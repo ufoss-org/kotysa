@@ -1,0 +1,141 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' apply false
+    id 'org.jetbrains.dokka' apply false
+    id 'net.researchgate.release'
+}
+
+println("Using Gradle version: $gradle.gradleVersion")
+
+configure(subprojects.findAll { it.name != "kotysa-platform" }) {
+    apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'jacoco'
+    apply plugin: 'org.jetbrains.dokka'
+
+    // Regular java modules need 'java-library' plugin for proper publication
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        // import BOM
+        implementation platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinx_coroutines_bom_version")
+        testImplementation platform("org.junit:junit-bom:$junit_bom_version")
+
+        api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+    }
+
+    compileKotlin {
+        kotlinOptions {
+            freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict']
+            jvmTarget = '1.8'
+        }
+    }
+
+    compileTestKotlin {
+        kotlinOptions {
+            freeCompilerArgs = ['-Xjvm-default=enable']
+            jvmTarget = '1.8'
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events 'passed', 'failed', 'skipped'
+            showStandardStreams = true
+        }
+    }
+
+    jacoco {
+        toolVersion = "0.8.5"
+    }
+
+    tasks.withType(Test) {
+        jacoco.includeNoLocationClasses = true
+    }
+
+    jacocoTestReport {
+        dependsOn(test)
+
+        reports {
+            html.enabled = true
+            xml.enabled = true
+        }
+    }
+
+    // --------------- Source & Javadoc artefacts + publishing ---------------
+
+    // generate xxx-sources.jar
+    java {
+        withSourcesJar()
+    }
+
+    dokka {
+        outputFormat = 'html'
+        outputDirectory = "$buildDir/javadoc"
+
+        configuration {
+            jdkVersion = 8
+        }
+    }
+
+    // generate xxx-javadoc.jar
+    task javadocJar(type: Jar, dependsOn: dokka) {
+        from "$buildDir/javadoc"
+        archiveClassifier = 'javadoc'
+    }
+
+    publishing {
+        repositories {
+            maven {
+                def user = 'pull-vert'
+                def repo = 'kotysa'
+                def name = 'kotysa'
+                url = "https://api.bintray.com/maven/$user/$repo/$name/;publish=0"
+
+                credentials {
+                    username = project.hasProperty('bintray_user') ? project.property('bintray_user') : System.getenv('BINTRAY_USER')
+                    password = project.hasProperty('bintray_api_key') ? project.property('bintray_api_key') : System.getenv('BINTRAY_API_KEY')
+                }
+            }
+        }
+
+        publications {
+            maven(MavenPublication) {
+                artifactId = project.name
+                from components.java
+                artifact javadocJar
+                pom {
+                    name = project.name
+                    description = 'Kotysa is the idiomatic way to write Kotlin type-safe SQL'
+                    url = 'https://github.com/pull-vert/kotysa'
+                    licenses {
+                        license {
+                            name = 'The Unlicence'
+                            url = 'https://unlicense.org'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/pull-vert/kotysa.git'
+                        url = 'https://github.com/pull-vert/kotysa.git'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Workaround for https://github.com/researchgate/gradle-release/issues/144
+task build {
+    dependsOn subprojects.findResults { it.tasks.findByName('build') }
+}
+
+// when version changes :
+// -> execute ./gradlew wrapper, then remove .gradle directory, then execute ./gradlew wrapper again
+wrapper {
+    gradleVersion = '6.4.1'
+    distributionType = Wrapper.DistributionType.ALL
+}

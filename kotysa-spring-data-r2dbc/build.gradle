@@ -1,0 +1,56 @@
+repositories {
+    maven { url 'https://repo.spring.io/milestone' }
+//    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+dependencies {
+    api platform(project(':kotysa-platform'))
+    api project(':kotysa-core')
+
+    // import BOM
+    implementation platform("io.r2dbc:r2dbc-bom:$r2dbc_bom_version")
+    implementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
+
+    api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
+
+    implementation "org.springframework.data:spring-data-r2dbc:$spring_data_r2dbc_version"
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-reactive'
+
+    testImplementation testFixtures(project(':kotysa-core'))
+
+    testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
+    testImplementation 'io.r2dbc:r2dbc-h2'
+    testImplementation 'io.r2dbc:r2dbc-postgresql'
+    testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactive'
+    testImplementation "ch.qos.logback:logback-classic:$logback_version"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable', '-Xexplicit-api=strict']
+        jvmTarget = '1.8'
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
+        jvmTarget = '1.8'
+    }
+}
+
+//dokka {
+//    configuration {
+//        externalDocumentationLink {
+//            url = new URL("https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/api/")
+//        }
+//    }
+//}

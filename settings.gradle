@@ -1,0 +1,16 @@
+pluginManagement {
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version "$kotlin_plugin_version"
+        id 'org.jetbrains.dokka' version "$dokka_plugin_version"
+        id 'net.researchgate.release' version "$release_plugin_version"
+    }
+}
+
+rootProject.name = 'kotysa'
+
+include 'kotysa-core'
+
+include 'kotysa-android'
+include 'kotysa-spring-data-r2dbc'
+
+include 'kotysa-platform'

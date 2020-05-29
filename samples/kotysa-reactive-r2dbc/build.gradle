@@ -1,0 +1,51 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'org.springframework.boot' version '2.3.0.RC1'
+}
+
+repositories {
+    jcenter()
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation 'org.springframework.data:spring-data-r2dbc'
+    implementation 'io.r2dbc:r2dbc-postgresql'
+
+    implementation 'com.pullvert:kotysa-spring-data-r2dbc:0.1.1'
+    implementation 'org.springframework.fu:spring-fu-kofu:0.3.0.M3'
+    implementation 'org.testcontainers:postgresql:1.14.1'
+
+    testImplementation 'io.r2dbc:r2dbc-h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
+        jvmTarget = '1.8'
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
+        jvmTarget = '1.8'
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        showStandardStreams = true
+    }
+}
+
+wrapper {
+    gradleVersion = '6.3'
+    distributionType = Wrapper.DistributionType.ALL
+}

@@ -1,0 +1,38 @@
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
+
+plugins {
+    id 'java-test-fixtures'
+}
+
+println("Using Kotlin compiler version: $KotlinCompilerVersion.VERSION")
+
+dependencies {
+    api platform(project(':kotysa-platform'))
+
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation "com.michael-bull.kotlin-inline-logger:kotlin-inline-logger-jvm"
+
+    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+
+    testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
+    testFixturesImplementation "org.springframework:spring-core:$spring_core_version"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation "ch.qos.logback:logback-classic:$logback_version"
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+compileTestFixturesKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjvm-default=enable']
+        jvmTarget = '1.8'
+    }
+}
+
+dokka {
+    configuration {
+        includes = ['../README.md']
+    }
+}
