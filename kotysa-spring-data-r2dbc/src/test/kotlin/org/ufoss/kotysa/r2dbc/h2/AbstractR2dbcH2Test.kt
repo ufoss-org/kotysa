@@ -19,7 +19,7 @@ abstract class AbstractR2dbcH2Test<T : Repository> {
     protected abstract val repository: T
 
     protected inline fun <reified U : Repository> startContext() =
-            application(WebApplicationType.NONE) {
+            application {
                 beans {
                     bean<U>()
                 }

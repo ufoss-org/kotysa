@@ -10,7 +10,7 @@ dependencies {
 
     testImplementation testFixtures(project(':kotysa-core'))
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     testImplementation 'org.robolectric:robolectric:4.0.2'
     testImplementation "org.assertj:assertj-core:$assertj_version"
     testImplementation "ch.qos.logback:logback-classic:$logback_version"

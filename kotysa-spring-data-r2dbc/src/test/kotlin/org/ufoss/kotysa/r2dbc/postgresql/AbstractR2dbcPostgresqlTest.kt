@@ -29,7 +29,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
                 .withPassword("")
         postgresqlContainer.start()
 
-        return application(WebApplicationType.NONE) {
+        return application {
             beans {
                 bean { postgresqlContainer }
                 bean<U>()
