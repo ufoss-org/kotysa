@@ -1,5 +1,5 @@
 [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
-[![Download](https://api.bintray.com/packages/pull-vert/kotysa/kotysa/images/download.svg) ](https://bintray.com/pull-vert/kotysa/kotysa/_latestVersion)
+[![Download](https://api.bintray.com/packages/ufoss/ufoss/kotysa/images/download.svg) ](https://bintray.com/ufoss/ufoss/kotysa/_latestVersion)
 
 # Kotysa
 
@@ -62,7 +62,7 @@ See sample projects [here](samples).
 
 Kotysa provides [Kotlin Coroutines first class support with R2DBC](kotysa-spring-data-r2dbc/README.md#coroutines-first-class-support)
 
-Kotysa is **not production ready yet**, some key features are still missing. Regular early releases will provide new features (see [next milestones](https://github.com/pull-vert/kotysa/milestones)).
+Kotysa is **not production ready yet**, some key features are still missing. Regular early releases will provide new features (see [next milestones](https://github.com/ufoss-org/kotysa/milestones)).
 
 Type safety relies on type and nullability of the Entity property (or getter).
 
