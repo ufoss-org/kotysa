@@ -17,8 +17,8 @@ dependencies {
 publishing {
     repositories {
         maven {
-            def user = 'pull-vert'
-            def repo = 'kotysa'
+            def user = 'ufoss'
+            def repo = 'ufoss'
             def name = 'kotysa'
             url = "https://api.bintray.com/maven/$user/$repo/$name/;publish=0"
 
