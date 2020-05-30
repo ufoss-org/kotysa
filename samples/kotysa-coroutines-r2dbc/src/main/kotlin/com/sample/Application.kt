@@ -1,9 +1,8 @@
 package com.sample
 
-import org.springframework.boot.WebApplicationType
-import org.springframework.fu.kofu.application
+import org.springframework.fu.kofu.reactiveWebApplication
 
-val app = application(WebApplicationType.REACTIVE) {
+val app = reactiveWebApplication {
     enable(dataConfig)
     enable(webConfig)
 }
