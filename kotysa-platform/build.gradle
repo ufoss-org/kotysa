@@ -10,7 +10,7 @@ dependencies {
         api project(':kotysa-android')
         api project(':kotysa-spring-data-r2dbc')
 
-        api "com.michael-bull.kotlin-inline-logger:kotlin-inline-logger:$kotlin_inline_logger_version"
+        api "com.michael-bull.kotlin-inline-logger:kotlin-inline-logger-jvm:$kotlin_inline_logger_version"
     }
 }
 

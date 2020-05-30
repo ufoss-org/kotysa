@@ -17,6 +17,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
 
     repositories {
         jcenter()
+        maven { url = 'https://dl.bintray.com/michaelbull/maven' }
     }
 
     dependencies {
