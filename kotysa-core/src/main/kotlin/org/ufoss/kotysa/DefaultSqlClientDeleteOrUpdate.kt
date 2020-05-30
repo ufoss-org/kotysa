@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import com.github.michaelbull.logging.InlineLogger
+import mu.KotlinLogging
 import org.ufoss.kotysa.h2.h2DeleteFromTableSql
 import org.ufoss.kotysa.h2.h2UpdateTableSql
 import org.ufoss.kotysa.postgresql.postgresqlUpdateTableSql
@@ -12,7 +12,7 @@ import org.ufoss.kotysa.sqlite.sqLiteDeleteFromTableSql
 import org.ufoss.kotysa.sqlite.sqLiteUpdateTableSql
 import kotlin.reflect.KClass
 
-private val logger = InlineLogger("org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate")
+private val logger = KotlinLogging.logger {}
 
 
 public open class DefaultSqlClientDeleteOrUpdate protected constructor() : DefaultSqlClientCommon() {

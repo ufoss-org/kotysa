@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import com.github.michaelbull.logging.InlineLogger
+import mu.KotlinLogging
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -14,7 +14,7 @@ import kotlin.reflect.*
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.primaryConstructor
 
-private val logger = InlineLogger("org.ufoss.kotysa.DefaultSqlClientSelect")
+private val logger = KotlinLogging.logger {}
 
 
 public open class DefaultSqlClientSelect protected constructor() : DefaultSqlClientCommon() {
