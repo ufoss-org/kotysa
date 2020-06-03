@@ -14,7 +14,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 	private val allColumns = mutableMapOf<(Any) -> Any?, Column<*, *>>()
 
 	@PublishedApi
-	internal fun <T : Any> table(tableClass: KClass<T>, dsl: U.() -> Unit) {
+	internal fun <T : Any> table(tableClass: KClass<T>, dsl: U.(TableColumnPropertyProvider) -> Unit) {
 		check(!allTables.containsKey(tableClass)) {
 			"Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
 		}
@@ -24,7 +24,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 		allColumns.putAll(table.columns as Map<out (Any) -> Any?, Column<*, *>>)
 	}
 
-	protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.() -> Unit): Table<*>
+	protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.(TableColumnPropertyProvider) -> Unit): Table<*>
 
 	internal fun initialize(initialize: T, dbType: DbType): Tables {
 		init(initialize)

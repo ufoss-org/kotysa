@@ -48,15 +48,6 @@ public abstract class ColumnBuilder<T : ColumnBuilder<T, U, V>, U : Any, V : Any
         return this as T
     }
 
-    public inline fun <reified V : Any> foreignKey(fkName: String? = null): T = foreignKey(V::class, fkName)
-
-    @PublishedApi
-    internal fun <V : Any> foreignKey(fkClass: KClass<V>, fkName: String?): T {
-        props.fkClass = fkClass
-        props.fkName = fkName
-        return this as T
-    }
-
     internal abstract fun build(): Column<U, *>
 }
 

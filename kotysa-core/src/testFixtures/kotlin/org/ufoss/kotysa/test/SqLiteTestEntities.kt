@@ -20,8 +20,9 @@ val sqLiteTables =
                 column { it[SqLiteUser::firstname].text().name("fname") }
                 column { it[SqLiteUser::lastname].text().name("lname") }
                 column { it[SqLiteUser::isAdmin].integer() }
-                column { it[SqLiteUser::roleId].text().foreignKey<SqLiteRole>() }
+                column { it[SqLiteUser::roleId].text() }
                 column { it[SqLiteUser::alias].text() }
+                foreignKey<SqLiteRole>(it[SqLiteUser::roleId]).name("FK_users_roles")
             }
             table<SqLiteAllTypesNotNull> {
                 name = "all_types"

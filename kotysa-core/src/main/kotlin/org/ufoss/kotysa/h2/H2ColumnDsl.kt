@@ -15,7 +15,7 @@ import java.util.*
  * see [H2 Data types](http://h2database.com/html/datatypes.html)
  */
 public class H2ColumnDsl<T : Any> internal constructor(
-        init: H2ColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *>
+        init: H2ColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>
 ) : ColumnDsl<T, H2ColumnDsl<T>>(init) {
 
     public fun NotNullStringColumnProperty<T>.varchar(): VarcharColumnBuilderNotNull<T, String> =

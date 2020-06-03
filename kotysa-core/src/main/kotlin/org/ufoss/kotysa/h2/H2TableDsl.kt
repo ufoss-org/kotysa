@@ -11,16 +11,16 @@ import kotlin.reflect.KClass
 
 
 public class H2TableDsl<T : Any>(
-        init: H2TableDsl<T>.() -> Unit,
+        init: H2TableDsl<T>.(TableColumnPropertyProvider) -> Unit,
         tableClass: KClass<T>
 ) : TableDsl<T, H2TableDsl<T>>(init, tableClass) {
 
     /**
      * Declare a Column, supported types follow : [H2 Data types](http://h2database.com/html/datatypes.html)
      */
-    public fun column(dsl: H2ColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *>) {
+    public fun column(dsl: H2ColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
         val columnDsl = H2ColumnDsl(dsl)
-        val column = columnDsl.initialize(columnDsl)
+        val column = columnDsl.initialize(columnDsl, this)
         addColumn(column)
     }
 }

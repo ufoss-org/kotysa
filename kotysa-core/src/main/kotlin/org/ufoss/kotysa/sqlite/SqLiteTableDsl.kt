@@ -11,16 +11,16 @@ import kotlin.reflect.KClass
 
 
 public class SqLiteTableDsl<T : Any>(
-        init: SqLiteTableDsl<T>.() -> Unit,
+        init: SqLiteTableDsl<T>.(TableColumnPropertyProvider) -> Unit,
         tableClass: KClass<T>
 ) : TableDsl<T, SqLiteTableDsl<T>>(init, tableClass) {
 
     /**
      * Declare a Column, supported types follow : [SqLite Data types](https://www.sqlite.org/datatype3.html)
      */
-    public fun column(dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *>) {
+    public fun column(dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
         val columnDsl = SqLiteColumnDsl(dsl)
-        val column = columnDsl.initialize(columnDsl)
+        val column = columnDsl.initialize(columnDsl, this)
         addColumn(column)
     }
 }

@@ -17,7 +17,7 @@ import java.util.*
  * see [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
  */
 public class PostgresqlColumnDsl<T : Any> internal constructor(
-        init: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *>
+        init: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>
 ) : ColumnDsl<T, PostgresqlColumnDsl<T>>(init) {
 
     public fun NotNullStringColumnProperty<T>.varchar(): VarcharColumnBuilderNotNull<T, String> =

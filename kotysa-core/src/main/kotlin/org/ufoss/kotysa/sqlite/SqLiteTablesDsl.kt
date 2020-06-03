@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.sqlite
 
 import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
 
@@ -13,13 +14,13 @@ import kotlin.reflect.KClass
  */
 public class SqLiteTablesDsl(init: SqLiteTablesDsl.() -> Unit) : TablesDsl<SqLiteTablesDsl, SqLiteTableDsl<*>>(init) {
 
-    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: SqLiteTableDsl<*>.() -> Unit): Table<*> {
+    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: SqLiteTableDsl<*>.(TableColumnPropertyProvider) -> Unit): Table<*> {
         val tableDsl = SqLiteTableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }
 
     @Suppress("UNCHECKED_CAST")
-    public inline fun <reified T : Any> table(noinline dsl: SqLiteTableDsl<T>.() -> Unit) {
-        table(T::class, dsl as SqLiteTableDsl<*>.() -> Unit)
+    public inline fun <reified T : Any> table(noinline dsl: SqLiteTableDsl<T>.(TableColumnPropertyProvider) -> Unit) {
+        table(T::class, dsl as SqLiteTableDsl<*>.(TableColumnPropertyProvider) -> Unit)
     }
 }
