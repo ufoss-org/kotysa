@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 
 public class PostgresqlTableDsl<T : Any>(
-        init: PostgresqlTableDsl<T>.(TableColumnPropertyProvider) -> Unit,
+        init: PostgresqlTableDsl<T>.() -> Unit,
         tableClass: KClass<T>
 ) : TableDsl<T, PostgresqlTableDsl<T>>(init, tableClass) {
 
@@ -20,7 +20,7 @@ public class PostgresqlTableDsl<T : Any>(
      */
     public fun column(dsl: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
         val columnDsl = PostgresqlColumnDsl(dsl)
-        val column = columnDsl.initialize(columnDsl, this)
+        val column = columnDsl.initialize(columnDsl)
         addColumn(column)
     }
 }

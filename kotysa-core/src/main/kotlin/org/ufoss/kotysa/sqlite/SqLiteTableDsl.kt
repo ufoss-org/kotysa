@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 
 public class SqLiteTableDsl<T : Any>(
-        init: SqLiteTableDsl<T>.(TableColumnPropertyProvider) -> Unit,
+        init: SqLiteTableDsl<T>.() -> Unit,
         tableClass: KClass<T>
 ) : TableDsl<T, SqLiteTableDsl<T>>(init, tableClass) {
 
@@ -20,7 +20,7 @@ public class SqLiteTableDsl<T : Any>(
      */
     public fun column(dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
         val columnDsl = SqLiteColumnDsl(dsl)
-        val column = columnDsl.initialize(columnDsl, this)
+        val column = columnDsl.initialize(columnDsl)
         addColumn(column)
     }
 }

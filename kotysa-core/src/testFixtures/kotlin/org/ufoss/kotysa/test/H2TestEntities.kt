@@ -25,7 +25,7 @@ val h2Tables =
                 column { it[H2User::isAdmin].boolean() }
                 column { it[H2User::roleId].uuid() }
                 column { it[H2User::alias].varchar() }
-                foreignKey<H2Role>(it[H2User::roleId]).name("FK_users_roles")
+                foreignKey<H2Role> { column(it[H2User::roleId]).name("FK_users_roles") }
             }
             table<H2AllTypesNotNull> {
                 name = "all_types"
@@ -67,8 +67,8 @@ val h2Tables =
                 column { it[H2Uuid::id].uuid().primaryKey() }
                 column { it[H2Uuid::roleIdNotNull].uuid() }
                 column { it[H2Uuid::roleIdNullable].uuid() }
-                foreignKey<H2Role>(it[H2Uuid::roleIdNotNull])
-                foreignKey<H2Role>(it[H2Uuid::roleIdNullable])
+                foreignKey<H2Role> { column(it[H2Uuid::roleIdNotNull]) }
+                foreignKey<H2Role> { column(it[H2Uuid::roleIdNullable]) }
             }
             table<H2LocalDate> {
                 column { it[H2LocalDate::id].uuid().primaryKey() }

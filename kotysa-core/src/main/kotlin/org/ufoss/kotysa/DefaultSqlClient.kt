@@ -69,17 +69,15 @@ public interface DefaultSqlClient {
                     ""
                 } else {
                     table.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
-                        when (foreignKey) {
-                            is SingleForeignKey<*, *> ->
-                                if (foreignKey.name != null) {
-                                    "CONSTRAINT ${foreignKey.name} FOREIGN KEY (${foreignKey.column.name}) " +
-                                            "REFERENCES ${foreignKey.referencedColumn.table.name}(${foreignKey.referencedColumn.name})"
-                                } else {
-                                    "FOREIGN KEY (${foreignKey.column.name}) " +
-                                            "REFERENCES ${foreignKey.referencedColumn.table.name}(${foreignKey.referencedColumn.name})"
-                                }
-                            else -> throw RuntimeException("Only SingleForeignKey is currently supported, had ${foreignKey::class.simpleName}")
+                        var foreignKeyStatement = if (foreignKey.name != null) {
+                            "CONSTRAINT ${foreignKey.name} "
+                        } else {
+                            ""
                         }
+                        foreignKeyStatement += "FOREIGN KEY (${foreignKey.columns.joinToString { it.name }})" +
+                                " REFERENCES ${foreignKey.referencedTable.name}" +
+                                " (${foreignKey.referencedColumns.joinToString { it.name }})"
+                        foreignKeyStatement
                     }
                 }
 

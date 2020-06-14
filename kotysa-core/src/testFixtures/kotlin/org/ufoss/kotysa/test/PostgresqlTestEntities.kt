@@ -23,7 +23,7 @@ val postgresqlTables =
                 column { it[PostgresqlUser::isAdmin].boolean() }
                 column { it[PostgresqlUser::roleId].uuid() }
                 column { it[PostgresqlUser::alias].varchar() }
-                foreignKey<PostgresqlRole>(it[PostgresqlUser::roleId]).name("FK_users_roles")
+                foreignKey<PostgresqlRole> { column(it[PostgresqlUser::roleId]).name("FK_users_roles") }
             }
             table<PostgresqlAllTypesNotNull> {
                 name = "all_types"
@@ -62,8 +62,8 @@ val postgresqlTables =
                 column { it[PostgresqlUuid::id].uuid().primaryKey() }
                 column { it[PostgresqlUuid::roleIdNotNull].uuid() }
                 column { it[PostgresqlUuid::roleIdNullable].uuid() }
-                foreignKey<PostgresqlRole>(it[PostgresqlUuid::roleIdNotNull])
-                foreignKey<PostgresqlRole>(it[PostgresqlUuid::roleIdNullable])
+                foreignKey<PostgresqlRole> { column(it[PostgresqlUuid::roleIdNotNull]) }
+                foreignKey<PostgresqlRole> { column(it[PostgresqlUuid::roleIdNullable]) }
             }
             table<PostgresqlLocalDate> {
                 column { it[PostgresqlLocalDate::id].uuid().primaryKey() }

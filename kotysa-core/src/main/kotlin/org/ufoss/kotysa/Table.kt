@@ -17,7 +17,7 @@ public interface Table<T : Any> {
     public val name: String
     public val columns: Map<(T) -> Any?, Column<T, *>>
     public val primaryKey: PrimaryKey
-    public var foreignKeys: Set<ForeignKey>
+    public val foreignKeys: Set<ForeignKey<T, *>>
 }
 
 
@@ -25,10 +25,9 @@ internal class TableImpl<T : Any> internal constructor(
         override val tableClass: KClass<T>,
         override val name: String,
         override val columns: Map<(T) -> Any?, Column<T, *>>,
-        override val primaryKey: PrimaryKey
+        override val primaryKey: PrimaryKey,
+        override val foreignKeys: Set<ForeignKey<T, *>>
 ) : Table<T> {
-
-    override lateinit var foreignKeys: Set<ForeignKey>
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

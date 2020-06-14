@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 
 
 public class H2TableDsl<T : Any>(
-        init: H2TableDsl<T>.(TableColumnPropertyProvider) -> Unit,
+        init: H2TableDsl<T>.() -> Unit,
         tableClass: KClass<T>
 ) : TableDsl<T, H2TableDsl<T>>(init, tableClass) {
 
@@ -20,7 +20,7 @@ public class H2TableDsl<T : Any>(
      */
     public fun column(dsl: H2ColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
         val columnDsl = H2ColumnDsl(dsl)
-        val column = columnDsl.initialize(columnDsl, this)
+        val column = columnDsl.initialize(columnDsl)
         addColumn(column)
     }
 }

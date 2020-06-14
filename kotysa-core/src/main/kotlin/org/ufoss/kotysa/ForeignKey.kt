@@ -4,14 +4,16 @@
 
 package org.ufoss.kotysa
 
+import kotlin.reflect.KClass
 
-public interface ForeignKey {
-	public val name: String?
+
+public class ForeignKey<T : Any, U : Any> internal constructor(
+	internal val properties: Set<ColumnProperty<T>>,
+	internal val referencedProperties: Set<ColumnProperty<U>>,
+	internal val referencedClass: KClass<U>,
+	internal val name: String?
+) {
+	internal lateinit var referencedTable: Table<*>
+	internal lateinit var referencedColumns: List<Column<*, *>>
+	internal lateinit var columns: List<Column<*, *>>
 }
-
-
-internal data class SingleForeignKey<T : Any, U> internal constructor(
-        override val name: String?,
-        internal val column: Column<T, U>,
-        internal var referencedColumn: Column<*, *>
-) : ForeignKey

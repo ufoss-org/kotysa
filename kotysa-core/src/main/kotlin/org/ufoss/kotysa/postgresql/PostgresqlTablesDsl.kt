@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.postgresql
 
 import org.ufoss.kotysa.Table
-import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
 
@@ -14,13 +13,13 @@ import kotlin.reflect.KClass
  */
 public class PostgresqlTablesDsl(init: PostgresqlTablesDsl.() -> Unit) : TablesDsl<PostgresqlTablesDsl, PostgresqlTableDsl<*>>(init) {
 
-    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: PostgresqlTableDsl<*>.(TableColumnPropertyProvider) -> Unit): Table<*> {
+    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: PostgresqlTableDsl<*>.() -> Unit): Table<*> {
         val tableDsl = PostgresqlTableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }
 
     @Suppress("UNCHECKED_CAST")
-    public inline fun <reified T : Any> table(noinline dsl: PostgresqlTableDsl<T>.(TableColumnPropertyProvider) -> Unit) {
-        table(T::class, dsl as PostgresqlTableDsl<*>.(TableColumnPropertyProvider) -> Unit)
+    public inline fun <reified T : Any> table(noinline dsl: PostgresqlTableDsl<T>.() -> Unit) {
+        table(T::class, dsl as PostgresqlTableDsl<*>.() -> Unit)
     }
 }

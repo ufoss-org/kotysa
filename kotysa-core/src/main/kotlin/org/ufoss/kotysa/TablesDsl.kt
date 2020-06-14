@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa
 
+import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
 
@@ -14,7 +15,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 	private val allColumns = mutableMapOf<(Any) -> Any?, Column<*, *>>()
 
 	@PublishedApi
-	internal fun <T : Any> table(tableClass: KClass<T>, dsl: U.(TableColumnPropertyProvider) -> Unit) {
+	internal fun <T : Any> table(tableClass: KClass<T>, dsl: U.() -> Unit) {
 		check(!allTables.containsKey(tableClass)) {
 			"Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
 		}
@@ -24,7 +25,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 		allColumns.putAll(table.columns as Map<out (Any) -> Any?, Column<*, *>>)
 	}
 
-	protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.(TableColumnPropertyProvider) -> Unit): Table<*>
+	protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.() -> Unit): Table<*>
 
 	internal fun initialize(initialize: T, dbType: DbType): Tables {
 		init(initialize)
@@ -32,45 +33,43 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 		val tables = Tables(allTables, allColumns, dbType)
 
 		// resolve foreign keys to referenced primary key column
-		resolveFkReferencedColumn(allColumns, tables)
-
-		// build foreign keys
-		buildForeignKeys(allTables)
+		resolveFkReferences(tables)
 
 		return tables
 	}
 
-	private fun resolveFkReferencedColumn(allColumns: MutableMap<(Any) -> Any?, Column<*, *>>, tables: Tables) {
-		allColumns.filterValues { column -> column.fkClass != null }
-				.forEach { (_, column) ->
-					val referencedTable = tables.getTable(column.fkClass!!)
-					val referencedTablePK = referencedTable.primaryKey
-					require(referencedTablePK is SinglePrimaryKey<*, *>) {
-						"Only table with single column primary key is currently supported, ${referencedTable.name} is not"
-					}
-					column.fkColumn = referencedTablePK.column
-				}
-	}
+	/**
+	 * Fill lateinit foreign key data after tables are built
+	 */
+	@Suppress("UNCHECKED_CAST")
+	private fun resolveFkReferences(tables: Tables) {
+		tables.allTables.values
+				.flatMap { table -> table.foreignKeys }
+				.forEach { foreignKey ->
+					val referencedTable = tables.getTable(foreignKey.referencedClass)
+					foreignKey.referencedTable = referencedTable
+					val columns = foreignKey.properties
+							.map { columnProperty ->
+								allColumns[columnProperty.getter] ?: throw IllegalArgumentException(
+										"Column property ${columnProperty.getter} is not declared as Column")
+							}
+					foreignKey.columns = columns
 
-	private fun buildForeignKeys(allTables: MutableMap<KClass<*>, Table<*>>) {
-		val foreignKeyNames = mutableSetOf<String>()
-		allTables.values.forEach { table ->
-			val foreignKeys = mutableSetOf<ForeignKey>()
-			// first loop with user provided FK names
-			table.columns.values.mapNotNull { column -> column.fkName }
-					.forEach { fkName ->
-						require(!foreignKeyNames.contains(fkName)) {
-							"Foreign key names must be unique, $fkName is duplicated"
+					// find primaryKey if no referencedProperties
+					if (foreignKey.referencedProperties.isEmpty()) {
+						val referencedTablePK = referencedTable.primaryKey
+						require(referencedTablePK is SinglePrimaryKey<*, *>) {
+							"Only table with single column primary key is currently supported, ${referencedTable.name} is not"
 						}
-						foreignKeyNames.add(fkName)
+						foreignKey.referencedColumns = listOf(referencedTablePK.column)
+					} else {
+						val referencedColumns = foreignKey.referencedProperties
+								.map { columnProperty ->
+									allColumns[columnProperty.getter] ?: throw IllegalArgumentException(
+											"Column property ${columnProperty.getter} is not declared as Column")
+								}
+						foreignKey.referencedColumns = referencedColumns
 					}
-
-			// then complete loop on all foreign keys
-			table.columns.filterValues { column -> column.fkColumn != null }
-					.forEach { (_, column) ->
-						foreignKeys.add(SingleForeignKey(column.fkName, column, column.fkColumn!!))
-					}
-			table.foreignKeys = foreignKeys
-		}
+				}
 	}
 }
