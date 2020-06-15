@@ -43,7 +43,7 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
                     column { it[User::isAdmin].boolean() }
                     column { it[User::roleId].uuid() }
                     column { it[User::alias].varchar() }
-                    foreignKey<Role> { column(it[User::roleId]) }
+                    foreignKey<Role> { columns(it[User::roleId]) }
                 }
             }
 

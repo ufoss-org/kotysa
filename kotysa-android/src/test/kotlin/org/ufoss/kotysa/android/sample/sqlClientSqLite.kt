@@ -40,7 +40,7 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
                     column { it[User::isAdmin].integer() }
                     column { it[User::roleId].text() }
                     column { it[User::alias].text() }
-                    foreignKey<Role> { column(it[User::roleId]) }
+                    foreignKey<Role> { columns(it[User::roleId]) }
                 }
             }
 

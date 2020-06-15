@@ -128,7 +128,7 @@ class H2TablesDslTest {
                 column { it[H2User::firstname].varchar() }
                 column { it[H2User::alias].varchar() }
                 column { it[H2User::roleId].uuid() }
-                foreignKey<H2Role> { column(it[H2User::roleId]) }
+                foreignKey<H2Role> { columns(it[H2User::roleId]) }
             }
         }
         val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
@@ -177,7 +177,7 @@ class H2TablesDslTest {
                 column { it[H2User::firstname].varchar() }
                 column { it[H2User::alias].varchar() }
                 column { it[H2User::roleId].uuid() }
-                foreignKey<H2Role> { column(it[H2User::roleId]).name("users_fk") }
+                foreignKey<H2Role> { columns(it[H2User::roleId]).name("users_fk") }
             }
         }
         val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
