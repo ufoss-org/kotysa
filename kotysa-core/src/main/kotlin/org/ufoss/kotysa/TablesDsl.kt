@@ -48,12 +48,14 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 				.forEach { foreignKey ->
 					val referencedTable = tables.getTable(foreignKey.referencedClass)
 					foreignKey.referencedTable = referencedTable
-					val columns = foreignKey.properties
-							.map { columnProperty ->
-								allColumns[columnProperty.getter] ?: throw IllegalArgumentException(
-										"Column property ${columnProperty.getter} is not declared as Column")
-							}
-					foreignKey.columns = columns
+					if (foreignKey.properties != null) {
+						val columns = foreignKey.properties
+								.map { columnProperty ->
+									allColumns[columnProperty.getter] ?: throw IllegalArgumentException(
+											"Column property ${columnProperty.getter} is not declared as Column")
+								}
+						foreignKey.columns = columns
+					}
 
 					// find primaryKey if no referencedProperties
 					if (foreignKey.referencedProperties.isEmpty()) {

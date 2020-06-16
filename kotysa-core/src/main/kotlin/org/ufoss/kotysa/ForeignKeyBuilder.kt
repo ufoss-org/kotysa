@@ -26,5 +26,5 @@ public class ForeignKeyBuilder<T : Any, U : Any>(
         return this
     }
 
-    internal fun build() = ForeignKey(properties.toHashSet(), referencedProperties, referencedClass, name)
+    internal fun build() = ForeignKey(referencedClass, referencedProperties, name, properties.toHashSet())
 }

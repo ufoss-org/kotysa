@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.postgresql
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.ColumnBuilder
 import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TableDsl
@@ -18,9 +19,12 @@ public class PostgresqlTableDsl<T : Any>(
     /**
      * Declare a Column, supported types follow : [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
      */
-    public fun column(dsl: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
+    public fun column(
+            dsl: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>
+    ): Column<T, *> {
         val columnDsl = PostgresqlColumnDsl(dsl)
         val column = columnDsl.initialize(columnDsl)
         addColumn(column)
+        return column
     }
 }

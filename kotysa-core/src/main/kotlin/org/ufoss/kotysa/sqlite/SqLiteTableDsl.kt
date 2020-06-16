@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.sqlite
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.ColumnBuilder
 import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TableDsl
@@ -18,9 +19,10 @@ public class SqLiteTableDsl<T : Any>(
     /**
      * Declare a Column, supported types follow : [SqLite Data types](https://www.sqlite.org/datatype3.html)
      */
-    public fun column(dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>) {
+    public fun column(dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>): Column<T, *> {
         val columnDsl = SqLiteColumnDsl(dsl)
         val column = columnDsl.initialize(columnDsl)
         addColumn(column)
+        return column
     }
 }

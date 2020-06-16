@@ -27,6 +27,12 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
         foreignKeys.add(foreignKey)
     }
 
+    public inline fun <reified V : Any> Column<T, *>.foreignKey(name: String? = null) {
+        val foreignKey = ForeignKey<T, V>(V::class, setOf(), name, null)
+        foreignKey.columns = listOf(this)
+        foreignKeys.add(foreignKey)
+    }
+
     protected fun addColumn(column: Column<T, *>) {
         require(!columns.containsKey(column.entityGetter)) {
             "Trying to map property \"${column.entityGetter}\" to multiple columns"
