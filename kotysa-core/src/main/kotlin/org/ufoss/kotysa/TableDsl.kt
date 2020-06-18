@@ -27,10 +27,11 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
         foreignKeys.add(foreignKey)
     }
 
-    public inline fun <reified V : Any> Column<T, *>.foreignKey(name: String? = null) {
-        val foreignKey = ForeignKey<T, V>(V::class, setOf(), name, null)
+    public inline fun <reified V : Any> Column<T, *>.foreignKey(fkName: String? = null): Column<T, *> {
+        val foreignKey = ForeignKey<T, V>(V::class, setOf(), fkName, null)
         foreignKey.columns = listOf(this)
         foreignKeys.add(foreignKey)
+        return this
     }
 
     protected fun addColumn(column: Column<T, *>) {
