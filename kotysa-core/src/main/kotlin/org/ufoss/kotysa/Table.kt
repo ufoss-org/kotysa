@@ -11,12 +11,13 @@ import kotlin.reflect.KClass
  */
 public interface Table<T : Any> {
     public val tableClass: KClass<T>
+
     /**
      * Real name of this table in the database
      */
     public val name: String
     public val columns: Map<(T) -> Any?, Column<T, *>>
-    public val primaryKey: PrimaryKey
+    public val primaryKey: PrimaryKey<T>
     public val foreignKeys: Set<ForeignKey<T, *>>
 }
 
@@ -25,7 +26,7 @@ internal class TableImpl<T : Any> internal constructor(
         override val tableClass: KClass<T>,
         override val name: String,
         override val columns: Map<(T) -> Any?, Column<T, *>>,
-        override val primaryKey: PrimaryKey,
+        override val primaryKey: PrimaryKey<T>,
         override val foreignKeys: Set<ForeignKey<T, *>>
 ) : Table<T> {
 

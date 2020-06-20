@@ -7,14 +7,15 @@ package org.ufoss.kotysa
 
 @KotysaMarker
 public abstract class ColumnDsl<T : Any, U : ColumnDsl<T, U>> internal constructor(
-        private val init: U.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>
+        private val init: U.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, *>
 ) : AbstractTableColumnPropertyProvider() {
 
-    internal fun initialize(initialize: U): Column<T, *> {
+    @Suppress("UNCHECKED_CAST")
+    internal fun <V : Column<T, *>> initialize(initialize: U): V {
         val columnBuilder = init(initialize, initialize)
         if (!columnBuilder.isColumnNameInitialized) {
             columnBuilder.props.columnName = columnBuilder.props.entityGetter.toCallable().name
         }
-        return columnBuilder.build()
+        return columnBuilder.build() as V
     }
 }

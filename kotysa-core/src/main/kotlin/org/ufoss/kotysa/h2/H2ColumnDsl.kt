@@ -15,7 +15,7 @@ import java.util.*
  * see [H2 Data types](http://h2database.com/html/datatypes.html)
  */
 public class H2ColumnDsl<T : Any> internal constructor(
-        init: H2ColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>
+        init: H2ColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, *>
 ) : ColumnDsl<T, H2ColumnDsl<T>>(init) {
 
     public fun NotNullStringColumnProperty<T>.varchar(): VarcharColumnBuilderNotNull<T, String> =
@@ -43,7 +43,7 @@ public class H2ColumnDsl<T : Any> internal constructor(
             DateColumnBuilderNullable(getter)
 
     public fun NotNullOffsetDateTimeColumnProperty<T>.timestampWithTimeZone()
-            : TimestampWithTimeZoneColumnBuilderNotNull<T, OffsetDateTime> =TimestampWithTimeZoneColumnBuilderNotNull(getter)
+            : TimestampWithTimeZoneColumnBuilderNotNull<T, OffsetDateTime> = TimestampWithTimeZoneColumnBuilderNotNull(getter)
 
     public fun NullableOffsetDateTimeColumnProperty<T>.timestampWithTimeZone()
             : TimestampWithTimeZoneColumnBuilderNullable<T, OffsetDateTime> = TimestampWithTimeZoneColumnBuilderNullable(getter)

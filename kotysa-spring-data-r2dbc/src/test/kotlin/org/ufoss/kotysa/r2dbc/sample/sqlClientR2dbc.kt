@@ -4,11 +4,10 @@
 
 package org.ufoss.kotysa.r2dbc.sample
 
+import org.springframework.data.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
-import org.springframework.data.r2dbc.core.DatabaseClient
 import java.util.*
-
 
 
 @Suppress("UNUSED_VARIABLE")
@@ -32,12 +31,14 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
             tables().h2 {
                 table<Role> {
                     name = "roles"
-                    column { it[Role::id].uuid().primaryKey() }
+                    column { it[Role::id].uuid() }
+                            .primaryKey()
                     column { it[Role::label].varchar() }
                 }
                 table<User> {
                     name = "users"
-                    column { it[User::id].uuid().primaryKey() }
+                    column { it[User::id].uuid() }
+                            .primaryKey()
                     column { it[User::firstname].varchar().name("fname") }
                     column { it[User::lastname].varchar().name("lname") }
                     column { it[User::isAdmin].boolean() }

@@ -12,8 +12,6 @@ internal class TimestampWithTimeZoneColumnNotNull<T : Any, U> internal construct
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), TimestampWithTimeZoneColumn<T, U>, ColumnNotNull<T, U>, NoAutoIncrement<T, U>
 
@@ -31,8 +29,6 @@ internal class Time9ColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), Time9Column<T, U>, ColumnNotNull<T, U>, NoAutoIncrement<T, U>
 

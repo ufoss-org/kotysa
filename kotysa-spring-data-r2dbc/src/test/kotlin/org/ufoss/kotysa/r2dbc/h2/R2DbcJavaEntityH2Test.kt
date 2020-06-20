@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.data.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
@@ -11,9 +14,6 @@ import org.ufoss.kotysa.test.JavaUser
 import org.ufoss.kotysa.test.UserDto
 import org.ufoss.kotysa.test.javaBboss
 import org.ufoss.kotysa.test.javaJdoe
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-import org.springframework.data.r2dbc.core.DatabaseClient
 
 
 class R2DbcJavaEntityH2Test : AbstractR2dbcH2Test<JavaUserH2Repository>() {
@@ -106,7 +106,8 @@ private val tables =
         tables().h2 {
             table<JavaUser> {
                 name = "java_users"
-                column { it[JavaUser::getLogin].varchar().primaryKey() }
+                column { it[JavaUser::getLogin].varchar() }
+                        .primaryKey()
                 column { it[JavaUser::getFirstname].varchar().name("fname") }
                 column { it[JavaUser::getLastname].varchar().name("lname") }
                 column { it[JavaUser::isAdmin].boolean() }

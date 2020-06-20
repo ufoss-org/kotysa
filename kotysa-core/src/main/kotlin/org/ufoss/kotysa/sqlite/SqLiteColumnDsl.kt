@@ -14,7 +14,7 @@ import java.time.OffsetDateTime
  * see [SqLite Data types](https://www.sqlite.org/datatype3.html)
  */
 public class SqLiteColumnDsl<T : Any> internal constructor(
-        init: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *>
+        init: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, *>
 ) : ColumnDsl<T, SqLiteColumnDsl<T>>(init) {
 
     public fun NotNullStringColumnProperty<T>.text(): TextColumnBuilderNotNull<T, String> =

@@ -4,7 +4,10 @@
 
 package org.ufoss.kotysa.h2
 
-import org.ufoss.kotysa.*
+import org.ufoss.kotysa.ColumnBuilderProps
+import org.ufoss.kotysa.ColumnNotNullBuilder
+import org.ufoss.kotysa.ColumnNullableBuilder
+import org.ufoss.kotysa.SqlType
 
 public class TimestampWithTimeZoneColumnBuilderNotNull<T : Any, U : Any> internal constructor(
         entityGetter: (T) -> U?
@@ -15,7 +18,7 @@ public class TimestampWithTimeZoneColumnBuilderNotNull<T : Any, U : Any> interna
     }
 
     override fun build() = with(props) {
-        TimestampWithTimeZoneColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        TimestampWithTimeZoneColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -41,7 +44,7 @@ public class Time9ColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        Time9ColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        Time9ColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 

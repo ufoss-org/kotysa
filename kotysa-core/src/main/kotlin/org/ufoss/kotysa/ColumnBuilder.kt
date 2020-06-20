@@ -5,8 +5,6 @@
 package org.ufoss.kotysa
 
 public interface ColumnBuilderProps<T : Any, U : Any> {
-    public var isPK: Boolean
-    public var pkName: String?
     public val sqlType: SqlType
     public val entityGetter: (T) -> U?
     public var columnName: String
@@ -21,14 +19,12 @@ private class ColumnBuilderPropsImpl<T : Any, U : Any> internal constructor(
 ) : ColumnBuilderProps<T, U> {
     override lateinit var columnName: String
     override val isColumnNameInitialized get() = ::columnName.isInitialized
-    override var isPK: Boolean = false
-    override var pkName: String? = null
     override var defaultValue: U? = null
     override var isAutoIncrement: Boolean = false
 }
 
 @Suppress("UNCHECKED_CAST")
-public abstract class ColumnBuilder<T : ColumnBuilder<T, U, V>, U : Any, V : Any> internal constructor(
+public abstract class ColumnBuilder<T : ColumnBuilder<T, U, V, W>, U : Any, V : Any, W : Column<U, *>> internal constructor(
         sqlType: SqlType,
         public val entityGetter: (U) -> V?
 ) {
@@ -42,31 +38,24 @@ public abstract class ColumnBuilder<T : ColumnBuilder<T, U, V>, U : Any, V : Any
         return this as T
     }
 
-    internal abstract fun build(): Column<U, *>
+    internal abstract fun build(): W
 }
 
 public abstract class ColumnNotNullNoPkBuilder<T : ColumnNotNullNoPkBuilder<T, U, V>, U : Any, V : Any> internal constructor(
         sqlType: SqlType,
         entityGetter: (U) -> V?
-) : ColumnBuilder<T, U, V>(sqlType, entityGetter)
+) : ColumnBuilder<T, U, V, ColumnNotNull<U, *>>(sqlType, entityGetter)
 
 @Suppress("UNCHECKED_CAST")
 public abstract class ColumnNotNullBuilder<T : ColumnNotNullBuilder<T, U, V>, U : Any, V : Any> internal constructor(
         sqlType: SqlType,
         entityGetter: (U) -> V?
-) : ColumnBuilder<T, U, V>(sqlType, entityGetter) {
-
-    public fun primaryKey(pkName: String? = null): T {
-        props.isPK = true
-        props.pkName = pkName
-        return this as T
-    }
-}
+) : ColumnBuilder<T, U, V, ColumnNotNull<U, *>>(sqlType, entityGetter)
 
 public abstract class ColumnNullableBuilder<T : ColumnNullableBuilder<T, U, V>, U : Any, V : Any> internal constructor(
         sqlType: SqlType,
         entityGetter: (U) -> V?
-) : ColumnBuilder<T, U, V>(sqlType, entityGetter) {
+) : ColumnBuilder<T, U, V, ColumnNullable<U, *>>(sqlType, entityGetter) {
 
     public abstract fun defaultValue(defaultValue: V): ColumnNotNullBuilder<*, U, V>
 }
@@ -80,7 +69,7 @@ public class VarcharColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        VarcharColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        VarcharColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -106,7 +95,7 @@ public class TextColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        TextColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        TextColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -132,7 +121,7 @@ public class TimestampColumnBuilderNotNull<T : Any, U : Any> internal constructo
     }
 
     override fun build() = with(props) {
-        TimestampColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        TimestampColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -158,7 +147,7 @@ public class DateColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        DateColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        DateColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -184,7 +173,7 @@ public class DateTimeColumnBuilderNotNull<T : Any, U : Any> internal constructor
     }
 
     override fun build() = with(props) {
-        DateTimeColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        DateTimeColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -210,7 +199,7 @@ public class TimeColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        TimeColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        TimeColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -244,7 +233,7 @@ public class UuidColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        UuidColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        UuidColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }
 
@@ -275,7 +264,7 @@ public class IntegerColumnBuilderNotNull<T : Any, U : Any> internal constructor(
     }
 
     override fun build() = with(props) {
-        IntegerColumnNotNull(entityGetter, columnName, sqlType, isPK, isAutoIncrement, pkName, defaultValue)
+        IntegerColumnNotNull(entityGetter, columnName, sqlType, isAutoIncrement, defaultValue)
     }
 }
 
@@ -306,7 +295,7 @@ public class IntegerNoAutoIncrementColumnBuilderNotNull<T : Any, U : Any> intern
     }
 
     override fun build() = with(props) {
-        IntegerColumnNotNull(entityGetter, columnName, sqlType, isPK, isAutoIncrement, pkName, defaultValue)
+        IntegerColumnNotNull(entityGetter, columnName, sqlType, isAutoIncrement, defaultValue)
     }
 }
 
@@ -328,6 +317,6 @@ public class SerialColumnBuilder<T : Any, U : Any> internal constructor(
         entityGetter: (T) -> U?
 ) : ColumnNotNullBuilder<SerialColumnBuilder<T, U>, T, U>(SqlType.SERIAL, entityGetter) {
     override fun build() = with(props) {
-        SerialColumnNotNull(entityGetter, columnName, sqlType, isPK, pkName, defaultValue)
+        SerialColumnNotNull(entityGetter, columnName, sqlType, defaultValue)
     }
 }

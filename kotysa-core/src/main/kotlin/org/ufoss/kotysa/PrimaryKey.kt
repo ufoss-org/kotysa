@@ -5,12 +5,9 @@
 package org.ufoss.kotysa
 
 
-public interface PrimaryKey {
-    public val name: String?
+public class PrimaryKey<T : Any> internal constructor(
+        internal val name: String?,
+        internal val properties: List<ColumnProperty<T>>?
+) {
+    internal lateinit var columns: List<Column<T, *>>
 }
-
-
-internal class SinglePrimaryKey<T : Any, U> internal constructor(
-        override val name: String?,
-        internal val column: Column<T, U>
-): PrimaryKey

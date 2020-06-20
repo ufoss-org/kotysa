@@ -12,11 +12,9 @@ public class ForeignKeyDsl<T : Any, U : Any> @PublishedApi internal constructor(
         private val referencedClass: KClass<U>
 ) : AbstractTableColumnPropertyProvider() {
 
-    public fun columns(vararg columnProperties: ColumnProperty<T>) : ForeignKeyBuilder<T, U> =
+    public fun columns(vararg columnProperties: ColumnProperty<T>): ForeignKeyBuilder<T, U> =
             ForeignKeyBuilder(referencedClass, *columnProperties)
 
     @PublishedApi
-    internal fun initialize(): ForeignKey<T, U> {
-        return init(this).build()
-    }
+    internal fun initialize() = init(this).build()
 }

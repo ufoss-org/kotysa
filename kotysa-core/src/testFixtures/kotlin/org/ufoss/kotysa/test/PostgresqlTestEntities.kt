@@ -12,12 +12,14 @@ val postgresqlTables =
         tables().postgresql {
             table<PostgresqlRole> {
                 name = "roles"
-                column { it[PostgresqlRole::id].uuid().primaryKey() }
+                column { it[PostgresqlRole::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlRole::label].varchar() }
             }
             table<PostgresqlUser> {
                 name = "users"
-                column { it[PostgresqlUser::id].uuid().primaryKey("PK_users") }
+                column { it[PostgresqlUser::id].uuid() }
+                        .primaryKey("PK_users")
                 column { it[PostgresqlUser::firstname].varchar().name("fname") }
                 column { it[PostgresqlUser::lastname].varchar().name("lname") }
                 column { it[PostgresqlUser::isAdmin].boolean() }
@@ -27,7 +29,8 @@ val postgresqlTables =
             }
             table<PostgresqlAllTypesNotNull> {
                 name = "all_types"
-                column { it[PostgresqlAllTypesNotNull::id].uuid().primaryKey() }
+                column { it[PostgresqlAllTypesNotNull::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlAllTypesNotNull::string].varchar() }
                 column { it[PostgresqlAllTypesNotNull::boolean].boolean() }
                 column { it[PostgresqlAllTypesNotNull::localDate].date() }
@@ -39,7 +42,8 @@ val postgresqlTables =
             }
             table<PostgresqlAllTypesNullable> {
                 name = "all_types_nullable"
-                column { it[PostgresqlAllTypesNullable::id].uuid().primaryKey() }
+                column { it[PostgresqlAllTypesNullable::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlAllTypesNullable::string].varchar() }
                 column { it[PostgresqlAllTypesNullable::localDate].date() }
                 column { it[PostgresqlAllTypesNullable::offsetDateTime].timestampWithTimeZone() }
@@ -49,7 +53,8 @@ val postgresqlTables =
                 column { it[PostgresqlAllTypesNullable::int].integer() }
             }
             table<PostgresqlAllTypesNullableDefaultValue> {
-                column { it[PostgresqlAllTypesNullableDefaultValue::id].uuid().primaryKey() }
+                column { it[PostgresqlAllTypesNullableDefaultValue::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlAllTypesNullableDefaultValue::string].varchar().defaultValue("default") }
                 column { it[PostgresqlAllTypesNullableDefaultValue::localDate].date().defaultValue(LocalDate.of(2019, 11, 4)) }
                 column { it[PostgresqlAllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)) }
@@ -59,34 +64,40 @@ val postgresqlTables =
                 column { it[PostgresqlAllTypesNullableDefaultValue::int].integer().defaultValue(42) }
             }
             table<PostgresqlUuid> {
-                column { it[PostgresqlUuid::id].uuid().primaryKey() }
+                column { it[PostgresqlUuid::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlUuid::roleIdNotNull].uuid() }
                 column { it[PostgresqlUuid::roleIdNullable].uuid() }
                 foreignKey<PostgresqlRole> { columns(it[PostgresqlUuid::roleIdNotNull]) }
                 foreignKey<PostgresqlRole> { columns(it[PostgresqlUuid::roleIdNullable]) }
             }
             table<PostgresqlLocalDate> {
-                column { it[PostgresqlLocalDate::id].uuid().primaryKey() }
+                column { it[PostgresqlLocalDate::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlLocalDate::localDateNotNull].date() }
                 column { it[PostgresqlLocalDate::localDateNullable].date() }
             }
             table<PostgresqlLocalDateTime> {
-                column { it[PostgresqlLocalDateTime::id].uuid().primaryKey() }
+                column { it[PostgresqlLocalDateTime::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull].timestamp() }
                 column { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable].timestamp() }
             }
             table<PostgresqlOffsetDateTime> {
-                column { it[PostgresqlOffsetDateTime::id].uuid().primaryKey() }
+                column { it[PostgresqlOffsetDateTime::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull].timestampWithTimeZone() }
                 column { it[PostgresqlOffsetDateTime::offsetDateTimeNullable].timestampWithTimeZone() }
             }
             table<PostgresqlLocalTime> {
-                column { it[PostgresqlLocalTime::id].uuid().primaryKey() }
+                column { it[PostgresqlLocalTime::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresqlLocalTime::localTimeNotNull].time() }
                 column { it[PostgresqlLocalTime::localTimeNullable].time() }
             }
             table<PostgresqlInt> {
-                column { it[PostgresqlInt::id].serial().primaryKey() }
+                column { it[PostgresqlInt::id].serial() }
+                        .primaryKey()
                 column { it[PostgresqlInt::intNotNull].integer() }
                 column { it[PostgresqlInt::intNullable].integer() }
             }

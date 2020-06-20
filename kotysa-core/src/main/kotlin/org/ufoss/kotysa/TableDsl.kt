@@ -15,22 +15,37 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
 
     public lateinit var name: String
     private val columns = mutableMapOf<(T) -> Any?, Column<T, *>>()
+
     @PublishedApi
     internal val foreignKeys = mutableSetOf<ForeignKey<T, *>>()
-    public lateinit var primaryKey: PrimaryKey
+    private lateinit var pk: PrimaryKey<T>
+
+    public fun primaryKey(
+            dsl: PrimaryKeyDsl<T>.(TableColumnPropertyProvider) -> PrimaryKey<T>
+    ) {
+        pk = PrimaryKeyDsl(dsl).initialize()
+    }
 
     public inline fun <reified V : Any> foreignKey(
             noinline dsl: ForeignKeyDsl<T, V>.(TableColumnPropertyProvider) -> ForeignKeyBuilder<T, V>
     ) {
-        val foreignKeyDsl = ForeignKeyDsl(dsl, V::class)
-        val foreignKey = foreignKeyDsl.initialize()
-        foreignKeys.add(foreignKey)
+        foreignKeys.add(ForeignKeyDsl(dsl, V::class).initialize())
     }
 
     public inline fun <reified V : Any> Column<T, *>.foreignKey(fkName: String? = null): Column<T, *> {
-        val foreignKey = ForeignKey<T, V>(V::class, setOf(), fkName, null)
+        val foreignKey = ForeignKey<T, V>(V::class, listOf(), fkName, null)
         foreignKey.columns = listOf(this)
         foreignKeys.add(foreignKey)
+        return this
+    }
+
+    public fun ColumnNotNull<T, *>.primaryKey(pkName: String? = null): ColumnNotNull<T, *> {
+        check(!::pk.isInitialized) {
+            "Table must not declare more than one Primary Key"
+        }
+        val primaryKey = PrimaryKey<T>(pkName, null)
+        primaryKey.columns = listOf(this)
+        pk = primaryKey
         return this
     }
 
@@ -41,12 +56,6 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
         require(tableClass.members.contains(column.entityGetter.toCallable())) {
             "Trying to map property \"${column.entityGetter}\", which is not a property of entity class \"${tableClass.qualifiedName}\""
         }
-        if (column.isPrimaryKey) {
-            check(!::primaryKey.isInitialized) {
-                "Table must not declare more than one Primary Key"
-            }
-            primaryKey = SinglePrimaryKey(column.pkName, column)
-        }
         columns[column.entityGetter] = column
     }
 
@@ -56,9 +65,9 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
         if (!::name.isInitialized) {
             name = tableClass.simpleName!!
         }
-        require(::primaryKey.isInitialized) { "Table primary key is mandatory" }
+        require(::pk.isInitialized) { "Table primary key is mandatory" }
         require(columns.isNotEmpty()) { "Table must declare at least one column" }
-        val table = TableImpl(tableClass, name, columns, primaryKey, foreignKeys)
+        val table = TableImpl(tableClass, name, columns, pk, foreignKeys)
         // associate table to all its columns
         columns.forEach { (_, c) -> c.table = table }
         return table

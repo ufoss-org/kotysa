@@ -111,7 +111,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         private fun joinsWithExists() = with(properties) {
             val rootJoinClause = rootJoinClause()
             if (rootJoinClause != null) {
-                val joinedTableFieldName = "${rootJoinClause.table.prefix}.${(rootJoinClause.table.primaryKey as SinglePrimaryKey<*, *>).column.name}"
+                // fixme handle multiple columns
+                val joinedTableFieldName = "${rootJoinClause.table.prefix}.${rootJoinClause.table.primaryKey.columns[0].name}"
                 // remaining joins
                 val joins = joins()
 
@@ -132,9 +133,6 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                                     && JoinType.INNER == joinClause.type
                         }
                         ?: throw IllegalArgumentException("There must be a join clause on one column of the table this query targets")
-                require(rootJoinClause.table.primaryKey is SinglePrimaryKey<*, *>) {
-                    "Only table with single column primary key is currently supported, ${table.name} is not"
-                }
                 joinClauses.remove(rootJoinClause)
 
                 rootJoinClause

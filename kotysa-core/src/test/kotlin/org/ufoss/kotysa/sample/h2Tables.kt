@@ -11,7 +11,8 @@ fun h2Tables() =
         tables().h2 { // choose database type
             table<H2User> {
                 name = "users"
-                column { it[H2User::id].uuid().primaryKey() }
+                column { it[H2User::id].uuid() }
+                        .primaryKey()
                 column { it[H2User::firstname].varchar().name("fname") }
                 column { it[H2User::lastname].varchar().name("lname") }
                 column { it[H2User::isAdmin].boolean() }

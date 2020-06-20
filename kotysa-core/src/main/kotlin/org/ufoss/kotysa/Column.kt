@@ -15,24 +15,18 @@ public interface Column<T : Any, U> {
     public val entityGetter: (T) -> U
     public val name: String
     public val sqlType: SqlType
-    public val isPrimaryKey: Boolean
     public val isAutoIncrement: Boolean
-    public val pkName: String?
     public val isNullable: Boolean
     public val defaultValue: U?
 }
 
-
-internal interface ColumnNotNull<T : Any, U> : Column<T, U> {
+public interface ColumnNotNull<T : Any, U> : Column<T, U> {
     override val isNullable: Boolean get() = false
 }
 
-
-internal interface ColumnNullable<T : Any, U> : Column<T, U> {
+public interface ColumnNullable<T : Any, U> : Column<T, U> {
     override val isNullable: Boolean get() = true
     override val defaultValue: U? get() = null
-    override val isPrimaryKey: Boolean get() = false
-    override val pkName: String? get() = null
 }
 
 internal interface NoAutoIncrement<T : Any, U> : Column<T, U> {
@@ -52,8 +46,6 @@ internal class VarcharColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U
 ) : AbstractColumn<T, U>(), VarcharColumn<T, U>, ColumnNotNull<T, U>
 
@@ -72,8 +64,6 @@ internal class TextColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U
 ) : AbstractColumn<T, U>(), TextColumn<T, U>, ColumnNotNull<T, U>
 
@@ -92,8 +82,6 @@ internal class TimestampColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), TimestampColumn<T, U>, ColumnNotNull<T, U>
 
@@ -112,8 +100,6 @@ internal class DateColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), DateColumn<T, U>, ColumnNotNull<T, U>
 
@@ -132,8 +118,6 @@ internal class DateTimeColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), DateTimeColumn<T, U>, ColumnNotNull<T, U>
 
@@ -152,8 +136,6 @@ internal class TimeColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), TimeColumn<T, U>, ColumnNotNull<T, U>
 
@@ -170,12 +152,7 @@ internal class BooleanColumnNotNull<T : Any, U> internal constructor(
         override val name: String,
         override val sqlType: SqlType,
         override val defaultValue: U?
-) : AbstractColumn<T, U>(), ColumnNotNull<T, U>, NoAutoIncrement<T, U> {
-
-    override val isPrimaryKey: Boolean get() = false
-
-    override val pkName: String? get() = null
-}
+) : AbstractColumn<T, U>(), ColumnNotNull<T, U>, NoAutoIncrement<T, U>
 
 
 internal interface UuidColumn<T : Any, U> : Column<T, U>, NoAutoIncrement<T, U>
@@ -185,8 +162,6 @@ internal class UuidColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), UuidColumn<T, U>, ColumnNotNull<T, U>
 
@@ -205,9 +180,7 @@ internal class IntegerColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
         override val isAutoIncrement: Boolean,
-        override val pkName: String?,
         override val defaultValue: U?
 ) : AbstractColumn<T, U>(), IntegerColumn<T, U>, ColumnNotNull<T, U>
 
@@ -227,7 +200,5 @@ internal class SerialColumnNotNull<T : Any, U> internal constructor(
         override val entityGetter: (T) -> U,
         override val name: String,
         override val sqlType: SqlType,
-        override val isPrimaryKey: Boolean,
-        override val pkName: String?,
         override val defaultValue: U
 ) : AbstractColumn<T, U>(), SerialColumn<T, U>, ColumnNotNull<T, U>

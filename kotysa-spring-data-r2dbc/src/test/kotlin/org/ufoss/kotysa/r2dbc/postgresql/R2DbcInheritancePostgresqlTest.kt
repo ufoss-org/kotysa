@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.data.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
@@ -11,9 +14,6 @@ import org.ufoss.kotysa.test.Entity
 import org.ufoss.kotysa.test.Inherited
 import org.ufoss.kotysa.test.Nameable
 import org.ufoss.kotysa.test.inherited
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-import org.springframework.data.r2dbc.core.DatabaseClient
 
 
 class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePostgresqlRepository>() {
@@ -54,7 +54,8 @@ private val tables =
         tables().postgresql {
             table<Inherited> {
                 name = "inherited"
-                column { it[Inherited::getId].varchar().primaryKey() }
+                column { it[Inherited::getId].varchar() }
+                        .primaryKey()
                 column { it[Inherited::name].varchar() }
                 column { it[Inherited::firstname].varchar() }
             }

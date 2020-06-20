@@ -11,12 +11,14 @@ val sqLiteTables =
         tables().sqlite {
             table<SqLiteRole> {
                 name = "roles"
-                column { it[SqLiteRole::id].text().primaryKey() }
+                column { it[SqLiteRole::id].text() }
+                        .primaryKey()
                 column { it[SqLiteRole::label].text() }
             }
             table<SqLiteUser> {
                 name = "users"
-                column { it[SqLiteUser::id].text().primaryKey() }
+                column { it[SqLiteUser::id].text() }
+                        .primaryKey()
                 column { it[SqLiteUser::firstname].text().name("fname") }
                 column { it[SqLiteUser::lastname].text().name("lname") }
                 column { it[SqLiteUser::isAdmin].integer() }
@@ -26,7 +28,8 @@ val sqLiteTables =
             }
             table<SqLiteAllTypesNotNull> {
                 name = "all_types"
-                column { it[SqLiteAllTypesNotNull::id].text().primaryKey() }
+                column { it[SqLiteAllTypesNotNull::id].text() }
+                        .primaryKey()
                 column { it[SqLiteAllTypesNotNull::string].text() }
                 column { it[SqLiteAllTypesNotNull::boolean].integer() }
                 column { it[SqLiteAllTypesNotNull::localDate].text() }
@@ -37,7 +40,8 @@ val sqLiteTables =
             }
             table<SqLiteAllTypesNullable> {
                 name = "all_types_nullable"
-                column { it[SqLiteAllTypesNullable::id].text().primaryKey() }
+                column { it[SqLiteAllTypesNullable::id].text() }
+                        .primaryKey()
                 column { it[SqLiteAllTypesNullable::string].text() }
                 column { it[SqLiteAllTypesNullable::localDate].text() }
                 column { it[SqLiteAllTypesNullable::offsetDateTime].text() }
@@ -46,7 +50,8 @@ val sqLiteTables =
                 column { it[SqLiteAllTypesNullable::int].integer() }
             }
             table<SqLiteAllTypesNullableDefaultValue> {
-                column { it[SqLiteAllTypesNullableDefaultValue::id].text().primaryKey() }
+                column { it[SqLiteAllTypesNullableDefaultValue::id].text() }
+                        .primaryKey()
                 column { it[SqLiteAllTypesNullableDefaultValue::string].text().defaultValue("default") }
                 column { it[SqLiteAllTypesNullableDefaultValue::localDate].text().defaultValue(LocalDate.MAX) }
                 column { it[SqLiteAllTypesNullableDefaultValue::offsetDateTime].text().defaultValue(OffsetDateTime.MAX) }
@@ -55,27 +60,32 @@ val sqLiteTables =
                 column { it[SqLiteAllTypesNullableDefaultValue::int].integer().defaultValue(42) }
             }
             table<SqLiteLocalDate> {
-                column { it[SqLiteLocalDate::id].text().primaryKey() }
+                column { it[SqLiteLocalDate::id].text() }
+                        .primaryKey()
                 column { it[SqLiteLocalDate::localDateNotNull].text() }
                 column { it[SqLiteLocalDate::localDateNullable].text() }
             }
             table<SqLiteLocalDateTime> {
-                column { it[SqLiteLocalDateTime::id].text().primaryKey() }
+                column { it[SqLiteLocalDateTime::id].text() }
+                        .primaryKey()
                 column { it[SqLiteLocalDateTime::localDateTimeNotNull].text() }
                 column { it[SqLiteLocalDateTime::localDateTimeNullable].text() }
             }
             table<SqLiteOffsetDateTime> {
-                column { it[SqLiteOffsetDateTime::id].text().primaryKey() }
+                column { it[SqLiteOffsetDateTime::id].text() }
+                        .primaryKey()
                 column { it[SqLiteOffsetDateTime::offsetDateTimeNotNull].text() }
                 column { it[SqLiteOffsetDateTime::offsetDateTimeNullable].text() }
             }
             table<SqLiteLocalTime> {
-                column { it[SqLiteLocalTime::id].text().primaryKey() }
+                column { it[SqLiteLocalTime::id].text() }
+                        .primaryKey()
                 column { it[SqLiteLocalTime::localTimeNotNull].text() }
                 column { it[SqLiteLocalTime::localTimeNullable].text() }
             }
             table<SqLiteInteger> {
-                column { it[SqLiteInteger::id].integer().autoIncrement().primaryKey() }
+                column { it[SqLiteInteger::id].integer().autoIncrement() }
+                        .primaryKey()
                 column { it[SqLiteInteger::integerNotNull].integer() }
                 column { it[SqLiteInteger::integerNullable].integer() }
             }

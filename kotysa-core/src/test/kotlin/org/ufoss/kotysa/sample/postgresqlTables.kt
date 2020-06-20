@@ -11,7 +11,8 @@ fun postgresqlTables() =
         tables().postgresql { // choose database type
             table<PostgresUser> {
                 name = "users"
-                column { it[PostgresUser::id].uuid().primaryKey() }
+                column { it[PostgresUser::id].uuid() }
+                        .primaryKey()
                 column { it[PostgresUser::firstname].varchar().name("fname") }
                 column { it[PostgresUser::lastname].varchar().name("lname") }
                 column { it[PostgresUser::isAdmin].boolean() }

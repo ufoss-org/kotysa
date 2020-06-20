@@ -54,15 +54,13 @@ public interface DefaultSqlClient {
             "${column.name} ${column.sqlType.fullType} $nullability$autoIncrement$default"
         }
 
-        val primaryKey = when (val primaryKey = table.primaryKey) {
-            is SinglePrimaryKey<*, *> ->
-                if (primaryKey.name != null) {
-                    "CONSTRAINT ${primaryKey.name} PRIMARY KEY (${primaryKey.column.name})"
-                } else {
-                    "PRIMARY KEY (${primaryKey.column.name})"
-                }
-            else -> throw RuntimeException("Only SinglePrimaryKey is currently supported, had ${primaryKey::class.simpleName}")
+        val pk = table.primaryKey
+        var primaryKey = if (pk.name != null) {
+            "CONSTRAINT ${pk.name} "
+        } else {
+            ""
         }
+        primaryKey += "PRIMARY KEY (${pk.columns.joinToString { it.name }})"
 
         val foreignKeys =
                 if (table.foreignKeys.isEmpty()) {
@@ -254,10 +252,8 @@ public open class DefaultSqlClientCommon protected constructor() {
 
         public fun joins(): String =
                 properties.joinClauses.joinToString { joinClause ->
-                    require(joinClause.table.primaryKey is SinglePrimaryKey<*, *>) {
-                        "Only table with single column primary key is currently supported, ${joinClause.table.name} is not"
-                    }
-                    val joinedTableFieldName = "${joinClause.table.prefix}.${joinClause.table.primaryKey.column.name}"
+                    // fixme handle multiple columns
+                    val joinedTableFieldName = "${joinClause.table.prefix}.${joinClause.table.primaryKey.columns[0].name}"
 
                     "${joinClause.type.sql} ${joinClause.table.declaration} ON ${joinClause.field.fieldName} = $joinedTableFieldName"
                 }

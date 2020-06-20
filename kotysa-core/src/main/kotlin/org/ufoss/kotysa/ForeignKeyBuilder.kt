@@ -12,7 +12,7 @@ public class ForeignKeyBuilder<T : Any, U : Any>(
 ) {
 
     private var name: String? = null
-    private var referencedProperties = mutableSetOf<ColumnProperty<U>>()
+    private var referencedProperties = mutableListOf<ColumnProperty<U>>()
 
     public fun name(foreignKeyName: String): ForeignKeyBuilder<T, U> {
         name = foreignKeyName
@@ -26,5 +26,5 @@ public class ForeignKeyBuilder<T : Any, U : Any>(
         return this
     }
 
-    internal fun build() = ForeignKey(referencedClass, referencedProperties, name, properties.toHashSet())
+    internal fun build() = ForeignKey(referencedClass, referencedProperties, name, properties.toList())
 }

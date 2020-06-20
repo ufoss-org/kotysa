@@ -29,12 +29,14 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
                 // choose database type
                 table<Role> {
                     name = "roles"
-                    column { it[Role::id].text().primaryKey() }
+                    column { it[Role::id].text() }
+                            .primaryKey()
                     column { it[Role::label].text() }
                 }
                 table<User> {
                     name = "users"
-                    column { it[User::id].text().primaryKey() }
+                    column { it[User::id].text() }
+                            .primaryKey()
                     column { it[User::firstname].text().name("fname") }
                     column { it[User::lastname].text().name("lname") }
                     column { it[User::isAdmin].integer() }

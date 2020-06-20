@@ -14,12 +14,14 @@ val h2Tables =
         tables().h2 {
             table<H2Role> {
                 name = "roles"
-                column { it[H2Role::id].uuid().primaryKey() }
+                column { it[H2Role::id].uuid() }
+                        .primaryKey()
                 column { it[H2Role::label].varchar() }
             }
             table<H2User> {
                 name = "users"
-                column { it[H2User::id].uuid().primaryKey("PK_users") }
+                column { it[H2User::id].uuid() }
+                        .primaryKey("PK_users")
                 column { it[H2User::firstname].varchar().name("fname") }
                 column { it[H2User::lastname].varchar().name("lname") }
                 column { it[H2User::isAdmin].boolean() }
@@ -29,7 +31,8 @@ val h2Tables =
             }
             table<H2AllTypesNotNull> {
                 name = "all_types"
-                column { it[H2AllTypesNotNull::id].uuid().primaryKey() }
+                column { it[H2AllTypesNotNull::id].uuid() }
+                        .primaryKey()
                 column { it[H2AllTypesNotNull::string].varchar() }
                 column { it[H2AllTypesNotNull::boolean].boolean() }
                 column { it[H2AllTypesNotNull::localDate].date() }
@@ -42,7 +45,8 @@ val h2Tables =
             }
             table<H2AllTypesNullable> {
                 name = "all_types_nullable"
-                column { it[H2AllTypesNullable::id].uuid().primaryKey() }
+                column { it[H2AllTypesNullable::id].uuid() }
+                        .primaryKey()
                 column { it[H2AllTypesNullable::string].varchar() }
                 column { it[H2AllTypesNullable::localDate].date() }
                 column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone() }
@@ -53,7 +57,8 @@ val h2Tables =
                 column { it[H2AllTypesNullable::int].integer() }
             }
             table<H2AllTypesNullableDefaultValue> {
-                column { it[H2AllTypesNullableDefaultValue::id].uuid().primaryKey() }
+                column { it[H2AllTypesNullableDefaultValue::id].uuid() }
+                        .primaryKey()
                 column { it[H2AllTypesNullableDefaultValue::string].varchar().defaultValue("default") }
                 column { it[H2AllTypesNullableDefaultValue::localDate].date().defaultValue(LocalDate.MAX) }
                 column { it[H2AllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)) }
@@ -64,36 +69,42 @@ val h2Tables =
                 column { it[H2AllTypesNullableDefaultValue::int].integer().defaultValue(42) }
             }
             table<H2Uuid> {
-                column { it[H2Uuid::id].uuid().primaryKey() }
+                column { it[H2Uuid::id].uuid() }
+                        .primaryKey()
                 column { it[H2Uuid::roleIdNotNull].uuid() }
                 column { it[H2Uuid::roleIdNullable].uuid() }
                 foreignKey<H2Role> { columns(it[H2Uuid::roleIdNotNull]) }
                 foreignKey<H2Role> { columns(it[H2Uuid::roleIdNullable]) }
             }
             table<H2LocalDate> {
-                column { it[H2LocalDate::id].uuid().primaryKey() }
+                column { it[H2LocalDate::id].uuid() }
+                        .primaryKey()
                 column { it[H2LocalDate::localDateNotNull].date() }
                 column { it[H2LocalDate::localDateNullable].date() }
             }
             table<H2LocalDateTime> {
-                column { it[H2LocalDateTime::id].uuid().primaryKey() }
+                column { it[H2LocalDateTime::id].uuid() }
+                        .primaryKey()
                 column { it[H2LocalDateTime::localDateTimeNotNull].dateTime() }
                 column { it[H2LocalDateTime::localDateTimeNullable].dateTime() }
                 column { it[H2LocalDateTime::localDateTimeAsTimestampNotNull].timestamp() }
                 column { it[H2LocalDateTime::localDateTimeAsTimestampNullable].timestamp() }
             }
             table<H2OffsetDateTime> {
-                column { it[H2OffsetDateTime::id].uuid().primaryKey() }
+                column { it[H2OffsetDateTime::id].uuid() }
+                        .primaryKey()
                 column { it[H2OffsetDateTime::offsetDateTimeNotNull].timestampWithTimeZone() }
                 column { it[H2OffsetDateTime::offsetDateTimeNullable].timestampWithTimeZone() }
             }
             table<H2LocalTime> {
-                column { it[H2LocalTime::id].uuid().primaryKey() }
+                column { it[H2LocalTime::id].uuid() }
+                        .primaryKey()
                 column { it[H2LocalTime::localTimeNotNull].time9() }
                 column { it[H2LocalTime::localTimeNullable].time9() }
             }
             table<H2Int> {
-                column { it[H2Int::id].integer().autoIncrement().primaryKey() }
+                column { it[H2Int::id].integer().autoIncrement() }
+                        .primaryKey()
                 column { it[H2Int::intNotNull].integer() }
                 column { it[H2Int::intNullable].integer() }
             }

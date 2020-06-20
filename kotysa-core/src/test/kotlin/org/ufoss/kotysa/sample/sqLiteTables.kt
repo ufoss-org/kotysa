@@ -10,7 +10,8 @@ fun sqLiteTables() =
         tables().sqlite { // choose database type
             table<SqLiteUser> {
                 name = "users"
-                column { it[SqLiteUser::id].text().primaryKey() }
+                column { it[SqLiteUser::id].text() }
+                        .primaryKey()
                 column { it[SqLiteUser::firstname].text().name("fname") }
                 column { it[SqLiteUser::lastname].text().name("lname") }
                 column { it[SqLiteUser::isAdmin].integer() }

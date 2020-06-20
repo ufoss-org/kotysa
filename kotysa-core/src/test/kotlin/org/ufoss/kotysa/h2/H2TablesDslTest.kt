@@ -9,7 +9,6 @@ import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.ufoss.kotysa.DbTypeChoice
-import org.ufoss.kotysa.SinglePrimaryKey
 import org.ufoss.kotysa.SqlType
 import org.ufoss.kotysa.test.H2AllTypesNotNull
 import org.ufoss.kotysa.test.H2AllTypesNullable
@@ -29,7 +28,8 @@ class H2TablesDslTest {
         val tables = DbTypeChoice.h2 {
             table<H2AllTypesNotNull> {
                 name = "all_types"
-                column { it[H2AllTypesNotNull::id].uuid().primaryKey() }
+                column { it[H2AllTypesNotNull::id].uuid() }
+                        .primaryKey()
                 column { it[H2AllTypesNotNull::string].varchar() }
                 column { it[H2AllTypesNotNull::boolean].boolean() }
                 column { it[H2AllTypesNotNull::localDate].date() }
@@ -61,7 +61,8 @@ class H2TablesDslTest {
         val tables = DbTypeChoice.h2 {
             table<H2AllTypesNullable> {
                 name = "all_types_nullable"
-                column { it[H2AllTypesNullable::id].uuid().primaryKey() }
+                column { it[H2AllTypesNullable::id].uuid() }
+                        .primaryKey()
                 column { it[H2AllTypesNullable::string].varchar() }
                 column { it[H2AllTypesNullable::localDate].date() }
                 column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone() }
@@ -92,7 +93,8 @@ class H2TablesDslTest {
         val tables = DbTypeChoice.h2 {
             table<H2AllTypesNullable> {
                 name = "all_types_nullable"
-                column { it[H2AllTypesNullable::id].uuid().primaryKey() }
+                column { it[H2AllTypesNullable::id].uuid() }
+                        .primaryKey()
                 column { it[H2AllTypesNullable::string].varchar().defaultValue("default") }
                 column { it[H2AllTypesNullable::localDate].date().defaultValue(LocalDate.MAX) }
                 column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.MAX) }
@@ -122,12 +124,14 @@ class H2TablesDslTest {
         val tables = DbTypeChoice.h2 {
             table<H2Role> {
                 name = "roles"
-                column { it[H2Role::id].uuid().primaryKey() }
+                column { it[H2Role::id].uuid() }
+                        .primaryKey()
                 column { it[H2Role::label].varchar() }
             }
             table<H2User> {
                 name = "users"
-                column { it[H2User::id].uuid().primaryKey() }
+                column { it[H2User::id].uuid() }
+                        .primaryKey()
                 column { it[H2User::firstname].varchar() }
                 column { it[H2User::alias].varchar() }
                 column { it[H2User::roleId].uuid() }
@@ -140,6 +144,9 @@ class H2TablesDslTest {
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("label", SqlType.VARCHAR, false))
+        assertThat(roleTable.primaryKey.name).isNull()
+        assertThat(roleTable.primaryKey.columns)
+                .containsExactly(roleTable.columns[H2Role::id])
         val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
         assertThat(userTable.columns.values)
                 .extracting("name", "sqlType", "isNullable")
@@ -151,8 +158,8 @@ class H2TablesDslTest {
         assertThat(userTable.foreignKeys)
                 .extracting("referencedClass", "name")
                 .containsExactly(tuple(H2Role::class, null))
-        val userTablePk = userTable.primaryKey as SinglePrimaryKey<*, *>
-        assertThat(userTablePk.column.entityGetter).isEqualTo(H2User::id)
+        val userTablePk = userTable.primaryKey
+        assertThat(userTablePk.columns[0].entityGetter).isEqualTo(H2User::id)
         assertThat(userTablePk.name).isNull()
         val userTableFk = userTable.foreignKeys.iterator().next()
         assertThat(userTableFk.columns)
@@ -171,12 +178,14 @@ class H2TablesDslTest {
         val tables = DbTypeChoice.h2 {
             table<H2Role> {
                 name = "roles"
-                column { it[H2Role::id].uuid().primaryKey() }
+                column { it[H2Role::id].uuid() }
+                        .primaryKey()
                 column { it[H2Role::label].varchar() }
             }
             table<H2User> {
                 name = "users"
-                column { it[H2User::id].uuid().primaryKey("users_pk") }
+                column { it[H2User::id].uuid() }
+                        .primaryKey("users_pk")
                 column { it[H2User::firstname].varchar() }
                 column { it[H2User::alias].varchar() }
                 column { it[H2User::roleId].uuid() }
@@ -200,8 +209,8 @@ class H2TablesDslTest {
         assertThat(userTable.foreignKeys)
                 .extracting("referencedClass", "name")
                 .containsExactly(tuple(H2Role::class, "users_fk"))
-        val userTablePk = userTable.primaryKey as SinglePrimaryKey<*, *>
-        assertThat(userTablePk.column.entityGetter).isEqualTo(H2User::id)
+        val userTablePk = userTable.primaryKey
+        assertThat(userTablePk.columns[0].entityGetter).isEqualTo(H2User::id)
         assertThat(userTablePk.name).isEqualTo("users_pk")
         val userTableFk = userTable.foreignKeys.iterator().next()
         assertThat(userTableFk.columns).hasSize(1).extracting("entityGetter").containsExactly(H2User::roleId)
@@ -214,12 +223,14 @@ class H2TablesDslTest {
         val tables = DbTypeChoice.h2 {
             table<H2Role> {
                 name = "roles"
-                column { it[H2Role::id].uuid().primaryKey() }
+                column { it[H2Role::id].uuid() }
+                        .primaryKey()
                 column { it[H2Role::label].varchar() }
             }
             table<H2User> {
                 name = "users"
-                column { it[H2User::id].uuid().primaryKey("users_pk") }
+                column { it[H2User::id].uuid() }
+                        .primaryKey("users_pk")
                 column { it[H2User::firstname].varchar() }
                 column { it[H2User::alias].varchar() }
                 column { it[H2User::roleId].uuid() }
@@ -243,8 +254,8 @@ class H2TablesDslTest {
         assertThat(userTable.foreignKeys)
                 .extracting("referencedClass", "name")
                 .containsExactly(tuple(H2Role::class, "users_fk"))
-        val userTablePk = userTable.primaryKey as SinglePrimaryKey<*, *>
-        assertThat(userTablePk.column.entityGetter).isEqualTo(H2User::id)
+        val userTablePk = userTable.primaryKey
+        assertThat(userTablePk.columns[0].entityGetter).isEqualTo(H2User::id)
         assertThat(userTablePk.name).isEqualTo("users_pk")
         val userTableFk = userTable.foreignKeys.iterator().next()
         assertThat(userTableFk.columns).hasSize(1).extracting("entityGetter").containsExactly(H2User::roleId)
