@@ -1,6 +1,5 @@
 repositories {
     maven { url 'https://repo.spring.io/milestone' }
-//    maven { url 'https://repo.spring.io/snapshot' }
 }
 
 dependencies {
@@ -8,12 +7,12 @@ dependencies {
     api project(':kotysa-core')
 
     // import BOM
-    implementation platform("io.r2dbc:r2dbc-bom:$r2dbc_bom_version")
-    implementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
+    implementation platform("org.springframework.data:spring-data-releasetrain:$spring_data_bom_version")
+    testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
 
     api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
 
-    implementation "org.springframework.data:spring-data-r2dbc:$spring_data_r2dbc_version"
+    implementation "org.springframework.data:spring-data-r2dbc"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-reactive'
