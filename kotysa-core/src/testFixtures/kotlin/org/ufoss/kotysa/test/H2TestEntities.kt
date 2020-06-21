@@ -26,8 +26,8 @@ val h2Tables =
                 column { it[H2User::lastname].varchar().name("lname") }
                 column { it[H2User::isAdmin].boolean() }
                 column { it[H2User::roleId].uuid() }
+                        .foreignKey<H2Role>("FK_users_roles")
                 column { it[H2User::alias].varchar() }
-                foreignKey<H2Role> { columns(it[H2User::roleId]).name("FK_users_roles") }
             }
             table<H2AllTypesNotNull> {
                 name = "all_types"
@@ -72,9 +72,9 @@ val h2Tables =
                 column { it[H2Uuid::id].uuid() }
                         .primaryKey()
                 column { it[H2Uuid::roleIdNotNull].uuid() }
+                        .foreignKey<H2Role>()
                 column { it[H2Uuid::roleIdNullable].uuid() }
-                foreignKey<H2Role> { columns(it[H2Uuid::roleIdNotNull]) }
-                foreignKey<H2Role> { columns(it[H2Uuid::roleIdNullable]) }
+                        .foreignKey<H2Role>()
             }
             table<H2LocalDate> {
                 column { it[H2LocalDate::id].uuid() }
@@ -133,6 +133,10 @@ data class H2User(
 val h2Jdoe = H2User("John", "Doe", false, h2User.id)
 val h2Bboss = H2User("Big", "Boss", true, h2Admin.id, "TheBoss")
 
+data class H2UserRole(
+        val userId: UUID,
+        val roleId: UUID
+)
 
 data class H2AllTypesNotNull(
         val id: UUID,

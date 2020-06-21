@@ -20,7 +20,7 @@ public class PostgresqlTableDsl<T : Any>(
      * Declare a Column, supported types follow : [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
      */
     public fun <U : Column<T, *>> column(
-            dsl: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, U>
+            dsl: PostgresqlColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *, U>
     ): U {
         val columnDsl = PostgresqlColumnDsl(dsl)
         val column = columnDsl.initialize<U>(columnDsl)

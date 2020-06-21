@@ -20,7 +20,7 @@ public class H2TableDsl<T : Any>(
      * Declare a Column, supported types follow : [H2 Data types](http://h2database.com/html/datatypes.html)
      */
     public fun <U : Column<T, *>> column(
-            dsl: H2ColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, U>
+            dsl: H2ColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *, U>
     ): U {
         val columnDsl = H2ColumnDsl(dsl)
         val column = columnDsl.initialize<U>(columnDsl)

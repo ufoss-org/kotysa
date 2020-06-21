@@ -12,92 +12,92 @@ import java.util.*
 import kotlin.reflect.KFunction
 
 
-public interface TableColumnPropertyProvider {
+public interface TableColumnPropertyProvider<T : Any> {
 
-    public operator fun <T : Any> get(getter: (T) -> String): NotNullStringColumnProperty<T>
+    public operator fun get(getter: (T) -> String): NotNullStringColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> String?): NullableStringColumnProperty<T>
+    public operator fun get(getter: (T) -> String?): NullableStringColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> LocalDateTime): NotNullLocalDateTimeColumnProperty<T>
+    public operator fun get(getter: (T) -> LocalDateTime): NotNullLocalDateTimeColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> LocalDateTime?): NullableLocalDateTimeColumnProperty<T>
+    public operator fun get(getter: (T) -> LocalDateTime?): NullableLocalDateTimeColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> LocalDate): NotNullLocalDateColumnProperty<T>
+    public operator fun get(getter: (T) -> LocalDate): NotNullLocalDateColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> LocalDate?): NullableLocalDateColumnProperty<T>
+    public operator fun get(getter: (T) -> LocalDate?): NullableLocalDateColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> OffsetDateTime): NotNullOffsetDateTimeColumnProperty<T>
+    public operator fun get(getter: (T) -> OffsetDateTime): NotNullOffsetDateTimeColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> OffsetDateTime?): NullableOffsetDateTimeColumnProperty<T>
+    public operator fun get(getter: (T) -> OffsetDateTime?): NullableOffsetDateTimeColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> LocalTime): NotNullLocalTimeColumnProperty<T>
+    public operator fun get(getter: (T) -> LocalTime): NotNullLocalTimeColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> LocalTime?): NullableLocalTimeColumnProperty<T>
+    public operator fun get(getter: (T) -> LocalTime?): NullableLocalTimeColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> Boolean): NotNullBooleanColumnProperty<T>
+    public operator fun get(getter: (T) -> Boolean): NotNullBooleanColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> UUID): NotNullUuidColumnProperty<T>
+    public operator fun get(getter: (T) -> UUID): NotNullUuidColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> UUID?): NullableUuidColumnProperty<T>
+    public operator fun get(getter: (T) -> UUID?): NullableUuidColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> Int): NotNullIntColumnProperty<T>
+    public operator fun get(getter: (T) -> Int): NotNullIntColumnProperty<T>
 
-    public operator fun <T : Any> get(getter: (T) -> Int?): NullableIntColumnProperty<T>
+    public operator fun get(getter: (T) -> Int?): NullableIntColumnProperty<T>
 }
 
-public abstract class AbstractTableColumnPropertyProvider internal constructor() : TableColumnPropertyProvider {
-    override fun <V : Any> get(getter: (V) -> String): NotNullStringColumnProperty<V> = NotNullStringColumnProperty(getter)
+public abstract class AbstractTableColumnPropertyProvider<T : Any> internal constructor() : TableColumnPropertyProvider<T> {
+    override fun get(getter: (T) -> String): NotNullStringColumnProperty<T> = NotNullStringColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> String?): NullableStringColumnProperty<V> {
+    override fun get(getter: (T) -> String?): NullableStringColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableStringColumnProperty(getter)
     }
 
-    override fun <V : Any> get(getter: (V) -> LocalDateTime): NotNullLocalDateTimeColumnProperty<V> = NotNullLocalDateTimeColumnProperty(getter)
+    override fun get(getter: (T) -> LocalDateTime): NotNullLocalDateTimeColumnProperty<T> = NotNullLocalDateTimeColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> LocalDateTime?): NullableLocalDateTimeColumnProperty<V> {
+    override fun get(getter: (T) -> LocalDateTime?): NullableLocalDateTimeColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableLocalDateTimeColumnProperty(getter)
     }
 
-    override fun <V : Any> get(getter: (V) -> LocalDate): NotNullLocalDateColumnProperty<V> = NotNullLocalDateColumnProperty(getter)
+    override fun get(getter: (T) -> LocalDate): NotNullLocalDateColumnProperty<T> = NotNullLocalDateColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> LocalDate?): NullableLocalDateColumnProperty<V> {
+    override fun get(getter: (T) -> LocalDate?): NullableLocalDateColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableLocalDateColumnProperty(getter)
     }
 
-    override fun <V : Any> get(getter: (V) -> OffsetDateTime): NotNullOffsetDateTimeColumnProperty<V> = NotNullOffsetDateTimeColumnProperty(getter)
+    override fun get(getter: (T) -> OffsetDateTime): NotNullOffsetDateTimeColumnProperty<T> = NotNullOffsetDateTimeColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> OffsetDateTime?): NullableOffsetDateTimeColumnProperty<V> {
+    override fun get(getter: (T) -> OffsetDateTime?): NullableOffsetDateTimeColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableOffsetDateTimeColumnProperty(getter)
     }
 
-    override fun <V : Any> get(getter: (V) -> LocalTime): NotNullLocalTimeColumnProperty<V> = NotNullLocalTimeColumnProperty(getter)
+    override fun get(getter: (T) -> LocalTime): NotNullLocalTimeColumnProperty<T> = NotNullLocalTimeColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> LocalTime?): NullableLocalTimeColumnProperty<V> {
+    override fun get(getter: (T) -> LocalTime?): NullableLocalTimeColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableLocalTimeColumnProperty(getter)
     }
 
-    override fun <V : Any> get(getter: (V) -> Boolean): NotNullBooleanColumnProperty<V> = NotNullBooleanColumnProperty(getter)
+    override fun get(getter: (T) -> Boolean): NotNullBooleanColumnProperty<T> = NotNullBooleanColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> UUID): NotNullUuidColumnProperty<V> = NotNullUuidColumnProperty(getter)
+    override fun get(getter: (T) -> UUID): NotNullUuidColumnProperty<T> = NotNullUuidColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> UUID?): NullableUuidColumnProperty<V> {
+    override fun get(getter: (T) -> UUID?): NullableUuidColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableUuidColumnProperty(getter)
     }
 
-    override fun <V : Any> get(getter: (V) -> Int): NotNullIntColumnProperty<V> = NotNullIntColumnProperty(getter)
+    override fun get(getter: (T) -> Int): NotNullIntColumnProperty<T> = NotNullIntColumnProperty(getter)
 
-    override fun <V : Any> get(getter: (V) -> Int?): NullableIntColumnProperty<V> {
+    override fun get(getter: (T) -> Int?): NullableIntColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableIntColumnProperty(getter)
     }
 
-    private fun <V : Any> checkNullableGetter(getter: (V) -> Any?) {
+    private fun checkNullableGetter(getter: (T) -> Any?) {
         if (getter !is KFunction<*>) {
             require(getter.toCallable().returnType.isMarkedNullable) { "\"$getter\" doesn't have a nullable return type" }
         }

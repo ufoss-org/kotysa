@@ -43,8 +43,8 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
                     column { it[User::lastname].varchar().name("lname") }
                     column { it[User::isAdmin].boolean() }
                     column { it[User::roleId].uuid() }
+                            .foreignKey<Role>()
                     column { it[User::alias].varchar() }
-                    foreignKey<Role> { columns(it[User::roleId]) }
                 }
             }
 
@@ -61,6 +61,7 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
 
     private val sqlClient = dbClient.sqlClient(tables)
 
+    @Suppress("ReactiveStreamsUnusedPublisher")
     fun simplifiedExample() = sqlClient.apply {
         createTable<User>() // CREATE TABLE IF NOT EXISTS
                 .then(deleteAllFromTable<User>())

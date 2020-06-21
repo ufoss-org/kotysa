@@ -8,12 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
+import org.ufoss.kotysa.ColumnNotNull
 import org.ufoss.kotysa.DbTypeChoice
 import org.ufoss.kotysa.SqlType
-import org.ufoss.kotysa.test.H2AllTypesNotNull
-import org.ufoss.kotysa.test.H2AllTypesNullable
-import org.ufoss.kotysa.test.H2Role
-import org.ufoss.kotysa.test.H2User
+import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -119,6 +117,7 @@ class H2TablesDslTest {
                         tuple("int", SqlType.INTEGER, false, 42))
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Test
     fun `Test unnamed primary and foreign key`() {
         val tables = DbTypeChoice.h2 {
@@ -135,7 +134,7 @@ class H2TablesDslTest {
                 column { it[H2User::firstname].varchar() }
                 column { it[H2User::alias].varchar() }
                 column { it[H2User::roleId].uuid() }
-                foreignKey<H2Role> { columns(it[H2User::roleId]) }
+                        .foreignKey<H2Role>()
             }
         }
         val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
@@ -146,7 +145,7 @@ class H2TablesDslTest {
                         tuple("label", SqlType.VARCHAR, false))
         assertThat(roleTable.primaryKey.name).isNull()
         assertThat(roleTable.primaryKey.columns)
-                .containsExactly(roleTable.columns[H2Role::id])
+                .containsExactly(roleTable.columns[H2Role::id] as ColumnNotNull<H2Role, *>)
         val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
         assertThat(userTable.columns.values)
                 .extracting("name", "sqlType", "isNullable")
@@ -170,56 +169,10 @@ class H2TablesDslTest {
                 .hasSize(1)
                 .extracting("entityGetter")
                 .containsExactly(H2Role::id)
-        assertThat(userTableFk.name).isNull()
     }
 
     @Test
     fun `Test named primary and foreign key`() {
-        val tables = DbTypeChoice.h2 {
-            table<H2Role> {
-                name = "roles"
-                column { it[H2Role::id].uuid() }
-                        .primaryKey()
-                column { it[H2Role::label].varchar() }
-            }
-            table<H2User> {
-                name = "users"
-                column { it[H2User::id].uuid() }
-                        .primaryKey("users_pk")
-                column { it[H2User::firstname].varchar() }
-                column { it[H2User::alias].varchar() }
-                column { it[H2User::roleId].uuid() }
-                foreignKey<H2Role> { columns(it[H2User::roleId]).name("users_fk") }
-            }
-        }
-        val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
-        assertThat(roleTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
-                .containsExactly(
-                        tuple("id", SqlType.UUID, false),
-                        tuple("label", SqlType.VARCHAR, false))
-        val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
-        assertThat(userTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
-                .containsExactly(
-                        tuple("id", SqlType.UUID, false),
-                        tuple("firstname", SqlType.VARCHAR, false),
-                        tuple("alias", SqlType.VARCHAR, true),
-                        tuple("roleId", SqlType.UUID, false))
-        assertThat(userTable.foreignKeys)
-                .extracting("referencedClass", "name")
-                .containsExactly(tuple(H2Role::class, "users_fk"))
-        val userTablePk = userTable.primaryKey
-        assertThat(userTablePk.columns[0].entityGetter).isEqualTo(H2User::id)
-        assertThat(userTablePk.name).isEqualTo("users_pk")
-        val userTableFk = userTable.foreignKeys.iterator().next()
-        assertThat(userTableFk.columns).hasSize(1).extracting("entityGetter").containsExactly(H2User::roleId)
-        assertThat(userTableFk.referencedColumns).hasSize(1).extracting("entityGetter").containsExactly(H2Role::id)
-        assertThat(userTableFk.name).isEqualTo("users_fk")
-    }
-
-    @Test
-    fun `Test named primary and foreign key - column syntax`() {
         val tables = DbTypeChoice.h2 {
             table<H2Role> {
                 name = "roles"
@@ -260,6 +213,95 @@ class H2TablesDslTest {
         val userTableFk = userTable.foreignKeys.iterator().next()
         assertThat(userTableFk.columns).hasSize(1).extracting("entityGetter").containsExactly(H2User::roleId)
         assertThat(userTableFk.referencedColumns).hasSize(1).extracting("entityGetter").containsExactly(H2Role::id)
-        assertThat(userTableFk.name).isEqualTo("users_fk")
+    }
+
+    @Test
+    fun `Test named primary and foreign key - other syntax`() {
+        val tables = DbTypeChoice.h2 {
+            table<H2Role> {
+                name = "roles"
+                primaryKey(
+                        column { it[H2Role::id].uuid() }
+                )
+                column { it[H2Role::label].varchar() }
+            }
+            table<H2User> {
+                name = "users"
+                primaryKey(
+                        column { it[H2User::id].uuid() },
+                        pkName = "users_pk"
+                )
+                column { it[H2User::firstname].varchar() }
+                column { it[H2User::alias].varchar() }
+                foreignKey<H2Role>(
+                        column { it[H2User::roleId].uuid() },
+                        fkName = "users_fk"
+                )
+            }
+        }
+        val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
+        assertThat(roleTable.columns.values)
+                .extracting("name", "sqlType", "isNullable")
+                .containsExactly(
+                        tuple("id", SqlType.UUID, false),
+                        tuple("label", SqlType.VARCHAR, false))
+        val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
+        assertThat(userTable.columns.values)
+                .extracting("name", "sqlType", "isNullable")
+                .containsExactly(
+                        tuple("id", SqlType.UUID, false),
+                        tuple("firstname", SqlType.VARCHAR, false),
+                        tuple("alias", SqlType.VARCHAR, true),
+                        tuple("roleId", SqlType.UUID, false))
+        assertThat(userTable.foreignKeys)
+                .extracting("referencedClass", "name")
+                .containsExactly(tuple(H2Role::class, "users_fk"))
+        val userTablePk = userTable.primaryKey
+        assertThat(userTablePk.columns[0].entityGetter).isEqualTo(H2User::id)
+        assertThat(userTablePk.name).isEqualTo("users_pk")
+        val userTableFk = userTable.foreignKeys.iterator().next()
+        assertThat(userTableFk.columns).hasSize(1).extracting("entityGetter").containsExactly(H2User::roleId)
+        assertThat(userTableFk.referencedColumns).hasSize(1).extracting("entityGetter").containsExactly(H2Role::id)
+    }
+
+    @Test
+    fun `Test named composite primary and foreign key`() {
+        val tables = DbTypeChoice.h2 {
+            table<H2Role> {
+                name = "roles"
+                column { it[H2Role::id].uuid() }
+                        .primaryKey()
+                column { it[H2Role::label].varchar() }
+            }
+            table<H2User> {
+                name = "users"
+                column { it[H2User::id].uuid() }
+                        .primaryKey("users_pk")
+                column { it[H2User::firstname].varchar() }
+                column { it[H2User::alias].varchar() }
+            }
+            table<H2UserRole> {
+                primaryKey(
+                        column { it[H2UserRole::userId].uuid() }.foreignKey<H2User>(),
+                        column { it[H2UserRole::roleId].uuid() }.foreignKey<H2Role>()
+                )
+            }
+        }
+        val userRoleTable = tables.allTables[H2UserRole::class] ?: fail { "require mapped H2UserRole" }
+        assertThat(userRoleTable.columns.values)
+                .extracting("name", "sqlType", "isNullable")
+                .containsExactly(
+                        tuple("userId", SqlType.UUID, false),
+                        tuple("roleId", SqlType.UUID, false))
+        assertThat(userRoleTable.foreignKeys)
+                .extracting("referencedClass", "name")
+                .containsExactly(
+                        tuple(H2User::class, null),
+                        tuple(H2Role::class, null)
+                )
+        val userTablePk = userRoleTable.primaryKey
+        assertThat(userTablePk.columns)
+                .extracting("entityGetter")
+                .contains(H2UserRole::userId, H2UserRole::roleId)
     }
 }

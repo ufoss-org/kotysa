@@ -20,7 +20,7 @@ public class SqLiteTableDsl<T : Any>(
      * Declare a Column, supported types follow : [SqLite Data types](https://www.sqlite.org/datatype3.html)
      */
     public fun <U : Column<T, *>> column(
-            dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, U>
+            dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *, U>
     ): U {
         val columnDsl = SqLiteColumnDsl(dsl)
         val column = columnDsl.initialize<U>(columnDsl)

@@ -21,31 +21,37 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
     private lateinit var pk: PrimaryKey<T>
 
     public fun primaryKey(
-            dsl: PrimaryKeyDsl<T>.(TableColumnPropertyProvider) -> PrimaryKey<T>
+            vararg columns: ColumnNotNull<T, *>,
+            pkName: String? = null
     ) {
-        pk = PrimaryKeyDsl(dsl).initialize()
-    }
-
-    public inline fun <reified V : Any> foreignKey(
-            noinline dsl: ForeignKeyDsl<T, V>.(TableColumnPropertyProvider) -> ForeignKeyBuilder<T, V>
-    ) {
-        foreignKeys.add(ForeignKeyDsl(dsl, V::class).initialize())
-    }
-
-    public inline fun <reified V : Any> Column<T, *>.foreignKey(fkName: String? = null): Column<T, *> {
-        val foreignKey = ForeignKey<T, V>(V::class, listOf(), fkName, null)
-        foreignKey.columns = listOf(this)
-        foreignKeys.add(foreignKey)
-        return this
+        check(!::pk.isInitialized) {
+            "Table must not declare more than one Primary Key"
+        }
+        pk = PrimaryKey(pkName, columns.toList())
     }
 
     public fun ColumnNotNull<T, *>.primaryKey(pkName: String? = null): ColumnNotNull<T, *> {
         check(!::pk.isInitialized) {
             "Table must not declare more than one Primary Key"
         }
-        val primaryKey = PrimaryKey<T>(pkName, null)
-        primaryKey.columns = listOf(this)
-        pk = primaryKey
+        pk = PrimaryKey(pkName, listOf(this))
+        return this
+    }
+
+    public inline fun <reified V : Any> foreignKey(
+            vararg columns: Column<T, *>,
+            fkName: String? = null
+    ) {
+        foreignKeys.add(ForeignKey(V::class, columns.toList(), fkName))
+    }
+
+    public inline fun <reified V : Any> ColumnNotNull<T, *>.foreignKey(fkName: String? = null): ColumnNotNull<T, *> {
+        foreignKeys.add(ForeignKey(V::class, listOf(this), fkName))
+        return this
+    }
+
+    public inline fun <reified V : Any> ColumnNullable<T, *>.foreignKey(fkName: String? = null): ColumnNullable<T, *> {
+        foreignKeys.add(ForeignKey(V::class, listOf(this), fkName))
         return this
     }
 

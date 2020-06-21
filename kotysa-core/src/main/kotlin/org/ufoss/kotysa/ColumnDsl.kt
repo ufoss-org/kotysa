@@ -7,8 +7,8 @@ package org.ufoss.kotysa
 
 @KotysaMarker
 public abstract class ColumnDsl<T : Any, U : ColumnDsl<T, U>> internal constructor(
-        private val init: U.(TableColumnPropertyProvider) -> ColumnBuilder<*, T, *, *>
-) : AbstractTableColumnPropertyProvider() {
+        private val init: U.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *, *>
+) : AbstractTableColumnPropertyProvider<T>() {
 
     @Suppress("UNCHECKED_CAST")
     internal fun <V : Column<T, *>> initialize(initialize: U): V {

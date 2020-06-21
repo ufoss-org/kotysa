@@ -7,7 +7,5 @@ package org.ufoss.kotysa
 
 public class PrimaryKey<T : Any> internal constructor(
         internal val name: String?,
-        internal val properties: List<ColumnProperty<T>>?
-) {
-    internal lateinit var columns: List<Column<T, *>>
-}
+        internal val columns: List<ColumnNotNull<T, *>>
+)
