@@ -28,14 +28,14 @@ val tables =
         tables().postgresql { // choose database type
             table<Role> {
                 name = "roles"
-                column { it[Role::id].uuid().primaryKey }
+                column { it[Role::id].uuid() }.primaryKey()
                 column { it[Role::label].varchar() }
             }
             table<User> {
                 name = "users"
-                column { it[User::id].uuid().primaryKey }
+                column { it[User::id].uuid() }.primaryKey()
                 column { it[User::firstname].varchar().name("first-name") }
-                column { it[User::roleId].uuid().foreignKey<Role>() }
+                column { it[User::roleId].uuid() }.foreignKey<Role>()
                 column { it[User::alias].varchar() }
             }
         }
