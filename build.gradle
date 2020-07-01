@@ -17,6 +17,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
 
     repositories {
         jcenter()
+        maven { url 'https://repo.spring.io/milestone' }
     }
 
     dependencies {
@@ -136,6 +137,6 @@ task build {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '6.5'
+    gradleVersion = '6.5.1'
     distributionType = Wrapper.DistributionType.ALL
 }

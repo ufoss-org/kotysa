@@ -1,13 +1,9 @@
-repositories {
-    maven { url 'https://repo.spring.io/milestone' }
-}
-
 dependencies {
     api platform(project(':kotysa-platform'))
     api project(':kotysa-core')
 
     // import BOM
-    implementation platform("org.springframework.data:spring-data-releasetrain:$spring_data_bom_version")
+    implementation platform("org.springframework.data:spring-data-bom:$spring_data_bom_version")
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
 
     api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
