@@ -72,6 +72,8 @@ Kotysa is agnostic from Sql Engine (SqLite on Android and R2DBC. JDBC in future)
 
 See sample projects [here](samples).
 
+[Real world sample project with R2DBC](https://github.com/pull-vert/demo-kotlin) is a Spring Boot Reactive web application with a R2DBC backend accessed via Kotysa, HTTP2, JWT based Security, Bean validation, RestDoc...
+
 ## Build from sources
 
 * Clone Kotysa repository
