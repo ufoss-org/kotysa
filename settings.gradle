@@ -11,6 +11,6 @@ rootProject.name = 'kotysa'
 include 'kotysa-core'
 
 include 'kotysa-android'
-include 'kotysa-spring-data-r2dbc'
+include 'kotysa-spring-r2dbc'
 
 include 'kotysa-platform'

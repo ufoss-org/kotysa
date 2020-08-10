@@ -8,7 +8,7 @@ dependencies {
     constraints {
         api project(':kotysa-core')
         api project(':kotysa-android')
-        api project(':kotysa-spring-data-r2dbc')
+        api project(':kotysa-spring-r2dbc')
 
         api "io.github.microutils:kotlin-logging:$kotlin_logging_version"
     }
