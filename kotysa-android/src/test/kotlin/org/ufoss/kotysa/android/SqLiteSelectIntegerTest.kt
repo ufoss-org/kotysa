@@ -11,6 +11,7 @@ import org.ufoss.kotysa.test.sqLiteIntegerWithNullable
 import org.ufoss.kotysa.test.sqLiteIntegerWithoutNullable
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.ufoss.kotysa.test.Repository
 
 class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
 

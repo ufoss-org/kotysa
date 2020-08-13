@@ -7,8 +7,6 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.android.Repository
-import org.ufoss.kotysa.android.sqlClient
 
 abstract class AbstractUserRepository(
         sqLiteOpenHelper: SQLiteOpenHelper,

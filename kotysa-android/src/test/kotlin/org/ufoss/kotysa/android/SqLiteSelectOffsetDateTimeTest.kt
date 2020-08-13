@@ -11,6 +11,7 @@ import org.ufoss.kotysa.test.sqLiteOffsetDateTimeWithNullable
 import org.ufoss.kotysa.test.sqLiteOffsetDateTimeWithoutNullable
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.ufoss.kotysa.test.Repository
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 

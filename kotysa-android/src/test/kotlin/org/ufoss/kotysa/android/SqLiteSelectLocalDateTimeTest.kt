@@ -11,6 +11,7 @@ import org.ufoss.kotysa.test.sqLiteLocalDateTimeWithNullable
 import org.ufoss.kotysa.test.sqLiteLocalDateTimeWithoutNullable
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.ufoss.kotysa.test.Repository
 import java.time.LocalDateTime
 
 class SqLiteSelectLocalDateTimeTest : AbstractSqLiteTest<LocalDateTimeRepositorySelect>() {
