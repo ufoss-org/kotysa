@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.Repository
+import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 

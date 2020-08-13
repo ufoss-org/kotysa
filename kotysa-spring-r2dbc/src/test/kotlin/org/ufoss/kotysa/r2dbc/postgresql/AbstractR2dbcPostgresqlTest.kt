@@ -11,7 +11,7 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbcPostgresql
 import org.testcontainers.containers.PostgreSQLContainer
-import org.ufoss.kotysa.r2dbc.Repository
+import org.ufoss.kotysa.test.Repository
 
 class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
 

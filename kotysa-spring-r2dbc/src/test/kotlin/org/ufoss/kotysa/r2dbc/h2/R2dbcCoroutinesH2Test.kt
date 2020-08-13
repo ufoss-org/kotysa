@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.r2dbc.Repository
+import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.test.*
 

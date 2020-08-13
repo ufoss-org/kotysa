@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import org.ufoss.kotysa.r2dbc.Repository
+import org.ufoss.kotysa.test.Repository
 import org.junit.jupiter.api.AfterAll
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
