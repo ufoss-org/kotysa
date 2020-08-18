@@ -24,8 +24,6 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         // import BOM
         implementation platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinx_coroutines_bom_version")
         testImplementation platform("org.junit:junit-bom:$junit_bom_version")
-
-        api 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
     }
 
     compileKotlin {
