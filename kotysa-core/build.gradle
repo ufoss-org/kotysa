@@ -10,7 +10,7 @@ dependencies {
     api platform(project(':kotysa-platform'))
 
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
-    implementation "io.github.microutils:kotlin-logging"
+    implementation 'io.github.microutils:kotlin-logging'
 
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
 
