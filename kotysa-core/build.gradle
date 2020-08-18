@@ -31,8 +31,10 @@ compileTestFixturesKotlin {
     }
 }
 
-dokka {
-    configuration {
-        includes = ['../README.md']
+dokkaHtml {
+    dokkaSourceSets {
+        configureEach {
+            includes = listOf('../README.md')
+        }
     }
 }

@@ -18,11 +18,3 @@ dependencies {
 
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
-
-//dokka {
-//    configuration {
-//        externalDocumentationLink {
-//            url = new URL("https://developer.android.com/reference/")
-//        }
-//    }
-//}

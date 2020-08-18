@@ -74,17 +74,18 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         withSourcesJar()
     }
 
-    dokka {
-        outputFormat = 'html'
+    dokkaHtml {
         outputDirectory = "$buildDir/javadoc"
 
-        configuration {
-            jdkVersion = 8
+        dokkaSourceSets {
+            configureEach {
+                jdkVersion = 8
+            }
         }
     }
 
     // generate xxx-javadoc.jar
-    task javadocJar(type: Jar, dependsOn: dokka) {
+    task javadocJar(type: Jar, dependsOn: dokkaHtml) {
         from "$buildDir/javadoc"
         archiveClassifier = 'javadoc'
     }
@@ -137,6 +138,6 @@ task build {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '6.5.1'
+    gradleVersion = '6.6'
     distributionType = Wrapper.DistributionType.ALL
 }
