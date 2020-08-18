@@ -29,7 +29,7 @@ public class NullableStringColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> String?
 ) : StringColumnProperty<T>()
 
-// LocalDateTime
+// LocalDateTime (java.time and kotlinx-datetime)
 
 public abstract class LocalDateTimeColumnProperty<T : Any> : ColumnProperty<T>()
 
@@ -38,9 +38,17 @@ public class NotNullLocalDateTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalDateTime
 ) : LocalDateTimeColumnProperty<T>()
 
+public class NotNullKotlinxLocalDateTimeColumnProperty<T : Any> internal constructor(
+        override val getter: (T) -> kotlinx.datetime.LocalDateTime
+) : LocalDateTimeColumnProperty<T>()
+
 
 public class NullableLocalDateTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalDateTime?
+) : LocalDateTimeColumnProperty<T>()
+
+public class NullableKotlinxLocalDateTimeColumnProperty<T : Any> internal constructor(
+        override val getter: (T) -> kotlinx.datetime.LocalDateTime?
 ) : LocalDateTimeColumnProperty<T>()
 
 // LocalDate

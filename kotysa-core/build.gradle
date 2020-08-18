@@ -13,6 +13,7 @@ dependencies {
     implementation 'io.github.microutils:kotlin-logging'
 
     compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+    compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
     testFixturesImplementation "org.springframework:spring-core:$spring_core_version"

@@ -29,6 +29,12 @@ public class SqLiteColumnDsl<T : Any> internal constructor(
     public fun NullableLocalDateTimeColumnProperty<T>.text(): TextColumnBuilderNullable<T, LocalDateTime> =
             TextColumnBuilderNullable(getter)
 
+    public fun NotNullKotlinxLocalDateTimeColumnProperty<T>.text(): TextColumnBuilderNotNull<T, kotlinx.datetime.LocalDateTime> =
+            TextColumnBuilderNotNull(getter)
+
+    public fun NullableKotlinxLocalDateTimeColumnProperty<T>.text(): TextColumnBuilderNullable<T, kotlinx.datetime.LocalDateTime> =
+            TextColumnBuilderNullable(getter)
+
     public fun NotNullLocalDateColumnProperty<T>.text(): TextColumnBuilderNotNull<T, LocalDate> =
             TextColumnBuilderNotNull(getter)
 

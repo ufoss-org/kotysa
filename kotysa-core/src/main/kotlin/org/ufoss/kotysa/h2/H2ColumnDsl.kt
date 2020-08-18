@@ -30,10 +30,22 @@ public class H2ColumnDsl<T : Any> internal constructor(
     public fun NullableLocalDateTimeColumnProperty<T>.timestamp(): TimestampColumnBuilderNullable<T, LocalDateTime> =
             TimestampColumnBuilderNullable(getter)
 
+    public fun NotNullKotlinxLocalDateTimeColumnProperty<T>.timestamp(): TimestampColumnBuilderNotNull<T, kotlinx.datetime.LocalDateTime> =
+            TimestampColumnBuilderNotNull(getter)
+
+    public fun NullableKotlinxLocalDateTimeColumnProperty<T>.timestamp(): TimestampColumnBuilderNullable<T, kotlinx.datetime.LocalDateTime> =
+            TimestampColumnBuilderNullable(getter)
+
     public fun NotNullLocalDateTimeColumnProperty<T>.dateTime(): DateTimeColumnBuilderNotNull<T, LocalDateTime> =
             DateTimeColumnBuilderNotNull(getter)
 
     public fun NullableLocalDateTimeColumnProperty<T>.dateTime(): DateTimeColumnBuilderNullable<T, LocalDateTime> =
+            DateTimeColumnBuilderNullable(getter)
+
+    public fun NotNullKotlinxLocalDateTimeColumnProperty<T>.dateTime(): DateTimeColumnBuilderNotNull<T, kotlinx.datetime.LocalDateTime> =
+            DateTimeColumnBuilderNotNull(getter)
+
+    public fun NullableKotlinxLocalDateTimeColumnProperty<T>.dateTime(): DateTimeColumnBuilderNullable<T, kotlinx.datetime.LocalDateTime> =
             DateTimeColumnBuilderNullable(getter)
 
     public fun NotNullLocalDateColumnProperty<T>.date(): DateColumnBuilderNotNull<T, LocalDate> =
