@@ -89,6 +89,20 @@ public class SelectDsl<T> internal constructor(
         return null
     }
 
+    override operator fun <T : Any> get(getter: (T) -> kotlinx.datetime.LocalDate, alias: String?): kotlinx.datetime.LocalDate {
+        val field = fieldAccess.getField(getter, alias)
+        addColumnField(getter, field, alias)
+        return kotlinx.datetime.LocalDate(2016, 2, 15)
+    }
+
+    override operator fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDate?, alias: String?, `_`: Nullable
+    ): kotlinx.datetime.LocalDate? {
+        val field = fieldAccess.getField(getter, alias)
+        addColumnField(getter, field, alias)
+        return null
+    }
+
     override operator fun <T : Any> get(getter: (T) -> OffsetDateTime, alias: String?): OffsetDateTime {
         val field = fieldAccess.getField(getter, alias)
         addColumnField(getter, field, alias)

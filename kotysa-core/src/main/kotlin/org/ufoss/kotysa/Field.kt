@@ -125,6 +125,21 @@ public class NullableLocalDateColumnField<T : Any> internal constructor(
         alias: String? = null
 ) : ColumnField<T, LocalDate?>(availableColumns, getter, alias, dbType), NullableField
 
+public class NotNullKotlinxLocalDateColumnField<T : Any> internal constructor(
+        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        getter: (T) -> kotlinx.datetime.LocalDate,
+        dbType: DbType,
+        alias: String? = null
+) : ColumnField<T, kotlinx.datetime.LocalDate>(availableColumns, getter, alias, dbType), NotNullField
+
+
+public class NullableKotlinxLocalDateColumnField<T : Any> internal constructor(
+        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        getter: (T) -> kotlinx.datetime.LocalDate?,
+        dbType: DbType,
+        alias: String? = null
+) : ColumnField<T, kotlinx.datetime.LocalDate?>(availableColumns, getter, alias, dbType), NullableField
+
 
 public class NotNullOffsetDateTimeColumnField<T : Any> internal constructor(
         availableColumns: Map<out (Any) -> Any?, Column<*, *>>,

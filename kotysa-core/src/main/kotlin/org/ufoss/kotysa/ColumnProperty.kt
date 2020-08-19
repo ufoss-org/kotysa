@@ -29,22 +29,24 @@ public class NullableStringColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> String?
 ) : StringColumnProperty<T>()
 
-// LocalDateTime (java.time and kotlinx-datetime)
+// LocalDateTime
 
 public abstract class LocalDateTimeColumnProperty<T : Any> : ColumnProperty<T>()
 
+// java.time.LocalDateTime
 
 public class NotNullLocalDateTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalDateTime
 ) : LocalDateTimeColumnProperty<T>()
 
-public class NotNullKotlinxLocalDateTimeColumnProperty<T : Any> internal constructor(
-        override val getter: (T) -> kotlinx.datetime.LocalDateTime
-) : LocalDateTimeColumnProperty<T>()
-
-
 public class NullableLocalDateTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalDateTime?
+) : LocalDateTimeColumnProperty<T>()
+
+// kotlinx.datetime.LocalDateTime
+
+public class NotNullKotlinxLocalDateTimeColumnProperty<T : Any> internal constructor(
+        override val getter: (T) -> kotlinx.datetime.LocalDateTime
 ) : LocalDateTimeColumnProperty<T>()
 
 public class NullableKotlinxLocalDateTimeColumnProperty<T : Any> internal constructor(
@@ -55,25 +57,35 @@ public class NullableKotlinxLocalDateTimeColumnProperty<T : Any> internal constr
 
 public abstract class LocalDateColumnProperty<T : Any> : ColumnProperty<T>()
 
+// java.time.LocalDate
 
 public class NotNullLocalDateColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalDate
 ) : LocalDateColumnProperty<T>()
 
-
 public class NullableLocalDateColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalDate?
+) : LocalDateColumnProperty<T>()
+
+// kotlinx.datetime.LocalDate
+
+public class NotNullKotlinxLocalDateColumnProperty<T : Any> internal constructor(
+        override val getter: (T) -> kotlinx.datetime.LocalDate
+) : LocalDateColumnProperty<T>()
+
+public class NullableKotlinxLocalDateColumnProperty<T : Any> internal constructor(
+        override val getter: (T) -> kotlinx.datetime.LocalDate?
 ) : LocalDateColumnProperty<T>()
 
 // OffsetDateTime
 
 public abstract class OffsetDateTimeColumnProperty<T : Any> : ColumnProperty<T>()
 
+// java.time.OffsetDateTime
 
 public class NotNullOffsetDateTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> OffsetDateTime
 ) : OffsetDateTimeColumnProperty<T>()
-
 
 public class NullableOffsetDateTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> OffsetDateTime?
@@ -83,11 +95,11 @@ public class NullableOffsetDateTimeColumnProperty<T : Any> internal constructor(
 
 public abstract class LocalTimeColumnProperty<T : Any> : ColumnProperty<T>()
 
+// java.time.LocalTime
 
 public class NotNullLocalTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalTime
 ) : LocalTimeColumnProperty<T>()
-
 
 public class NullableLocalTimeColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> LocalTime?
@@ -108,7 +120,6 @@ public class NotNullUuidColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> UUID
 ) : UuidColumnProperty<T>()
 
-
 public class NullableUuidColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> UUID?
 ) : UuidColumnProperty<T>()
@@ -121,7 +132,6 @@ public abstract class IntColumnProperty<T : Any> : ColumnProperty<T>()
 public class NotNullIntColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> Int
 ) : IntColumnProperty<T>()
-
 
 public class NullableIntColumnProperty<T : Any> internal constructor(
         override val getter: (T) -> Int?

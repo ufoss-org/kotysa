@@ -31,6 +31,12 @@ public interface ValueProvider {
 
     public operator fun <T : Any> get(getter: (T) -> LocalDate?, alias: String? = null, `_`: Nullable = Nullable.TRUE): LocalDate?
 
+    public operator fun <T : Any> get(getter: (T) -> kotlinx.datetime.LocalDate, alias: String? = null): kotlinx.datetime.LocalDate
+
+    public operator fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDate?, alias: String? = null, `_`: Nullable = Nullable.TRUE
+    ): kotlinx.datetime.LocalDate?
+
     public operator fun <T : Any> get(getter: (T) -> OffsetDateTime, alias: String? = null): OffsetDateTime
 
     public operator fun <T : Any> get(getter: (T) -> OffsetDateTime?, alias: String? = null, `_`: Nullable = Nullable.TRUE): OffsetDateTime?

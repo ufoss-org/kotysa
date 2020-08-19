@@ -24,6 +24,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
     testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }

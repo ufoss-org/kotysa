@@ -156,6 +156,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                             ByteArray::class.java.isAssignableFrom(type) -> sqLiteCursor.getBlob(index)
                             // Date are stored as String
                             LocalDate::class.java.isAssignableFrom(type) -> LocalDate.parse(sqLiteCursor.getString(index))
+                            kotlinx.datetime.LocalDate::class.java.isAssignableFrom(type) -> kotlinx.datetime.LocalDate.parse(sqLiteCursor.getString(index))
                             LocalDateTime::class.java.isAssignableFrom(type) -> LocalDateTime.parse(sqLiteCursor.getString(index))
                             kotlinx.datetime.LocalDateTime::class.java.isAssignableFrom(type) -> kotlinx.datetime.LocalDateTime.parse(sqLiteCursor.getString(index))
                             OffsetDateTime::class.java.isAssignableFrom(type) -> OffsetDateTime.parse(sqLiteCursor.getString(index))

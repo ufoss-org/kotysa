@@ -58,6 +58,15 @@ public class UpdateSetDsl<T : Any> internal constructor(
         return Nullable.TRUE
     }
 
+    override fun set(getter: (T) -> kotlinx.datetime.LocalDate, value: kotlinx.datetime.LocalDate) {
+        addValue(fieldAccess.getField(getter, null), value)
+    }
+
+    override fun set(getter: (T) -> kotlinx.datetime.LocalDate?, value: kotlinx.datetime.LocalDate?): Nullable {
+        addValue(fieldAccess.getField(getter, null), value)
+        return Nullable.TRUE
+    }
+
     override fun set(getter: (T) -> OffsetDateTime, value: OffsetDateTime) {
         addValue(fieldAccess.getField(getter, null), value)
     }

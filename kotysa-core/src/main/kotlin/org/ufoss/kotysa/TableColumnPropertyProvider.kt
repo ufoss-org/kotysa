@@ -30,6 +30,10 @@ public interface TableColumnPropertyProvider<T : Any> {
 
     public operator fun get(getter: (T) -> LocalDate?): NullableLocalDateColumnProperty<T>
 
+    public operator fun get(getter: (T) -> kotlinx.datetime.LocalDate): NotNullKotlinxLocalDateColumnProperty<T>
+
+    public operator fun get(getter: (T) -> kotlinx.datetime.LocalDate?): NullableKotlinxLocalDateColumnProperty<T>
+
     public operator fun get(getter: (T) -> OffsetDateTime): NotNullOffsetDateTimeColumnProperty<T>
 
     public operator fun get(getter: (T) -> OffsetDateTime?): NullableOffsetDateTimeColumnProperty<T>
@@ -78,6 +82,14 @@ public abstract class AbstractTableColumnPropertyProvider<T : Any> internal cons
     override fun get(getter: (T) -> LocalDate?): NullableLocalDateColumnProperty<T> {
         checkNullableGetter(getter)
         return NullableLocalDateColumnProperty(getter)
+    }
+
+    override fun get(getter: (T) -> kotlinx.datetime.LocalDate): NotNullKotlinxLocalDateColumnProperty<T> =
+            NotNullKotlinxLocalDateColumnProperty(getter)
+
+    override fun get(getter: (T) -> kotlinx.datetime.LocalDate?): NullableKotlinxLocalDateColumnProperty<T> {
+        checkNullableGetter(getter)
+        return NullableKotlinxLocalDateColumnProperty(getter)
     }
 
     override fun get(getter: (T) -> OffsetDateTime): NotNullOffsetDateTimeColumnProperty<T> = NotNullOffsetDateTimeColumnProperty(getter)

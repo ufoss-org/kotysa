@@ -47,6 +47,13 @@ public abstract class AbstractRow(private val fieldIndexMap: Map<Field, Int>) : 
     override operator fun <T : Any> get(getter: (T) -> LocalDate?, alias: String?, `_`: Nullable): LocalDate? =
             this[getIndexdByGetterAndAlias(getter, alias)]
 
+    override operator fun <T : Any> get(getter: (T) -> kotlinx.datetime.LocalDate, alias: String?): kotlinx.datetime.LocalDate =
+            this[getIndexdByGetterAndAlias(getter, alias)]!!
+
+    override operator fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDate?, alias: String?, `_`: Nullable
+    ): kotlinx.datetime.LocalDate? = this[getIndexdByGetterAndAlias(getter, alias)]
+
     override operator fun <T : Any> get(getter: (T) -> OffsetDateTime, alias: String?): OffsetDateTime =
             this[getIndexdByGetterAndAlias(getter, alias)]!!
 

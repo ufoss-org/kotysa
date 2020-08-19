@@ -203,6 +203,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                         } else {
                             NotNullLocalDateColumnField(allColumns, getter as (Any) -> LocalDate, dbType)
                         }
+                    kotlinx.datetime.LocalDate::class ->
+                        if (getterType.isMarkedNullable) {
+                            NullableKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate?, dbType)
+                        } else {
+                            NotNullKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate, dbType)
+                        }
                     OffsetDateTime::class ->
                         if (getterType.isMarkedNullable) {
                             NullableOffsetDateTimeColumnField(allColumns, getter as (Any) -> OffsetDateTime?, dbType)

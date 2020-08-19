@@ -41,6 +41,12 @@ internal class FieldAccess internal constructor(
     internal fun <T : Any> getField(getter: (T) -> LocalDate?, alias: String?) =
             NullableLocalDateColumnField(availableColumns, getter, dbType, alias)
 
+    internal fun <T : Any> getField(getter: (T) -> kotlinx.datetime.LocalDate, alias: String?) =
+            NotNullKotlinxLocalDateColumnField(availableColumns, getter, dbType, alias)
+
+    internal fun <T : Any> getField(getter: (T) -> kotlinx.datetime.LocalDate?, alias: String?) =
+            NullableKotlinxLocalDateColumnField(availableColumns, getter, dbType, alias)
+
     internal fun <T : Any> getField(getter: (T) -> OffsetDateTime, alias: String?) =
             NotNullOffsetDateTimeColumnField(availableColumns, getter, dbType, alias)
 

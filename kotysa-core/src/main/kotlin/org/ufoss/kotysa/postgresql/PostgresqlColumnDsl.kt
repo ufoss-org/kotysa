@@ -44,6 +44,12 @@ public class PostgresqlColumnDsl<T : Any> internal constructor(
     public fun NullableLocalDateColumnProperty<T>.date(): DateColumnBuilderNullable<T, LocalDate> =
             DateColumnBuilderNullable(getter)
 
+    public fun NotNullKotlinxLocalDateColumnProperty<T>.date(): DateColumnBuilderNotNull<T, kotlinx.datetime.LocalDate> =
+            DateColumnBuilderNotNull(getter)
+
+    public fun NullableKotlinxLocalDateColumnProperty<T>.date(): DateColumnBuilderNullable<T, kotlinx.datetime.LocalDate> =
+            DateColumnBuilderNullable(getter)
+
     public fun NotNullOffsetDateTimeColumnProperty<T>.timestampWithTimeZone()
             : TimestampWithTimeZoneColumnBuilderNotNull<T, OffsetDateTime> = TimestampWithTimeZoneColumnBuilderNotNull(getter)
 
