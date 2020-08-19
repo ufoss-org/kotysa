@@ -142,6 +142,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 when (getter.toCallable().returnType.classifier as KClass<*>) {
                     String::class -> valueProvider[getter as (T) -> String?]
                     LocalDateTime::class -> valueProvider[getter as (T) -> LocalDateTime?]
+                    kotlinx.datetime.LocalDateTime::class -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDateTime?]
                     LocalDate::class -> valueProvider[getter as (T) -> LocalDate?]
                     OffsetDateTime::class -> valueProvider[getter as (T) -> OffsetDateTime?]
                     LocalTime::class -> valueProvider[getter as (T) -> LocalTime?]
@@ -189,6 +190,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                             NullableLocalDateTimeColumnField(allColumns, getter as (Any) -> LocalDateTime?, dbType)
                         } else {
                             NotNullLocalDateTimeColumnField(allColumns, getter as (Any) -> LocalDateTime, dbType)
+                        }
+                    kotlinx.datetime.LocalDateTime::class ->
+                        if (getterType.isMarkedNullable) {
+                            NullableKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime?, dbType)
+                        } else {
+                            NotNullKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime, dbType)
                         }
                     LocalDate::class ->
                         if (getterType.isMarkedNullable) {

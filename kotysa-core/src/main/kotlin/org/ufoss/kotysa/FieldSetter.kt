@@ -21,6 +21,10 @@ public interface FieldSetter<T : Any> {
 
     public operator fun set(getter: (T) -> LocalDateTime?, value: LocalDateTime?): Nullable
 
+    public operator fun set(getter: (T) -> kotlinx.datetime.LocalDateTime, value: kotlinx.datetime.LocalDateTime)
+
+    public operator fun set(getter: (T) -> kotlinx.datetime.LocalDateTime?, value: kotlinx.datetime.LocalDateTime?): Nullable
+
     public operator fun set(getter: (T) -> LocalDate, value: LocalDate)
 
     public operator fun set(getter: (T) -> LocalDate?, value: LocalDate?): Nullable

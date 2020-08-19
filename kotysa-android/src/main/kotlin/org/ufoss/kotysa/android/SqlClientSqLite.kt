@@ -73,6 +73,7 @@ internal fun ContentValues.put(name: String, value: Any?) {
             // Date are stored as String
             is LocalDate -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_DATE))
             is LocalDateTime -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            is kotlinx.datetime.LocalDateTime -> put(name, value.toString())
             is OffsetDateTime -> put(name, value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             is LocalTime -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_TIME))
             else -> throw UnsupportedOperationException(

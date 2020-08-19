@@ -130,6 +130,7 @@ private fun Any?.dbValue(): String = when (this) {
     is Int -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    is kotlinx.datetime.LocalDateTime -> this.toString()
     is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")

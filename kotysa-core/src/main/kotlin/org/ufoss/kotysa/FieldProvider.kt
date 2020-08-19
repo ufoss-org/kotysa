@@ -20,6 +20,14 @@ public interface FieldProvider {
 
     public operator fun <T : Any> get(getter: (T) -> LocalDateTime?, alias: String? = null): NullableLocalDateTimeColumnField<T>
 
+    public operator fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime, alias: String? = null
+    ): NotNullKotlinxLocalDateTimeColumnField<T>
+
+    public operator fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime?, alias: String? = null
+    ): NullableKotlinxLocalDateTimeColumnField<T>
+
     public operator fun <T : Any> get(getter: (T) -> LocalDate, alias: String? = null): NotNullLocalDateColumnField<T>
 
     public operator fun <T : Any> get(getter: (T) -> LocalDate?, alias: String? = null): NullableLocalDateColumnField<T>
@@ -52,6 +60,14 @@ public interface TypedFieldProvider<T : Any> {
     public operator fun get(getter: (T) -> LocalDateTime, alias: String? = null): NotNullLocalDateTimeColumnField<T>
 
     public operator fun get(getter: (T) -> LocalDateTime?, alias: String? = null): NullableLocalDateTimeColumnField<T>
+
+    public operator fun get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime, alias: String? = null
+    ): NotNullKotlinxLocalDateTimeColumnField<T>
+
+    public operator fun get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime?, alias: String? = null
+    ): NullableKotlinxLocalDateTimeColumnField<T>
 
     public operator fun get(getter: (T) -> LocalDate, alias: String? = null): NotNullLocalDateColumnField<T>
 
@@ -94,6 +110,14 @@ public open class SimpleFieldProvider internal constructor(
 
     override fun <T : Any> get(getter: (T) -> LocalDateTime?, alias: String?): NullableLocalDateTimeColumnField<T> =
             fieldAccess.getField(getter, alias)
+
+    override fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime, alias: String?
+    ): NotNullKotlinxLocalDateTimeColumnField<T> = fieldAccess.getField(getter, alias)
+
+    override fun <T : Any> get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime?, alias: String?
+    ): NullableKotlinxLocalDateTimeColumnField<T> = fieldAccess.getField(getter, alias)
 
     override fun <T : Any> get(getter: (T) -> LocalDate, alias: String?): NotNullLocalDateColumnField<T> =
             fieldAccess.getField(getter, alias)
@@ -147,6 +171,14 @@ public open class SimpleTypedFieldProvider<T : Any> internal constructor(
 
     override fun get(getter: (T) -> LocalDateTime?, alias: String?): NullableLocalDateTimeColumnField<T> =
             fieldAccess.getField(getter, alias)
+
+    override fun get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime, alias: String?
+    ): NotNullKotlinxLocalDateTimeColumnField<T> = fieldAccess.getField(getter, alias)
+
+    override fun get(
+            getter: (T) -> kotlinx.datetime.LocalDateTime?, alias: String?
+    ): NullableKotlinxLocalDateTimeColumnField<T> = fieldAccess.getField(getter, alias)
 
     override fun get(getter: (T) -> LocalDate, alias: String?): NotNullLocalDateColumnField<T> =
             fieldAccess.getField(getter, alias)

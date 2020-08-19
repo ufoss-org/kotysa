@@ -136,6 +136,44 @@ public interface CommonWhereDsl {
     public infix fun <T : Any> NullableLocalDateTimeColumnField<T>.afterOrEq(value: LocalDateTime): WhereClause =
             WhereClause(this, Operation.SUP_OR_EQ, value)
 
+    // operations on kotlinx.datetime.LocalDateTime
+
+    public infix fun <T : Any> NotNullKotlinxLocalDateTimeColumnField<T>.eq(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.EQ, value)
+
+    public infix fun <T : Any> NotNullKotlinxLocalDateTimeColumnField<T>.notEq(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.NOT_EQ, value)
+
+    public infix fun <T : Any> NotNullKotlinxLocalDateTimeColumnField<T>.before(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.INF, value)
+
+    public infix fun <T : Any> NotNullKotlinxLocalDateTimeColumnField<T>.after(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.SUP, value)
+
+    public infix fun <T : Any> NotNullKotlinxLocalDateTimeColumnField<T>.beforeOrEq(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.INF_OR_EQ, value)
+
+    public infix fun <T : Any> NotNullKotlinxLocalDateTimeColumnField<T>.afterOrEq(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.SUP_OR_EQ, value)
+
+    public infix fun <T : Any> NullableKotlinxLocalDateTimeColumnField<T>.eq(value: kotlinx.datetime.LocalDateTime?): WhereClause =
+            WhereClause(this, Operation.EQ, value)
+
+    public infix fun <T : Any> NullableKotlinxLocalDateTimeColumnField<T>.notEq(value: kotlinx.datetime.LocalDateTime?): WhereClause =
+            WhereClause(this, Operation.NOT_EQ, value)
+
+    public infix fun <T : Any> NullableKotlinxLocalDateTimeColumnField<T>.before(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.INF, value)
+
+    public infix fun <T : Any> NullableKotlinxLocalDateTimeColumnField<T>.after(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.SUP, value)
+
+    public infix fun <T : Any> NullableKotlinxLocalDateTimeColumnField<T>.beforeOrEq(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.INF_OR_EQ, value)
+
+    public infix fun <T : Any> NullableKotlinxLocalDateTimeColumnField<T>.afterOrEq(value: kotlinx.datetime.LocalDateTime): WhereClause =
+            WhereClause(this, Operation.SUP_OR_EQ, value)
+
     // operations on java.time.OffsetDateTime
 
     public infix fun <T : Any> NotNullOffsetDateTimeColumnField<T>.eq(value: OffsetDateTime): WhereClause =
