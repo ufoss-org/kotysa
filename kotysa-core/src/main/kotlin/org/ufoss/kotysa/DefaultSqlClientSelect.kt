@@ -144,6 +144,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                     LocalDateTime::class -> valueProvider[getter as (T) -> LocalDateTime?]
                     kotlinx.datetime.LocalDateTime::class -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDateTime?]
                     LocalDate::class -> valueProvider[getter as (T) -> LocalDate?]
+                    kotlinx.datetime.LocalDate::class -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDate?]
                     OffsetDateTime::class -> valueProvider[getter as (T) -> OffsetDateTime?]
                     LocalTime::class -> valueProvider[getter as (T) -> LocalTime?]
                     Boolean::class -> valueProvider[getter as (T) -> Boolean]

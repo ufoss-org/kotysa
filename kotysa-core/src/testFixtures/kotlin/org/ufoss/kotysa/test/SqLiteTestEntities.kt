@@ -7,6 +7,7 @@ package org.ufoss.kotysa.test
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.tables
 import java.time.*
 
@@ -36,6 +37,7 @@ val sqLiteTables =
                 column { it[SqLiteAllTypesNotNull::string].text() }
                 column { it[SqLiteAllTypesNotNull::boolean].integer() }
                 column { it[SqLiteAllTypesNotNull::localDate].text() }
+                column { it[SqLiteAllTypesNotNull::kotlinxLocalDate].text() }
                 column { it[SqLiteAllTypesNotNull::offsetDateTime].text() }
                 column { it[SqLiteAllTypesNotNull::localDateTime].text() }
                 column { it[SqLiteAllTypesNotNull::kotlinxLocalDateTime].text() }
@@ -48,6 +50,7 @@ val sqLiteTables =
                         .primaryKey()
                 column { it[SqLiteAllTypesNullable::string].text() }
                 column { it[SqLiteAllTypesNullable::localDate].text() }
+                column { it[SqLiteAllTypesNullable::kotlinxLocalDate].text() }
                 column { it[SqLiteAllTypesNullable::offsetDateTime].text() }
                 column { it[SqLiteAllTypesNullable::localDateTime].text() }
                 column { it[SqLiteAllTypesNullable::kotlinxLocalDateTime].text() }
@@ -59,6 +62,7 @@ val sqLiteTables =
                         .primaryKey()
                 column { it[SqLiteAllTypesNullableDefaultValue::string].text().defaultValue("default") }
                 column { it[SqLiteAllTypesNullableDefaultValue::localDate].text().defaultValue(LocalDate.MAX) }
+                column { it[SqLiteAllTypesNullableDefaultValue::kotlinxLocalDate].text().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
                 column { it[SqLiteAllTypesNullableDefaultValue::offsetDateTime].text().defaultValue(OffsetDateTime.MAX) }
                 column { it[SqLiteAllTypesNullableDefaultValue::localDateTime].text().defaultValue(LocalDateTime.MAX) }
                 column { it[SqLiteAllTypesNullableDefaultValue::kotlinxLocalDateTime].text().defaultValue(kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)) }
@@ -70,6 +74,12 @@ val sqLiteTables =
                         .primaryKey()
                 column { it[SqLiteLocalDate::localDateNotNull].text() }
                 column { it[SqLiteLocalDate::localDateNullable].text() }
+            }
+            table<SqLiteKotlinxLocalDate> {
+                column { it[SqLiteKotlinxLocalDate::id].text() }
+                        .primaryKey()
+                column { it[SqLiteKotlinxLocalDate::localDateNotNull].text() }
+                column { it[SqLiteKotlinxLocalDate::localDateNullable].text() }
             }
             table<SqLiteLocalDateTime> {
                 column { it[SqLiteLocalDateTime::id].text() }
@@ -132,6 +142,7 @@ data class SqLiteAllTypesNotNull(
         val string: String,
         val boolean: Boolean,
         val localDate: LocalDate,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate,
         val offsetDateTime: OffsetDateTime,
         val localDateTime: LocalDateTime,
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
@@ -140,13 +151,15 @@ data class SqLiteAllTypesNotNull(
 )
 
 val sqLiteAllTypesNotNull = SqLiteAllTypesNotNull("abc", "", true, LocalDate.now(),
-        OffsetDateTime.now(), LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC), LocalTime.now(), 1)
+        Clock.System.todayAt(TimeZone.UTC), OffsetDateTime.now(), LocalDateTime.now(),
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), LocalTime.now(), 1)
 
 
 data class SqLiteAllTypesNullable(
         val id: String,
         val string: String?,
         val localDate: LocalDate?,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
         val offsetDateTime: OffsetDateTime?,
         val localDateTime: LocalDateTime?,
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime?,
@@ -155,13 +168,14 @@ data class SqLiteAllTypesNullable(
 )
 
 val sqLiteAllTypesNullable = SqLiteAllTypesNullable("def", null, null, null,
-        null, null, null, null)
+        null, null, null, null, null)
 
 
 data class SqLiteAllTypesNullableDefaultValue(
         val id: String,
         val string: String? = null,
         val localDate: LocalDate? = null,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
         val offsetDateTime: OffsetDateTime? = null,
         val localDateTime: LocalDateTime? = null,
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime? = null,
@@ -180,6 +194,19 @@ data class SqLiteLocalDate(
 
 val sqLiteLocalDateWithNullable = SqLiteLocalDate("abc", LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))
 val sqLiteLocalDateWithoutNullable = SqLiteLocalDate("def", LocalDate.of(2019, 11, 6))
+
+data class SqLiteKotlinxLocalDate(
+        val id: String,
+        val localDateNotNull: kotlinx.datetime.LocalDate,
+        val localDateNullable: kotlinx.datetime.LocalDate? = null
+)
+
+val sqLiteKotlinxLocalDateWithNullable = SqLiteKotlinxLocalDate(
+        "abc",
+        kotlinx.datetime.LocalDate(2019, 11, 4),
+        kotlinx.datetime.LocalDate(2018, 11, 4))
+val sqLiteKotlinxLocalDateWithoutNullable = SqLiteKotlinxLocalDate(
+        "def", kotlinx.datetime.LocalDate(2019, 11, 6))
 
 
 data class SqLiteLocalDateTime(

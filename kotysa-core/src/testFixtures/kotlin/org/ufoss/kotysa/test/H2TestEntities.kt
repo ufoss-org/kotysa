@@ -7,6 +7,7 @@ package org.ufoss.kotysa.test
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.util.*
@@ -146,6 +147,7 @@ data class H2AllTypesNotNull(
         val string: String,
         val boolean: Boolean,
         val localDate: LocalDate,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate,
         val offsetDateTime: OffsetDateTime,
         val localTim: LocalTime,
         val localDateTime1: LocalDateTime,
@@ -157,14 +159,16 @@ data class H2AllTypesNotNull(
 )
 
 val h2AllTypesNotNull = H2AllTypesNotNull(UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f"), "",
-        true, LocalDate.now(), OffsetDateTime.now(), LocalTime.now(), LocalDateTime.now(), LocalDateTime.now(),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), UUID.randomUUID(), 1)
+        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), OffsetDateTime.now(), LocalTime.now(),
+        LocalDateTime.now(), LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), UUID.randomUUID(), 1)
 
 
 data class H2AllTypesNullable(
         val id: UUID,
         val string: String?,
         val localDate: LocalDate?,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
         val offsetDateTime: OffsetDateTime?,
         val localTim: LocalTime?,
         val localDateTime1: LocalDateTime?,
@@ -175,13 +179,14 @@ data class H2AllTypesNullable(
         val int: Int?
 )
 
-val h2AllTypesNullable = H2AllTypesNullable(UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691a4e"), null,
+val h2AllTypesNullable = H2AllTypesNullable(UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691a4e"), null, null,
         null, null, null, null, null, null, null, null, null)
 
 
 data class H2AllTypesNullableDefaultValue(
         val string: String? = null,
         val localDate: LocalDate? = null,
+        val LocalDate: kotlinx.datetime.LocalDate? = null,
         val offsetDateTime: OffsetDateTime? = null,
         val localTim: LocalTime? = null,
         val localDateTime1: LocalDateTime? = null,
@@ -214,6 +219,16 @@ data class H2LocalDate(
 
 val h2LocalDateWithNullable = H2LocalDate(LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))
 val h2LocalDateWithoutNullable = H2LocalDate(LocalDate.of(2019, 11, 6))
+
+data class H2KotlinxLocalDate(
+        val localDateNotNull: kotlinx.datetime.LocalDate,
+        val localDateNullable: kotlinx.datetime.LocalDate? = null,
+        val id: UUID = UUID.randomUUID()
+)
+
+val h2KotlinxLocalDateWithNullable = H2KotlinxLocalDate(kotlinx.datetime.LocalDate(2019, 11, 4),
+        kotlinx.datetime.LocalDate(2018, 11, 4))
+val h2KotlinxLocalDateWithoutNullable = H2KotlinxLocalDate(kotlinx.datetime.LocalDate(2019, 11, 6))
 
 
 data class H2LocalDateTime(

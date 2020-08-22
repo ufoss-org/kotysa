@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 import org.assertj.core.api.Assertions.assertThat
@@ -37,6 +38,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                         sqLiteAllTypesNullableDefaultValue.id,
                         "default",
                         LocalDate.MAX,
+                        kotlinx.datetime.LocalDate(2019, 11, 6),
                         OffsetDateTime.MAX,
                         LocalDateTime.MAX,
                         kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0),
@@ -55,21 +57,24 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
     @Test
     fun `Verify updateAll works`() {
         val newLocalDate = LocalDate.now()
+        val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newOffsetDateTime, newLocalTime,
-                newLocalDateTime, newKotlinxLocalDateTime, newInt)
+        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
+                newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
         assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
-                        SqLiteAllTypesNotNull(sqLiteAllTypesNotNull.id, "new", false, newLocalDate, newOffsetDateTime,
-                                newLocalDateTime, newKotlinxLocalDateTime, newLocalTime, newInt))
+                        SqLiteAllTypesNotNull(sqLiteAllTypesNotNull.id, "new", false, newLocalDate,
+                                newKotlinxLocalDate, newOffsetDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                                newLocalTime, newInt))
         repository.updateAllTypesNotNull(sqLiteAllTypesNotNull.string, sqLiteAllTypesNotNull.boolean,
-                sqLiteAllTypesNotNull.localDate, sqLiteAllTypesNotNull.offsetDateTime, sqLiteAllTypesNotNull.localTime,
-                sqLiteAllTypesNotNull.localDateTime, sqLiteAllTypesNotNull.kotlinxLocalDateTime, sqLiteAllTypesNotNull.int)
+                sqLiteAllTypesNotNull.localDate, sqLiteAllTypesNotNull.kotlinxLocalDate, sqLiteAllTypesNotNull.offsetDateTime,
+                sqLiteAllTypesNotNull.localTime, sqLiteAllTypesNotNull.localDateTime, sqLiteAllTypesNotNull.kotlinxLocalDateTime,
+                sqLiteAllTypesNotNull.int)
     }
 }
 
@@ -108,12 +113,13 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
     fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<SqLiteAllTypesNullableDefaultValue>()
 
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-                              newOffsetDateTime: OffsetDateTime, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
-                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
+                              newKotlinxLocalDate: kotlinx.datetime.LocalDate, newOffsetDateTime: OffsetDateTime, newLocalTime: LocalTime,
+                              newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
             sqlClient.updateTable<SqLiteAllTypesNotNull>()
                     .set { it[SqLiteAllTypesNotNull::string] = newString }
                     .set { it[SqLiteAllTypesNotNull::boolean] = newBoolean }
                     .set { it[SqLiteAllTypesNotNull::localDate] = newLocalDate }
+                    .set { it[SqLiteAllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
                     .set { it[SqLiteAllTypesNotNull::offsetDateTime] = newOffsetDateTime }
                     .set { it[SqLiteAllTypesNotNull::localTime] = newLocalTime }
                     .set { it[SqLiteAllTypesNotNull::localDateTime] = newLocalDateTime }
