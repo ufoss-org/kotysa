@@ -1,5 +1,6 @@
 [![License: Unlicense](https://img.shields.io/badge/license-Unlicense-blue.svg)](http://unlicense.org/)
 [![Download](https://api.bintray.com/packages/ufoss/ufoss/kotysa/images/download.svg) ](https://bintray.com/ufoss/ufoss/kotysa/_latestVersion)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.4.0-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 # Kotysa
 
