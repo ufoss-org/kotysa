@@ -33,7 +33,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: JdbcTemplate,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -48,7 +48,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Join<T>, BlockingSqlClientDeleteOrUpdate.Join, Return<T> {
@@ -59,7 +59,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T>, BlockingSqlClientDeleteOrUpdate.Where, Return<T> {
@@ -75,7 +75,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class TypedWhere<T : Any> internal constructor(
+    private class TypedWhere<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, BlockingSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
@@ -101,13 +101,17 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
         override fun execute() = with(properties) {
             require(setValues.isNotEmpty()) { "At least one value must be set in Update" }
 
-            val argsCollection = setValues.values
-            argsCollection.addAll(
-                    whereClauses
-                            .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-            )
+            val args = with(mutableListOf<Any?>()) {
+                // 1) add all values from set part
+                addAll(setValues.values)
+                // 2) add all values from where part
+                addAll(whereClauses
+                        .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                )
+                map { arg -> tables.getDbValue(arg) }
+            }
 
-            client.update(updateTableSql(), *argsCollection.toTypedArray())
+            client.update(updateTableSql(), *args.toTypedArray())
         }
     }
 }

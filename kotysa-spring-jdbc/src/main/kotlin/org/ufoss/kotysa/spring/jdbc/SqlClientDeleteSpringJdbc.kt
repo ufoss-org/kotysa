@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 
 internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
-    internal class Delete<T : Any> internal constructor(
+    internal class Delete<T : Any>(
             override val client: JdbcTemplate,
             override val tables: Tables,
             override val tableClass: KClass<T>
@@ -27,7 +27,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: JdbcTemplate,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -42,7 +42,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Join<T>, BlockingSqlClientDeleteOrUpdate.Join, Return<T> {
@@ -53,7 +53,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T>, BlockingSqlClientDeleteOrUpdate.Where, Return<T> {
@@ -69,7 +69,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class TypedWhere<T : Any> internal constructor(
+    private class TypedWhere<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, BlockingSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
@@ -91,7 +91,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         override fun execute() = with(properties) {
             client.update(deleteFromTableSql(),
                     *whereClauses
-                            .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                            .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
                             .toTypedArray()
             )
         }

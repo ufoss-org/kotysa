@@ -34,7 +34,7 @@ internal class SqlClientSpringJdbc(
                             column.entityGetter(row) == null
                                     && (column.defaultValue != null || SqlType.SERIAL == column.sqlType)
                         }
-                        .map { column -> column.entityGetter(row) }
+                        .map { column -> tables.getDbValue(column.entityGetter(row)) }
                         .toTypedArray()
         )
     }

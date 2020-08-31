@@ -4,6 +4,10 @@
 
 package org.ufoss.kotysa
 
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 import kotlin.reflect.KClass
 
 /**
@@ -53,4 +57,22 @@ public class Tables internal constructor(
         public val allTables: Map<KClass<*>, Table<*>>,
         internal val allColumns: Map<out (Any) -> Any?, Column<*, *>>,
         internal val dbType: DbType
-)
+) {
+    public fun <T> getDbValue(value: T): Any? =
+            if (value != null) {
+                when (value) {
+                    is kotlinx.datetime.LocalDate -> value.toJavaLocalDate()
+                    is kotlinx.datetime.LocalDateTime -> value.toJavaLocalDateTime()
+                    is LocalTime ->
+                        if (this.dbType == DbType.POSTGRESQL) {
+                            // PostgreSQL does not support nanoseconds
+                            value.truncatedTo(ChronoUnit.SECONDS)
+                        } else {
+                            value
+                        }
+                    else -> value
+                }
+            } else {
+                value
+            }
+}

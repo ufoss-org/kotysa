@@ -9,7 +9,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
-import org.springframework.fu.kofu.r2dbc.r2dbcPostgresql
+import org.springframework.fu.kofu.jdbc.jdbc
 import org.testcontainers.containers.PostgreSQLContainer
 import org.ufoss.kotysa.test.Repository
 
@@ -36,8 +36,8 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> {
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
             }
-            r2dbcPostgresql {
-                port = postgresqlContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)
+            jdbc {
+                url = "jdbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
             }
         }.run()
     }

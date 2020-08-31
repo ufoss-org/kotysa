@@ -28,7 +28,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 Joinable(client, properties, joinClass, alias, type)
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: SQLiteDatabase,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -43,7 +43,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, BlockingSqlClientSelect.Join<T>, Whereable<T>, Return<T>
@@ -58,7 +58,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, BlockingSqlClientSelect.Where<T>, Return<T> {
@@ -135,7 +135,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             client.rawQuery(selectSql(), whereParams)
         }
 
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         private class SqLiteRow(
                 private val sqLiteCursor: Cursor,
                 fieldIndexMap: Map<Field, Int>

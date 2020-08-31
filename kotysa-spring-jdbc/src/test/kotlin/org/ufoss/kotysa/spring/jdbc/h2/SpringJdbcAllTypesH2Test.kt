@@ -4,6 +4,10 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcTemplate
@@ -32,10 +36,13 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                 .containsExactly(H2AllTypesNullableDefaultValue(
                         "default",
                         LocalDate.MAX,
+                        kotlinx.datetime.LocalDate(2019, 11, 6),
                         OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
                         LocalTime.MAX,
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         LocalDateTime.of(2019, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         UUID.fromString(defaultUuid),
                         42,
                         h2AllTypesNullableDefaultValue.id
@@ -52,21 +59,25 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
     @Test
     fun `Verify updateAll works`() {
         val newLocalDate = LocalDate.now()
+        val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()
+        val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newOffsetDateTime, newLocalTime,
-                newLocalDateTime, newLocalDateTime, newUuid, newInt)
+        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate, newOffsetDateTime, newLocalTime,
+                newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newUuid, newInt)
         assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
-                        H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate, newOffsetDateTime,
-                                newLocalTime, newLocalDateTime, newLocalDateTime, newUuid, newInt))
+                        H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                                newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                                newKotlinxLocalDateTime, newUuid, newInt))
         repository.updateAllTypesNotNull(h2AllTypesNotNull.string, h2AllTypesNotNull.boolean, h2AllTypesNotNull.localDate,
-                h2AllTypesNotNull.offsetDateTime, h2AllTypesNotNull.localTim, h2AllTypesNotNull.localDateTime1,
-                h2AllTypesNotNull.localDateTime2, h2AllTypesNotNull.uuid, h2AllTypesNotNull.int)
+                h2AllTypesNotNull.kotlinxLocalDate, h2AllTypesNotNull.offsetDateTime, h2AllTypesNotNull.localTim,
+                h2AllTypesNotNull.localDateTime1, h2AllTypesNotNull.localDateTime2, h2AllTypesNotNull.kotlinxLocalDateTime1,
+                h2AllTypesNotNull.kotlinxLocalDateTime2, h2AllTypesNotNull.uuid, h2AllTypesNotNull.int)
     }
 }
 
@@ -103,17 +114,21 @@ class AllTypesRepositoryH2(client: JdbcTemplate) : Repository {
 
     fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<H2AllTypesNullableDefaultValue>()
 
-    fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
+    fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate, newKotlinxLocalDate: kotlinx.datetime.LocalDate,
                               newOffsetDateTime: OffsetDateTime, newLocalTim: LocalTime, newLocalDateTime1: LocalDateTime,
-                              newLocalDateTime2: LocalDateTime, newUuid: UUID, newInt: Int) =
+                              newLocalDateTime2: LocalDateTime, newKotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+                              newKotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime, newUuid: UUID, newInt: Int) =
             sqlClient.updateTable<H2AllTypesNotNull>()
                     .set { it[H2AllTypesNotNull::string] = newString }
                     .set { it[H2AllTypesNotNull::boolean] = newBoolean }
                     .set { it[H2AllTypesNotNull::localDate] = newLocalDate }
+                    .set { it[H2AllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
                     .set { it[H2AllTypesNotNull::offsetDateTime] = newOffsetDateTime }
                     .set { it[H2AllTypesNotNull::localTim] = newLocalTim }
                     .set { it[H2AllTypesNotNull::localDateTime1] = newLocalDateTime1 }
                     .set { it[H2AllTypesNotNull::localDateTime2] = newLocalDateTime2 }
+                    .set { it[H2AllTypesNotNull::kotlinxLocalDateTime1] = newKotlinxLocalDateTime1 }
+                    .set { it[H2AllTypesNotNull::kotlinxLocalDateTime2] = newKotlinxLocalDateTime2 }
                     .set { it[H2AllTypesNotNull::uuid] = newUuid }
                     .set { it[H2AllTypesNotNull::int] = newInt }
                     .where { it[H2AllTypesNotNull::id] eq h2AllTypesNotNull.id }

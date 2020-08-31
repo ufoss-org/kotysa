@@ -44,5 +44,5 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcTemplate) : Reposi
     fun selectFirstByFirstame(firstname: String) =
             sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
-            .fetchFirst()
+            .fetchFirstOrNull()
 }

@@ -4,11 +4,16 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
+import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toKotlinLocalDateTime
+import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.query
 import org.ufoss.kotysa.*
 import java.sql.ResultSet
+import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 
@@ -26,7 +31,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 Joinable(client, properties, joinClass, alias, type)
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: JdbcTemplate,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -41,7 +46,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, BlockingSqlClientSelect.Join<T>, Whereable<T>, Return<T>
@@ -56,7 +61,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any> constructor(
             override val client: JdbcTemplate,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, BlockingSqlClientSelect.Where<T>, Return<T> {
@@ -75,47 +80,57 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, BlockingSqlClientSelect.Return<T> {
         val client: JdbcTemplate
 
-        override fun fetchOne() = with(properties) {
+        override fun fetchOne() = fetchOneOrNull() ?: throw NoResultException()
+
+        override fun fetchOneOrNull(): T? = with(properties) {
             val rowMapper = RowMapper { rs, _ ->
                 val row = JdbcRow(rs, selectInformation.fieldIndexMap)
                 selectInformation.select(row, row)
             }
 
-            client.queryForObject(selectSql(),
-                    rowMapper,
-                    *whereClauses
-                            .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                            .toTypedArray()
-            ) as T
+            val args = whereClauses
+                    .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                    .toTypedArray()
+
+            try {
+                client.queryForObject(selectSql(), rowMapper, *args)
+            } catch (_: IncorrectResultSizeDataAccessException) {
+                throw NonUniqueResultException()
+            }
         }
 
-        override fun fetchOneOrNull(): T? {
-            TODO("Not yet implemented")
+        override fun fetchFirst() = with(fetchAll()) {
+            if (isEmpty()) {
+                throw NoResultException()
+            }
+            this[0]
         }
 
-        override fun fetchFirst() =
-                fetchAll().first()
-
-        override fun fetchFirstOrNull() =
-                fetchAll().firstOrNull()
+        override fun fetchFirstOrNull() = fetchAll().firstOrNull()
 
         override fun fetchAll() = with(properties) {
-            client.query(selectSql(),
-                    *whereClauses
-                            .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                            .toTypedArray()
-            ) { rs, _ ->
+            val args = whereClauses
+                    .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
+
+            client.query(selectSql(), *args.toTypedArray()) { rs, _ ->
                 val row = JdbcRow(rs, selectInformation.fieldIndexMap)
                 selectInformation.select(row, row)
             }
         }
 
-        @Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         private class JdbcRow(
                 private val rs: ResultSet,
                 fieldIndexMap: Map<Field, Int>
         ) : AbstractRow(fieldIndexMap) {
-            override fun <T> get(index: Int, type: Class<T>) = rs.getObject(index, type) as T
+            override fun <T> get(index: Int, type: Class<T>) =
+                    when {
+                        kotlinx.datetime.LocalDate::class.java.isAssignableFrom(type) ->
+                            rs.getObject(index + 1, LocalDate::class.java)?.toKotlinLocalDate()
+                        kotlinx.datetime.LocalDateTime::class.java.isAssignableFrom(type) ->
+                            rs.getObject(index + 1, LocalDateTime::class.java)?.toKotlinLocalDateTime()
+                        else -> rs.getObject(index + 1, type)
+                    } as T
         }
     }
 }

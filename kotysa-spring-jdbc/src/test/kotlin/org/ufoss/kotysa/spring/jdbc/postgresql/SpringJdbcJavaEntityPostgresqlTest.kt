@@ -137,7 +137,7 @@ class JavaUserPostgresqlRepository(client: JdbcTemplate) : Repository {
 
     fun selectFirstByFirstame(firstname: String) = sqlClient.select<JavaUser>()
             .where { it[JavaUser::getFirstname] eq firstname }
-            .fetchFirst()
+            .fetchFirstOrNull()
 
     fun selectByAlias1(alias: String?) = sqlClient.select<JavaUser>()
             .where { it[JavaUser::getAlias1] eq alias }

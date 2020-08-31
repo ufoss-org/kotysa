@@ -58,31 +58,31 @@ public abstract class BlockingSqlClient {
 
 
 public class BlockingSqlClientSelect private constructor() {
-    public abstract class Select<T : Any> : BlockingSqlClientSelect.Whereable<T>, BlockingSqlClientSelect.Return<T> {
+    public abstract class Select<T : Any> : Whereable<T>, Return<T> {
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): BlockingSqlClientSelect.Joinable<T> =
+        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
 
         @PublishedApi
         internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
                 join(joinClass, alias, type)
 
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): BlockingSqlClientSelect.Joinable<T>
+        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>
     }
 
     public interface Joinable<T : Any> {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): BlockingSqlClientSelect.Join<T>
+        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join<T>
     }
 
-    public interface Join<T : Any> : BlockingSqlClientSelect.Whereable<T>, BlockingSqlClientSelect.Return<T>
+    public interface Join<T : Any> : Whereable<T>, Return<T>
 
     public interface Whereable<T : Any> {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T>
+        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
     }
 
-    public interface Where<T : Any> : BlockingSqlClientSelect.Return<T> {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T>
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T>
+    public interface Where<T : Any> : Return<T> {
+        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
     }
 
     public interface Return<T : Any> {
@@ -122,40 +122,40 @@ public class BlockingSqlClientSelect private constructor() {
 
 
 public class BlockingSqlClientDeleteOrUpdate private constructor() {
-    public abstract class DeleteOrUpdate<T : Any> : BlockingSqlClientDeleteOrUpdate.Return {
+    public abstract class DeleteOrUpdate<T : Any> : Return {
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): BlockingSqlClientDeleteOrUpdate.Joinable =
+        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable =
                 joinInternal(U::class, alias, JoinType.INNER)
 
         @PublishedApi
         internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
                 join(joinClass, alias, type)
 
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): BlockingSqlClientDeleteOrUpdate.Joinable
+        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable
 
-        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): BlockingSqlClientDeleteOrUpdate.TypedWhere<T>
+        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
     }
 
     public abstract class Update<T : Any> : BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
-        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): BlockingSqlClientDeleteOrUpdate.Update<T>
+        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
     }
 
     public interface Joinable {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): BlockingSqlClientDeleteOrUpdate.Join
+        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
     }
 
-    public interface Join : BlockingSqlClientDeleteOrUpdate.Return {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where
+    public interface Join : Return {
+        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
     }
 
-    public interface Where : BlockingSqlClientDeleteOrUpdate.Return {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where
+    public interface Where : Return {
+        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
+        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
     }
 
-    public interface TypedWhere<T : Any> : BlockingSqlClientDeleteOrUpdate.Return {
-        public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): BlockingSqlClientDeleteOrUpdate.TypedWhere<T>
-        public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): BlockingSqlClientDeleteOrUpdate.TypedWhere<T>
+    public interface TypedWhere<T : Any> : Return {
+        public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
+        public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
     }
 
     public interface Return {
