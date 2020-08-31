@@ -66,8 +66,9 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate, newOffsetDateTime, newLocalTime,
-                newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newUuid, newInt)
+        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
+                newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                newKotlinxLocalDateTime, newUuid, newInt)
         assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(

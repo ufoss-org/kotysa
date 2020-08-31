@@ -35,7 +35,7 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                     executeSpec.bindNull(index++, (column.entityGetter.toCallable().returnType.classifier as KClass<*>).java)
                 }
             } else {
-                executeSpec.bind(index++, value)
+                executeSpec.bind(index++, tables.getDbValue(value)!!)
             }
         }
         return executeSpec

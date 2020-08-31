@@ -9,7 +9,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
-import org.springframework.fu.kofu.r2dbc.r2dbcPostgresql
+import org.springframework.fu.kofu.r2dbc.r2dbc
 import org.testcontainers.containers.PostgreSQLContainer
 import org.ufoss.kotysa.test.Repository
 
@@ -23,7 +23,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
     protected inline fun <reified U : Repository> startContext(): ConfigurableApplicationContext {
         // PostgreSQL testcontainers must be started first to get random Docker mapped port
         val postgresqlContainer = KPostgreSQLContainer()
-                .withDatabaseName("postgres")
+                .withDatabaseName("db")
                 .withUsername("postgres")
                 .withPassword("")
         postgresqlContainer.start()
@@ -36,8 +36,9 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
             }
-            r2dbcPostgresql {
-                port = postgresqlContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)
+            r2dbc {
+                url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
+                username = "postgres"
             }
         }.run()
     }

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
-import org.springframework.fu.kofu.r2dbc.r2dbcH2
+import org.springframework.fu.kofu.r2dbc.r2dbc
 
 
 abstract class AbstractR2dbcH2Test<T : Repository> {
@@ -25,7 +25,9 @@ abstract class AbstractR2dbcH2Test<T : Repository> {
                 listener<ApplicationReadyEvent> {
                     ref<U>().init()
                 }
-                r2dbcH2()
+                r2dbc {
+                    url = "r2dbc:h2:mem:///testdb"
+                }
             }.run()
 
     protected abstract val context: ConfigurableApplicationContext
