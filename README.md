@@ -78,9 +78,9 @@ See sample projects [here](samples).
 ## Build from sources
 
 * Clone Kotysa repository
-* Use a JDK 1.8
+* Use a JDK 11
 * You need a local docker, like docker-ce. Some integration tests use testcontainers to start real databases like PostgreSQL
-* Kotysa can be easily built with the gradle wrapper
+* Build Kotysa using gradle
 
 ```bash
  $ ./gradlew clean buildNeeded

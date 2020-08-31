@@ -50,11 +50,12 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     jacoco {
-        toolVersion = "0.8.5"
+        toolVersion = '0.8.5'
     }
 
     tasks.withType(Test) {
         jacoco.includeNoLocationClasses = true
+        jacoco.excludes = ['jdk.internal.*']
     }
 
     jacocoTestReport {
@@ -137,6 +138,6 @@ task build {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '6.6'
+    gradleVersion = '6.6.1'
     distributionType = Wrapper.DistributionType.ALL
 }
