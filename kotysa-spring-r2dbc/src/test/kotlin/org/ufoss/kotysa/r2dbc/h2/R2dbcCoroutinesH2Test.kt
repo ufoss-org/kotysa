@@ -10,11 +10,10 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.test.*
 
 
@@ -102,9 +101,7 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
 }
 
 
-class CoroutinesUserH2Repository(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.coSqlClient(h2Tables)
+class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

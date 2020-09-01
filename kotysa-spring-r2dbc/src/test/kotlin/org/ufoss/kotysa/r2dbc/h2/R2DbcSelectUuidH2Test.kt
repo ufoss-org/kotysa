@@ -6,9 +6,7 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import java.util.*
 
@@ -60,9 +58,7 @@ class R2DbcSelectUuidH2Test : AbstractR2dbcH2Test<UuidRepositoryH2Select>() {
 }
 
 
-class UuidRepositoryH2Select(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(h2Tables)
+class UuidRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

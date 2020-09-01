@@ -84,7 +84,10 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
 }
 
 
-class AllTypesRepositoryH2(private val sqlClient: ReactorSqlClient, private val transactionalOp: ReactorTransactionalOp) : Repository {
+class AllTypesRepositoryH2(
+        private val sqlClient: ReactorSqlClient,
+        private val transactionalOp: ReactorTransactionalOp
+) : Repository {
 
     override fun init() {
         createTables()

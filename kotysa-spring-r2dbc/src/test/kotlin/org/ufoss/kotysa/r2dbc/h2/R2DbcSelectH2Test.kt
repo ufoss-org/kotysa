@@ -7,9 +7,10 @@ package org.ufoss.kotysa.r2dbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.count
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.test.*
 
 
@@ -64,7 +65,10 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
 }
 
 
-class UserRepositoryH2Select(dbClient: DatabaseClient) : AbstractUserRepositoryH2(dbClient) {
+class UserRepositoryH2Select(
+        sqlClient: ReactorSqlClient,
+        transactionalOp: ReactorTransactionalOp
+) : AbstractUserRepositoryH2(sqlClient, transactionalOp) {
 
     fun countAllUsers() = sqlClient.countAll<H2User>()
 

@@ -4,20 +4,23 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.test.*
 
 
-abstract class AbstractUserRepositoryH2(dbClient: DatabaseClient) : Repository {
-
-    protected val sqlClient = dbClient.sqlClient(h2Tables)
+abstract class AbstractUserRepositoryH2(
+        protected val sqlClient: ReactorSqlClient,
+        private val transactionalOp: ReactorTransactionalOp
+) : Repository {
 
     override fun init() {
         createTables()
                 .then(insertRoles())
                 .then(insertUsers())
+                // another option would be to plug in SingleConnectionFactory somehow
+                // because in memory (serverless) h2 databases don't seem to be shared between connections
+                .`as`(transactionalOp::transactional)
                 .block()
     }
 

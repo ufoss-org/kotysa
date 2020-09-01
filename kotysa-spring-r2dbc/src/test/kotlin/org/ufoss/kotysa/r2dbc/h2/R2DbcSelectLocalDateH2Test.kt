@@ -6,13 +6,11 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2LocalDate
+import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.h2LocalDateWithNullable
 import org.ufoss.kotysa.test.h2LocalDateWithoutNullable
-import org.ufoss.kotysa.test.h2Tables
 import java.time.LocalDate
 
 
@@ -172,9 +170,7 @@ class R2DbcSelectLocalDateH2Test : AbstractR2dbcH2Test<LocalDateRepositoryH2Sele
 }
 
 
-class LocalDateRepositoryH2Select(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(h2Tables)
+class LocalDateRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

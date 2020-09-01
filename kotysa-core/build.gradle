@@ -29,7 +29,7 @@ dependencies {
 
 compileTestFixturesKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjvm-default=all']
+        freeCompilerArgs = ['-Xjvm-default=enable']
         jvmTarget = '1.8'
     }
 }
