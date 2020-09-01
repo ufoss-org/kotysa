@@ -10,10 +10,9 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.transaction.reactive.TransactionalOperator
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
@@ -85,16 +84,14 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
 }
 
 
-class AllTypesRepositoryH2(dbClient: DatabaseClient, private val transactionalOperator: TransactionalOperator) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(h2Tables)
+class AllTypesRepositoryH2(private val sqlClient: ReactorSqlClient, private val transactionalOp: ReactorTransactionalOp) : Repository {
 
     override fun init() {
         createTables()
                 .then(insertAllTypes())
                 // another option would be to plug in SingleConnectionFactory somehow
                 // because in memory (serverless) h2 databases don't seem to be shared between connections
-                .`as`(transactionalOperator::transactional)
+                .`as`(transactionalOp::transactional)
                 .block()
     }
 

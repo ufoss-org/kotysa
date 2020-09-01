@@ -2,11 +2,9 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc
+package org.ufoss.kotysa
 
-
-// todo put in kotysa-core
-public interface TransactionStatus {
+public interface Transaction {
 
     public fun isNewTransaction(): Boolean
 
