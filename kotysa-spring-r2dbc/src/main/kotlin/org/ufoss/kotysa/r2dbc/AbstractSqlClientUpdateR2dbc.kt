@@ -24,9 +24,10 @@ internal abstract class AbstractSqlClientUpdateR2dbc protected constructor() : D
             var index = 0
             setValues.forEach { (column, value) ->
                 executeSpec = if (value == null) {
-                    executeSpec.bindNull(index, (column.entityGetter.toCallable().returnType.classifier as KClass<*>).java)
+                    executeSpec.bindNull(index,
+                            (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
                 } else {
-                    executeSpec.bind(index, value)
+                    executeSpec.bind(index, tables.getDbValue(value)!!)
                 }
                 index++
             }
@@ -34,7 +35,7 @@ internal abstract class AbstractSqlClientUpdateR2dbc protected constructor() : D
             whereClauses
                     .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
                     .forEach { value ->
-                        executeSpec = executeSpec.bind(index, value)
+                        executeSpec = executeSpec.bind(index, tables.getDbValue(value)!!)
                         index++
                     }
 

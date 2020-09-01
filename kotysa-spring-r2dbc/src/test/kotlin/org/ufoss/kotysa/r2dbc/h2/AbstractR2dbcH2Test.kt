@@ -26,7 +26,8 @@ abstract class AbstractR2dbcH2Test<T : Repository> {
                     ref<U>().init()
                 }
                 r2dbc {
-                    url = "r2dbc:h2:mem:///testdb"
+                    url = "r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
+                    transactional = true
                 }
             }.run()
 

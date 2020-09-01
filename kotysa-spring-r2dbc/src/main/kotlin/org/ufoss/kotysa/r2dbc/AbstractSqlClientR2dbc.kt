@@ -9,6 +9,8 @@ import org.ufoss.kotysa.DefaultSqlClient
 import org.ufoss.kotysa.SqlType
 import org.ufoss.kotysa.getTable
 import org.ufoss.kotysa.toCallable
+import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 /**
@@ -32,7 +34,8 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                 if (column.defaultValue != null || SqlType.SERIAL == column.sqlType) {
                     executeSpec
                 } else {
-                    executeSpec.bindNull(index++, (column.entityGetter.toCallable().returnType.classifier as KClass<*>).java)
+                    executeSpec.bindNull(index++,
+                            (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
                 }
             } else {
                 executeSpec.bind(index++, tables.getDbValue(value)!!)
@@ -41,3 +44,10 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
         return executeSpec
     }
 }
+
+internal fun KClass<*>.toDbClass() =
+        when (this) {
+            kotlinx.datetime.LocalDate::class -> LocalDate::class
+            kotlinx.datetime.LocalDateTime::class -> LocalDateTime::class
+            else -> this
+        }
