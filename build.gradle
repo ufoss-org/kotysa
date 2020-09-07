@@ -75,7 +75,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     dokkaHtml {
-        outputDirectory = "$buildDir/javadoc"
+        outputDirectory = new File("$buildDir/javadoc")
 
         dokkaSourceSets {
             configureEach {
