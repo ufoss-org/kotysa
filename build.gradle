@@ -74,12 +74,12 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         withSourcesJar()
     }
 
-    dokkaHtml {
-        outputDirectory = new File("$buildDir/javadoc")
+    tasks.dokkaHtml.configure {
+        outputDirectory.set(file("$buildDir/javadoc"))
 
         dokkaSourceSets {
             configureEach {
-                jdkVersion = 8
+                jdkVersion.set(8)
             }
         }
     }

@@ -47,10 +47,12 @@ compileTestKotlin {
     }
 }
 
-//dokka {
-//    configuration {
-//        externalDocumentationLink {
-//            url = new URL("https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/api/")
-//        }
-//    }
-//}
+tasks.dokkaHtml.configure {
+    dokkaSourceSets {
+        configureEach {
+            externalDocumentationLink {
+                url.set(URL("https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/api/"))
+            }
+        }
+    }
+}
