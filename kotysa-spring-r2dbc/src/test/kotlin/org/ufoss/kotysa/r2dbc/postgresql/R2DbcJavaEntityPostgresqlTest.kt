@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
@@ -19,7 +19,7 @@ class R2DbcJavaEntityPostgresqlTest : AbstractR2dbcPostgresqlTest<JavaUserPostgr
     override val context = startContext<JavaUserPostgresqlRepository>()
 
     override val repository = getContextRepository<JavaUserPostgresqlRepository>()
-    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify selectAll returns all users`() {
@@ -93,7 +93,7 @@ class R2DbcJavaEntityPostgresqlTest : AbstractR2dbcPostgresqlTest<JavaUserPostgr
 
     @Test
     fun `Verify deleteAll works correctly`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAll()
                     .doOnNext { n -> assertThat(n).isEqualTo(2) }

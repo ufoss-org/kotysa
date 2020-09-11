@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.util.*
@@ -18,11 +18,11 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     override val context = startContext<UserRepositoryPostgresqlUpdateDelete>()
 
     override val repository = getContextRepository<UserRepositoryPostgresqlUpdateDelete>()
-    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAllFromUsers()
                     .doOnNext { n -> assertThat(n).isEqualTo(2) }
@@ -33,7 +33,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
     @Test
     fun `Verify deleteUserById works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserById(postgresqlJdoe.id)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -45,7 +45,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserWithJoin(postgresqlUser.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -57,7 +57,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
     @Test
     fun `Verify updateLastname works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -69,7 +69,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
     @Test
     fun `Verify updateWithJoin works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", postgresqlUser.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }

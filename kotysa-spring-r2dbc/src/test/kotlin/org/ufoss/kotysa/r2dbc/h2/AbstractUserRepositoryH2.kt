@@ -5,13 +5,14 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactional
 import org.ufoss.kotysa.test.*
 
 
 abstract class AbstractUserRepositoryH2(
         protected val sqlClient: ReactorSqlClient,
-        private val transactionalOp: ReactorTransactionalOp
+        private val operator: ReactorTransactionalOp
 ) : Repository {
 
     override fun init() {
@@ -20,7 +21,7 @@ abstract class AbstractUserRepositoryH2(
                 .then(insertUsers())
                 // another option would be to plug in SingleConnectionFactory somehow
                 // because in memory (serverless) h2 databases don't seem to be shared between connections
-                .`as`(transactionalOp::transactional)
+                .transactional(operator)
                 .block()
     }
 

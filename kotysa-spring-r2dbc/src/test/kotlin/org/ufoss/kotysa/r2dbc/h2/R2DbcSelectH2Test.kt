@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.count
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.test.*
 
 
@@ -67,8 +67,8 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
 
 class UserRepositoryH2Select(
         sqlClient: ReactorSqlClient,
-        transactionalOp: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, transactionalOp) {
+        operator: ReactorTransactionalOp
+) : AbstractUserRepositoryH2(sqlClient, operator) {
 
     fun countAllUsers() = sqlClient.countAll<H2User>()
 

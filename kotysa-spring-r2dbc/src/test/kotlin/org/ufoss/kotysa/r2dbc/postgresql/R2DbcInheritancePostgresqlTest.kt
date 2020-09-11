@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
@@ -19,7 +19,7 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
     override val context = startContext<InheritancePostgresqlRepository>()
 
     override val repository = getContextRepository<InheritancePostgresqlRepository>()
-    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
@@ -41,7 +41,7 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteById<Inherited>("id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }

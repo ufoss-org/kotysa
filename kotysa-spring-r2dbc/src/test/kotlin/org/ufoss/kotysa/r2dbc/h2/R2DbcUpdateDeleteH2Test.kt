@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.util.*
@@ -18,11 +18,11 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
     override val context = startContext<UserRepositoryH2UpdateDelete>()
 
     override val repository = getContextRepository<UserRepositoryH2UpdateDelete>()
-    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAllFromUsers()
                     .doOnNext { n -> assertThat(n).isEqualTo(2) }
@@ -33,7 +33,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify deleteUserById works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserById(h2Jdoe.id)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -45,7 +45,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserWithJoin(h2User.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -57,7 +57,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateLastname works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -69,7 +69,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateWithJoin works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", h2User.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -81,7 +81,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateAlias works`() {
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateAlias("TheBigBoss")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -99,8 +99,8 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
 class UserRepositoryH2UpdateDelete(
         sqlClient: ReactorSqlClient,
-        transactionalOp: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, transactionalOp) {
+        operator: ReactorTransactionalOp
+) : AbstractUserRepositoryH2(sqlClient, operator) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<H2User>()
             .where { it[H2User::id] eq id }

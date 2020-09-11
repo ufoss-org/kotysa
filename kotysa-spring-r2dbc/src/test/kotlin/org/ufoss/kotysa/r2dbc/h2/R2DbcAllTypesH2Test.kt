@@ -12,7 +12,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactional
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
@@ -23,7 +24,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     override val context = startContext<AllTypesRepositoryH2>()
 
     override val repository = getContextRepository<AllTypesRepositoryH2>()
-    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -69,7 +70,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        transactionalOp.execute { transaction ->
+        operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
                     newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
@@ -87,7 +88,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
 
 class AllTypesRepositoryH2(
         private val sqlClient: ReactorSqlClient,
-        private val transactionalOp: ReactorTransactionalOp
+        private val operator: ReactorTransactionalOp
 ) : Repository {
 
     override fun init() {
@@ -95,7 +96,7 @@ class AllTypesRepositoryH2(
                 .then(insertAllTypes())
                 // another option would be to plug in SingleConnectionFactory somehow
                 // because in memory (serverless) h2 databases don't seem to be shared between connections
-                .`as`(transactionalOp::transactional)
+                .transactional(operator)
                 .block()
     }
 

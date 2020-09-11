@@ -15,7 +15,8 @@ import org.springframework.transaction.reactive.TransactionalOperator
 import org.testcontainers.containers.PostgreSQLContainer
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.coTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.postgresqlTables
 
@@ -41,6 +42,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
                 bean { ref<DatabaseClient>().sqlClient(postgresqlTables) }
                 bean { ref<DatabaseClient>().coSqlClient(postgresqlTables) }
                 bean { ref<TransactionalOperator>().transactionalOp() }
+                bean { ref<TransactionalOperator>().coTransactionalOp() }
             }
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
