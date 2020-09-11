@@ -6,7 +6,7 @@ package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.PostgresqlUser
 import org.ufoss.kotysa.test.postgresqlBboss
 import org.ufoss.kotysa.test.postgresqlJdoe
@@ -150,7 +150,7 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 }
 
 
-class UserRepositoryPostgresqlSelectString(dbClient: DatabaseClient) : AbstractUserRepositoryPostgresql(dbClient) {
+class UserRepositoryPostgresqlSelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectAllByFirstameNotEq(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] notEq firstname }

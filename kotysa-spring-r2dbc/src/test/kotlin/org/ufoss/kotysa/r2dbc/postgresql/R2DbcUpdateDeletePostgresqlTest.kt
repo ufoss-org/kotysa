@@ -6,8 +6,11 @@ package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.beans.factory.getBean
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.test.*
+import reactor.kotlin.test.test
 import java.util.*
 
 
@@ -15,57 +18,65 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     override val context = startContext<UserRepositoryPostgresqlUpdateDelete>()
 
     override val repository = getContextRepository<UserRepositoryPostgresqlUpdateDelete>()
+    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
-        assertThat(repository.deleteAllFromUsers().block()!!)
-                .isEqualTo(2)
-        assertThat(repository.selectAllUsers().toIterable())
-                .isEmpty()
-        // re-insertUsers users
-        repository.insertUsers().block()
+        transactionalOp.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteAllFromUsers()
+                    .doOnNext { n -> assertThat(n).isEqualTo(2) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .verifyComplete()
     }
 
     @Test
     fun `Verify deleteUserById works`() {
-        assertThat(repository.deleteUserById(postgresqlJdoe.id).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectAllUsers().toIterable())
-                .hasSize(1)
-                .containsOnly(postgresqlBboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe().block()
+        transactionalOp.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteUserById(postgresqlJdoe.id)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .expectNext(postgresqlBboss)
+                .verifyComplete()
     }
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        assertThat(repository.deleteUserWithJoin(postgresqlUser.label).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectAllUsers().toIterable())
-                .hasSize(1)
-                .containsOnly(postgresqlBboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe().block()
+        transactionalOp.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteUserWithJoin(postgresqlUser.label)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .expectNext(postgresqlBboss)
+                .verifyComplete()
     }
 
     @Test
     fun `Verify updateLastname works`() {
-        assertThat(repository.updateLastname("Do").block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname).block())
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(postgresqlJdoe.lastname).block()
+        transactionalOp.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateLastname("Do")
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+        }.test()
+                .expectNextMatches { user -> "Do" == user.lastname }
+                .verifyComplete()
     }
 
     @Test
     fun `Verify updateWithJoin works`() {
-        assertThat(repository.updateWithJoin("Do", postgresqlUser.label).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname).block())
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(postgresqlJdoe.lastname).block()
+        transactionalOp.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateWithJoin("Doee", postgresqlUser.label)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+        }.test()
+                .expectNextMatches { user -> "Doee" == user.lastname }
+                .verifyComplete()
     }
 
     @Test
@@ -85,7 +96,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 }
 
 
-class UserRepositoryPostgresqlUpdateDelete(dbClient: DatabaseClient) : AbstractUserRepositoryPostgresql(dbClient) {
+class UserRepositoryPostgresqlUpdateDelete(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<PostgresqlUser>()
             .where { it[PostgresqlUser::id] eq id }

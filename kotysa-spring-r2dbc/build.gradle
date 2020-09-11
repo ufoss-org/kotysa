@@ -7,6 +7,7 @@ dependencies {
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
     testImplementation platform("io.r2dbc:r2dbc-bom:$r2dbc_bom_version")
     testImplementation platform("org.springframework.data:spring-data-bom:$spring_data_bom_version")
+    testImplementation platform("io.projectreactor:reactor-bom:$reactor_bom_version")
 
     api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
 
@@ -20,6 +21,7 @@ dependencies {
 
     testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
     testImplementation 'org.springframework.data:spring-data-r2dbc'
+    testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'io.r2dbc:r2dbc-h2'
     testImplementation 'io.r2dbc:r2dbc-postgresql'
     testImplementation 'org.testcontainers:postgresql'

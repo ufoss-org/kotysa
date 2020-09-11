@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc
 
+import org.reactivestreams.Publisher
 import org.springframework.transaction.reactive.TransactionalOperator
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -17,7 +18,7 @@ public class ReactorTransactionalOp(private val operator: TransactionalOperator)
 
     public fun <T> transactional(mono: Mono<T>): Mono<T> = operator.transactional(mono)
 
-    public fun <T> execute(block: (ReactorTransaction) -> Flux<T>): Flux<T> =
+    public fun <T> execute(block: (ReactorTransaction) -> Publisher<T>): Flux<T> =
         operator.execute { reactiveTransaction -> block.invoke(ReactorTransaction(reactiveTransaction)) }
 }
 

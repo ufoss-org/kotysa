@@ -6,20 +6,20 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.Entity
-import org.ufoss.kotysa.test.Inherited
-import org.ufoss.kotysa.test.Nameable
-import org.ufoss.kotysa.test.inherited
+import org.ufoss.kotysa.test.*
+import reactor.kotlin.test.test
 
 
 class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
     override val context = startContext<InheritanceH2Repository>()
 
     override val repository = getContextRepository<InheritanceH2Repository>()
+    private val transactionalOp = context.getBean<ReactorTransactionalOp>()
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
@@ -41,12 +41,13 @@ class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        assertThat(repository.deleteById<Inherited>("id").block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectAll().toIterable())
-                .isEmpty()
-        // re-insert
-        repository.insert().block()
+        transactionalOp.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteById<Inherited>("id")
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAll())
+        }.test()
+                .verifyComplete()
     }
 }
 
