@@ -7,8 +7,9 @@ package org.ufoss.kotysa.r2dbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.util.*
@@ -18,7 +19,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
     override val context = startContext<UserRepositoryH2UpdateDelete>()
 
     override val repository = getContextRepository<UserRepositoryH2UpdateDelete>()
-    private val operator = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
@@ -99,8 +100,8 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
 class UserRepositoryH2UpdateDelete(
         sqlClient: ReactorSqlClient,
-        operator: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, operator) {
+        transactionalOperator: TransactionalOperator
+) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<H2User>()
             .where { it[H2User::id] eq id }

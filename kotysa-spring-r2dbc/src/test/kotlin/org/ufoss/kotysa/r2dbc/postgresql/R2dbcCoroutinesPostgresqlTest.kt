@@ -12,10 +12,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.r2dbc.coSqlClient
-import org.ufoss.kotysa.r2dbc.transaction.CoroutinesTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.test.*
 
 
@@ -24,7 +25,7 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcPostgresqlTest<CoroutinesUserPostgres
     override val context = startContext<CoroutinesUserPostgresqlRepository>()
 
     override val repository = getContextRepository<CoroutinesUserPostgresqlRepository>()
-    private val operator = context.getBean<CoroutinesTransactionalOp>()
+    private val operator = context.getBean<TransactionalOperator>().coTransactionalOp()
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {

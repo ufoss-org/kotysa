@@ -6,8 +6,8 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.test.H2User
 import org.ufoss.kotysa.test.h2Bboss
 import org.ufoss.kotysa.test.h2Jdoe
@@ -153,8 +153,8 @@ class R2DbcSelectStringH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectString
 
 class UserRepositoryH2SelectString(
         sqlClient: ReactorSqlClient,
-        operator: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, operator) {
+        transactionalOperator: TransactionalOperator
+) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
 
     fun selectAllByFirstameNotEq(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] notEq firstname }

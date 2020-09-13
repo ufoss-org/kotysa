@@ -7,8 +7,9 @@ package org.ufoss.kotysa.r2dbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.util.*
@@ -18,7 +19,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     override val context = startContext<UserRepositoryPostgresqlUpdateDelete>()
 
     override val repository = getContextRepository<UserRepositoryPostgresqlUpdateDelete>()
-    private val operator = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {

@@ -11,9 +11,11 @@ import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.r2dbc.transaction.transactional
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
@@ -24,7 +26,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     override val context = startContext<AllTypesRepositoryH2>()
 
     override val repository = getContextRepository<AllTypesRepositoryH2>()
-    private val operator = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -88,8 +90,10 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
 
 class AllTypesRepositoryH2(
         private val sqlClient: ReactorSqlClient,
-        private val operator: ReactorTransactionalOp
+        transactionalOperator: TransactionalOperator
 ) : Repository {
+
+    private val operator = transactionalOperator.transactionalOp()
 
     override fun init() {
         createTables()

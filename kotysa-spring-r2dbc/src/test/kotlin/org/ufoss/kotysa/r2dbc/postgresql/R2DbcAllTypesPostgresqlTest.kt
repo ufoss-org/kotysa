@@ -8,8 +8,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
@@ -20,7 +21,7 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
     override val context = startContext<AllTypesRepositoryPostgresql>()
 
     override val repository = getContextRepository<AllTypesRepositoryPostgresql>()
-    private val operator = context.getBean<ReactorTransactionalOp>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
