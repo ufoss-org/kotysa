@@ -39,8 +39,6 @@ abstract class AbstractUserRepositoryH2(
 
     fun insertUsers() = sqlClient.insert(h2Jdoe, h2Bboss)
 
-    fun insertJDoe() = sqlClient.insert(h2Jdoe)
-
     private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<H2Role>()
 
     fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<H2User>()
