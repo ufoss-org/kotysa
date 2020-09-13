@@ -6,8 +6,12 @@ package org.ufoss.kotysa.spring.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.JavaUser
@@ -20,6 +24,8 @@ class SpringJdbcJavaEntityH2Test : AbstractSpringJdbcH2Test<JavaUserH2Repository
     override val context = startContext<JavaUserH2Repository>()
 
     override val repository = getContextRepository<JavaUserH2Repository>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify selectAll returns all users`() {
@@ -93,12 +99,13 @@ class SpringJdbcJavaEntityH2Test : AbstractSpringJdbcH2Test<JavaUserH2Repository
 
     @Test
     fun `Verify deleteAll works correctly`() {
-        assertThat(repository.deleteAll())
-                .isEqualTo(2)
-        assertThat(repository.selectAll())
-                .isEmpty()
-        // re-insert users
-        repository.insert()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteAll())
+                    .isEqualTo(2)
+            assertThat(repository.selectAll())
+                    .isEmpty()
+        }
     }
 }
 

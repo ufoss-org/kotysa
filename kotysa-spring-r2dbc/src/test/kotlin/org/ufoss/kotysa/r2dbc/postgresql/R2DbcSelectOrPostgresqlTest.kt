@@ -6,7 +6,7 @@ package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.PostgresqlRole
 import org.ufoss.kotysa.test.postgresqlAdmin
 import org.ufoss.kotysa.test.postgresqlGod
@@ -26,7 +26,7 @@ class R2DbcSelectOrPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPo
 }
 
 
-class UserRepositoryPostgresqlSelectOr(dbClient: DatabaseClient) : AbstractUserRepositoryPostgresql(dbClient) {
+class UserRepositoryPostgresqlSelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<PostgresqlRole>()
             .where { it[PostgresqlRole::label] eq label1 }

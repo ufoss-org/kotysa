@@ -6,10 +6,13 @@ package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import reactor.kotlin.test.test
 import java.time.*
 import java.util.*
 
@@ -18,6 +21,7 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
     override val context = startContext<AllTypesRepositoryPostgresql>()
 
     override val repository = getContextRepository<AllTypesRepositoryPostgresql>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -57,16 +61,16 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
         val newLocalDateTime = LocalDateTime.now()
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newOffsetDateTime, newLocalTime,
-                newLocalDateTime, newUuid, newInt).block()
-        assertThat(repository.selectAllAllTypesNotNull().toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(
-                        PostgresqlAllTypesNotNull(postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newOffsetDateTime,
-                                newLocalTime, newLocalDateTime, newUuid, newInt))
-        repository.updateAllTypesNotNull(postgresqlAllTypesNotNull.string, postgresqlAllTypesNotNull.boolean, postgresqlAllTypesNotNull.localDate,
-                postgresqlAllTypesNotNull.offsetDateTime, postgresqlAllTypesNotNull.localTim, postgresqlAllTypesNotNull.localDateTime,
-                postgresqlAllTypesNotNull.uuid, postgresqlAllTypesNotNull.int).block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNull("new", false, newLocalDate, newOffsetDateTime, newLocalTime,
+                    newLocalDateTime, newUuid, newInt)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllAllTypesNotNull())
+        }.test()
+                .expectNext(PostgresqlAllTypesNotNull(postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newOffsetDateTime,
+                        newLocalTime, newLocalDateTime, newUuid, newInt))
+                .verifyComplete()
     }
 }
 

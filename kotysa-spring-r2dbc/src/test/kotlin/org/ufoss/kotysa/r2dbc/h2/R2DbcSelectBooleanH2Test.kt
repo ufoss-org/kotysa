@@ -6,8 +6,8 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.test.H2User
 import org.ufoss.kotysa.test.h2Bboss
 import org.ufoss.kotysa.test.h2Jdoe
@@ -36,8 +36,8 @@ class R2DbcSelectBooleanH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectBoole
 
 class UserRepositoryH2SelectBoolean(
         sqlClient: ReactorSqlClient,
-        transactionalOp: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, transactionalOp) {
+        transactionalOperator: TransactionalOperator
+) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
 
     fun selectAllByIsAdminEq(value: Boolean) = sqlClient.select<H2User>()
             .where { it[H2User::isAdmin] eq value }

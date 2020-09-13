@@ -10,8 +10,12 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbc
+import org.springframework.r2dbc.core.DatabaseClient
 import org.testcontainers.containers.PostgreSQLContainer
+import org.ufoss.kotysa.r2dbc.coSqlClient
+import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.postgresqlTables
 
 class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
 
@@ -32,6 +36,8 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
             beans {
                 bean { postgresqlContainer }
                 bean<U>()
+                bean { ref<DatabaseClient>().sqlClient(postgresqlTables) }
+                bean { ref<DatabaseClient>().coSqlClient(postgresqlTables) }
             }
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
@@ -39,6 +45,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
             r2dbc {
                 url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
                 username = "postgres"
+                transactional = true
             }
         }.run()
     }
@@ -48,9 +55,9 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
 
     @AfterAll
-    fun afterAll() = context.run {
+    fun afterAll() {
         repository.delete()
-        getBean<PostgreSQLContainer<*>>().stop()
-        close()
+        context.getBean<PostgreSQLContainer<*>>().stop()
+        context.close()
     }
 }

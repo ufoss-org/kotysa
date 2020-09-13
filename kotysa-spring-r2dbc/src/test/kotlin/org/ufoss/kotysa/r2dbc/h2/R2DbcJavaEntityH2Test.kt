@@ -6,20 +6,21 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
-import org.ufoss.kotysa.test.UserDto
-import org.ufoss.kotysa.test.javaBboss
-import org.ufoss.kotysa.test.javaJdoe
+import org.ufoss.kotysa.test.*
+import reactor.kotlin.test.test
 
 
 class R2DbcJavaEntityH2Test : AbstractR2dbcH2Test<JavaUserH2Repository>() {
     override val context = startContext<JavaUserH2Repository>()
 
     override val repository = getContextRepository<JavaUserH2Repository>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify selectAll returns all users`() {
@@ -93,12 +94,13 @@ class R2DbcJavaEntityH2Test : AbstractR2dbcH2Test<JavaUserH2Repository>() {
 
     @Test
     fun `Verify deleteAll works correctly`() {
-        assertThat(repository.deleteAll().block()!!)
-                .isEqualTo(2)
-        assertThat(repository.selectAll().toIterable())
-                .isEmpty()
-        // re-insert users
-        repository.insert().block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteAll()
+                    .doOnNext { n -> assertThat(n).isEqualTo(2) }
+                    .thenMany(repository.selectAll())
+        }.test()
+                .verifyComplete()
     }
 }
 

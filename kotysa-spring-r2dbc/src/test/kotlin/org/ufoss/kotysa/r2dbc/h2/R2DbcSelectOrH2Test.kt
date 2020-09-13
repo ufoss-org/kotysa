@@ -6,8 +6,8 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
 import org.ufoss.kotysa.test.H2Role
 import org.ufoss.kotysa.test.h2Admin
 import org.ufoss.kotysa.test.h2God
@@ -29,8 +29,8 @@ class R2DbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectOr>() {
 
 class UserRepositoryH2SelectOr(
         sqlClient: ReactorSqlClient,
-        transactionalOp: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, transactionalOp) {
+        transactionalOperator: TransactionalOperator
+) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
 
     fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<H2Role>()
             .where { it[H2Role::label] eq label1 }

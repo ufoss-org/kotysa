@@ -4,15 +4,12 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 
-abstract class AbstractUserRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
-
-    protected val sqlClient = dbClient.sqlClient(postgresqlTables)
+abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: ReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()
@@ -33,9 +30,7 @@ abstract class AbstractUserRepositoryPostgresql(dbClient: DatabaseClient) : Repo
 
     private fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin, postgresqlGod)
 
-    fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
-
-    fun insertJDoe() = sqlClient.insert(postgresqlJdoe)
+    private fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
 
     private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
 

@@ -4,15 +4,19 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactional
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 
 
 abstract class AbstractUserRepositoryH2(
         protected val sqlClient: ReactorSqlClient,
-        private val transactionalOp: ReactorTransactionalOp
+        transactionalOperator: TransactionalOperator
 ) : Repository {
+
+    private val operator = transactionalOperator.transactionalOp()
 
     override fun init() {
         createTables()
@@ -20,7 +24,7 @@ abstract class AbstractUserRepositoryH2(
                 .then(insertUsers())
                 // another option would be to plug in SingleConnectionFactory somehow
                 // because in memory (serverless) h2 databases don't seem to be shared between connections
-                .`as`(transactionalOp::transactional)
+                .transactional(operator)
                 .block()
     }
 
@@ -36,9 +40,7 @@ abstract class AbstractUserRepositoryH2(
 
     private fun insertRoles() = sqlClient.insert(h2User, h2Admin, h2God)
 
-    fun insertUsers() = sqlClient.insert(h2Jdoe, h2Bboss)
-
-    fun insertJDoe() = sqlClient.insert(h2Jdoe)
+    private fun insertUsers() = sqlClient.insert(h2Jdoe, h2Bboss)
 
     private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<H2Role>()
 

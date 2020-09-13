@@ -10,10 +10,12 @@ import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.test.*
 
 
@@ -22,6 +24,7 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
     override val context = startContext<CoroutinesUserH2Repository>()
 
     override val repository = getContextRepository<CoroutinesUserH2Repository>()
+    private val operator = context.getBean<TransactionalOperator>().coTransactionalOp()
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
@@ -81,12 +84,13 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() = runBlocking<Unit> {
-        assertThat(repository.deleteAllFromUsers())
-                .isEqualTo(2)
-        assertThat(repository.selectAllUsers().toList())
-                .isEmpty()
-        // re-insert users
-        repository.insertUsers()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteAllFromUsers())
+                    .isEqualTo(2)
+            assertThat(repository.selectAllUsers().toList())
+                    .isEmpty()
+        }
     }
 
     @Test

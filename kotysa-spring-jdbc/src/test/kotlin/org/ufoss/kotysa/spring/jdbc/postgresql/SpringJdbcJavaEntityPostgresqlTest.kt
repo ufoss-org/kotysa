@@ -6,8 +6,12 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
 
@@ -16,6 +20,8 @@ class SpringJdbcJavaEntityPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Java
     override val context = startContext<JavaUserPostgresqlRepository>()
 
     override val repository = getContextRepository<JavaUserPostgresqlRepository>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify selectAll returns all users`() {
@@ -89,12 +95,13 @@ class SpringJdbcJavaEntityPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Java
 
     @Test
     fun `Verify deleteAll works correctly`() {
-        assertThat(repository.deleteAll())
-                .isEqualTo(2)
-        assertThat(repository.selectAll())
-                .isEmpty()
-        // re-insert users
-        repository.insert()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteAll())
+                    .isEqualTo(2)
+            assertThat(repository.selectAll())
+                    .isEmpty()
+        }
     }
 }
 

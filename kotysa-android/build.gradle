@@ -20,3 +20,10 @@ dependencies {
 
     testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
 }
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict', "-Xinline-classes"]
+        jvmTarget = '1.8'
+    }
+}

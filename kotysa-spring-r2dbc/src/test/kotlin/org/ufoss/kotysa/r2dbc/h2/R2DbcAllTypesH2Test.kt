@@ -10,10 +10,14 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
-import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactional
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import reactor.kotlin.test.test
 import java.time.*
 import java.util.*
 
@@ -22,6 +26,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     override val context = startContext<AllTypesRepositoryH2>()
 
     override val repository = getContextRepository<AllTypesRepositoryH2>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -67,34 +72,35 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                newKotlinxLocalDateTime, newUuid, newInt).block()
-        assertThat(repository.selectAllAllTypesNotNull().toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(
-                        H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
-                                newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                newKotlinxLocalDateTime, newUuid, newInt))
-        repository.updateAllTypesNotNull(h2AllTypesNotNull.string, h2AllTypesNotNull.boolean, h2AllTypesNotNull.localDate,
-                h2AllTypesNotNull.kotlinxLocalDate, h2AllTypesNotNull.offsetDateTime, h2AllTypesNotNull.localTim,
-                h2AllTypesNotNull.localDateTime1, h2AllTypesNotNull.localDateTime2, h2AllTypesNotNull.kotlinxLocalDateTime1,
-                h2AllTypesNotNull.kotlinxLocalDateTime2, h2AllTypesNotNull.uuid, h2AllTypesNotNull.int).block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
+                    newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                    newKotlinxLocalDateTime, newUuid, newInt)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllAllTypesNotNull())
+        }.test()
+                .expectNext(H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate,
+                        newKotlinxLocalDate, newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime,
+                        newKotlinxLocalDateTime, newKotlinxLocalDateTime, newUuid, newInt))
+                .verifyComplete()
     }
 }
 
 
 class AllTypesRepositoryH2(
         private val sqlClient: ReactorSqlClient,
-        private val transactionalOp: ReactorTransactionalOp
+        transactionalOperator: TransactionalOperator
 ) : Repository {
+
+    private val operator = transactionalOperator.transactionalOp()
 
     override fun init() {
         createTables()
                 .then(insertAllTypes())
                 // another option would be to plug in SingleConnectionFactory somehow
                 // because in memory (serverless) h2 databases don't seem to be shared between connections
-                .`as`(transactionalOp::transactional)
+                .transactional(operator)
                 .block()
     }
 
