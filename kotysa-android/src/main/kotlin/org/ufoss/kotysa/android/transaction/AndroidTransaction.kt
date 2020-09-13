@@ -4,16 +4,13 @@
 
 package org.ufoss.kotysa.android.transaction
 
-import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.transaction.Transaction
 
-public class AndroidTransaction internal constructor(private val client: SQLiteDatabase) : Transaction {
+public class AndroidTransaction internal constructor() : Transaction {
 
     private var rollbackOnly = false
 
-    override fun isNewTransaction(): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isNewTransaction(): Boolean = true
 
     override fun setRollbackOnly() {
         rollbackOnly = true
@@ -21,5 +18,5 @@ public class AndroidTransaction internal constructor(private val client: SQLiteD
 
     override fun isRollbackOnly(): Boolean = rollbackOnly
 
-    override fun isCompleted(): Boolean = !client.isOpen
+    override fun isCompleted(): Boolean = false
 }

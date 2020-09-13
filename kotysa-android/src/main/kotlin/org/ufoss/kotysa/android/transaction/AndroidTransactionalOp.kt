@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteDatabase
 public inline class AndroidTransactionalOp(private val client: SQLiteDatabase) {
 
     public fun <T> execute(block: (AndroidTransaction) -> T): T? = client.run {
-        val transaction = AndroidTransaction(this)
+        val transaction = AndroidTransaction()
         beginTransaction()
         try {
             block.invoke(transaction).also {
