@@ -6,8 +6,12 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
@@ -17,6 +21,8 @@ class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTyp
     override val context = startContext<AllTypesRepositoryPostgresql>()
 
     override val repository = getContextRepository<AllTypesRepositoryPostgresql>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -56,16 +62,16 @@ class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTyp
         val newLocalDateTime = LocalDateTime.now()
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newOffsetDateTime, newLocalTime,
-                newLocalDateTime, newUuid, newInt)
-        assertThat(repository.selectAllAllTypesNotNull())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(
-                        PostgresqlAllTypesNotNull(postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newOffsetDateTime,
-                                newLocalTime, newLocalDateTime, newUuid, newInt))
-        repository.updateAllTypesNotNull(postgresqlAllTypesNotNull.string, postgresqlAllTypesNotNull.boolean, postgresqlAllTypesNotNull.localDate,
-                postgresqlAllTypesNotNull.offsetDateTime, postgresqlAllTypesNotNull.localTim, postgresqlAllTypesNotNull.localDateTime,
-                postgresqlAllTypesNotNull.uuid, postgresqlAllTypesNotNull.int)
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNull("new", false, newLocalDate, newOffsetDateTime, newLocalTime,
+                    newLocalDateTime, newUuid, newInt)
+            assertThat(repository.selectAllAllTypesNotNull())
+                    .hasSize(1)
+                    .containsExactlyInAnyOrder(
+                            PostgresqlAllTypesNotNull(postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newOffsetDateTime,
+                                    newLocalTime, newLocalDateTime, newUuid, newInt))
+        }
     }
 }
 
