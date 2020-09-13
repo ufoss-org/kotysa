@@ -14,7 +14,7 @@ import org.junit.Test
 
 class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             UserRepositorySelectOr(dbHelper, sqLiteTables)
 
     @Test

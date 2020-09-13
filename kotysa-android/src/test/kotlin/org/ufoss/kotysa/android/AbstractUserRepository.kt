@@ -9,7 +9,7 @@ import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepository(
-        sqLiteOpenHelper: SQLiteOpenHelper,
+        private val sqLiteOpenHelper: SQLiteOpenHelper,
         tables: Tables
 ) : Repository {
 
@@ -24,6 +24,7 @@ abstract class AbstractUserRepository(
     override fun delete() {
         deleteAllFromUsers()
         deleteAllFromRoles()
+        sqLiteOpenHelper.close()
     }
 
     private fun createTable() {
@@ -33,13 +34,11 @@ abstract class AbstractUserRepository(
 
     private fun insertRoles() = sqlClient.insert(sqLiteUser, sqLiteAdmin, sqLiteGod)
 
-    fun insertUsers() = sqlClient.insert(sqLiteJdoe, sqLiteBboss)
+    private fun insertUsers() = sqlClient.insert(sqLiteJdoe, sqLiteBboss)
 
     fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<SqLiteUser>()
 
     private fun deleteAllFromRoles() = sqlClient.deleteAllFromTable<SqLiteRole>()
-
-    fun insertJDoe() = sqlClient.insert(sqLiteJdoe)
 
     fun selectAll() = sqlClient.selectAll<SqLiteUser>()
 

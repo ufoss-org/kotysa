@@ -13,6 +13,7 @@ import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.ufoss.kotysa.android.transaction.transactionalOp
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -20,7 +21,7 @@ import java.time.OffsetDateTime
 
 class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             AllTypesRepository(dbHelper, sqLiteTables)
 
     @Test
@@ -63,18 +64,18 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
-        assertThat(repository.selectAllAllTypesNotNull())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(
-                        SqLiteAllTypesNotNull(sqLiteAllTypesNotNull.id, "new", false, newLocalDate,
-                                newKotlinxLocalDate, newOffsetDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                newLocalTime, newInt))
-        repository.updateAllTypesNotNull(sqLiteAllTypesNotNull.string, sqLiteAllTypesNotNull.boolean,
-                sqLiteAllTypesNotNull.localDate, sqLiteAllTypesNotNull.kotlinxLocalDate, sqLiteAllTypesNotNull.offsetDateTime,
-                sqLiteAllTypesNotNull.localTime, sqLiteAllTypesNotNull.localDateTime, sqLiteAllTypesNotNull.kotlinxLocalDateTime,
-                sqLiteAllTypesNotNull.int)
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
+                    newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
+            assertThat(repository.selectAllAllTypesNotNull())
+                    .hasSize(1)
+                    .containsExactlyInAnyOrder(
+                            SqLiteAllTypesNotNull(sqLiteAllTypesNotNull.id, "new", false, newLocalDate,
+                                    newKotlinxLocalDate, newOffsetDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                                    newLocalTime, newInt))
+        }
     }
 }
 

@@ -14,7 +14,7 @@ import org.junit.Test
 
 class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             UserRepositoryBooleanSelect(dbHelper, sqLiteTables)
 
     @Test

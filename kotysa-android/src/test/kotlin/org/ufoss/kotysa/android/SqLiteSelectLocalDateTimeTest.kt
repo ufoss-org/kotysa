@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 
 class SqLiteSelectLocalDateTimeTest : AbstractSqLiteTest<LocalDateTimeRepositorySelect>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             LocalDateTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test

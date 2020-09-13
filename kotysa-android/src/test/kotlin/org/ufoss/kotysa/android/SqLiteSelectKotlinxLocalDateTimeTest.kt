@@ -13,7 +13,7 @@ import org.ufoss.kotysa.test.*
 
 class SqLiteSelectKotlinxLocalDateTimeTest : AbstractSqLiteTest<KotlinxLocalDateTimeRepositorySelect>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             KotlinxLocalDateTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test

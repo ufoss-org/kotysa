@@ -9,61 +9,76 @@ import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.ufoss.kotysa.android.transaction.transactionalOp
 
 class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             UserRepositoryUpdateDelete(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
-        assertThat(repository.deleteAllFromUsers())
-                .isEqualTo(2)
-        assertThat(repository.selectAll().toList())
-                .isEmpty()
-        // re-insert users
-        repository.insertUsers()
+        val operator = client.transactionalOp()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteAllFromUsers())
+                    .isEqualTo(2)
+            assertThat(repository.selectAll())
+                    .isEmpty()
+        }
+        assertThat(repository.selectAll())
+                .hasSize(2)
     }
 
     @Test
     fun `Verify deleteUserById works`() {
-        assertThat(repository.deleteUserById(sqLiteJdoe.id))
-                .isEqualTo(1)
-        assertThat(repository.selectAll())
-                .hasSize(1)
-        // re-insertUsers jdoe
-        repository.insertJDoe()
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserById(sqLiteJdoe.id))
+                    .isEqualTo(1)
+            assertThat(repository.selectAll())
+                    .hasSize(1)
+        }
     }
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        assertThat(repository.deleteUserWithJoin(sqLiteUser.label))
-                .isEqualTo(1)
-        assertThat(repository.selectAll())
-                .hasSize(1)
-                .containsOnly(sqLiteBboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe()
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserWithJoin(sqLiteUser.label))
+                    .isEqualTo(1)
+            assertThat(repository.selectAll())
+                    .hasSize(1)
+                    .containsOnly(sqLiteBboss)
+        }
     }
 
     @Test
     fun `Verify updateLastname works`() {
-        assertThat(repository.updateLastname("Do"))
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(sqLiteJdoe.lastname)
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateLastname("Do"))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
+        }
     }
 
     @Test
     fun `Verify updateWithJoin works`() {
-        assertThat(repository.updateWithJoin("Do", sqLiteUser.label))
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(sqLiteJdoe.lastname)
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateWithJoin("Do", sqLiteUser.label))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
+        }
     }
 }
 

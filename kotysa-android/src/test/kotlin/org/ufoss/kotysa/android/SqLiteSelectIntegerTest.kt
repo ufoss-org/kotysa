@@ -25,7 +25,7 @@ class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
             org.ufoss.kotysa.test.sqLiteIntegerWithoutNullable.integerNullable,
             2)
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             IntegerRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
