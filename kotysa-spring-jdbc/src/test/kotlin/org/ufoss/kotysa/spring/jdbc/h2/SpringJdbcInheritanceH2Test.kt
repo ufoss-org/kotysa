@@ -6,8 +6,12 @@ package org.ufoss.kotysa.spring.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.Entity
@@ -20,6 +24,8 @@ class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Reposi
     override val context = startContext<InheritanceH2Repository>()
 
     override val repository = getContextRepository<InheritanceH2Repository>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
@@ -41,12 +47,13 @@ class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Reposi
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        assertThat(repository.deleteById<Inherited>("id"))
-                .isEqualTo(1)
-        assertThat(repository.selectAll())
-                .isEmpty()
-        // re-insert
-        repository.insert()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteById<Inherited>("id"))
+                    .isEqualTo(1)
+            assertThat(repository.selectAll())
+                    .isEmpty()
+        }
     }
 }
 

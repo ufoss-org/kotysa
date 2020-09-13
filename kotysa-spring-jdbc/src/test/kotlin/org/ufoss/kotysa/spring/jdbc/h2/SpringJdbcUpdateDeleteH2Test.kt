@@ -6,7 +6,11 @@ package org.ufoss.kotysa.spring.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import java.util.*
 
@@ -15,72 +19,83 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     override val context = startContext<UserRepositorySpringJdbcH2UpdateDelete>()
 
     override val repository = getContextRepository<UserRepositorySpringJdbcH2UpdateDelete>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
-        assertThat(repository.deleteAllFromUsers())
-                .isEqualTo(2)
-        assertThat(repository.selectAllUsers())
-                .isEmpty()
-        // re-insertUsers users
-        repository.insertUsers()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteAllFromUsers())
+                    .isEqualTo(2)
+            assertThat(repository.selectAllUsers())
+                    .isEmpty()
+        }
     }
 
     @Test
     fun `Verify deleteUserById works`() {
-        assertThat(repository.deleteUserById(h2Jdoe.id))
-                .isEqualTo(1)
-        assertThat(repository.selectAllUsers())
-                .hasSize(1)
-                .containsOnly(h2Bboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserById(h2Jdoe.id))
+                    .isEqualTo(1)
+            assertThat(repository.selectAllUsers())
+                    .hasSize(1)
+                    .containsOnly(h2Bboss)
+        }
     }
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        assertThat(repository.deleteUserWithJoin(h2User.label))
-                .isEqualTo(1)
-        assertThat(repository.selectAllUsers())
-                .hasSize(1)
-                .containsOnly(h2Bboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserWithJoin(h2User.label))
+                    .isEqualTo(1)
+            assertThat(repository.selectAllUsers())
+                    .hasSize(1)
+                    .containsOnly(h2Bboss)
+        }
     }
 
     @Test
     fun `Verify updateLastname works`() {
-        assertThat(repository.updateLastname("Do"))
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(h2Jdoe.lastname)
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateLastname("Do"))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
+        }
     }
 
     @Test
     fun `Verify updateWithJoin works`() {
-        assertThat(repository.updateWithJoin("Do", h2User.label))
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(h2Jdoe.lastname)
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateWithJoin("Do", h2User.label))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
+        }
     }
 
     @Test
     fun `Verify updateAlias works`() {
-        assertThat(repository.updateAlias("TheBigBoss"))
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Bboss.firstname))
-                .extracting { user -> user?.alias }
-                .isEqualTo("TheBigBoss")
-        assertThat(repository.updateAlias(null))
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Bboss.firstname))
-                .extracting { user -> user?.alias }
-                .isEqualTo(null)
-        repository.updateAlias(h2Bboss.alias)
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAlias("TheBigBoss"))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstame(h2Bboss.firstname))
+                    .extracting { user -> user?.alias }
+                    .isEqualTo("TheBigBoss")
+            assertThat(repository.updateAlias(null))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstame(h2Bboss.firstname))
+                    .extracting { user -> user?.alias }
+                    .isEqualTo(null)
+        }
     }
 }
 

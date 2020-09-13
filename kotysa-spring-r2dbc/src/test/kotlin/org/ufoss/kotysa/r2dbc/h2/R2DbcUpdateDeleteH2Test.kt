@@ -6,9 +6,12 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
+import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.r2dbc.ReactorTransactionalOp
+import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import reactor.kotlin.test.test
 import java.util.*
 
 
@@ -16,80 +19,89 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
     override val context = startContext<UserRepositoryH2UpdateDelete>()
 
     override val repository = getContextRepository<UserRepositoryH2UpdateDelete>()
+    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
-        assertThat(repository.deleteAllFromUsers().block()!!)
-                .isEqualTo(2)
-        assertThat(repository.selectAllUsers().toIterable())
-                .isEmpty()
-        // re-insertUsers users
-        repository.insertUsers().block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteAllFromUsers()
+                    .doOnNext { n -> assertThat(n).isEqualTo(2) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .verifyComplete()
     }
 
     @Test
     fun `Verify deleteUserById works`() {
-        assertThat(repository.deleteUserById(h2Jdoe.id).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectAllUsers().toIterable())
-                .hasSize(1)
-                .containsOnly(h2Bboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe().block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteUserById(h2Jdoe.id)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .expectNext(h2Bboss)
+                .verifyComplete()
     }
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        assertThat(repository.deleteUserWithJoin(h2User.label).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectAllUsers().toIterable())
-                .hasSize(1)
-                .containsOnly(h2Bboss)
-        // re-insertUsers jdoe
-        repository.insertJDoe().block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteUserWithJoin(h2User.label)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .expectNext(h2Bboss)
+                .verifyComplete()
     }
 
     @Test
     fun `Verify updateLastname works`() {
-        assertThat(repository.updateLastname("Do").block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname).block())
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(h2Jdoe.lastname).block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateLastname("Do")
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstame(h2Jdoe.firstname))
+        }.test()
+                .expectNextMatches { user -> "Do" == user.lastname }
+                .verifyComplete()
     }
 
     @Test
     fun `Verify updateWithJoin works`() {
-        assertThat(repository.updateWithJoin("Do", h2User.label).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname).block())
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        repository.updateLastname(h2Jdoe.lastname).block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateWithJoin("Doee", h2User.label)
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstame(h2Jdoe.firstname))
+        }.test()
+                .expectNextMatches { user -> "Doee" == user.lastname }
+                .verifyComplete()
     }
 
     @Test
     fun `Verify updateAlias works`() {
-        assertThat(repository.updateAlias("TheBigBoss").block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Bboss.firstname).block())
-                .extracting { user -> user?.alias }
-                .isEqualTo("TheBigBoss")
-        assertThat(repository.updateAlias(null).block()!!)
-                .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Bboss.firstname).block())
-                .extracting { user -> user?.alias }
-                .isEqualTo(null)
-        repository.updateAlias(h2Bboss.alias).block()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAlias("TheBigBoss")
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstame(h2Bboss.firstname))
+                    .doOnNext { user -> assertThat(user.alias).isEqualTo("TheBigBoss") }
+                    .then(repository.updateAlias(null))
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstame(h2Bboss.firstname))
+        }.test()
+                .expectNextMatches { user -> null == user.alias }
+                .verifyComplete()
     }
 }
 
 
 class UserRepositoryH2UpdateDelete(
         sqlClient: ReactorSqlClient,
-        transactionalOp: ReactorTransactionalOp
-) : AbstractUserRepositoryH2(sqlClient, transactionalOp) {
+        transactionalOperator: TransactionalOperator
+) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<H2User>()
             .where { it[H2User::id] eq id }

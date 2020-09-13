@@ -31,9 +31,7 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcTemplate) : Reposi
 
     private fun insertRoles() = sqlClient.insert(h2User, h2Admin, h2God)
 
-    fun insertUsers() = sqlClient.insert(h2Jdoe, h2Bboss)
-
-    fun insertJDoe() = sqlClient.insert(h2Jdoe)
+    private fun insertUsers() = sqlClient.insert(h2Jdoe, h2Bboss)
 
     private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<H2Role>()
 

@@ -2,10 +2,10 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc
+package org.ufoss.kotysa.r2dbc.transaction
 
 import org.springframework.transaction.ReactiveTransaction
-import org.ufoss.kotysa.Transaction
+import org.ufoss.kotysa.transaction.Transaction
 
 
 public inline class ReactorTransaction(private val reactiveTransaction: ReactiveTransaction) : Transaction {

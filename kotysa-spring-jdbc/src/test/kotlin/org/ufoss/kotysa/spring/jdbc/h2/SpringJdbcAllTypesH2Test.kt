@@ -10,8 +10,12 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
@@ -21,6 +25,8 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
     override val context = startContext<AllTypesRepositoryH2>()
 
     override val repository = getContextRepository<AllTypesRepositoryH2>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -66,19 +72,18 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
         val newInt = 2
-        repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                newKotlinxLocalDateTime, newUuid, newInt)
-        assertThat(repository.selectAllAllTypesNotNull())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(
-                        H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
-                                newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                newKotlinxLocalDateTime, newUuid, newInt))
-        repository.updateAllTypesNotNull(h2AllTypesNotNull.string, h2AllTypesNotNull.boolean, h2AllTypesNotNull.localDate,
-                h2AllTypesNotNull.kotlinxLocalDate, h2AllTypesNotNull.offsetDateTime, h2AllTypesNotNull.localTim,
-                h2AllTypesNotNull.localDateTime1, h2AllTypesNotNull.localDateTime2, h2AllTypesNotNull.kotlinxLocalDateTime1,
-                h2AllTypesNotNull.kotlinxLocalDateTime2, h2AllTypesNotNull.uuid, h2AllTypesNotNull.int)
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
+                    newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                    newKotlinxLocalDateTime, newUuid, newInt)
+            assertThat(repository.selectAllAllTypesNotNull())
+                    .hasSize(1)
+                    .containsExactlyInAnyOrder(
+                            H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                                    newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                                    newKotlinxLocalDateTime, newUuid, newInt))
+        }
     }
 }
 

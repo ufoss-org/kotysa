@@ -31,9 +31,7 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcTemplate) 
 
     private fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin, postgresqlGod)
 
-    fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
-
-    fun insertJDoe() = sqlClient.insert(postgresqlJdoe)
+    private fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
 
     private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
 

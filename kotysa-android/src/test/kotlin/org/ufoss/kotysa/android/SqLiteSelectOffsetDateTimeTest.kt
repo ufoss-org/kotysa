@@ -17,7 +17,7 @@ import java.time.ZoneOffset
 
 class SqLiteSelectOffsetDateTimeTest : AbstractSqLiteTest<OffsetDateTimeRepositorySelect>() {
 
-    override fun getRepository(dbHelper: DbHelper, sqLiteTables: Tables) =
+    override fun getRepository(sqLiteTables: Tables) =
             OffsetDateTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
