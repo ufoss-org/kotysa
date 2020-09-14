@@ -19,13 +19,15 @@ import kotlin.reflect.KClass
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
  */
 internal class SqlClientSqLite(
-        private val client: SQLiteOpenHelper,
-        override val tables: Tables
+    private val client: SQLiteOpenHelper,
+    override val tables: Tables
 ) : BlockingSqlClient(), DefaultSqlClient {
 
-    override fun <T : Any> select(resultClass: KClass<T>,
-                                  dsl: (SelectDslApi.(ValueProvider) -> T)?): BlockingSqlClientSelect.Select<T> =
-            SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
+    override fun <T : Any> select(
+        resultClass: KClass<T>,
+        dsl: (SelectDslApi.(ValueProvider) -> T)?
+    ): BlockingSqlClientSelect.Select<T> =
+        SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
 
     override fun <T : Any> createTable(tableClass: KClass<T>) {
         val createTableSql = createTableSql(tableClass)
@@ -36,8 +38,8 @@ internal class SqlClientSqLite(
         val table = tables.getTable(row::class)
         val contentValues = ContentValues(table.columns.size)
         table.columns.values
-                .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
-                .forEach { column -> contentValues.put(column.name, column.entityGetter(row)) }
+            .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
+            .forEach { column -> contentValues.put(column.name, column.entityGetter(row)) }
 
         // debug query
         insertSqlDebug(row)
@@ -52,10 +54,10 @@ internal class SqlClientSqLite(
     }
 
     override fun <T : Any> deleteFromTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
+        SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
 
     override fun <T : Any> updateTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
+        SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
 }
 
 internal fun ContentValues.put(name: String, value: Any?) {
@@ -78,7 +80,8 @@ internal fun ContentValues.put(name: String, value: Any?) {
             is OffsetDateTime -> put(name, value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             is LocalTime -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_TIME))
             else -> throw UnsupportedOperationException(
-                    "${value.javaClass.canonicalName} is not supported by Android SqLite")
+                "${value.javaClass.canonicalName} is not supported by Android SqLite"
+            )
         }
     } else {
         putNull(name)

@@ -9,8 +9,8 @@ import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepository(
-        private val sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+    private val sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: Tables
 ) : Repository {
 
     protected val sqlClient = sqLiteOpenHelper.sqlClient(tables)
@@ -32,9 +32,13 @@ abstract class AbstractUserRepository(
         sqlClient.createTable<SqLiteUser>()
     }
 
-    private fun insertRoles() = sqlClient.insert(sqLiteUser, sqLiteAdmin, sqLiteGod)
+    private fun insertRoles() {
+        sqlClient.insert(sqLiteUser, sqLiteAdmin, sqLiteGod)
+    }
 
-    private fun insertUsers() = sqlClient.insert(sqLiteJdoe, sqLiteBboss)
+    private fun insertUsers() {
+        sqlClient.insert(sqLiteJdoe, sqLiteBboss)
+    }
 
     fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<SqLiteUser>()
 
@@ -42,7 +46,8 @@ abstract class AbstractUserRepository(
 
     fun selectAll() = sqlClient.selectAll<SqLiteUser>()
 
-    fun selectFirstByFirstame(firstname: String) = sqlClient.select<SqLiteUser>()
+    fun selectFirstByFirstame(firstname: String) =
+        sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] eq firstname }
             .fetchFirstOrNull()
 }

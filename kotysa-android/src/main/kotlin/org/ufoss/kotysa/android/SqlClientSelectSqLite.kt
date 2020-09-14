@@ -16,24 +16,28 @@ import kotlin.reflect.KClass
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
 
     internal class Select<T : Any> internal constructor(
-            override val client: SQLiteDatabase,
-            override val tables: Tables,
-            override val resultClass: KClass<T>,
-            override val dsl: (SelectDslApi.(ValueProvider) -> T)?
+        override val client: SQLiteDatabase,
+        override val tables: Tables,
+        override val resultClass: KClass<T>,
+        override val dsl: (SelectDslApi.(ValueProvider) -> T)?
     ) : BlockingSqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
 
         override val properties: Properties<T> = initProperties()
 
-        override fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): BlockingSqlClientSelect.Joinable<T> =
-                Joinable(client, properties, joinClass, alias, type)
+        override fun <U : Any> join(
+            joinClass: KClass<U>,
+            alias: String?,
+            type: JoinType
+        ): BlockingSqlClientSelect.Joinable<T> =
+            Joinable(client, properties, joinClass, alias, type)
     }
 
     private class Joinable<T : Any, U : Any>(
-            private val client: SQLiteDatabase,
-            private val properties: Properties<T>,
-            private val joinClass: KClass<U>,
-            private val alias: String?,
-            private val type: JoinType
+        private val client: SQLiteDatabase,
+        private val properties: Properties<T>,
+        private val joinClass: KClass<U>,
+        private val alias: String?,
+        private val type: JoinType
     ) : BlockingSqlClientSelect.Joinable<T> {
 
         override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): BlockingSqlClientSelect.Join<T> {
@@ -44,8 +48,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     }
 
     private class Join<T : Any>(
-            override val client: SQLiteDatabase,
-            override val properties: Properties<T>
+        override val client: SQLiteDatabase,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, BlockingSqlClientSelect.Join<T>, Whereable<T>, Return<T>
 
     private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, BlockingSqlClientSelect.Whereable<T> {
@@ -59,8 +63,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     }
 
     private class Where<T : Any>(
-            override val client: SQLiteDatabase,
-            override val properties: Properties<T>
+        override val client: SQLiteDatabase,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, BlockingSqlClientSelect.Where<T>, Return<T> {
 
         override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T> {
@@ -127,9 +131,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             var whereParams: Array<String>? = null
             if (whereClauses.isNotEmpty()) {
                 whereParams = whereClauses
-                        .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                        .map { whereValue -> stringValue(whereValue) }
-                        .toTypedArray()
+                    .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                    .map { whereValue -> stringValue(whereValue) }
+                    .toTypedArray()
             }
 
             client.rawQuery(selectSql(), whereParams)
@@ -137,34 +141,43 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
 
         @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         private class SqLiteRow(
-                private val sqLiteCursor: Cursor,
-                fieldIndexMap: Map<Field, Int>
+            private val sqLiteCursor: Cursor,
+            fieldIndexMap: Map<Field, Int>
         ) : AbstractRow(fieldIndexMap) {
             override fun <T> get(index: Int, type: Class<T>) =
-                    if (sqLiteCursor.isNull(index)) {
-                        null
-                    } else {
-                        when {
-                            Integer::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index)
-                            java.lang.Long::class.java.isAssignableFrom(type) -> sqLiteCursor.getLong(index)
-                            java.lang.Float::class.java.isAssignableFrom(type) -> sqLiteCursor.getFloat(index)
-                            java.lang.Short::class.java.isAssignableFrom(type) -> sqLiteCursor.getShort(index)
-                            java.lang.Double::class.java.isAssignableFrom(type) -> sqLiteCursor.getDouble(index)
-                            String::class.java.isAssignableFrom(type) -> sqLiteCursor.getString(index)
-                            // boolean is stored as Int
-                            java.lang.Boolean::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index) != 0
-                            ByteArray::class.java.isAssignableFrom(type) -> sqLiteCursor.getBlob(index)
-                            // Date are stored as String
-                            LocalDate::class.java.isAssignableFrom(type) -> LocalDate.parse(sqLiteCursor.getString(index))
-                            kotlinx.datetime.LocalDate::class.java.isAssignableFrom(type) -> kotlinx.datetime.LocalDate.parse(sqLiteCursor.getString(index))
-                            LocalDateTime::class.java.isAssignableFrom(type) -> LocalDateTime.parse(sqLiteCursor.getString(index))
-                            kotlinx.datetime.LocalDateTime::class.java.isAssignableFrom(type) -> kotlinx.datetime.LocalDateTime.parse(sqLiteCursor.getString(index))
-                            OffsetDateTime::class.java.isAssignableFrom(type) -> OffsetDateTime.parse(sqLiteCursor.getString(index))
-                            LocalTime::class.java.isAssignableFrom(type) -> LocalTime.parse(sqLiteCursor.getString(index))
-                            else -> throw UnsupportedOperationException(
-                                    "${type.canonicalName} is not supported by Android SqLite")
-                        } as T?
-                    }
+                if (sqLiteCursor.isNull(index)) {
+                    null
+                } else {
+                    when {
+                        Integer::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index)
+                        java.lang.Long::class.java.isAssignableFrom(type) -> sqLiteCursor.getLong(index)
+                        java.lang.Float::class.java.isAssignableFrom(type) -> sqLiteCursor.getFloat(index)
+                        java.lang.Short::class.java.isAssignableFrom(type) -> sqLiteCursor.getShort(index)
+                        java.lang.Double::class.java.isAssignableFrom(type) -> sqLiteCursor.getDouble(index)
+                        String::class.java.isAssignableFrom(type) -> sqLiteCursor.getString(index)
+                        // boolean is stored as Int
+                        java.lang.Boolean::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index) != 0
+                        ByteArray::class.java.isAssignableFrom(type) -> sqLiteCursor.getBlob(index)
+                        // Date are stored as String
+                        LocalDate::class.java.isAssignableFrom(type) -> LocalDate.parse(sqLiteCursor.getString(index))
+                        kotlinx.datetime.LocalDate::class.java.isAssignableFrom(type) -> kotlinx.datetime.LocalDate.parse(
+                            sqLiteCursor.getString(index)
+                        )
+                        LocalDateTime::class.java.isAssignableFrom(type) -> LocalDateTime.parse(
+                            sqLiteCursor.getString(index)
+                        )
+                        kotlinx.datetime.LocalDateTime::class.java.isAssignableFrom(type) -> kotlinx.datetime.LocalDateTime.parse(
+                            sqLiteCursor.getString(index)
+                        )
+                        OffsetDateTime::class.java.isAssignableFrom(type) -> OffsetDateTime.parse(
+                            sqLiteCursor.getString(index)
+                        )
+                        LocalTime::class.java.isAssignableFrom(type) -> LocalTime.parse(sqLiteCursor.getString(index))
+                        else -> throw UnsupportedOperationException(
+                            "${type.canonicalName} is not supported by Android SqLite"
+                        )
+                    } as T?
+                }
         }
     }
 }
