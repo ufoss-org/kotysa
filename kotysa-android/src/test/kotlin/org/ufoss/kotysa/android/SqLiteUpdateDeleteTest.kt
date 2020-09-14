@@ -5,16 +5,15 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.android.transaction.transactionalOp
+import org.ufoss.kotysa.test.*
 
 class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() {
 
-    override fun getRepository(sqLiteTables: Tables) =
-            UserRepositoryUpdateDelete(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: Tables) = UserRepositoryUpdateDelete(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {
@@ -22,12 +21,12 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
-                    .isEqualTo(2)
+                .isEqualTo(2)
             assertThat(repository.selectAll())
-                    .isEmpty()
+                .isEmpty()
         }
         assertThat(repository.selectAll())
-                .hasSize(2)
+            .hasSize(2)
     }
 
     @Test
@@ -36,9 +35,9 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserById(sqLiteJdoe.id))
-                    .isEqualTo(1)
+                .isEqualTo(1)
             assertThat(repository.selectAll())
-                    .hasSize(1)
+                .hasSize(1)
         }
     }
 
@@ -48,10 +47,10 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserWithJoin(sqLiteUser.label))
-                    .isEqualTo(1)
+                .isEqualTo(1)
             assertThat(repository.selectAll())
-                    .hasSize(1)
-                    .containsOnly(sqLiteBboss)
+                .hasSize(1)
+                .containsOnly(sqLiteBboss)
         }
     }
 
@@ -61,10 +60,10 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
-                    .isEqualTo(1)
+                .isEqualTo(1)
             assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
-                    .extracting { user -> user?.lastname }
-                    .isEqualTo("Do")
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Do")
         }
     }
 
@@ -74,31 +73,38 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", sqLiteUser.label))
-                    .isEqualTo(1)
+                .isEqualTo(1)
             assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
-                    .extracting { user -> user?.lastname }
-                    .isEqualTo("Do")
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Do")
         }
     }
 }
 
-class UserRepositoryUpdateDelete(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : AbstractUserRepository(sqLiteOpenHelper, tables) {
+class UserRepositoryUpdateDelete(
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: Tables
+) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
-    fun deleteUserById(id: String) = sqlClient.deleteFromTable<SqLiteUser>()
+    fun deleteUserById(id: String) =
+        sqlClient.deleteFromTable<SqLiteUser>()
             .where { it[SqLiteUser::id] eq id }
             .execute()
 
-    fun deleteUserWithJoin(roleLabel: String) = sqlClient.deleteFromTable<SqLiteUser>()
+    fun deleteUserWithJoin(roleLabel: String) =
+        sqlClient.deleteFromTable<SqLiteUser>()
             .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
             .where { it[SqLiteRole::label] eq roleLabel }
             .execute()
 
-    fun updateLastname(newLastname: String) = sqlClient.updateTable<SqLiteUser>()
+    fun updateLastname(newLastname: String) =
+        sqlClient.updateTable<SqLiteUser>()
             .set { it[SqLiteUser::lastname] = newLastname }
             .where { it[SqLiteUser::id] eq sqLiteJdoe.id }
             .execute()
 
-    fun updateWithJoin(newLastname: String, roleLabel: String) = sqlClient.updateTable<SqLiteUser>()
+    fun updateWithJoin(newLastname: String, roleLabel: String) =
+        sqlClient.updateTable<SqLiteUser>()
             .set { it[SqLiteUser::lastname] = newLastname }
             .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
             .where { it[SqLiteRole::label] eq roleLabel }

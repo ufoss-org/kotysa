@@ -13,7 +13,7 @@ import android.util.Log
  * see [Android SQLite database unit testing](https://medium.com/@elye.project/android-sqlite-database-unit-testing-is-easy-a09994701162#.s44tity8x)
  */
 class DbHelper internal constructor(
-        context: Context
+    context: Context
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     companion object {
