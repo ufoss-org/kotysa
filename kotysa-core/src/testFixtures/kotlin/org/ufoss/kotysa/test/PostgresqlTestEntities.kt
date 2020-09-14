@@ -4,6 +4,10 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.time.temporal.ChronoUnit
@@ -35,9 +39,11 @@ val postgresqlTables =
                 column { it[PostgresqlAllTypesNotNull::string].varchar() }
                 column { it[PostgresqlAllTypesNotNull::boolean].boolean() }
                 column { it[PostgresqlAllTypesNotNull::localDate].date() }
+                column { it[PostgresqlAllTypesNotNull::kotlinxLocalDate].date() }
                 column { it[PostgresqlAllTypesNotNull::offsetDateTime].timestampWithTimeZone() }
                 column { it[PostgresqlAllTypesNotNull::localTim].time() }
                 column { it[PostgresqlAllTypesNotNull::localDateTime].timestamp() }
+                column { it[PostgresqlAllTypesNotNull::kotlinxLocalDateTime].timestamp() }
                 column { it[PostgresqlAllTypesNotNull::uuid].uuid() }
                 column { it[PostgresqlAllTypesNotNull::int].integer() }
             }
@@ -47,9 +53,11 @@ val postgresqlTables =
                         .primaryKey()
                 column { it[PostgresqlAllTypesNullable::string].varchar() }
                 column { it[PostgresqlAllTypesNullable::localDate].date() }
+                column { it[PostgresqlAllTypesNullable::kotlinxLocalDate].date() }
                 column { it[PostgresqlAllTypesNullable::offsetDateTime].timestampWithTimeZone() }
                 column { it[PostgresqlAllTypesNullable::localTim].time() }
                 column { it[PostgresqlAllTypesNullable::localDateTime].timestamp() }
+                column { it[PostgresqlAllTypesNullable::kotlinxLocalDateTime].timestamp() }
                 column { it[PostgresqlAllTypesNullable::uuid].uuid() }
                 column { it[PostgresqlAllTypesNullable::int].integer() }
             }
@@ -58,9 +66,11 @@ val postgresqlTables =
                         .primaryKey()
                 column { it[PostgresqlAllTypesNullableDefaultValue::string].varchar().defaultValue("default") }
                 column { it[PostgresqlAllTypesNullableDefaultValue::localDate].date().defaultValue(LocalDate.of(2019, 11, 4)) }
+                column { it[PostgresqlAllTypesNullableDefaultValue::kotlinxLocalDate].date().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
                 column { it[PostgresqlAllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)) }
                 column { it[PostgresqlAllTypesNullableDefaultValue::localTim].time().defaultValue(LocalTime.of(11, 25, 55)) }
                 column { it[PostgresqlAllTypesNullableDefaultValue::localDateTime].timestamp().defaultValue(LocalDateTime.of(2018, 11, 4, 0, 0)) }
+                column { it[PostgresqlAllTypesNullableDefaultValue::kotlinxLocalDateTime].timestamp().defaultValue(kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)) }
                 column { it[PostgresqlAllTypesNullableDefaultValue::uuid].uuid().defaultValue(UUID.fromString(defaultUuid)) }
                 column { it[PostgresqlAllTypesNullableDefaultValue::int].integer().defaultValue(42) }
             }
@@ -78,11 +88,23 @@ val postgresqlTables =
                 column { it[PostgresqlLocalDate::localDateNotNull].date() }
                 column { it[PostgresqlLocalDate::localDateNullable].date() }
             }
+            table<PostgresqlKotlinxLocalDate> {
+                column { it[PostgresqlKotlinxLocalDate::id].uuid() }
+                        .primaryKey()
+                column { it[PostgresqlKotlinxLocalDate::localDateNotNull].date() }
+                column { it[PostgresqlKotlinxLocalDate::localDateNullable].date() }
+            }
             table<PostgresqlLocalDateTime> {
                 column { it[PostgresqlLocalDateTime::id].uuid() }
                         .primaryKey()
                 column { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull].timestamp() }
                 column { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable].timestamp() }
+            }
+            table<PostgresqlKotlinxLocalDateTime> {
+                column { it[PostgresqlKotlinxLocalDateTime::id].uuid() }
+                        .primaryKey()
+                column { it[PostgresqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull].timestamp() }
+                column { it[PostgresqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable].timestamp() }
             }
             table<PostgresqlOffsetDateTime> {
                 column { it[PostgresqlOffsetDateTime::id].uuid() }
@@ -133,9 +155,11 @@ data class PostgresqlAllTypesNotNull(
         val string: String,
         val boolean: Boolean,
         val localDate: LocalDate,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate,
         val offsetDateTime: OffsetDateTime,
         val localTim: LocalTime,
         val localDateTime: LocalDateTime,
+        val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
         val uuid: UUID,
         val int: Int
 ) {
@@ -148,9 +172,11 @@ data class PostgresqlAllTypesNotNull(
 
         if (string != other.string) return false
         if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
         if (localTim.truncatedTo(ChronoUnit.SECONDS) != other.localTim.truncatedTo(ChronoUnit.SECONDS)) return false
         if (localDateTime != other.localDateTime) return false
+        if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
         if (uuid != other.uuid) return false
         if (int != other.int) return false
         if (id != other.id) return false
@@ -161,9 +187,11 @@ data class PostgresqlAllTypesNotNull(
     override fun hashCode(): Int {
         var result = string.hashCode()
         result = 31 * result + (localDate.hashCode())
+        result = 31 * result + (kotlinxLocalDate.hashCode())
         result = 31 * result + (offsetDateTime.hashCode())
         result = 31 * result + (localTim.hashCode())
         result = 31 * result + (localDateTime.hashCode())
+        result = 31 * result + (kotlinxLocalDateTime.hashCode())
         result = 31 * result + (uuid.hashCode())
         result = 31 * result + (int)
         result = 31 * result + id.hashCode()
@@ -172,30 +200,36 @@ data class PostgresqlAllTypesNotNull(
 }
 
 val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNull(UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f"), "",
-        true, LocalDate.now(), OffsetDateTime.now(), LocalTime.now(), LocalDateTime.now(), UUID.randomUUID(), 1)
+        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), OffsetDateTime.now(), LocalTime.now(),
+        LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC), UUID.randomUUID(), 1)
 
 
 data class PostgresqlAllTypesNullable(
         val id: UUID,
         val string: String?,
         val localDate: LocalDate?,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
         val offsetDateTime: OffsetDateTime?,
         val localTim: LocalTime?,
         val localDateTime: LocalDateTime?,
+        val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime?,
         val uuid: UUID?,
         val int: Int?
 )
 
-val postgresqlAllTypesNullable = PostgresqlAllTypesNullable(UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691a4e"), null,
-        null, null, null, null, null, null)
+val postgresqlAllTypesNullable = PostgresqlAllTypesNullable(UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691a4e"),
+        null, null, null, null, null, null,
+        null, null, null)
 
 
 data class PostgresqlAllTypesNullableDefaultValue(
         val string: String? = null,
         val localDate: LocalDate? = null,
+        val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
         val offsetDateTime: OffsetDateTime? = null,
         val localTim: LocalTime? = null,
         val localDateTime: LocalDateTime? = null,
+        val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime? = null,
         val uuid: UUID? = null,
         val int: Int? = null,
         val id: UUID = UUID.randomUUID()
@@ -209,6 +243,7 @@ data class PostgresqlAllTypesNullableDefaultValue(
 
         if (string != other.string) return false
         if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (offsetDateTime != null) {
             if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
         } else if (other.offsetDateTime != null) {
@@ -216,6 +251,7 @@ data class PostgresqlAllTypesNullableDefaultValue(
         }
         if (localTim != other.localTim) return false
         if (localDateTime != other.localDateTime) return false
+        if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
         if (uuid != other.uuid) return false
         if (int != other.int) return false
         if (id != other.id) return false
@@ -226,9 +262,11 @@ data class PostgresqlAllTypesNullableDefaultValue(
     override fun hashCode(): Int {
         var result = string?.hashCode() ?: 0
         result = 31 * result + (localDate?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
         result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
         result = 31 * result + (localTim?.hashCode() ?: 0)
         result = 31 * result + (localDateTime?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime?.hashCode() ?: 0)
         result = 31 * result + (uuid?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
         result = 31 * result + id.hashCode()
@@ -258,6 +296,16 @@ data class PostgresqlLocalDate(
 val postgresqlLocalDateWithNullable = PostgresqlLocalDate(LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))
 val postgresqlLocalDateWithoutNullable = PostgresqlLocalDate(LocalDate.of(2019, 11, 6))
 
+data class PostgresqlKotlinxLocalDate(
+        val localDateNotNull: kotlinx.datetime.LocalDate,
+        val localDateNullable: kotlinx.datetime.LocalDate? = null,
+        val id: UUID = UUID.randomUUID()
+)
+
+val postgresqlKotlinxLocalDateWithNullable = PostgresqlKotlinxLocalDate(kotlinx.datetime.LocalDate(2019, 11, 4),
+        kotlinx.datetime.LocalDate(2018, 11, 4))
+val postgresqlKotlinxLocalDateWithoutNullable = PostgresqlKotlinxLocalDate(kotlinx.datetime.LocalDate(2019, 11, 6))
+
 
 data class PostgresqlLocalDateTime(
         val localDateTimeAsTimestampNotNull: LocalDateTime,
@@ -268,6 +316,18 @@ data class PostgresqlLocalDateTime(
 val postgresqlLocalDateTimeWithNullable = PostgresqlLocalDateTime(LocalDateTime.of(2019, 11, 4, 0, 0), LocalDateTime.of(2018, 11, 4, 0, 0))
 val postgresqlLocalDateTimeWithoutNullable = PostgresqlLocalDateTime(LocalDateTime.of(2019, 11, 6, 0, 0))
 
+
+data class PostgresqlKotlinxLocalDateTime(
+        val localDateTimeAsTimestampNotNull: kotlinx.datetime.LocalDateTime,
+        val localDateTimeAsTimestampNullable: kotlinx.datetime.LocalDateTime? = null,
+        val id: UUID = UUID.randomUUID()
+)
+
+val postgresqlKotlinxLocalDateTimeWithNullable = PostgresqlKotlinxLocalDateTime(
+        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
+val postgresqlKotlinxLocalDateTimeWithoutNullable = PostgresqlKotlinxLocalDateTime(
+        kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0))
 
 data class PostgresqlOffsetDateTime(
         val offsetDateTimeNotNull: OffsetDateTime,

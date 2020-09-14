@@ -95,6 +95,12 @@ val h2Tables =
                 column { it[H2LocalDate::localDateNotNull].date() }
                 column { it[H2LocalDate::localDateNullable].date() }
             }
+            table<H2KotlinxLocalDate> {
+                column { it[H2KotlinxLocalDate::id].uuid() }
+                        .primaryKey()
+                column { it[H2KotlinxLocalDate::localDateNotNull].date() }
+                column { it[H2KotlinxLocalDate::localDateNullable].date() }
+            }
             table<H2LocalDateTime> {
                 column { it[H2LocalDateTime::id].uuid() }
                         .primaryKey()
@@ -102,6 +108,14 @@ val h2Tables =
                 column { it[H2LocalDateTime::localDateTimeNullable].dateTime() }
                 column { it[H2LocalDateTime::localDateTimeAsTimestampNotNull].timestamp() }
                 column { it[H2LocalDateTime::localDateTimeAsTimestampNullable].timestamp() }
+            }
+            table<H2KotlinxLocalDateTime> {
+                column { it[H2KotlinxLocalDateTime::id].uuid() }
+                        .primaryKey()
+                column { it[H2KotlinxLocalDateTime::localDateTimeNotNull].dateTime() }
+                column { it[H2KotlinxLocalDateTime::localDateTimeNullable].dateTime() }
+                column { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull].timestamp() }
+                column { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable].timestamp() }
             }
             table<H2OffsetDateTime> {
                 column { it[H2OffsetDateTime::id].uuid() }
