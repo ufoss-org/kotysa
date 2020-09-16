@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa
 
+import java.util.stream.Stream
 import kotlin.reflect.KClass
 
 /**
@@ -117,6 +118,11 @@ public class BlockingSqlClientSelect private constructor() {
          * This Query can return several results as [List], can be empty if no results
          */
         public fun fetchAll(): List<T>
+
+        /**
+         * This Query can return several results as [Stream] (for lazy result iteration), can be empty if no results
+         */
+        public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }
 }
 

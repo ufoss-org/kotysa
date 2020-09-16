@@ -48,6 +48,13 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
                 UserWithRoleDto(sqLiteBboss.lastname, sqLiteAdmin.label)
             )
     }
+
+    @Test
+    fun `Verify selectAllStream returns all users`() {
+        assertThat(repository.selectAllStream())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteJdoe, sqLiteBboss)
+    }
 }
 
 class UserRepositorySelect(
@@ -71,4 +78,8 @@ class UserRepositorySelect(
         sqlClient.select { UserWithRoleDto(it[SqLiteUser::lastname], it[SqLiteRole::label]) }
             .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
             .fetchAll()
+
+    fun selectAllStream() =
+            sqlClient.select<SqLiteUser>()
+                    .fetchAllStream()
 }
