@@ -61,17 +61,29 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
                         UserWithRoleDto(h2Bboss.lastname, h2Admin.label)
                 )
     }
+
+    @Test
+    fun `Verify selectAllStream returns all users`() {
+        assertThat(repository.selectAllStream())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
+    }
 }
 
 
 class UserRepositorySpringJdbcH2Select(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcH2(client) {
 
-    fun countAllUsers() = sqlClient.countAll<H2User>()
+    fun countAllUsers() =
+            sqlClient.countAll<H2User>()
 
-    fun countUsersWithAlias() = sqlClient.select { count { it[H2User::alias] } }.fetchOne()
+    fun countUsersWithAlias() =
+            sqlClient.select { count { it[H2User::alias] } }
+                    .fetchOne()
 
-    fun selectOneNonUnique() = sqlClient.select<H2User>()
-            .fetchOne()
+    fun selectOneNonUnique() =
+            sqlClient
+                    .select<H2User>()
+                    .fetchOne()
 
     fun selectAllMappedToDto() =
             sqlClient.select {
@@ -83,4 +95,8 @@ class UserRepositorySpringJdbcH2Select(client: JdbcTemplate) : AbstractUserRepos
             sqlClient.select { UserWithRoleDto(it[H2User::lastname], it[H2Role::label]) }
                     .innerJoin<H2Role>().on { it[H2User::roleId] }
                     .fetchAll()
+
+    fun selectAllStream() =
+            sqlClient.select<H2User>()
+                    .fetchAllStream()
 }

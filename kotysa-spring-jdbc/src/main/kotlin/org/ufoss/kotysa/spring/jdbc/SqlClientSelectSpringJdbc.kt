@@ -7,6 +7,7 @@ package org.ufoss.kotysa.spring.jdbc
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.springframework.dao.IncorrectResultSizeDataAccessException
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.query
@@ -14,6 +15,7 @@ import org.ufoss.kotysa.*
 import java.sql.ResultSet
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.stream.Stream
 import kotlin.reflect.KClass
 
 
@@ -118,6 +120,16 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             }
         }
 
+        override fun fetchAllStream() = with(properties) {
+            val args = whereClauses
+                    .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
+
+            client.queryForStream(selectSql(), *args.toTypedArray()) { rs, _ ->
+                val row = JdbcRow(rs, selectInformation.fieldIndexMap)
+                selectInformation.select(row, row)
+            }
+        }
+
         @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         private class JdbcRow(
                 private val rs: ResultSet,
@@ -134,3 +146,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 }
+
+// todo remove when JdbcOperationsExtentions.kt contains it
+private fun <T> JdbcOperations.queryForStream(sql: String, vararg args: Any, function: (ResultSet, Int) -> T): Stream<T> =
+        queryForStream(sql, { rs, i -> function(rs, i) }, *args)
