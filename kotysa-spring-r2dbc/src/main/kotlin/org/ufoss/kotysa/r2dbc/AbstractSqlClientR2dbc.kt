@@ -46,8 +46,8 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
 }
 
 internal fun KClass<*>.toDbClass() =
-        when (this) {
-            kotlinx.datetime.LocalDate::class -> LocalDate::class
-            kotlinx.datetime.LocalDateTime::class -> LocalDateTime::class
+        when (this.qualifiedName) {
+            "kotlinx.datetime.LocalDate" -> LocalDate::class
+            "kotlinx.datetime.LocalDateTime" -> LocalDateTime::class
             else -> this
         }

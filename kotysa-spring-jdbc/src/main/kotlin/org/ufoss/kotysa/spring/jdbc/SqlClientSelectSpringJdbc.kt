@@ -136,10 +136,10 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 fieldIndexMap: Map<Field, Int>
         ) : AbstractRow(fieldIndexMap) {
             override fun <T> get(index: Int, type: Class<T>) =
-                    when {
-                        kotlinx.datetime.LocalDate::class.java.isAssignableFrom(type) ->
+                    when (type.name) {
+                        "kotlinx.datetime.LocalDate" ->
                             rs.getObject(index + 1, LocalDate::class.java)?.toKotlinLocalDate()
-                        kotlinx.datetime.LocalDateTime::class.java.isAssignableFrom(type) ->
+                        "kotlinx.datetime.LocalDateTime" ->
                             rs.getObject(index + 1, LocalDateTime::class.java)?.toKotlinLocalDateTime()
                         else -> rs.getObject(index + 1, type)
                     } as T

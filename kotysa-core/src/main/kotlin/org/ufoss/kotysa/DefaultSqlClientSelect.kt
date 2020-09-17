@@ -142,15 +142,17 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 when (getter.toCallable().returnType.classifier as KClass<*>) {
                     String::class -> valueProvider[getter as (T) -> String?]
                     LocalDateTime::class -> valueProvider[getter as (T) -> LocalDateTime?]
-                    kotlinx.datetime.LocalDateTime::class -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDateTime?]
                     LocalDate::class -> valueProvider[getter as (T) -> LocalDate?]
-                    kotlinx.datetime.LocalDate::class -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDate?]
                     OffsetDateTime::class -> valueProvider[getter as (T) -> OffsetDateTime?]
                     LocalTime::class -> valueProvider[getter as (T) -> LocalTime?]
                     Boolean::class -> valueProvider[getter as (T) -> Boolean]
                     UUID::class -> valueProvider[getter as (T) -> UUID?]
                     Int::class -> valueProvider[getter as (T) -> Int?]
-                    else -> throw RuntimeException("should never happen")
+                    else -> when ((getter.toCallable().returnType.classifier as KClass<*>).qualifiedName) {
+                        "kotlinx.datetime.LocalDateTime" -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDateTime?]
+                        "kotlinx.datetime.LocalDate" -> valueProvider[getter as (T) -> kotlinx.datetime.LocalDate?]
+                        else -> throw RuntimeException("should never happen")
+                    }
                 }
 
         private fun getTableConstructor(tableClass: KClass<T>) = with(tableClass) {
@@ -192,23 +194,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                         } else {
                             NotNullLocalDateTimeColumnField(allColumns, getter as (Any) -> LocalDateTime, dbType)
                         }
-                    kotlinx.datetime.LocalDateTime::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime?, dbType)
-                        } else {
-                            NotNullKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime, dbType)
-                        }
                     LocalDate::class ->
                         if (getterType.isMarkedNullable) {
                             NullableLocalDateColumnField(allColumns, getter as (Any) -> LocalDate?, dbType)
                         } else {
                             NotNullLocalDateColumnField(allColumns, getter as (Any) -> LocalDate, dbType)
-                        }
-                    kotlinx.datetime.LocalDate::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate?, dbType)
-                        } else {
-                            NotNullKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate, dbType)
                         }
                     OffsetDateTime::class ->
                         if (getterType.isMarkedNullable) {
@@ -238,7 +228,21 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                         } else {
                             NotNullIntColumnField(allColumns, getter as (Any) -> Int, dbType)
                         }
-                    else -> throw RuntimeException("should never happen")
+                    else -> when ((getterType.classifier as KClass<*>).qualifiedName) {
+                        "kotlinx.datetime.LocalDateTime" ->
+                            if (getterType.isMarkedNullable) {
+                                NullableKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime?, dbType)
+                            } else {
+                                NotNullKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime, dbType)
+                            }
+                        "kotlinx.datetime.LocalDate" ->
+                            if (getterType.isMarkedNullable) {
+                                NullableKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate?, dbType)
+                            } else {
+                                NotNullKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate, dbType)
+                            }
+                        else -> throw RuntimeException("should never happen")
+                    }
                 }
                 selectedFields.add(field)
                 fieldIndexMap[field] = fieldIndex++

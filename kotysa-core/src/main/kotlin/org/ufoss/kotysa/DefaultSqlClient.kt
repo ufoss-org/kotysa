@@ -129,12 +129,13 @@ private fun Any?.dbValue(): String = when (this) {
     is UUID -> "$this"
     is Int -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
-    is kotlinx.datetime.LocalDate -> this.toString()
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    is kotlinx.datetime.LocalDateTime -> this.toString()
     is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-    else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
+    else -> when (this::class.qualifiedName) {
+        "kotlinx.datetime.LocalDate", "kotlinx.datetime.LocalDateTime" -> this.toString()
+        else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
+    }
 }
 
 private fun Any?.defaultValue(): String = when (this) {

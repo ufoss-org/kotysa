@@ -60,13 +60,13 @@ public class Tables internal constructor(
 ) {
     public fun <T> getDbValue(value: T): Any? =
             if (value != null) {
-                when (value) {
-                    is kotlinx.datetime.LocalDate -> value.toJavaLocalDate()
-                    is kotlinx.datetime.LocalDateTime -> value.toJavaLocalDateTime()
-                    is LocalTime ->
+                when (value!!::class.qualifiedName) {
+                    "kotlinx.datetime.LocalDate" -> (value as kotlinx.datetime.LocalDate).toJavaLocalDate()
+                    "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()
+                    "java.time.LocalTime" ->
                         if (this.dbType == DbType.POSTGRESQL) {
                             // PostgreSQL does not support nanoseconds
-                            value.truncatedTo(ChronoUnit.SECONDS)
+                            (value as LocalTime).truncatedTo(ChronoUnit.SECONDS)
                         } else {
                             value
                         }

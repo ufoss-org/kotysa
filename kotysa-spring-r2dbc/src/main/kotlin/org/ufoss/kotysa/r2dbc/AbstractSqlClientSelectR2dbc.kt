@@ -43,10 +43,10 @@ internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : D
                 fieldIndexMap: Map<Field, Int>
         ) : AbstractRow(fieldIndexMap) {
             override fun <T> get(index: Int, type: Class<T>) =
-                    when {
-                        kotlinx.datetime.LocalDate::class.java.isAssignableFrom(type) ->
+                    when (type.name) {
+                        "kotlinx.datetime.LocalDate" ->
                             r2bcRow.get(index, LocalDate::class.java)?.toKotlinLocalDate()
-                        kotlinx.datetime.LocalDateTime::class.java.isAssignableFrom(type) ->
+                        "kotlinx.datetime.LocalDateTime" ->
                             r2bcRow.get(index, LocalDateTime::class.java)?.toKotlinLocalDateTime()
                         else -> r2bcRow.get(index, type)
                     } as T
