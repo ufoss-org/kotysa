@@ -25,6 +25,10 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         // import BOM
         implementation platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:$kotlinx_coroutines_bom_version")
         testImplementation platform("org.junit:junit-bom:$junit_bom_version")
+
+        testImplementation "org.assertj:assertj-core:$assertj_version"
+
+        testRuntimeOnly "ch.qos.logback:logback-classic:$logback_version"
     }
 
     compileKotlin {

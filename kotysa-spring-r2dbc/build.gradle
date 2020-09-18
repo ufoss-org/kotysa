@@ -26,10 +26,8 @@ dependencies {
     testImplementation 'io.r2dbc:r2dbc-postgresql'
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
-    testImplementation "ch.qos.logback:logback-classic:$logback_version"
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
-    testImplementation "org.assertj:assertj-core:$assertj_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

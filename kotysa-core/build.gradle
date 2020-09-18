@@ -20,8 +20,6 @@ dependencies {
     testFixturesImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testImplementation "ch.qos.logback:logback-classic:$logback_version"
-    testImplementation "org.assertj:assertj-core:$assertj_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'

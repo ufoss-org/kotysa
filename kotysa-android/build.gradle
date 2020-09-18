@@ -13,8 +13,6 @@ dependencies {
 
     testImplementation 'junit:junit:4.13'
     testImplementation 'org.robolectric:robolectric:4.0.2'
-    testImplementation "org.assertj:assertj-core:$assertj_version"
-    testImplementation "ch.qos.logback:logback-classic:$logback_version"
     testImplementation 'com.google.android:android:4.1.1.4'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
