@@ -4,6 +4,7 @@ plugins {
     id 'java-test-fixtures'
 }
 
+println("Using Gradle version: $gradle.gradleVersion")
 println("Using Kotlin compiler version: $KotlinCompilerVersion.VERSION")
 
 dependencies {

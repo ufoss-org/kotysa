@@ -4,8 +4,6 @@ plugins {
     id 'net.researchgate.release'
 }
 
-println("Using Gradle version: $gradle.gradleVersion")
-
 configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
@@ -134,7 +132,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 }
 
-// Workaround for https://github.com/researchgate/gradle-release/issues/144
+// Workaround for project with modules https://github.com/researchgate/gradle-release/issues/144
 task build {
     dependsOn subprojects.findResults { it.tasks.findByName('build') }
 }
