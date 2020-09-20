@@ -4,11 +4,10 @@ import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.tables
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.data.r2dbc.core.DatabaseClient
 import org.springframework.fu.kofu.configuration
-import org.springframework.fu.kofu.r2dbc.r2dbcH2
-import org.springframework.fu.kofu.r2dbc.r2dbcPostgresql
+import org.springframework.fu.kofu.r2dbc.r2dbc
 import org.springframework.fu.kofu.webflux.webFlux
+import org.springframework.r2dbc.core.DatabaseClient
 import org.testcontainers.containers.PostgreSQLContainer
 
 private class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
@@ -29,17 +28,20 @@ val dataConfig = configuration {
         }
     }
     if (profiles.contains("test")) {
-        r2dbcH2()
+        r2dbc {
+            url = "r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
+        }
     } else {
         // PostgreSQL testcontainers must be started first to get random Docker mapped port
         val postgresqlContainer = KPostgreSQLContainer()
-                .withDatabaseName("postgres")
+                .withDatabaseName("db")
                 .withUsername("postgres")
                 .withPassword("")
         postgresqlContainer.start()
 
-        r2dbcPostgresql {
-            port = postgresqlContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT)
+        r2dbc {
+            url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
+            username = "postgres"
         }
     }
 }
