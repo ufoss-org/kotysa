@@ -7,3 +7,7 @@ A sample project for a Spring Boot Reactive web application with Kofu and a R2DB
 ## kotysa-coroutines-r2dbc
 
 A sample project for a Spring Boot Coroutines web application with Kofu and a R2DBC backend accessed via Kotysa.
+
+## kotysa-spring-jdbc
+
+A sample project for a Spring Boot Servlet web application with Kofu and a JDBC backend accessed via Kotysa.
