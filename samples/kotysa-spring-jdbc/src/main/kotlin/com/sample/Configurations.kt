@@ -5,7 +5,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.springframework.fu.kofu.webmvc.webMvc
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.testcontainers.containers.PostgreSQLContainer
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 
@@ -14,7 +14,7 @@ private class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
 val dataConfig = configuration {
     beans {
         val tables = if (profiles.contains("test")) h2Tables else postgresqlTables
-        bean { ref<JdbcTemplate>().sqlClient(tables) }
+        bean { ref<JdbcOperations>().sqlClient(tables) }
         bean<RoleRepository>()
         bean<UserRepository>()
     }
