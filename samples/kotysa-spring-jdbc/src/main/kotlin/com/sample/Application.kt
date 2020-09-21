@@ -1,6 +1,5 @@
 package com.sample
 
-import org.springframework.fu.kofu.reactiveWebApplication
 import org.springframework.fu.kofu.webApplication
 
 val app = webApplication {
