@@ -8,6 +8,6 @@
 
 ## Merge
 * git rebase master develop
-* git checkout develop
+* git checkout master
 * git merge develop
 * git push
