@@ -6,7 +6,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalTime
@@ -168,7 +168,7 @@ class SpringJdbcSelectLocalTimePostgresqlTest : AbstractSpringJdbcPostgresqlTest
 }
 
 
-class LocalTimeRepositoryPostgresqlSelect(client: JdbcTemplate) : Repository {
+class LocalTimeRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
 
     private val sqlClient = client.sqlClient(postgresqlTables)
 

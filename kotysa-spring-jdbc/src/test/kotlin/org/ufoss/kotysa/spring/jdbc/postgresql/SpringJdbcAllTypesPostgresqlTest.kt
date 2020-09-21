@@ -11,7 +11,7 @@ import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
@@ -85,7 +85,7 @@ class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTyp
 }
 
 
-class AllTypesRepositoryPostgresql(client: JdbcTemplate) : Repository {
+class AllTypesRepositoryPostgresql(client: JdbcOperations) : Repository {
 
     private val sqlClient = client.sqlClient(postgresqlTables)
 

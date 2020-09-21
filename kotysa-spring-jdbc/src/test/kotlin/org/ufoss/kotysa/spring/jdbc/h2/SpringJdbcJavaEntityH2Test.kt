@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
@@ -125,7 +125,7 @@ private val tables =
         }
 
 
-class JavaUserH2Repository(client: JdbcTemplate) : Repository {
+class JavaUserH2Repository(client: JdbcOperations) : Repository {
 
     private val sqlClient = client.sqlClient(tables)
 

@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
@@ -100,7 +100,7 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 }
 
 
-class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcH2(client) {
+class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<H2User>()
             .where { it[H2User::id] eq id }

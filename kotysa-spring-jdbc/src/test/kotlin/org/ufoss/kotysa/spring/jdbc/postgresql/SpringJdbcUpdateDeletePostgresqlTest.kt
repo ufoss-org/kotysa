@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
@@ -100,7 +100,7 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
 }
 
 
-class UserRepositorySpringJdbcPostgresqlUpdateDelete(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySpringJdbcPostgresqlUpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<PostgresqlUser>()
             .where { it[PostgresqlUser::id] eq id }

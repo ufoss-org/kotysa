@@ -4,12 +4,12 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 
-abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcTemplate) : Repository {
+abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations) : Repository {
 
     protected val sqlClient = client.sqlClient(postgresqlTables)
 

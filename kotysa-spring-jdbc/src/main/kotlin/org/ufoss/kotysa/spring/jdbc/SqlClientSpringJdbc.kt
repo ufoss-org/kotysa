@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
 
@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
  */
 internal class SqlClientSpringJdbc(
-        private val client: JdbcTemplate,
+        private val client: JdbcOperations,
         override val tables: Tables
 ) : BlockingSqlClient(), DefaultSqlClient {
 
@@ -53,8 +53,8 @@ internal class SqlClientSpringJdbc(
 }
 
 /**
- * Create a [BlockingSqlClient] from a Spring [JdbcTemplate] with [Tables] mapping
+ * Create a [BlockingSqlClient] from a Spring [JdbcOperations] with [Tables] mapping
  *
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
  */
-public fun JdbcTemplate.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSpringJdbc(this, tables)
+public fun JdbcOperations.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSpringJdbc(this, tables)

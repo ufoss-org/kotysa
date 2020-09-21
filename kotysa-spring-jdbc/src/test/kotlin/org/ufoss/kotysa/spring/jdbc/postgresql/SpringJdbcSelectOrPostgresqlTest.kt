@@ -6,7 +6,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.PostgresqlRole
 import org.ufoss.kotysa.test.postgresqlAdmin
 import org.ufoss.kotysa.test.postgresqlGod
@@ -26,7 +26,7 @@ class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRe
 }
 
 
-class UserRepositorySpringJdbcPostgresqlSelectOr(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySpringJdbcPostgresqlSelectOr(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<PostgresqlRole>()
             .where { it[PostgresqlRole::label] eq label1 }

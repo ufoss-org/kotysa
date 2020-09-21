@@ -4,14 +4,14 @@
 
 package org.ufoss.kotysa.spring.jdbc.transaction
 
-import org.springframework.transaction.support.TransactionTemplate
+import org.springframework.transaction.support.TransactionOperations
 
-public inline class JdbcTransactionalOp(private val template: TransactionTemplate) {
+public inline class JdbcTransactionalOp(private val template: TransactionOperations) {
     public fun <T> execute(block: (JdbcTransaction) -> T): T? =
             template.execute { transactionStatus -> block.invoke(JdbcTransaction(transactionStatus)) }
 }
 
 /**
- * Create a [JdbcTransactionalOp] from a [TransactionTemplate]
+ * Create a [JdbcTransactionalOp] from a [TransactionOperations]
  */
-public fun TransactionTemplate.transactionalOp(): JdbcTransactionalOp = JdbcTransactionalOp(this)
+public fun TransactionOperations.transactionalOp(): JdbcTransactionalOp = JdbcTransactionalOp(this)

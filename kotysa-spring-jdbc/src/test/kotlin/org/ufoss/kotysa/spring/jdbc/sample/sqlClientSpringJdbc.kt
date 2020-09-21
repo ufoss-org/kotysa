@@ -4,14 +4,14 @@
 
 package org.ufoss.kotysa.spring.jdbc.sample
 
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.tables
 import java.util.*
 
 
 @Suppress("UNUSED_VARIABLE")
-class UserRepositorySpringJdbc(client: JdbcTemplate) {
+class UserRepositorySpringJdbc(client: JdbcOperations) {
 
     private data class Role(
             val label: String,

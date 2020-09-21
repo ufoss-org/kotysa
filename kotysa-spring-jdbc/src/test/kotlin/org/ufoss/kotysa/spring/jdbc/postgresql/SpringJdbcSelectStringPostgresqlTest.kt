@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.PostgresqlUser
 import org.ufoss.kotysa.test.postgresqlBboss
@@ -158,7 +158,7 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
 }
 
 
-class UserRepositorySpringJdbcPostgresqlSelectString(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySpringJdbcPostgresqlSelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] eq firstname }

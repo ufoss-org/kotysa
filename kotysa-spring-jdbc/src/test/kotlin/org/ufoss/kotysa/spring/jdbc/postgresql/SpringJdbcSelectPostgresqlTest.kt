@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.count
 import org.ufoss.kotysa.test.*
@@ -64,7 +64,7 @@ class SpringJdbcSelectPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepo
 }
 
 
-class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun countAllUsers() = sqlClient.countAll<PostgresqlUser>()
 

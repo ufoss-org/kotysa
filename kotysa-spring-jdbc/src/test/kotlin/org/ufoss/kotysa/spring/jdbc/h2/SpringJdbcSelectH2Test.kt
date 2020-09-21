@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.count
 import org.ufoss.kotysa.test.*
@@ -71,7 +71,7 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
 }
 
 
-class UserRepositorySpringJdbcH2Select(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcH2(client) {
+class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun countAllUsers() =
             sqlClient.countAll<H2User>()

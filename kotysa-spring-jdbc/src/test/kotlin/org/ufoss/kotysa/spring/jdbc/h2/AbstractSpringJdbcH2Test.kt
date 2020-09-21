@@ -26,7 +26,7 @@ abstract class AbstractSpringJdbcH2Test<T : Repository> {
                     ref<U>().init()
                 }
                 jdbc {
-                    url = "jdbc:h2:mem:///testdb"
+                    url = "jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
                 }
             }.run()
 

@@ -6,7 +6,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.PostgresqlUser
 import org.ufoss.kotysa.test.postgresqlBboss
 import org.ufoss.kotysa.test.postgresqlJdoe
@@ -33,7 +33,7 @@ class SpringJdbcSelectBooleanH2Test : AbstractSpringJdbcPostgresqlTest<UserRepos
 }
 
 
-class UserRepositorySpringJdbcPostgresqlSelectBoolean(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySpringJdbcPostgresqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectAllByIsAdminEq(value: Boolean) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::isAdmin] eq value }

@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.H2User
 import org.ufoss.kotysa.test.h2Bboss
@@ -158,7 +158,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 }
 
 
-class UserRepositorySpringJdbcH2SelectString(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcH2(client) {
+class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }

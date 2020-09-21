@@ -6,7 +6,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.H2Role
 import org.ufoss.kotysa.test.h2Admin
 import org.ufoss.kotysa.test.h2God
@@ -26,7 +26,7 @@ class SpringJdbcSelectOrH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJd
 }
 
 
-class UserRepositorySpringJdbcH2SelectOr(client: JdbcTemplate) : AbstractUserRepositorySpringJdbcH2(client) {
+class UserRepositorySpringJdbcH2SelectOr(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<H2Role>()
             .where { it[H2Role::label] eq label1 }

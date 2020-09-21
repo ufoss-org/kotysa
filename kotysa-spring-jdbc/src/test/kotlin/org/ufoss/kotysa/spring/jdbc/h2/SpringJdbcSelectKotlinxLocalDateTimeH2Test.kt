@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
@@ -168,7 +168,7 @@ class SpringJdbcSelectKotlinxLocalDateTimeH2Test : AbstractSpringJdbcH2Test<Kotl
 }
 
 
-class KotlinxLocalDateTimeRepositoryH2Select(client: JdbcTemplate) : Repository {
+class KotlinxLocalDateTimeRepositoryH2Select(client: JdbcOperations) : Repository {
 
     private val sqlClient = client.sqlClient(h2Tables)
 

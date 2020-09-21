@@ -11,7 +11,7 @@ import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
@@ -88,7 +88,7 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
 }
 
 
-class AllTypesRepositoryH2(client: JdbcTemplate) : Repository {
+class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
 
     private val sqlClient = client.sqlClient(h2Tables)
 

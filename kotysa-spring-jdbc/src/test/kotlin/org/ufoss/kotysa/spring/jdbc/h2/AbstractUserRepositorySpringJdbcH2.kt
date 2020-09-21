@@ -4,12 +4,12 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 
-abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcTemplate) : Repository {
+abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repository {
 
     protected val sqlClient = client.sqlClient(h2Tables)
 

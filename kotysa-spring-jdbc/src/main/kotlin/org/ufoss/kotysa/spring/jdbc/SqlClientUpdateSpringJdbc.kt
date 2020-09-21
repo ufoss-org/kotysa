@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
 
@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class Update<T : Any> internal constructor(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val tables: Tables,
             override val tableClass: KClass<T>
     ) : BlockingSqlClientDeleteOrUpdate.Update<T>(), DefaultSqlClientDeleteOrUpdate.Update<T>, Return<T> {
@@ -34,7 +34,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Joinable<T : Any, U : Any>(
-            private val client: JdbcTemplate,
+            private val client: JdbcOperations,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
             private val alias: String?,
@@ -49,7 +49,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Join<T : Any>(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Join<T>, BlockingSqlClientDeleteOrUpdate.Join, Return<T> {
         override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where {
@@ -60,7 +60,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Where<T : Any>(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T>, BlockingSqlClientDeleteOrUpdate.Where, Return<T> {
 
@@ -76,7 +76,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class TypedWhere<T : Any>(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, BlockingSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
 
@@ -96,7 +96,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, BlockingSqlClientDeleteOrUpdate.Return {
-        val client: JdbcTemplate
+        val client: JdbcOperations
 
         override fun execute() = with(properties) {
             require(setValues.isNotEmpty()) { "At least one value must be set in Update" }

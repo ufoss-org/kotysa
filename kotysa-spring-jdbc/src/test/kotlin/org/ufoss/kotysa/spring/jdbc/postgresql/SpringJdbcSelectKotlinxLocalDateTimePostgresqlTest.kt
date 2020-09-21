@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
@@ -168,7 +168,7 @@ class SpringJdbcSelectKotlinxLocalDateTimeAsTimestampH2Test : AbstractSpringJdbc
 }
 
 
-class KotlinxLocalDateTimeRepositoryPostgresqlSelect(client: JdbcTemplate) : Repository {
+class KotlinxLocalDateTimeRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
 
     private val sqlClient = client.sqlClient(postgresqlTables)
 

@@ -8,7 +8,6 @@ import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.query
 import org.ufoss.kotysa.*
@@ -22,7 +21,7 @@ import kotlin.reflect.KClass
 internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClientSelect() {
 
     internal class Select<T : Any> internal constructor(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val tables: Tables,
             override val resultClass: KClass<T>,
             override val dsl: (SelectDslApi.(ValueProvider) -> T)?
@@ -34,7 +33,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Joinable<T : Any, U : Any>(
-            private val client: JdbcTemplate,
+            private val client: JdbcOperations,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
             private val alias: String?,
@@ -49,12 +48,12 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Join<T : Any>(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, BlockingSqlClientSelect.Join<T>, Whereable<T>, Return<T>
 
     private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, BlockingSqlClientSelect.Whereable<T> {
-        val client: JdbcTemplate
+        val client: JdbcOperations
 
         override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T> {
             val where = Where(client, properties)
@@ -64,7 +63,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Where<T : Any> constructor(
-            override val client: JdbcTemplate,
+            override val client: JdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, BlockingSqlClientSelect.Where<T>, Return<T> {
 
@@ -80,7 +79,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, BlockingSqlClientSelect.Return<T> {
-        val client: JdbcTemplate
+        val client: JdbcOperations
 
         override fun fetchOne() = fetchOneOrNull() ?: throw NoResultException()
 
