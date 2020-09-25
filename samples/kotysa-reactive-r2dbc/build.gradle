@@ -11,17 +11,19 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-    implementation 'org.springframework.data:spring-data-r2dbc'
-    implementation 'io.r2dbc:r2dbc-postgresql'
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+    implementation('org.springframework.data:spring-data-r2dbc')
+    implementation('io.r2dbc:r2dbc-postgresql')
 
-    implementation 'org.ufoss.kotysa:kotysa-spring-r2dbc:0.1.6'
-    implementation 'org.springframework.fu:spring-fu-kofu:0.4.0'
-    implementation 'org.testcontainers:postgresql:1.14.3'
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.1.6')
+    implementation('org.springframework.fu:spring-fu-kofu:0.4.0')
+    implementation('org.testcontainers:postgresql:1.14.3')
 
-    testImplementation 'io.r2dbc:r2dbc-h2'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('io.r2dbc:r2dbc-h2')
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
 }
 
 compileKotlin {
@@ -40,10 +42,6 @@ compileTestKotlin {
 
 test {
     useJUnitPlatform()
-    testLogging {
-        events 'passed', 'failed', 'skipped'
-        showStandardStreams = true
-    }
 }
 
 wrapper {
