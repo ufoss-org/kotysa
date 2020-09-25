@@ -3,7 +3,7 @@
 ## Dependency
 
 Kotysa is an additional dependency you can add to your Spring project.
-It is an extension to Spring Data R2DBC, and does not replace it.
+It is an extension to Spring R2DBC, and does not replace it.
 
 ```groovy
 repositories {
@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.ufoss.kotysa:kotysa-spring-data-r2dbc:0.1.4'
+    implementation 'org.ufoss.kotysa:kotysa-spring-data-r2dbc:0.1.6'
     
     implementation "org.springframework.data:spring-data-r2dbc"
 }
@@ -19,7 +19,7 @@ dependencies {
 
 ## Reactive support
 
-**SqlClient** has one reactive implementation on top of R2DBC using spring-data-r2dbc's ```DatabaseClient```, it can be obtained via an Extension function directly on ```DatabaseClient```.
+**SqlClient** has one reactive implementation on top of R2DBC using spring-r2dbc's ```DatabaseClient```, it can be obtained via an Extension function directly on ```DatabaseClient```.
 
 It provides a SQL client API using Reactor ```Mono``` and ```Flux```.
 
@@ -34,7 +34,7 @@ class UserRepository(dbClient: DatabaseClient, tables: Tables) {
 
 ## Coroutines first class support
 
-**SqlClient** has one Coroutines implementation on top of R2DBC using spring-data-r2dbc's ```DatabaseClient```, it can be obtained via an Extension function directly on ```DatabaseClient```.
+**SqlClient** has one Coroutines implementation on top of R2DBC using spring-r2dbc's ```DatabaseClient```, it can be obtained via an Extension function directly on ```DatabaseClient```.
 
 It provides a SQL client API using ```suspend``` functions and kotlinx-coroutines ```Flow```.
 
