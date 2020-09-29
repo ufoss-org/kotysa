@@ -12,6 +12,7 @@ dependencies {
         api project(':kotysa-spring-r2dbc')
 
         api "io.github.microutils:kotlin-logging:$kotlin_logging_version"
+        //api "org.ufoss.logger:kotlin-slf4j:$kotlin_slf4j_version"
     }
 }
 
