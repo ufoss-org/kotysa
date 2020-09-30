@@ -32,11 +32,3 @@ compileTestFixturesKotlin {
         jvmTarget = '1.8'
     }
 }
-
-tasks.dokkaHtml.configure {
-    dokkaSourceSets {
-        configureEach {
-            includes.from(files("../README.md"))
-        }
-    }
-}
