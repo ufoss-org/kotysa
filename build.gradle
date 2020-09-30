@@ -29,11 +29,19 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         testRuntimeOnly "ch.qos.logback:logback-classic:$logback_version"
     }
 
+    compileJava {
+        sourceCompatibility = 1.8
+    }
+
     compileKotlin {
         kotlinOptions {
             freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict']
             jvmTarget = '1.8'
         }
+    }
+
+    compileTestJava {
+        sourceCompatibility = 11
     }
 
     compileTestKotlin {

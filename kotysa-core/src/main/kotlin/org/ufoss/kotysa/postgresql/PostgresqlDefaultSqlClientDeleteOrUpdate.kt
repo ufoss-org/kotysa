@@ -4,11 +4,11 @@
 
 package org.ufoss.kotysa.postgresql
 
-import mu.KLogger
 import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
+import org.ufoss.logger.Logger
 
 
-internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.postgresqlUpdateTableSql(logger: KLogger) = with(properties) {
+internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.postgresqlUpdateTableSql(logger: Logger) = with(properties) {
     val updateSql = "UPDATE ${table.name}"
     var index = 1
     val setSql = setValues.keys.joinToString(prefix = "SET ") { column -> "${column.name} = $${index++}" }

@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import mu.KotlinLogging
+import org.ufoss.logger.Logger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -27,7 +27,7 @@ public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
     require(this.allTables.containsKey(tableClass)) { tableMustBeMapped(tableClass.qualifiedName) }
 }
 
-private val logger = KotlinLogging.logger {}
+private val logger = Logger.of<DefaultSqlClient>()
 
 
 public interface DefaultSqlClient {

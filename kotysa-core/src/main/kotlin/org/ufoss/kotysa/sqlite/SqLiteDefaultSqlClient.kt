@@ -4,11 +4,11 @@
 
 package org.ufoss.kotysa.sqlite
 
-import mu.KLogger
 import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
+import org.ufoss.logger.Logger
 
 
-internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.sqLiteDeleteFromTableSql(logger: KLogger) = with(properties) {
+internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.sqLiteDeleteFromTableSql(logger: Logger) = with(properties) {
     val joinsAndWheres = joinsWithExistsAndWheres(false)
     logger.debug {
         val joinsAndWheresDebug = if (joinsAndWheres.isNotEmpty()) {
@@ -22,7 +22,7 @@ internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.sqLiteDeleteFromTableSql(l
 }
 
 
-internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.sqLiteUpdateTableSql(logger: KLogger) = with(properties) {
+internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.sqLiteUpdateTableSql(logger: Logger) = with(properties) {
     val joinsAndWheres = joinsWithExistsAndWheres(false)
     logger.debug {
         val setSqlDebug = setValues.keys.joinToString(prefix = "SET ") { column -> "${column.name} = ?" }
