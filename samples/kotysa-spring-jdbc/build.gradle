@@ -1,11 +1,10 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id 'org.springframework.boot' version '2.4.0-M2'
+    id 'org.springframework.boot' version '2.4.0-M3'
 }
 
 repositories {
-    mavenLocal()
     jcenter()
     maven { url 'https://repo.spring.io/milestone' }
 }
@@ -14,8 +13,8 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework:spring-jdbc')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:0.1.6')
-    implementation('org.springframework.fu:spring-fu-kofu:0.4.0')
+    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:0.1.7')
+    implementation('org.springframework.fu:spring-fu-kofu:0.4.1')
     implementation('org.testcontainers:postgresql:1.14.3')
 
     testImplementation('com.fasterxml.jackson.module:jackson-module-kotlin')
