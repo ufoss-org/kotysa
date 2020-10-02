@@ -67,13 +67,13 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
         public fun deleteFromTableSql(): String = when (properties.tables.dbType) {
-            DbType.H2, DbType.POSTGRESQL -> h2DeleteFromTableSql(logger)
+            DbType.H2, DbType.POSTGRESQL, DbType.MYSQL -> h2DeleteFromTableSql(logger)
             DbType.SQLITE -> sqLiteDeleteFromTableSql(logger)
         }
 
         public fun updateTableSql(): String = when (properties.tables.dbType) {
             DbType.H2 -> h2UpdateTableSql(logger)
-            DbType.POSTGRESQL -> postgresqlUpdateTableSql(logger)
+            DbType.POSTGRESQL, DbType.MYSQL -> postgresqlUpdateTableSql(logger)
             DbType.SQLITE -> sqLiteUpdateTableSql(logger)
         }
 
