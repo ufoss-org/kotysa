@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.postgresqlBboss
 import org.ufoss.kotysa.test.postgresqlJdoe
 
 
-class SpringJdbcSelectBooleanH2Test : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectBoolean>() {
+class SpringJdbcSelectBooleanPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectBoolean>() {
     override val context = startContext<UserRepositorySpringJdbcPostgresqlSelectBoolean>()
 
     override val repository = getContextRepository<UserRepositorySpringJdbcPostgresqlSelectBoolean>()
