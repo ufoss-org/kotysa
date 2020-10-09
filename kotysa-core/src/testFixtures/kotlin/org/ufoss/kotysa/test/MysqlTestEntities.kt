@@ -10,6 +10,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.tables
 import java.time.*
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 val mysqlTables =
@@ -161,7 +162,42 @@ data class MysqlAllTypesNotNull(
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
         val uuid: UUID,
         val int: Int
-)
+) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MysqlAllTypesNotNull
+
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (offsetDateTime != other.offsetDateTime) return false
+        if (localTim.truncatedTo(ChronoUnit.SECONDS) != other.localTim.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (localDateTime != other.localDateTime) return false
+        if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
+        if (uuid != other.uuid) return false
+        if (int != other.int) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = string.hashCode()
+        result = 31 * result + (localDate.hashCode())
+        result = 31 * result + (kotlinxLocalDate.hashCode())
+        result = 31 * result + (offsetDateTime.hashCode())
+        result = 31 * result + (localTim.hashCode())
+        result = 31 * result + (localDateTime.hashCode())
+        result = 31 * result + (kotlinxLocalDateTime.hashCode())
+        result = 31 * result + (uuid.hashCode())
+        result = 31 * result + (int)
+        result = 31 * result + id.hashCode()
+        return result
+    }
+}
 
 val mysqlAllTypesNotNull = MysqlAllTypesNotNull(UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f"), "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), OffsetDateTime.now(), LocalTime.now(),
