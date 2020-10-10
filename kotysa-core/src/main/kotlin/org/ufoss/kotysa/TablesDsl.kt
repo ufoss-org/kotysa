@@ -8,7 +8,9 @@ import kotlin.reflect.KClass
 
 
 @KotysaMarker
-public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protected constructor(private val init: T.() -> Unit) {
+public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protected constructor(
+        private val init: T.() -> Unit
+) {
 
     private val allTables = mutableMapOf<KClass<*>, Table<*>>()
     private val allColumns = mutableMapOf<(Any) -> Any?, Column<*, *>>()
