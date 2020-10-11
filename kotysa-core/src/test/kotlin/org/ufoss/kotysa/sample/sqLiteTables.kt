@@ -12,8 +12,12 @@ fun sqLiteTables() =
                 name = "users"
                 column { it[SqLiteUser::id].text() }
                         .primaryKey()
-                column { it[SqLiteUser::firstname].text().name("fname") }
-                column { it[SqLiteUser::lastname].text().name("lname") }
+                column { it[SqLiteUser::firstname].text {
+                    name = "fname"
+                } }
+                column { it[SqLiteUser::lastname].text {
+                    name = "lname"
+                } }
                 column { it[SqLiteUser::isAdmin].integer() }
                 column { it[SqLiteUser::alias].text() }
             }

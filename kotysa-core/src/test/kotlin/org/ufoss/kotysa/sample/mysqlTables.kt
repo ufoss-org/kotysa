@@ -13,8 +13,12 @@ fun mysqlTables() =
                 name = "users"
                 column { it[MySqlUser::id].uuid() }
                         .primaryKey()
-                column { it[MySqlUser::firstname].varchar().name("fname") }
-                column { it[MySqlUser::lastname].varchar().name("lname") }
+                column { it[MySqlUser::firstname].varchar {
+                    name = "fname"
+                } }
+                column { it[MySqlUser::lastname].varchar {
+                    name = "lname"
+                } }
                 column { it[MySqlUser::isAdmin].boolean() }
                 column { it[MySqlUser::alias].varchar() }
             }

@@ -23,8 +23,12 @@ val sqLiteTables =
                 name = "users"
                 column { it[SqLiteUser::id].text() }
                         .primaryKey()
-                column { it[SqLiteUser::firstname].text().name("fname") }
-                column { it[SqLiteUser::lastname].text().name("lname") }
+                column { it[SqLiteUser::firstname].text {
+                    name = "fname"
+                } }
+                column { it[SqLiteUser::lastname].text {
+                    name = "lname"
+                } }
                 column { it[SqLiteUser::isAdmin].integer() }
                 column { it[SqLiteUser::roleId].text() }
                         .foreignKey<SqLiteRole>("FK_users_roles")
@@ -60,14 +64,30 @@ val sqLiteTables =
             table<SqLiteAllTypesNullableDefaultValue> {
                 column { it[SqLiteAllTypesNullableDefaultValue::id].text() }
                         .primaryKey()
-                column { it[SqLiteAllTypesNullableDefaultValue::string].text().defaultValue("default") }
-                column { it[SqLiteAllTypesNullableDefaultValue::localDate].text().defaultValue(LocalDate.MAX) }
-                column { it[SqLiteAllTypesNullableDefaultValue::kotlinxLocalDate].text().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
-                column { it[SqLiteAllTypesNullableDefaultValue::offsetDateTime].text().defaultValue(OffsetDateTime.MAX) }
-                column { it[SqLiteAllTypesNullableDefaultValue::localDateTime].text().defaultValue(LocalDateTime.MAX) }
-                column { it[SqLiteAllTypesNullableDefaultValue::kotlinxLocalDateTime].text().defaultValue(kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)) }
-                column { it[SqLiteAllTypesNullableDefaultValue::localTime].text().defaultValue(LocalTime.MAX) }
-                column { it[SqLiteAllTypesNullableDefaultValue::int].integer().defaultValue(42) }
+                column { it[SqLiteAllTypesNullableDefaultValue::string].text {
+                    defaultValue = "default"
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::localDate].text {
+                    defaultValue = LocalDate.MAX
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::kotlinxLocalDate].text {
+                    defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::offsetDateTime].text {
+                    defaultValue = OffsetDateTime.MAX
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::localDateTime].text {
+                    defaultValue = LocalDateTime.MAX
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::kotlinxLocalDateTime].text {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::localTime].text {
+                    defaultValue = LocalTime.MAX
+                } }
+                column { it[SqLiteAllTypesNullableDefaultValue::int].integer {
+                    defaultValue = 42
+                } }
             }
             table<SqLiteLocalDate> {
                 column { it[SqLiteLocalDate::id].text() }
@@ -106,7 +126,7 @@ val sqLiteTables =
                 column { it[SqLiteLocalTime::localTimeNullable].text() }
             }
             table<SqLiteInteger> {
-                column { it[SqLiteInteger::id].integer().autoIncrement() }
+                column { it[SqLiteInteger::id].autoIncrementInteger() }
                         .primaryKey()
                 column { it[SqLiteInteger::integerNotNull].integer() }
                 column { it[SqLiteInteger::integerNullable].integer() }

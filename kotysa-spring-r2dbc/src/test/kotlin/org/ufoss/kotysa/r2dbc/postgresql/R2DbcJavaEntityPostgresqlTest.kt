@@ -110,8 +110,12 @@ private val tables =
                 name = "java_users"
                 column { it[JavaUser::getLogin].varchar() }
                         .primaryKey()
-                column { it[JavaUser::getFirstname].varchar().name("fname") }
-                column { it[JavaUser::getLastname].varchar().name("lname") }
+                column { it[JavaUser::getFirstname].varchar {
+                    name = "fname"
+                } }
+                column { it[JavaUser::getLastname].varchar {
+                    name = "lname"
+                } }
                 column { it[JavaUser::isAdmin].boolean() }
                 column { it[JavaUser::getAlias1].varchar() }
                 column { it[JavaUser::getAlias2].varchar() }

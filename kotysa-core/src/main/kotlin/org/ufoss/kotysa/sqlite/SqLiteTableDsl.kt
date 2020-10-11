@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.sqlite
 
 import org.ufoss.kotysa.Column
-import org.ufoss.kotysa.ColumnBuilder
 import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TableDsl
 import kotlin.reflect.KClass
@@ -20,7 +19,7 @@ public class SqLiteTableDsl<T : Any>(
      * Declare a Column, supported types follow : [SqLite Data types](https://www.sqlite.org/datatype3.html)
      */
     public fun <U : Column<T, *>> column(
-            dsl: SqLiteColumnDsl<T>.(TableColumnPropertyProvider<T>) -> ColumnBuilder<*, T, *, U>
+            @BuilderInference dsl: SqLiteColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
     ): U {
         val columnDsl = SqLiteColumnDsl(dsl)
         val column = columnDsl.initialize<U>(columnDsl)

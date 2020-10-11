@@ -72,8 +72,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
 
         public fun updateTableSql(): String = when (properties.tables.dbType) {
-            DbType.H2 -> h2UpdateTableSql(logger)
-            DbType.POSTGRESQL, DbType.MYSQL -> postgresqlUpdateTableSql(logger)
+            DbType.H2, DbType.MYSQL -> h2UpdateTableSql(logger)
+            DbType.POSTGRESQL -> postgresqlUpdateTableSql(logger)
             DbType.SQLITE -> sqLiteUpdateTableSql(logger)
         }
 

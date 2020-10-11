@@ -25,8 +25,12 @@ val postgresqlTables =
                 name = "users"
                 column { it[PostgresqlUser::id].uuid() }
                         .primaryKey("PK_users")
-                column { it[PostgresqlUser::firstname].varchar().name("fname") }
-                column { it[PostgresqlUser::lastname].varchar().name("lname") }
+                column { it[PostgresqlUser::firstname].varchar {
+                    name = "fname"
+                } }
+                column { it[PostgresqlUser::lastname].varchar {
+                    name = "lname"
+                } }
                 column { it[PostgresqlUser::isAdmin].boolean() }
                 column { it[PostgresqlUser::roleId].uuid() }
                         .foreignKey<PostgresqlRole>("FK_users_roles")
@@ -64,15 +68,33 @@ val postgresqlTables =
             table<PostgresqlAllTypesNullableDefaultValue> {
                 column { it[PostgresqlAllTypesNullableDefaultValue::id].uuid() }
                         .primaryKey()
-                column { it[PostgresqlAllTypesNullableDefaultValue::string].varchar().defaultValue("default") }
-                column { it[PostgresqlAllTypesNullableDefaultValue::localDate].date().defaultValue(LocalDate.of(2019, 11, 4)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::kotlinxLocalDate].date().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::localTim].time().defaultValue(LocalTime.of(11, 25, 55)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::localDateTime].timestamp().defaultValue(LocalDateTime.of(2018, 11, 4, 0, 0)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::kotlinxLocalDateTime].timestamp().defaultValue(kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::uuid].uuid().defaultValue(UUID.fromString(defaultUuid)) }
-                column { it[PostgresqlAllTypesNullableDefaultValue::int].integer().defaultValue(42) }
+                column { it[PostgresqlAllTypesNullableDefaultValue::string].varchar {
+                    defaultValue = "default"
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::localDate].date {
+                    defaultValue = LocalDate.of(2019, 11, 4)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::kotlinxLocalDate].date {
+                    defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone {
+                    defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::localTim].time {
+                    defaultValue = LocalTime.of(11, 25, 55)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::localDateTime].timestamp {
+                    defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::kotlinxLocalDateTime].timestamp {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::uuid].uuid {
+                    defaultValue = UUID.fromString(defaultUuid)
+                } }
+                column { it[PostgresqlAllTypesNullableDefaultValue::int].integer {
+                    defaultValue = 42
+                } }
             }
             table<PostgresqlUuid> {
                 column { it[PostgresqlUuid::id].uuid() }

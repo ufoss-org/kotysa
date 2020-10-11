@@ -33,13 +33,13 @@ class H2TablesDslTest {
                 column { it[H2AllTypesNotNull::localDate].date() }
                 column { it[H2AllTypesNotNull::kotlinxLocalDate].date() }
                 column { it[H2AllTypesNotNull::offsetDateTime].timestampWithTimeZone() }
-                column { it[H2AllTypesNotNull::localTim].time9() }
+                column { it[H2AllTypesNotNull::localTim].time() }
                 column { it[H2AllTypesNotNull::localDateTime1].dateTime() }
                 column { it[H2AllTypesNotNull::localDateTime2].timestamp() }
                 column { it[H2AllTypesNotNull::kotlinxLocalDateTime1].dateTime() }
                 column { it[H2AllTypesNotNull::kotlinxLocalDateTime2].timestamp() }
                 column { it[H2AllTypesNotNull::uuid].uuid() }
-                column { it[H2AllTypesNotNull::int].integer().autoIncrement() }
+                column { it[H2AllTypesNotNull::int].integer() }
             }
         }
         assertThat(tables.allColumns.values)
@@ -51,13 +51,13 @@ class H2TablesDslTest {
                         tuple("localDate", SqlType.DATE, false, false),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, false),
                         tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, false),
-                        tuple("localTim", SqlType.TIME9, false, false),
+                        tuple("localTim", SqlType.TIME, false, false),
                         tuple("localDateTime1", SqlType.DATE_TIME, false, false),
                         tuple("localDateTime2", SqlType.TIMESTAMP, false, false),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, false),
                         tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, false, false),
                         tuple("uuid", SqlType.UUID, false, false),
-                        tuple("int", SqlType.INTEGER, false, true))
+                        tuple("int", SqlType.INTEGER, false, false))
     }
 
     @Test
@@ -71,30 +71,30 @@ class H2TablesDslTest {
                 column { it[H2AllTypesNullable::localDate].date() }
                 column { it[H2AllTypesNullable::kotlinxLocalDate].date() }
                 column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone() }
-                column { it[H2AllTypesNullable::localTim].time9() }
+                column { it[H2AllTypesNullable::localTim].time() }
                 column { it[H2AllTypesNullable::localDateTime1].dateTime() }
                 column { it[H2AllTypesNullable::localDateTime2].timestamp() }
                 column { it[H2AllTypesNullable::kotlinxLocalDateTime1].dateTime() }
                 column { it[H2AllTypesNullable::kotlinxLocalDateTime2].timestamp() }
                 column { it[H2AllTypesNullable::uuid].uuid() }
-                column { it[H2AllTypesNullable::int].integer() }
+                column { it[H2AllTypesNullable::int].autoIncrementInteger() }
             }
         }
         assertThat(tables.allColumns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "isNullable", "isAutoIncrement")
                 .containsExactly(
-                        tuple("id", SqlType.UUID, false),
-                        tuple("string", SqlType.VARCHAR, true),
-                        tuple("localDate", SqlType.DATE, true),
-                        tuple("kotlinxLocalDate", SqlType.DATE, true),
-                        tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, true),
-                        tuple("localTim", SqlType.TIME9, true),
-                        tuple("localDateTime1", SqlType.DATE_TIME, true),
-                        tuple("localDateTime2", SqlType.TIMESTAMP, true),
-                        tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, true),
-                        tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, true),
-                        tuple("uuid", SqlType.UUID, true),
-                        tuple("int", SqlType.INTEGER, true))
+                        tuple("id", SqlType.UUID, false, false),
+                        tuple("string", SqlType.VARCHAR, true, false),
+                        tuple("localDate", SqlType.DATE, true, false),
+                        tuple("kotlinxLocalDate", SqlType.DATE, true, false),
+                        tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, true, false),
+                        tuple("localTim", SqlType.TIME, true, false),
+                        tuple("localDateTime1", SqlType.DATE_TIME, true, false),
+                        tuple("localDateTime2", SqlType.TIMESTAMP, true, false),
+                        tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, true, false),
+                        tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, true, false),
+                        tuple("uuid", SqlType.UUID, true, false),
+                        tuple("int", SqlType.INTEGER, false, true))
     }
 
     @Test
@@ -105,17 +105,39 @@ class H2TablesDslTest {
                 name = "all_types_nullable"
                 column { it[H2AllTypesNullable::id].uuid() }
                         .primaryKey()
-                column { it[H2AllTypesNullable::string].varchar().defaultValue("default") }
-                column { it[H2AllTypesNullable::localDate].date().defaultValue(LocalDate.MAX) }
-                column { it[H2AllTypesNullable::kotlinxLocalDate].date().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
-                column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.MAX) }
-                column { it[H2AllTypesNullable::localTim].time9().defaultValue(LocalTime.MAX) }
-                column { it[H2AllTypesNullable::localDateTime1].dateTime().defaultValue(LocalDateTime.MAX) }
-                column { it[H2AllTypesNullable::localDateTime2].timestamp().defaultValue(LocalDateTime.MAX) }
-                column { it[H2AllTypesNullable::kotlinxLocalDateTime1].dateTime().defaultValue(kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)) }
-                column { it[H2AllTypesNullable::kotlinxLocalDateTime2].timestamp().defaultValue(kotlinx.datetime.LocalDateTime(2020, 11, 6, 0, 0)) }
-                column { it[H2AllTypesNullable::uuid].uuid().defaultValue(defaultUuid) }
-                column { it[H2AllTypesNullable::int].integer().defaultValue(42) }
+                column { it[H2AllTypesNullable::string].varchar {
+                    defaultValue = "default"
+                } }
+                column { it[H2AllTypesNullable::localDate].date {
+                    defaultValue = LocalDate.MAX
+                } }
+                column { it[H2AllTypesNullable::kotlinxLocalDate].date {
+                    defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+                } }
+                column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone {
+                    defaultValue = OffsetDateTime.MAX
+                } }
+                column { it[H2AllTypesNullable::localTim].time {
+                    defaultValue = LocalTime.MAX
+                } }
+                column { it[H2AllTypesNullable::localDateTime1].dateTime {
+                    defaultValue = LocalDateTime.MAX
+                } }
+                column { it[H2AllTypesNullable::localDateTime2].timestamp {
+                    defaultValue = LocalDateTime.MAX
+                } }
+                column { it[H2AllTypesNullable::kotlinxLocalDateTime1].dateTime {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)
+                } }
+                column { it[H2AllTypesNullable::kotlinxLocalDateTime2].timestamp {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2020, 11, 6, 0, 0)
+                } }
+                column { it[H2AllTypesNullable::uuid].uuid {
+                    defaultValue = defaultUuid
+                } }
+                column { it[H2AllTypesNullable::int].integer {
+                    defaultValue = 42
+                } }
             }
         }
         assertThat(tables.allColumns.values)
@@ -126,7 +148,7 @@ class H2TablesDslTest {
                         tuple("localDate", SqlType.DATE, false, LocalDate.MAX),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, kotlinx.datetime.LocalDate(2019, 11, 6)),
                         tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, OffsetDateTime.MAX),
-                        tuple("localTim", SqlType.TIME9, false, LocalTime.MAX),
+                        tuple("localTim", SqlType.TIME, false, LocalTime.MAX),
                         tuple("localDateTime1", SqlType.DATE_TIME, false, LocalDateTime.MAX),
                         tuple("localDateTime2", SqlType.TIMESTAMP, false, LocalDateTime.MAX),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)),

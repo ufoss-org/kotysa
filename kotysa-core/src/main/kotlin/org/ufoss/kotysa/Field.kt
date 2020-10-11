@@ -22,7 +22,7 @@ public interface NotNullField : Field
 
 public interface NullableField : Field
 
-public class CountField<T : Any, U> internal constructor(
+public class CountField<T : Any, U : Any> internal constructor(
         internal val dsl: ((FieldProvider) -> ColumnField<T, *>)?,
         columnField: ColumnField<T, U>?,
         override val alias: String?
@@ -37,7 +37,7 @@ public class CountField<T : Any, U> internal constructor(
 
 
 @Suppress("UNCHECKED_CAST")
-public abstract class ColumnField<T : Any, U> internal constructor(
+public abstract class ColumnField<T : Any, U : Any> internal constructor(
         availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
         getter: (T) -> Any?,
         final override val alias: String?,
@@ -76,7 +76,7 @@ public class NullableStringColumnField<T : Any> internal constructor(
         getter: (T) -> String?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, String?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, String>(availableColumns, getter, alias, dbType), NullableField
 
 
 public class NotNullLocalDateTimeColumnField<T : Any> internal constructor(
@@ -92,7 +92,7 @@ public class NullableLocalDateTimeColumnField<T : Any> internal constructor(
         getter: (T) -> LocalDateTime?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, LocalDateTime?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, LocalDateTime>(availableColumns, getter, alias, dbType), NullableField
 
 public class NotNullKotlinxLocalDateTimeColumnField<T : Any> internal constructor(
         availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
@@ -107,7 +107,7 @@ public class NullableKotlinxLocalDateTimeColumnField<T : Any> internal construct
         getter: (T) -> kotlinx.datetime.LocalDateTime?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, kotlinx.datetime.LocalDateTime?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, kotlinx.datetime.LocalDateTime>(availableColumns, getter, alias, dbType), NullableField
 
 
 public class NotNullLocalDateColumnField<T : Any> internal constructor(
@@ -123,7 +123,7 @@ public class NullableLocalDateColumnField<T : Any> internal constructor(
         getter: (T) -> LocalDate?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, LocalDate?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, LocalDate>(availableColumns, getter, alias, dbType), NullableField
 
 public class NotNullKotlinxLocalDateColumnField<T : Any> internal constructor(
         availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
@@ -138,7 +138,7 @@ public class NullableKotlinxLocalDateColumnField<T : Any> internal constructor(
         getter: (T) -> kotlinx.datetime.LocalDate?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, kotlinx.datetime.LocalDate?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, kotlinx.datetime.LocalDate>(availableColumns, getter, alias, dbType), NullableField
 
 
 public class NotNullOffsetDateTimeColumnField<T : Any> internal constructor(
@@ -154,7 +154,7 @@ public class NullableOffsetDateTimeColumnField<T : Any> internal constructor(
         getter: (T) -> OffsetDateTime?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, OffsetDateTime?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, OffsetDateTime>(availableColumns, getter, alias, dbType), NullableField
 
 
 public class NotNullLocalTimeColumnField<T : Any> internal constructor(
@@ -170,7 +170,7 @@ public class NullableLocalTimeColumnField<T : Any> internal constructor(
         getter: (T) -> LocalTime?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, LocalTime?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, LocalTime>(availableColumns, getter, alias, dbType), NullableField
 
 
 public class NotNullBooleanColumnField<T : Any> internal constructor(
@@ -194,7 +194,7 @@ public class NullableUuidColumnField<T : Any> internal constructor(
         getter: (T) -> UUID?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, UUID?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, UUID>(availableColumns, getter, alias, dbType), NullableField
 
 
 public class NotNullIntColumnField<T : Any> internal constructor(
@@ -210,4 +210,4 @@ public class NullableIntColumnField<T : Any> internal constructor(
         getter: (T) -> Int?,
         dbType: DbType,
         alias: String? = null
-) : ColumnField<T, Int?>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, Int>(availableColumns, getter, alias, dbType), NullableField
