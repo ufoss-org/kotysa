@@ -37,6 +37,7 @@ public interface DefaultSqlClient {
         val table = tables.getTable(tableClass)
 
         val columns = table.columns.values.joinToString { column ->
+            val size = if (column.size != null) "(${column.size})" else ""
             val nullability = if (column.isNullable) "NULL" else "NOT NULL"
             val autoIncrement = if (column.isAutoIncrement && DbType.SQLITE != tables.dbType) {
                 // SQLITE : The AUTOINCREMENT keyword imposes extra CPU, memory, disk space, and disk I/O overhead and should be avoided if not strictly needed.
@@ -51,7 +52,7 @@ public interface DefaultSqlClient {
             } else {
                 ""
             }
-            "${column.name} ${column.sqlType.fullType} $nullability$autoIncrement$default"
+            "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
         }
 
         val pk = table.primaryKey

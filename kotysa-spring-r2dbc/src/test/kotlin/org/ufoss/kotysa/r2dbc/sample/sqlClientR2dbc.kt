@@ -39,8 +39,12 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
                     name = "users"
                     column { it[User::id].uuid() }
                             .primaryKey()
-                    column { it[User::firstname].varchar().name("fname") }
-                    column { it[User::lastname].varchar().name("lname") }
+                    column { it[User::firstname].varchar {
+                        name = "fname"
+                    } }
+                    column { it[User::lastname].varchar {
+                        name = "lname"
+                    } }
                     column { it[User::isAdmin].boolean() }
                     column { it[User::roleId].uuid() }
                             .foreignKey<Role>()

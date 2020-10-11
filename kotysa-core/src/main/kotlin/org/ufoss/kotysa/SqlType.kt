@@ -22,7 +22,6 @@ public enum class SqlType(internal val fullType: String) {
     DATE_TIME("DATETIME"),
     TIME("TIME"),
     TIMESTAMP_WITH_TIME_ZONE("TIMESTAMP WITH TIME ZONE"),
-    TIME9("TIME(9)"), // time9 with fractional seconds precision to match with java.time.LocalTime's value
 
     BOOLEAN("BOOLEAN"),
 

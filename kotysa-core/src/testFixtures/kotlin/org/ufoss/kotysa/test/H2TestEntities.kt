@@ -26,8 +26,12 @@ val h2Tables =
                 name = "users"
                 column { it[H2User::id].uuid() }
                         .primaryKey("PK_users")
-                column { it[H2User::firstname].varchar().name("fname") }
-                column { it[H2User::lastname].varchar().name("lname") }
+                column { it[H2User::firstname].varchar {
+                    name = "fname"
+                } }
+                column { it[H2User::lastname].varchar {
+                    name = "lname"
+                } }
                 column { it[H2User::isAdmin].boolean() }
                 column { it[H2User::roleId].uuid() }
                         .foreignKey<H2Role>("FK_users_roles")
@@ -42,7 +46,9 @@ val h2Tables =
                 column { it[H2AllTypesNotNull::localDate].date() }
                 column { it[H2AllTypesNotNull::kotlinxLocalDate].date() }
                 column { it[H2AllTypesNotNull::offsetDateTime].timestampWithTimeZone() }
-                column { it[H2AllTypesNotNull::localTim].time9() }
+                column { it[H2AllTypesNotNull::localTim].time {
+                    fractionalSecondsPart = 9
+                } }
                 column { it[H2AllTypesNotNull::localDateTime1].dateTime() }
                 column { it[H2AllTypesNotNull::localDateTime2].timestamp() }
                 column { it[H2AllTypesNotNull::kotlinxLocalDateTime1].dateTime() }
@@ -58,7 +64,9 @@ val h2Tables =
                 column { it[H2AllTypesNullable::localDate].date() }
                 column { it[H2AllTypesNullable::kotlinxLocalDate].date() }
                 column { it[H2AllTypesNullable::offsetDateTime].timestampWithTimeZone() }
-                column { it[H2AllTypesNullable::localTim].time9() }
+                column { it[H2AllTypesNullable::localTim].time {
+                    fractionalSecondsPart = 9
+                } }
                 column { it[H2AllTypesNullable::localDateTime1].dateTime() }
                 column { it[H2AllTypesNullable::localDateTime2].timestamp() }
                 column { it[H2AllTypesNullable::kotlinxLocalDateTime1].dateTime() }
@@ -69,17 +77,40 @@ val h2Tables =
             table<H2AllTypesNullableDefaultValue> {
                 column { it[H2AllTypesNullableDefaultValue::id].uuid() }
                         .primaryKey()
-                column { it[H2AllTypesNullableDefaultValue::string].varchar().defaultValue("default") }
-                column { it[H2AllTypesNullableDefaultValue::localDate].date().defaultValue(LocalDate.MAX) }
-                column { it[H2AllTypesNullableDefaultValue::kotlinxLocalDate].date().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
-                column { it[H2AllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)) }
-                column { it[H2AllTypesNullableDefaultValue::localTim].time9().defaultValue(LocalTime.MAX) }
-                column { it[H2AllTypesNullableDefaultValue::localDateTime1].dateTime().defaultValue(LocalDateTime.of(2018, 11, 4, 0, 0)) }
-                column { it[H2AllTypesNullableDefaultValue::localDateTime2].timestamp().defaultValue(LocalDateTime.of(2019, 11, 4, 0, 0)) }
-                column { it[H2AllTypesNullableDefaultValue::kotlinxLocalDateTime1].dateTime().defaultValue(kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)) }
-                column { it[H2AllTypesNullableDefaultValue::kotlinxLocalDateTime2].timestamp().defaultValue(kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)) }
-                column { it[H2AllTypesNullableDefaultValue::uuid].uuid().defaultValue(UUID.fromString(defaultUuid)) }
-                column { it[H2AllTypesNullableDefaultValue::int].integer().defaultValue(42) }
+                column { it[H2AllTypesNullableDefaultValue::string].varchar {
+                    defaultValue = "default"
+                } }
+                column { it[H2AllTypesNullableDefaultValue::localDate].date {
+                    defaultValue = LocalDate.MAX
+                } }
+                column { it[H2AllTypesNullableDefaultValue::kotlinxLocalDate].date {
+                    defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone {
+                    defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::localTim].time {
+                    fractionalSecondsPart = 9
+                    defaultValue = LocalTime.MAX
+                } }
+                column { it[H2AllTypesNullableDefaultValue::localDateTime1].dateTime {
+                    defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::localDateTime2].timestamp {
+                    defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::kotlinxLocalDateTime1].dateTime {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::kotlinxLocalDateTime2].timestamp {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::uuid].uuid {
+                    defaultValue = UUID.fromString(defaultUuid)
+                } }
+                column { it[H2AllTypesNullableDefaultValue::int].integer {
+                    defaultValue = 42
+                } }
             }
             table<H2Uuid> {
                 column { it[H2Uuid::id].uuid() }
@@ -126,11 +157,15 @@ val h2Tables =
             table<H2LocalTime> {
                 column { it[H2LocalTime::id].uuid() }
                         .primaryKey()
-                column { it[H2LocalTime::localTimeNotNull].time9() }
-                column { it[H2LocalTime::localTimeNullable].time9() }
+                column { it[H2LocalTime::localTimeNotNull].time {
+                    fractionalSecondsPart = 9
+                } }
+                column { it[H2LocalTime::localTimeNullable].time {
+                    fractionalSecondsPart = 9
+                } }
             }
             table<H2Int> {
-                column { it[H2Int::id].integer().autoIncrement() }
+                column { it[H2Int::id].autoIncrementInteger() }
                         .primaryKey()
                 column { it[H2Int::intNotNull].integer() }
                 column { it[H2Int::intNullable].integer() }

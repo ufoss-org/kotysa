@@ -26,6 +26,13 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict', '-Xopt-in=kotlin.experimental.ExperimentalTypeInference']
+        jvmTarget = '1.8'
+    }
+}
+
 compileTestFixturesKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjvm-default=enable']

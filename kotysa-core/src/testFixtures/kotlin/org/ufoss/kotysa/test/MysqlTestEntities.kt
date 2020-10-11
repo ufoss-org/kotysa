@@ -13,6 +13,14 @@ import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+private fun LocalTime.roundToSecond(): LocalTime {
+    var time = this
+    if (nano >= 500_000_000) {
+        time = plusSeconds(1)
+    }
+    return time.truncatedTo(ChronoUnit.SECONDS)
+}
+
 val mysqlTables =
         tables().mysql {
             table<MysqlRole> {
@@ -25,8 +33,12 @@ val mysqlTables =
                 name = "users"
                 column { it[MysqlUser::id].uuid() }
                         .primaryKey("PK_users")
-                column { it[MysqlUser::firstname].varchar().name("fname") }
-                column { it[MysqlUser::lastname].varchar().name("lname") }
+                column { it[MysqlUser::firstname].varchar {
+                    name = "fname"
+                } }
+                column { it[MysqlUser::lastname].varchar() {
+                    name = "lname"
+                } }
                 column { it[MysqlUser::isAdmin].boolean() }
                 column { it[MysqlUser::roleId].uuid() }
                         .foreignKey<MysqlRole>("FK_users_roles")
@@ -40,7 +52,7 @@ val mysqlTables =
                 column { it[MysqlAllTypesNotNull::boolean].boolean() }
                 column { it[MysqlAllTypesNotNull::localDate].date() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDate].date() }
-                column { it[MysqlAllTypesNotNull::offsetDateTime].timestampWithTimeZone() }
+                column { it[MysqlAllTypesNotNull::offsetDateTime].timestamp() }
                 column { it[MysqlAllTypesNotNull::localTim].time() }
                 column { it[MysqlAllTypesNotNull::localDateTime].timestamp() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDateTime].timestamp() }
@@ -54,8 +66,10 @@ val mysqlTables =
                 column { it[MysqlAllTypesNullable::string].varchar() }
                 column { it[MysqlAllTypesNullable::localDate].date() }
                 column { it[MysqlAllTypesNullable::kotlinxLocalDate].date() }
-                column { it[MysqlAllTypesNullable::offsetDateTime].timestampWithTimeZone() }
-                column { it[MysqlAllTypesNullable::localTim].time() }
+                column { it[MysqlAllTypesNullable::offsetDateTime].timestamp() }
+                column { it[MysqlAllTypesNullable::localTim].time {
+                    fractionalSecondsPart = 0
+                } }
                 column { it[MysqlAllTypesNullable::localDateTime].timestamp() }
                 column { it[MysqlAllTypesNullable::kotlinxLocalDateTime].timestamp() }
                 column { it[MysqlAllTypesNullable::uuid].uuid() }
@@ -64,15 +78,33 @@ val mysqlTables =
             table<MysqlAllTypesNullableDefaultValue> {
                 column { it[MysqlAllTypesNullableDefaultValue::id].uuid() }
                         .primaryKey()
-                column { it[MysqlAllTypesNullableDefaultValue::string].varchar().defaultValue("default") }
-                column { it[MysqlAllTypesNullableDefaultValue::localDate].date().defaultValue(LocalDate.of(2019, 11, 4)) }
-                column { it[MysqlAllTypesNullableDefaultValue::kotlinxLocalDate].date().defaultValue(kotlinx.datetime.LocalDate(2019, 11, 6)) }
-                column { it[MysqlAllTypesNullableDefaultValue::offsetDateTime].timestampWithTimeZone().defaultValue(OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)) }
-                column { it[MysqlAllTypesNullableDefaultValue::localTim].time().defaultValue(LocalTime.of(11, 25, 55)) }
-                column { it[MysqlAllTypesNullableDefaultValue::localDateTime].timestamp().defaultValue(LocalDateTime.of(2018, 11, 4, 0, 0)) }
-                column { it[MysqlAllTypesNullableDefaultValue::kotlinxLocalDateTime].timestamp().defaultValue(kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)) }
-                column { it[MysqlAllTypesNullableDefaultValue::uuid].uuid().defaultValue(UUID.fromString(defaultUuid)) }
-                column { it[MysqlAllTypesNullableDefaultValue::int].integer().defaultValue(42) }
+                column { it[MysqlAllTypesNullableDefaultValue::string].varchar {
+                    defaultValue = "default"
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::localDate].date {
+                    defaultValue = LocalDate.of(2019, 11, 4)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::kotlinxLocalDate].date {
+                    defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::offsetDateTime].timestamp {
+                    defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::localTim].time {
+                    defaultValue = LocalTime.of(11, 25, 55)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::localDateTime].timestamp {
+                    defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::kotlinxLocalDateTime].timestamp {
+                    defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::uuid].uuid {
+                    defaultValue = UUID.fromString(defaultUuid)
+                } }
+                column { it[MysqlAllTypesNullableDefaultValue::int].integer {
+                    defaultValue = 42
+                } }
             }
             table<MysqlUuid> {
                 column { it[MysqlUuid::id].uuid() }
@@ -109,8 +141,8 @@ val mysqlTables =
             table<MysqlOffsetDateTime> {
                 column { it[MysqlOffsetDateTime::id].uuid() }
                         .primaryKey()
-                column { it[MysqlOffsetDateTime::offsetDateTimeNotNull].timestampWithTimeZone() }
-                column { it[MysqlOffsetDateTime::offsetDateTimeNullable].timestampWithTimeZone() }
+                column { it[MysqlOffsetDateTime::offsetDateTimeNotNull].timestamp() }
+                column { it[MysqlOffsetDateTime::offsetDateTimeNullable].timestamp() }
             }
             table<MysqlLocalTime> {
                 column { it[MysqlLocalTime::id].uuid() }
@@ -174,7 +206,7 @@ data class MysqlAllTypesNotNull(
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (offsetDateTime != other.offsetDateTime) return false
-        if (localTim.truncatedTo(ChronoUnit.SECONDS) != other.localTim.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (localTim.roundToSecond() != other.localTim.roundToSecond()) return false
         if (localDateTime != other.localDateTime) return false
         if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
         if (uuid != other.uuid) return false
@@ -233,7 +265,45 @@ data class MysqlAllTypesNullableDefaultValue(
         val uuid: UUID? = null,
         val int: Int? = null,
         val id: UUID = UUID.randomUUID()
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MysqlAllTypesNullableDefaultValue
+
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (offsetDateTime != null) {
+            if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
+        } else if (other.offsetDateTime != null) {
+            return false
+        }
+        if (localTim != other.localTim) return false
+        if (localDateTime != other.localDateTime) return false
+        if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
+        if (uuid != other.uuid) return false
+        if (int != other.int) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = string?.hashCode() ?: 0
+        result = 31 * result + (localDate?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (localTim?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
+        result = 31 * result + (int ?: 0)
+        result = 31 * result + id.hashCode()
+        return result
+    }
+}
 
 val mysqlAllTypesNullableDefaultValue = MysqlAllTypesNullableDefaultValue()
 
