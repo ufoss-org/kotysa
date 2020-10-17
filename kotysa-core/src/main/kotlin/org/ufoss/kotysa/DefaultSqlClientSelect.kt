@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.logger.Logger
+import org.ufoss.kolog.Logger
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

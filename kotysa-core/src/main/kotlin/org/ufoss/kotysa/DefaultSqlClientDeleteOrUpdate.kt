@@ -9,7 +9,7 @@ import org.ufoss.kotysa.h2.h2UpdateTableSql
 import org.ufoss.kotysa.postgresql.postgresqlUpdateTableSql
 import org.ufoss.kotysa.sqlite.sqLiteDeleteFromTableSql
 import org.ufoss.kotysa.sqlite.sqLiteUpdateTableSql
-import org.ufoss.logger.Logger
+import org.ufoss.kolog.Logger
 import kotlin.reflect.KClass
 
 private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()

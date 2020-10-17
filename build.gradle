@@ -17,6 +17,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         jcenter()
         maven { url 'https://repo.spring.io/milestone' }
         maven { url 'https://kotlin.bintray.com/kotlinx' }
+        maven { url  'https://dl.bintray.com/ufoss/ufoss' } // todo remove me
     }
 
     dependencies {
