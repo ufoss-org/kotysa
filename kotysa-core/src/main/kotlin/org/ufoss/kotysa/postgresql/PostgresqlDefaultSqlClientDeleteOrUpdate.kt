@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.postgresql
 
 import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
-import org.ufoss.logger.Logger
+import org.ufoss.kolog.Logger
 
 
 internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.postgresqlUpdateTableSql(logger: Logger) = with(properties) {

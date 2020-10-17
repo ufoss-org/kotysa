@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
-import org.ufoss.logger.Logger
+import org.ufoss.kolog.Logger
 
 
 internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.h2DeleteFromTableSql(logger: Logger) = with(properties) {
