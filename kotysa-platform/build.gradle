@@ -5,7 +5,6 @@ plugins {
 
 repositories {
     jcenter()
-    maven { url  'https://dl.bintray.com/ufoss/ufoss' } // todo remove me
 }
 
 dependencies {
@@ -16,7 +15,7 @@ dependencies {
         api project(':kotysa-spring-jdbc')
         api project(':kotysa-spring-r2dbc')
 
-        api "org.ufoss.kolog:kolog:0.2"
+        api "org.ufoss.kolog:kolog:$kolog_version"
     }
 }
 
