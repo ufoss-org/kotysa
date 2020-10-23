@@ -12,7 +12,7 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 
-class SpringJdbcSelectKotlinxLocalDateTimeAsTimestampH2Test : AbstractSpringJdbcPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
+class SpringJdbcSelectKotlinxLocalDateTimeAsTimestampPostgresqlTest : AbstractSpringJdbcPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
     override val context = startContext<KotlinxLocalDateTimeRepositoryPostgresqlSelect>()
 
     override val repository = getContextRepository<KotlinxLocalDateTimeRepositoryPostgresqlSelect>()
