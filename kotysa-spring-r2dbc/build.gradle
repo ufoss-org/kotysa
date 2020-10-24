@@ -25,6 +25,8 @@ dependencies {
     testImplementation 'io.r2dbc:r2dbc-h2'
     testImplementation 'io.r2dbc:r2dbc-postgresql'
     testImplementation 'org.testcontainers:postgresql'
+    testImplementation 'dev.miku:r2dbc-mysql'
+    testImplementation 'org.testcontainers:mysql'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
