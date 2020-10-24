@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.*
 import java.time.LocalDateTime
 
 
-class SpringJdbcSelectLocalDateTimeAsTimestampH2Test : AbstractSpringJdbcPostgresqlTest<LocalDateTimeRepositoryPostgresqlSelect>() {
+class SpringJdbcSelectLocalDateTimePostgresqlTest : AbstractSpringJdbcPostgresqlTest<LocalDateTimeRepositoryPostgresqlSelect>() {
     override val context = startContext<LocalDateTimeRepositoryPostgresqlSelect>()
 
     override val repository = getContextRepository<LocalDateTimeRepositoryPostgresqlSelect>()

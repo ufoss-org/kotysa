@@ -16,7 +16,7 @@ import org.ufoss.kotysa.test.postgresqlTables
 import java.time.LocalDateTime
 
 
-class R2DbcSelectLocalDateTimeAsTimestampH2Test : AbstractR2dbcPostgresqlTest<LocalDateTimeRepositoryPostgresqlSelect>() {
+class R2DbcSelectLocalDateTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalDateTimeRepositoryPostgresqlSelect>() {
     override val context = startContext<LocalDateTimeRepositoryPostgresqlSelect>()
 
     override val repository = getContextRepository<LocalDateTimeRepositoryPostgresqlSelect>()
