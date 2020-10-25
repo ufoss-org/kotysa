@@ -10,12 +10,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbc
-import org.springframework.r2dbc.core.DatabaseClient
 import org.testcontainers.containers.MySQLContainer
-import org.ufoss.kotysa.r2dbc.coSqlClient
-import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.mysqlTables
 
 class KMySQLContainer : MySQLContainer<KMySQLContainer>()
 
@@ -27,7 +23,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> {
     protected inline fun <reified U : Repository> startContext(): ConfigurableApplicationContext {
         // PostgreSQL testcontainers must be started first to get random Docker mapped port
         val mysqlContainer = KMySQLContainer()
-                .withDatabaseName("mysql")
+                .withDatabaseName("db")
                 .withUsername("mysql")
                 .withPassword("test")
         mysqlContainer.start()
@@ -36,15 +32,14 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> {
             beans {
                 bean { mysqlContainer }
                 bean<U>()
-                bean { ref<DatabaseClient>().sqlClient(mysqlTables) }
-                bean { ref<DatabaseClient>().coSqlClient(mysqlTables) }
             }
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
             }
             r2dbc {
                 url = "r2dbc:mysql://${mysqlContainer.containerIpAddress}:${mysqlContainer.firstMappedPort}/db"
-                username = "postgres"
+                username = "mysql"
+                password = "test"
                 transactional = true
             }
         }.run()

@@ -27,6 +27,8 @@ dependencies {
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'dev.miku:r2dbc-mysql'
     testImplementation 'org.testcontainers:mysql'
+    // needed to start mysql testcontainer
+    testImplementation "mysql:mysql-connector-java:$mysql_version"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'

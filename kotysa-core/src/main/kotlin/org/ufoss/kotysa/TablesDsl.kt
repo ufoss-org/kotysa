@@ -9,7 +9,8 @@ import kotlin.reflect.KClass
 
 @KotysaMarker
 public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protected constructor(
-        private val init: T.() -> Unit
+        private val init: T.() -> Unit,
+        private val dbType: DbType
 ) {
 
     private val allTables = mutableMapOf<KClass<*>, Table<*>>()
@@ -28,7 +29,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
 
     protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.() -> Unit): Table<*>
 
-    internal fun initialize(initialize: T, dbType: DbType): Tables {
+    internal fun initialize(initialize: T): Tables {
         init(initialize)
         require(allTables.isNotEmpty()) { "Tables must declare at least one table" }
         val tables = Tables(allTables, allColumns, dbType)

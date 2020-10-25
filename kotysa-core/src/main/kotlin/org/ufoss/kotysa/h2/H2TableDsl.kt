@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TableDsl
 import kotlin.reflect.KClass
@@ -12,7 +13,8 @@ import kotlin.reflect.KClass
 
 public class H2TableDsl<T : Any>(
         init: H2TableDsl<T>.() -> Unit,
-        tableClass: KClass<T>
+        tableClass: KClass<T>,
+        private val dbType: DbType
 ) : TableDsl<T, H2TableDsl<T>>(init, tableClass) {
 
     /**
@@ -21,7 +23,7 @@ public class H2TableDsl<T : Any>(
     public fun <U : Column<T, *>> column(
             @BuilderInference dsl: H2ColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
     ): U {
-        val columnDsl = H2ColumnDsl(dsl)
+        val columnDsl = H2ColumnDsl(dsl, dbType)
         val column = columnDsl.initialize<U>(columnDsl)
         addColumn(column)
         return column
