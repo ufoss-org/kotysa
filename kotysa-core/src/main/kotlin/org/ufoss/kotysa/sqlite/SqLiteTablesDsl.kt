@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.sqlite
 
+import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
@@ -11,7 +12,10 @@ import kotlin.reflect.KClass
 /**
  * @sample org.ufoss.kotysa.sample.sqLiteTables
  */
-public class SqLiteTablesDsl(init: SqLiteTablesDsl.() -> Unit) : TablesDsl<SqLiteTablesDsl, SqLiteTableDsl<*>>(init) {
+public class SqLiteTablesDsl(
+        init: SqLiteTablesDsl.() -> Unit,
+        private val dbType: DbType
+) : TablesDsl<SqLiteTablesDsl, SqLiteTableDsl<*>>(init, dbType) {
 
     override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: SqLiteTableDsl<*>.() -> Unit): Table<*> {
         val tableDsl = SqLiteTableDsl(dsl, tableClass)

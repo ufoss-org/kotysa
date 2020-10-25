@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.mysql
 
 import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TableDsl
 import kotlin.reflect.KClass
@@ -12,7 +13,8 @@ import kotlin.reflect.KClass
 
 public class MysqlTableDsl<T : Any>(
         init: MysqlTableDsl<T>.() -> Unit,
-        tableClass: KClass<T>
+        tableClass: KClass<T>,
+        private val dbType: DbType
 ) : TableDsl<T, MysqlTableDsl<T>>(init, tableClass) {
 
     /**
@@ -21,7 +23,7 @@ public class MysqlTableDsl<T : Any>(
     public fun <U : Column<T, *>> column(
             @BuilderInference dsl: MysqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
     ): U {
-        val columnDsl = MysqlColumnDsl(dsl)
+        val columnDsl = MysqlColumnDsl(dsl, dbType)
         val column = columnDsl.initialize<U>(columnDsl)
         addColumn(column)
         return column

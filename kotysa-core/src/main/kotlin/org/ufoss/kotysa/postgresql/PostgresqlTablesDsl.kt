@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.postgresql
 
+import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
@@ -11,10 +12,13 @@ import kotlin.reflect.KClass
 /**
  * @sample org.ufoss.kotysa.sample.postgresqlTables
  */
-public class PostgresqlTablesDsl(init: PostgresqlTablesDsl.() -> Unit) : TablesDsl<PostgresqlTablesDsl, PostgresqlTableDsl<*>>(init) {
+public class PostgresqlTablesDsl(
+        init: PostgresqlTablesDsl.() -> Unit,
+        private val dbType: DbType
+) : TablesDsl<PostgresqlTablesDsl, PostgresqlTableDsl<*>>(init, dbType) {
 
     override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: PostgresqlTableDsl<*>.() -> Unit): Table<*> {
-        val tableDsl = PostgresqlTableDsl(dsl, tableClass)
+        val tableDsl = PostgresqlTableDsl(dsl, tableClass, dbType)
         return tableDsl.initialize(tableDsl)
     }
 

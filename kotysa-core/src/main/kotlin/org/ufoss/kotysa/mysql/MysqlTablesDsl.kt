@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.mysql
 
+import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
@@ -11,10 +12,13 @@ import kotlin.reflect.KClass
 /**
  * @sample org.ufoss.kotysa.sample.postgresqlTables
  */
-public class MysqlTablesDsl(init: MysqlTablesDsl.() -> Unit) : TablesDsl<MysqlTablesDsl, MysqlTableDsl<*>>(init) {
+public class MysqlTablesDsl(
+        init: MysqlTablesDsl.() -> Unit,
+        private val dbType: DbType
+) : TablesDsl<MysqlTablesDsl, MysqlTableDsl<*>>(init, dbType) {
 
     override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: MysqlTableDsl<*>.() -> Unit): Table<*> {
-        val tableDsl = MysqlTableDsl(dsl, tableClass)
+        val tableDsl = MysqlTableDsl(dsl, tableClass, dbType)
         return tableDsl.initialize(tableDsl)
     }
 

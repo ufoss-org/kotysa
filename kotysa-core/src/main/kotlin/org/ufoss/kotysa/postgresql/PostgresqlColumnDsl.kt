@@ -16,14 +16,15 @@ import java.util.*
  * see [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
  */
 public class PostgresqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
-        init: PostgresqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
+        init: PostgresqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U,
+        private val dbType: DbType
 ) : ColumnDsl<T, U, PostgresqlColumnDsl<T, U>>(init) {
 
     public fun NotNullStringColumnProperty<T>.varchar(dsl: (VarcharColumnNotNullDsl<T, String>.() -> Unit)? = null)
-            : VarcharColumnNotNull<T, String> = VarcharColumnNotNullDsl(dsl, getter).initialize()
+            : VarcharColumnNotNull<T, String> = VarcharColumnNotNullDsl(dsl, getter, dbType).initialize()
 
     public fun NullableStringColumnProperty<T>.varchar(dsl: (VarcharColumnNullableDsl<T, String>.() -> Unit)? = null)
-            : VarcharColumnNullable<T, String> = VarcharColumnNullableDsl(dsl, getter).initialize()
+            : VarcharColumnNullable<T, String> = VarcharColumnNullableDsl(dsl, getter, dbType).initialize()
 
     public fun NotNullLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNotNullDsl<T, LocalDateTime>.() -> Unit)? = null)
             : TimestampColumnNotNull<T, LocalDateTime> = TimestampColumnNotNullDsl(dsl, getter).initialize()

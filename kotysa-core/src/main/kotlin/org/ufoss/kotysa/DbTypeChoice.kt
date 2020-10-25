@@ -20,8 +20,8 @@ public object DbTypeChoice {
      * @see H2TablesDsl
      */
     public fun h2(dsl: H2TablesDsl.() -> Unit): Tables {
-        val tablesDsl = H2TablesDsl(dsl)
-        return tablesDsl.initialize(tablesDsl, DbType.H2)
+        val tablesDsl = H2TablesDsl(dsl, DbType.H2)
+        return tablesDsl.initialize(tablesDsl)
     }
 
     /**
@@ -30,8 +30,8 @@ public object DbTypeChoice {
      * @see SqLiteTablesDsl
      */
     public fun sqlite(dsl: SqLiteTablesDsl.() -> Unit): Tables {
-        val tablesDsl = SqLiteTablesDsl(dsl)
-        return tablesDsl.initialize(tablesDsl, DbType.SQLITE)
+        val tablesDsl = SqLiteTablesDsl(dsl, DbType.SQLITE)
+        return tablesDsl.initialize(tablesDsl)
     }
 
     /**
@@ -40,8 +40,8 @@ public object DbTypeChoice {
      * @see PostgresqlTablesDsl
      */
     public fun postgresql(dsl: PostgresqlTablesDsl.() -> Unit): Tables {
-        val tablesDsl = PostgresqlTablesDsl(dsl)
-        return tablesDsl.initialize(tablesDsl, DbType.POSTGRESQL)
+        val tablesDsl = PostgresqlTablesDsl(dsl, DbType.POSTGRESQL)
+        return tablesDsl.initialize(tablesDsl)
     }
 
     /**
@@ -50,8 +50,8 @@ public object DbTypeChoice {
      * @see MysqlTablesDsl
      */
     public fun mysql(dsl: MysqlTablesDsl.() -> Unit): Tables {
-        val tablesDsl = MysqlTablesDsl(dsl)
-        return tablesDsl.initialize(tablesDsl, DbType.MYSQL)
+        val tablesDsl = MysqlTablesDsl(dsl, DbType.MYSQL)
+        return tablesDsl.initialize(tablesDsl)
     }
 }
 
