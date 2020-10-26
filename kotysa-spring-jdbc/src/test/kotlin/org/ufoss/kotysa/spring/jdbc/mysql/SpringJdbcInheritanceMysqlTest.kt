@@ -57,10 +57,16 @@ private val tables =
         tables().mysql {
             table<Inherited> {
                 name = "inherited"
-                column { it[Inherited::getId].varchar() }
-                        .primaryKey()
-                column { it[Inherited::name].varchar() }
-                column { it[Inherited::firstname].varchar() }
+                column { it[Inherited::getId].varchar {
+                    size = 255
+                } }
+                    .primaryKey()
+                column { it[Inherited::name].varchar {
+                    size = 255
+                } }
+                column { it[Inherited::firstname].varchar {
+                    size = 255
+                } }
             }
         }
 
