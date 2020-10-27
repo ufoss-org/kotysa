@@ -21,22 +21,32 @@ private val tables =
         tables().mysql {
             table<JavaUser> {
                 name = "java_users"
-                column { it[JavaUser::getLogin].varchar() }
+                column { it[JavaUser::getLogin].varchar {
+                    size = 255
+                } }
                         .primaryKey()
                 column {
                     it[JavaUser::getFirstname].varchar {
                         name = "fname"
+                        size = 255
                     }
                 }
                 column {
                     it[JavaUser::getLastname].varchar {
                         name = "lname"
+                        size = 255
                     }
                 }
                 column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar() }
-                column { it[JavaUser::getAlias2].varchar() }
-                column { it[JavaUser::getAlias3].varchar() }
+                column { it[JavaUser::getAlias1].varchar {
+                    size = 255
+                } }
+                column { it[JavaUser::getAlias2].varchar {
+                    size = 255
+                } }
+                column { it[JavaUser::getAlias3].varchar {
+                    size = 255
+                } }
             }
         }
 
