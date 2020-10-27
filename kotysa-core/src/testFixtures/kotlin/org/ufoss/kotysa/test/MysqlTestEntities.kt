@@ -27,7 +27,9 @@ val mysqlTables =
                 name = "roles"
                 column { it[MysqlRole::id].uuid() }
                         .primaryKey()
-                column { it[MysqlRole::label].varchar() }
+                column { it[MysqlRole::label].varchar {
+                    size = 255
+                } }
             }
             table<MysqlUser> {
                 name = "users"
@@ -35,20 +37,26 @@ val mysqlTables =
                         .primaryKey("PK_users")
                 column { it[MysqlUser::firstname].varchar {
                     name = "fname"
+                    size = 255
                 } }
                 column { it[MysqlUser::lastname].varchar() {
                     name = "lname"
+                    size = 255
                 } }
                 column { it[MysqlUser::isAdmin].boolean() }
                 column { it[MysqlUser::roleId].uuid() }
                         .foreignKey<MysqlRole>("FK_users_roles")
-                column { it[MysqlUser::alias].varchar() }
+                column { it[MysqlUser::alias].varchar {
+                    size = 255
+                } }
             }
             table<MysqlAllTypesNotNull> {
                 name = "all_types"
                 column { it[MysqlAllTypesNotNull::id].uuid() }
                         .primaryKey()
-                column { it[MysqlAllTypesNotNull::string].varchar() }
+                column { it[MysqlAllTypesNotNull::string].varchar {
+                    size = 255
+                } }
                 column { it[MysqlAllTypesNotNull::boolean].boolean() }
                 column { it[MysqlAllTypesNotNull::localDate].date() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDate].date() }
@@ -63,7 +71,9 @@ val mysqlTables =
                 name = "all_types_nullable"
                 column { it[MysqlAllTypesNullable::id].uuid() }
                         .primaryKey()
-                column { it[MysqlAllTypesNullable::string].varchar() }
+                column { it[MysqlAllTypesNullable::string].varchar {
+                    size = 255
+                } }
                 column { it[MysqlAllTypesNullable::localDate].date() }
                 column { it[MysqlAllTypesNullable::kotlinxLocalDate].date() }
                 column { it[MysqlAllTypesNullable::offsetDateTime].timestamp() }
@@ -80,6 +90,7 @@ val mysqlTables =
                         .primaryKey()
                 column { it[MysqlAllTypesNullableDefaultValue::string].varchar {
                     defaultValue = "default"
+                    size = 255
                 } }
                 column { it[MysqlAllTypesNullableDefaultValue::localDate].date {
                     defaultValue = LocalDate.of(2019, 11, 4)
