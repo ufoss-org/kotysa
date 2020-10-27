@@ -14,11 +14,11 @@ import kotlin.reflect.KClass
  */
 public class H2TablesDsl(
         init: H2TablesDsl.() -> Unit,
-        private val dbType: DbType
+        dbType: DbType
 ) : TablesDsl<H2TablesDsl, H2TableDsl<*>>(init, dbType) {
 
     override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: H2TableDsl<*>.() -> Unit): Table<*> {
-        val tableDsl = H2TableDsl(dsl, tableClass, dbType)
+        val tableDsl = H2TableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }
 

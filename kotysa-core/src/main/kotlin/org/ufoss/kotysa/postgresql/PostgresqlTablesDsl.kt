@@ -14,11 +14,11 @@ import kotlin.reflect.KClass
  */
 public class PostgresqlTablesDsl(
         init: PostgresqlTablesDsl.() -> Unit,
-        private val dbType: DbType
+        dbType: DbType
 ) : TablesDsl<PostgresqlTablesDsl, PostgresqlTableDsl<*>>(init, dbType) {
 
     override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: PostgresqlTableDsl<*>.() -> Unit): Table<*> {
-        val tableDsl = PostgresqlTableDsl(dsl, tableClass, dbType)
+        val tableDsl = PostgresqlTableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }
 

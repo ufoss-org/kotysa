@@ -37,6 +37,9 @@ public interface DefaultSqlClient {
         val table = tables.getTable(tableClass)
 
         val columns = table.columns.values.joinToString { column ->
+            if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
+                requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
+            }
             val size = if (column.size != null) "(${column.size})" else ""
             val nullability = if (column.isNullable) "NULL" else "NOT NULL"
             val autoIncrement = if (column.isAutoIncrement && DbType.SQLITE != tables.dbType) {
