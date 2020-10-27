@@ -14,11 +14,11 @@ import kotlin.reflect.KClass
  */
 public class MysqlTablesDsl(
         init: MysqlTablesDsl.() -> Unit,
-        private val dbType: DbType
+        dbType: DbType
 ) : TablesDsl<MysqlTablesDsl, MysqlTableDsl<*>>(init, dbType) {
 
     override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: MysqlTableDsl<*>.() -> Unit): Table<*> {
-        val tableDsl = MysqlTableDsl(dsl, tableClass, dbType)
+        val tableDsl = MysqlTableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }
 
