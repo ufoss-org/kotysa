@@ -126,7 +126,7 @@ val mysqlTables =
                         .foreignKey<MysqlRole>()
             }
             table<MysqlLocalDate> {
-                column { it[MysqlLocalDate::id].uuid() }
+                column { it[MysqlLocalDate::id].autoIncrementInteger() }
                         .primaryKey()
                 column { it[MysqlLocalDate::localDateNotNull].date() }
                 column { it[MysqlLocalDate::localDateNullable].date() }
@@ -332,7 +332,7 @@ val mysqlUuidWithoutNullable = MysqlUuid(mysqlUser.id)
 data class MysqlLocalDate(
         val localDateNotNull: LocalDate,
         val localDateNullable: LocalDate? = null,
-        val id: UUID = UUID.randomUUID()
+        val id: Int? = null
 )
 
 val mysqlLocalDateWithNullable = MysqlLocalDate(LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))

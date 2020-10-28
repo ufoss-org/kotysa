@@ -2,17 +2,17 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.jdbc.mysql
+package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 
 
-class SpringJdbcSelectLocalDateMysqlTest : AbstractSpringJdbcMysqlTest<LocalDateRepositoryMysqlSelect>() {
+class R2DbcSelectLocalDateMysqlTest : AbstractR2dbcMysqlTest<LocalDateRepositoryMysqlSelect>() {
     override val context = startContext<LocalDateRepositoryMysqlSelect>()
 
     override val repository = getContextRepository<LocalDateRepositoryMysqlSelect>()
@@ -29,166 +29,168 @@ class SpringJdbcSelectLocalDateMysqlTest : AbstractSpringJdbcMysqlTest<LocalDate
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNull(LocalDate.of(2019, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNotNull(LocalDate.of(2019, 11, 4)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullNotEq finds mysqlLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullNotEq(LocalDate.of(2019, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNotNullNotEq(LocalDate.of(2019, 11, 4)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullBefore finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate.of(2019, 11, 5)))
+        assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate.of(2019, 11, 5)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate.of(2019, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate.of(2019, 11, 4)).toIterable())
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 5)))
+        assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 5)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds mysqlLocalDateWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 4)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullAfter finds mysqlLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate.of(2019, 11, 5)))
+        assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate.of(2019, 11, 5)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate.of(2019, 11, 6)))
+        assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate.of(2019, 11, 6)).toIterable())
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullAfterOrEq finds mysqlLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 5)))
+        assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 5)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullAfterOrEq finds mysqlLocalDateWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 6)))
+        assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 6)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullable finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullable(LocalDate.of(2018, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNullable(LocalDate.of(2018, 11, 4)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullable finds mysqlLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullable(null))
+        assertThat(repository.selectAllByLocalDateNullable(null).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateNullableNotEq(LocalDate.of(2018, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNullableNotEq(LocalDate.of(2018, 11, 4)).toIterable())
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableNotEq finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableNotEq(null))
+        assertThat(repository.selectAllByLocalDateNullableNotEq(null).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableBefore finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate.of(2018, 11, 5)))
+        assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate.of(2018, 11, 5)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate.of(2018, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate.of(2018, 11, 4)).toIterable())
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableBeforeOrEq finds mysqlLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 5)))
+        assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 5)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableBeforeOrEq finds mysqlLocalDateWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 4)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableAfter finds mysqlLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate.of(2018, 11, 3)))
+        assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate.of(2018, 11, 3)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate.of(2018, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate.of(2018, 11, 4)).toIterable())
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableAfterOrEq finds mysqlLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 3)))
+        assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 3)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullableAfterOrEq finds mysqlLocalDateWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 4)))
+        assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 4)).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlLocalDateWithNullable)
     }
 }
 
 
-class LocalDateRepositoryMysqlSelect(client: JdbcOperations) : Repository {
+class LocalDateRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
 
-    private val sqlClient = client.sqlClient(mysqlTables)
+    private val sqlClient = dbClient.sqlClient(mysqlTables)
 
     override fun init() {
         createTables()
-        insertLocalDates()
+                .then(insertLocalDates())
+                .block()
     }
 
     override fun delete() {
         deleteAll()
+                .block()
     }
 
     private fun createTables() =
