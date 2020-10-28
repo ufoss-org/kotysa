@@ -97,6 +97,7 @@ public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
     public fun NullableIntColumnProperty<T>.autoIncrementInteger(dsl: (IntegerAutoIncrementColumnDsl<T, Int>.() -> Unit)? = null)
             : IntegerColumnNotNull<T, Int> = IntegerAutoIncrementColumnDsl(dsl, getter).initialize()
 
-    public fun NullableIntColumnProperty<T>.serial(dsl: (SerialColumnDsl<T, Int>.() -> Unit)? = null)
-            : SerialColumnNotNull<T, Int> = SerialColumnDsl(dsl, getter).initialize()
+    // SERIAL type is not recognized by dev.miku R2DBC MySQL driver
+//    public fun NullableIntColumnProperty<T>.serial(dsl: (SerialColumnDsl<T, Int>.() -> Unit)? = null)
+//            : SerialColumnNotNull<T, Int> = SerialColumnDsl(dsl, getter).initialize()
 }
