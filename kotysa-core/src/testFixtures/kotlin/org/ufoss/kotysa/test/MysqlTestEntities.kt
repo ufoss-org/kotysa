@@ -162,7 +162,7 @@ val mysqlTables =
                 column { it[MysqlLocalTime::localTimeNullable].time() }
             }
             table<MysqlInt> {
-                column { it[MysqlInt::id].serial() }
+                column { it[MysqlInt::id].autoIncrementInteger() }
                         .primaryKey()
                 column { it[MysqlInt::intNotNull].integer() }
                 column { it[MysqlInt::intNullable].integer() }
