@@ -12,7 +12,7 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 
-class SpringJdbcSelectKotlinxLocalDateTimeAsTimestampMysqlTest : AbstractSpringJdbcMysqlTest<KotlinxLocalDateTimeRepositoryMysqlSelect>() {
+class SpringJdbcSelectKotlinxLocalDateTimeMysqlTest : AbstractSpringJdbcMysqlTest<KotlinxLocalDateTimeRepositoryMysqlSelect>() {
     override val context = startContext<KotlinxLocalDateTimeRepositoryMysqlSelect>()
 
     override val repository = getContextRepository<KotlinxLocalDateTimeRepositoryMysqlSelect>()
