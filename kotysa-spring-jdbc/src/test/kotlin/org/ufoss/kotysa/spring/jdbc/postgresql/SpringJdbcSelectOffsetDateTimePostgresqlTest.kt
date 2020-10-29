@@ -13,7 +13,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 
-class SpringJdbcSelectOffsetDateTimeH2Test : AbstractSpringJdbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
+class SpringJdbcSelectOffsetDateTimePostgresqlTest : AbstractSpringJdbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
     override val context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>()
 
     override val repository = getContextRepository<OffsetDateTimeRepositoryPostgresqlSelect>()
