@@ -6,10 +6,7 @@ import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.springframework.fu.kofu.webmvc.webMvc
 import org.springframework.jdbc.core.JdbcOperations
-import org.testcontainers.containers.PostgreSQLContainer
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-
-private class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
 
 val dataConfig = configuration {
     beans {
@@ -29,16 +26,10 @@ val dataConfig = configuration {
             url = "jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
         }
     } else {
-        // PostgreSQL testcontainers must be started first to get random Docker mapped port
-        val postgresqlContainer = KPostgreSQLContainer()
-                .withDatabaseName("db")
-                .withUsername("postgres")
-                .withPassword("")
-        postgresqlContainer.start()
-
         jdbc {
-            url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
-            username = "postgres"
+            url = "jdbc:tc:postgresql:13.0-alpine///db"
+            username = "test"
+            password = "test"
         }
     }
 }

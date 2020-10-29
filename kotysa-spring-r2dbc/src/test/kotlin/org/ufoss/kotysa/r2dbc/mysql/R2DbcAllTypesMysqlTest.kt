@@ -20,7 +20,6 @@ import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
 
-@Disabled
 class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
     override val context = startContext<AllTypesRepositoryMysql>()
 
@@ -34,6 +33,7 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                 .containsExactly(mysqlAllTypesNotNull)
     }
 
+    @Disabled
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toIterable())
@@ -43,7 +43,6 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                         "default",
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
-                        OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
                         LocalTime.of(11, 25, 55),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
@@ -62,7 +61,6 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
     fun `Verify updateAll works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
-        val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
@@ -70,12 +68,12 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
+                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAllAllTypesNotNull())
         }.test()
                 .expectNext(MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false,
-                        newLocalDate, newKotlinxLocalDate, newOffsetDateTime, newLocalTime, newLocalDateTime,
+                        newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
                         newKotlinxLocalDateTime, newInt))
                 .verifyComplete()
     }
@@ -116,7 +114,7 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
     fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<MysqlAllTypesNullableDefaultValue>()
 
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-                              newKotlinxLocalDate: kotlinx.datetime.LocalDate, newOffsetDateTime: OffsetDateTime,
+                              newKotlinxLocalDate: kotlinx.datetime.LocalDate,
                               newLocalTim: LocalTime, newLocalDateTime: LocalDateTime,
                               newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
             sqlClient.updateTable<MysqlAllTypesNotNull>()
@@ -124,7 +122,6 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
                     .set { it[MysqlAllTypesNotNull::boolean] = newBoolean }
                     .set { it[MysqlAllTypesNotNull::localDate] = newLocalDate }
                     .set { it[MysqlAllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
-                    .set { it[MysqlAllTypesNotNull::offsetDateTime] = newOffsetDateTime }
                     .set { it[MysqlAllTypesNotNull::localTim] = newLocalTim }
                     .set { it[MysqlAllTypesNotNull::localDateTime] = newLocalDateTime }
                     .set { it[MysqlAllTypesNotNull::kotlinxLocalDateTime] = newKotlinxLocalDateTime }

@@ -4,12 +4,14 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.tables
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -19,6 +21,14 @@ private fun LocalTime.roundToSecond(): LocalTime {
         time = plusSeconds(1)
     }
     return time.truncatedTo(ChronoUnit.SECONDS)
+}
+
+private fun LocalDateTime.roundToSecond(): LocalDateTime {
+    var localDateTime = this
+    if (nano >= 500_000_000) {
+        localDateTime = plusSeconds(1)
+    }
+    return localDateTime.truncatedTo(ChronoUnit.SECONDS)
 }
 
 val mysqlTables =
@@ -60,7 +70,6 @@ val mysqlTables =
                 column { it[MysqlAllTypesNotNull::boolean].boolean() }
                 column { it[MysqlAllTypesNotNull::localDate].date() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDate].date() }
-                column { it[MysqlAllTypesNotNull::offsetDateTime].dateTime() }
                 column { it[MysqlAllTypesNotNull::localTim].time() }
                 column { it[MysqlAllTypesNotNull::localDateTime].dateTime() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDateTime].dateTime() }
@@ -77,7 +86,6 @@ val mysqlTables =
                 } }
                 column { it[MysqlAllTypesNullable::localDate].date() }
                 column { it[MysqlAllTypesNullable::kotlinxLocalDate].date() }
-                column { it[MysqlAllTypesNullable::offsetDateTime].dateTime() }
                 column { it[MysqlAllTypesNullable::localTim].time {
                     fractionalSecondsPart = 0
                 } }
@@ -99,9 +107,6 @@ val mysqlTables =
                 } }
                 column { it[MysqlAllTypesNullableDefaultValue::kotlinxLocalDate].date {
                     defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
-                } }
-                column { it[MysqlAllTypesNullableDefaultValue::offsetDateTime].dateTime {
-                    defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)
                 } }
                 column { it[MysqlAllTypesNullableDefaultValue::localTim].time {
                     defaultValue = LocalTime.of(11, 25, 55)
@@ -197,7 +202,6 @@ data class MysqlAllTypesNotNull(
         val boolean: Boolean,
         val localDate: LocalDate,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-        val offsetDateTime: OffsetDateTime,
         val localTim: LocalTime,
         val localDateTime: LocalDateTime,
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
@@ -213,10 +217,10 @@ data class MysqlAllTypesNotNull(
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (offsetDateTime != other.offsetDateTime) return false
         if (localTim.roundToSecond() != other.localTim.roundToSecond()) return false
-        if (localDateTime != other.localDateTime) return false
-        if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
+        if (localDateTime.roundToSecond() != other.localDateTime.roundToSecond()) return false
+        if (kotlinxLocalDateTime.toJavaLocalDateTime().roundToSecond()
+                != other.kotlinxLocalDateTime.toJavaLocalDateTime().roundToSecond()) return false
         if (int != other.int) return false
         if (id != other.id) return false
 
@@ -227,7 +231,6 @@ data class MysqlAllTypesNotNull(
         var result = string.hashCode()
         result = 31 * result + (localDate.hashCode())
         result = 31 * result + (kotlinxLocalDate.hashCode())
-        result = 31 * result + (offsetDateTime.hashCode())
         result = 31 * result + (localTim.hashCode())
         result = 31 * result + (localDateTime.hashCode())
         result = 31 * result + (kotlinxLocalDateTime.hashCode())
@@ -238,7 +241,7 @@ data class MysqlAllTypesNotNull(
 }
 
 val mysqlAllTypesNotNull = MysqlAllTypesNotNull(1, "",
-        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), OffsetDateTime.now(), LocalTime.now(),
+        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(),
         LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1)
 
 
@@ -247,7 +250,6 @@ data class MysqlAllTypesNullable(
         val string: String?,
         val localDate: LocalDate?,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
-        val offsetDateTime: OffsetDateTime?,
         val localTim: LocalTime?,
         val localDateTime: LocalDateTime?,
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime?,
@@ -255,7 +257,7 @@ data class MysqlAllTypesNullable(
 )
 
 val mysqlAllTypesNullable = MysqlAllTypesNullable(1, null, null, null,
-        null, null, null, null, null)
+        null, null, null, null)
 
 
 data class MysqlAllTypesNullableDefaultValue(
@@ -263,7 +265,6 @@ data class MysqlAllTypesNullableDefaultValue(
         val string: String? = null,
         val localDate: LocalDate? = null,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
-        val offsetDateTime: OffsetDateTime? = null,
         val localTim: LocalTime? = null,
         val localDateTime: LocalDateTime? = null,
         val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime? = null,
@@ -278,11 +279,6 @@ data class MysqlAllTypesNullableDefaultValue(
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (offsetDateTime != null) {
-            if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
-        } else if (other.offsetDateTime != null) {
-            return false
-        }
         if (localTim != other.localTim) return false
         if (localDateTime != other.localDateTime) return false
         if (kotlinxLocalDateTime != other.kotlinxLocalDateTime) return false
@@ -296,7 +292,6 @@ data class MysqlAllTypesNullableDefaultValue(
         var result = string?.hashCode() ?: 0
         result = 31 * result + (localDate?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
         result = 31 * result + (localTim?.hashCode() ?: 0)
         result = 31 * result + (localDateTime?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime?.hashCode() ?: 0)
