@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.postgresqlBboss
 import org.ufoss.kotysa.test.postgresqlJdoe
 
 
-class R2DbcSelectBooleanH2Test : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectBoolean>() {
+class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectBoolean>() {
     override val context = startContext<UserRepositoryPostgresqlSelectBoolean>()
 
     override val repository = getContextRepository<UserRepositoryPostgresqlSelectBoolean>()
