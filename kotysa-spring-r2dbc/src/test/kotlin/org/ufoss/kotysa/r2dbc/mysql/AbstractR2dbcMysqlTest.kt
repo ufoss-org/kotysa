@@ -24,7 +24,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> {
     protected abstract val repository: T
 
     protected inline fun <reified U : Repository> startContext(): ConfigurableApplicationContext {
-        // PostgreSQL testcontainers must be started first to get random Docker mapped port
+        // MySQL testcontainers must be started first to get random Docker mapped port
         val mysqlContainer = KMySQLContainer()
                 .withDatabaseName("db")
                 .withUsername("mysql")
