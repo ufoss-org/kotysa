@@ -60,7 +60,7 @@ val mysqlTables =
                 column { it[MysqlAllTypesNotNull::boolean].boolean() }
                 column { it[MysqlAllTypesNotNull::localDate].date() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDate].date() }
-                column { it[MysqlAllTypesNotNull::offsetDateTime].timestamp() }
+                column { it[MysqlAllTypesNotNull::offsetDateTime].dateTime() }
                 column { it[MysqlAllTypesNotNull::localTim].time() }
                 column { it[MysqlAllTypesNotNull::localDateTime].dateTime() }
                 column { it[MysqlAllTypesNotNull::kotlinxLocalDateTime].dateTime() }
@@ -77,7 +77,7 @@ val mysqlTables =
                 } }
                 column { it[MysqlAllTypesNullable::localDate].date() }
                 column { it[MysqlAllTypesNullable::kotlinxLocalDate].date() }
-                column { it[MysqlAllTypesNullable::offsetDateTime].timestamp() }
+                column { it[MysqlAllTypesNullable::offsetDateTime].dateTime() }
                 column { it[MysqlAllTypesNullable::localTim].time {
                     fractionalSecondsPart = 0
                 } }
@@ -100,7 +100,7 @@ val mysqlTables =
                 column { it[MysqlAllTypesNullableDefaultValue::kotlinxLocalDate].date {
                     defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
                 } }
-                column { it[MysqlAllTypesNullableDefaultValue::offsetDateTime].timestamp {
+                column { it[MysqlAllTypesNullableDefaultValue::offsetDateTime].dateTime {
                     defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)
                 } }
                 column { it[MysqlAllTypesNullableDefaultValue::localTim].time {
@@ -150,8 +150,8 @@ val mysqlTables =
             table<MysqlOffsetDateTime> {
                 column { it[MysqlOffsetDateTime::id].integer() }
                         .primaryKey()
-                column { it[MysqlOffsetDateTime::offsetDateTimeNotNull].timestamp() }
-                column { it[MysqlOffsetDateTime::offsetDateTimeNullable].timestamp() }
+                column { it[MysqlOffsetDateTime::offsetDateTimeNotNull].dateTime() }
+                column { it[MysqlOffsetDateTime::offsetDateTimeNullable].dateTime() }
             }
             table<MysqlLocalTime> {
                 column { it[MysqlLocalTime::id].integer() }
@@ -369,7 +369,31 @@ data class MysqlOffsetDateTime(
         val id: Int,
         val offsetDateTimeNotNull: OffsetDateTime,
         val offsetDateTimeNullable: OffsetDateTime? = null
-)
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MysqlOffsetDateTime
+
+        if (id != other.id) return false
+        if (!offsetDateTimeNotNull.isEqual(other.offsetDateTimeNotNull)) return false
+        if (offsetDateTimeNullable != null) {
+            if (!offsetDateTimeNullable.isEqual(other.offsetDateTimeNullable)) return false
+        } else if (other.offsetDateTimeNullable != null) {
+            return false
+        }
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + offsetDateTimeNotNull.hashCode()
+        result = 31 * result + (offsetDateTimeNullable?.hashCode() ?: 0)
+        return result
+    }
+}
 
 val mysqlOffsetDateTimeWithNullable = MysqlOffsetDateTime(1,
         OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),

@@ -10,10 +10,13 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbc
+import org.springframework.r2dbc.core.DatabaseClient
 import org.testcontainers.containers.MySQLContainer
+import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.mysqlTables
 
-class KMySQLContainer : MySQLContainer<KMySQLContainer>()
+class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
 
 
 abstract class AbstractR2dbcMysqlTest<T : Repository> {
@@ -32,6 +35,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> {
             beans {
                 bean { mysqlContainer }
                 bean<U>()
+                bean { ref<DatabaseClient>().sqlClient(mysqlTables) }
             }
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
