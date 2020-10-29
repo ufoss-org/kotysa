@@ -10,6 +10,9 @@ println("Using Kotlin compiler version: $KotlinCompilerVersion.VERSION")
 dependencies {
     api platform(project(':kotysa-platform'))
 
+    // import BOMs
+    testFixturesImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
+
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.ufoss.kolog:kolog'
 
@@ -17,7 +20,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
-    testFixturesImplementation "org.springframework:spring-core:$spring_core_version"
+    testFixturesImplementation "org.springframework:spring-core"
     testFixturesImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
