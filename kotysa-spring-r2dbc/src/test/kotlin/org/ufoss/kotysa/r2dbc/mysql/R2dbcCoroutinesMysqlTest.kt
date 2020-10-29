@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc.postgresql
+package org.ufoss.kotysa.r2dbc.mysql
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
@@ -21,23 +21,23 @@ import org.ufoss.kotysa.test.*
 
 
 @ExperimentalCoroutinesApi
-class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUserPostgresqlRepository>() {
-    override val context = startContext<CoroutinesUserPostgresqlRepository>()
+class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepository>() {
+    override val context = startContext<CoroutinesUserMysqlRepository>()
 
-    override val repository = getContextRepository<CoroutinesUserPostgresqlRepository>()
+    override val repository = getContextRepository<CoroutinesUserMysqlRepository>()
     private val operator = context.getBean<TransactionalOperator>().coTransactionalOp()
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
         assertThat(repository.selectAllUsers().toList())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
+                .containsExactlyInAnyOrder(mysqlJdoe, mysqlBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstame finds John`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstame("John"))
-                .isEqualTo(postgresqlJdoe)
+                .isEqualTo(mysqlJdoe)
     }
 
     @Test
@@ -64,14 +64,14 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     fun `Verify selectByAlias finds TheBoss`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias("TheBoss").toList())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(mysqlBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias(null).toList())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlJdoe)
+                .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
@@ -98,17 +98,17 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+        assertThat(repository.selectFirstByFirstame(mysqlJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
-        repository.updateLastname(postgresqlJdoe.lastname)
+        repository.updateLastname(mysqlJdoe.lastname)
     }
 }
 
 
-class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository {
+class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
 
-    private val sqlClient = dbClient.coSqlClient(postgresqlTables)
+    private val sqlClient = dbClient.coSqlClient(mysqlTables)
 
     override fun init() = runBlocking {
         createTables()
@@ -122,43 +122,43 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient.createTable<PostgresqlRole>()
-        sqlClient.createTable<PostgresqlUser>()
+        sqlClient.createTable<MysqlRole>()
+        sqlClient.createTable<MysqlUser>()
     }
 
-    private suspend fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin)
+    private suspend fun insertRoles() = sqlClient.insert(mysqlUser, mysqlAdmin)
 
-    suspend fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
+    suspend fun insertUsers() = sqlClient.insert(mysqlJdoe, mysqlBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
+    private suspend fun deleteAllFromRole() = sqlClient.deleteAllFromTable<MysqlRole>()
 
-    suspend fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<PostgresqlUser>()
+    suspend fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<MysqlUser>()
 
-    fun selectAllUsers() = sqlClient.selectAll<PostgresqlUser>()
+    fun selectAllUsers() = sqlClient.selectAll<MysqlUser>()
 
-    suspend fun selectFirstByFirstame(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] eq firstname }
+    suspend fun selectFirstByFirstame(firstname: String) = sqlClient.select<MysqlUser>()
+            .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirstOrNull()
 
-    suspend fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] eq firstname }
+    suspend fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<MysqlUser>()
+            .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirst()
 
-    suspend fun selectOneNonUnique() = sqlClient.select<PostgresqlUser>()
+    suspend fun selectOneNonUnique() = sqlClient.select<MysqlUser>()
             .fetchOne()
 
-    fun selectByAlias(alias: String?) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] eq alias }
+    fun selectByAlias(alias: String?) = sqlClient.select<MysqlUser>()
+            .where { it[MysqlUser::alias] eq alias }
             .fetchAll()
 
     fun selectAllMappedToDto() =
             sqlClient.select {
-                UserDto("${it[PostgresqlUser::firstname]} ${it[PostgresqlUser::lastname]}",
-                        it[PostgresqlUser::alias])
+                UserDto("${it[MysqlUser::firstname]} ${it[MysqlUser::lastname]}",
+                        it[MysqlUser::alias])
             }.fetchAll()
 
-    suspend fun updateLastname(newLastname: String) = sqlClient.updateTable<PostgresqlUser>()
-            .set { it[PostgresqlUser::lastname] = newLastname }
-            .where { it[PostgresqlUser::id] eq postgresqlJdoe.id }
+    suspend fun updateLastname(newLastname: String) = sqlClient.updateTable<MysqlUser>()
+            .set { it[MysqlUser::lastname] = newLastname }
+            .where { it[MysqlUser::id] eq mysqlJdoe.id }
             .execute()
 }
