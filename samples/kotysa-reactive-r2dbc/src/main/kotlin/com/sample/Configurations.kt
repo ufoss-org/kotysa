@@ -7,9 +7,6 @@ import org.springframework.fu.kofu.configuration
 import org.springframework.fu.kofu.r2dbc.r2dbc
 import org.springframework.fu.kofu.webflux.webFlux
 import org.springframework.r2dbc.core.DatabaseClient
-import org.testcontainers.containers.PostgreSQLContainer
-
-private class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
 
 val dataConfig = configuration {
     beans {
