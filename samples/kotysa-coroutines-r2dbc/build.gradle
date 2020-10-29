@@ -19,6 +19,7 @@ dependencies {
     implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.1.7')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.1')
     implementation('org.testcontainers:postgresql:1.14.3')
+    implementation('org.testcontainers:r2dbc:1.14.3')
 
     testImplementation('io.r2dbc:r2dbc-h2')
     testImplementation('org.springframework.boot:spring-boot-starter-test') {

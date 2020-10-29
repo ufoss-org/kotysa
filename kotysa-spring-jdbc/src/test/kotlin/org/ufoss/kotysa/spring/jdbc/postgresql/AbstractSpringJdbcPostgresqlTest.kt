@@ -13,7 +13,7 @@ import org.springframework.fu.kofu.jdbc.jdbc
 import org.testcontainers.containers.PostgreSQLContainer
 import org.ufoss.kotysa.test.Repository
 
-class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
+class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres:13.0-alpine")
 
 
 abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> {
@@ -23,9 +23,9 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> {
     protected inline fun <reified U : Repository> startContext(): ConfigurableApplicationContext {
         // PostgreSQL testcontainers must be started first to get random Docker mapped port
         val postgresqlContainer = KPostgreSQLContainer()
-                .withDatabaseName("postgres")
+                .withDatabaseName("db")
                 .withUsername("postgres")
-                .withPassword("")
+                .withPassword("test")
         postgresqlContainer.start()
 
         return application {
@@ -38,6 +38,8 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> {
             }
             jdbc {
                 url = "jdbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
+                username = "postgres"
+                password = "test"
             }
         }.run()
     }

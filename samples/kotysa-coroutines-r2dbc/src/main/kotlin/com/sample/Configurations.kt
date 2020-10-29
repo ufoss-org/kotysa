@@ -32,17 +32,9 @@ val dataConfig = configuration {
             url = "r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
         }
     } else {
-        // PostgreSQL testcontainers must be started first to get random Docker mapped port
-        val postgresqlContainer = KPostgreSQLContainer()
-                .withDatabaseName("db")
-                .withUsername("postgres")
-                .withPassword("")
-        postgresqlContainer.start()
-
-        r2dbc {
-            url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
-            username = "postgres"
-        }
+        url = "r2dbc:tc:postgresql:///db?TC_IMAGE_TAG=13.0-alpine"
+        username = "test"
+        password = "test"
     }
 }
 

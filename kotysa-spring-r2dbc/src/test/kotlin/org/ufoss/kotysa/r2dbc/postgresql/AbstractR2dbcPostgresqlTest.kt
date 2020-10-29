@@ -17,7 +17,7 @@ import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.postgresqlTables
 
-class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>()
+class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres:13.0-alpine")
 
 
 abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
@@ -29,7 +29,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
         val postgresqlContainer = KPostgreSQLContainer()
                 .withDatabaseName("db")
                 .withUsername("postgres")
-                .withPassword("")
+                .withPassword("test")
         postgresqlContainer.start()
 
         return application {
@@ -45,6 +45,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
             r2dbc {
                 url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
                 username = "postgres"
+                password = "test"
                 transactional = true
             }
         }.run()
