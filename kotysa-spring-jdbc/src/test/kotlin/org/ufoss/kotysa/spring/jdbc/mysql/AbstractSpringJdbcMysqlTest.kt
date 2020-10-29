@@ -38,6 +38,8 @@ class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
             }
             jdbc {
                 url = "jdbc:mysql://${mysqlContainer.containerIpAddress}:${mysqlContainer.firstMappedPort}/db"
+                username = "mysql"
+                password = "test"
             }
         }.run()
     }
