@@ -12,7 +12,6 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
-import java.util.*
 
 
 class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlUpdateDelete>() {
@@ -102,7 +101,7 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
 
 class UserRepositorySpringJdbcMysqlUpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
 
-    fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<MysqlUser>()
+    fun deleteUserById(id: Int) = sqlClient.deleteFromTable<MysqlUser>()
             .where { it[MysqlUser::id] eq id }
             .execute()
 

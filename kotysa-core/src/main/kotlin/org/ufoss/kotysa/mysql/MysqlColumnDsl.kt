@@ -25,18 +25,6 @@ public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
     public fun NullableStringColumnProperty<T>.varchar(dsl: (VarcharColumnNullableDsl<T, String>.() -> Unit)? = null)
             : VarcharColumnNullable<T, String> = VarcharColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNotNullDsl<T, LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNotNull<T, LocalDateTime> = TimestampColumnNotNullDsl(dsl, getter).initialize()
-
-    public fun NullableLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNullableDsl<T, LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNullable<T, LocalDateTime> = TimestampColumnNullableDsl(dsl, getter).initialize()
-
-    public fun NotNullKotlinxLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNotNullDsl<T, kotlinx.datetime.LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNotNull<T, kotlinx.datetime.LocalDateTime> = TimestampColumnNotNullDsl(dsl, getter).initialize()
-
-    public fun NullableKotlinxLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNullableDsl<T, kotlinx.datetime.LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNullable<T, kotlinx.datetime.LocalDateTime> = TimestampColumnNullableDsl(dsl, getter).initialize()
-
     public fun NotNullLocalDateTimeColumnProperty<T>.dateTime(dsl: (DateTimeColumnNotNullDsl<T, LocalDateTime>.() -> Unit)? = null)
             : DateTimeColumnNotNull<T, LocalDateTime> = DateTimeColumnNotNullDsl(dsl, getter).initialize()
 
@@ -66,12 +54,6 @@ public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
 
     public fun NullableOffsetDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNullableDsl<T, OffsetDateTime>.() -> Unit)? = null)
             : TimestampColumnNullable<T, OffsetDateTime> = TimestampColumnNullableDsl(dsl, getter).initialize()
-
-    public fun NotNullOffsetDateTimeColumnProperty<T>.dateTime(dsl: (DateTimeColumnNotNullDsl<T, OffsetDateTime>.() -> Unit)? = null)
-            : DateTimeColumnNotNull<T, OffsetDateTime> = DateTimeColumnNotNullDsl(dsl, getter).initialize()
-
-    public fun NullableOffsetDateTimeColumnProperty<T>.dateTime(dsl: (DateTimeColumnNullableDsl<T, OffsetDateTime>.() -> Unit)? = null)
-            : DateTimeColumnNullable<T, OffsetDateTime> = DateTimeColumnNullableDsl(dsl, getter).initialize()
 
     public fun NotNullLocalTimeColumnProperty<T>.time(dsl: (TimeColumnNotNullDsl<T, LocalTime>.() -> Unit)? = null)
             : TimeColumnNotNull<T, LocalTime> = TimeColumnNotNullDsl(dsl, getter).initialize()

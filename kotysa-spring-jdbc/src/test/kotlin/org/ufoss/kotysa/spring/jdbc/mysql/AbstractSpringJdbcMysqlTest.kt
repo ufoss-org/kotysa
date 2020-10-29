@@ -23,7 +23,7 @@ abstract class AbstractSpringJdbcMysqlTest<T : Repository> {
     protected inline fun <reified U : Repository> startContext(): ConfigurableApplicationContext {
         // MySQL testcontainers must be started first to get random Docker mapped port
         val mysqlContainer = KMySQLContainer()
-                .withDatabaseName("mysql")
+                .withDatabaseName("db")
                 .withUsername("mysql")
                 .withPassword("test")
         mysqlContainer.start()

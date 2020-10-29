@@ -19,40 +19,40 @@ class SpringJdbcSelectUuidMysqlTest : AbstractSpringJdbcMysqlTest<UuidRepository
 
     @Test
     fun `Verify selectAllByRoleIdNotNull finds both results`() {
-        assertThat(repository.selectAllByRoleIdNotNull(mysqlUser.id))
+        assertThat(repository.selectAllByUuidNotNull(UUID.fromString(defaultUuid)))
                 .hasSize(2)
                 .containsExactlyInAnyOrder(mysqlUuidWithNullable, mysqlUuidWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByRoleIdNotNullNotEq finds no results`() {
-        assertThat(repository.selectAllByRoleIdNotNullNotEq(mysqlUser.id))
+        assertThat(repository.selectAllByUuidNotNullNotEq(UUID.fromString(defaultUuid)))
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByRoleIdNullable finds mysqlUuidWithNullable`() {
-        assertThat(repository.selectAllByRoleIdNullable(mysqlAdmin.id))
+        assertThat(repository.selectAllByUuidNullable(mysqlUuidWithNullable.uuidNullable))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlUuidWithNullable)
     }
 
     @Test
     fun `Verify selectAllByRoleIdNullable finds mysqlUuidWithoutNullable`() {
-        assertThat(repository.selectAllByRoleIdNullable(null))
+        assertThat(repository.selectAllByUuidNullable(null))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlUuidWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByRoleIdNullableNotEq finds mysqlUuidWithoutNullable`() {
-        assertThat(repository.selectAllByRoleIdNullableNotEq(mysqlAdmin.id))
+        assertThat(repository.selectAllByUuidNullableNotEq(mysqlUuidWithNullable.uuidNullable))
                 .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByRoleIdNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByRoleIdNullableNotEq(null))
+        assertThat(repository.selectAllByUuidNullableNotEq(null))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlUuidWithNullable)
     }
@@ -87,19 +87,19 @@ class UuidRepositoryMysqlSelect(client: JdbcOperations) : Repository {
 
     private fun deleteAllFromUuid() = sqlClient.deleteAllFromTable<MysqlUuid>()
 
-    fun selectAllByRoleIdNotNull(roleId: UUID) = sqlClient.select<MysqlUuid>()
-            .where { it[MysqlUuid::roleIdNotNull] eq roleId }
+    fun selectAllByUuidNotNull(uuid: UUID) = sqlClient.select<MysqlUuid>()
+            .where { it[MysqlUuid::uuidNotNull] eq uuid }
             .fetchAll()
 
-    fun selectAllByRoleIdNotNullNotEq(roleId: UUID) = sqlClient.select<MysqlUuid>()
-            .where { it[MysqlUuid::roleIdNotNull] notEq roleId }
+    fun selectAllByUuidNotNullNotEq(uuid: UUID) = sqlClient.select<MysqlUuid>()
+            .where { it[MysqlUuid::uuidNotNull] notEq uuid }
             .fetchAll()
 
-    fun selectAllByRoleIdNullable(roleId: UUID?) = sqlClient.select<MysqlUuid>()
-            .where { it[MysqlUuid::roleIdNullable] eq roleId }
+    fun selectAllByUuidNullable(uuid: UUID?) = sqlClient.select<MysqlUuid>()
+            .where { it[MysqlUuid::uuidNullable] eq uuid }
             .fetchAll()
 
-    fun selectAllByRoleIdNullableNotEq(roleId: UUID?) = sqlClient.select<MysqlUuid>()
-            .where { it[MysqlUuid::roleIdNullable] notEq roleId }
+    fun selectAllByUuidNullableNotEq(uuid: UUID?) = sqlClient.select<MysqlUuid>()
+            .where { it[MysqlUuid::uuidNullable] notEq uuid }
             .fetchAll()
 }

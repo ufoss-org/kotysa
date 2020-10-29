@@ -191,61 +191,61 @@ class KotlinxLocalDateTimeRepositoryMysqlSelect(client: JdbcOperations) : Reposi
 
     fun selectAllByLocalDateTimeAsTimestampNotNull(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull] eq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] eq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNotNullNotEq(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull] notEq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] notEq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNotNullBefore(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull] before localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] before localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull] beforeOrEq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] beforeOrEq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNotNullAfter(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull] after localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] after localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNotNull] afterOrEq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] afterOrEq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNullable(localDateTime: LocalDateTime?) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] eq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] eq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNullableNotEq(localDateTime: LocalDateTime?) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] notEq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] notEq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNullableBefore(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] before localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] before localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] beforeOrEq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] beforeOrEq localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNullableAfter(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] after localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] after localDateTime }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(localDateTime: LocalDateTime) =
             sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] afterOrEq localDateTime }
+                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] afterOrEq localDateTime }
                     .fetchAll()
 }

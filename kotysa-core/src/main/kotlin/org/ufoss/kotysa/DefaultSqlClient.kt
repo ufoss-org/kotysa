@@ -5,16 +5,16 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeFormatterBuilder
+import java.time.format.SignStyle
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.allSuperclasses
+import java.time.temporal.ChronoField.*
 
 
 private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
@@ -134,7 +134,16 @@ private fun Any?.dbValue(): String = when (this) {
     is Int -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
+            /*DateTimeFormatterBuilder()
+                    .parseCaseInsensitive()
+                    .append(DateTimeFormatter.ISO_LOCAL_DATE)
+                    .appendLiteral(' ')
+                    .append(DateTimeFormatter.ISO_LOCAL_TIME)
+                    .optionalStart()
+                    .appendFraction(MICRO_OF_SECOND, 0, 6, true)
+                    .optionalEnd()
+                    .toFormatter(Locale.ENGLISH))*/
+    is LocalTime -> /*"+" + */this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     else -> when (this::class.qualifiedName) {
         "kotlinx.datetime.LocalDate", "kotlinx.datetime.LocalDateTime" -> this.toString()
