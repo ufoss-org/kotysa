@@ -13,10 +13,10 @@ import org.springframework.fu.kofu.jdbc.jdbc
 import org.testcontainers.containers.MySQLContainer
 import org.ufoss.kotysa.test.Repository
 
-class KMySQLContainer : MySQLContainer<KMySQLContainer>()
+class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
 
 
-abstract class AbstractSpringJdbcMysqlTest<T : Repository> {
+        abstract class AbstractSpringJdbcMysqlTest<T : Repository> {
 
     protected abstract val repository: T
 
