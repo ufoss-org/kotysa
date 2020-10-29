@@ -2,9 +2,10 @@ dependencies {
     api platform(project(':kotysa-platform'))
     api project(':kotysa-core')
 
-    // import BOM
+    // import BOMs
     implementation platform("org.springframework:spring-framework-bom:$spring_core_version")
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
+    testImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
 
     implementation 'org.springframework:spring-jdbc'
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
@@ -16,8 +17,8 @@ dependencies {
     testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:mysql'
-    testImplementation "com.h2database:h2:$h2_version"
-    testImplementation "mysql:mysql-connector-java:$mysql_version"
+    testImplementation "com.h2database:h2"
+    testImplementation "mysql:mysql-connector-java"
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 

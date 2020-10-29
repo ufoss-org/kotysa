@@ -2,12 +2,10 @@ dependencies {
     api platform(project(':kotysa-platform'))
     api project(':kotysa-core')
 
-    // import BOM, see https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-dependencies/build.gradle
+    // import BOMs
     implementation platform("org.springframework:spring-framework-bom:$spring_core_version")
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
-    testImplementation platform("io.r2dbc:r2dbc-bom:$r2dbc_bom_version")
-    testImplementation platform("org.springframework.data:spring-data-bom:$spring_data_bom_version")
-    testImplementation platform("io.projectreactor:reactor-bom:$reactor_bom_version")
+    testImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
 
     api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
 
@@ -28,7 +26,7 @@ dependencies {
     testImplementation 'dev.miku:r2dbc-mysql'
     testImplementation 'org.testcontainers:mysql'
     // needed to start mysql testcontainer
-    testImplementation "mysql:mysql-connector-java:$mysql_version"
+    testImplementation "mysql:mysql-connector-java"
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
