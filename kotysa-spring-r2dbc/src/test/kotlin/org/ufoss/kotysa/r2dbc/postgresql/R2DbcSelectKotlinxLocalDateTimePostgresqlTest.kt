@@ -12,7 +12,7 @@ import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 
-class R2DbcSelectKotlinxLocalDateTimeAsTimestampPostgresqlTest : AbstractR2dbcPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
+class R2DbcSelectKotlinxLocalDateTimePostgresqlTest : AbstractR2dbcPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
     override val context = startContext<KotlinxLocalDateTimeRepositoryPostgresqlSelect>()
 
     override val repository = getContextRepository<KotlinxLocalDateTimeRepositoryPostgresqlSelect>()
