@@ -17,16 +17,6 @@ class R2DbcSelectLocalDateMysqlTest : AbstractR2dbcMysqlTest<LocalDateRepository
 
     override val repository = getContextRepository<LocalDateRepositoryMysqlSelect>()
 
-    private val mysqlLocalDateWithNullable = MysqlLocalDate(
-            org.ufoss.kotysa.test.mysqlLocalDateWithNullable.localDateNotNull,
-            org.ufoss.kotysa.test.mysqlLocalDateWithNullable.localDateNullable,
-            1)
-
-    private val mysqlLocalDateWithoutNullable = MysqlLocalDate(
-            org.ufoss.kotysa.test.mysqlLocalDateWithoutNullable.localDateNotNull,
-            org.ufoss.kotysa.test.mysqlLocalDateWithoutNullable.localDateNullable,
-            2)
-
     @Test
     fun `Verify selectAllByLocalDateNotNull finds mysqlLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNull(LocalDate.of(2019, 11, 4)).toIterable())

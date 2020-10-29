@@ -19,7 +19,6 @@ import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
-import java.util.*
 
 @Disabled
 class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
@@ -40,6 +39,7 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toIterable())
                 .hasSize(1)
                 .containsExactly(MysqlAllTypesNullableDefaultValue(
+                        mysqlAllTypesNullableDefaultValue.id,
                         "default",
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
@@ -47,9 +47,7 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                         LocalTime.of(11, 25, 55),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        UUID.fromString(defaultUuid),
-                        42,
-                        mysqlAllTypesNullableDefaultValue.id
+                        42
                 ))
     }
 
@@ -68,18 +66,17 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
-        val newUuid = UUID.randomUUID()
         val newInt = 2
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newUuid, newInt)
+                    newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAllAllTypesNotNull())
         }.test()
                 .expectNext(MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false,
                         newLocalDate, newKotlinxLocalDate, newOffsetDateTime, newLocalTime, newLocalDateTime,
-                        newKotlinxLocalDateTime, newUuid, newInt))
+                        newKotlinxLocalDateTime, newInt))
                 .verifyComplete()
     }
 }
@@ -104,9 +101,9 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
     private fun createTables() =
             sqlClient.createTable<MysqlAllTypesNotNull>()
                     .then(sqlClient.createTable<MysqlAllTypesNullable>())
-                    .then(sqlClient.createTable<MysqlAllTypesNullableDefaultValue>())
+                    //.then(sqlClient.createTable<MysqlAllTypesNullableDefaultValue>())
 
-    private fun insertAllTypes() = sqlClient.insert(mysqlAllTypesNotNull, mysqlAllTypesNullable, mysqlAllTypesNullableDefaultValue)
+    private fun insertAllTypes() = sqlClient.insert(mysqlAllTypesNotNull, mysqlAllTypesNullable/*, mysqlAllTypesNullableDefaultValue*/)
 
     private fun deleteAllFromAllTypesNotNull() = sqlClient.deleteAllFromTable<MysqlAllTypesNotNull>()
 
@@ -121,7 +118,7 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
                               newKotlinxLocalDate: kotlinx.datetime.LocalDate, newOffsetDateTime: OffsetDateTime,
                               newLocalTim: LocalTime, newLocalDateTime: LocalDateTime,
-                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newUuid: UUID, newInt: Int) =
+                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
             sqlClient.updateTable<MysqlAllTypesNotNull>()
                     .set { it[MysqlAllTypesNotNull::string] = newString }
                     .set { it[MysqlAllTypesNotNull::boolean] = newBoolean }
@@ -131,7 +128,6 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
                     .set { it[MysqlAllTypesNotNull::localTim] = newLocalTim }
                     .set { it[MysqlAllTypesNotNull::localDateTime] = newLocalDateTime }
                     .set { it[MysqlAllTypesNotNull::kotlinxLocalDateTime] = newKotlinxLocalDateTime }
-                    .set { it[MysqlAllTypesNotNull::uuid] = newUuid }
                     .set { it[MysqlAllTypesNotNull::int] = newInt }
                     .where { it[MysqlAllTypesNotNull::id] eq mysqlAllTypesNotNull.id }
                     .execute()
