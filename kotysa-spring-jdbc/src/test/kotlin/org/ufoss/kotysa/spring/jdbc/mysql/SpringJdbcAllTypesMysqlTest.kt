@@ -43,7 +43,6 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
                         "default",
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
-                        OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
                         LocalTime.of(11, 25, 55),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
@@ -62,7 +61,6 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
     fun `Verify updateAll works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
-        val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
@@ -70,12 +68,12 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
+                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
                     .containsExactlyInAnyOrder(
                             MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false,
-                                    newLocalDate, newKotlinxLocalDate, newOffsetDateTime, newLocalTime,
+                                    newLocalDate, newKotlinxLocalDate, newLocalTime,
                                     newLocalDateTime, newKotlinxLocalDateTime, newInt))
         }
     }
@@ -115,7 +113,7 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
     fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<MysqlAllTypesNullableDefaultValue>()
 
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-                              newKotlinxLocalDate: kotlinx.datetime.LocalDate, newOffsetDateTime: OffsetDateTime,
+                              newKotlinxLocalDate: kotlinx.datetime.LocalDate,
                               newLocalTim: LocalTime, newLocalDateTime: LocalDateTime,
                               newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
             sqlClient.updateTable<MysqlAllTypesNotNull>()
@@ -124,7 +122,6 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
                     .set { it[MysqlAllTypesNotNull::localDate] = newLocalDate }
                     .set { it[MysqlAllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
                     .set { it[MysqlAllTypesNotNull::localDate] = newLocalDate }
-                    .set { it[MysqlAllTypesNotNull::offsetDateTime] = newOffsetDateTime }
                     .set { it[MysqlAllTypesNotNull::localTim] = newLocalTim }
                     .set { it[MysqlAllTypesNotNull::localDateTime] = newLocalDateTime }
                     .set { it[MysqlAllTypesNotNull::kotlinxLocalDateTime] = newKotlinxLocalDateTime }
