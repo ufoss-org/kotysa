@@ -8,7 +8,7 @@ println("Using Gradle version: $gradle.gradleVersion")
 println("Using Kotlin compiler version: $KotlinCompilerVersion.VERSION")
 
 dependencies {
-    api platform(project(':kotysa-platform'))
+    api "org.ufoss.kolog:kolog:$kolog_version"
 
     // import BOMs
     testFixturesImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")

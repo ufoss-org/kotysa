@@ -3,7 +3,6 @@ repositories {
 }
 
 dependencies {
-    api platform(project(':kotysa-platform'))
     api project(':kotysa-core')
 
     compileOnly 'com.google.android:android:4.1.1.4'
