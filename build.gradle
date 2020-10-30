@@ -52,7 +52,10 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     test {
-        useJUnitPlatform()
+        useJUnitPlatform {
+            // TODO remove this exclusion when https://github.com/spring-projects-experimental/spring-fu/issues/322 is fixed
+            excludeTags("spring-jdbc-testcontainers")
+        }
         testLogging {
             events 'passed', 'failed', 'skipped'
             showStandardStreams = true
@@ -148,6 +151,6 @@ task build {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '6.6.1'
+    gradleVersion = '6.7'
     distributionType = Wrapper.DistributionType.ALL
 }

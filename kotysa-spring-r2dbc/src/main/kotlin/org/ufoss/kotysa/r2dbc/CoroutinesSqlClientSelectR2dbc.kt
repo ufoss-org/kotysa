@@ -29,7 +29,7 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 Joinable(client, properties, joinClass, alias, type)
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: DatabaseClient,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -44,7 +44,7 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, CoroutinesSqlClientSelect.Join<T>, Whereable<T>, Return<T>
@@ -59,7 +59,7 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.Where<T>, Return<T> {
@@ -95,12 +95,12 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
 
         override suspend fun fetchFirst(): T =
                 try {
-                    fetch().awaitFirst()
+                    fetch().awaitSingle()
                 } catch (_: EmptyResultDataAccessException) {
                     throw NoResultException()
                 }
 
-        override suspend fun fetchFirstOrNull(): T? = fetch().awaitFirstOrNull()
+        override suspend fun fetchFirstOrNull(): T? = fetch().awaitSingleOrNull()
 
         override fun fetchAll(): Flow<T> = fetch().flow()
     }

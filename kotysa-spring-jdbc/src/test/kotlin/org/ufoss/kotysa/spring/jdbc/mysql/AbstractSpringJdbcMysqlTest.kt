@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Tag
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
@@ -15,8 +16,8 @@ import org.ufoss.kotysa.test.Repository
 
 class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
 
-
-        abstract class AbstractSpringJdbcMysqlTest<T : Repository> {
+@Tag("spring-jdbc-testcontainers")
+abstract class AbstractSpringJdbcMysqlTest<T : Repository> {
 
     protected abstract val repository: T
 
