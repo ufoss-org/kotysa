@@ -16,7 +16,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.ufoss.kolog:kolog'
 
-    compileOnly 'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
