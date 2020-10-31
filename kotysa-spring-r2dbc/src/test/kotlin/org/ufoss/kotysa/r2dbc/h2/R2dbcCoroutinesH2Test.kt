@@ -34,21 +34,21 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() = runBlocking<Unit> {
-        assertThat(repository.selectFirstByFirstame("John"))
+    fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
+        assertThat(repository.selectFirstByFirstname("John"))
                 .isEqualTo(h2Jdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() = runBlocking<Unit> {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
         assertThatThrownBy {
-            runBlocking<Unit> { repository.selectFirstByFirstameNotNullable("Unknown") }
+            runBlocking<Unit> { repository.selectFirstByFirstnameNotNullable("Unknown") }
         }.isInstanceOf(NoResultException::class.java)
     }
 
@@ -97,7 +97,7 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
+        assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
         repository.updateLastname(h2Jdoe.lastname)
@@ -133,11 +133,11 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
 
     fun selectAllUsers() = sqlClient.selectAll<H2User>()
 
-    suspend fun selectFirstByFirstame(firstname: String) = sqlClient.select<H2User>()
+    suspend fun selectFirstByFirstname(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
             .fetchFirstOrNull()
 
-    suspend fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<H2User>()
+    suspend fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
             .fetchFirst()
 

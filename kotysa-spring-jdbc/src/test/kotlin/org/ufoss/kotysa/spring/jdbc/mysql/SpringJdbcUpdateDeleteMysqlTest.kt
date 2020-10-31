@@ -62,7 +62,7 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(mysqlJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -74,7 +74,7 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", mysqlUser.label))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(mysqlJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -86,12 +86,12 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(mysqlBboss.firstname))
+            assertThat(repository.selectFirstByFirstname(mysqlBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo("TheBigBoss")
             assertThat(repository.updateAlias(null))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(mysqlBboss.firstname))
+            assertThat(repository.selectFirstByFirstname(mysqlBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo(null)
         }

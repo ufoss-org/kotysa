@@ -20,20 +20,20 @@ class SpringJdbcSelectStringMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
     override val repository = getContextRepository<UserRepositorySpringJdbcMysqlSelectString>()
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() {
-        assertThat(repository.selectFirstByFirstame(mysqlJdoe.firstname))
+    fun `Verify selectFirstByFirstname finds John`() {
+        assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
                 .isEqualTo(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
-        Assertions.assertThatThrownBy { repository.selectFirstByFirstameNotNullable("Unknown") }
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
+        Assertions.assertThatThrownBy { repository.selectFirstByFirstnameNotNullable("Unknown") }
                 .isInstanceOf(NoResultException::class.java)
     }
 
@@ -52,15 +52,15 @@ class SpringJdbcSelectStringMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstameNotEq(mysqlJdoe.firstname))
+    fun `Verify selectAllByFirstnameNotEq ignore John`() {
+        assertThat(repository.selectAllByFirstnameNotEq(mysqlJdoe.firstname))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlBboss)
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore unknow`() {
-        assertThat(repository.selectAllByFirstameNotEq("Unknown"))
+    fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
+        assertThat(repository.selectAllByFirstnameNotEq("Unknown"))
                 .hasSize(2)
                 .containsExactlyInAnyOrder(mysqlJdoe, mysqlBboss)
     }
@@ -79,41 +79,41 @@ class SpringJdbcSelectStringMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get John by searching oh`() {
-        assertThat(repository.selectAllByFirstameContains("oh"))
+    fun `Verify selectAllByFirstnameContains get John by searching oh`() {
+        assertThat(repository.selectAllByFirstnameContains("oh"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get nothing by searching boz`() {
-        assertThat(repository.selectAllByFirstameContains("boz"))
+    fun `Verify selectAllByFirstnameContains get nothing by searching boz`() {
+        assertThat(repository.selectAllByFirstnameContains("boz"))
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get John by searching Joh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("Joh"))
+    fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("Joh"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get nothing by searching oh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("oh"))
+    fun `Verify selectAllByFirstnameStartsWith get nothing by searching oh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("oh"))
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get John by searching ohn`() {
-        assertThat(repository.selectAllByFirstameEndsWith("ohn"))
+    fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("ohn"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get nothing by searching joh`() {
-        assertThat(repository.selectAllByFirstameEndsWith("joh"))
+    fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("joh"))
                 .hasSize(0)
     }
 
@@ -160,11 +160,11 @@ class SpringJdbcSelectStringMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
 
 class UserRepositorySpringJdbcMysqlSelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
 
-    fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<MysqlUser>()
+    fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirst()
 
-    fun selectAllByFirstameNotEq(firstname: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] notEq firstname }
             .fetchAll()
 
@@ -176,15 +176,15 @@ class UserRepositorySpringJdbcMysqlSelectString(client: JdbcOperations) : Abstra
             .where { it[MysqlUser::alias] notEq alias }
             .fetchAll()
 
-    fun selectAllByFirstameContains(firstnameContains: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] contains firstnameContains }
             .fetchAll()
 
-    fun selectAllByFirstameStartsWith(firstnameStartsWith: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] startsWith firstnameStartsWith }
             .fetchAll()
 
-    fun selectAllByFirstameEndsWith(firstnameEndsWith: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] endsWith firstnameEndsWith }
             .fetchAll()
 

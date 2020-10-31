@@ -46,7 +46,7 @@ abstract class AbstractUserRepository(
 
     fun selectAll() = sqlClient.selectAll<SqLiteUser>()
 
-    fun selectFirstByFirstame(firstname: String) =
+    fun selectFirstByFirstname(firstname: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] eq firstname }
             .fetchFirstOrNull()

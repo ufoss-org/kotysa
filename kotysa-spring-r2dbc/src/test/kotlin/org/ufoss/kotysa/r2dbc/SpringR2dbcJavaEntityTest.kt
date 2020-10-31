@@ -30,14 +30,14 @@ interface SpringR2dbcJavaEntityTest<T : JavaUserRepository> {
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() {
-        assertThat(repository.selectFirstByFirstame("John").block())
+    fun `Verify selectFirstByFirstname finds John`() {
+        assertThat(repository.selectFirstByFirstname("John").block())
                 .isEqualTo(javaJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() {
-        assertThat(repository.selectFirstByFirstame("Unknown").block())
+    fun `Verify selectFirstByFirstname finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstname("Unknown").block())
                 .isNull()
     }
 

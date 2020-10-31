@@ -38,7 +38,7 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
 
     fun selectAllUsers() = sqlClient.selectAll<MysqlUser>()
 
-    fun selectFirstByFirstame(firstname: String) = sqlClient.select<MysqlUser>()
+    fun selectFirstByFirstname(firstname: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirst()
 }

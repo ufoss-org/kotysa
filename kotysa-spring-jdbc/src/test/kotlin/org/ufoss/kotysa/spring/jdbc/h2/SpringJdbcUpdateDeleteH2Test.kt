@@ -63,7 +63,7 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -75,7 +75,7 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", h2User.label))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -87,12 +87,12 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(h2Bboss.firstname))
+            assertThat(repository.selectFirstByFirstname(h2Bboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo("TheBigBoss")
             assertThat(repository.updateAlias(null))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(h2Bboss.firstname))
+            assertThat(repository.selectFirstByFirstname(h2Bboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo(null)
         }

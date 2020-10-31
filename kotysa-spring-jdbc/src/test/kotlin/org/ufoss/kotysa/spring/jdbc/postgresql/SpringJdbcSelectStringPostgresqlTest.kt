@@ -20,20 +20,20 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
     override val repository = getContextRepository<UserRepositorySpringJdbcPostgresqlSelectString>()
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() {
-        assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+    fun `Verify selectFirstByFirstname finds John`() {
+        assertThat(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
                 .isEqualTo(postgresqlJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
-        Assertions.assertThatThrownBy { repository.selectFirstByFirstameNotNullable("Unknown") }
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
+        Assertions.assertThatThrownBy { repository.selectFirstByFirstnameNotNullable("Unknown") }
                 .isInstanceOf(NoResultException::class.java)
     }
 
@@ -52,15 +52,15 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstameNotEq(postgresqlJdoe.firstname))
+    fun `Verify selectAllByFirstnameNotEq ignore John`() {
+        assertThat(repository.selectAllByFirstnameNotEq(postgresqlJdoe.firstname))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(postgresqlBboss)
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore unknow`() {
-        assertThat(repository.selectAllByFirstameNotEq("Unknown"))
+    fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
+        assertThat(repository.selectAllByFirstnameNotEq("Unknown"))
                 .hasSize(2)
                 .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
     }
@@ -79,41 +79,41 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get John by searching oh`() {
-        assertThat(repository.selectAllByFirstameContains("oh"))
+    fun `Verify selectAllByFirstnameContains get John by searching oh`() {
+        assertThat(repository.selectAllByFirstnameContains("oh"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(postgresqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get nothing by searching boz`() {
-        assertThat(repository.selectAllByFirstameContains("boz"))
+    fun `Verify selectAllByFirstnameContains get nothing by searching boz`() {
+        assertThat(repository.selectAllByFirstnameContains("boz"))
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get John by searching Joh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("Joh"))
+    fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("Joh"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(postgresqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get nothing by searching oh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("oh"))
+    fun `Verify selectAllByFirstnameStartsWith get nothing by searching oh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("oh"))
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get John by searching ohn`() {
-        assertThat(repository.selectAllByFirstameEndsWith("ohn"))
+    fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("ohn"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(postgresqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get nothing by searching joh`() {
-        assertThat(repository.selectAllByFirstameEndsWith("joh"))
+    fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("joh"))
                 .hasSize(0)
     }
 
@@ -160,11 +160,11 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
 
 class UserRepositorySpringJdbcPostgresqlSelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
-    fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
+    fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] eq firstname }
             .fetchFirst()
 
-    fun selectAllByFirstameNotEq(firstname: String) = sqlClient.select<PostgresqlUser>()
+    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] notEq firstname }
             .fetchAll()
 
@@ -176,15 +176,15 @@ class UserRepositorySpringJdbcPostgresqlSelectString(client: JdbcOperations) : A
             .where { it[PostgresqlUser::alias] notEq alias }
             .fetchAll()
 
-    fun selectAllByFirstameContains(firstnameContains: String) = sqlClient.select<PostgresqlUser>()
+    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] contains firstnameContains }
             .fetchAll()
 
-    fun selectAllByFirstameStartsWith(firstnameStartsWith: String) = sqlClient.select<PostgresqlUser>()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] startsWith firstnameStartsWith }
             .fetchAll()
 
-    fun selectAllByFirstameEndsWith(firstnameEndsWith: String) = sqlClient.select<PostgresqlUser>()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] endsWith firstnameEndsWith }
             .fetchAll()
 

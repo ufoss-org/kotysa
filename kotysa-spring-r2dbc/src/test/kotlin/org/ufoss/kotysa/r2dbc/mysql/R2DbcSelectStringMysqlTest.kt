@@ -18,14 +18,14 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     override val repository = getContextRepository<UserRepositoryMysqlSelectString>()
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() {
-        assertThat(repository.selectFirstByFirstame(mysqlJdoe.firstname).block())
+    fun `Verify selectFirstByFirstname finds John`() {
+        assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname).block())
                 .isEqualTo(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() {
-        assertThat(repository.selectFirstByFirstame("Unknown").block())
+    fun `Verify selectFirstByFirstname finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstname("Unknown").block())
                 .isNull()
     }
 
@@ -44,15 +44,15 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstameNotEq(mysqlJdoe.firstname).toIterable())
+    fun `Verify selectAllByFirstnameNotEq ignore John`() {
+        assertThat(repository.selectAllByFirstnameNotEq(mysqlJdoe.firstname).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlBboss)
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore unknow`() {
-        assertThat(repository.selectAllByFirstameNotEq("Unknown").toIterable())
+    fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
+        assertThat(repository.selectAllByFirstnameNotEq("Unknown").toIterable())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(mysqlJdoe, mysqlBboss)
     }
@@ -71,41 +71,41 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get John by searching oh`() {
-        assertThat(repository.selectAllByFirstameContains("oh").toIterable())
+    fun `Verify selectAllByFirstnameContains get John by searching oh`() {
+        assertThat(repository.selectAllByFirstnameContains("oh").toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get nothing by searching boz`() {
-        assertThat(repository.selectAllByFirstameContains("boz").toIterable())
+    fun `Verify selectAllByFirstnameContains get nothing by searching boz`() {
+        assertThat(repository.selectAllByFirstnameContains("boz").toIterable())
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get John by searching Joh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("Joh").toIterable())
+    fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("Joh").toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get nothing by searching oh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("oh").toIterable())
+    fun `Verify selectAllByFirstnameStartsWith get nothing by searching oh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("oh").toIterable())
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get John by searching ohn`() {
-        assertThat(repository.selectAllByFirstameEndsWith("ohn").toIterable())
+    fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("ohn").toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get nothing by searching joh`() {
-        assertThat(repository.selectAllByFirstameEndsWith("joh").toIterable())
+    fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("joh").toIterable())
                 .hasSize(0)
     }
 
@@ -152,7 +152,7 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
 
 class UserRepositoryMysqlSelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
 
-    fun selectAllByFirstameNotEq(firstname: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] notEq firstname }
             .fetchAll()
 
@@ -164,15 +164,15 @@ class UserRepositoryMysqlSelectString(sqlClient: ReactorSqlClient) : AbstractUse
             .where { it[MysqlUser::alias] notEq alias }
             .fetchAll()
 
-    fun selectAllByFirstameContains(firstnameContains: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] contains firstnameContains }
             .fetchAll()
 
-    fun selectAllByFirstameStartsWith(firstnameStartsWith: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] startsWith firstnameStartsWith }
             .fetchAll()
 
-    fun selectAllByFirstameEndsWith(firstnameEndsWith: String) = sqlClient.select<MysqlUser>()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] endsWith firstnameEndsWith }
             .fetchAll()
 

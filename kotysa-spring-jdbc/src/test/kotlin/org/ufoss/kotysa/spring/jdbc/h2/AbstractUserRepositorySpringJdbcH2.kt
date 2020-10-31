@@ -39,7 +39,7 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
 
     fun selectAllUsers() = sqlClient.selectAll<H2User>()
 
-    fun selectFirstByFirstame(firstname: String) =
+    fun selectFirstByFirstname(firstname: String) =
             sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
             .fetchFirstOrNull()

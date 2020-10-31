@@ -61,7 +61,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
         }
@@ -74,7 +74,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", sqLiteUser.label))
                 .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(sqLiteJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
         }
