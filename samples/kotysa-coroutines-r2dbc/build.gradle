@@ -1,7 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
-    id 'org.springframework.boot' version '2.4.0-M3'
+    id 'org.springframework.boot' version '2.4.0-RC1'
 }
 
 repositories {
@@ -17,7 +17,7 @@ dependencies {
     implementation('org.jetbrains.kotlinx:kotlinx-coroutines-reactor')
 
     implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.1.8')
-    implementation('org.springframework.fu:spring-fu-kofu:0.4.1')
+    implementation('org.springframework.fu:spring-fu-kofu:0.4.2')
     implementation('org.testcontainers:postgresql:1.14.3')
     implementation('org.testcontainers:r2dbc:1.14.3')
 
