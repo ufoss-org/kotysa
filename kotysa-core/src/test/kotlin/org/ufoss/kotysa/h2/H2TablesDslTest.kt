@@ -43,7 +43,7 @@ class H2TablesDslTest {
             }
         }
         assertThat(tables.allColumns.values)
-                .extracting("name", "sqlType", "isNullable", "isAutoIncrement")
+                .extracting("name", "sqlType", "nullable", "autoIncrement")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false, false),
                         tuple("string", SqlType.VARCHAR, false, false),
@@ -81,7 +81,7 @@ class H2TablesDslTest {
             }
         }
         assertThat(tables.allColumns.values)
-                .extracting("name", "sqlType", "isNullable", "isAutoIncrement")
+                .extracting("name", "sqlType", "nullable", "autoIncrement")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false, false),
                         tuple("string", SqlType.VARCHAR, true, false),
@@ -141,7 +141,7 @@ class H2TablesDslTest {
             }
         }
         assertThat(tables.allColumns.values)
-                .extracting("name", "sqlType", "isNullable", "defaultValue")
+                .extracting("name", "sqlType", "nullable", "defaultValue")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false, null),
                         tuple("string", SqlType.VARCHAR, false, "default"),
@@ -179,7 +179,7 @@ class H2TablesDslTest {
         }
         val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
         assertThat(roleTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("label", SqlType.VARCHAR, false))
@@ -188,7 +188,7 @@ class H2TablesDslTest {
                 .containsExactly(roleTable.columns[H2Role::id] as ColumnNotNull<H2Role, *>)
         val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
         assertThat(userTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("firstname", SqlType.VARCHAR, false),
@@ -232,13 +232,13 @@ class H2TablesDslTest {
         }
         val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
         assertThat(roleTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("label", SqlType.VARCHAR, false))
         val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
         assertThat(userTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("firstname", SqlType.VARCHAR, false),
@@ -281,13 +281,13 @@ class H2TablesDslTest {
         }
         val roleTable = tables.allTables[H2Role::class] ?: fail { "require mapped H2Role" }
         assertThat(roleTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("label", SqlType.VARCHAR, false))
         val userTable = tables.allTables[H2User::class] ?: fail { "require mapped H2User" }
         assertThat(userTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("id", SqlType.UUID, false),
                         tuple("firstname", SqlType.VARCHAR, false),
@@ -329,7 +329,7 @@ class H2TablesDslTest {
         }
         val userRoleTable = tables.allTables[H2UserRole::class] ?: fail { "require mapped H2UserRole" }
         assertThat(userRoleTable.columns.values)
-                .extracting("name", "sqlType", "isNullable")
+                .extracting("name", "sqlType", "nullable")
                 .containsExactly(
                         tuple("userId", SqlType.UUID, false),
                         tuple("roleId", SqlType.UUID, false))
