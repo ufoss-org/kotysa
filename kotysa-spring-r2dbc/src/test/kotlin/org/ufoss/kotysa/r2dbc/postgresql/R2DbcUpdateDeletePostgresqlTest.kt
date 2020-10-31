@@ -62,7 +62,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+                    .then(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
         }.test()
                 .expectNextMatches { user -> "Do" == user.lastname }
                 .verifyComplete()
@@ -74,7 +74,7 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", postgresqlUser.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+                    .then(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
         }.test()
                 .expectNextMatches { user -> "Doee" == user.lastname }
                 .verifyComplete()
@@ -84,12 +84,12 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify updateAlias works`() {
         assertThat(repository.updateAlias("TheBigBoss").block()!!)
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(postgresqlBboss.firstname).block())
+        assertThat(repository.selectFirstByFirstname(postgresqlBboss.firstname).block())
                 .extracting { user -> user?.alias }
                 .isEqualTo("TheBigBoss")
         assertThat(repository.updateAlias(null).block()!!)
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(postgresqlBboss.firstname).block())
+        assertThat(repository.selectFirstByFirstname(postgresqlBboss.firstname).block())
                 .extracting { user -> user?.alias }
                 .isEqualTo(null)
         repository.updateAlias(postgresqlBboss.alias).block()

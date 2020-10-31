@@ -20,20 +20,20 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectString>()
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() {
-        assertThat(repository.selectFirstByFirstame(h2Jdoe.firstname))
+    fun `Verify selectFirstByFirstname finds John`() {
+        assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
                 .isEqualTo(h2Jdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
-        assertThatThrownBy { repository.selectFirstByFirstameNotNullable("Unknown") }
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
+        assertThatThrownBy { repository.selectFirstByFirstnameNotNullable("Unknown") }
                 .isInstanceOf(NoResultException::class.java)
     }
 
@@ -52,15 +52,15 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstameNotEq(h2Jdoe.firstname))
+    fun `Verify selectAllByFirstnameNotEq ignore John`() {
+        assertThat(repository.selectAllByFirstnameNotEq(h2Jdoe.firstname))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(h2Bboss)
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore unknow`() {
-        assertThat(repository.selectAllByFirstameNotEq("Unknown"))
+    fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
+        assertThat(repository.selectAllByFirstnameNotEq("Unknown"))
                 .hasSize(2)
                 .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
     }
@@ -79,41 +79,41 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get John by searching oh`() {
-        assertThat(repository.selectAllByFirstameContains("oh"))
+    fun `Verify selectAllByFirstnameContains get John by searching oh`() {
+        assertThat(repository.selectAllByFirstnameContains("oh"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(h2Jdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get nothing by searching boz`() {
-        assertThat(repository.selectAllByFirstameContains("boz"))
+    fun `Verify selectAllByFirstnameContains get nothing by searching boz`() {
+        assertThat(repository.selectAllByFirstnameContains("boz"))
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get John by searching Joh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("Joh"))
+    fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("Joh"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(h2Jdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get nothing by searching oh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("oh"))
+    fun `Verify selectAllByFirstnameStartsWith get nothing by searching oh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("oh"))
                 .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get John by searching ohn`() {
-        assertThat(repository.selectAllByFirstameEndsWith("ohn"))
+    fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("ohn"))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(h2Jdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get nothing by searching joh`() {
-        assertThat(repository.selectAllByFirstameEndsWith("joh"))
+    fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("joh"))
                 .hasSize(0)
     }
 
@@ -160,11 +160,11 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 
 class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
-    fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<H2User>()
+    fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
             .fetchFirst()
 
-    fun selectAllByFirstameNotEq(firstname: String) = sqlClient.select<H2User>()
+    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] notEq firstname }
             .fetchAll()
 
@@ -176,15 +176,15 @@ class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) : AbstractU
             .where { it[H2User::alias] notEq alias }
             .fetchAll()
 
-    fun selectAllByFirstameContains(firstnameContains: String) = sqlClient.select<H2User>()
+    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] contains firstnameContains }
             .fetchAll()
 
-    fun selectAllByFirstameStartsWith(firstnameStartsWith: String) = sqlClient.select<H2User>()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] startsWith firstnameStartsWith }
             .fetchAll()
 
-    fun selectAllByFirstameEndsWith(firstnameEndsWith: String) = sqlClient.select<H2User>()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] endsWith firstnameEndsWith }
             .fetchAll()
 

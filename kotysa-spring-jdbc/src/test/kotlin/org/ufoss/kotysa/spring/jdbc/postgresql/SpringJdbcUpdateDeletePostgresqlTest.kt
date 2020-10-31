@@ -63,7 +63,7 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -75,7 +75,7 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", postgresqlUser.label))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -87,12 +87,12 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(postgresqlBboss.firstname))
+            assertThat(repository.selectFirstByFirstname(postgresqlBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo("TheBigBoss")
             assertThat(repository.updateAlias(null))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstame(postgresqlBboss.firstname))
+            assertThat(repository.selectFirstByFirstname(postgresqlBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo(null)
         }

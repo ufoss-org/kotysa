@@ -29,7 +29,7 @@ abstract class JavaUserRepository(client: JdbcOperations, tables: Tables) : Repo
 
     fun selectAll() = sqlClient.selectAll<JavaUser>()
 
-    fun selectFirstByFirstame(firstname: String) = sqlClient.select<JavaUser>()
+    fun selectFirstByFirstname(firstname: String) = sqlClient.select<JavaUser>()
             .where { it[JavaUser::getFirstname] eq firstname }
             .fetchFirstOrNull()
 

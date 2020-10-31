@@ -48,7 +48,7 @@ abstract class AbstractUserRepositoryH2(
 
     fun selectAllUsers() = sqlClient.selectAll<H2User>()
 
-    fun selectFirstByFirstame(firstname: String) = sqlClient.select<H2User>()
+    fun selectFirstByFirstname(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
             .fetchFirst()
 }

@@ -35,21 +35,21 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() = runBlocking<Unit> {
-        assertThat(repository.selectFirstByFirstame("John"))
+    fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
+        assertThat(repository.selectFirstByFirstname("John"))
                 .isEqualTo(postgresqlJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() = runBlocking<Unit> {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
         assertThatThrownBy {
-            runBlocking<Unit> { repository.selectFirstByFirstameNotNullable("Unknown") }
+            runBlocking<Unit> { repository.selectFirstByFirstnameNotNullable("Unknown") }
         }.isInstanceOf(NoResultException::class.java)
     }
 
@@ -98,7 +98,7 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(postgresqlJdoe.firstname))
+        assertThat(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
         repository.updateLastname(postgresqlJdoe.lastname)
@@ -136,11 +136,11 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
 
     fun selectAllUsers() = sqlClient.selectAll<PostgresqlUser>()
 
-    suspend fun selectFirstByFirstame(firstname: String) = sqlClient.select<PostgresqlUser>()
+    suspend fun selectFirstByFirstname(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] eq firstname }
             .fetchFirstOrNull()
 
-    suspend fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
+    suspend fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] eq firstname }
             .fetchFirst()
 

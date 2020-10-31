@@ -39,7 +39,7 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
 
     fun selectAllUsers() = sqlClient.selectAll<PostgresqlUser>()
 
-    fun selectFirstByFirstame(firstname: String) = sqlClient.select<PostgresqlUser>()
+    fun selectFirstByFirstname(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] eq firstname }
             .fetchFirstOrNull()
 }

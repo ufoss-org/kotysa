@@ -62,7 +62,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(h2Jdoe.firstname))
+                    .then(repository.selectFirstByFirstname(h2Jdoe.firstname))
         }.test()
                 .expectNextMatches { user -> "Do" == user.lastname }
                 .verifyComplete()
@@ -74,7 +74,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", h2User.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(h2Jdoe.firstname))
+                    .then(repository.selectFirstByFirstname(h2Jdoe.firstname))
         }.test()
                 .expectNextMatches { user -> "Doee" == user.lastname }
                 .verifyComplete()
@@ -86,11 +86,11 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
             transaction.setRollbackOnly()
             repository.updateAlias("TheBigBoss")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(h2Bboss.firstname))
+                    .then(repository.selectFirstByFirstname(h2Bboss.firstname))
                     .doOnNext { user -> assertThat(user.alias).isEqualTo("TheBigBoss") }
                     .then(repository.updateAlias(null))
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(h2Bboss.firstname))
+                    .then(repository.selectFirstByFirstname(h2Bboss.firstname))
         }.test()
                 .expectNextMatches { user -> null == user.alias }
                 .verifyComplete()

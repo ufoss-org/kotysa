@@ -35,21 +35,21 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() = runBlocking<Unit> {
-        assertThat(repository.selectFirstByFirstame("John"))
+    fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
+        assertThat(repository.selectFirstByFirstname("John"))
                 .isEqualTo(mysqlJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() = runBlocking<Unit> {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
         assertThatThrownBy {
-            runBlocking<Unit> { repository.selectFirstByFirstameNotNullable("Unknown") }
+            runBlocking<Unit> { repository.selectFirstByFirstnameNotNullable("Unknown") }
         }.isInstanceOf(NoResultException::class.java)
     }
 
@@ -98,7 +98,7 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(mysqlJdoe.firstname))
+        assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
         repository.updateLastname(mysqlJdoe.lastname)
@@ -136,11 +136,11 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
 
     fun selectAllUsers() = sqlClient.selectAll<MysqlUser>()
 
-    suspend fun selectFirstByFirstame(firstname: String) = sqlClient.select<MysqlUser>()
+    suspend fun selectFirstByFirstname(firstname: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirstOrNull()
 
-    suspend fun selectFirstByFirstameNotNullable(firstname: String) = sqlClient.select<MysqlUser>()
+    suspend fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<MysqlUser>()
             .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirst()
 

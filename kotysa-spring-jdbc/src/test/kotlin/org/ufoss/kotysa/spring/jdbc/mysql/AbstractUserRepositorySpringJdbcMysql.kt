@@ -39,7 +39,7 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
 
     fun selectAllUsers() = sqlClient.selectAll<MysqlUser>()
 
-    fun selectFirstByFirstame(firstname: String) =
+    fun selectFirstByFirstname(firstname: String) =
             sqlClient.select<MysqlUser>()
                     .where { it[MysqlUser::firstname] eq firstname }
                     .fetchFirstOrNull()

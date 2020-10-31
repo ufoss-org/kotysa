@@ -61,7 +61,7 @@ class R2DbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlUpd
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(mysqlJdoe.firstname))
+                    .then(repository.selectFirstByFirstname(mysqlJdoe.firstname))
         }.test()
                 .expectNextMatches { user -> "Do" == user.lastname }
                 .verifyComplete()
@@ -73,7 +73,7 @@ class R2DbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlUpd
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", mysqlUser.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstame(mysqlJdoe.firstname))
+                    .then(repository.selectFirstByFirstname(mysqlJdoe.firstname))
         }.test()
                 .expectNextMatches { user -> "Doee" == user.lastname }
                 .verifyComplete()
@@ -83,12 +83,12 @@ class R2DbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlUpd
     fun `Verify updateAlias works`() {
         assertThat(repository.updateAlias("TheBigBoss").block()!!)
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(mysqlBboss.firstname).block())
+        assertThat(repository.selectFirstByFirstname(mysqlBboss.firstname).block())
                 .extracting { user -> user?.alias }
                 .isEqualTo("TheBigBoss")
         assertThat(repository.updateAlias(null).block()!!)
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstame(mysqlBboss.firstname).block())
+        assertThat(repository.selectFirstByFirstname(mysqlBboss.firstname).block())
                 .extracting { user -> user?.alias }
                 .isEqualTo(null)
         repository.updateAlias(mysqlBboss.alias).block()

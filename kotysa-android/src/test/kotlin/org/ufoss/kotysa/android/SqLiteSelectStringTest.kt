@@ -19,20 +19,20 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() 
     override fun getRepository(sqLiteTables: Tables) = UserRepositoryStringSelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectFirstByFirstame finds John`() {
-        assertThat(repository.selectFirstByFirstame("John"))
+    fun `Verify selectFirstByFirstname finds John`() {
+        assertThat(repository.selectFirstByFirstname("John"))
             .isEqualTo(sqLiteJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstame finds no Unknown`() {
-        assertThat(repository.selectFirstByFirstame("Unknown"))
+    fun `Verify selectFirstByFirstname finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstname("Unknown"))
             .isNull()
     }
 
     @Test
-    fun `Verify selectFirstByFirstameNotNullable finds no Unknown, throws NoResultException`() {
-        assertThatThrownBy { repository.selectFirstByFirstameNotNullable("Unknown") }
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
+        assertThatThrownBy { repository.selectFirstByFirstnameNotNullable("Unknown") }
             .isInstanceOf(NoResultException::class.java)
     }
 
@@ -51,15 +51,15 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() 
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstameNotEq(sqLiteJdoe.firstname))
+    fun `Verify selectAllByFirstnameNotEq ignore John`() {
+        assertThat(repository.selectAllByFirstnameNotEq(sqLiteJdoe.firstname))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteBboss)
     }
 
     @Test
-    fun `Verify selectAllByFirstameNotEq ignore unknow`() {
-        assertThat(repository.selectAllByFirstameNotEq("Unknown"))
+    fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
+        assertThat(repository.selectAllByFirstnameNotEq("Unknown"))
             .hasSize(2)
             .containsExactlyInAnyOrder(sqLiteJdoe, sqLiteBboss)
     }
@@ -78,41 +78,41 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() 
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get John by searching oh`() {
-        assertThat(repository.selectAllByFirstameContains("oh"))
+    fun `Verify selectAllByFirstnameContains get John by searching oh`() {
+        assertThat(repository.selectAllByFirstnameContains("oh"))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameContains get nothing by searching boz`() {
-        assertThat(repository.selectAllByFirstameContains("boz"))
+    fun `Verify selectAllByFirstnameContains get nothing by searching boz`() {
+        assertThat(repository.selectAllByFirstnameContains("boz"))
             .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get John by searching Joh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("Joh"))
+    fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("Joh"))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameStartsWith get nothing by searching oh`() {
-        assertThat(repository.selectAllByFirstameStartsWith("oh"))
+    fun `Verify selectAllByFirstnameStartsWith get nothing by searching oh`() {
+        assertThat(repository.selectAllByFirstnameStartsWith("oh"))
             .hasSize(0)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get John by searching ohn`() {
-        assertThat(repository.selectAllByFirstameEndsWith("ohn"))
+    fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("ohn"))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteJdoe)
     }
 
     @Test
-    fun `Verify selectAllByFirstameEndsWith get nothing by searching joh`() {
-        assertThat(repository.selectAllByFirstameEndsWith("joh"))
+    fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
+        assertThat(repository.selectAllByFirstnameEndsWith("joh"))
             .hasSize(0)
     }
 
@@ -161,12 +161,12 @@ class UserRepositoryStringSelect(
     tables: Tables
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
-    fun selectFirstByFirstameNotNullable(firstname: String) =
+    fun selectFirstByFirstnameNotNullable(firstname: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] eq firstname }
             .fetchFirst()
 
-    fun selectAllByFirstameNotEq(firstname: String) =
+    fun selectAllByFirstnameNotEq(firstname: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] notEq firstname }
             .fetchAll()
@@ -181,17 +181,17 @@ class UserRepositoryStringSelect(
             .where { it[SqLiteUser::alias] notEq alias }
             .fetchAll()
 
-    fun selectAllByFirstameContains(firstnameContains: String) =
+    fun selectAllByFirstnameContains(firstnameContains: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] contains firstnameContains }
             .fetchAll()
 
-    fun selectAllByFirstameStartsWith(firstnameStartsWith: String) =
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] startsWith firstnameStartsWith }
             .fetchAll()
 
-    fun selectAllByFirstameEndsWith(firstnameEndsWith: String) =
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] endsWith firstnameEndsWith }
             .fetchAll()
