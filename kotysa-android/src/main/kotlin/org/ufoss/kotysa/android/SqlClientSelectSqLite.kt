@@ -127,17 +127,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             results
         }
 
-        private fun fetch() = with(properties) {
-            var whereParams: Array<String>? = null
-            if (whereClauses.isNotEmpty()) {
-                whereParams = whereClauses
-                    .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                    .map { whereValue -> stringValue(whereValue) }
-                    .toTypedArray()
-            }
-
-            client.rawQuery(selectSql(), whereParams)
-        }
+        private fun fetch() = client.rawQuery(selectSql(), buildWhereArgs())
 
         @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         private class SqLiteRow(

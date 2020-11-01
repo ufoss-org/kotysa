@@ -10,9 +10,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.SqLiteUser
-import org.ufoss.kotysa.test.sqLiteBboss
-import org.ufoss.kotysa.test.sqLiteJdoe
+import org.ufoss.kotysa.test.*
 
 class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() {
 
@@ -75,6 +73,14 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() 
         assertThat(repository.selectAllByAliasNotEq(null))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteBboss)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
+        val seq = sequenceOf(sqLiteJdoe.firstname, sqLiteBboss.firstname)
+        assertThat(repository.selectAllByFirstnameIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteJdoe, sqLiteBboss)
     }
 
     @Test
@@ -169,6 +175,10 @@ class UserRepositoryStringSelect(
     fun selectAllByFirstnameNotEq(firstname: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] notEq firstname }
+            .fetchAll()
+
+    fun selectAllByFirstnameIn(firstnames: Sequence<String>) = sqlClient.select<SqLiteUser>()
+            .where { it[SqLiteUser::firstname] `in` firstnames }
             .fetchAll()
 
     fun selectByAlias(alias: String?) =
