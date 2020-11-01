@@ -264,6 +264,9 @@ public open class DefaultSqlClientCommon protected constructor() {
 
     public interface Return : WithProperties {
 
+        /**
+         * Used exclusively by SqLite
+         */
         public fun stringValue(value: Any?): String = value.dbValue()
 
         public fun joins(): String =

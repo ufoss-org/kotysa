@@ -103,21 +103,13 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             val contentValues = ContentValues(setValues.size)
             setValues.forEach { (column, value) -> contentValues.put(column.name, value) }
 
-            var whereParams: Array<String>? = null
-            if (whereClauses.isNotEmpty()) {
-                whereParams = whereClauses
-                    .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                    .map { whereValue -> stringValue(whereValue) }
-                    .toTypedArray()
-            }
-
             val updateTableSql = updateTableSql()
             val whereClause = if (updateTableSql.isNotEmpty()) {
                 updateTableSql
             } else {
                 null
             }
-            client.update(table.name, contentValues, whereClause, whereParams)
+            client.update(table.name, contentValues, whereClause, buildWhereArgs())
         }
     }
 }
