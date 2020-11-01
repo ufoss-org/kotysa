@@ -29,7 +29,7 @@ internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSq
         }
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: DatabaseClient,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -44,7 +44,7 @@ internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSq
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Join<T>, CoroutinesSqlClientDeleteOrUpdate.Join, Return<T> {
@@ -55,7 +55,7 @@ internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSq
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T>, CoroutinesSqlClientDeleteOrUpdate.Where, Return<T> {
@@ -71,7 +71,7 @@ internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSq
         }
     }
 
-    private class TypedWhere<T : Any> internal constructor(
+    private class TypedWhere<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, CoroutinesSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {

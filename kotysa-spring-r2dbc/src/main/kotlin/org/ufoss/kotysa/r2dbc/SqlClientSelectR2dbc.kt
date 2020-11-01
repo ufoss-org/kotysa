@@ -26,7 +26,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 Joinable(client, properties, joinClass, alias, type)
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: DatabaseClient,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -41,7 +41,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, ReactorSqlClientSelect.Join<T>, Whereable<T>, Return<T>
@@ -56,7 +56,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, ReactorSqlClientSelect.Where<T>, Return<T> {
