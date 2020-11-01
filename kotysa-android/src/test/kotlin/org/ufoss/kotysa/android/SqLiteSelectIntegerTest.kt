@@ -44,6 +44,14 @@ class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
     }
 
     @Test
+    fun `Verify selectAllByIntegerNotNullIn finds both`() {
+        val seq = sequenceOf(sqLiteIntegerWithNullable.integerNotNull, sqLiteIntegerWithoutNullable.integerNotNull)
+        assertThat(repository.selectAllByIntegerNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteIntegerWithNullable, sqLiteIntegerWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByIntegerNotNullInf finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByIntegerNotNullInf(11))
             .hasSize(1)
@@ -209,6 +217,10 @@ class IntegerRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables
     fun selectAllByIntegerNotNullNotEq(int: Int) =
         sqlClient.select<SqLiteInteger>()
             .where { it[SqLiteInteger::integerNotNull] notEq int }
+            .fetchAll()
+
+    fun selectAllByIntegerNotNullIn(values: Sequence<Int>) = sqlClient.select<SqLiteInteger>()
+            .where { it[SqLiteInteger::integerNotNull] `in` values }
             .fetchAll()
 
     fun selectAllByIntegerNotNullInf(int: Int) =

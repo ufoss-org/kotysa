@@ -28,7 +28,7 @@ internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : D
             executeSpec = whereClauses
                     .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
                     .foldIndexed(executeSpec) { index, execSpec, value ->
-                        execSpec.bind("k${index}", tables.getDbValue(value)!!)
+                        execSpec.bind("k${index}", value)
                     }
 
             executeSpec.map { r, _ ->

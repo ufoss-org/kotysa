@@ -41,6 +41,14 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
     }
 
     @Test
+    fun `Verify selectAllByIntegerNotNullIn finds both`() {
+        val seq = sequenceOf(h2IntWithNullable.intNotNull, h2IntWithoutNullable.intNotNull)
+        assertThat(repository.selectAllByIntegerNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2IntWithNullable, h2IntWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByIntNotNullInf finds h2IntWithNullable`() {
         assertThat(repository.selectAllByIntNotNullInf(11))
                 .hasSize(1)
@@ -203,6 +211,10 @@ class IntRepositoryH2Select(client: JdbcOperations) : Repository {
 
     fun selectAllByIntNotNullNotEq(int: Int) = sqlClient.select<H2Int>()
             .where { it[H2Int::intNotNull] notEq int }
+            .fetchAll()
+
+    fun selectAllByIntegerNotNullIn(values: Sequence<Int>) = sqlClient.select<H2Int>()
+            .where { it[H2Int::intNotNull] `in` values }
             .fetchAll()
 
     fun selectAllByIntNotNullInf(int: Int) = sqlClient.select<H2Int>()

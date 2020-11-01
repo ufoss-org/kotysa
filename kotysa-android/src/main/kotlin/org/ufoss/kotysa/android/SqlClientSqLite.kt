@@ -78,7 +78,15 @@ internal fun ContentValues.put(name: String, value: Any?) {
             is OffsetDateTime -> put(name, value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             is LocalTime -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_TIME))
             else -> when (value::class.qualifiedName) {
-                "kotlinx.datetime.LocalDate", "kotlinx.datetime.LocalDateTime" -> put(name, value.toString())
+                "kotlinx.datetime.LocalDate" -> put(name, value.toString())
+                "kotlinx.datetime.LocalDateTime" -> {
+                    val kotlinxLocalDateTime = value as kotlinx.datetime.LocalDateTime
+                    if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
+                        put(name, "$value:00") // missing seconds
+                    } else {
+                        put(name, value.toString())
+                    }
+                }
                 else -> throw UnsupportedOperationException(
                         "${value.javaClass.canonicalName} is not supported by Android SqLite"
                 )

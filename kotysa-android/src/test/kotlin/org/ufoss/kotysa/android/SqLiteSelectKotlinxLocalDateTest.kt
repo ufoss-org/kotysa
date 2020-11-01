@@ -33,6 +33,16 @@ class SqLiteSelectKotlinxLocalDateTest : AbstractSqLiteTest<KotlinxLocalDateRepo
     }
 
     @Test
+    fun `Verify selectAllByLocalDateNotNullIn finds both`() {
+        val seq = sequenceOf(
+                sqLiteKotlinxLocalDateWithNullable.localDateNotNull,
+                sqLiteKotlinxLocalDateWithoutNullable.localDateNotNull)
+        assertThat(repository.selectAllByLocalDateNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteKotlinxLocalDateWithNullable, sqLiteKotlinxLocalDateWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByLocalDateNotNullBefore finds sqLiteKotlinxLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate(2019, 11, 5)))
             .hasSize(1)
@@ -200,6 +210,11 @@ class KotlinxLocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, table
         sqlClient.select<SqLiteKotlinxLocalDate>()
             .where { it[SqLiteKotlinxLocalDate::localDateNotNull] notEq localDate }
             .fetchAll()
+
+    fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
+            sqlClient.select<SqLiteKotlinxLocalDate>()
+                    .where { it[SqLiteKotlinxLocalDate::localDateNotNull] `in` values }
+                    .fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
         sqlClient.select<SqLiteKotlinxLocalDate>()

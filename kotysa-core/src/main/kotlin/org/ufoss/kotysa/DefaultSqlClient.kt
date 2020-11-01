@@ -146,7 +146,15 @@ private fun Any?.dbValue(): String = when (this) {
     is LocalTime -> /*"+" + */this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     else -> when (this::class.qualifiedName) {
-        "kotlinx.datetime.LocalDate", "kotlinx.datetime.LocalDateTime" -> this.toString()
+        "kotlinx.datetime.LocalDate" -> this.toString()
+        "kotlinx.datetime.LocalDateTime" -> {
+            val kotlinxLocalDateTime = this as kotlinx.datetime.LocalDateTime
+            if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
+                "$kotlinxLocalDateTime:00" // missing seconds
+            } else {
+                kotlinxLocalDateTime.toString()
+            }
+        }
         else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
     }
 }
