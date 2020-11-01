@@ -7,21 +7,19 @@ package org.ufoss.kotysa.spring.jdbc
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.springframework.dao.IncorrectResultSizeDataAccessException
-import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.jdbc.core.RowMapper
-import org.springframework.jdbc.core.query
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.ufoss.kotysa.*
 import java.sql.ResultSet
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.stream.Stream
 import kotlin.reflect.KClass
 
 
 internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClientSelect() {
 
     internal class Select<T : Any> internal constructor(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val tables: Tables,
             override val resultClass: KClass<T>,
             override val dsl: (SelectDslApi.(ValueProvider) -> T)?
@@ -33,7 +31,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Joinable<T : Any, U : Any>(
-            private val client: JdbcOperations,
+            private val client: NamedParameterJdbcOperations,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
             private val alias: String?,
@@ -48,12 +46,12 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Join<T : Any>(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Join<T>, BlockingSqlClientSelect.Join<T>, Whereable<T>, Return<T>
 
     private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, BlockingSqlClientSelect.Whereable<T> {
-        val client: JdbcOperations
+        val client: NamedParameterJdbcOperations
 
         override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T> {
             val where = Where(client, properties)
@@ -63,7 +61,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Where<T : Any> constructor(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, BlockingSqlClientSelect.Where<T>, Return<T> {
 
@@ -79,28 +77,25 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, BlockingSqlClientSelect.Return<T> {
-        val client: JdbcOperations
+        val client: NamedParameterJdbcOperations
 
         override fun fetchOne() = fetchOneOrNull() ?: throw NoResultException()
 
         override fun fetchOneOrNull(): T? = with(properties) {
-            val rowMapper = RowMapper { rs, _ ->
-                val row = JdbcRow(rs, selectInformation.fieldIndexMap)
-                selectInformation.select(row, row)
-            }
-
-            val args = whereClauses
-                    .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                    .toTypedArray()
+            val parameters = MapSqlParameterSource()
+            bindWhereParams(parameters)
 
             try {
-                client.queryForObject(selectSql(), rowMapper, *args)
+                client.queryForObject(selectSql(), parameters) { rs, _ ->
+                    val row = JdbcRow(rs, selectInformation.fieldIndexMap)
+                    selectInformation.select(row, row)
+                }
             } catch (_: IncorrectResultSizeDataAccessException) {
                 throw NonUniqueResultException()
             }
         }
 
-        override fun fetchFirst() = with(fetchAll()) {
+        override fun fetchFirst(): T = with(fetchAll()) {
             if (isEmpty()) {
                 throw NoResultException()
             }
@@ -109,21 +104,21 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun fetchFirstOrNull() = fetchAll().firstOrNull()
 
-        override fun fetchAll() = with(properties) {
-            val args = whereClauses
-                    .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
+        override fun fetchAll(): List<T> = with(properties) {
+            val parameters = MapSqlParameterSource()
+            bindWhereParams(parameters)
 
-            client.query(selectSql(), *args.toTypedArray()) { rs, _ ->
+            client.query(selectSql(), parameters) { rs, _ ->
                 val row = JdbcRow(rs, selectInformation.fieldIndexMap)
                 selectInformation.select(row, row)
             }
         }
 
         override fun fetchAllStream() = with(properties) {
-            val args = whereClauses
-                    .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
+            val parameters = MapSqlParameterSource()
+            bindWhereParams(parameters)
 
-            client.queryForStream(selectSql(), *args.toTypedArray()) { rs, _ ->
+            client.queryForStream(selectSql(), parameters) { rs, _ ->
                 val row = JdbcRow(rs, selectInformation.fieldIndexMap)
                 selectInformation.select(row, row)
             }
@@ -145,7 +140,3 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 }
-
-// todo remove when JdbcOperationsExtentions.kt contains it
-private fun <T> JdbcOperations.queryForStream(sql: String, vararg args: Any, function: (ResultSet, Int) -> T): Stream<T> =
-        queryForStream(sql, { rs, i -> function(rs, i) }, *args)

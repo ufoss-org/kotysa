@@ -22,6 +22,9 @@ public interface CommonWhereDsl {
     public infix fun <T : Any> NotNullStringColumnField<T>.notEq(value: String): WhereClause =
             WhereClause(this, Operation.NOT_EQ, value)
 
+    public infix fun <T : Any> NotNullStringColumnField<T>.`in`(values: Collection<String>): WhereClause =
+            WhereClause(this, Operation.IN, values)
+
     public infix fun <T : Any> NotNullStringColumnField<T>.contains(value: String): WhereClause =
             WhereClause(this, Operation.CONTAINS, "%$value%")
 

@@ -6,7 +6,6 @@ package org.ufoss.kotysa
 
 import org.ufoss.kotysa.h2.h2DeleteFromTableSql
 import org.ufoss.kotysa.h2.h2UpdateTableSql
-import org.ufoss.kotysa.postgresql.postgresqlUpdateTableSql
 import org.ufoss.kotysa.sqlite.sqLiteDeleteFromTableSql
 import org.ufoss.kotysa.sqlite.sqLiteUpdateTableSql
 import org.ufoss.kolog.Logger
@@ -67,21 +66,20 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
         public fun deleteFromTableSql(): String = when (properties.tables.dbType) {
-            DbType.H2, DbType.POSTGRESQL, DbType.MYSQL -> h2DeleteFromTableSql(logger)
             DbType.SQLITE -> sqLiteDeleteFromTableSql(logger)
+            else -> h2DeleteFromTableSql(logger)
         }
 
         public fun updateTableSql(): String = when (properties.tables.dbType) {
-            DbType.H2, DbType.MYSQL -> h2UpdateTableSql(logger)
-            DbType.POSTGRESQL -> postgresqlUpdateTableSql(logger)
             DbType.SQLITE -> sqLiteUpdateTableSql(logger)
+            else -> h2UpdateTableSql(logger)
         }
 
         /**
          * Handle joins as EXISTS + nested SELECT
          * Then other WHERE clauses
          */
-        public fun joinsWithExistsAndWheres(withWhere: Boolean = true, offset: Int = 1): String = with(properties) {
+        public fun joinsWithExistsAndWheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
             val joins = joinsWithExists()
 
             var wheres = wheres(false, offset)

@@ -7,9 +7,7 @@ package org.ufoss.kotysa.r2dbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.PostgresqlUser
-import org.ufoss.kotysa.test.postgresqlBboss
-import org.ufoss.kotysa.test.postgresqlJdoe
+import org.ufoss.kotysa.test.*
 
 
 class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectString>() {
@@ -55,6 +53,16 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
         assertThat(repository.selectAllByFirstnameNotEq("Unknown").toIterable())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
+        val col = mutableListOf<String>()
+        col.add(h2Jdoe.firstname)
+        col.add(h2Bboss.firstname)
+        assertThat(repository.selectAllByFirstnameIn(col).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlJdoe)
     }
 
     @Test
@@ -154,6 +162,10 @@ class UserRepositoryPostgresqlSelectString(sqlClient: ReactorSqlClient) : Abstra
 
     fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] notEq firstname }
+            .fetchAll()
+
+    fun selectAllByFirstnameIn(firstnames: Collection<String>) = sqlClient.select<PostgresqlUser>()
+            .where { it[PostgresqlUser::firstname] `in` firstnames }
             .fetchAll()
 
     fun selectAllByAlias(alias: String?) = sqlClient.select<PostgresqlUser>()
