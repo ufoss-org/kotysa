@@ -5,16 +5,16 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeFormatterBuilder
-import java.time.format.SignStyle
 import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KTypeParameter
 import kotlin.reflect.full.allSuperclasses
-import java.time.temporal.ChronoField.*
 
 
 private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
@@ -134,15 +134,15 @@ private fun Any?.dbValue(): String = when (this) {
     is Int -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-            /*DateTimeFormatterBuilder()
-                    .parseCaseInsensitive()
-                    .append(DateTimeFormatter.ISO_LOCAL_DATE)
-                    .appendLiteral(' ')
-                    .append(DateTimeFormatter.ISO_LOCAL_TIME)
-                    .optionalStart()
-                    .appendFraction(MICRO_OF_SECOND, 0, 6, true)
-                    .optionalEnd()
-                    .toFormatter(Locale.ENGLISH))*/
+    /*DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .append(DateTimeFormatter.ISO_LOCAL_DATE)
+            .appendLiteral(' ')
+            .append(DateTimeFormatter.ISO_LOCAL_TIME)
+            .optionalStart()
+            .appendFraction(MICRO_OF_SECOND, 0, 6, true)
+            .optionalEnd()
+            .toFormatter(Locale.ENGLISH))*/
     is LocalTime -> /*"+" + */this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     else -> when (this::class.qualifiedName) {
@@ -274,7 +274,7 @@ public open class DefaultSqlClientCommon protected constructor() {
                     "${joinClause.type.sql} ${joinClause.table.declaration} ON ${joinClause.field.fieldName} = $joinedTableFieldName"
                 }
 
-        public fun wheres(withWhere: Boolean = true, offset: Int = 1): String = with(properties) {
+        public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
             if (whereClauses.isEmpty()) {
                 return ""
             }
@@ -299,57 +299,64 @@ public open class DefaultSqlClientCommon protected constructor() {
                                     if (value == null) {
                                         "${field.fieldName} IS NULL"
                                     } else {
-                                        if (DbType.POSTGRESQL == tables.dbType) {
-                                            "${field.fieldName} = $${index++}"
-                                        } else {
+                                        if (DbType.SQLITE == tables.dbType) {
                                             "${field.fieldName} = ?"
+                                        } else {
+                                            "${field.fieldName} = :k${index++}"
                                         }
                                     }
                                 Operation.NOT_EQ ->
                                     if (value == null) {
                                         "${field.fieldName} IS NOT NULL"
                                     } else {
-                                        if (DbType.POSTGRESQL == tables.dbType) {
-                                            "${field.fieldName} <> $${index++}"
-                                        } else {
+                                        if (DbType.SQLITE == tables.dbType) {
                                             "${field.fieldName} <> ?"
+                                        } else {
+                                            "${field.fieldName} <> :k${index++}"
                                         }
                                     }
                                 Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
-                                    if (DbType.POSTGRESQL == tables.dbType) {
-                                        "${field.fieldName} LIKE $${index++}"
-                                    } else {
+                                    if (DbType.SQLITE == tables.dbType) {
                                         "${field.fieldName} LIKE ?"
+                                    } else {
+                                        "${field.fieldName} LIKE :k${index++}"
                                     }
                                 Operation.INF ->
-                                    if (DbType.POSTGRESQL == tables.dbType) {
-                                        "${field.fieldName} < $${index++}"
-                                    } else {
+                                    if (DbType.SQLITE == tables.dbType) {
                                         "${field.fieldName} < ?"
+                                    } else {
+                                        "${field.fieldName} < :k${index++}"
                                     }
                                 Operation.INF_OR_EQ ->
-                                    if (DbType.POSTGRESQL == tables.dbType) {
-                                        "${field.fieldName} <= $${index++}"
-                                    } else {
+                                    if (DbType.SQLITE == tables.dbType) {
                                         "${field.fieldName} <= ?"
+                                    } else {
+                                        "${field.fieldName} <= :k${index++}"
                                     }
                                 Operation.SUP ->
-                                    if (DbType.POSTGRESQL == tables.dbType) {
-                                        "${field.fieldName} > $${index++}"
-                                    } else {
+                                    if (DbType.SQLITE == tables.dbType) {
                                         "${field.fieldName} > ?"
+                                    } else {
+                                        "${field.fieldName} > :k${index++}"
                                     }
                                 Operation.SUP_OR_EQ ->
-                                    if (DbType.POSTGRESQL == tables.dbType) {
-                                        "${field.fieldName} >= $${index++}"
-                                    } else {
+                                    if (DbType.SQLITE == tables.dbType) {
                                         "${field.fieldName} >= ?"
+                                    } else {
+                                        "${field.fieldName} >= :k${index++}"
                                     }
                                 Operation.IS ->
-                                    if (DbType.POSTGRESQL == tables.dbType) {
-                                        "${field.fieldName} IS $${index++}"
-                                    } else {
+                                    if (DbType.SQLITE == tables.dbType) {
                                         "${field.fieldName} IS ?"
+                                    } else {
+                                        "${field.fieldName} IS :k${index++}"
+                                    }
+                                Operation.IN ->
+                                    if (DbType.SQLITE == tables.dbType) {
+                                        // must put as much '?' as
+                                        "${field.fieldName} IN (${(value as Collection<*>).joinToString { "?" }})"
+                                    } else {
+                                        "${field.fieldName} IN (:k${index++})"
                                     }
                             }
                     )

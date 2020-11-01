@@ -4,14 +4,15 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
-import org.springframework.jdbc.core.JdbcOperations
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
 
 internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class Delete<T : Any>(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val tables: Tables,
             override val tableClass: KClass<T>
     ) : BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T>(), DeleteOrUpdate<T>, Return<T> {
@@ -28,7 +29,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Joinable<T : Any, U : Any>(
-            private val client: JdbcOperations,
+            private val client: NamedParameterJdbcOperations,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
             private val alias: String?,
@@ -43,7 +44,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Join<T : Any>(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Join<T>, BlockingSqlClientDeleteOrUpdate.Join, Return<T> {
         override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where {
@@ -54,7 +55,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class Where<T : Any>(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T>, BlockingSqlClientDeleteOrUpdate.Where, Return<T> {
 
@@ -70,7 +71,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class TypedWhere<T : Any>(
-            override val client: JdbcOperations,
+            override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, BlockingSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
 
@@ -86,14 +87,13 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, BlockingSqlClientDeleteOrUpdate.Return {
-        val client: JdbcOperations
+        val client: NamedParameterJdbcOperations
 
         override fun execute() = with(properties) {
-            client.update(deleteFromTableSql(),
-                    *whereClauses
-                            .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
-                            .toTypedArray()
-            )
+            val parameters = MapSqlParameterSource()
+            bindWhereParams(parameters)
+
+            client.update(deleteFromTableSql(), parameters)
         }
     }
 }

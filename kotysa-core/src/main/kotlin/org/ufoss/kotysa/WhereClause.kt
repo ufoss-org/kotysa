@@ -12,7 +12,7 @@ public class WhereClause internal constructor(
 )
 
 internal enum class Operation {
-    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IS
+    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IS, IN
 }
 
 public class TypedWhereClause internal constructor(

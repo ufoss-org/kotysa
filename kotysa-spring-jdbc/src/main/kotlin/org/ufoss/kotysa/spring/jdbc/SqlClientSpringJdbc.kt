@@ -4,7 +4,8 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
-import org.springframework.jdbc.core.JdbcOperations
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
 
@@ -12,7 +13,7 @@ import kotlin.reflect.KClass
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
  */
 internal class SqlClientSpringJdbc(
-        private val client: JdbcOperations,
+        private val client: NamedParameterJdbcOperations,
         override val tables: Tables
 ) : BlockingSqlClient(), DefaultSqlClient {
 
@@ -22,21 +23,23 @@ internal class SqlClientSpringJdbc(
 
     override fun <T : Any> createTable(tableClass: KClass<T>) {
         val createTableSql = createTableSql(tableClass)
-        return client.execute(createTableSql)
+        return client.jdbcOperations.execute(createTableSql)
     }
 
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
-        client.update(insertSql(row),
-                *table.columns.values
-                        // do nothing for null values with default or Serial type
-                        .filterNot { column ->
-                            column.entityGetter(row) == null
-                                    && (column.defaultValue != null || SqlType.SERIAL == column.sqlType)
-                        }
-                        .map { column -> tables.getDbValue(column.entityGetter(row)) }
-                        .toTypedArray()
-        )
+
+        val parameters = MapSqlParameterSource()
+        table.columns.values
+                // do nothing for null values with default or Serial type
+                .filterNot { column ->
+                    column.entityGetter(row) == null
+                            && (column.defaultValue != null || SqlType.SERIAL == column.sqlType)
+                }
+                .map { column -> tables.getDbValue(column.entityGetter(row)) }
+                .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue)  }
+
+        client.update(insertSql(row), parameters)
     }
 
     override fun insert(vararg rows: Any) {
@@ -53,8 +56,8 @@ internal class SqlClientSpringJdbc(
 }
 
 /**
- * Create a [BlockingSqlClient] from a Spring [JdbcOperations] with [Tables] mapping
+ * Create a [BlockingSqlClient] from a Spring [NamedParameterJdbcOperations] with [Tables] mapping
  *
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
  */
-public fun JdbcOperations.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSpringJdbc(this, tables)
+public fun NamedParameterJdbcOperations.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSpringJdbc(this, tables)

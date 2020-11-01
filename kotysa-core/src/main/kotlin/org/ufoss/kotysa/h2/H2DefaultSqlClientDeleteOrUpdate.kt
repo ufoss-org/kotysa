@@ -19,8 +19,9 @@ internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.h2DeleteFromTableSql(logge
 
 internal fun DefaultSqlClientDeleteOrUpdate.Return<*>.h2UpdateTableSql(logger: Logger) = with(properties) {
     val updateSql = "UPDATE ${table.name}"
-    val setSql = setValues.keys.joinToString(prefix = "SET ") { column -> "${column.name} = ?" }
-    val joinsAndWheres = joinsWithExistsAndWheres()
+    var index = 0
+    val setSql = setValues.keys.joinToString(prefix = "SET ") { column -> "${column.name} = :k${index++}" }
+    val joinsAndWheres = joinsWithExistsAndWheres(offset = index)
     logger.debug { "Exec SQL (${tables.dbType.name}) : $updateSql $setSql $joinsAndWheres" }
 
     "$updateSql $setSql $joinsAndWheres"

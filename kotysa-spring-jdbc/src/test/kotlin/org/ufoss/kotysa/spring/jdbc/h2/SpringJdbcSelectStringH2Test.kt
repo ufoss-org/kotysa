@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.core.JdbcOperations
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.H2User
 import org.ufoss.kotysa.test.h2Bboss
@@ -61,6 +61,16 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
         assertThat(repository.selectAllByFirstnameNotEq("Unknown"))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
+        val col = mutableListOf<String>()
+        col.add(h2Jdoe.firstname)
+        col.add(h2Bboss.firstname)
+        assertThat(repository.selectAllByFirstnameIn(col))
                 .hasSize(2)
                 .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
     }
@@ -158,7 +168,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 }
 
 
-class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
+class UserRepositorySpringJdbcH2SelectString(client: NamedParameterJdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] eq firstname }
@@ -166,6 +176,10 @@ class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) : AbstractU
 
     fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] notEq firstname }
+            .fetchAll()
+
+    fun selectAllByFirstnameIn(firstnames: Collection<String>) = sqlClient.select<H2User>()
+            .where { it[H2User::firstname] `in` firstnames }
             .fetchAll()
 
     fun selectAllByAlias(alias: String?) = sqlClient.select<H2User>()
