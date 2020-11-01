@@ -22,18 +22,19 @@ internal abstract class AbstractSqlClientUpdateR2dbc protected constructor() : D
             var index = 0
             var executeSpec = setValues.entries
                     .fold(client.sql(updateTableSql())) { execSpec, entry ->
-                        if (entry.value == null) {
+                        val value = entry.value
+                        if (value == null) {
                             execSpec.bindNull("k${index++}",
                                     (entry.key.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
                         } else {
-                            execSpec.bind("k${index++}", tables.getDbValue(entry.value)!!)
+                            execSpec.bind("k${index++}", value)
                         }
                     }
 
             executeSpec = whereClauses
                     .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
                     .fold(executeSpec) { execSpec, value ->
-                        execSpec.bind("k${index++}", tables.getDbValue(value)!!)
+                        execSpec.bind("k${index++}", value)
                     }
 
             executeSpec.fetch()

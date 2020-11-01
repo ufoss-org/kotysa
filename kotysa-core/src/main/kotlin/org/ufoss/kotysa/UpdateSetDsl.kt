@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -41,11 +43,11 @@ public class UpdateSetDsl<T : Any> internal constructor(
     }
 
     override fun set(getter: (T) -> kotlinx.datetime.LocalDateTime, value: kotlinx.datetime.LocalDateTime) {
-        addValue(fieldAccess.getField(getter, null), value)
+        addValue(fieldAccess.getField(getter, null), value.toJavaLocalDateTime())
     }
 
     override fun set(getter: (T) -> kotlinx.datetime.LocalDateTime?, value: kotlinx.datetime.LocalDateTime?): Nullable {
-        addValue(fieldAccess.getField(getter, null), value)
+        addValue(fieldAccess.getField(getter, null), value?.toJavaLocalDateTime())
         return Nullable.TRUE
     }
 
@@ -59,11 +61,11 @@ public class UpdateSetDsl<T : Any> internal constructor(
     }
 
     override fun set(getter: (T) -> kotlinx.datetime.LocalDate, value: kotlinx.datetime.LocalDate) {
-        addValue(fieldAccess.getField(getter, null), value)
+        addValue(fieldAccess.getField(getter, null), value.toJavaLocalDate())
     }
 
     override fun set(getter: (T) -> kotlinx.datetime.LocalDate?, value: kotlinx.datetime.LocalDate?): Nullable {
-        addValue(fieldAccess.getField(getter, null), value)
+        addValue(fieldAccess.getField(getter, null), value?.toJavaLocalDate())
         return Nullable.TRUE
     }
 

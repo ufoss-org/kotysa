@@ -14,7 +14,7 @@ internal fun DefaultSqlClientCommon.Properties.bindWhereParams(
     var index = offset
     with(this) {
         whereClauses
-                .mapNotNull { typedWhereClause -> tables.getDbValue(typedWhereClause.whereClause.value) }
+                .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
                 .forEach { dbValue -> parameters.addValue("k${index++}", dbValue) }
     }
 }

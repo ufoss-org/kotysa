@@ -34,6 +34,16 @@ class R2DbcSelectKotlinxLocalDateTimeH2Test : AbstractR2dbcH2Test<KotlinxLocalDa
     }
 
     @Test
+    fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                h2KotlinxLocalDateTimeWithNullable.localDateTimeNotNull,
+                h2KotlinxLocalDateTimeWithoutNullable.localDateTimeNotNull)
+        assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable, h2KotlinxLocalDateTimeWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByLocalDateTimeNotNullBefore finds h2KotlinxLocalDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime(2019, 11, 4, 12, 0)).toIterable())
                 .hasSize(1)
@@ -199,6 +209,11 @@ class KotlinxLocalDateTimeRepositoryH2Select(private val sqlClient: ReactorSqlCl
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
             sqlClient.select<H2KotlinxLocalDateTime>()
                     .where { it[H2KotlinxLocalDateTime::localDateTimeNotNull] notEq localDateTime }
+                    .fetchAll()
+
+    fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
+            sqlClient.select<H2KotlinxLocalDateTime>()
+                    .where { it[H2KotlinxLocalDateTime::localDateTimeNotNull] `in` values }
                     .fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
