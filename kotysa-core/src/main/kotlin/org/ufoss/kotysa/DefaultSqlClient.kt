@@ -106,7 +106,7 @@ public interface DefaultSqlClient {
     public fun <T : Any> insertSqlQuery(row: T): String {
         val table = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
-        var index = 1
+        var index = 0
         val values = table.columns.values
                 // filter out null values with default value or Serial type
                 .filterNot { column ->
@@ -115,10 +115,10 @@ public interface DefaultSqlClient {
                 }
                 .joinToString { column ->
                     columnNames.add(column.name)
-                    if (DbType.POSTGRESQL == tables.dbType) {
-                        "$${index++}"
-                    } else {
+                    if (DbType.SQLITE == tables.dbType) {
                         "?"
+                    } else {
+                        ":k${index++}"
                     }
                 }
 

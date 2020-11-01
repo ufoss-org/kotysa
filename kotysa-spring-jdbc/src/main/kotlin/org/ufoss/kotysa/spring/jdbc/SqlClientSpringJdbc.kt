@@ -4,8 +4,10 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
+import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
 
@@ -13,17 +15,24 @@ import kotlin.reflect.KClass
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
  */
 internal class SqlClientSpringJdbc(
-        private val client: NamedParameterJdbcOperations,
+        private val client: JdbcOperations,
         override val tables: Tables
 ) : BlockingSqlClient(), DefaultSqlClient {
 
+    /**
+     * Computed property : only created once on first call
+     */
+    private val namedParameterJdbcOperations: NamedParameterJdbcOperations by lazy {
+        NamedParameterJdbcTemplate(client)
+    }
+
     override fun <T : Any> select(resultClass: KClass<T>,
                                   dsl: (SelectDslApi.(ValueProvider) -> T)?): BlockingSqlClientSelect.Select<T> =
-            SqlClientSelectSpringJdbc.Select(client, tables, resultClass, dsl)
+            SqlClientSelectSpringJdbc.Select(namedParameterJdbcOperations, tables, resultClass, dsl)
 
     override fun <T : Any> createTable(tableClass: KClass<T>) {
         val createTableSql = createTableSql(tableClass)
-        return client.jdbcOperations.execute(createTableSql)
+        return client.execute(createTableSql)
     }
 
     override fun <T : Any> insert(row: T) {
@@ -39,7 +48,7 @@ internal class SqlClientSpringJdbc(
                 .map { column -> tables.getDbValue(column.entityGetter(row)) }
                 .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue)  }
 
-        client.update(insertSql(row), parameters)
+        namedParameterJdbcOperations.update(insertSql(row), parameters)
     }
 
     override fun insert(vararg rows: Any) {
@@ -49,15 +58,15 @@ internal class SqlClientSpringJdbc(
     }
 
     override fun <T : Any> deleteFromTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteSpringJdbc.Delete(client, tables, tableClass)
+            SqlClientDeleteSpringJdbc.Delete(namedParameterJdbcOperations, tables, tableClass)
 
     override fun <T : Any> updateTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSpringJdbc.Update(client, tables, tableClass)
+            SqlClientUpdateSpringJdbc.Update(namedParameterJdbcOperations, tables, tableClass)
 }
 
 /**
- * Create a [BlockingSqlClient] from a Spring [NamedParameterJdbcOperations] with [Tables] mapping
+ * Create a [BlockingSqlClient] from a Spring [JdbcOperations] with [Tables] mapping
  *
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
  */
-public fun NamedParameterJdbcOperations.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSpringJdbc(this, tables)
+public fun JdbcOperations.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSpringJdbc(this, tables)
