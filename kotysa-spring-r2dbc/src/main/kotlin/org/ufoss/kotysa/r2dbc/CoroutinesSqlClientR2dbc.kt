@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
 /**
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbcCoroutines
  */
-private class CoroutinesSqlClientR2Dbc internal constructor(
+private class CoroutinesSqlClientR2Dbc(
         override val client: DatabaseClient,
         override val tables: Tables
 ) : CoroutinesSqlClient(), AbstractSqlClientR2dbc {

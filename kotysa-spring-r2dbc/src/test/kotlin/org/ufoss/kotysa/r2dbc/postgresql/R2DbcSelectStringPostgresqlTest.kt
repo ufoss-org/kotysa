@@ -56,16 +56,6 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     }
 
     @Test
-    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
-        val col = mutableListOf<String>()
-        col.add(h2Jdoe.firstname)
-        col.add(h2Bboss.firstname)
-        assertThat(repository.selectAllByFirstnameIn(col).toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlJdoe)
-    }
-
-    @Test
     fun `Verify selectAllByAliasNotEq ignore BigBoss`() {
         assertThat(repository.selectAllByAliasNotEq(postgresqlBboss.alias).toIterable())
                 .hasSize(0)
@@ -76,6 +66,14 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
         assertThat(repository.selectAllByAliasNotEq(null).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(postgresqlBboss)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
+        val seq = sequenceOf(postgresqlJdoe.firstname, postgresqlBboss.firstname)
+        assertThat(repository.selectAllByFirstnameIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
     }
 
     @Test
@@ -164,7 +162,7 @@ class UserRepositoryPostgresqlSelectString(sqlClient: ReactorSqlClient) : Abstra
             .where { it[PostgresqlUser::firstname] notEq firstname }
             .fetchAll()
 
-    fun selectAllByFirstnameIn(firstnames: Collection<String>) = sqlClient.select<PostgresqlUser>()
+    fun selectAllByFirstnameIn(firstnames: Sequence<String>) = sqlClient.select<PostgresqlUser>()
             .where { it[PostgresqlUser::firstname] `in` firstnames }
             .fetchAll()
 

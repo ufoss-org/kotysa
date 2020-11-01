@@ -4,14 +4,14 @@
 
 package org.ufoss.kotysa.r2dbc
 
-import org.ufoss.kotysa.AbstractRow
-import org.ufoss.kotysa.DefaultSqlClientSelect
-import org.ufoss.kotysa.Field
 import io.r2dbc.spi.Row
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.RowsFetchSpec
+import org.ufoss.kotysa.AbstractRow
+import org.ufoss.kotysa.DefaultSqlClientSelect
+import org.ufoss.kotysa.Field
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -25,10 +25,10 @@ internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : D
         fun fetch(): RowsFetchSpec<T> = with(properties) {
             var executeSpec = client.sql(selectSql())
 
-            whereClauses
+            executeSpec = whereClauses
                     .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                    .forEachIndexed { index, value ->
-                        executeSpec = executeSpec.bind(index, tables.getDbValue(value)!!)
+                    .foldIndexed(executeSpec) { index, execSpec, value ->
+                        execSpec.bind("k${index}", tables.getDbValue(value)!!)
                     }
 
             executeSpec.map { r, _ ->

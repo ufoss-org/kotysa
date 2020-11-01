@@ -19,24 +19,21 @@ internal abstract class AbstractSqlClientUpdateR2dbc protected constructor() : D
         fun fetch(): FetchSpec<Map<String, Any>> = with(properties) {
             require(setValues.isNotEmpty()) { "At least one value must be set in Update" }
 
-            var executeSpec = client.sql(updateTableSql())
-
             var index = 0
-            setValues.forEach { (column, value) ->
-                executeSpec = if (value == null) {
-                    executeSpec.bindNull(index,
-                            (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
-                } else {
-                    executeSpec.bind(index, tables.getDbValue(value)!!)
-                }
-                index++
-            }
+            var executeSpec = setValues.entries
+                    .fold(client.sql(updateTableSql())) { execSpec, entry ->
+                        if (entry.value == null) {
+                            execSpec.bindNull("k${index++}",
+                                    (entry.key.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
+                        } else {
+                            execSpec.bind("k${index++}", tables.getDbValue(entry.value)!!)
+                        }
+                    }
 
-            whereClauses
+            executeSpec = whereClauses
                     .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                    .forEach { value ->
-                        executeSpec = executeSpec.bind(index, tables.getDbValue(value)!!)
-                        index++
+                    .fold(executeSpec) { execSpec, value ->
+                        execSpec.bind("k${index++}", tables.getDbValue(value)!!)
                     }
 
             executeSpec.fetch()

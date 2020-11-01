@@ -24,24 +24,23 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
             client.sql(createTableSql(tableClass))
 
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec {
-        var executeSpec = client.sql(insertSql(row))
         val table = tables.getTable(row::class)
         var index = 0
-        table.columns.values.forEach { column ->
-            val value = column.entityGetter(row)
-            executeSpec = if (value == null) {
-                // do nothing for null values with default or Serial type
-                if (column.defaultValue != null || SqlType.SERIAL == column.sqlType) {
-                    executeSpec
-                } else {
-                    executeSpec.bindNull(index++,
-                            (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
+        return table.columns.values
+                .fold(client.sql(insertSql(row))) { execSpec, column ->
+                    val value = column.entityGetter(row)
+                    if (value == null) {
+                        // do nothing for null values with default or Serial type
+                        if (column.defaultValue != null || SqlType.SERIAL == column.sqlType) {
+                            execSpec
+                        } else {
+                            execSpec.bindNull("k${index++}",
+                                    (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
+                        }
+                    } else {
+                        execSpec.bind("k${index++}", tables.getDbValue(value)!!)
+                    }
                 }
-            } else {
-                executeSpec.bind(index++, tables.getDbValue(value)!!)
-            }
-        }
-        return executeSpec
     }
 }
 

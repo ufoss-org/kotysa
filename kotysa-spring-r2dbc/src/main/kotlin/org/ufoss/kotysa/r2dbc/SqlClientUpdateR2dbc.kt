@@ -34,7 +34,7 @@ internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpd
         }
     }
 
-    private class Joinable<T : Any, U : Any> internal constructor(
+    private class Joinable<T : Any, U : Any>(
             private val client: DatabaseClient,
             private val properties: Properties<T>,
             private val joinClass: KClass<U>,
@@ -49,7 +49,7 @@ internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpd
         }
     }
 
-    private class Join<T : Any> internal constructor(
+    private class Join<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Join<T>, ReactorSqlClientDeleteOrUpdate.Join, Return<T> {
@@ -60,7 +60,7 @@ internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpd
         }
     }
 
-    private class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T>, ReactorSqlClientDeleteOrUpdate.Where, Return<T> {
@@ -76,7 +76,7 @@ internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpd
         }
     }
 
-    private class TypedWhere<T : Any> internal constructor(
+    private class TypedWhere<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, ReactorSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {

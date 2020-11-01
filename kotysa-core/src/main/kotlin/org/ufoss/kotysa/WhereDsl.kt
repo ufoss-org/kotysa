@@ -22,11 +22,11 @@ public interface CommonWhereDsl {
     public infix fun <T : Any> NotNullStringColumnField<T>.notEq(value: String): WhereClause =
             WhereClause(this, Operation.NOT_EQ, value)
 
-    public infix fun <T : Any> NotNullStringColumnField<T>.`in`(values: Iterable<String>): WhereClause =
+    public infix fun <T : Any> NotNullStringColumnField<T>.`in`(values: Collection<String>): WhereClause =
             WhereClause(this, Operation.IN, values)
 
     public infix fun <T : Any> NotNullStringColumnField<T>.`in`(values: Sequence<String>): WhereClause =
-            this.`in`(values.asIterable())
+            this.`in`(values.toSet())
 
     public infix fun <T : Any> NotNullStringColumnField<T>.contains(value: String): WhereClause =
             WhereClause(this, Operation.CONTAINS, "%$value%")

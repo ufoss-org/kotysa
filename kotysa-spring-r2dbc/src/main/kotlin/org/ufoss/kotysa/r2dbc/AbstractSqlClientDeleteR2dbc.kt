@@ -17,10 +17,10 @@ internal abstract class AbstractSqlClientDeleteR2dbc protected constructor() : D
         fun fetch(): FetchSpec<Map<String, Any>> = with(properties) {
             var executeSpec = client.sql(deleteFromTableSql())
 
-            whereClauses
+            executeSpec = whereClauses
                     .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                    .forEachIndexed { index, value ->
-                        executeSpec = executeSpec.bind(index, value)
+                    .foldIndexed(executeSpec) { index, execSpec, value ->
+                        execSpec.bind("k${index}", value)
                     }
 
             executeSpec.fetch()
