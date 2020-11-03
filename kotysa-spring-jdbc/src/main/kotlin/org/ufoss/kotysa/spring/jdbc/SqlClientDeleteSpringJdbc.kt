@@ -15,13 +15,13 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
             override val client: NamedParameterJdbcOperations,
             override val tables: Tables,
             override val tableClass: KClass<T>
-    ) : BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T>(), DeleteOrUpdate<T>, Return<T> {
+    ) : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>(), DeleteOrUpdate<T>, Return<T> {
         override val properties: Properties<T> = initProperties()
 
-        override fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): BlockingSqlClientDeleteOrUpdate.Joinable =
+        override fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): SqlClientDeleteOrUpdate.Joinable =
                 Joinable(client, properties, joinClass, alias, type)
 
-        override fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): BlockingSqlClientDeleteOrUpdate.TypedWhere<T> {
+        override fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
             val where = TypedWhere(client, properties)
             where.addWhereClause(dsl)
             return where
@@ -34,9 +34,9 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
             private val joinClass: KClass<U>,
             private val alias: String?,
             private val type: JoinType
-    ) : BlockingSqlClientDeleteOrUpdate.Joinable {
+    ) : SqlClientDeleteOrUpdate.Joinable {
 
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): BlockingSqlClientDeleteOrUpdate.Join {
+        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): SqlClientDeleteOrUpdate.Join {
             val join = Join(client, properties)
             join.addJoinClause(dsl, joinClass, alias, type)
             return join
@@ -46,8 +46,8 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     private class Join<T : Any>(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Join<T>, BlockingSqlClientDeleteOrUpdate.Join, Return<T> {
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where {
+    ) : DefaultSqlClientDeleteOrUpdate.Join<T>, SqlClientDeleteOrUpdate.Join, Return<T> {
+        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientDeleteOrUpdate.Where {
             val where = Where(client, properties)
             where.addWhereClause(dsl)
             return where
@@ -57,14 +57,14 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     private class Where<T : Any>(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T>, BlockingSqlClientDeleteOrUpdate.Where, Return<T> {
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Where, Return<T> {
 
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where {
+        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientDeleteOrUpdate.Where {
             addAndClause(dsl)
             return this
         }
 
-        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientDeleteOrUpdate.Where {
+        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientDeleteOrUpdate.Where {
             addOrClause(dsl)
             return this
         }
@@ -73,20 +73,20 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     private class TypedWhere<T : Any>(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, BlockingSqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
+    ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, SqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
 
-        override fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): BlockingSqlClientDeleteOrUpdate.TypedWhere<T> {
+        override fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
             addAndClause(dsl)
             return this
         }
 
-        override fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): BlockingSqlClientDeleteOrUpdate.TypedWhere<T> {
+        override fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
             addOrClause(dsl)
             return this
         }
     }
 
-    private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, BlockingSqlClientDeleteOrUpdate.Return {
+    private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, SqlClientDeleteOrUpdate.Return {
         val client: NamedParameterJdbcOperations
 
         override fun execute() = with(properties) {

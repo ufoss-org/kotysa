@@ -23,10 +23,10 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             override val tables: Tables,
             override val resultClass: KClass<T>,
             override val dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ) : BlockingSqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
+    ) : SqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
         override val properties: Properties<T> = initProperties()
 
-        override fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): BlockingSqlClientSelect.Joinable<T> =
+        override fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): SqlClientSelect.Joinable<T> =
                 Joinable(client, properties, joinClass, alias, type)
     }
 
@@ -36,9 +36,9 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             private val joinClass: KClass<U>,
             private val alias: String?,
             private val type: JoinType
-    ) : BlockingSqlClientSelect.Joinable<T> {
+    ) : SqlClientSelect.Joinable<T> {
 
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): BlockingSqlClientSelect.Join<T> {
+        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): SqlClientSelect.Join<T> {
             val join = Join(client, properties)
             join.addJoinClause(dsl, joinClass, alias, type)
             return join
@@ -48,12 +48,12 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     private class Join<T : Any>(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Join<T>, BlockingSqlClientSelect.Join<T>, Whereable<T>, Return<T>
+    ) : DefaultSqlClientSelect.Join<T>, SqlClientSelect.Join<T>, Whereable<T>, Return<T>
 
-    private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, BlockingSqlClientSelect.Whereable<T> {
+    private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, SqlClientSelect.Whereable<T> {
         val client: NamedParameterJdbcOperations
 
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T> {
+        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
             val where = Where(client, properties)
             where.addWhereClause(dsl)
             return where
@@ -63,20 +63,20 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     private class Where<T : Any> constructor(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T>, BlockingSqlClientSelect.Where<T>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T>, SqlClientSelect.Where<T>, Return<T> {
 
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T> {
+        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
             addAndClause(dsl)
             return this
         }
 
-        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): BlockingSqlClientSelect.Where<T> {
+        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
             addOrClause(dsl)
             return this
         }
     }
 
-    private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, BlockingSqlClientSelect.Return<T> {
+    private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: NamedParameterJdbcOperations
 
         override fun fetchOne() = fetchOneOrNull() ?: throw NoResultException()

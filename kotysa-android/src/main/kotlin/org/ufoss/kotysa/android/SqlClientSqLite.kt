@@ -21,12 +21,12 @@ import kotlin.reflect.KClass
 internal class SqlClientSqLite(
     private val client: SQLiteOpenHelper,
     override val tables: Tables
-) : BlockingSqlClient(), DefaultSqlClient {
+) : SqlClient(), DefaultSqlClient {
 
     override fun <T : Any> select(
         resultClass: KClass<T>,
         dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ): BlockingSqlClientSelect.Select<T> =
+    ): SqlClientSelect.Select<T> =
         SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
 
     override fun <T : Any> createTable(tableClass: KClass<T>) {
@@ -53,10 +53,10 @@ internal class SqlClientSqLite(
         rows.forEach { row -> insert(row) }
     }
 
-    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
+    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
         SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
 
-    override fun <T : Any> updateTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.Update<T> =
+    override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
         SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
 }
 
@@ -98,8 +98,8 @@ internal fun ContentValues.put(name: String, value: Any?) {
 }
 
 /**
- * Create a [BlockingSqlClient] from a Android SqLite [SQLiteDatabase] with [Tables] mapping
+ * Create a [SqlClient] from a Android SqLite [SQLiteDatabase] with [Tables] mapping
  *
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
  */
-public fun SQLiteOpenHelper.sqlClient(tables: Tables): BlockingSqlClient = SqlClientSqLite(this, tables)
+public fun SQLiteOpenHelper.sqlClient(tables: Tables): SqlClient = SqlClientSqLite(this, tables)

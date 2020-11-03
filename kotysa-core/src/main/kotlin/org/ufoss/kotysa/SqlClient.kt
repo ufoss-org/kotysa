@@ -10,15 +10,15 @@ import kotlin.reflect.KClass
 /**
  * Blocking Sql Client, to be used with any blocking JDBC driver
  */
-public abstract class BlockingSqlClient {
+public abstract class SqlClient {
 
     public abstract fun <T : Any> insert(row: T)
 
     public abstract fun insert(vararg rows: Any)
 
-    public inline fun <reified T : Any> select(noinline dsl: SelectDslApi.(ValueProvider) -> T): BlockingSqlClientSelect.Select<T> = selectInternal(T::class, dsl)
+    public inline fun <reified T : Any> select(noinline dsl: SelectDslApi.(ValueProvider) -> T): SqlClientSelect.Select<T> = selectInternal(T::class, dsl)
 
-    public inline fun <reified T : Any> select(): BlockingSqlClientSelect.Select<T> = selectInternal(T::class, null)
+    public inline fun <reified T : Any> select(): SqlClientSelect.Select<T> = selectInternal(T::class, null)
 
     public inline fun <reified T : Any> selectAll(): List<T> = selectInternal(T::class, null).fetchAll()
 
@@ -29,7 +29,7 @@ public abstract class BlockingSqlClient {
             select(resultClass, dsl)
 
     protected abstract fun <T : Any> select(
-            resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): BlockingSqlClientSelect.Select<T>
+            resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): SqlClientSelect.Select<T>
 
     public inline fun <reified T : Any> createTable(): Unit = createTableInternal(T::class)
 
@@ -38,7 +38,7 @@ public abstract class BlockingSqlClient {
 
     protected abstract fun <T : Any> createTable(tableClass: KClass<T>)
 
-    public inline fun <reified T : Any> deleteFromTable(): BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T> = deleteFromTableInternal(T::class)
+    public inline fun <reified T : Any> deleteFromTable(): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> = deleteFromTableInternal(T::class)
 
     public inline fun <reified T : Any> deleteAllFromTable(): Int = deleteFromTableInternal(T::class).execute()
 
@@ -46,19 +46,19 @@ public abstract class BlockingSqlClient {
     internal fun <T : Any> deleteFromTableInternal(tableClass: KClass<T>) =
             deleteFromTable(tableClass)
 
-    protected abstract fun <T : Any> deleteFromTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T>
+    protected abstract fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
 
-    public inline fun <reified T : Any> updateTable(): BlockingSqlClientDeleteOrUpdate.Update<T> = updateTableInternal(T::class)
+    public inline fun <reified T : Any> updateTable(): SqlClientDeleteOrUpdate.Update<T> = updateTableInternal(T::class)
 
     @PublishedApi
     internal fun <T : Any> updateTableInternal(tableClass: KClass<T>) =
             updateTable(tableClass)
 
-    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): BlockingSqlClientDeleteOrUpdate.Update<T>
+    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T>
 }
 
 
-public class BlockingSqlClientSelect private constructor() {
+public class SqlClientSelect private constructor() {
     public abstract class Select<T : Any> : Whereable<T>, Return<T> {
 
         public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
@@ -127,7 +127,7 @@ public class BlockingSqlClientSelect private constructor() {
 }
 
 
-public class BlockingSqlClientDeleteOrUpdate private constructor() {
+public class SqlClientDeleteOrUpdate private constructor() {
     public abstract class DeleteOrUpdate<T : Any> : Return {
 
         public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable =
@@ -142,7 +142,7 @@ public class BlockingSqlClientDeleteOrUpdate private constructor() {
         public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
     }
 
-    public abstract class Update<T : Any> : BlockingSqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
+    public abstract class Update<T : Any> : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
         public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
     }
 
