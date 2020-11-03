@@ -57,6 +57,26 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
     }
 
     @Test
+    fun `Verify deleteUserIn works`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.deleteUserIn(listOf(h2Jdoe.id, UUID.randomUUID()))
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.selectAllUsers())
+        }.test()
+                .expectNext(h2Bboss)
+                .verifyComplete()
+    }
+
+    @Test
+    fun `Verify deleteUserIn no match`() {
+        assertThat(repository.deleteUserIn(listOf(UUID.randomUUID(), UUID.randomUUID())).block())
+                .isEqualTo(0)
+        assertThat(repository.selectAllUsers().toIterable())
+                .hasSize(2)
+    }
+
+    @Test
     fun `Verify updateLastname works`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
@@ -95,6 +115,27 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
                 .expectNextMatches { user -> null == user.alias }
                 .verifyComplete()
     }
+
+    @Test
+    fun `Verify updateLastnameIn works`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateLastnameIn("Do", listOf(h2Jdoe.id, UUID.randomUUID()))
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .then(repository.selectFirstByFirstname(h2Jdoe.firstname))
+        }.test()
+                .expectNextMatches { user -> "Do" == user.lastname }
+                .verifyComplete()
+    }
+
+    @Test
+    fun `Verify updateLastnameIn no match`() {
+        assertThat(repository.updateLastnameIn("Do", listOf(UUID.randomUUID(), UUID.randomUUID())).block())
+                .isEqualTo(0)
+        assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname).block())
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Doe")
+    }
 }
 
 
@@ -112,6 +153,11 @@ class UserRepositoryH2UpdateDelete(
             .where { it[H2Role::label] eq roleLabel }
             .execute()
 
+    fun deleteUserIn(ids: Collection<UUID>) =
+            sqlClient.deleteFromTable<H2User>()
+                    .where { it[H2User::id] `in` ids }
+                    .execute()
+
     fun updateLastname(newLastname: String) = sqlClient.updateTable<H2User>()
             .set { it[H2User::lastname] = newLastname }
             .where { it[H2User::id] eq h2Jdoe.id }
@@ -127,4 +173,10 @@ class UserRepositoryH2UpdateDelete(
             .innerJoin<H2Role>().on { it[H2User::roleId] }
             .where { it[H2Role::label] eq roleLabel }
             .execute()
+
+    fun updateLastnameIn(newLastname: String, ids: Collection<UUID>) =
+            sqlClient.updateTable<H2User>()
+                    .set { it[H2User::lastname] = newLastname }
+                    .where { it[H2User::id] `in` ids }
+                    .execute()
 }

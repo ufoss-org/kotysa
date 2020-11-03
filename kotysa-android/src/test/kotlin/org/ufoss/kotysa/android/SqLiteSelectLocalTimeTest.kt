@@ -8,10 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.SqLiteLocalTime
-import org.ufoss.kotysa.test.sqLiteLocalTimeWithNullable
-import org.ufoss.kotysa.test.sqLiteLocalTimeWithoutNullable
+import org.ufoss.kotysa.test.*
 import java.time.LocalTime
 
 class SqLiteSelectLocalTimeTest : AbstractSqLiteTest<LocalTimeRepositorySelect>() {
@@ -19,150 +16,160 @@ class SqLiteSelectLocalTimeTest : AbstractSqLiteTest<LocalTimeRepositorySelect>(
     override fun getRepository(sqLiteTables: Tables) = LocalTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllByLocalDateNotNull finds SqLiteLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNull(LocalTime.of(12, 4)))
+    fun `Verify selectAllByLocalTimeNotNull finds SqLiteLocalDateWithNullable`() {
+        assertThat(repository.selectAllByLocalTimeNotNull(LocalTime.of(12, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullNotEq finds SqLiteLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullNotEq(LocalTime.of(12, 4)))
+    fun `Verify selectAllByLocalTimeNotNullNotEq finds SqLiteLocalDateWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNotNullNotEq(LocalTime.of(12, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBefore finds SqLiteLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullBefore(LocalTime.of(12, 5)))
+    fun `Verify selectAllByLocalTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                sqLiteLocalTimeWithNullable.localTimeNotNull,
+                sqLiteLocalTimeWithoutNullable.localTimeNotNull)
+        assertThat(repository.selectAllByLocalTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable, sqLiteLocalTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalTimeNotNullBefore finds SqLiteLocalDateWithNullable`() {
+        assertThat(repository.selectAllByLocalTimeNotNullBefore(LocalTime.of(12, 5)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullBefore(LocalTime.of(12, 4)))
+    fun `Verify selectAllByLocalTimeNotNullBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalTimeNotNullBefore(LocalTime.of(12, 4)))
             .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds SqLiteLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalTime.of(12, 5)))
+    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds SqLiteLocalDateWithNullable`() {
+        assertThat(repository.selectAllByLocalTimeNotNullBeforeOrEq(LocalTime.of(12, 5)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds SqLiteLocalDateWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalTime.of(12, 4)))
+    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds SqLiteLocalDateWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalTimeNotNullBeforeOrEq(LocalTime.of(12, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfter finds SqLiteLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfter(LocalTime.of(12, 5)))
+    fun `Verify selectAllByLocalTimeNotNullAfter finds SqLiteLocalDateWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNotNullAfter(LocalTime.of(12, 5)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfter(LocalTime.of(12, 6)))
+    fun `Verify selectAllByLocalTimeNotNullAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalTimeNotNullAfter(LocalTime.of(12, 6)))
             .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds SqLiteLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalTime.of(12, 5)))
+    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds SqLiteLocalDateWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNotNullAfterOrEq(LocalTime.of(12, 5)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds SqLiteLocalDateWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalTime.of(12, 6)))
+    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds SqLiteLocalDateWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalTimeNotNullAfterOrEq(LocalTime.of(12, 6)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullable finds h2UuidWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullable(LocalTime.of(11, 4)))
+    fun `Verify selectAllByLocalTimeNullable finds h2UuidWithNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullable(LocalTime.of(11, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullable finds h2UuidWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullable(null))
+    fun `Verify selectAllByLocalTimeNullable finds h2UuidWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullable(null))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableNotEq finds h2UuidWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableNotEq(LocalTime.of(11, 4)))
+    fun `Verify selectAllByLocalTimeNullableNotEq finds h2UuidWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullableNotEq(LocalTime.of(11, 4)))
             .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateNullableNotEq(null))
+    fun `Verify selectAllByLocalTimeNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByLocalTimeNullableNotEq(null))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBefore finds SqLiteLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableBefore(LocalTime.of(11, 5)))
+    fun `Verify selectAllByLocalTimeNullableBefore finds SqLiteLocalDateWithNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullableBefore(LocalTime.of(11, 5)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableBefore(LocalTime.of(11, 4)))
+    fun `Verify selectAllByLocalTimeNullableBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalTimeNullableBefore(LocalTime.of(11, 4)))
             .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds SqLiteLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalTime.of(11, 5)))
+    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds SqLiteLocalDateWithNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullableBeforeOrEq(LocalTime.of(11, 5)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds SqLiteLocalDateWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalTime.of(11, 4)))
+    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds SqLiteLocalDateWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalTimeNullableBeforeOrEq(LocalTime.of(11, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfter finds SqLiteLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableAfter(LocalTime.of(11, 3)))
+    fun `Verify selectAllByLocalTimeNullableAfter finds SqLiteLocalDateWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullableAfter(LocalTime.of(11, 3)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableAfter(LocalTime.of(11, 4)))
+    fun `Verify selectAllByLocalTimeNullableAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalTimeNullableAfter(LocalTime.of(11, 4)))
             .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds SqLiteLocalDateWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalTime.of(11, 3)))
+    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds SqLiteLocalDateWithoutNullable`() {
+        assertThat(repository.selectAllByLocalTimeNullableAfterOrEq(LocalTime.of(11, 3)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds SqLiteLocalDateWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalTime.of(11, 4)))
+    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds SqLiteLocalDateWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalTimeNullableAfterOrEq(LocalTime.of(11, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalTimeWithNullable)
     }
@@ -191,62 +198,67 @@ class LocalTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tabl
 
     private fun deleteAll() = sqlClient.deleteAllFromTable<SqLiteLocalTime>()
 
-    fun selectAllByLocalDateNotNull(localTime: LocalTime) =
+    fun selectAllByLocalTimeNotNull(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNotNull] eq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNotNullNotEq(localTime: LocalTime) =
+    fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNotNull] notEq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNotNullBefore(localTime: LocalTime) =
+    fun selectAllByLocalTimeNotNullIn(values: Sequence<LocalTime>) =
+            sqlClient.select<SqLiteLocalTime>()
+                    .where { it[SqLiteLocalTime::localTimeNotNull] `in` values }
+                    .fetchAll()
+
+    fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNotNull] before localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNotNullBeforeOrEq(localTime: LocalTime) =
+    fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNotNull] beforeOrEq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNotNullAfter(localTime: LocalTime) =
+    fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNotNull] after localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNotNullAfterOrEq(localTime: LocalTime) =
+    fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNotNull] afterOrEq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNullable(localTime: LocalTime?) =
+    fun selectAllByLocalTimeNullable(localTime: LocalTime?) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNullable] eq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNullableNotEq(localTime: LocalTime?) =
+    fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNullable] notEq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNullableBefore(localTime: LocalTime) =
+    fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNullable] before localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNullableBeforeOrEq(localTime: LocalTime) =
+    fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNullable] beforeOrEq localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNullableAfter(localTime: LocalTime) =
+    fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNullable] after localTime }
             .fetchAll()
 
-    fun selectAllByLocalDateNullableAfterOrEq(localTime: LocalTime) =
+    fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) =
         sqlClient.select<SqLiteLocalTime>()
             .where { it[SqLiteLocalTime::localTimeNullable] afterOrEq localTime }
             .fetchAll()

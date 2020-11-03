@@ -8,10 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.SqLiteOffsetDateTime
-import org.ufoss.kotysa.test.sqLiteOffsetDateTimeWithNullable
-import org.ufoss.kotysa.test.sqLiteOffsetDateTimeWithoutNullable
+import org.ufoss.kotysa.test.*
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
@@ -77,6 +74,35 @@ class SqLiteSelectOffsetDateTimeTest : AbstractSqLiteTest<OffsetDateTimeReposito
         )
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                OffsetDateTime.of(
+                        2019,
+                        11,
+                        4,
+                        0,
+                        0,
+                        0,
+                        0,
+                        ZoneOffset.UTC
+                ),
+                OffsetDateTime.of(
+                        2019,
+                        11,
+                        6,
+                        0,
+                        0,
+                        0,
+                        0,
+                        ZoneOffset.UTC
+                )
+        )
+        assertThat(repository.selectAllByOffsetDateTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable, sqLiteOffsetDateTimeWithoutNullable)
     }
 
     @Test
@@ -481,6 +507,11 @@ class OffsetDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables:
         sqlClient.select<SqLiteOffsetDateTime>()
             .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] notEq offsetDateTime }
             .fetchAll()
+
+    fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
+            sqlClient.select<SqLiteOffsetDateTime>()
+                    .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] `in` values }
+                    .fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
         sqlClient.select<SqLiteOffsetDateTime>()

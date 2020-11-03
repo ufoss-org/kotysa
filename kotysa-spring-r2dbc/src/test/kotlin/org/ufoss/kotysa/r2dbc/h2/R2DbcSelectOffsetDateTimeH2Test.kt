@@ -37,6 +37,17 @@ class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcH2Test<OffsetDateTimeReposi
     }
 
     @Test
+    fun `Verify selectAllByOffsetDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
+                OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)
+        )
+        assertThat(repository.selectAllByOffsetDateTimeNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2OffsetDateTimeWithNullable, h2OffsetDateTimeWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByLocalDateTimeNotNullBefore finds h2OffsetDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullBefore(
                 OffsetDateTime.of(2019, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
@@ -218,6 +229,11 @@ class OffsetDateTimeRepositoryH2Select(private val sqlClient: ReactorSqlClient) 
     fun selectAllByLocalDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) = sqlClient.select<H2OffsetDateTime>()
             .where { it[H2OffsetDateTime::offsetDateTimeNotNull] notEq offsetDateTime }
             .fetchAll()
+
+    fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
+            sqlClient.select<H2OffsetDateTime>()
+                    .where { it[H2OffsetDateTime::offsetDateTimeNotNull] `in` values }
+                    .fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) = sqlClient.select<H2OffsetDateTime>()
             .where { it[H2OffsetDateTime::offsetDateTimeNotNull] before offsetDateTime }

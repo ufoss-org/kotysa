@@ -62,6 +62,22 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
                         UserWithRoleDto(h2Bboss.lastname, h2Admin.label)
                 )
     }
+
+    @Test
+    fun `Verify selectAllIn returns TheBoss`() {
+        assertThat(repository.selectAllIn(setOf("TheBoss", "TheStar", "TheBest")).toIterable())
+                .hasSize(1)
+                .containsExactly(h2Bboss)
+    }
+
+    @Test
+    fun `Verify selectAllIn returns no result`() {
+        val coll = ArrayDeque<String>()
+        coll.addFirst("TheStar")
+        coll.addLast("TheBest")
+        assertThat(repository.selectAllIn(coll).toIterable())
+                .isEmpty()
+    }
 }
 
 
@@ -86,5 +102,10 @@ class UserRepositoryH2Select(
     fun selectWithJoin() =
             sqlClient.select { UserWithRoleDto(it[H2User::lastname], it[H2Role::label]) }
                     .innerJoin<H2Role>().on { it[H2User::roleId] }
+                    .fetchAll()
+
+    fun selectAllIn(aliases: Collection<String>) =
+            sqlClient.select<H2User>()
+                    .where { it[H2User::alias] `in` aliases }
                     .fetchAll()
 }
