@@ -58,6 +58,25 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     }
 
     @Test
+    fun `Verify deleteUserIn works`() {
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserIn(listOf(h2Jdoe.id, UUID.randomUUID())))
+                    .isEqualTo(1)
+            assertThat(repository.selectAllUsers())
+                    .hasSize(1)
+        }
+    }
+
+    @Test
+    fun `Verify deleteUserIn no match`() {
+        assertThat(repository.deleteUserIn(listOf(UUID.randomUUID(), UUID.randomUUID())))
+                .isEqualTo(0)
+        assertThat(repository.selectAllUsers())
+                .hasSize(2)
+    }
+
+    @Test
     fun `Verify updateLastname works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
@@ -97,6 +116,27 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
                     .isEqualTo(null)
         }
     }
+
+    @Test
+    fun `Verify updateLastnameIn works`() {
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateLastnameIn("Do", listOf(h2Jdoe.id, UUID.randomUUID())))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
+        }
+    }
+
+    @Test
+    fun `Verify updateLastnameIn no match`() {
+        assertThat(repository.updateLastnameIn("Do", listOf(UUID.randomUUID(), UUID.randomUUID())))
+                .isEqualTo(0)
+        assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Doe")
+    }
 }
 
 
@@ -110,6 +150,11 @@ class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcOperations) : AbstractU
             .innerJoin<H2Role>().on { it[H2User::roleId] }
             .where { it[H2Role::label] eq roleLabel }
             .execute()
+
+    fun deleteUserIn(ids: Collection<UUID>) =
+            sqlClient.deleteFromTable<H2User>()
+                    .where { it[H2User::id] `in` ids }
+                    .execute()
 
     fun updateLastname(newLastname: String) = sqlClient.updateTable<H2User>()
             .set { it[H2User::lastname] = newLastname }
@@ -126,4 +171,10 @@ class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcOperations) : AbstractU
             .innerJoin<H2Role>().on { it[H2User::roleId] }
             .where { it[H2Role::label] eq roleLabel }
             .execute()
+
+    fun updateLastnameIn(newLastname: String, ids: Collection<UUID>) =
+            sqlClient.updateTable<H2User>()
+                    .set { it[H2User::lastname] = newLastname }
+                    .where { it[H2User::id] `in` ids }
+                    .execute()
 }

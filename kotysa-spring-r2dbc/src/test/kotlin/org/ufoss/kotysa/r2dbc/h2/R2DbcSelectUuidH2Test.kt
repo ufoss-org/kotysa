@@ -30,6 +30,14 @@ class R2DbcSelectUuidH2Test : AbstractR2dbcH2Test<UuidRepositoryH2Select>() {
     }
 
     @Test
+    fun `Verify selectAllByRoleIdNotNullIn finds both`() {
+        val seq = sequenceOf(h2UuidWithNullable.roleIdNotNull, h2UuidWithoutNullable.roleIdNotNull)
+        assertThat(repository.selectAllByRoleIdNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2UuidWithNullable, h2UuidWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByRoleIdNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByRoleIdNullable(h2Admin.id).toIterable())
                 .hasSize(1)
@@ -91,6 +99,10 @@ class UuidRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
 
     fun selectAllByRoleIdNotNullNotEq(roleId: UUID) = sqlClient.select<H2Uuid>()
             .where { it[H2Uuid::roleIdNotNull] notEq roleId }
+            .fetchAll()
+
+    fun selectAllByRoleIdNotNullIn(roleIds: Sequence<UUID>) = sqlClient.select<H2Uuid>()
+            .where { it[H2Uuid::roleIdNotNull] `in` roleIds }
             .fetchAll()
 
     fun selectAllByRoleIdNullable(roleId: UUID?) = sqlClient.select<H2Uuid>()

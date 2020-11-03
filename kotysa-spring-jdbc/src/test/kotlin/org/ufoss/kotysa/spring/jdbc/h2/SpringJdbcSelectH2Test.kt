@@ -68,6 +68,22 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
                 .hasSize(2)
                 .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
     }
+
+    @Test
+    fun `Verify selectAllIn returns TheBoss`() {
+        assertThat(repository.selectAllIn(setOf("TheBoss", "TheStar", "TheBest")))
+                .hasSize(1)
+                .containsExactly(h2Bboss)
+    }
+
+    @Test
+    fun `Verify selectAllIn returns no result`() {
+        val coll = ArrayDeque<String>()
+        coll.addFirst("TheStar")
+        coll.addLast("TheBest")
+        assertThat(repository.selectAllIn(coll))
+                .isEmpty()
+    }
 }
 
 
@@ -99,4 +115,9 @@ class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRep
     fun selectAllStream() =
             sqlClient.select<H2User>()
                     .fetchAllStream()
+
+    fun selectAllIn(aliases: Collection<String>) =
+            sqlClient.select<H2User>()
+                    .where { it[H2User::alias] `in` aliases }
+                    .fetchAll()
 }

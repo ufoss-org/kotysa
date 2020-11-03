@@ -8,10 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.SqLiteLocalDateTime
-import org.ufoss.kotysa.test.sqLiteLocalDateTimeWithNullable
-import org.ufoss.kotysa.test.sqLiteLocalDateTimeWithoutNullable
+import org.ufoss.kotysa.test.*
 import java.time.LocalDateTime
 
 class SqLiteSelectLocalDateTimeTest : AbstractSqLiteTest<LocalDateTimeRepositorySelect>() {
@@ -30,6 +27,16 @@ class SqLiteSelectLocalDateTimeTest : AbstractSqLiteTest<LocalDateTimeRepository
         assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(LocalDateTime.of(2019, 11, 4, 0, 0)))
             .hasSize(1)
             .containsExactlyInAnyOrder(sqLiteLocalDateTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                sqLiteLocalDateTimeWithNullable.localDateTimeNotNull,
+                sqLiteLocalDateTimeWithoutNullable.localDateTimeNotNull)
+        assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(sqLiteLocalDateTimeWithNullable, sqLiteLocalDateTimeWithoutNullable)
     }
 
     @Test
@@ -200,6 +207,11 @@ class LocalDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: 
         sqlClient.select<SqLiteLocalDateTime>()
             .where { it[SqLiteLocalDateTime::localDateTimeNotNull] notEq localDateTime }
             .fetchAll()
+
+    fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
+            sqlClient.select<SqLiteLocalDateTime>()
+                    .where { it[SqLiteLocalDateTime::localDateTimeNotNull] `in` values }
+                    .fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
         sqlClient.select<SqLiteLocalDateTime>()

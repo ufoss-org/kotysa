@@ -55,6 +55,22 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
                 .hasSize(2)
                 .containsExactlyInAnyOrder(sqLiteJdoe, sqLiteBboss)
     }
+
+    @Test
+    fun `Verify selectAllIn returns TheBoss`() {
+        assertThat(repository.selectAllIn(setOf("TheBoss", "TheStar", "TheBest")))
+                .hasSize(1)
+                .containsExactly(sqLiteBboss)
+    }
+
+    @Test
+    fun `Verify selectAllIn returns no result`() {
+        val coll = ArrayDeque<String>()
+        coll.addFirst("TheStar")
+        coll.addLast("TheBest")
+        assertThat(repository.selectAllIn(coll))
+                .isEmpty()
+    }
 }
 
 class UserRepositorySelect(
@@ -82,4 +98,9 @@ class UserRepositorySelect(
     fun selectAllStream() =
             sqlClient.select<SqLiteUser>()
                     .fetchAllStream()
+
+    fun selectAllIn(aliases: Collection<String>) =
+            sqlClient.select<SqLiteUser>()
+                    .where { it[SqLiteUser::alias] `in` aliases }
+                    .fetchAll()
 }

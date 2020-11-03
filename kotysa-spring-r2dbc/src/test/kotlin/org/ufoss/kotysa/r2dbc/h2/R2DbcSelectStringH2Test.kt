@@ -72,6 +72,14 @@ class R2DbcSelectStringH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectString
     }
 
     @Test
+    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
+        val seq = sequenceOf(h2Jdoe.firstname, h2Bboss.firstname)
+        assertThat(repository.selectAllByFirstnameIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameContains get John by searching oh`() {
         assertThat(repository.selectAllByFirstnameContains("oh").toIterable())
                 .hasSize(1)
@@ -166,6 +174,10 @@ class UserRepositoryH2SelectString(
 
     fun selectAllByAliasNotEq(alias: String?) = sqlClient.select<H2User>()
             .where { it[H2User::alias] notEq alias }
+            .fetchAll()
+
+    fun selectAllByFirstnameIn(firstnames: Sequence<String>) = sqlClient.select<H2User>()
+            .where { it[H2User::firstname] `in` firstnames }
             .fetchAll()
 
     fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<H2User>()
