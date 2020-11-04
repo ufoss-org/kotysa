@@ -13,7 +13,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework:spring-jdbc')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:0.1.8')
+    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:0.1.9')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.2')
     implementation('org.testcontainers:postgresql:1.14.3')
 
