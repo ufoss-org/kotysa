@@ -16,7 +16,7 @@ dependencies {
     implementation('io.r2dbc:r2dbc-postgresql')
     implementation('org.jetbrains.kotlinx:kotlinx-coroutines-reactor')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.1.8')
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.1.9')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.2')
     implementation('org.testcontainers:postgresql:1.14.3')
     implementation('org.testcontainers:r2dbc:1.14.3')
