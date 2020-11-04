@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.android
 
-import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
@@ -100,16 +99,15 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
         val client: SQLiteDatabase
 
         override fun execute() = with(properties) {
-            val contentValues = ContentValues(setValues.size)
-            setValues.forEach { (column, value) -> contentValues.put(column.name, value) }
+            val statement = client.compileStatement(updateTableSql())
 
-            val updateTableSql = updateTableSql()
-            val whereClause = if (updateTableSql.isNotEmpty()) {
-                updateTableSql
-            } else {
-                null
-            }
-            client.update(table.name, contentValues, whereClause, buildWhereArgs())
+            var index = 1
+            // 1) add all values from set part
+            setValues.values.forEach { value -> statement.bind(index++, value) }
+            // 2) add all values from where part
+            bindWhereArgs(statement, index)
+
+            statement.executeUpdateDelete()
         }
     }
 }

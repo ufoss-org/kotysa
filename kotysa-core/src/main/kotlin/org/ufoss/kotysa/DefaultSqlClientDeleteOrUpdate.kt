@@ -4,10 +4,6 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.h2.h2DeleteFromTableSql
-import org.ufoss.kotysa.h2.h2UpdateTableSql
-import org.ufoss.kotysa.sqlite.sqLiteDeleteFromTableSql
-import org.ufoss.kotysa.sqlite.sqLiteUpdateTableSql
 import org.ufoss.kolog.Logger
 import kotlin.reflect.KClass
 
@@ -65,14 +61,28 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
-        public fun deleteFromTableSql(): String = when (properties.tables.dbType) {
-            DbType.SQLITE -> sqLiteDeleteFromTableSql(logger)
-            else -> h2DeleteFromTableSql(logger)
+        public fun deleteFromTableSql(): String = with(properties) {
+            val deleteSql = "DELETE FROM ${table.name}"
+            val joinsAndWheres = joinsWithExistsAndWheres()
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $deleteSql $joinsAndWheres" }
+
+            "$deleteSql $joinsAndWheres"
         }
 
-        public fun updateTableSql(): String = when (properties.tables.dbType) {
-            DbType.SQLITE -> sqLiteUpdateTableSql(logger)
-            else -> h2UpdateTableSql(logger)
+        public fun updateTableSql(): String = with(properties) {
+            val updateSql = "UPDATE ${table.name}"
+            var index = 0
+            val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
+                if (DbType.SQLITE == tables.dbType) {
+                    "${column.name} = ?"
+                } else {
+                    "${column.name} = :k${index++}"
+                }
+            }
+            val joinsAndWheres = joinsWithExistsAndWheres(offset = index)
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $updateSql $setSql $joinsAndWheres" }
+
+            "$updateSql $setSql $joinsAndWheres"
         }
 
         /**

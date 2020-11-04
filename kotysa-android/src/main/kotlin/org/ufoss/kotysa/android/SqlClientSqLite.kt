@@ -4,47 +4,39 @@
 
 package org.ufoss.kotysa.android
 
-import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
 import kotlin.reflect.KClass
 
 /**
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
  */
 internal class SqlClientSqLite(
-    private val client: SQLiteOpenHelper,
-    override val tables: Tables
+        private val client: SQLiteOpenHelper,
+        override val tables: Tables
 ) : SqlClient(), DefaultSqlClient {
 
     override fun <T : Any> select(
-        resultClass: KClass<T>,
-        dsl: (SelectDslApi.(ValueProvider) -> T)?
+            resultClass: KClass<T>,
+            dsl: (SelectDslApi.(ValueProvider) -> T)?
     ): SqlClientSelect.Select<T> =
-        SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
+            SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
 
     override fun <T : Any> createTable(tableClass: KClass<T>) {
         val createTableSql = createTableSql(tableClass)
-        return client.writableDatabase.execSQL(createTableSql)
+        return client.writableDatabase.compileStatement(createTableSql).execute()
     }
 
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
-        val contentValues = ContentValues(table.columns.size)
+
+        val statement = client.writableDatabase.compileStatement(insertSql(row))
         table.columns.values
-            .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
-            .forEach { column -> contentValues.put(column.name, column.entityGetter(row)) }
+                .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
+                .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
 
-        // debug query
-        insertSqlDebug(row)
-
-        client.writableDatabase.insert(table.name, null, contentValues)
+        statement.executeInsert()
     }
 
     override fun insert(vararg rows: Any) {
@@ -54,47 +46,10 @@ internal class SqlClientSqLite(
     }
 
     override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-        SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
+            SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
 
     override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
-        SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
-}
-
-internal fun ContentValues.put(name: String, value: Any?) {
-    if (value != null) {
-        when (value) {
-            is Int -> put(name, value)
-            is Byte -> put(name, value)
-            is Long -> put(name, value)
-            is Float -> put(name, value)
-            is Short -> put(name, value)
-            is Double -> put(name, value)
-            is String -> put(name, value)
-            is Boolean -> put(name, value)
-            is ByteArray -> put(name, value)
-            // Date are stored as String
-            is LocalDate -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_DATE))
-            is LocalDateTime -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
-            is OffsetDateTime -> put(name, value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-            is LocalTime -> put(name, value.format(DateTimeFormatter.ISO_LOCAL_TIME))
-            else -> when (value::class.qualifiedName) {
-                "kotlinx.datetime.LocalDate" -> put(name, value.toString())
-                "kotlinx.datetime.LocalDateTime" -> {
-                    val kotlinxLocalDateTime = value as kotlinx.datetime.LocalDateTime
-                    if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
-                        put(name, "$value:00") // missing seconds
-                    } else {
-                        put(name, value.toString())
-                    }
-                }
-                else -> throw UnsupportedOperationException(
-                        "${value.javaClass.canonicalName} is not supported by Android SqLite"
-                )
-            }
-        }
-    } else {
-        putNull(name)
-    }
+            SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
 }
 
 /**
