@@ -5,20 +5,25 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.PostgresqlInt
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlIntWithNullable
 import org.ufoss.kotysa.test.postgresqlIntWithoutNullable
 import org.ufoss.kotysa.test.postgresqlTables
 
 
 class R2DbcSelectIntPostgresqlTest : AbstractR2dbcPostgresqlTest<IntRepositoryPostgresqlSelect>() {
-    override val context = startContext<IntRepositoryPostgresqlSelect>()
 
-    override val repository = getContextRepository<IntRepositoryPostgresqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<IntRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     private val postgresqlIntWithNullable = PostgresqlInt(
             org.ufoss.kotysa.test.postgresqlIntWithNullable.intNotNull,

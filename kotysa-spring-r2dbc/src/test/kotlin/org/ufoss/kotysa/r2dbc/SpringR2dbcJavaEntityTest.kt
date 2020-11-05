@@ -6,21 +6,12 @@ package org.ufoss.kotysa.r2dbc
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.transaction.reactive.TransactionalOperator
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.UserDto
 import org.ufoss.kotysa.test.javaBboss
 import org.ufoss.kotysa.test.javaJdoe
 import reactor.kotlin.test.test
 
-interface SpringR2dbcJavaEntityTest<T : JavaUserRepository> {
-
-    val repository: T
-    val context: ConfigurableApplicationContext
-
-    private val operator get() = context.getBean<TransactionalOperator>().transactionalOp()
+interface SpringR2dbcJavaEntityTest<T : JavaUserRepository> : R2dbcRepositoryTest<T> {
 
     @Test
     fun `Verify selectAll returns all users`() {

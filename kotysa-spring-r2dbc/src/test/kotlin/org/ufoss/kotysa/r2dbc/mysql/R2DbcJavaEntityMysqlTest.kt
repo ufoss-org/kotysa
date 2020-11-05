@@ -13,8 +13,8 @@ import org.ufoss.kotysa.test.JavaUser
 
 class R2DbcJavaEntityMysqlTest :
         AbstractR2dbcMysqlTest<JavaUserMysqlRepository>(), SpringR2dbcJavaEntityTest<JavaUserMysqlRepository> {
-    override val context = startContext<JavaUserMysqlRepository>()
-    override val repository = getContextRepository<JavaUserMysqlRepository>()
+    override var context = startContext<JavaUserMysqlRepository>()
+    override var repository = getContextRepository<JavaUserMysqlRepository>()
 }
 
 private val tables =

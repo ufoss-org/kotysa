@@ -13,8 +13,8 @@ import org.ufoss.kotysa.test.JavaUser
 
 class R2DbcJavaEntityH2Test :
         AbstractR2dbcH2Test<JavaUserH2Repository>(), SpringR2dbcJavaEntityTest<JavaUserH2Repository> {
-    override val context = startContext<JavaUserH2Repository>()
-    override val repository = getContextRepository<JavaUserH2Repository>()
+    override var context = startContext<JavaUserH2Repository>()
+    override var repository = getContextRepository<JavaUserH2Repository>()
 }
 
 private val tables =

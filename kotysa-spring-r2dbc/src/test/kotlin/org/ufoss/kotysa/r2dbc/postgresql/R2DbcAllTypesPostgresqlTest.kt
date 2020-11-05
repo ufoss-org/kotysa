@@ -9,23 +9,24 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.time.*
 import java.util.*
 
 
 class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesRepositoryPostgresql>() {
-    override val context = startContext<AllTypesRepositoryPostgresql>()
 
-    override val repository = getContextRepository<AllTypesRepositoryPostgresql>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<AllTypesRepositoryPostgresql>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

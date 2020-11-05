@@ -5,22 +5,27 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePostgresqlRepository>() {
-    override val context = startContext<InheritancePostgresqlRepository>()
 
-    override val repository = getContextRepository<InheritancePostgresqlRepository>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<InheritancePostgresqlRepository>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
@@ -42,7 +47,7 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator!!.execute { transaction ->
             transaction.setRollbackOnly()
             repository.deleteById<Inherited>("id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }

@@ -4,17 +4,23 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
+import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.JavaUserRepository
 import org.ufoss.kotysa.r2dbc.SpringR2dbcJavaEntityTest
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2DbcJavaEntityPostgresqlTest :
         AbstractR2dbcPostgresqlTest<JavaUserPostgresqlRepository>(), SpringR2dbcJavaEntityTest<JavaUserPostgresqlRepository> {
-    override val context = startContext<JavaUserPostgresqlRepository>()
-    override val repository = getContextRepository<JavaUserPostgresqlRepository>()
+
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<JavaUserPostgresqlRepository>(resource)
+        repository = getContextRepository<JavaUserPostgresqlRepository>()
+    }
 }
 
 private val tables =

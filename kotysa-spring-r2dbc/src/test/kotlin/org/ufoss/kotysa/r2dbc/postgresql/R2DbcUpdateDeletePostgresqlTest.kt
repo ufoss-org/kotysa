@@ -5,21 +5,25 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.util.*
 
 
 class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlUpdateDelete>() {
-    override val context = startContext<UserRepositoryPostgresqlUpdateDelete>()
 
-    override val repository = getContextRepository<UserRepositoryPostgresqlUpdateDelete>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositoryPostgresqlUpdateDelete>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {

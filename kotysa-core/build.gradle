@@ -12,6 +12,7 @@ dependencies {
 
     // import BOMs
     testFixturesImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
+    testFixturesImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
 
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
     implementation 'org.ufoss.kolog:kolog'
@@ -22,6 +23,9 @@ dependencies {
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
     testFixturesImplementation "org.springframework:spring-core"
     testFixturesImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testFixturesImplementation 'org.testcontainers:postgresql'
+    testFixturesImplementation 'org.testcontainers:mysql'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"

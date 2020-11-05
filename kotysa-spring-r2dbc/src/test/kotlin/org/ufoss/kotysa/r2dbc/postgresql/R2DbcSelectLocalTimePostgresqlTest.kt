@@ -5,11 +5,13 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.PostgresqlLocalTime
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlLocalTimeWithNullable
 import org.ufoss.kotysa.test.postgresqlLocalTimeWithoutNullable
 import org.ufoss.kotysa.test.postgresqlTables
@@ -17,9 +19,12 @@ import java.time.LocalTime
 
 
 class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTimeRepositoryPostgresqlSelect>() {
-    override val context = startContext<LocalTimeRepositoryPostgresqlSelect>()
 
-    override val repository = getContextRepository<LocalTimeRepositoryPostgresqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<LocalTimeRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalTimeNotNull finds postgresqlLocalTimeWithNullable`() {

@@ -5,11 +5,13 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.PostgresqlOffsetDateTime
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlOffsetDateTimeWithNullable
 import org.ufoss.kotysa.test.postgresqlOffsetDateTimeWithoutNullable
 import org.ufoss.kotysa.test.postgresqlTables
@@ -18,9 +20,12 @@ import java.time.ZoneOffset
 
 
 class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
-    override val context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>()
 
-    override val repository = getContextRepository<OffsetDateTimeRepositoryPostgresqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds postgresqlOffsetDateTimeWithNullable`() {

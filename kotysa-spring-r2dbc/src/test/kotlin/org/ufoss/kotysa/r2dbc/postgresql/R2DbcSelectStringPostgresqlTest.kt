@@ -5,15 +5,20 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectString>() {
-    override val context = startContext<UserRepositoryPostgresqlSelectString>()
 
-    override val repository = getContextRepository<UserRepositoryPostgresqlSelectString>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositoryPostgresqlSelectString>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

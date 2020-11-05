@@ -5,36 +5,32 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
-import org.testcontainers.containers.PostgreSQLContainer
+import org.ufoss.kotysa.r2dbc.R2dbcRepositoryTest
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.hooks.PostgreSqlContainerExecutionHook
+import org.ufoss.kotysa.test.hooks.PostgreSqlContainerResource
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlTables
 
-class KPostgreSQLContainer : PostgreSQLContainer<KPostgreSQLContainer>("postgres:13.0-alpine")
 
+@ExtendWith(PostgreSqlContainerExecutionHook::class)
+@ResourceLock(PostgreSqlContainerResource.ID)
+abstract class AbstractR2dbcPostgresqlTest<T : Repository> : R2dbcRepositoryTest<T> {
 
-abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
-
-    protected abstract val repository: T
-
-    protected inline fun <reified U : Repository> startContext(): ConfigurableApplicationContext {
-        // PostgreSQL testcontainers must be started first to get random Docker mapped port
-        val postgresqlContainer = KPostgreSQLContainer()
-                .withDatabaseName("db")
-                .withUsername("postgres")
-                .withPassword("test")
-        postgresqlContainer.start()
+    protected inline fun <reified U : Repository> startContext(resource: TestContainersCloseableResource): ConfigurableApplicationContext {
 
         return application {
             beans {
-                bean { postgresqlContainer }
                 bean<U>()
                 bean { ref<DatabaseClient>().sqlClient(postgresqlTables) }
                 bean { ref<DatabaseClient>().coSqlClient(postgresqlTables) }
@@ -43,7 +39,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
                 ref<U>().init()
             }
             r2dbc {
-                url = "r2dbc:postgresql://${postgresqlContainer.containerIpAddress}:${postgresqlContainer.firstMappedPort}/db"
+                url = "r2dbc:postgresql://${resource.containerIpAddress}:${resource.firstMappedPort}/db"
                 username = "postgres"
                 password = "test"
                 transactional = true
@@ -51,14 +47,14 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> {
         }.run()
     }
 
-    protected abstract val context: ConfigurableApplicationContext
+    override lateinit var context: ConfigurableApplicationContext
+    override lateinit var repository: T
 
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
 
     @AfterAll
     fun afterAll() {
         repository.delete()
-        context.getBean<PostgreSQLContainer<*>>().stop()
         context.close()
     }
 }
