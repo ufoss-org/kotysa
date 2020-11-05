@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
@@ -13,14 +14,17 @@ import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlRepository>() {
-    override val context = startContext<InheritanceMysqlRepository>()
 
-    override val repository = getContextRepository<InheritanceMysqlRepository>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<InheritanceMysqlRepository>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify extension function selectById finds inherited`() {

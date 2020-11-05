@@ -5,17 +5,22 @@
 package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.time.LocalDate
 
 
 class R2DbcSelectLocalDateMysqlTest : AbstractR2dbcMysqlTest<LocalDateRepositoryMysqlSelect>() {
-    override val context = startContext<LocalDateRepositoryMysqlSelect>()
 
-    override val repository = getContextRepository<LocalDateRepositoryMysqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<LocalDateRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds mysqlLocalDateWithNullable`() {

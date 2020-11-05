@@ -5,15 +5,20 @@
 package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2DbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectOr>() {
-    override val context = startContext<UserRepositoryMysqlSelectOr>()
 
-    override val repository = getContextRepository<UserRepositoryMysqlSelectOr>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositoryMysqlSelectOr>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectRolesByLabels finds mysqlAdmin and mysqlGod`() {

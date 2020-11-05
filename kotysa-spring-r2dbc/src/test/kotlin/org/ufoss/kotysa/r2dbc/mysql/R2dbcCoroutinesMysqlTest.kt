@@ -9,23 +9,24 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.r2dbc.coSqlClient
-import org.ufoss.kotysa.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 @ExperimentalCoroutinesApi
 class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepository>() {
-    override val context = startContext<CoroutinesUserMysqlRepository>()
 
-    override val repository = getContextRepository<CoroutinesUserMysqlRepository>()
-    private val operator = context.getBean<TransactionalOperator>().coTransactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<CoroutinesUserMysqlRepository>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
@@ -85,7 +86,7 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() = runBlocking<Unit> {
-        operator.execute { transaction ->
+        coOperator.execute { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
                     .isEqualTo(2)

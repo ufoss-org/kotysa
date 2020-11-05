@@ -8,9 +8,10 @@ import com.github.dockerjava.api.command.InspectContainerResponse
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
+import org.testcontainers.containers.MySQLContainer
 import org.testcontainers.containers.PostgreSQLContainer
 
-class PostgreSqlContainerExecutionHook : ParameterResolver {
+class MySqlContainerExecutionHook : ParameterResolver {
 
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext?): Boolean {
         return TestContainersCloseableResource::class.java == parameterContext.parameter.type
@@ -18,31 +19,30 @@ class PostgreSqlContainerExecutionHook : ParameterResolver {
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
-                .getOrComputeIfAbsent("postgreSqlContainer", { PostgreSqlContainerResource() })
+                .getOrComputeIfAbsent("mySqlContainer", { MySqlContainerResource() })
     }
 }
 
-private class KPostgreSqlContainer : PostgreSQLContainer<KPostgreSqlContainer>("postgres:13.0-alpine")
+class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
 
-class PostgreSqlContainerResource : TestContainersCloseableResource {
+class MySqlContainerResource : TestContainersCloseableResource {
     companion object {
 
-        const val ID = "PostgreSqlContainerResource"
+        const val ID = "MySqlContainerResource"
 
         @JvmStatic
         private val dbContainer = createDbContainer()
 
         @JvmStatic
-        private fun createDbContainer(): KPostgreSqlContainer {
-            val postgreSqlContainer = KPostgreSqlContainer()
-            postgreSqlContainer
+        private fun createDbContainer(): KMySQLContainer {
+            val mysqlContainer = KMySQLContainer()
                     .withDatabaseName("db")
-                    .withUsername("postgres")
+                    .withUsername("mysql")
                     .withPassword("test")
-            postgreSqlContainer.start()
-            println("KPostgreSqlContainer started")
+            mysqlContainer.start()
+            println("KMySQLContainer started")
 
-            return postgreSqlContainer
+            return mysqlContainer
         }
     }
 

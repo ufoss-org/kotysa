@@ -27,25 +27,23 @@ import org.ufoss.kotysa.test.postgresqlTables
 @ResourceLock(PostgreSqlContainerResource.ID)
 abstract class AbstractR2dbcPostgresqlTest<T : Repository> : R2dbcRepositoryTest<T> {
 
-    protected inline fun <reified U : Repository> startContext(resource: TestContainersCloseableResource): ConfigurableApplicationContext {
-
-        return application {
-            beans {
-                bean<U>()
-                bean { ref<DatabaseClient>().sqlClient(postgresqlTables) }
-                bean { ref<DatabaseClient>().coSqlClient(postgresqlTables) }
-            }
-            listener<ApplicationReadyEvent> {
-                ref<U>().init()
-            }
-            r2dbc {
-                url = "r2dbc:postgresql://${resource.containerIpAddress}:${resource.firstMappedPort}/db"
-                username = "postgres"
-                password = "test"
-                transactional = true
-            }
-        }.run()
-    }
+    protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
+            application {
+                beans {
+                    bean<U>()
+                    bean { ref<DatabaseClient>().sqlClient(postgresqlTables) }
+                    bean { ref<DatabaseClient>().coSqlClient(postgresqlTables) }
+                }
+                listener<ApplicationReadyEvent> {
+                    ref<U>().init()
+                }
+                r2dbc {
+                    url = "r2dbc:postgresql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                    username = "postgres"
+                    password = "test"
+                    transactional = true
+                }
+            }.run()
 
     override lateinit var context: ConfigurableApplicationContext
     override lateinit var repository: T

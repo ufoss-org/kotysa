@@ -19,7 +19,7 @@ class R2DbcJavaEntityPostgresqlTest :
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserPostgresqlRepository>(resource)
-        repository = getContextRepository<JavaUserPostgresqlRepository>()
+        repository = getContextRepository()
     }
 }
 

@@ -6,17 +6,22 @@ package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.count
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>() {
-    override val context = startContext<UserRepositoryMysqlSelect>()
 
-    override val repository = getContextRepository<UserRepositoryMysqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAll returns all users`() {

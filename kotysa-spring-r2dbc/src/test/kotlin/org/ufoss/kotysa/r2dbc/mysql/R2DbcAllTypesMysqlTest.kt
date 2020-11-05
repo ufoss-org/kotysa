@@ -9,22 +9,25 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
-import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
-    override val context = startContext<AllTypesRepositoryMysql>()
 
-    override val repository = getContextRepository<AllTypesRepositoryMysql>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<AllTypesRepositoryMysql>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -99,7 +102,7 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
     private fun createTables() =
             sqlClient.createTable<MysqlAllTypesNotNull>()
                     .then(sqlClient.createTable<MysqlAllTypesNullable>())
-                    //.then(sqlClient.createTable<MysqlAllTypesNullableDefaultValue>())
+    //.then(sqlClient.createTable<MysqlAllTypesNullableDefaultValue>())
 
     private fun insertAllTypes() = sqlClient.insert(mysqlAllTypesNotNull, mysqlAllTypesNullable/*, mysqlAllTypesNullableDefaultValue*/)
 

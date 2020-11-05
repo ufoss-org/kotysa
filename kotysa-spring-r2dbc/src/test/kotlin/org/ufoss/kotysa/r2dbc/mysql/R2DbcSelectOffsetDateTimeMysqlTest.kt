@@ -5,18 +5,23 @@
 package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 
 class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcMysqlTest<OffsetDateTimeRepositoryMysqlSelect>() {
-    override val context = startContext<OffsetDateTimeRepositoryMysqlSelect>()
 
-    override val repository = getContextRepository<OffsetDateTimeRepositoryMysqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<OffsetDateTimeRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds mysqlOffsetDateTimeWithNullable`() {
