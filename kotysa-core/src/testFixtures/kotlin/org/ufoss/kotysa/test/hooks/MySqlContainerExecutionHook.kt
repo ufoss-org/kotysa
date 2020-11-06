@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 import org.testcontainers.containers.MySQLContainer
-import org.testcontainers.containers.PostgreSQLContainer
 
 class MySqlContainerExecutionHook : ParameterResolver {
 
@@ -19,36 +18,31 @@ class MySqlContainerExecutionHook : ParameterResolver {
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
-                .getOrComputeIfAbsent("mySqlContainer", { MySqlContainerResource() })
+                .getOrComputeIfAbsent("mySqlContainer") {
+                    val mysqlContainer = KMySQLContainer()
+                            .withDatabaseName("db")
+                            .withUsername("mysql")
+                            .withPassword("test")
+                    mysqlContainer.start()
+                    println("KMySQLContainer started")
+
+                    MySqlContainerResource(mysqlContainer)
+                }
     }
 }
 
-class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
+internal class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
 
-class MySqlContainerResource : TestContainersCloseableResource {
+class MySqlContainerResource internal constructor(
+        private val dbContainer: KMySQLContainer
+) : TestContainersCloseableResource {
     companion object {
-
         const val ID = "MySqlContainerResource"
-
-        @JvmStatic
-        private val dbContainer = createDbContainer()
-
-        @JvmStatic
-        private fun createDbContainer(): KMySQLContainer {
-            val mysqlContainer = KMySQLContainer()
-                    .withDatabaseName("db")
-                    .withUsername("mysql")
-                    .withPassword("test")
-            mysqlContainer.start()
-            println("KMySQLContainer started")
-
-            return mysqlContainer
-        }
     }
 
     override fun close() {
         dbContainer.stop()
-        println("KPostgreSqlContainer stopped")
+        println("KMySQLContainer stopped")
     }
 
     override fun getExposedPorts(): MutableList<Int> = dbContainer.exposedPorts

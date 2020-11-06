@@ -18,32 +18,27 @@ class PostgreSqlContainerExecutionHook : ParameterResolver {
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
-                .getOrComputeIfAbsent("postgreSqlContainer", { PostgreSqlContainerResource() })
+                .getOrComputeIfAbsent("postgreSqlContainer") {
+                    val postgreSqlContainer = KPostgreSqlContainer()
+                    postgreSqlContainer
+                            .withDatabaseName("db")
+                            .withUsername("postgres")
+                            .withPassword("test")
+                    postgreSqlContainer.start()
+                    println("KPostgreSqlContainer started")
+
+                    PostgreSqlContainerResource(postgreSqlContainer)
+                }
     }
 }
 
-private class KPostgreSqlContainer : PostgreSQLContainer<KPostgreSqlContainer>("postgres:13.0-alpine")
+internal class KPostgreSqlContainer : PostgreSQLContainer<KPostgreSqlContainer>("postgres:13.0-alpine")
 
-class PostgreSqlContainerResource : TestContainersCloseableResource {
+class PostgreSqlContainerResource internal constructor(
+        private val dbContainer: KPostgreSqlContainer
+) : TestContainersCloseableResource {
     companion object {
-
         const val ID = "PostgreSqlContainerResource"
-
-        @JvmStatic
-        private val dbContainer = createDbContainer()
-
-        @JvmStatic
-        private fun createDbContainer(): KPostgreSqlContainer {
-            val postgreSqlContainer = KPostgreSqlContainer()
-            postgreSqlContainer
-                    .withDatabaseName("db")
-                    .withUsername("postgres")
-                    .withPassword("test")
-            postgreSqlContainer.start()
-            println("KPostgreSqlContainer started")
-
-            return postgreSqlContainer
-        }
     }
 
     override fun close() {
