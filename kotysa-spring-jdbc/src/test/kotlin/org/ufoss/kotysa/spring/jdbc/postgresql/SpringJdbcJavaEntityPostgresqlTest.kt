@@ -4,17 +4,23 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
+import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
 import org.ufoss.kotysa.spring.jdbc.SpringJdbcJavaEntityTest
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcJavaEntityPostgresqlTest :
         AbstractSpringJdbcPostgresqlTest<JavaUserPostgresqlRepository>(), SpringJdbcJavaEntityTest<JavaUserPostgresqlRepository> {
-    override val context = startContext<JavaUserPostgresqlRepository>()
-    override val repository = getContextRepository<JavaUserPostgresqlRepository>()
+
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<JavaUserPostgresqlRepository>(resource)
+        repository = getContextRepository()
+    }
 }
 
 private val tables =

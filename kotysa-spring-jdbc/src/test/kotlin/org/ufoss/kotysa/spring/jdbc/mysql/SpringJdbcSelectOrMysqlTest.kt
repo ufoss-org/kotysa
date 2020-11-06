@@ -5,15 +5,20 @@
 package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcSelectOrMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectOr>() {
-    override val context = startContext<UserRepositorySpringJdbcMysqlSelectOr>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcMysqlSelectOr>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcMysqlSelectOr>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {

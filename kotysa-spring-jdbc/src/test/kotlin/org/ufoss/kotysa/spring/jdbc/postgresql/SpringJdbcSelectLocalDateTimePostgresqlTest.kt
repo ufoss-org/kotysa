@@ -5,17 +5,22 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.time.LocalDateTime
 
 
 class SpringJdbcSelectLocalDateTimePostgresqlTest : AbstractSpringJdbcPostgresqlTest<LocalDateTimeRepositoryPostgresqlSelect>() {
-    override val context = startContext<LocalDateTimeRepositoryPostgresqlSelect>()
 
-    override val repository = getContextRepository<LocalDateTimeRepositoryPostgresqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<LocalDateTimeRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeAsTimestampNotNull finds postgresqlLocalDateTimeWithNullable`() {

@@ -5,15 +5,21 @@
 package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMysqlSelect>() {
-    override val context = startContext<IntRepositoryMysqlSelect>()
-    override val repository = getContextRepository<IntRepositoryMysqlSelect>()
+
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<IntRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     private val mysqlIntWithNullable = MysqlInt(
             org.ufoss.kotysa.test.mysqlIntWithNullable.intNotNull,

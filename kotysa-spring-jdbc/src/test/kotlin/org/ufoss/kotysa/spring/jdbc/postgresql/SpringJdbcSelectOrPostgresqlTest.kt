@@ -5,17 +5,22 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.PostgresqlRole
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlAdmin
 import org.ufoss.kotysa.test.postgresqlGod
 
 
 class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectOr>() {
-    override val context = startContext<UserRepositorySpringJdbcPostgresqlSelectOr>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcPostgresqlSelectOr>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcPostgresqlSelectOr>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {

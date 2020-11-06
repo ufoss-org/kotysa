@@ -6,17 +6,22 @@ package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.count
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelect>() {
-    override val context = startContext<UserRepositorySpringJdbcMysqlSelect>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcMysqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAll returns all users`() {

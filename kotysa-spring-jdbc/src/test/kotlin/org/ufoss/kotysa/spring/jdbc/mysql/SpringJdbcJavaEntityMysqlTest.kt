@@ -4,17 +4,23 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
+import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
 import org.ufoss.kotysa.spring.jdbc.SpringJdbcJavaEntityTest
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcJavaEntityMysqlTest :
         AbstractSpringJdbcMysqlTest<JavaUserMysqlRepository>(), SpringJdbcJavaEntityTest<JavaUserMysqlRepository> {
-    override val context = startContext<JavaUserMysqlRepository>()
-    override val repository = getContextRepository<JavaUserMysqlRepository>()
+
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<JavaUserMysqlRepository>(resource)
+        repository = getContextRepository()
+    }
 }
 
 private val tables =

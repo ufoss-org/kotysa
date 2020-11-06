@@ -6,18 +6,23 @@ package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.MysqlUser
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlBboss
 import org.ufoss.kotysa.test.mysqlJdoe
 
 
 class SpringJdbcSelectStringMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectString>() {
-    override val context = startContext<UserRepositorySpringJdbcMysqlSelectString>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcMysqlSelectString>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcMysqlSelectString>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

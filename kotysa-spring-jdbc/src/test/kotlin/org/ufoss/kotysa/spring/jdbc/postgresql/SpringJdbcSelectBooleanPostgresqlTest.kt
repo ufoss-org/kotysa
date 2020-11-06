@@ -5,17 +5,22 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.PostgresqlUser
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlBboss
 import org.ufoss.kotysa.test.postgresqlJdoe
 
 
 class SpringJdbcSelectBooleanPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectBoolean>() {
-    override val context = startContext<UserRepositorySpringJdbcPostgresqlSelectBoolean>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcPostgresqlSelectBoolean>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcPostgresqlSelectBoolean>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {

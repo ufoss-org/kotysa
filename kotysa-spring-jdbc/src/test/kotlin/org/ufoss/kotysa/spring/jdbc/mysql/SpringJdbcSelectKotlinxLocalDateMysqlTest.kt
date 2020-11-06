@@ -6,16 +6,21 @@ package org.ufoss.kotysa.spring.jdbc.mysql
 
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcSelectKotlinxLocalDateMysqlTest : AbstractSpringJdbcMysqlTest<KotlinxLocalDateRepositoryMysqlSelect>() {
-    override val context = startContext<KotlinxLocalDateRepositoryMysqlSelect>()
 
-    override val repository = getContextRepository<KotlinxLocalDateRepositoryMysqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<KotlinxLocalDateRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds mysqlKotlinxLocalDateWithNullable`() {

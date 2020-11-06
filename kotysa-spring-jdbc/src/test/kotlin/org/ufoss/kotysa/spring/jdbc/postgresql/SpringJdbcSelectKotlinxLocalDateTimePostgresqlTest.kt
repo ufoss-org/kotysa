@@ -6,16 +6,21 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcSelectKotlinxLocalDateTimePostgresqlTest : AbstractSpringJdbcPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
-    override val context = startContext<KotlinxLocalDateTimeRepositoryPostgresqlSelect>()
 
-    override val repository = getContextRepository<KotlinxLocalDateTimeRepositoryPostgresqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<KotlinxLocalDateTimeRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeAsTimestampNotNull finds postgresqlKotlinxLocalDateTimeWithNullable`() {

@@ -6,22 +6,11 @@ package org.ufoss.kotysa.spring.jdbc
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.UserDto
 import org.ufoss.kotysa.test.javaBboss
 import org.ufoss.kotysa.test.javaJdoe
 
-interface SpringJdbcJavaEntityTest<T : JavaUserRepository> {
-
-    val repository: T
-    val context: ConfigurableApplicationContext
-
-    private val transactionManager get() = context.getBean<PlatformTransactionManager>()
-    private val operator get() = TransactionTemplate(transactionManager).transactionalOp()
+interface SpringJdbcJavaEntityTest<T : JavaUserRepository>: SpringJdbcRepositoryTest<T> {
 
     @Test
     fun `Verify selectAll returns all users`() {

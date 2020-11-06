@@ -9,23 +9,24 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
-import java.time.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 
 
 class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesRepositoryMysql>() {
-    override val context = startContext<AllTypesRepositoryMysql>()
 
-    override val repository = getContextRepository<AllTypesRepositoryMysql>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    private val operator = TransactionTemplate(transactionManager).transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<AllTypesRepositoryMysql>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

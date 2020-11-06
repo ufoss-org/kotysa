@@ -5,23 +5,22 @@
 package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMysqlRepository>() {
-    override val context = startContext<InheritanceMysqlRepository>()
 
-    override val repository = getContextRepository<InheritanceMysqlRepository>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    private val operator = TransactionTemplate(transactionManager).transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<InheritanceMysqlRepository>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
@@ -57,16 +56,22 @@ private val tables =
         tables().mysql {
             table<Inherited> {
                 name = "inherited"
-                column { it[Inherited::getId].varchar {
-                    size = 255
-                } }
-                    .primaryKey()
-                column { it[Inherited::name].varchar {
-                    size = 255
-                } }
-                column { it[Inherited::firstname].varchar {
-                    size = 255
-                } }
+                column {
+                    it[Inherited::getId].varchar {
+                        size = 255
+                    }
+                }
+                        .primaryKey()
+                column {
+                    it[Inherited::name].varchar {
+                        size = 255
+                    }
+                }
+                column {
+                    it[Inherited::firstname].varchar {
+                        size = 255
+                    }
+                }
             }
         }
 

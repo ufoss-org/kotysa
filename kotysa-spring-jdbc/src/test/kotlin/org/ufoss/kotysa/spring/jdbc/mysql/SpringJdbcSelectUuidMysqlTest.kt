@@ -5,17 +5,22 @@
 package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.util.*
 
 
 class SpringJdbcSelectUuidMysqlTest : AbstractSpringJdbcMysqlTest<UuidRepositoryMysqlSelect>() {
-    override val context = startContext<UuidRepositoryMysqlSelect>()
 
-    override val repository = getContextRepository<UuidRepositoryMysqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UuidRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByRoleIdNotNull finds both results`() {

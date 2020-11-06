@@ -6,18 +6,23 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.PostgresqlUser
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlBboss
 import org.ufoss.kotysa.test.postgresqlJdoe
 
 
 class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectString>() {
-    override val context = startContext<UserRepositorySpringJdbcPostgresqlSelectString>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcPostgresqlSelectString>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcPostgresqlSelectString>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

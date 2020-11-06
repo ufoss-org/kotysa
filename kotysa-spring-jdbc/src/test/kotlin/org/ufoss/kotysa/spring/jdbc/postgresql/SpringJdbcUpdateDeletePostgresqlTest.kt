@@ -5,22 +5,21 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.util.*
 
 
 class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlUpdateDelete>() {
-    override val context = startContext<UserRepositorySpringJdbcPostgresqlUpdateDelete>()
 
-    override val repository = getContextRepository<UserRepositorySpringJdbcPostgresqlUpdateDelete>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    private val operator = TransactionTemplate(transactionManager).transactionalOp()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySpringJdbcPostgresqlUpdateDelete>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {

@@ -5,18 +5,23 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 
 class SpringJdbcSelectOffsetDateTimePostgresqlTest : AbstractSpringJdbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
-    override val context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>()
 
-    override val repository = getContextRepository<OffsetDateTimeRepositoryPostgresqlSelect>()
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds postgresqlOffsetDateTimeWithNullable`() {
