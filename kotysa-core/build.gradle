@@ -6,6 +6,7 @@ plugins {
 
 println("Using Gradle version: $gradle.gradleVersion")
 println("Using Kotlin compiler version: $KotlinCompilerVersion.VERSION")
+println("Using Java compiler version: ${JavaVersion.current()}")
 
 dependencies {
     api "org.ufoss.kolog:kolog:$kolog_version"
