@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.mysql
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.columns.Column
 import org.ufoss.kotysa.TableColumnPropertyProvider
 import org.ufoss.kotysa.TableDsl
 import kotlin.reflect.KClass

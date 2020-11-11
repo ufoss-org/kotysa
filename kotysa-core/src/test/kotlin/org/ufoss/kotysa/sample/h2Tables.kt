@@ -8,7 +8,7 @@ import org.ufoss.kotysa.tables
 import java.util.*
 
 fun h2Tables() =
-        tables().h2 { // choose database type
+        tables().h2Old { // choose database type
             table<H2User> {
                 name = "users"
                 column { it[H2User::id].uuid() }

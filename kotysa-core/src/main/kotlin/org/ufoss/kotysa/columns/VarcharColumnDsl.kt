@@ -13,27 +13,27 @@ public abstract class VarcharColumnDsl<T : Any, U : Any> protected constructor(
 }
 
 @KotysaMarker
-public class VarcharColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (VarcharColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : VarcharColumnDsl<T, U>(entityGetter) {
+public class StringVarcharColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (StringVarcharColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> String
+) : VarcharColumnDsl<T, String>(entityGetter) {
 
-    internal fun initialize(): VarcharColumnNotNull<T, U> {
+    internal fun initialize(): StringVarcharColumnNotNull<T> {
         init?.invoke(this)
-        return VarcharColumnNotNull(entityGetter, columnName, size)
+        return StringVarcharColumnNotNull(entityGetter, columnName, size)
     }
 }
 
 @KotysaMarker
-public class VarcharColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (VarcharColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : VarcharColumnDsl<T, U>(entityGetter) {
+public class StringVarcharColumnNullableDsl<T : Any> internal constructor(
+        private val init: (StringVarcharColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> String?
+) : VarcharColumnDsl<T, String>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: String? = null
 
-    internal fun initialize(): VarcharColumnNullable<T, U> {
+    internal fun initialize(): StringVarcharColumnNullable<T> {
         init?.invoke(this)
-        return VarcharColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, size)
+        return StringVarcharColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, size)
     }
 }

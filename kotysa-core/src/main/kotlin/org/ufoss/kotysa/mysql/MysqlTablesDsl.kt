@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.mysql
 
 import org.ufoss.kotysa.DbType
-import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.KotysaTable
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
 
@@ -17,7 +17,7 @@ public class MysqlTablesDsl(
         dbType: DbType
 ) : TablesDsl<MysqlTablesDsl, MysqlTableDsl<*>>(init, dbType) {
 
-    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: MysqlTableDsl<*>.() -> Unit): Table<*> {
+    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: MysqlTableDsl<*>.() -> Unit): KotysaTable<*> {
         val tableDsl = MysqlTableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }

@@ -6,10 +6,6 @@ package org.ufoss.kotysa.postgresql
 
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.columns.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
 import java.util.*
 
 /**
@@ -19,63 +15,63 @@ public class PostgresqlColumnDsl<T : Any, U : Column<T, *>> internal constructor
         init: PostgresqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
 ) : ColumnDsl<T, U, PostgresqlColumnDsl<T, U>>(init) {
 
-    public fun NotNullStringColumnProperty<T>.varchar(dsl: (VarcharColumnNotNullDsl<T, String>.() -> Unit)? = null)
-            : VarcharColumnNotNull<T, String> = VarcharColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullStringColumnProperty<T>.varchar(dsl: (StringVarcharColumnNotNullDsl<T>.() -> Unit)? = null)
+            : StringVarcharColumnNotNull<T> = StringVarcharColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableStringColumnProperty<T>.varchar(dsl: (VarcharColumnNullableDsl<T, String>.() -> Unit)? = null)
-            : VarcharColumnNullable<T, String> = VarcharColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableStringColumnProperty<T>.varchar(dsl: (StringVarcharColumnNullableDsl<T>.() -> Unit)? = null)
+            : StringVarcharColumnNullable<T> = StringVarcharColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNotNullDsl<T, LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNotNull<T, LocalDateTime> = TimestampColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullLocalDateTimeColumnProperty<T>.timestamp(dsl: (LocalDateTimeTimestampColumnNotNullDsl<T>.() -> Unit)? = null)
+            : LocalDateTimeTimestampColumnNotNull<T> = LocalDateTimeTimestampColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNullableDsl<T, LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNullable<T, LocalDateTime> = TimestampColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableLocalDateTimeColumnProperty<T>.timestamp(dsl: (LocalDateTimeTimestampColumnNullableDsl<T>.() -> Unit)? = null)
+            : LocalDateTimeTimestampColumnNullable<T> = LocalDateTimeTimestampColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullKotlinxLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNotNullDsl<T, kotlinx.datetime.LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNotNull<T, kotlinx.datetime.LocalDateTime> = TimestampColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullKotlinxLocalDateTimeColumnProperty<T>.timestamp(dsl: (KotlinxLocalDateTimeTimestampColumnNotNullDsl<T>.() -> Unit)? = null)
+            : KotlinxLocalDateTimeTimestampColumnNotNull<T> = KotlinxLocalDateTimeTimestampColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableKotlinxLocalDateTimeColumnProperty<T>.timestamp(dsl: (TimestampColumnNullableDsl<T, kotlinx.datetime.LocalDateTime>.() -> Unit)? = null)
-            : TimestampColumnNullable<T, kotlinx.datetime.LocalDateTime> = TimestampColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableKotlinxLocalDateTimeColumnProperty<T>.timestamp(dsl: (KotlinxLocalDateTimeTimestampColumnNullableDsl<T>.() -> Unit)? = null)
+            : KotlinxLocalDateTimeTimestampColumnNullable<T> = KotlinxLocalDateTimeTimestampColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullLocalDateColumnProperty<T>.date(dsl: (DateColumnNotNullDsl<T, LocalDate>.() -> Unit)? = null)
-            : DateColumnNotNull<T, LocalDate> = DateColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullLocalDateColumnProperty<T>.date(dsl: (LocalDateDateColumnNotNullDsl<T>.() -> Unit)? = null)
+            : LocalDateDateColumnNotNull<T> = LocalDateDateColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableLocalDateColumnProperty<T>.date(dsl: (DateColumnNullableDsl<T, LocalDate>.() -> Unit)? = null)
-            : DateColumnNullable<T, LocalDate> = DateColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableLocalDateColumnProperty<T>.date(dsl: (LocalDateDateColumnNullableDsl<T>.() -> Unit)? = null)
+            : LocalDateDateColumnNullable<T> = LocalDateDateColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullKotlinxLocalDateColumnProperty<T>.date(dsl: (DateColumnNotNullDsl<T, kotlinx.datetime.LocalDate>.() -> Unit)? = null)
-            : DateColumnNotNull<T, kotlinx.datetime.LocalDate> = DateColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullKotlinxLocalDateColumnProperty<T>.date(dsl: (KotlinxLocalDateDateColumnNotNullDsl<T>.() -> Unit)? = null)
+            : KotlinxLocalDateDateColumnNotNull<T> = KotlinxLocalDateDateColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableKotlinxLocalDateColumnProperty<T>.date(dsl: (DateColumnNullableDsl<T, kotlinx.datetime.LocalDate>.() -> Unit)? = null)
-            : DateColumnNullable<T, kotlinx.datetime.LocalDate> = DateColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableKotlinxLocalDateColumnProperty<T>.date(dsl: (KotlinxLocalDateDateColumnNullableDsl<T>.() -> Unit)? = null)
+            : KotlinxLocalDateDateColumnNullable<T> = KotlinxLocalDateDateColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullOffsetDateTimeColumnProperty<T>.timestampWithTimeZone(dsl: (TimestampWithTimeZoneColumnNotNullDsl<T, OffsetDateTime>.() -> Unit)? = null)
-            : TimestampWithTimeZoneColumnNotNull<T, OffsetDateTime> = TimestampWithTimeZoneColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullOffsetDateTimeColumnProperty<T>.timestampWithTimeZone(dsl: (OffsetDateTimeTimestampWithTimeZoneColumnNotNullDsl<T>.() -> Unit)? = null)
+            : OffsetDateTimeTimestampWithTimeZoneColumnNotNull<T> = OffsetDateTimeTimestampWithTimeZoneColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableOffsetDateTimeColumnProperty<T>.timestampWithTimeZone(dsl: (TimestampWithTimeZoneColumnNullableDsl<T, OffsetDateTime>.() -> Unit)? = null)
-            : TimestampWithTimeZoneColumnNullable<T, OffsetDateTime> = TimestampWithTimeZoneColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableOffsetDateTimeColumnProperty<T>.timestampWithTimeZone(dsl: (OffsetDateTimeTimestampWithTimeZoneColumnNullableDsl<T>.() -> Unit)? = null)
+            : OffsetDateTimeTimestampWithTimeZoneColumnNullable<T> = OffsetDateTimeTimestampWithTimeZoneColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullLocalTimeColumnProperty<T>.time(dsl: (TimeColumnNotNullDsl<T, LocalTime>.() -> Unit)? = null)
-            : TimeColumnNotNull<T, LocalTime> = TimeColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullLocalTimeColumnProperty<T>.time(dsl: (LocalTimeTimeColumnNotNullDsl<T>.() -> Unit)? = null)
+            : LocalTimeTimeColumnNotNull<T> = LocalTimeTimeColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableLocalTimeColumnProperty<T>.time(dsl: (TimeColumnNullableDsl<T, LocalTime>.() -> Unit)? = null)
-            : TimeColumnNullable<T, LocalTime> = TimeColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableLocalTimeColumnProperty<T>.time(dsl: (LocalTimeTimeColumnNullableDsl<T>.() -> Unit)? = null)
+            : LocalTimeTimeColumnNullable<T> = LocalTimeTimeColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullBooleanColumnProperty<T>.boolean(dsl: (BooleanColumnDsl<T, Boolean>.() -> Unit)? = null)
-            : BooleanColumnNotNull<T, Boolean> = BooleanColumnDsl(dsl, getter).initialize()
+    public fun NotNullBooleanColumnProperty<T>.boolean(dsl: (BooleanBooleanColumnDsl<T>.() -> Unit)? = null)
+            : BooleanBooleanColumnNotNull<T> = BooleanBooleanColumnDsl(dsl, getter).initialize()
 
-    public fun NotNullUuidColumnProperty<T>.uuid(dsl: (UuidColumnNotNullDsl<T, UUID>.() -> Unit)? = null)
-            : UuidColumnNotNull<T, UUID> = UuidColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullUuidColumnProperty<T>.uuid(dsl: (UuidUuidColumnNotNullDsl<T>.() -> Unit)? = null)
+            : UuidUuidColumnNotNull<T> = UuidUuidColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableUuidColumnProperty<T>.uuid(dsl: (UuidColumnNullableDsl<T, UUID>.() -> Unit)? = null)
-            : UuidColumnNullable<T, UUID> = UuidColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableUuidColumnProperty<T>.uuid(dsl: (UuidUuidColumnNullableDsl<T>.() -> Unit)? = null)
+            : UuidUuidColumnNullable<T> = UuidUuidColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullIntColumnProperty<T>.integer(dsl: (IntegerColumnNotNullDsl<T, Int>.() -> Unit)? = null)
-            : IntegerColumnNotNull<T, Int> = IntegerColumnNotNullDsl(dsl, getter).initialize()
+    public fun NotNullIntColumnProperty<T>.integer(dsl: (IntIntegerColumnNotNullDsl<T>.() -> Unit)? = null)
+            : IntIntegerColumnNotNull<T> = IntIntegerColumnNotNullDsl(dsl, getter).initialize()
 
-    public fun NullableIntColumnProperty<T>.integer(dsl: (IntegerColumnNullableDsl<T, Int>.() -> Unit)? = null)
-            : IntegerColumnNullable<T, Int> = IntegerColumnNullableDsl(dsl, getter).initialize()
+    public fun NullableIntColumnProperty<T>.integer(dsl: (IntIntegerColumnNullableDsl<T>.() -> Unit)? = null)
+            : IntIntegerColumnNullable<T> = IntIntegerColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NullableIntColumnProperty<T>.serial(dsl: (SerialColumnDsl<T, Int>.() -> Unit)? = null)
-            : SerialColumnNotNull<T, Int> = SerialColumnDsl(dsl, getter).initialize()
+    public fun NullableIntColumnProperty<T>.serial(dsl: (IntSerialColumnDsl<T>.() -> Unit)? = null)
+            : IntSerialColumnNotNull<T> = IntSerialColumnDsl(dsl, getter).initialize()
 }

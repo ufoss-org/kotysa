@@ -155,8 +155,8 @@ val mysqlTables =
             table<MysqlOffsetDateTime> {
                 column { it[MysqlOffsetDateTime::id].integer() }
                         .primaryKey()
-                column { it[MysqlOffsetDateTime::offsetDateTimeNotNull].dateTime() }
-                column { it[MysqlOffsetDateTime::offsetDateTimeNullable].dateTime() }
+                column { it[MysqlOffsetDateTime::offsetDateTimeNotNull].timestamp() }
+                column { it[MysqlOffsetDateTime::offsetDateTimeNullable].timestamp() }
             }
             table<MysqlLocalTime> {
                 column { it[MysqlLocalTime::id].integer() }

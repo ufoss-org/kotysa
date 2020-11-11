@@ -28,7 +28,7 @@ class UserRepositorySpringJdbc(client: JdbcOperations) {
     )
 
     private val tables =
-            tables().h2 {
+            tables().h2Old {
                 table<Role> {
                     name = "roles"
                     column { it[Role::id].uuid() }

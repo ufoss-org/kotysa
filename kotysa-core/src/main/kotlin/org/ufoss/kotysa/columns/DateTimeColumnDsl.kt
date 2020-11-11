@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.*
+import java.time.LocalDateTime
 
 public abstract class DateTimeColumnDsl<T : Any, U : Any> protected constructor(
         entityGetter: (T) -> U?
@@ -13,27 +14,55 @@ public abstract class DateTimeColumnDsl<T : Any, U : Any> protected constructor(
 }
 
 @KotysaMarker
-public class DateTimeColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (DateTimeColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : DateTimeColumnDsl<T, U>(entityGetter) {
+public class LocalDateTimeDateTimeColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (LocalDateTimeDateTimeColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> LocalDateTime
+) : DateTimeColumnDsl<T, LocalDateTime>(entityGetter) {
 
-    internal fun initialize(): DateTimeColumnNotNull<T, U> {
+    internal fun initialize(): LocalDateTimeDateTimeColumnNotNull<T> {
         init?.invoke(this)
-        return DateTimeColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
+        return LocalDateTimeDateTimeColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
     }
 }
 
 @KotysaMarker
-public class DateTimeColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (DateTimeColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : DateTimeColumnDsl<T, U>(entityGetter) {
+public class LocalDateTimeDateTimeColumnNullableDsl<T : Any> internal constructor(
+        private val init: (LocalDateTimeDateTimeColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> LocalDateTime?
+) : DateTimeColumnDsl<T, LocalDateTime>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: LocalDateTime? = null
 
-    internal fun initialize(): DateTimeColumnNullable<T, U> {
+    internal fun initialize(): LocalDateTimeDateTimeColumnNullable<T> {
         init?.invoke(this)
-        return DateTimeColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, fractionalSecondsPart)
+        return LocalDateTimeDateTimeColumnNullable(entityGetter, columnName, defaultValue == null,
+                defaultValue, fractionalSecondsPart)
+    }
+}
+
+@KotysaMarker
+public class KotlinxLocalDateTimeDateTimeColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (KotlinxLocalDateTimeDateTimeColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> kotlinx.datetime.LocalDateTime
+) : DateTimeColumnDsl<T, kotlinx.datetime.LocalDateTime>(entityGetter) {
+
+    internal fun initialize(): KotlinxLocalDateTimeDateTimeColumnNotNull<T> {
+        init?.invoke(this)
+        return KotlinxLocalDateTimeDateTimeColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
+    }
+}
+
+@KotysaMarker
+public class KotlinxLocalDateTimeDateTimeColumnNullableDsl<T : Any> internal constructor(
+        private val init: (KotlinxLocalDateTimeDateTimeColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?
+) : DateTimeColumnDsl<T, kotlinx.datetime.LocalDateTime>(entityGetter) {
+
+    public var defaultValue: kotlinx.datetime.LocalDateTime? = null
+
+    internal fun initialize(): KotlinxLocalDateTimeDateTimeColumnNullable<T> {
+        init?.invoke(this)
+        return KotlinxLocalDateTimeDateTimeColumnNullable(entityGetter, columnName, defaultValue == null,
+                defaultValue, fractionalSecondsPart)
     }
 }

@@ -11,39 +11,51 @@ public abstract class IntegerColumnDsl<T : Any, U : Any> protected constructor(
 ) : ColumnDescriptionDsl<T, U>(entityGetter)
 
 @KotysaMarker
-public class IntegerColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (IntegerColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : IntegerColumnDsl<T, U>(entityGetter) {
+public class IntIntegerColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (IntIntegerColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> Int
+) : IntegerColumnDsl<T, Int>(entityGetter) {
 
-    internal fun initialize(): IntegerColumnNotNull<T, U> {
+    internal fun initialize(): IntIntegerColumnNotNull<T> {
         init?.invoke(this)
-        return IntegerColumnNotNull(entityGetter, columnName, false)
+        return IntIntegerColumnNotNull(entityGetter, columnName, false)
     }
 }
 
 @KotysaMarker
-public class IntegerColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (IntegerColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : IntegerColumnDsl<T, U>(entityGetter) {
+public class IntIntegerColumnNullableDsl<T : Any> internal constructor(
+        private val init: (IntIntegerColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> Int?
+) : IntegerColumnDsl<T, Int>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: Int? = null
 
-    internal fun initialize(): IntegerColumnNullable<T, U> {
+    internal fun initialize(): IntIntegerColumnNullable<T> {
         init?.invoke(this)
-        return IntegerColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return IntIntegerColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
     }
 }
 
 @KotysaMarker
-public class IntegerAutoIncrementColumnDsl<T : Any, U : Any> internal constructor(
-        private val init: (IntegerAutoIncrementColumnDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : IntegerColumnDsl<T, U>(entityGetter) {
+public class IntIntegerAutoIncrementColumnDsl<T : Any> internal constructor(
+        private val init: (IntIntegerAutoIncrementColumnDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> Int?
+) : IntegerColumnDsl<T, Int>(entityGetter) {
 
-    internal fun initialize(): IntegerColumnNotNull<T, U> {
+    internal fun initialize(): IntIntegerColumnNotNull<T> {
         init?.invoke(this)
-        return IntegerColumnNotNull(entityGetter, columnName, true)
+        return IntIntegerColumnNotNull(entityGetter, columnName, true)
+    }
+}
+
+@KotysaMarker
+public class BooleanIntegerColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (BooleanIntegerColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> Boolean
+) : IntegerColumnDsl<T, Boolean>(entityGetter) {
+
+    internal fun initialize(): BooleanIntegerColumnNotNull<T> {
+        init?.invoke(this)
+        return BooleanIntegerColumnNotNull(entityGetter, columnName)
     }
 }

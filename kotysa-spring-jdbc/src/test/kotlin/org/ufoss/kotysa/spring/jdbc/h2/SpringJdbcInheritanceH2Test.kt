@@ -58,7 +58,7 @@ class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Reposi
 }
 
 private val tables =
-        tables().h2 {
+        tables().h2Old {
             table<Inherited> {
                 name = "inherited"
                 column { it[Inherited::getId].varchar() }

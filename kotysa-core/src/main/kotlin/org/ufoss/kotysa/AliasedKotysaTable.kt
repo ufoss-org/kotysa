@@ -7,10 +7,10 @@ package org.ufoss.kotysa
 /**
  * A table with an alias (that may be null)
  */
-internal class AliasedTable<T : Any> internal constructor(
-        internal val table: Table<T>,
+internal class AliasedKotysaTable<T : Any> internal constructor(
+        internal val table: KotysaTable<T>,
         internal val alias: String? = null
-) : Table<T> by table {
+) : KotysaTable<T> by table {
 
     /**
      * The prefix : alias if exists, or table name
@@ -30,7 +30,7 @@ internal class AliasedTable<T : Any> internal constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AliasedTable<*>
+        other as AliasedKotysaTable<*>
 
         if (alias != other.alias) return false
         if (name != other.name) return false

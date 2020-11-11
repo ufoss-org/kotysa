@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
+import org.ufoss.kotysa.columns.Column
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -20,8 +21,8 @@ import kotlin.reflect.full.allSuperclasses
 private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
 
 @Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): Table<T> =
-        requireNotNull(this.allTables[tableClass] as Table<T>?) { tableMustBeMapped(tableClass.qualifiedName) }
+public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
+        requireNotNull(this.allTables[tableClass] as KotysaTable<T>?) { tableMustBeMapped(tableClass.qualifiedName) }
 
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
     require(this.allTables.containsKey(tableClass)) { tableMustBeMapped(tableClass.qualifiedName) }
@@ -178,7 +179,7 @@ public open class DefaultSqlClientCommon protected constructor() {
         @Suppress("UNCHECKED_CAST")
         public fun <T : Any> addAvailableColumnsFromTable(
                 properties: Properties,
-                table: Table<T>
+                table: KotysaTable<T>
         ) {
             properties.apply {
                 if (joinClauses.isEmpty() ||
@@ -218,7 +219,7 @@ public open class DefaultSqlClientCommon protected constructor() {
         public fun <T : Any> addJoinClause(dsl: (FieldProvider) -> ColumnField<*, *>, joinClass: KClass<T>, alias: String?, type: JoinType) {
             properties.apply {
                 tables.checkTable(joinClass)
-                val aliasedTable = AliasedTable(tables.getTable(joinClass), alias)
+                val aliasedTable = AliasedKotysaTable(tables.getTable(joinClass), alias)
                 joinClauses.add(JoinDsl(dsl, aliasedTable, type, availableColumns, tables.dbType).initialize())
                 addAvailableColumnsFromTable(this, aliasedTable)
             }

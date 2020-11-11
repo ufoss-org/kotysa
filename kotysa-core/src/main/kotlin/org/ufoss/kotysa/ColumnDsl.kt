@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.Column
+
 
 @KotysaMarker
 public abstract class ColumnDsl<T : Any, U : Column<T, *>, V : ColumnDsl<T, U, V>> internal constructor(

@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.ColumnNotNull
+import org.ufoss.kotysa.columns.ColumnNullable
 import kotlin.reflect.KClass
 
 
@@ -66,14 +69,14 @@ public abstract class TableDsl<T : Any, U : TableDsl<T, U>>(
     }
 
     @PublishedApi
-    internal fun initialize(initialize: U): Table<*> {
+    internal fun initialize(initialize: U): KotysaTable<*> {
         init(initialize)
         if (!::name.isInitialized) {
             name = tableClass.simpleName!!
         }
         require(::pk.isInitialized) { "Table primary key is mandatory" }
         require(columns.isNotEmpty()) { "Table must declare at least one column" }
-        val table = TableImpl(tableClass, name, columns, pk, foreignKeys)
+        val table = KotysaTableImpl(tableClass, name, columns, pk, foreignKeys)
         // associate table to all its columns
         columns.forEach { (_, c) -> c.table = table }
         return table

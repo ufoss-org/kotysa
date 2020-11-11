@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.*
+import java.time.OffsetDateTime
 
 public abstract class TimestampWithTimeZoneColumnDsl<T : Any, U : Any> protected constructor(
         entityGetter: (T) -> U?
@@ -13,27 +14,28 @@ public abstract class TimestampWithTimeZoneColumnDsl<T : Any, U : Any> protected
 }
 
 @KotysaMarker
-public class TimestampWithTimeZoneColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (TimestampWithTimeZoneColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : TimestampWithTimeZoneColumnDsl<T, U>(entityGetter) {
+public class OffsetDateTimeTimestampWithTimeZoneColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (OffsetDateTimeTimestampWithTimeZoneColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> OffsetDateTime
+) : TimestampWithTimeZoneColumnDsl<T, OffsetDateTime>(entityGetter) {
 
-    internal fun initialize(): TimestampWithTimeZoneColumnNotNull<T, U> {
+    internal fun initialize(): OffsetDateTimeTimestampWithTimeZoneColumnNotNull<T> {
         init?.invoke(this)
-        return TimestampWithTimeZoneColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
+        return OffsetDateTimeTimestampWithTimeZoneColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
     }
 }
 
 @KotysaMarker
-public class TimestampWithTimeZoneColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (TimestampWithTimeZoneColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : TimestampWithTimeZoneColumnDsl<T, U>(entityGetter) {
+public class OffsetDateTimeTimestampWithTimeZoneColumnNullableDsl<T : Any> internal constructor(
+        private val init: (OffsetDateTimeTimestampWithTimeZoneColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> OffsetDateTime?
+) : TimestampWithTimeZoneColumnDsl<T, OffsetDateTime>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: OffsetDateTime? = null
 
-    internal fun initialize(): TimestampWithTimeZoneColumnNullable<T, U> {
+    internal fun initialize(): OffsetDateTimeTimestampWithTimeZoneColumnNullable<T> {
         init?.invoke(this)
-        return TimestampWithTimeZoneColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, fractionalSecondsPart)
+        return OffsetDateTimeTimestampWithTimeZoneColumnNullable(entityGetter, columnName,
+                defaultValue == null, defaultValue, fractionalSecondsPart)
     }
 }

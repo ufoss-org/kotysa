@@ -11,27 +11,27 @@ public abstract class TextColumnDsl<T : Any, U : Any> protected constructor(
 ) : ColumnDescriptionDsl<T, U>(entityGetter)
 
 @KotysaMarker
-public class TextColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (TextColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : TextColumnDsl<T, U>(entityGetter) {
+public class StringTextColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (StringTextColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> String
+) : TextColumnDsl<T, String>(entityGetter) {
 
-    internal fun initialize(): TextColumnNotNull<T, U> {
+    internal fun initialize(): StringTextColumnNotNull<T> {
         init?.invoke(this)
-        return TextColumnNotNull(entityGetter, columnName)
+        return StringTextColumnNotNull(entityGetter, columnName)
     }
 }
 
 @KotysaMarker
-public class TextColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (TextColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : TextColumnDsl<T, U>(entityGetter) {
+public class StringTextColumnNullableDsl<T : Any> internal constructor(
+        private val init: (StringTextColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> String?
+) : TextColumnDsl<T, String>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: String? = null
 
-    internal fun initialize(): TextColumnNullable<T, U> {
+    internal fun initialize(): StringTextColumnNullable<T> {
         init?.invoke(this)
-        return TextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return StringTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
     }
 }

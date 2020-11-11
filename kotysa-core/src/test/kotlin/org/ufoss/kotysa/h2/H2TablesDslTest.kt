@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
-import org.ufoss.kotysa.ColumnNotNull
+import org.ufoss.kotysa.columns.ColumnNotNull
 import org.ufoss.kotysa.DbTypeChoice
 import org.ufoss.kotysa.SqlType
 import org.ufoss.kotysa.test.*
@@ -21,9 +21,20 @@ import java.util.*
 
 class H2TablesDslTest {
 
+    object H2_ROLE : H2Table<H2Role>() {
+
+    }
+
+    @Test
+    fun `Test new syntax`() {
+        DbTypeChoice.h2(
+                H2_ROLE
+        )
+    }
+
     @Test
     fun `Test all supported column types for not null properties`() {
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2AllTypesNotNull> {
                 name = "all_types"
                 column { it[H2AllTypesNotNull::id].uuid() }
@@ -62,7 +73,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test all supported column types for nullable properties`() {
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2AllTypesNullable> {
                 name = "all_types_nullable"
                 column { it[H2AllTypesNullable::id].uuid() }
@@ -100,7 +111,7 @@ class H2TablesDslTest {
     @Test
     fun `Test all supported column types for nullable properties with default values`() {
         val defaultUuid = UUID.randomUUID()
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2AllTypesNullable> {
                 name = "all_types_nullable"
                 column { it[H2AllTypesNullable::id].uuid() }
@@ -160,7 +171,7 @@ class H2TablesDslTest {
     @Suppress("UNCHECKED_CAST")
     @Test
     fun `Test unnamed primary and foreign key`() {
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2Role> {
                 name = "roles"
                 column { it[H2Role::id].uuid() }
@@ -213,7 +224,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test named primary and foreign key`() {
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2Role> {
                 name = "roles"
                 column { it[H2Role::id].uuid() }
@@ -257,7 +268,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test named primary and foreign key - other syntax`() {
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2Role> {
                 name = "roles"
                 primaryKey(
@@ -306,7 +317,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test named composite primary and foreign key`() {
-        val tables = DbTypeChoice.h2 {
+        val tables = DbTypeChoice.h2Old {
             table<H2Role> {
                 name = "roles"
                 column { it[H2Role::id].uuid() }

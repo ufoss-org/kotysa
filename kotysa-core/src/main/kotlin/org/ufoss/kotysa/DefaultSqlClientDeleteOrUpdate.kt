@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
+import org.ufoss.kotysa.columns.Column
 import kotlin.reflect.KClass
 
 private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()
@@ -17,7 +18,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             /**
              * targeted table to update
              */
-            public val table: Table<T>,
+            public val table: KotysaTable<T>,
             override val availableColumns: MutableMap<(Any) -> Any?, Column<*, *>>
     ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()

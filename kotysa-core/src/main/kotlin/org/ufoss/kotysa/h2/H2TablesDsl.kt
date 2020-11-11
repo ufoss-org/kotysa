@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.DbType
-import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.KotysaTable
 import org.ufoss.kotysa.TablesDsl
 import kotlin.reflect.KClass
 
@@ -17,7 +17,7 @@ public class H2TablesDsl(
         dbType: DbType
 ) : TablesDsl<H2TablesDsl, H2TableDsl<*>>(init, dbType) {
 
-    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: H2TableDsl<*>.() -> Unit): Table<*> {
+    override fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: H2TableDsl<*>.() -> Unit): KotysaTable<*> {
         val tableDsl = H2TableDsl(dsl, tableClass)
         return tableDsl.initialize(tableDsl)
     }

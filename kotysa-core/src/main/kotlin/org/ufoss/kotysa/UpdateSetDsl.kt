@@ -6,6 +6,7 @@ package org.ufoss.kotysa
 
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
+import org.ufoss.kotysa.columns.Column
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

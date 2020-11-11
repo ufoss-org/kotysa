@@ -28,7 +28,7 @@ class UserRepositoryR2dbcCoroutines(dbClient: DatabaseClient) {
     )
 
     private val tables =
-            tables().h2 {
+            tables().h2Old {
                 table<Role> {
                     name = "roles"
                     column { it[Role::id].uuid() }

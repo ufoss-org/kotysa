@@ -18,7 +18,7 @@ class SpringJdbcJavaEntityH2Test :
 }
 
 private val tables =
-        tables().h2 {
+        tables().h2Old {
             table<JavaUser> {
                 name = "java_users"
                 column { it[JavaUser::getLogin].varchar() }

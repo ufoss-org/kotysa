@@ -5,33 +5,60 @@
 package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.*
+import java.time.LocalDate
 
 public abstract class DateColumnDsl<T : Any, U : Any> protected constructor(
         entityGetter: (T) -> U?
 ) : ColumnDescriptionDsl<T, U>(entityGetter)
 
 @KotysaMarker
-public class DateColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (DateColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : DateColumnDsl<T, U>(entityGetter) {
+public class LocalDateDateColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (LocalDateDateColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> LocalDate
+) : DateColumnDsl<T, LocalDate>(entityGetter) {
 
-    internal fun initialize(): DateColumnNotNull<T, U> {
+    internal fun initialize(): LocalDateDateColumnNotNull<T> {
         init?.invoke(this)
-        return DateColumnNotNull(entityGetter, columnName)
+        return LocalDateDateColumnNotNull(entityGetter, columnName)
     }
 }
 
 @KotysaMarker
-public class DateColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (DateColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : DateColumnDsl<T, U>(entityGetter) {
+public class LocalDateDateColumnNullableDsl<T : Any> internal constructor(
+        private val init: (LocalDateDateColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> LocalDate?
+) : DateColumnDsl<T, LocalDate>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: LocalDate? = null
 
-    internal fun initialize(): DateColumnNullable<T, U> {
+    internal fun initialize(): LocalDateDateColumnNullable<T> {
         init?.invoke(this)
-        return DateColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return LocalDateDateColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+    }
+}
+
+@KotysaMarker
+public class KotlinxLocalDateDateColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (KotlinxLocalDateDateColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> kotlinx.datetime.LocalDate
+) : DateColumnDsl<T, kotlinx.datetime.LocalDate>(entityGetter) {
+
+    internal fun initialize(): KotlinxLocalDateDateColumnNotNull<T> {
+        init?.invoke(this)
+        return KotlinxLocalDateDateColumnNotNull(entityGetter, columnName)
+    }
+}
+
+@KotysaMarker
+public class KotlinxLocalDateDateColumnNullableDsl<T : Any> internal constructor(
+        private val init: (KotlinxLocalDateDateColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> kotlinx.datetime.LocalDate?
+) : DateColumnDsl<T, kotlinx.datetime.LocalDate>(entityGetter) {
+
+    public var defaultValue: kotlinx.datetime.LocalDate? = null
+
+    internal fun initialize(): KotlinxLocalDateDateColumnNullable<T> {
+        init?.invoke(this)
+        return KotlinxLocalDateDateColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
     }
 }

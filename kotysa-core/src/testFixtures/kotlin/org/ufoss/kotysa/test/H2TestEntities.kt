@@ -15,7 +15,7 @@ import java.util.*
 const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
 
 val h2Tables =
-        tables().h2 {
+        tables().h2Old {
             table<H2Role> {
                 name = "roles"
                 column { it[H2Role::id].uuid() }

@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
+import org.ufoss.kotysa.columns.Column
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -57,7 +58,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         @Suppress("UNCHECKED_CAST")
         private fun selectInformationForSingleClass(resultClass: KClass<T>, tables: Tables): SelectInformation<T> {
-            val table = tables.allTables[resultClass] as Table<T>
+            val table = tables.allTables[resultClass] as KotysaTable<T>
             val fieldIndexMap = mutableMapOf<Field, Int>()
 
             // build selectedFields List & fill columnPropertyIndexMap
@@ -135,7 +136,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 }
                 instance
             }
-            return SelectInformation(fieldIndexMap, selectedFields, setOf(AliasedTable(table)), select)
+            return SelectInformation(fieldIndexMap, selectedFields, setOf(AliasedKotysaTable(table)), select)
         }
 
         private fun valueProviderCall(getter: (T) -> Any?, valueProvider: ValueProvider): Any? =
@@ -276,6 +277,6 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 public class SelectInformation<T> internal constructor(
         public val fieldIndexMap: Map<Field, Int>,
         internal val selectedFields: List<Field>,
-        internal val selectedTables: Set<AliasedTable<*>>,
+        internal val selectedTables: Set<AliasedKotysaTable<*>>,
         public val select: SelectDslApi.(ValueProvider) -> T
 )

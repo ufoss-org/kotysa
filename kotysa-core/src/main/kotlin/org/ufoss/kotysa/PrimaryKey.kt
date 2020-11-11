@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.ColumnNotNull
+
 
 public class PrimaryKey<T : Any> internal constructor(
         internal val name: String?,

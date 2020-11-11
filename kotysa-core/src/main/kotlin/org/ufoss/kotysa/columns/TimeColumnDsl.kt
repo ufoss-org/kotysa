@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.*
+import java.time.LocalTime
 
 public abstract class TimeColumnDsl<T : Any, U : Any> protected constructor(
         entityGetter: (T) -> U?
@@ -13,27 +14,28 @@ public abstract class TimeColumnDsl<T : Any, U : Any> protected constructor(
 }
 
 @KotysaMarker
-public class TimeColumnNotNullDsl<T : Any, U : Any> internal constructor(
-        private val init: (TimeColumnNotNullDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U
-) : TimeColumnDsl<T, U>(entityGetter) {
+public class LocalTimeTimeColumnNotNullDsl<T : Any> internal constructor(
+        private val init: (LocalTimeTimeColumnNotNullDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> LocalTime
+) : TimeColumnDsl<T, LocalTime>(entityGetter) {
 
-    internal fun initialize(): TimeColumnNotNull<T, U> {
+    internal fun initialize(): LocalTimeTimeColumnNotNull<T> {
         init?.invoke(this)
-        return TimeColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
+        return LocalTimeTimeColumnNotNull(entityGetter, columnName, fractionalSecondsPart)
     }
 }
 
 @KotysaMarker
-public class TimeColumnNullableDsl<T : Any, U : Any> internal constructor(
-        private val init: (TimeColumnNullableDsl<T, U>.() -> Unit)?,
-        private val entityGetter: (T) -> U?
-) : TimeColumnDsl<T, U>(entityGetter) {
+public class LocalTimeTimeColumnNullableDsl<T : Any> internal constructor(
+        private val init: (LocalTimeTimeColumnNullableDsl<T>.() -> Unit)?,
+        private val entityGetter: (T) -> LocalTime?
+) : TimeColumnDsl<T, LocalTime>(entityGetter) {
 
-    public var defaultValue: U? = null
+    public var defaultValue: LocalTime? = null
 
-    internal fun initialize(): TimeColumnNullable<T, U> {
+    internal fun initialize(): LocalTimeTimeColumnNullable<T> {
         init?.invoke(this)
-        return TimeColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, fractionalSecondsPart)
+        return LocalTimeTimeColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue,
+                fractionalSecondsPart)
     }
 }

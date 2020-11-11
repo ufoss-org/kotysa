@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.Column
 import kotlin.reflect.KClass
 
 
@@ -13,7 +14,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
         private val dbType: DbType
 ) {
 
-    private val allTables = mutableMapOf<KClass<*>, Table<*>>()
+    private val allTables = mutableMapOf<KClass<*>, KotysaTable<*>>()
     private val allColumns = mutableMapOf<(Any) -> Any?, Column<*, *>>()
 
     @PublishedApi
@@ -27,7 +28,7 @@ public abstract class TablesDsl<T : TablesDsl<T, U>, U : TableDsl<*, *>> protect
         allColumns.putAll(table.columns as Map<out (Any) -> Any?, Column<*, *>>)
     }
 
-    protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.() -> Unit): Table<*>
+    protected abstract fun <T : Any> initializeTable(tableClass: KClass<T>, dsl: U.() -> Unit): KotysaTable<*>
 
     internal fun initialize(initialize: T): Tables {
         init(initialize)
