@@ -5,13 +5,12 @@
 package org.ufoss.kotysa.sample
 
 import org.ufoss.kotysa.tables
-import java.util.*
 
 fun mysqlTables() =
         tables().mysql { // choose database type
             table<MySqlUser> {
                 name = "users"
-                column { it[MySqlUser::id].uuid() }
+                column { it[MySqlUser::id].autoIncrementInteger() }
                         .primaryKey()
                 column { it[MySqlUser::firstname].varchar {
                     name = "fname"
@@ -29,5 +28,5 @@ data class MySqlUser(
         val lastname: String,
         val isAdmin: Boolean,
         val alias: String? = null,
-        val id: UUID
+        val id: Int? = null
 )

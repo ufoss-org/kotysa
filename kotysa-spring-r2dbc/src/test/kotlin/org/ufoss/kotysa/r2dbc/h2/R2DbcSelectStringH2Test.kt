@@ -161,8 +161,7 @@ class R2DbcSelectStringH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectString
 
 class UserRepositoryH2SelectString(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<H2User>()
             .where { it[H2User::firstname] notEq firstname }

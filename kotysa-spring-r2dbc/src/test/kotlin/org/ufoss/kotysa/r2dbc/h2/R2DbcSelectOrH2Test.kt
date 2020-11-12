@@ -29,8 +29,7 @@ class R2DbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectOr>() {
 
 class UserRepositoryH2SelectOr(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<H2Role>()
             .where { it[H2Role::label] eq label1 }

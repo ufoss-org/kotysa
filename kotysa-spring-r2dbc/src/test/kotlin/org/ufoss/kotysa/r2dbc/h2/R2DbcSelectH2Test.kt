@@ -83,8 +83,7 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
 
 class UserRepositoryH2Select(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
     fun countAllUsers() = sqlClient.countAll<H2User>()
 

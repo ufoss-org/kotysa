@@ -28,8 +28,7 @@ class R2DbcSelectAndH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectAnd>() {
 
 class UserRepositoryH2SelectAnd(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<H2Role>()
             .where { it[H2Role::label] contains label1 }

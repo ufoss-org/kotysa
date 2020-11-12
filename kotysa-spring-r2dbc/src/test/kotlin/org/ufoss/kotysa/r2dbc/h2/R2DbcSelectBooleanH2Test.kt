@@ -36,8 +36,7 @@ class R2DbcSelectBooleanH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectBoole
 
 class UserRepositoryH2SelectBoolean(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) = sqlClient.select<H2User>()
             .where { it[H2User::isAdmin] eq value }

@@ -141,8 +141,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
 class UserRepositoryH2UpdateDelete(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
     fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<H2User>()
             .where { it[H2User::id] eq id }

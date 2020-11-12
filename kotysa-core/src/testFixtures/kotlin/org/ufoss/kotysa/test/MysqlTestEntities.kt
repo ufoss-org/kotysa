@@ -122,12 +122,6 @@ val mysqlTables =
                     defaultValue = 42
                 } }
             }
-            table<MysqlUuid> {
-                column { it[MysqlUuid::id].uuid() }
-                        .primaryKey()
-                column { it[MysqlUuid::uuidNotNull].uuid() }
-                column { it[MysqlUuid::uuidNullable].uuid() }
-            }
             table<MysqlLocalDate> {
                 column { it[MysqlLocalDate::id].integer() }
                         .primaryKey()
@@ -302,20 +296,6 @@ data class MysqlAllTypesNullableDefaultValue(
 }
 
 val mysqlAllTypesNullableDefaultValue = MysqlAllTypesNullableDefaultValue(1)
-
-
-/**
- * Just for JDBC tests, UUID is not natively supported by MySQL but some drivers may fake this support by making some
- * operations for the user
- */
-data class MysqlUuid(
-        val uuidNotNull: UUID,
-        val uuidNullable: UUID? = null,
-        val id: UUID = UUID.randomUUID()
-)
-
-val mysqlUuidWithNullable = MysqlUuid(UUID.fromString(defaultUuid), UUID.randomUUID())
-val mysqlUuidWithoutNullable = MysqlUuid(UUID.fromString(defaultUuid))
 
 
 data class MysqlLocalDate(
