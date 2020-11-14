@@ -28,19 +28,19 @@ public object DbTypeChoice {
     private fun fillTables(dbType: DbType, vararg tables: Table<*>): Tables {
         require(tables.isNotEmpty()) { "Tables must declare at least one table" }
 
-        val allTables = mutableSetOf<KotysaTable<*>>()
-        val allColumns = mutableSetOf<KotysaColumn<*, *>>()
+        val allTables = mutableMapOf<Table<*>, KotysaTable<*>>()
+        val allColumns = mutableMapOf<Column<*, *>, KotysaColumn<*, *>>()
         for (table in tables) {
             val tableClass = table::class.supertypes
                     .first { type -> H2Table::class == type.classifier }
                     .arguments[0].type!!.classifier as KClass<*>
-            check(!allTables.map { kotysaTable -> kotysaTable.tableClass }.contains(tableClass)) {
+            check(!allTables.values.map { kotysaTable -> kotysaTable.tableClass }.contains(tableClass)) {
                 "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
             }
             val kotysaTable = table.initialize(tableClass)
-            allTables += kotysaTable
+            allTables.put(kotysaTable.table, kotysaTable)
             @Suppress("UNCHECKED_CAST")
-            allColumns.addAll(table.columns)
+            allColumns.putAll(kotysaTable.columns.associateBy { kotysaColumn -> kotysaColumn.column })
         }
         val tablesModel = Tables(allTables, allColumns, dbType)
         // resolve foreign keys to referenced primary key column
@@ -51,13 +51,11 @@ public object DbTypeChoice {
     /**
      * Fill lateinit foreign key data after tables are built
      */
-    @Suppress("UNCHECKED_CAST")
     private fun resolveFkReferences(tables: Tables) {
         tables.allTables.values
                 .flatMap { table -> table.foreignKeys }
                 .forEach { foreignKey ->
                     val referencedKotysaTable = tables.getTable(foreignKey.referencedTable)
-                    foreignKey.referencedKotysaTable = referencedKotysaTable
                     // find primaryKey of referenced table
                     foreignKey.referencedColumns = referencedKotysaTable.primaryKey.columns
                 }

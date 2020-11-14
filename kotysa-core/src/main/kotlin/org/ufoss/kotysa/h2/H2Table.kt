@@ -1,5 +1,6 @@
 package org.ufoss.kotysa.h2
 
+import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.KotysaColumn
 import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.TableColumnPropertyProvider
@@ -15,7 +16,7 @@ public abstract class H2Table<T : Any> : Table<T>() {
     /**
      * Declare a Column, supported types follow : [H2 Data types](http://h2database.com/html/datatypes.html)
      */
-    protected fun <U : KotysaColumn<T, *>> column(
+    protected fun <U : DbColumn<T, *>> column(
             @BuilderInference dsl: H2ColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
     ): U {
         val columnDsl = H2ColumnDsl(dsl)

@@ -5,8 +5,10 @@
 package org.ufoss.kotysa
 
 
-public class ForeignKey<T : Any, U : Any> @PublishedApi internal constructor(
+public class KotysaForeignKey<T : Any, U : Any> internal constructor(
         internal val referencedTable: Table<U>,
-        internal val columns: List<Column<T, *>>,
+        internal val columns: List<KotysaColumn<T, *>>,
         internal val name: String?,
-)
+) {
+    internal lateinit var referencedColumns: List<KotysaColumn<*, *>>
+}

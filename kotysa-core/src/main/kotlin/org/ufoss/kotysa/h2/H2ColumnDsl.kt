@@ -10,7 +10,7 @@ import org.ufoss.kotysa.columns.*
 /**
  * see [H2 Data types](http://h2database.com/html/datatypes.html)
  */
-public class H2ColumnDsl<T : Any, U : KotysaColumn<T, *>> internal constructor(
+public class H2ColumnDsl<T : Any, U : DbColumn<T, *>> internal constructor(
         init: H2ColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
 ) : ColumnDsl<T, U, H2ColumnDsl<T, U>>(init) {
 

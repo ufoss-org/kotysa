@@ -1,7 +1,5 @@
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.KotysaColumnNotNull
-import org.ufoss.kotysa.columns.KotysaColumnNullable
 import kotlin.reflect.KClass
 
 /**
@@ -10,19 +8,25 @@ import kotlin.reflect.KClass
  * @param T Entity type associated with this table
  */
 public abstract class Table<T : Any> {
-    protected open lateinit var name: String
-    
-    internal val columns = mutableSetOf<KotysaColumn<T, *>>()
+    public open lateinit var name: String
+
+    internal val columns = mutableSetOf<DbColumn<T, *>>()
     internal lateinit var pk: PrimaryKey<T>
+
     @PublishedApi
     internal val foreignKeys = mutableSetOf<ForeignKey<T, *>>()
 
-    public fun primaryKey(
-            vararg columns: KotysaColumnNotNull<T, *>,
+    protected fun primaryKey(
+            vararg columns: ColumnNotNull<T, *>,
             pkName: String? = null
-    ): PrimaryKey<T> = PrimaryKey(pkName, columns.toList())
+    ): PrimaryKey<T> {
+        check(!::pk.isInitialized) {
+            "Table must not declare more than one Primary Key"
+        }
+        return PrimaryKey(pkName, columns.toList())
+    }
 
-    protected fun <U : KotysaColumnNotNull<T, *>> U.primaryKey(pkName: String? = null): U {
+    protected fun <U : ColumnNotNull<T, *>> U.primaryKey(pkName: String? = null): U {
         check(!::pk.isInitialized) {
             "Table must not declare more than one Primary Key"
         }
@@ -32,24 +36,19 @@ public abstract class Table<T : Any> {
 
     protected fun <V : Any> foreignKey(
             referencedTable: Table<V>,
-            vararg columns: KotysaColumn<T, *>,
+            vararg columns: DbColumn<T, *>,
             fkName: String? = null
     ) {
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
     }
 
-    protected fun <U : KotysaColumnNotNull<T, *>, V : Any> U.foreignKey(referencedTable: Table<V>, fkName: String? = null): U {
+    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: Table<V>, fkName: String? = null): U {
         foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
         return this
     }
 
-    protected inline fun <U : KotysaColumnNullable<T, *>, reified V : Any> U.foreignKey(referencedTable: Table<V>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
-        return this
-    }
-
-    internal fun addColumn(column: KotysaColumn<T, *>) {
-        require(!columns.contains(column.entityGetter)) {
+    internal fun addColumn(column: DbColumn<T, *>) {
+        require(!columns.any { col -> col.entityGetter == column.entityGetter }) {
             "Trying to map property \"${column.entityGetter}\" to multiple columns"
         }
         columns += column
@@ -61,10 +60,26 @@ public abstract class Table<T : Any> {
         }
         require(::pk.isInitialized) { "Table primary key is mandatory" }
         require(columns.isNotEmpty()) { "Table must declare at least one column" }
+
+        // build KotysaColumns
+        val kotysaColumnsMap = columns.associateWith { column ->
+            KotysaColumnImpl(column, column.entityGetter, column.name, column.sqlType, column.isAutoIncrement,
+                    column.isNullable, column.defaultValue, column.size)
+        }
+
+        // build Kotysa PK
+        val kotysaPK = KotysaPrimaryKey(pk.name, pk.columns.map { column -> kotysaColumnsMap[column]!! })
+
+        // build Kotysa FKs
+        val kotysaFKs = foreignKeys.map { fk ->
+            KotysaForeignKey(fk.referencedTable, fk.columns.map { column -> kotysaColumnsMap[column]!! }, fk.name)
+        }
+
         @Suppress("UNCHECKED_CAST")
-        val kotysaTable = KotysaTableImpl(kClass as KClass<T>, this, name, columns, pk, foreignKeys)
+        val kotysaTable = KotysaTableImpl(kClass as KClass<T>, this, name, kotysaColumnsMap.values, kotysaPK,
+                kotysaFKs)
         // associate table to all its columns
-        columns.forEach { c -> c.table = kotysaTable }
+        kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
     }
 }

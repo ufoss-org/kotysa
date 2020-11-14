@@ -20,8 +20,8 @@ import kotlin.reflect.full.allSuperclasses
 private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
 
 @Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(table: Table<out T>): KotysaTable<T> =
-        requireNotNull(this.allTables[table] as KotysaTable<T>?) { tableMustBeMapped(table.name) }
+public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
+        requireNotNull(this.allTables[table]) { tableMustBeMapped(table.name) } as KotysaTable<T>
 
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
     require(this.allTables.containsKey(tableClass)) { tableMustBeMapped(tableClass.qualifiedName) }

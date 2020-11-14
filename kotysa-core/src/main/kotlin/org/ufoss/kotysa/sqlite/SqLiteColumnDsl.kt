@@ -10,7 +10,7 @@ import org.ufoss.kotysa.columns.*
 /**
  * see [SqLite Data types](https://www.sqlite.org/datatype3.html)
  */
-public class SqLiteColumnDsl<T : Any, U : KotysaColumn<T, *>> internal constructor(
+public class SqLiteColumnDsl<T : Any, U : DbColumn<T, *>> internal constructor(
         init: SqLiteColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
 ) : ColumnDsl<T, U, SqLiteColumnDsl<T, U>>(init) {
 
