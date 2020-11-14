@@ -6,7 +6,7 @@ package org.ufoss.kotysa
 
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -454,7 +454,7 @@ public interface CommonWhereDsl {
  */
 public class WhereDsl internal constructor(
         private val init: WhereDsl.(FieldProvider) -> WhereClause,
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Set<KotysaColumn<*, *>>,
         dbType: DbType
 ) : SimpleFieldProvider(availableColumns, dbType), CommonWhereDsl {
 
@@ -466,7 +466,7 @@ public class WhereDsl internal constructor(
 
 public class TypedWhereDsl<T : Any> internal constructor(
         private val init: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause,
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         dbType: DbType
 ) : SimpleTypedFieldProvider<T>(availableColumns, dbType), CommonWhereDsl {
 

@@ -8,7 +8,7 @@ import org.ufoss.kotysa.*
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
-public abstract class TimestampColumnDsl<T : Any, U : Any> protected constructor(
+public sealed class TimestampColumnDsl<T : Any, U : Any>(
         entityGetter: (T) -> U?
 ) : ColumnDescriptionDsl<T, U>(entityGetter) {
     public var fractionalSecondsPart: Int? = null

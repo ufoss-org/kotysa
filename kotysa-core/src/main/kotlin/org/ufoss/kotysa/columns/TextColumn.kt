@@ -4,103 +4,108 @@
 
 package org.ufoss.kotysa.columns
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.SqlType
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 
-internal interface TextColumn<T : Any, U : Any> : Column<T, U>, NoAutoIncrement<T, U>, NoSize<T, U> {
-    override val sqlType get() = SqlType.TEXT
+public sealed class TextColumn<T : Any, U : Any> : Column<T, U>() {
+    // No auto-increment
+    final override val isAutoIncrement = false
+    // No size
+    final override val size = null
+
+    final override val sqlType = SqlType.TEXT
 }
 
-public abstract class TextColumnNotNull<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), TextColumn<T, U>, ColumnNotNull<T, U>
+public sealed class TextColumnNotNull<T : Any, U : Any> : TextColumn<T, U>() {
+    // Not null
+    final override val isNullable: Boolean = false
+    final override val defaultValue: U? = null
+}
 
-
-public abstract class TextColumnNullable<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), TextColumn<T, U>, ColumnNullable<T, U>
-
-public class StringTextColumnNotNull<T : Any>(
+public class StringTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
         override val name: String,
 ) : TextColumnNotNull<T, String>(), StringFieldColumnNotNull
 
-public class StringTextColumnNullable<T : Any>(
+public class StringTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: String?,
-) : TextColumnNullable<T, String>(), StringFieldColumnNullable
+) : TextColumn<T, String>(), StringFieldColumnNullable
 
-public class LocalDateTimeTextColumnNotNull<T : Any>(
+public class LocalDateTimeTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDateTime?,
         override val name: String,
 ) : TextColumnNotNull<T, LocalDateTime>(), LocalDateTimeFieldColumnNotNull
 
-public class LocalDateTimeTextColumnNullable<T : Any>(
+public class LocalDateTimeTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: LocalDateTime?,
-) : TextColumnNullable<T, LocalDateTime>(), LocalDateTimeFieldColumnNullable
+) : TextColumn<T, LocalDateTime>(), LocalDateTimeFieldColumnNullable
 
-public class KotlinxLocalDateTimeTextColumnNotNull<T : Any>(
+public class KotlinxLocalDateTimeTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?,
         override val name: String,
 ) : TextColumnNotNull<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeFieldColumnNotNull
 
-public class KotlinxLocalDateTimeTextColumnNullable<T : Any>(
+public class KotlinxLocalDateTimeTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: kotlinx.datetime.LocalDateTime?,
-) : TextColumnNullable<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeFieldColumnNullable
+) : TextColumn<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeFieldColumnNullable
 
-public class LocalDateTextColumnNotNull<T : Any>(
+public class LocalDateTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDate?,
         override val name: String,
 ) : TextColumnNotNull<T, LocalDate>(), LocalDateFieldColumnNotNull
 
-public class LocalDateTextColumnNullable<T : Any>(
+public class LocalDateTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDate?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: LocalDate?,
-) : TextColumnNullable<T, LocalDate>(), LocalDateFieldColumnNullable
+) : TextColumn<T, LocalDate>(), LocalDateFieldColumnNullable
 
-public class KotlinxLocalDateTextColumnNotNull<T : Any>(
+public class KotlinxLocalDateTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDate?,
         override val name: String,
 ) : TextColumnNotNull<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateFieldColumnNotNull
 
-public class KotlinxLocalDateTextColumnNullable<T : Any>(
+public class KotlinxLocalDateTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDate?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: kotlinx.datetime.LocalDate?,
-) : TextColumnNullable<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateFieldColumnNullable
+) : TextColumn<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateFieldColumnNullable
 
-public class OffsetDateTimeTextColumnNotNull<T : Any>(
+public class OffsetDateTimeTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String,
 ) : TextColumnNotNull<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNotNull
 
-public class OffsetDateTimeTextColumnNullable<T : Any>(
+public class OffsetDateTimeTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: OffsetDateTime?,
-) : TextColumnNullable<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNullable
+) : TextColumn<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNullable
 
-public class LocalTimeTextColumnNotNull<T : Any>(
+public class LocalTimeTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
         override val name: String,
 ) : TextColumnNotNull<T, LocalTime>(), LocalTimeFieldColumnNotNull
 
-public class LocalTimeTextColumnNullable<T : Any>(
+public class LocalTimeTextColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: LocalTime?,
-) : TextColumnNullable<T, LocalTime>(), LocalTimeFieldColumnNullable
+) : TextColumn<T, LocalTime>(), LocalTimeFieldColumnNullable

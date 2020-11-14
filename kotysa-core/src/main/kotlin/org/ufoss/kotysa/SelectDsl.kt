@@ -24,14 +24,14 @@ public class SelectDsl<T> internal constructor(
     private val fieldIndexMap = mutableMapOf<Field, Int>()
     private val selectedGetters = mutableListOf<(Any) -> Any?>()
     private val selectedFields = mutableListOf<Field>()
-    private val selectedTables = mutableSetOf<AliasedKotysaTable<*>>()
+    private val selectedTables = mutableSetOf<AliasedKotysaTableOld<*>>()
 
     override fun <T : Any> count(resultClass: KClass<T>, dsl: ((FieldProvider) -> ColumnField<T, *>)?, alias: String?): Long {
         if (dsl == null) {
             tables.checkTable(resultClass)
         }
         val columnField = dsl?.invoke(SimpleFieldProvider(tables.allColumns, tables.dbType))
-        val aliasedTable = AliasedKotysaTable(tables.getTable(resultClass), alias)
+        val aliasedTable = AliasedKotysaTableOld(tables.getTable(resultClass), alias)
         if (!selectedTables.contains(aliasedTable)) {
             selectedTables.add(aliasedTable)
         }
@@ -159,7 +159,7 @@ public class SelectDsl<T> internal constructor(
 
     private fun <T : Any> addColumnField(getter: (T) -> Any?, columnField: ColumnField<*, *>, alias: String?) {
         addFieldAndGetter(columnField, getter)
-        val aliasedTable = AliasedKotysaTable(columnField.column.table, alias)
+        val aliasedTable = AliasedKotysaTableOld(columnField.column.tableOld, alias)
         if (!selectedTables.contains(aliasedTable)) {
             selectedTables.add(aliasedTable)
         }

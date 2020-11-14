@@ -6,17 +6,16 @@ package org.ufoss.kotysa
 
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
-import kotlin.reflect.KClass
 
 /**
  * All Mapped Tables
  */
 public class Tables internal constructor(
-        public val allTables: Map<KClass<*>, KotysaTable<*>>,
-        internal val allColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        public val allTables: Set<KotysaTable<*>>,
+        internal val allColumns: Set<KotysaColumn<*, *>>,
         internal val dbType: DbType
 ) {
     public fun <T> getDbValue(value: T): Any? =

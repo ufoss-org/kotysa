@@ -4,17 +4,23 @@
 
 package org.ufoss.kotysa.columns
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.SqlType
 
-internal interface SerialColumn<T : Any, U : Any> : Column<T, U>, NoAutoIncrement<T, U>, NoSize<T, U> {
-    override val sqlType get() = SqlType.SERIAL
+public sealed class SerialColumnNotNull<T : Any, U : Any> : Column<T, U>() {
+    // No auto-increment
+    final override val isAutoIncrement = false
+    // No size
+    final override val size = null
+    // Not null
+    final override val isNullable: Boolean = false
+    final override val defaultValue: U? = null
+
+    final override val sqlType = SqlType.SERIAL
 }
 
 
-public abstract class SerialColumnNotNull<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), SerialColumn<T, U>, ColumnNotNull<T, U>
-
-public class IntSerialColumnNotNull<T : Any>(
+public class IntSerialColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String,
 ) : SerialColumnNotNull<T, Int>(), IntFieldColumnNotNull

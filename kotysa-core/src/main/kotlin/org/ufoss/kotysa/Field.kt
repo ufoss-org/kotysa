@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -39,20 +39,20 @@ public class CountField<T : Any, U : Any> internal constructor(
 
 @Suppress("UNCHECKED_CAST")
 public abstract class ColumnField<T : Any, U : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Set<KotysaColumn<*, *>>,
         getter: (T) -> Any?,
         final override val alias: String?,
         internal val dbType: DbType
 ) : Field {
 
-    internal val column: Column<T, U>
+    internal val column: KotysaColumn<T, U>
 
     init {
         if (alias != null) {
             require(alias.isNotBlank()) { "An alias must not be empty or blank" }
         }
         require(availableColumns.containsKey(getter)) { "Requested field \"$getter\" is not mapped" }
-        column = availableColumns[getter]!! as Column<T, U>
+        column = availableColumns[getter]!! as KotysaColumn<T, U>
     }
 
     override val fieldName: String =
@@ -65,7 +65,7 @@ public abstract class ColumnField<T : Any, U : Any> internal constructor(
 
 
 public class NotNullStringColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Set<KotysaColumn<*, *>>,
         getter: (T) -> String,
         dbType: DbType,
         alias: String? = null
@@ -73,7 +73,7 @@ public class NotNullStringColumnField<T : Any> internal constructor(
 
 
 public class NullableStringColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Set<KotysaColumn<*, *>>,
         getter: (T) -> String?,
         dbType: DbType,
         alias: String? = null
@@ -81,7 +81,7 @@ public class NullableStringColumnField<T : Any> internal constructor(
 
 
 public class NotNullLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> LocalDateTime,
         dbType: DbType,
         alias: String? = null
@@ -89,14 +89,14 @@ public class NotNullLocalDateTimeColumnField<T : Any> internal constructor(
 
 
 public class NullableLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> LocalDateTime?,
         dbType: DbType,
         alias: String? = null
 ) : ColumnField<T, LocalDateTime>(availableColumns, getter, alias, dbType), NullableField
 
 public class NotNullKotlinxLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> kotlinx.datetime.LocalDateTime,
         dbType: DbType,
         alias: String? = null
@@ -104,7 +104,7 @@ public class NotNullKotlinxLocalDateTimeColumnField<T : Any> internal constructo
 
 
 public class NullableKotlinxLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> kotlinx.datetime.LocalDateTime?,
         dbType: DbType,
         alias: String? = null
@@ -112,7 +112,7 @@ public class NullableKotlinxLocalDateTimeColumnField<T : Any> internal construct
 
 
 public class NotNullLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> LocalDate,
         dbType: DbType,
         alias: String? = null
@@ -120,14 +120,14 @@ public class NotNullLocalDateColumnField<T : Any> internal constructor(
 
 
 public class NullableLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> LocalDate?,
         dbType: DbType,
         alias: String? = null
 ) : ColumnField<T, LocalDate>(availableColumns, getter, alias, dbType), NullableField
 
 public class NotNullKotlinxLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> kotlinx.datetime.LocalDate,
         dbType: DbType,
         alias: String? = null
@@ -135,7 +135,7 @@ public class NotNullKotlinxLocalDateColumnField<T : Any> internal constructor(
 
 
 public class NullableKotlinxLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> kotlinx.datetime.LocalDate?,
         dbType: DbType,
         alias: String? = null
@@ -143,7 +143,7 @@ public class NullableKotlinxLocalDateColumnField<T : Any> internal constructor(
 
 
 public class NotNullOffsetDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> OffsetDateTime,
         dbType: DbType,
         alias: String? = null
@@ -151,7 +151,7 @@ public class NotNullOffsetDateTimeColumnField<T : Any> internal constructor(
 
 
 public class NullableOffsetDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> OffsetDateTime?,
         dbType: DbType,
         alias: String? = null
@@ -159,7 +159,7 @@ public class NullableOffsetDateTimeColumnField<T : Any> internal constructor(
 
 
 public class NotNullLocalTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> LocalTime,
         dbType: DbType,
         alias: String? = null
@@ -167,7 +167,7 @@ public class NotNullLocalTimeColumnField<T : Any> internal constructor(
 
 
 public class NullableLocalTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> LocalTime?,
         dbType: DbType,
         alias: String? = null
@@ -175,7 +175,7 @@ public class NullableLocalTimeColumnField<T : Any> internal constructor(
 
 
 public class NotNullBooleanColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> Boolean,
         dbType: DbType,
         alias: String? = null
@@ -183,7 +183,7 @@ public class NotNullBooleanColumnField<T : Any> internal constructor(
 
 
 public class NotNullUuidColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> UUID,
         dbType: DbType,
         alias: String? = null
@@ -191,7 +191,7 @@ public class NotNullUuidColumnField<T : Any> internal constructor(
 
 
 public class NullableUuidColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> UUID?,
         dbType: DbType,
         alias: String? = null
@@ -199,7 +199,7 @@ public class NullableUuidColumnField<T : Any> internal constructor(
 
 
 public class NotNullIntColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> Int,
         dbType: DbType,
         alias: String? = null
@@ -207,7 +207,7 @@ public class NotNullIntColumnField<T : Any> internal constructor(
 
 
 public class NullableIntColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         getter: (T) -> Int?,
         dbType: DbType,
         alias: String? = null

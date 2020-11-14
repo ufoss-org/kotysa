@@ -4,14 +4,22 @@
 
 package org.ufoss.kotysa.columns
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.SqlType
 
-public abstract class BooleanColumnNotNull<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), ColumnNotNull<T, U>, NoAutoIncrement<T, U>, NoSize<T, U> {
-    override val sqlType: SqlType get() = SqlType.BOOLEAN
+public sealed class BooleanColumnNotNull<T : Any, U : Any> : Column<T, U>() {
+    // Not null
+    final override val isNullable: Boolean = false
+    final override val defaultValue: U? = null
+    // No auto-increment
+    final override val isAutoIncrement = false
+    // No size
+    final override val size = null
+
+    final override val sqlType: SqlType = SqlType.BOOLEAN
 }
 
-public class BooleanBooleanColumnNotNull<T : Any>(
+public class BooleanBooleanColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Boolean,
         override val name: String,
 ) : BooleanColumnNotNull<T, Boolean>(), BooleanFieldColumnNotNull

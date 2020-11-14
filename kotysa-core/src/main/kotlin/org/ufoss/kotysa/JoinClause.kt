@@ -6,7 +6,7 @@ package org.ufoss.kotysa
 
 
 public class JoinClause internal constructor(
-        internal val table: AliasedKotysaTable<*>,
+        internal val table: AliasedKotysaTableOld<*>,
         internal val field: ColumnField<*, *>,
         internal val type: JoinType
 )

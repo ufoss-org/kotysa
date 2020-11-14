@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -110,7 +110,7 @@ public interface TypedFieldProvider<T : Any> {
 }
 
 public open class SimpleFieldProvider internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Set<KotysaColumn<*, *>>,
         dbType: DbType
 ) : FieldProvider {
 
@@ -179,7 +179,7 @@ public open class SimpleFieldProvider internal constructor(
 }
 
 public open class SimpleTypedFieldProvider<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         dbType: DbType
 ) : TypedFieldProvider<T> {
 

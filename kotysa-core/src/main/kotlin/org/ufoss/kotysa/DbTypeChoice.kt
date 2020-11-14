@@ -4,11 +4,9 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.KotysaColumn
 import org.ufoss.kotysa.h2.H2Table
-import org.ufoss.kotysa.h2.H2TablesDsl
-import org.ufoss.kotysa.mysql.MysqlTablesDsl
-import org.ufoss.kotysa.postgresql.PostgresqlTablesDsl
-import org.ufoss.kotysa.sqlite.SqLiteTablesDsl
+import org.ufoss.kotysa.sqlite.SqLiteTable
 import kotlin.reflect.KClass
 
 /**
@@ -19,27 +17,54 @@ public object DbTypeChoice {
     /**
      * Configure Functional Table Mapping support for H2
      * @sample org.ufoss.kotysa.sample.h2Tables
-     * @see H2TablesDsl
      */
-    public fun h2Old(dsl: H2TablesDsl.() -> Unit): Tables {
-        val tablesDsl = H2TablesDsl(dsl, DbType.H2)
-        return tablesDsl.initialize(tablesDsl)
-    }
+    public fun h2(vararg tables: H2Table<*>): Tables = fillTables(DbType.H2, *tables)
 
     /**
-     * Configure Functional Table Mapping support for H2
-     * @sample org.ufoss.kotysa.sample.h2Tables
-     * @see H2TablesDsl
+     * Configure Functional Table Mapping support for SqLite
+     * @sample org.ufoss.kotysa.sample.sqLiteTables
      */
-    public fun <T : Any> h2(vararg tables: H2Table<T>) {
+    public fun sqlite(vararg tables: SqLiteTable<*>): Tables = fillTables(DbType.SQLITE, *tables)
+
+    private fun fillTables(dbType: DbType, vararg tables: Table<*>): Tables {
+        require(tables.isNotEmpty()) { "Tables must declare at least one table" }
+
+        val allTables = mutableSetOf<KotysaTable<*>>()
+        val allColumns = mutableSetOf<KotysaColumn<*, *>>()
         for (table in tables) {
             val tableClass = table::class.supertypes
                     .first { type -> H2Table::class == type.classifier }
                     .arguments[0].type!!.classifier as KClass<*>
-            println("name = " + tableClass.qualifiedName)
+            check(!allTables.map { kotysaTable -> kotysaTable.tableClass }.contains(tableClass)) {
+                "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
+            }
+            val kotysaTable = table.initialize(tableClass)
+            allTables += kotysaTable
+            @Suppress("UNCHECKED_CAST")
+            allColumns.addAll(table.columns)
         }
+        val tablesModel = Tables(allTables, allColumns, dbType)
+        // resolve foreign keys to referenced primary key column
+        resolveFkReferences(tablesModel)
+        return tablesModel
     }
 
+    /**
+     * Fill lateinit foreign key data after tables are built
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun resolveFkReferences(tables: Tables) {
+        tables.allTables.values
+                .flatMap { table -> table.foreignKeys }
+                .forEach { foreignKey ->
+                    val referencedKotysaTable = tables.getTable(foreignKey.referencedTable)
+                    foreignKey.referencedKotysaTable = referencedKotysaTable
+                    // find primaryKey of referenced table
+                    foreignKey.referencedColumns = referencedKotysaTable.primaryKey.columns
+                }
+    }
+
+    /*
     /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
@@ -68,7 +93,7 @@ public object DbTypeChoice {
     public fun mysql(dsl: MysqlTablesDsl.() -> Unit): Tables {
         val tablesDsl = MysqlTablesDsl(dsl, DbType.MYSQL)
         return tablesDsl.initialize(tablesDsl)
-    }
+    }*/
 }
 
 /**

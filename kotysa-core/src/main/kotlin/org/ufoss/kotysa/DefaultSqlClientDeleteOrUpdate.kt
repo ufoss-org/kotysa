@@ -5,7 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import kotlin.reflect.KClass
 
 private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()
@@ -18,12 +18,12 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             /**
              * targeted table to update
              */
-            public val table: KotysaTable<T>,
-            override val availableColumns: MutableMap<(Any) -> Any?, Column<*, *>>
+            public val tableOld: KotysaTableOld<T>,
+            override val availableColumns: MutableMap<(Any) -> Any?, KotysaColumn<*, *>>
     ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()
         override val joinClauses: MutableList<JoinClause> = mutableListOf()
-        public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
+        public val setValues: MutableMap<KotysaColumn<T, *>, Any?> = mutableMapOf()
     }
 
     public interface WithProperties<T : Any> {
@@ -63,7 +63,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
         public fun deleteFromTableSql(): String = with(properties) {
-            val deleteSql = "DELETE FROM ${table.name}"
+            val deleteSql = "DELETE FROM ${tableOld.name}"
             val joinsAndWheres = joinsWithExistsAndWheres()
             logger.debug { "Exec SQL (${tables.dbType.name}) : $deleteSql $joinsAndWheres" }
 
@@ -71,7 +71,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
 
         public fun updateTableSql(): String = with(properties) {
-            val updateSql = "UPDATE ${table.name}"
+            val updateSql = "UPDATE ${tableOld.name}"
             var index = 0
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
                 if (DbType.SQLITE == tables.dbType) {
@@ -138,7 +138,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             if (joinClauses.isNotEmpty()) {
                 val rootJoinClause = joinClauses
                         .firstOrNull { joinClause ->
-                            joinClause.field.column.table == table
+                            joinClause.field.column.tableOld == tableOld
                                     && JoinType.INNER == joinClause.type
                         }
                         ?: throw IllegalArgumentException("There must be a join clause on one column of the table this query targets")

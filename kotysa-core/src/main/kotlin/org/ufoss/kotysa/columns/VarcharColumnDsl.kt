@@ -6,7 +6,7 @@ package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.*
 
-public abstract class VarcharColumnDsl<T : Any, U : Any> protected constructor(
+public sealed class VarcharColumnDsl<T : Any, U : Any>(
         entityGetter: (T) -> U?
 ) : ColumnDescriptionDsl<T, U>(entityGetter) {
     public var size: Int? = null
@@ -32,8 +32,8 @@ public class StringVarcharColumnNullableDsl<T : Any> internal constructor(
 
     public var defaultValue: String? = null
 
-    internal fun initialize(): StringVarcharColumnNullable<T> {
+    internal fun initialize(): StringVarcharColNullable<T> {
         init?.invoke(this)
-        return StringVarcharColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, size)
+        return StringVarcharColNullable(entityGetter, columnName, defaultValue == null, defaultValue, size)
     }
 }

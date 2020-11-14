@@ -4,15 +4,14 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.Column
-import kotlin.reflect.KClass
+import org.ufoss.kotysa.columns.KotysaColumn
 
 
 public class ForeignKey<T : Any, U : Any> @PublishedApi internal constructor(
-        internal val referencedClass: KClass<U>,
-        internal val columns: List<Column<T, *>>,
+        internal val referencedTable: Table<U>,
+        internal val columns: List<KotysaColumn<T, *>>,
         internal val name: String?
 ) {
-    internal lateinit var referencedTable: KotysaTable<*>
-    internal lateinit var referencedColumns: List<Column<*, *>>
+    internal lateinit var referencedKotysaTable: KotysaTable<*>
+    internal lateinit var referencedColumns: List<KotysaColumn<*, *>>
 }

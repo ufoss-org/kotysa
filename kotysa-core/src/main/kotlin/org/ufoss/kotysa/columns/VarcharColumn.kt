@@ -4,30 +4,33 @@
 
 package org.ufoss.kotysa.columns
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.SqlType
 
-internal interface VarcharColumn<T : Any, U : Any> : Column<T, U>, NoAutoIncrement<T, U> {
-    override val sqlType get() = SqlType.VARCHAR
+public sealed class VarcharColumn<T : Any, U : Any> : Column<T, U>() {
+    // No auto-increment
+    final override val isAutoIncrement = false
+
+    final override val sqlType = SqlType.VARCHAR
 }
 
 
-public abstract class VarcharColumnNotNull<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), VarcharColumn<T, U>, ColumnNotNull<T, U>
+public sealed class VarcharColumnNotNull<T : Any, U : Any> : VarcharColumn<T, U>() {
+    // Not null
+    final override val isNullable: Boolean = false
+    final override val defaultValue: U? = null
+}
 
-
-public abstract class VarcharColumnNullable<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), VarcharColumn<T, U>, ColumnNullable<T, U>
-
-public class StringVarcharColumnNotNull<T : Any>(
+public class StringVarcharColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
         override val name: String,
         override val size: Int?,
 ) : VarcharColumnNotNull<T, String>(), StringFieldColumnNotNull
 
-public class StringVarcharColumnNullable<T : Any>(
+public class StringVarcharColNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: String?,
         override val size: Int?,
-) : VarcharColumnNullable<T, String>(), StringFieldColumnNullable
+) : VarcharColumn<T, String>(), StringFieldColumnNullable

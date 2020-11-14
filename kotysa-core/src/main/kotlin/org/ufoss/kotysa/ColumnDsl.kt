@@ -4,11 +4,11 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 
 
 @KotysaMarker
-public abstract class ColumnDsl<T : Any, U : Column<T, *>, V : ColumnDsl<T, U, V>> internal constructor(
+public abstract class ColumnDsl<T : Any, U : KotysaColumn<T, *>, V : ColumnDsl<T, U, V>> internal constructor(
         private val init: V.(TableColumnPropertyProvider<T>) -> U
 ) : AbstractTableColumnPropertyProvider<T>() {
 

@@ -4,10 +4,10 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.ColumnNotNull
+import org.ufoss.kotysa.columns.KotysaColumnNotNull
 
 
 public class PrimaryKey<T : Any> internal constructor(
         internal val name: String?,
-        internal val columns: List<ColumnNotNull<T, *>>
+        internal val columns: List<KotysaColumnNotNull<T, *>>
 )

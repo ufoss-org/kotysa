@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import kotlin.reflect.KClass
 
 /**
@@ -12,12 +12,13 @@ import kotlin.reflect.KClass
  */
 public interface KotysaTable<T : Any> {
     public val tableClass: KClass<T>
+    public val table: Table<T>
 
     /**
      * Real name of this table in the database
      */
     public val name: String
-    public val columns: Map<(T) -> Any?, Column<T, *>>
+    public val columns: Set<KotysaColumn<T, *>>
     public val primaryKey: PrimaryKey<T>
     public val foreignKeys: Set<ForeignKey<T, *>>
 }
@@ -25,8 +26,9 @@ public interface KotysaTable<T : Any> {
 
 internal class KotysaTableImpl<T : Any> internal constructor(
         override val tableClass: KClass<T>,
+        override val table: Table<T>,
         override val name: String,
-        override val columns: Map<(T) -> Any?, Column<T, *>>,
+        override val columns: Set<KotysaColumn<T, *>>,
         override val primaryKey: PrimaryKey<T>,
         override val foreignKeys: Set<ForeignKey<T, *>>
 ) : KotysaTable<T> {

@@ -6,7 +6,7 @@ package org.ufoss.kotysa
 
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -17,7 +17,7 @@ import java.util.*
 @KotysaMarker
 public class UpdateSetDsl<T : Any> internal constructor(
         private val init: (FieldSetter<T>) -> Unit,
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         dbType: DbType
 ) : FieldSetter<T> {
 

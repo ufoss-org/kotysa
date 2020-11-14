@@ -5,14 +5,13 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.*
 import kotlin.reflect.*
-import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.primaryConstructor
 
 private val logger = Logger.of<DefaultSqlClientSelect>()
@@ -23,7 +22,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     public class Properties<T : Any> internal constructor(
             override val tables: Tables,
             public val selectInformation: SelectInformation<T>,
-            override val availableColumns: MutableMap<(Any) -> Any?, Column<*, *>>
+            override val availableColumns: MutableMap<(Any) -> Any?, KotysaColumn<*, *>>
     ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()
         override val joinClauses: MutableList<JoinClause> = mutableListOf()
@@ -58,7 +57,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         @Suppress("UNCHECKED_CAST")
         private fun selectInformationForSingleClass(resultClass: KClass<T>, tables: Tables): SelectInformation<T> {
-            val table = tables.allTables[resultClass] as KotysaTable<T>
+            val table = tables.allTables[resultClass] as KotysaTableOld<T>
             val fieldIndexMap = mutableMapOf<Field, Int>()
 
             // build selectedFields List & fill columnPropertyIndexMap
@@ -66,7 +65,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
             // Build select Function : (ValueProvider) -> T
             val select: SelectDslApi.(ValueProvider) -> T = { it ->
-                val associatedColumns = mutableListOf<Column<*, *>>()
+                val associatedColumns = mutableListOf<KotysaColumn<*, *>>()
                 val constructor = getTableConstructor(table.tableClass)
                 val instance = with(constructor!!) {
                     val args = mutableMapOf<KParameter, Any?>()
@@ -136,7 +135,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 }
                 instance
             }
-            return SelectInformation(fieldIndexMap, selectedFields, setOf(AliasedKotysaTable(table)), select)
+            return SelectInformation(fieldIndexMap, selectedFields, setOf(AliasedKotysaTableOld(table)), select)
         }
 
         private fun valueProviderCall(getter: (T) -> Any?, valueProvider: ValueProvider): Any? =
@@ -173,7 +172,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
 
         private fun selectedFieldsFromTable(
-                columns: Map<(T) -> Any?, Column<T, *>>,
+                columns: Map<(T) -> Any?, KotysaColumn<T, *>>,
                 fieldIndexMap: MutableMap<Field, Int>
         ): List<Field> {
             val allColumns = tables.allColumns
@@ -277,6 +276,6 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 public class SelectInformation<T> internal constructor(
         public val fieldIndexMap: Map<Field, Int>,
         internal val selectedFields: List<Field>,
-        internal val selectedTables: Set<AliasedKotysaTable<*>>,
+        internal val selectedTables: Set<AliasedKotysaTableOld<*>>,
         public val select: SelectDslApi.(ValueProvider) -> T
 )

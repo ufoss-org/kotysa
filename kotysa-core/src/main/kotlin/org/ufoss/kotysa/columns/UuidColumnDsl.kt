@@ -7,7 +7,7 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 import java.util.*
 
-public abstract class UuidColumnDsl<T : Any, U : Any> protected constructor(
+public sealed class UuidColumnDsl<T : Any, U : Any>(
         entityGetter: (T) -> U?
 ) : ColumnDescriptionDsl<T, U>(entityGetter)
 

@@ -10,7 +10,7 @@ import org.ufoss.kotysa.columns.*
 /**
  * see [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
  */
-public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
+public class MysqlColumnDsl<T : Any, U : KotysaColumn<T, *>> internal constructor(
         init: MysqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
 ) : ColumnDsl<T, U, MysqlColumnDsl<T, U>>(init) {
 
@@ -18,7 +18,7 @@ public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
             : StringVarcharColumnNotNull<T> = StringVarcharColumnNotNullDsl(dsl, getter).initialize()
 
     public fun NullableStringColumnProperty<T>.varchar(dsl: (StringVarcharColumnNullableDsl<T>.() -> Unit)? = null)
-            : StringVarcharColumnNullable<T> = StringVarcharColumnNullableDsl(dsl, getter).initialize()
+            : StringVarcharKotysaColumnNullable<T> = StringVarcharColumnNullableDsl(dsl, getter).initialize()
 
     public fun NotNullLocalDateTimeColumnProperty<T>.dateTime(dsl: (LocalDateTimeDateTimeColumnNotNullDsl<T>.() -> Unit)? = null)
             : LocalDateTimeDateTimeColumnNotNull<T> = LocalDateTimeDateTimeColumnNotNullDsl(dsl, getter).initialize()
@@ -33,22 +33,22 @@ public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
             : KotlinxLocalDateTimeDateTimeColumnNullable<T> = KotlinxLocalDateTimeDateTimeColumnNullableDsl(dsl, getter).initialize()
 
     public fun NotNullLocalDateColumnProperty<T>.date(dsl: (LocalDateDateColumnNotNullDsl<T>.() -> Unit)? = null)
-            : LocalDateDateColumnNotNull<T> = LocalDateDateColumnNotNullDsl(dsl, getter).initialize()
+            : LocalDateDateKotysaColumnNotNull<T> = LocalDateDateColumnNotNullDsl(dsl, getter).initialize()
 
     public fun NullableLocalDateColumnProperty<T>.date(dsl: (LocalDateDateColumnNullableDsl<T>.() -> Unit)? = null)
-            : LocalDateDateColumnNullable<T> = LocalDateDateColumnNullableDsl(dsl, getter).initialize()
+            : LocalDateDateKotysaColumnNullable<T> = LocalDateDateColumnNullableDsl(dsl, getter).initialize()
 
     public fun NotNullKotlinxLocalDateColumnProperty<T>.date(dsl: (KotlinxLocalDateDateColumnNotNullDsl<T>.() -> Unit)? = null)
-            : KotlinxLocalDateDateColumnNotNull<T> = KotlinxLocalDateDateColumnNotNullDsl(dsl, getter).initialize()
+            : KotlinxLocalDateDateKotysaColumnNotNull<T> = KotlinxLocalDateDateColumnNotNullDsl(dsl, getter).initialize()
 
     public fun NullableKotlinxLocalDateColumnProperty<T>.date(dsl: (KotlinxLocalDateDateColumnNullableDsl<T>.() -> Unit)? = null)
-            : KotlinxLocalDateDateColumnNullable<T> = KotlinxLocalDateDateColumnNullableDsl(dsl, getter).initialize()
+            : KotlinxLocalDateDateKotysaColumnNullable<T> = KotlinxLocalDateDateColumnNullableDsl(dsl, getter).initialize()
 
     public fun NotNullOffsetDateTimeColumnProperty<T>.timestamp(dsl: (OffsetDateTimeTimestampColumnNotNullDsl<T>.() -> Unit)? = null)
             : OffsetDateTimeTimestampColumnNotNull<T> = OffsetDateTimeTimestampColumnNotNullDsl(dsl, getter).initialize()
 
     public fun NullableOffsetDateTimeColumnProperty<T>.timestamp(dsl: (OffsetDateTimeTimestampColumnNullableDsl<T>.() -> Unit)? = null)
-            : OffsetDateTimeTimestampColumnNullable<T> = OffsetDateTimeTimestampColumnNullableDsl(dsl, getter).initialize()
+            : OffsetDateTimeTimestampKotysaColumnNullable<T> = OffsetDateTimeTimestampColumnNullableDsl(dsl, getter).initialize()
 
     public fun NotNullLocalTimeColumnProperty<T>.time(dsl: (LocalTimeTimeColumnNotNullDsl<T>.() -> Unit)? = null)
             : LocalTimeTimeColumnNotNull<T> = LocalTimeTimeColumnNotNullDsl(dsl, getter).initialize()
@@ -56,8 +56,8 @@ public class MysqlColumnDsl<T : Any, U : Column<T, *>> internal constructor(
     public fun NullableLocalTimeColumnProperty<T>.time(dsl: (LocalTimeTimeColumnNullableDsl<T>.() -> Unit)? = null)
             : LocalTimeTimeColumnNullable<T> = LocalTimeTimeColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NotNullBooleanColumnProperty<T>.boolean(dsl: (BooleanBooleanColumnDsl<T>.() -> Unit)? = null)
-            : BooleanBooleanColumnNotNull<T> = BooleanBooleanColumnDsl(dsl, getter).initialize()
+    public fun NotNullBooleanColumnProperty<T>.boolean(dsl: (BooleanColumnDsl<T>.() -> Unit)? = null)
+            : BooleanBooleanColumnNotNull<T> = BooleanColumnDsl(dsl, getter).initialize()
 
     public fun NotNullIntColumnProperty<T>.integer(dsl: (IntIntegerColumnNotNullDsl<T>.() -> Unit)? = null)
             : IntIntegerColumnNotNull<T> = IntIntegerColumnNotNullDsl(dsl, getter).initialize()

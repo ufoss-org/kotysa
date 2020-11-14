@@ -4,15 +4,15 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 
 
 @KotysaMarker
 public class JoinDsl internal constructor(
         private val init: (FieldProvider) -> ColumnField<*, *>,
-        private val table: AliasedKotysaTable<*>,
+        private val table: AliasedKotysaTableOld<*>,
         private val type: JoinType,
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         dbType: DbType
 ) : SimpleFieldProvider(availableColumns, dbType) {
 

@@ -4,34 +4,43 @@
 
 package org.ufoss.kotysa.columns
 
+import org.ufoss.kotysa.Column
 import org.ufoss.kotysa.SqlType
 
-internal interface IntegerColumn<T : Any, U : Any> : Column<T, U>, NoSize<T, U> {
-    override val sqlType get() = SqlType.INTEGER
+public sealed class IntegerColumn<T : Any, U : Any> : Column<T, U>() {
+    // No size
+    final override val size = null
+
+    final override val sqlType = SqlType.INTEGER
 }
 
 
-public abstract class IntegerColumnNotNull<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), IntegerColumn<T, U>, ColumnNotNull<T, U>
+public sealed class IntegerColumnNotNull<T : Any, U : Any> : IntegerColumn<T, U>() {
+    // Not null
+    final override val isNullable: Boolean = false
+    final override val defaultValue: U? = null
+}
 
-
-public abstract class IntegerColumnNullable<T : Any, U : Any> protected constructor()
-    : AbstractColumn<T, U>(), IntegerColumn<T, U>, ColumnNullable<T, U>, NoAutoIncrement<T, U>
-
-public class IntIntegerColumnNotNull<T : Any>(
+public class IntIntegerColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String,
         override val isAutoIncrement: Boolean,
 ) : IntegerColumnNotNull<T, Int>(), IntFieldColumnNotNull
 
-public class IntIntegerColumnNullable<T : Any>(
+public class IntIntegerColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: Int?,
-) : IntegerColumnNullable<T, Int>(), IntFieldColumnNullable
+) : IntegerColumn<T, Int>(), IntFieldColumnNullable {
+    // No auto-increment
+    override val isAutoIncrement = false
+}
 
-public class BooleanIntegerColumnNotNull<T : Any>(
+public class BooleanIntegerColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Boolean,
         override val name: String,
-) : IntegerColumnNotNull<T, Boolean>(), NoAutoIncrement<T, Boolean>, BooleanFieldColumnNotNull
+) : IntegerColumnNotNull<T, Boolean>(), BooleanFieldColumnNotNull {
+    // No auto-increment
+    override val isAutoIncrement = false
+}

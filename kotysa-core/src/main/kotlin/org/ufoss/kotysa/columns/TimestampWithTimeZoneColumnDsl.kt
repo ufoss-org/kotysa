@@ -7,7 +7,7 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 import java.time.OffsetDateTime
 
-public abstract class TimestampWithTimeZoneColumnDsl<T : Any, U : Any> protected constructor(
+public sealed class TimestampWithTimeZoneColumnDsl<T : Any, U : Any>(
         entityGetter: (T) -> U?
 ) : ColumnDescriptionDsl<T, U>(entityGetter) {
     public var fractionalSecondsPart: Int? = null

@@ -10,7 +10,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 
-public abstract class TextColumnDsl<T : Any, U : Any> protected constructor(
+public sealed class TextColumnDsl<T : Any, U : Any>(
         entityGetter: (T) -> U?
 ) : ColumnDescriptionDsl<T, U>(entityGetter)
 

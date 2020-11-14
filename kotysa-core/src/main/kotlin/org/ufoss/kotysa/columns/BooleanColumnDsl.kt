@@ -7,8 +7,8 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 
 @KotysaMarker
-public class BooleanBooleanColumnDsl<T : Any> internal constructor(
-        private val init: (BooleanBooleanColumnDsl<T>.() -> Unit)?,
+public class BooleanColumnDsl<T : Any> internal constructor(
+        private val init: (BooleanColumnDsl<T>.() -> Unit)?,
         private val entityGetter: (T) -> Boolean
 ) : ColumnDescriptionDsl<T, Boolean>(entityGetter) {
 

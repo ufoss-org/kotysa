@@ -8,9 +8,9 @@ package org.ufoss.kotysa
  * A table with an alias (that may be null)
  */
 internal class AliasedKotysaTable<T : Any> internal constructor(
-        internal val table: KotysaTable<T>,
+        internal val kotysaTable: KotysaTable<T>,
         internal val alias: String? = null
-) : KotysaTable<T> by table {
+) : KotysaTable<T> by kotysaTable {
 
     /**
      * The prefix : alias if exists, or table name

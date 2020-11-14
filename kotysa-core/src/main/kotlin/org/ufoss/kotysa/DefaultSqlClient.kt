@@ -5,7 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import org.ufoss.kotysa.columns.Column
+import org.ufoss.kotysa.columns.KotysaColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -21,8 +21,8 @@ import kotlin.reflect.full.allSuperclasses
 private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
 
 @Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
-        requireNotNull(this.allTables[tableClass] as KotysaTable<T>?) { tableMustBeMapped(tableClass.qualifiedName) }
+public fun <T : Any> Tables.getTable(table: Table<out T>): KotysaTable<T> =
+        requireNotNull(this.allTables[table] as KotysaTable<T>?) { tableMustBeMapped(table.name) }
 
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
     require(this.allTables.containsKey(tableClass)) { tableMustBeMapped(tableClass.qualifiedName) }
@@ -34,10 +34,10 @@ private val logger = Logger.of<DefaultSqlClient>()
 public interface DefaultSqlClient {
     public val tables: Tables
 
-    public fun createTableSql(tableClass: KClass<*>): String {
-        val table = tables.getTable(tableClass)
+    public fun createTableSql(table: Table<*>): String {
+        val table = tables.getTable(table)
 
-        val columns = table.columns.values.joinToString { column ->
+        val columns = table.columns.joinToString { column ->
             if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
                 requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
             }
@@ -172,7 +172,7 @@ public open class DefaultSqlClientCommon protected constructor() {
         public val tables: Tables
         public val whereClauses: MutableList<TypedWhereClause>
         public val joinClauses: MutableList<JoinClause>
-        public val availableColumns: MutableMap<(Any) -> Any?, Column<*, *>>
+        public val availableColumns: MutableSet<KotysaColumn<*, *>>
     }
 
     protected interface Instruction {
@@ -183,12 +183,12 @@ public open class DefaultSqlClientCommon protected constructor() {
         ) {
             properties.apply {
                 if (joinClauses.isEmpty() ||
-                        !joinClauses.map { joinClause -> joinClause.table.table }.contains(table)) {
-                    table.columns.forEach { (key, value) ->
+                        !joinClauses.map { joinClause -> joinClause.table.tableOld }.contains(table)) {
+                    table.columns.forEach { column ->
                         // 1) add mapped getter
-                        availableColumns[key as (Any) -> Any?] = value
+                        availableColumns += column
 
-                        val getterCallable = key.toCallable()
+                        val getterCallable = column.entityGetter.toCallable()
 
                         // 2) add overridden parent getters associated with this column
                         table.tableClass.allSuperclasses

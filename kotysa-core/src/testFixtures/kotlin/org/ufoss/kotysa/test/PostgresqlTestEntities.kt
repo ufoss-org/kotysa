@@ -13,6 +13,7 @@ import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+/*
 val postgresqlTables =
         tables().postgresql {
             table<PostgresqlRole> {
@@ -410,3 +411,5 @@ data class PostgresqlInt(
 
 val postgresqlIntWithNullable = PostgresqlInt(10, 6)
 val postgresqlIntWithoutNullable = PostgresqlInt(12)
+
+*/
