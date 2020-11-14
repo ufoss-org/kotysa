@@ -4,33 +4,35 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbColumn
+import org.ufoss.kotysa.OffsetDateTimeColumnNotNull
+import org.ufoss.kotysa.OffsetDateTimeColumnNullable
 import org.ufoss.kotysa.SqlType
 import java.time.OffsetDateTime
 
-public sealed class TimestampWithTimeZoneColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbTimestampWithTimeZoneColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
 
     final override val sqlType = SqlType.TIMESTAMP_WITH_TIME_ZONE
 }
 
-public sealed class TimestampWithTimeZoneColumnNotNull<T : Any, U : Any> : TimestampWithTimeZoneColumn<T, U>() {
+public sealed class DbTimestampWithTimeZoneColumnNotNull<T : Any, U : Any> : DbTimestampWithTimeZoneColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class OffsetDateTimeTimestampWithTimeZoneColumnNotNull<T : Any> internal constructor(
+public class OffsetDateTimeDbTimestampWithTimeZoneColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String,
         override val size: Int?,
-) : TimestampWithTimeZoneColumnNotNull<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNotNull
+) : DbTimestampWithTimeZoneColumnNotNull<T, OffsetDateTime>(), OffsetDateTimeColumnNotNull<T>
 
-public class OffsetDateTimeTimestampWithTimeZoneColumnNullable<T : Any> internal constructor(
+public class OffsetDateTimeDbTimestampWithTimeZoneColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: OffsetDateTime?,
         override val size: Int?,
-) : TimestampWithTimeZoneColumn<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNullable
+) : DbTimestampWithTimeZoneColumn<T, OffsetDateTime>(), OffsetDateTimeColumnNullable<T>

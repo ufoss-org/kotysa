@@ -4,12 +4,11 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
-import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.*
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
-public sealed class TimestampColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbTimestampColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
 
@@ -17,50 +16,50 @@ public sealed class TimestampColumn<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public sealed class TimestampColumnNotNull<T : Any, U : Any> : TimestampColumn<T, U>() {
+public sealed class DbTimestampColumnNotNull<T : Any, U : Any> : DbTimestampColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class LocalDateTimeTimestampColumnNotNull<T : Any> internal constructor(
+public class LocalDateTimeDbTimestampColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDateTime?,
         override val name: String,
         override val size: Int?,
-) : TimestampColumnNotNull<T, LocalDateTime>(), LocalDateTimeFieldColumnNotNull
+) : DbTimestampColumnNotNull<T, LocalDateTime>(), LocalDateTimeColumnNotNull<T>
 
-public class LocalDateTimeTimestampColumnNullable<T : Any> internal constructor(
+public class LocalDateTimeDbTimestampColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: LocalDateTime?,
         override val size: Int?,
-) : TimestampColumn<T, LocalDateTime>(), LocalDateTimeFieldColumnNullable
+) : DbTimestampColumn<T, LocalDateTime>(), LocalDateTimeColumnNullable<T>
 
-public class KotlinxLocalDateTimeTimestampColumnNotNull<T : Any> internal constructor(
+public class KotlinxLocalDateTimeDbTimestampColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?,
         override val name: String,
         override val size: Int?,
-) : TimestampColumnNotNull<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeFieldColumnNotNull
+) : DbTimestampColumnNotNull<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeColumnNotNull<T>
 
-public class KotlinxLocalDateTimeTimestampColumnNullable<T : Any> internal constructor(
+public class KotlinxLocalDateTimeDbTimestampColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: kotlinx.datetime.LocalDateTime?,
         override val size: Int?,
-) : TimestampColumn<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeFieldColumnNullable
+) : DbTimestampColumn<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeColumnNullable<T>
 
-public class OffsetDateTimeTimestampColumnNotNull<T : Any> internal constructor(
+public class OffsetDateTimeDbTimestampColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String,
         override val size: Int?,
-) : TimestampColumnNotNull<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNotNull
+) : DbTimestampColumnNotNull<T, OffsetDateTime>(), OffsetDateTimeColumnNotNull<T>
 
-public class OffsetDateTimeTimestampColumnNullable<T : Any> internal constructor(
+public class OffsetDateTimeDbTimestampColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: OffsetDateTime?,
         override val size: Int?,
-) : TimestampColumn<T, OffsetDateTime>(), OffsetDateTimeFieldColumnNullable
+) : DbTimestampColumn<T, OffsetDateTime>(), OffsetDateTimeColumnNullable<T>

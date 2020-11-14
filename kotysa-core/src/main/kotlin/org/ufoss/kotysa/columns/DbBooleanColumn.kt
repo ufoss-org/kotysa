@@ -4,10 +4,11 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.BooleanColumnNotNull
+import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.SqlType
 
-public sealed class BooleanColumnNotNull<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbBooleanColumnNotNull<T : Any, U : Any> : DbColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
@@ -19,7 +20,7 @@ public sealed class BooleanColumnNotNull<T : Any, U : Any> : Column<T, U>() {
     final override val sqlType: SqlType = SqlType.BOOLEAN
 }
 
-public class BooleanBooleanColumnNotNull<T : Any> internal constructor(
+public class BooleanDbBooleanColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Boolean,
         override val name: String,
-) : BooleanColumnNotNull<T, Boolean>(), BooleanFieldColumnNotNull
+) : DbBooleanColumnNotNull<T, Boolean>(), BooleanColumnNotNull<T>

@@ -4,11 +4,10 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
-import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.*
 import java.time.LocalDate
 
-public sealed class DateColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbDateColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
     // No size
@@ -18,32 +17,32 @@ public sealed class DateColumn<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public sealed class DateColumnNotNull<T : Any, U : Any> : DateColumn<T, U>() {
+public sealed class DbDateColumnNotNull<T : Any, U : Any> : DbDateColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class LocalDateDateColumnNotNull<T : Any> internal constructor(
+public class LocalDateDbDateColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDate?,
         override val name: String,
-) : DateColumnNotNull<T, LocalDate>(), LocalDateFieldColumnNotNull
+) : DbDateColumnNotNull<T, LocalDate>(), LocalDateColumnNotNull<T>
 
-public class LocalDateDateColumnNullable<T : Any> internal constructor(
+public class LocalDateDbDateColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDate?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: LocalDate?,
-) : DateColumn<T, LocalDate>(), LocalDateFieldColumnNullable
+) : DbDateColumn<T, LocalDate>(), LocalDateColumnNullable<T>
 
-public class KotlinxLocalDateDateColumnNotNull<T : Any> internal constructor(
+public class KotlinxLocalDateDbDateColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDate?,
         override val name: String,
-) : DateColumnNotNull<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateFieldColumnNotNull
+) : DbDateColumnNotNull<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateColumnNotNull<T>
 
-public class KotlinxLocalDateDateColumnNullable<T : Any> internal constructor(
+public class KotlinxLocalDateDbDateColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDate?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: kotlinx.datetime.LocalDate?,
-) : DateColumn<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateFieldColumnNullable
+) : DbDateColumn<T, kotlinx.datetime.LocalDate>(), KotlinxLocalDateColumnNullable<T>

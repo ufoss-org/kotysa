@@ -7,13 +7,13 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 
 @KotysaMarker
-public class SerialColumnDsl<T : Any> internal constructor(
-        private val init: (SerialColumnDsl<T>.() -> Unit)?,
+public class DbDbSerialColumnDsl<T : Any> internal constructor(
+        private val init: (DbDbSerialColumnDsl<T>.() -> Unit)?,
         private val entityGetter: (T) -> Int?
 ) : ColumnDescriptionDsl<T, Int>(entityGetter) {
 
-    internal fun initialize(): IntSerialColumnNotNull<T> {
+    internal fun initialize(): IntDbSerialColumnNotNull<T> {
         init?.invoke(this)
-        return IntSerialColumnNotNull(entityGetter, columnName)
+        return IntDbSerialColumnNotNull(entityGetter, columnName)
     }
 }

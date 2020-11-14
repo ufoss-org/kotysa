@@ -4,10 +4,12 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.StringColumnNotNull
+import org.ufoss.kotysa.StringColumnNullable
 
-public sealed class VarcharColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbVarcharColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
 
@@ -15,22 +17,22 @@ public sealed class VarcharColumn<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public sealed class VarcharColumnNotNull<T : Any, U : Any> : VarcharColumn<T, U>() {
+public sealed class DbVarcharColumnNotNull<T : Any, U : Any> : DbVarcharColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class StringVarcharColumnNotNull<T : Any> internal constructor(
+public class StringDbVarcharColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
         override val name: String,
         override val size: Int?,
-) : VarcharColumnNotNull<T, String>(), StringFieldColumnNotNull
+) : DbVarcharColumnNotNull<T, String>(), StringColumnNotNull<T>
 
-public class StringVarcharColNullable<T : Any> internal constructor(
+public class StringDbVarcharColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: String?,
         override val size: Int?,
-) : VarcharColumn<T, String>(), StringFieldColumnNullable
+) : DbVarcharColumn<T, String>(), StringColumnNullable<T>

@@ -4,10 +4,11 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbColumn
+import org.ufoss.kotysa.IntColumnNotNull
 import org.ufoss.kotysa.SqlType
 
-public sealed class SerialColumnNotNull<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbSerialColumnNotNull<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
     // No size
@@ -20,7 +21,7 @@ public sealed class SerialColumnNotNull<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public class IntSerialColumnNotNull<T : Any> internal constructor(
+public class IntDbSerialColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String,
-) : SerialColumnNotNull<T, Int>(), IntFieldColumnNotNull
+) : DbSerialColumnNotNull<T, Int>(), IntColumnNotNull<T>

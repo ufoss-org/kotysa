@@ -10,7 +10,7 @@ package org.ufoss.kotysa
  * @param T Entity type associated with the table this column is in
  * @param U return type of associated getter to this column
  */
-public abstract class Column<T : Any, U : Any> internal constructor() {
+public abstract class DbColumn<T : Any, U : Any> internal constructor() {
     internal abstract val entityGetter: (T) -> U?
     internal abstract val name: String?
     internal abstract val sqlType: SqlType

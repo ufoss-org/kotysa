@@ -4,11 +4,13 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.UuidColumnNotNull
+import org.ufoss.kotysa.UuidColumnNullable
 import java.util.*
 
-public sealed class UuidColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbUuidColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
     // No size
@@ -18,21 +20,21 @@ public sealed class UuidColumn<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public sealed class UuidColumnNotNull<T : Any, U : Any> : UuidColumn<T, U>() {
+public sealed class DbUuidColumnNotNull<T : Any, U : Any> : DbUuidColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class UuidUuidColumnNotNull<T : Any> internal constructor(
+public class UuidDbUuidColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> UUID?,
         override val name: String,
-) : UuidColumnNotNull<T, UUID>(), UuidFieldColumnNotNull
+) : DbUuidColumnNotNull<T, UUID>(), UuidColumnNotNull<T>
 
 
-public class UuidUuidColumnNullable<T : Any> internal constructor(
+public class UuidDbUuidColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> UUID?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: UUID?,
-) : UuidColumn<T, UUID>(), UuidFieldColumnNullable
+) : DbUuidColumn<T, UUID>(), UuidColumnNullable<T>

@@ -4,10 +4,9 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
-import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.*
 
-public sealed class IntegerColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbIntegerColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No size
     final override val size = null
 
@@ -15,32 +14,32 @@ public sealed class IntegerColumn<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public sealed class IntegerColumnNotNull<T : Any, U : Any> : IntegerColumn<T, U>() {
+public sealed class DbIntegerColumnNotNull<T : Any, U : Any> : DbIntegerColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class IntIntegerColumnNotNull<T : Any> internal constructor(
+public class IntDbIntegerColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String,
         override val isAutoIncrement: Boolean,
-) : IntegerColumnNotNull<T, Int>(), IntFieldColumnNotNull
+) : DbIntegerColumnNotNull<T, Int>(), IntColumnNotNull<T>
 
-public class IntIntegerColumnNullable<T : Any> internal constructor(
+public class IntDbIntegerColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: Int?,
-) : IntegerColumn<T, Int>(), IntFieldColumnNullable {
+) : DbIntegerColumn<T, Int>(), IntColumnNullable<T> {
     // No auto-increment
     override val isAutoIncrement = false
 }
 
-public class BooleanIntegerColumnNotNull<T : Any> internal constructor(
+public class BooleanDbIntegerColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Boolean,
         override val name: String,
-) : IntegerColumnNotNull<T, Boolean>(), BooleanFieldColumnNotNull {
+) : DbIntegerColumnNotNull<T, Boolean>(), BooleanColumnNotNull<T> {
     // No auto-increment
     override val isAutoIncrement = false
 }

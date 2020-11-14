@@ -4,11 +4,13 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbColumn
+import org.ufoss.kotysa.LocalTimeColumnNotNull
+import org.ufoss.kotysa.LocalTimeColumnNullable
 import org.ufoss.kotysa.SqlType
 import java.time.LocalTime
 
-public sealed class TimeColumn<T : Any, U : Any> : Column<T, U>() {
+public sealed class DbTimeColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement = false
 
@@ -16,22 +18,22 @@ public sealed class TimeColumn<T : Any, U : Any> : Column<T, U>() {
 }
 
 
-public sealed class TimeColumnNotNull<T : Any, U : Any> : TimeColumn<T, U>() {
+public sealed class DbTimeColumnNotNull<T : Any, U : Any> : DbTimeColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
 }
 
-public class LocalTimeTimeColumnNotNull<T : Any> internal constructor(
+public class LocalTimeDbTimeColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
         override val name: String,
         override val size: Int?,
-) : TimeColumnNotNull<T, LocalTime>(), LocalTimeFieldColumnNotNull
+) : DbTimeColumnNotNull<T, LocalTime>(), LocalTimeColumnNotNull<T>
 
-public class LocalTimeTimeColumnNullable<T : Any> internal constructor(
+public class LocalTimeDbTimeColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
         override val name: String,
         override val isNullable: Boolean,
         override val defaultValue: LocalTime?,
         override val size: Int?,
-) : TimeColumn<T, LocalTime>(), LocalTimeFieldColumnNullable
+) : DbTimeColumn<T, LocalTime>(), LocalTimeColumnNullable<T>
