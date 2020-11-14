@@ -1,6 +1,8 @@
-package org.ufoss.kotysa
+/*
+ * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
+ */
 
-import java.time.LocalDate
+package org.ufoss.kotysa
 
 /**
  * Represents a Column

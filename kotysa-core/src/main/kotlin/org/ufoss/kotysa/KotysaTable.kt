@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.KotysaColumn
 import kotlin.reflect.KClass
 
 /**

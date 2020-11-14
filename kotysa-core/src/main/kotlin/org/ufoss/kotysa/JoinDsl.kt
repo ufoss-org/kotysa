@@ -4,8 +4,6 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.KotysaColumn
-
 
 @KotysaMarker
 public class JoinDsl internal constructor(

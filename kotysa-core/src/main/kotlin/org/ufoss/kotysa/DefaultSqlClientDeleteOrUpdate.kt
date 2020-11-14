@@ -5,7 +5,6 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import org.ufoss.kotysa.columns.KotysaColumn
 import kotlin.reflect.KClass
 
 private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()

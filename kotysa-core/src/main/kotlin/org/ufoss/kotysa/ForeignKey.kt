@@ -4,8 +4,6 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.KotysaColumn
-
 
 public class ForeignKey<T : Any, U : Any> @PublishedApi internal constructor(
         internal val referencedTable: Table<U>,

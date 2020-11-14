@@ -1,6 +1,5 @@
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.KotysaColumn
 import org.ufoss.kotysa.columns.KotysaColumnNotNull
 import org.ufoss.kotysa.columns.KotysaColumnNullable
 import kotlin.reflect.KClass

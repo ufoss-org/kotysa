@@ -2,9 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.columns
-
-import org.ufoss.kotysa.*
+package org.ufoss.kotysa
 
 /**
  * One database Table's Column model mapped by entity's [entityGetter]

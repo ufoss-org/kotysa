@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.KotysaColumn
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import kotlin.reflect.KClass

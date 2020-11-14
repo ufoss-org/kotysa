@@ -1,6 +1,6 @@
 package org.ufoss.kotysa.sqlite
 
-import org.ufoss.kotysa.columns.KotysaColumn
+import org.ufoss.kotysa.KotysaColumn
 import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.TableColumnPropertyProvider
 
