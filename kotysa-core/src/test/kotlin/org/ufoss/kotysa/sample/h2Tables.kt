@@ -4,25 +4,9 @@
 
 package org.ufoss.kotysa.sample
 
+import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.tables
 import java.util.*
-
-fun h2Tables() =
-        tables().h2Old { // choose database type
-            table<H2User> {
-                name = "users"
-                column { it[H2User::id].uuid() }
-                        .primaryKey()
-                column { it[H2User::firstname].varchar {
-                    name = "fname"
-                } }
-                column { it[H2User::lastname].varchar {
-                    name = "lname"
-                } }
-                column { it[H2User::isAdmin].boolean() }
-                column { it[H2User::alias].varchar() }
-            }
-        }
 
 data class H2User(
         val firstname: String,
@@ -31,3 +15,18 @@ data class H2User(
         val alias: String? = null,
         val id: UUID
 )
+
+object H2_USER : H2Table<H2User>() {
+    val id = column { it[H2User::id].uuid() }
+            .primaryKey()
+    val firstname = column { it[H2User::firstname].varchar {
+        name = "fname"
+    } }
+    val lastname = column { it[H2User::lastname].varchar {
+        name = "lname"
+    } }
+    val isAdmin = column { it[H2User::isAdmin].boolean() }
+    val alias = column { it[H2User::alias].varchar() }
+}
+
+fun h2Tables() = tables().h2(H2_USER)

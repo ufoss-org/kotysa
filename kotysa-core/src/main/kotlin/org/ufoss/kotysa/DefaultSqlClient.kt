@@ -12,9 +12,6 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.full.allSuperclasses
 
 
 private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
@@ -23,8 +20,12 @@ private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableNam
 public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
         requireNotNull(this.allTables[table]) { tableMustBeMapped(table.name) } as KotysaTable<T>
 
+@Suppress("UNCHECKED_CAST")
+public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
+        requireNotNull(this.allTables.values.first { kClass -> kClass == tableClass }) as KotysaTable<T>
+
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
-    require(this.allTables.containsKey(tableClass)) { tableMustBeMapped(tableClass.qualifiedName) }
+    require(this.allTables.values.any { kClass -> kClass == tableClass }) { tableMustBeMapped(tableClass.qualifiedName) }
 }
 
 private val logger = Logger.of<DefaultSqlClient>()
@@ -34,9 +35,9 @@ public interface DefaultSqlClient {
     public val tables: Tables
 
     public fun createTableSql(table: Table<*>): String {
-        val table = tables.getTable(table)
+        val kotysaTable = tables.getTable(table)
 
-        val columns = table.columns.joinToString { column ->
+        val columns = kotysaTable.columns.joinToString { column ->
             if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
                 requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
             }
@@ -58,7 +59,7 @@ public interface DefaultSqlClient {
             "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
         }
 
-        val pk = table.primaryKey
+        val pk = kotysaTable.primaryKey
         var primaryKey = if (pk.name != null) {
             "CONSTRAINT ${pk.name} "
         } else {
@@ -67,10 +68,10 @@ public interface DefaultSqlClient {
         primaryKey += "PRIMARY KEY (${pk.columns.joinToString { it.name }})"
 
         val foreignKeys =
-                if (table.foreignKeys.isEmpty()) {
+                if (kotysaTable.foreignKeys.isEmpty()) {
                     ""
                 } else {
-                    table.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
+                    kotysaTable.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
                         var foreignKeyStatement = if (foreignKey.name != null) {
                             "CONSTRAINT ${foreignKey.name} "
                         } else {
@@ -83,7 +84,7 @@ public interface DefaultSqlClient {
                     }
                 }
 
-        val createTableSql = "CREATE TABLE IF NOT EXISTS ${table.name} ($columns, $primaryKey$foreignKeys)"
+        val createTableSql = "CREATE TABLE IF NOT EXISTS ${kotysaTable.name} ($columns, $primaryKey$foreignKeys)"
         logger.debug { "Exec SQL (${tables.dbType.name}) : $createTableSql" }
         return createTableSql
     }
@@ -104,10 +105,10 @@ public interface DefaultSqlClient {
     }
 
     public fun <T : Any> insertSqlQuery(row: T): String {
-        val table = tables.getTable(row::class)
+        val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         var index = 0
-        val values = table.columns.values
+        val values = kotysaTable.columns
                 // filter out null values with default value or Serial type
                 .filterNot { column ->
                     column.entityGetter(row) == null
@@ -122,7 +123,7 @@ public interface DefaultSqlClient {
                     }
                 }
 
-        return "INSERT INTO ${table.name} (${columnNames.joinToString()}) VALUES ($values)"
+        return "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
     }
 }
 
@@ -164,14 +165,14 @@ private fun Any?.defaultValue(): String = when (this) {
     else -> "'${this.dbValue()}'"
 }
 
-
+/*
 public open class DefaultSqlClientCommon protected constructor() {
 
     public interface Properties {
         public val tables: Tables
         public val whereClauses: MutableList<TypedWhereClause>
         public val joinClauses: MutableList<JoinClause>
-        public val availableColumns: MutableSet<KotysaColumn<*, *>>
+        public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
     }
 
     protected interface Instruction {
@@ -182,12 +183,12 @@ public open class DefaultSqlClientCommon protected constructor() {
         ) {
             properties.apply {
                 if (joinClauses.isEmpty() ||
-                        !joinClauses.map { joinClause -> joinClause.table.tableOld }.contains(table)) {
-                    table.columns.forEach { column ->
+                        !joinClauses.map { joinClause -> joinClause.table.kotysaTable }.contains(table)) {
+                    table.columns.forEach { kotysaColumn ->
                         // 1) add mapped getter
-                        availableColumns += column
+                        availableColumns[kotysaColumn.column] = kotysaColumn
 
-                        val getterCallable = column.entityGetter.toCallable()
+                        /*val getterCallable = kotysaColumn.entityGetter.toCallable()
 
                         // 2) add overridden parent getters associated with this column
                         table.tableClass.allSuperclasses
@@ -201,7 +202,7 @@ public open class DefaultSqlClientCommon protected constructor() {
                                 }
                                 .forEach { callable ->
                                     availableColumns[callable as (Any) -> Any?] = value
-                                }
+                                }*/
                     }
                 }
             }
@@ -377,4 +378,4 @@ public open class DefaultSqlClientCommon protected constructor() {
             return where.toString()
         }
     }
-}
+}*/

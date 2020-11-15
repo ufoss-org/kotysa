@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 
 public class WhereClause internal constructor(
         internal val field: Field,
@@ -22,4 +22,4 @@ public class TypedWhereClause internal constructor(
 
 internal enum class WhereClauseType {
     WHERE, AND, OR
-}
+}*/

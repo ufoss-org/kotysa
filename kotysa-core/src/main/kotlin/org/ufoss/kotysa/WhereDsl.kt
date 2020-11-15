@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.LocalDate
@@ -473,4 +473,4 @@ public class TypedWhereDsl<T : Any> internal constructor(
     internal fun initialize(): WhereClause {
         return init(this)
     }
-}
+}*/

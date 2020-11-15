@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import kotlinx.coroutines.flow.Flow
 import kotlin.reflect.KClass
 
@@ -170,4 +170,4 @@ public class CoroutinesSqlClientDeleteOrUpdate private constructor() {
          */
         public suspend fun execute(): Int
     }
-}
+}*/

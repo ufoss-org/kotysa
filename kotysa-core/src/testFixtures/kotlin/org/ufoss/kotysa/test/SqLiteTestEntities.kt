@@ -61,8 +61,10 @@ object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>() {
     val localDate = column { it[AllTypesNullableEntity::localDate].text() }
     val kotlinxLocalDate = column { it[AllTypesNullableEntity::kotlinxLocalDate].text() }
     val localTime = column { it[AllTypesNullableEntity::localTim].text() }
-    val localDateTime = column { it[AllTypesNullableEntity::localDateTime].text() }
-    val kotlinxLocalDateTime = column { it[AllTypesNullableEntity::kotlinxLocalDateTime].text() }
+    val localDateTime1 = column { it[AllTypesNullableEntity::localDateTime1].text() }
+    val localDateTime2 = column { it[AllTypesNullableEntity::localDateTime2].text() }
+    val kotlinxLocalDateTime1 = column { it[AllTypesNullableEntity::kotlinxLocalDateTime1].text() }
+    val kotlinxLocalDateTime2 = column { it[AllTypesNullableEntity::kotlinxLocalDateTime2].text() }
     val int = column { it[AllTypesNullableEntity::int].integer() }
 }
 
@@ -89,14 +91,24 @@ object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE : SqLiteTable<AllTypesNullableDef
             defaultValue = LocalTime.of(11, 25, 55)
         }
     }
-    val localDateTime = column {
-        it[AllTypesNullableDefaultValueEntity::localDateTime].text {
+    val localDateTime1 = column {
+        it[AllTypesNullableDefaultValueEntity::localDateTime1].text {
             defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
         }
     }
-    val kotlinxLocalDateTime = column {
-        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime].text {
+    val localDateTime2 = column {
+        it[AllTypesNullableDefaultValueEntity::localDateTime2].text {
+            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+        }
+    }
+    val kotlinxLocalDateTime1 = column {
+        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1].text {
             defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+        }
+    }
+    val kotlinxLocalDateTime2 = column {
+        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2].text {
+            defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
         }
     }
     val int = column {

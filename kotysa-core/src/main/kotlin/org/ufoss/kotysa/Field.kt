@@ -4,16 +4,23 @@
 
 package org.ufoss.kotysa
 
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.util.*
+internal fun Column<*, *>?.getCountFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+    val counted = this?.getFieldName(availableColumns) ?: "*"
+    return "COUNT($counted)"
+}
 
+internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+    val kotysaColumn = requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" }
+    return if (this is AliasedTable<*>) {
+        "$alias."
+    } else {
+        "${kotysaColumn.table.name}."
+    } + kotysaColumn.name
+}
 
+/*
 public interface Field {
     public val fieldName: String
-    public val alias: String?
 }
 
 
@@ -23,14 +30,18 @@ public interface NotNullField : Field
 public interface NullableField : Field
 
 public class CountField<T : Any, U : Any> internal constructor(
-        internal val dsl: ((FieldProvider) -> ColumnField<T, *>)?,
-        columnField: ColumnField<T, U>?,
-        override val alias: String?
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: Column<T, U>?,
+        internal val dbType: DbType
 ) : NotNullField {
     override val fieldName: String
 
     init {
-        val counted = columnField?.fieldName ?: "*"
+        val counted = if (column != null) {
+            column.getFieldName()
+        } else {
+            "*"
+        }
         fieldName = "COUNT($counted)"
     }
 }
@@ -38,176 +49,149 @@ public class CountField<T : Any, U : Any> internal constructor(
 
 @Suppress("UNCHECKED_CAST")
 public abstract class ColumnField<T : Any, U : Any> internal constructor(
-        availableColumns: Set<KotysaColumn<*, *>>,
-        getter: (T) -> Any?,
-        final override val alias: String?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: Column<T, U>,
         internal val dbType: DbType
 ) : Field {
 
-    internal val column: KotysaColumn<T, U>
+    internal val kotysaColumn: KotysaColumn<T, U>
 
     init {
-        if (alias != null) {
-            require(alias.isNotBlank()) { "An alias must not be empty or blank" }
-        }
-        require(availableColumns.containsKey(getter)) { "Requested field \"$getter\" is not mapped" }
-        column = availableColumns[getter]!! as KotysaColumn<T, U>
+        require(availableColumns.containsKey(column)) { "Requested column \"$column\" is not mapped" }
+        kotysaColumn = availableColumns[column] as KotysaColumn<T, U>
     }
 
-    override val fieldName: String =
-            if (alias != null) {
-                "$alias."
-            } else {
-                "${column.table.name}."
-            } + column.name
+    override val fieldName: String = "${kotysaColumn.table.name}.${kotysaColumn.name}"
 }
 
 
 public class NotNullStringColumnField<T : Any> internal constructor(
-        availableColumns: Set<KotysaColumn<*, *>>,
-        getter: (T) -> String,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: StringColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, String>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, String>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableStringColumnField<T : Any> internal constructor(
-        availableColumns: Set<KotysaColumn<*, *>>,
-        getter: (T) -> String?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: StringColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, String>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, String>(availableColumns, column, dbType), NullableField
 
 
 public class NotNullLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> LocalDateTime,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: LocalDateTimeColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, LocalDateTime>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, LocalDateTime>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> LocalDateTime?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: LocalDateTimeColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, LocalDateTime>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, LocalDateTime>(availableColumns, column, dbType), NullableField
 
 public class NotNullKotlinxLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> kotlinx.datetime.LocalDateTime,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: KotlinxLocalDateTimeColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, kotlinx.datetime.LocalDateTime>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, kotlinx.datetime.LocalDateTime>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableKotlinxLocalDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> kotlinx.datetime.LocalDateTime?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: KotlinxLocalDateTimeColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, kotlinx.datetime.LocalDateTime>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, kotlinx.datetime.LocalDateTime>(availableColumns, column, dbType), NullableField
 
 
 public class NotNullLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> LocalDate,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: LocalDateColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, LocalDate>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, LocalDate>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> LocalDate?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: LocalDateColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, LocalDate>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, LocalDate>(availableColumns, column, dbType), NullableField
 
 public class NotNullKotlinxLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> kotlinx.datetime.LocalDate,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: KotlinxLocalDateColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, kotlinx.datetime.LocalDate>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, kotlinx.datetime.LocalDate>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableKotlinxLocalDateColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> kotlinx.datetime.LocalDate?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: KotlinxLocalDateColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, kotlinx.datetime.LocalDate>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, kotlinx.datetime.LocalDate>(availableColumns, column, dbType), NullableField
 
 
 public class NotNullOffsetDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> OffsetDateTime,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: OffsetDateTimeColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, OffsetDateTime>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, OffsetDateTime>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableOffsetDateTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> OffsetDateTime?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: OffsetDateTimeColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, OffsetDateTime>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, OffsetDateTime>(availableColumns, column, dbType), NullableField
 
 
 public class NotNullLocalTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> LocalTime,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: LocalTimeColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, LocalTime>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, LocalTime>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableLocalTimeColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> LocalTime?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: LocalTimeColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, LocalTime>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, LocalTime>(availableColumns, column, dbType), NullableField
 
 
 public class NotNullBooleanColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> Boolean,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: BooleanColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, Boolean>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, Boolean>(availableColumns, column, dbType), NotNullField
 
 
 public class NotNullUuidColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> UUID,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: UuidColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, UUID>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, UUID>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableUuidColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> UUID?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: UuidColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, UUID>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, UUID>(availableColumns, column, dbType), NullableField
 
 
 public class NotNullIntColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> Int,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: IntColumnNotNull<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, Int>(availableColumns, getter, alias, dbType), NotNullField
+) : ColumnField<T, Int>(availableColumns, column, dbType), NotNullField
 
 
 public class NullableIntColumnField<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
-        getter: (T) -> Int?,
+        availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+        column: IntColumnNullable<T>,
         dbType: DbType,
-        alias: String? = null
-) : ColumnField<T, Int>(availableColumns, getter, alias, dbType), NullableField
+) : ColumnField<T, Int>(availableColumns, column, dbType), NullableField
+*/

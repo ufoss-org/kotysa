@@ -8,15 +8,17 @@ import java.util.stream.Stream
 import kotlin.reflect.KClass
 
 /**
- * Blocking Sql Client, to be used with any blocking JDBC driver
+ * Sql Client, to be used with a JDBC driver
  */
-public abstract class SqlClient {
+public interface SqlClient {
 
-    public abstract fun <T : Any> insert(row: T)
+    public fun <T : Any> insert(row: T)
 
-    public abstract fun insert(vararg rows: Any)
+    public fun <T : Any> insert(vararg rows: T)
 
-    public inline fun <reified T : Any> select(noinline dsl: SelectDslApi.(ValueProvider) -> T): SqlClientSelect.Select<T> = selectInternal(T::class, dsl)
+    public fun <T : Any> createTable(table: Table<T>)
+
+    /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
 
     public inline fun <reified T : Any> select(): SqlClientSelect.Select<T> = selectInternal(T::class, null)
 
@@ -24,19 +26,8 @@ public abstract class SqlClient {
 
     public inline fun <reified T : Any> countAll(): Long = selectInternal(Long::class) { count<T>() }.fetchOne()
 
-    @PublishedApi
-    internal fun <T : Any> selectInternal(resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?) =
-            select(resultClass, dsl)
-
     protected abstract fun <T : Any> select(
-            resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): SqlClientSelect.Select<T>
-
-    public inline fun <reified T : Any> createTable(): Unit = createTableInternal(T::class)
-
-    @PublishedApi
-    internal fun <T : Any> createTableInternal(tableClass: KClass<T>) = createTable(tableClass)
-
-    protected abstract fun <T : Any> createTable(tableClass: KClass<T>)
+            resultClass: KClass<T>, dsl: (SelectDslApi.() -> T)?): SqlClientSelect.Select<T>
 
     public inline fun <reified T : Any> deleteFromTable(): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> = deleteFromTableInternal(T::class)
 
@@ -54,10 +45,10 @@ public abstract class SqlClient {
     internal fun <T : Any> updateTableInternal(tableClass: KClass<T>) =
             updateTable(tableClass)
 
-    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T>
+    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T>*/
 }
 
-
+/*
 public class SqlClientSelect private constructor() {
     public abstract class Select<T : Any> : Whereable<T>, Return<T> {
 
@@ -170,4 +161,4 @@ public class SqlClientDeleteOrUpdate private constructor() {
          */
         public fun execute(): Int
     }
-}
+}*/

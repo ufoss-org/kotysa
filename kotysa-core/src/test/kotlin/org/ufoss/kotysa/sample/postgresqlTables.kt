@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.sample
-
+/*
 import org.ufoss.kotysa.tables
 import java.util.*
 
@@ -30,4 +30,4 @@ data class PostgresUser(
         val isAdmin: Boolean,
         val alias: String? = null,
         val id: UUID
-)
+)*/

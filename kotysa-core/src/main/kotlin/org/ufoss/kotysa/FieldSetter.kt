@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -50,4 +50,4 @@ public interface FieldSetter<T : Any> {
     public operator fun set(getter: (T) -> Int, value: Int)
 
     public operator fun set(getter: (T) -> Int?, value: Int?): Nullable
-}
+}*/

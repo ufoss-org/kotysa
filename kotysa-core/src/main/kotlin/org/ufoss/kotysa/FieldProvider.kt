@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -242,4 +242,4 @@ public open class SimpleTypedFieldProvider<T : Any> internal constructor(
 
     override fun get(getter: (T) -> Int?, alias: String?): NullableIntColumnField<T> =
             fieldAccess.getField(getter, alias)
-}
+}*/

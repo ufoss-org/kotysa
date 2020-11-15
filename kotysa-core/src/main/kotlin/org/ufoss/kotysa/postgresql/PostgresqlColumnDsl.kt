@@ -10,7 +10,7 @@ import org.ufoss.kotysa.columns.*
 /**
  * see [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
  */
-public class PostgresqlColumnDsl<T : Any, U : KotysaColumn<T, *>> internal constructor(
+public class PostgresqlColumnDsl<T : Any, U : DbColumn<T, *>> internal constructor(
         init: PostgresqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
 ) : ColumnDsl<T, U, PostgresqlColumnDsl<T, U>>(init) {
 

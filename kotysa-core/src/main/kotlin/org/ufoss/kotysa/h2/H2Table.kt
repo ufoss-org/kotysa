@@ -1,7 +1,6 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.DbColumn
-import org.ufoss.kotysa.KotysaColumn
 import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.TableColumnPropertyProvider
 

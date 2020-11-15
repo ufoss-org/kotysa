@@ -95,13 +95,15 @@ data class AllTypesNullableEntity(
         val localDate: LocalDate?,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
         val localTim: LocalTime?,
-        val localDateTime: LocalDateTime?,
-        val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime?,
+        val localDateTime1: LocalDateTime?,
+        val localDateTime2: LocalDateTime?,
+        val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
+        val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
         val int: Int?
 )
 
 val mysqlAllTypesNullable = AllTypesNullableEntity(1, null, null, null,
-        null, null, null, null)
+        null, null, null, null, null, null)
 
 
 data class AllTypesNullableDefaultValueEntity(
@@ -110,8 +112,10 @@ data class AllTypesNullableDefaultValueEntity(
         val localDate: LocalDate? = null,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
         val localTim: LocalTime? = null,
-        val localDateTime: LocalDateTime? = null,
-        val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime? = null,
+        val localDateTime1: LocalDateTime? = null,
+        val localDateTime2: LocalDateTime? = null,
+        val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
+        val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
         val int: Int? = null
 )
 

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import org.ufoss.kolog.Logger
 import kotlin.reflect.KClass
 
@@ -48,7 +48,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public fun addSetValue(dsl: (FieldSetter<T>) -> Unit) {
             properties.apply {
                 val setValue = UpdateSetDsl(dsl, availableColumns, tables.dbType).initialize()
-                setValues[setValue.first.column] = setValue.second
+                setValues[setValue.first.kotysaColumn] = setValue.second
             }
         }
     }
@@ -137,7 +137,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             if (joinClauses.isNotEmpty()) {
                 val rootJoinClause = joinClauses
                         .firstOrNull { joinClause ->
-                            joinClause.field.column.tableOld == tableOld
+                            joinClause.field.kotysaColumn.tableOld == tableOld
                                     && JoinType.INNER == joinClause.type
                         }
                         ?: throw IllegalArgumentException("There must be a join clause on one column of the table this query targets")
@@ -149,4 +149,4 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             }
         }
     }
-}
+}*/

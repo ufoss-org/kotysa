@@ -10,8 +10,8 @@ import kotlin.reflect.KClass
 public abstract class Table<T : Any> {
     public open lateinit var name: String
 
-    internal val columns = mutableSetOf<DbColumn<T, *>>()
-    internal lateinit var pk: PrimaryKey<T>
+    private val columns = mutableSetOf<DbColumn<T, *>>()
+    private lateinit var pk: PrimaryKey<T>
 
     @PublishedApi
     internal val foreignKeys = mutableSetOf<ForeignKey<T, *>>()

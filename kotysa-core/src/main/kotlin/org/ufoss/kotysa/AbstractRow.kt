@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -90,6 +90,6 @@ public abstract class AbstractRow(private val fieldIndexMap: Map<Field, Int>) : 
 
     private fun <T : Any, U> getIndexdByGetterAndAlias(getter: (T) -> U, alias: String?) =
             fieldIndexMap.filterKeys { field ->
-                field is ColumnField<*, *> && field.column.entityGetter == getter && field.alias == alias
+                field is ColumnField<*, *> && field.kotysaColumn.entityGetter == getter && field.alias == alias
             }.values.first()
-}
+}*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.sample
-
+/*
 import org.ufoss.kotysa.tables
 
 fun mysqlTables() =
@@ -29,4 +29,4 @@ data class MySqlUser(
         val isAdmin: Boolean,
         val alias: String? = null,
         val id: Int? = null
-)
+)*/

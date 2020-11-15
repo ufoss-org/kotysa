@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.LocalDate
@@ -120,4 +120,4 @@ public class UpdateSetDsl<T : Any> internal constructor(
         require(::columnField.isInitialized) { "One value assignment is required" }
         return Pair(columnField, value)
     }
-}
+}*/

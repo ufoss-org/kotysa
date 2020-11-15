@@ -63,8 +63,10 @@ object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>() {
     val localDate = column { it[AllTypesNullableEntity::localDate].date() }
     val kotlinxLocalDate = column { it[AllTypesNullableEntity::kotlinxLocalDate].date() }
     val localTime = column { it[AllTypesNullableEntity::localTim].time() } // todo test fractionalSecondsPart later
-    val localDateTime = column { it[AllTypesNullableEntity::localDateTime].dateTime() }
-    val kotlinxLocalDateTime = column { it[AllTypesNullableEntity::kotlinxLocalDateTime].dateTime() }
+    val localDateTime1 = column { it[AllTypesNullableEntity::localDateTime1].dateTime() }
+    val localDateTime2 = column { it[AllTypesNullableEntity::localDateTime2].timestamp() }
+    val kotlinxLocalDateTime1 = column { it[AllTypesNullableEntity::kotlinxLocalDateTime1].dateTime() }
+    val kotlinxLocalDateTime2 = column { it[AllTypesNullableEntity::kotlinxLocalDateTime2].timestamp() }
     val int = column { it[AllTypesNullableEntity::int].integer() }
 }
 
@@ -88,22 +90,31 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValu
     }
     val localTime = column {
         it[AllTypesNullableDefaultValueEntity::localTim].time {
-            defaultValue = LocalTime.of(11, 25, 55)
+            defaultValue = LocalTime.of(11, 25, 55, 123456789)
         }
     }
-    val localDateTime = column {
-        it[AllTypesNullableDefaultValueEntity::localDateTime].dateTime {
+    val localDateTime1 = column {
+        it[AllTypesNullableDefaultValueEntity::localDateTime1].dateTime {
             defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
         }
     }
-    val kotlinxLocalDateTime = column {
-        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime].dateTime {
+    val localDateTime2 = column {
+        it[AllTypesNullableDefaultValueEntity::localDateTime2].timestamp {
+            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+        }
+    }
+    val kotlinxLocalDateTime1 = column {
+        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1].dateTime {
             defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+        }
+    }
+    val kotlinxLocalDateTime2 = column {
+        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2].timestamp {
+            defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
         }
     }
     val int = column {
         it[AllTypesNullableDefaultValueEntity::int].integer {
-            name = "mysql_integer"
             defaultValue = 42
         }
     }

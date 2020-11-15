@@ -10,7 +10,7 @@ import org.ufoss.kotysa.columns.*
 /**
  * see [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
  */
-public class MysqlColumnDsl<T : Any, U : KotysaColumn<T, *>> internal constructor(
+public class MysqlColumnDsl<T : Any, U : DbColumn<T, *>> internal constructor(
         init: MysqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
 ) : ColumnDsl<T, U, MysqlColumnDsl<T, U>>(init) {
 

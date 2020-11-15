@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import org.ufoss.kolog.Logger
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -275,6 +275,5 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 public class SelectInformation<T> internal constructor(
         public val fieldIndexMap: Map<Field, Int>,
         internal val selectedFields: List<Field>,
-        internal val selectedTables: Set<AliasedKotysaTableOld<*>>,
-        public val select: SelectDslApi.(ValueProvider) -> T
-)
+        public val select: SelectDslApi.() -> T
+)*/

@@ -11,14 +11,20 @@ import java.time.OffsetDateTime
 import java.util.*
 
 /**
- * Represents a Column
+ * Represents a column
  *
  * @param T Entity type associated with the table this column is in
  * @param U return type of associated getter to this column
  */
 public interface Column<T : Any, U : Any>
 
+/**
+ * Not null column, its return type is <[U]>
+ */
 public interface ColumnNotNull<T : Any, U : Any> : Column<T, U>
+/**
+ * Nullable column, its return type is <[U]?>
+ */
 public interface ColumnNullable<T : Any, U : Any> : Column<T, U>
 
 public interface StringColumnNotNull<T : Any> : ColumnNotNull<T, String>
