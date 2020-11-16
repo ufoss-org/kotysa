@@ -12,15 +12,13 @@ import java.time.LocalTime
 
 const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
 
-object H2_ROLE : H2Table<RoleEntity>() {
-    override var name = "roles"
+object H2_ROLE : H2Table<RoleEntity>("roles") {
     val id = column { it[RoleEntity::id].integer() }
             .primaryKey()
     val label = column { it[RoleEntity::label].varchar() }
 }
 
-object H2_USER : H2Table<UserEntity>() {
-    override var name = "users"
+object H2_USER : H2Table<UserEntity>("users") {
     val id = column { it[UserEntity::id].integer() }
             .primaryKey("PK_users")
     val firstname = column {
@@ -39,8 +37,7 @@ object H2_USER : H2Table<UserEntity>() {
     val alias = column { it[UserEntity::alias].varchar() }
 }
 
-object H2_ALL_TYPES_NOT_NULL : H2Table<AllTypesNotNullEntity>() {
-    override var name = "all_types"
+object H2_ALL_TYPES_NOT_NULL : H2Table<AllTypesNotNullEntity>("all_types") {
     val id = column { it[AllTypesNotNullEntity::id].integer() }
             .primaryKey()
     val string = column { it[AllTypesNotNullEntity::string].varchar() }
@@ -55,8 +52,7 @@ object H2_ALL_TYPES_NOT_NULL : H2Table<AllTypesNotNullEntity>() {
     val int = column { it[AllTypesNotNullEntity::int].integer() }
 }
 
-object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>() {
-    override var name = "all_types_nullable"
+object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>("all_types_nullable") {
     val id = column { it[AllTypesNullableEntity::id].integer() }
             .primaryKey()
     val string = column { it[AllTypesNullableEntity::string].varchar() }

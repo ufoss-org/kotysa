@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -562,4 +562,4 @@ class OffsetDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables:
         sqlClient.select<SqLiteOffsetDateTime>()
             .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
             .fetchAll()
-}
+}*/

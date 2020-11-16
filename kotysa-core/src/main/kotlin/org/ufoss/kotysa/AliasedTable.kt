@@ -10,9 +10,7 @@ package org.ufoss.kotysa
 internal class AliasedTable<T : Any> internal constructor(
         table: Table<T>,
         internal val alias: String
-) : Table<T>() {
-
-    override var name = table.name
+) : Table<T>(table.name) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

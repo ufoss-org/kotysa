@@ -1,40 +1,40 @@
+package org.ufoss.kotysa.mysql
+
 /*
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.h2
-
 import org.ufoss.kotysa.*
 
 /**
- * Represents a H2 Table
+ * Represents a MySQL Table
  *
  * **Extend this class with an object**
  * @param T Entity type associated with this table
  */
-public abstract class H2Table<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
+public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
 
     /**
-     * Declare a Column, supported types follow : [H2 Data types](http://h2database.com/html/datatypes.html)
+     * Declare a Column, supported types follow : [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
      */
     protected fun <U : DbColumn<T, *>> column(
-            @BuilderInference dsl: H2ColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
+            @BuilderInference dsl: MysqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
     ): U {
-        val columnDsl = H2ColumnDsl(dsl)
+        val columnDsl = MysqlColumnDsl(dsl)
         val column = columnDsl.initialize<U>(columnDsl)
         addColumn(column)
         return column
     }
 
     protected fun <V : Any> foreignKey(
-            referencedTable: H2Table<V>,
+            referencedTable: MysqlTable<V>,
             vararg columns: DbColumn<T, *>,
             fkName: String? = null
     ) {
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
     }
 
-    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: H2Table<V>, fkName: String? = null): U {
+    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: MysqlTable<V>, fkName: String? = null): U {
         foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
         return this
     }

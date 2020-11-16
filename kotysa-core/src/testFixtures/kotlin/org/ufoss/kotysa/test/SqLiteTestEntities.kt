@@ -10,15 +10,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-object SQLITE_ROLE : SqLiteTable<RoleEntity>() {
-    override var name = "roles"
+object SQLITE_ROLE : SqLiteTable<RoleEntity>("roles") {
     val id = column { it[RoleEntity::id].integer() }
             .primaryKey()
     val label = column { it[RoleEntity::label].text() }
 }
 
-object SQLITE_USER : SqLiteTable<UserEntity>() {
-    override var name = "users"
+object SQLITE_USER : SqLiteTable<UserEntity>("users") {
     val id = column { it[UserEntity::id].integer() }
             .primaryKey("PK_users")
     val firstname = column {
@@ -33,12 +31,11 @@ object SQLITE_USER : SqLiteTable<UserEntity>() {
     }
     val isAdmin = column { it[UserEntity::isAdmin].integer() }
     val roleId = column { it[UserEntity::roleId].integer() }
-            .foreignKey(H2_ROLE, "FK_users_roles")
+            .foreignKey(SQLITE_ROLE, "FK_users_roles")
     val alias = column { it[UserEntity::alias].text() }
 }
 
-object SQLITE_ALL_TYPES_NOT_NULL : SqLiteTable<AllTypesNotNullEntity>() {
-    override var name = "all_types"
+object SQLITE_ALL_TYPES_NOT_NULL : SqLiteTable<AllTypesNotNullEntity>("all_types") {
     val id = column { it[AllTypesNotNullEntity::id].integer() }
             .primaryKey()
     val string = column { it[AllTypesNotNullEntity::string].text() }
@@ -53,8 +50,7 @@ object SQLITE_ALL_TYPES_NOT_NULL : SqLiteTable<AllTypesNotNullEntity>() {
     val int = column { it[AllTypesNotNullEntity::int].integer() }
 }
 
-object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>() {
-    override var name = "all_types_nullable"
+object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>("all_types_nullable") {
     val id = column { it[AllTypesNullableEntity::id].integer() }
             .primaryKey()
     val string = column { it[AllTypesNullableEntity::string].text() }

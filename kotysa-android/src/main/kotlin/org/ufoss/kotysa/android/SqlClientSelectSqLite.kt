@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
@@ -172,4 +172,4 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 }
         }
     }
-}
+}*/

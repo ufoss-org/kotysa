@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -103,4 +103,4 @@ class UserRepositorySelect(
             sqlClient.select<SqLiteUser>()
                     .where { it[SqLiteUser::alias] `in` aliases }
                     .fetchAll()
-}
+}*/

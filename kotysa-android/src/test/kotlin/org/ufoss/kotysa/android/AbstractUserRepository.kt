@@ -22,25 +22,25 @@ abstract class AbstractUserRepository(
     }
 
     override fun delete() {
-        deleteAllFromUsers()
-        deleteAllFromRoles()
+        //deleteAllFromUsers()
+        //deleteAllFromRoles()
         sqLiteOpenHelper.close()
     }
 
     private fun createTable() {
-        sqlClient.createTable<SqLiteRole>()
-        sqlClient.createTable<SqLiteUser>()
+        sqlClient.createTable(SQLITE_ROLE)
+        sqlClient.createTable(SQLITE_USER)
     }
 
     private fun insertRoles() {
-        sqlClient.insert(sqLiteUser, sqLiteAdmin, sqLiteGod)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private fun insertUsers() {
-        sqlClient.insert(sqLiteJdoe, sqLiteBboss)
+        sqlClient.insert(userJdoe, userBboss)
     }
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<SqLiteUser>()
+    /*fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<SqLiteUser>()
 
     private fun deleteAllFromRoles() = sqlClient.deleteAllFromTable<SqLiteRole>()
 
@@ -49,5 +49,5 @@ abstract class AbstractUserRepository(
     fun selectFirstByFirstname(firstname: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] eq firstname }
-            .fetchFirstOrNull()
+            .fetchFirstOrNull()*/
 }

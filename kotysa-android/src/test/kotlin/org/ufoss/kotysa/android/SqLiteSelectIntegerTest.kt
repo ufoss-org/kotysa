@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -272,4 +272,4 @@ class IntegerRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables
         sqlClient.select<SqLiteInteger>()
             .where { it[SqLiteInteger::integerNullable] supOrEq int }
             .fetchAll()
-}
+}*/

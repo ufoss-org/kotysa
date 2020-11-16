@@ -7,7 +7,6 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.*
-import kotlin.reflect.KClass
 
 /**
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
@@ -15,9 +14,31 @@ import kotlin.reflect.KClass
 internal class SqlClientSqLite(
         private val client: SQLiteOpenHelper,
         override val tables: Tables
-) : SqlClient(), DefaultSqlClient {
+) : SqlClient, DefaultSqlClient {
 
-    override fun <T : Any> select(
+    override fun <T : Any> insert(row: T) {
+        val table = tables.getTable(row::class)
+
+        val statement = client.writableDatabase.compileStatement(insertSql(row))
+        table.columns
+                .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
+                .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
+
+        statement.executeInsert()
+    }
+
+    override fun <T : Any> insert(vararg rows: T) {
+        checkRowsAreMapped(*rows)
+
+        rows.forEach { row -> insert(row) }
+    }
+
+    override fun <T : Any> createTable(table: Table<T>) {
+        val createTableSql = createTableSql(table)
+        return client.writableDatabase.compileStatement(createTableSql).execute()
+    }
+
+    /*override fun <T : Any> select(
             resultClass: KClass<T>,
             dsl: (SelectDslApi.(ValueProvider) -> T)?
     ): SqlClientSelect.Select<T> =
@@ -28,28 +49,11 @@ internal class SqlClientSqLite(
         return client.writableDatabase.compileStatement(createTableSql).execute()
     }
 
-    override fun <T : Any> insert(row: T) {
-        val table = tables.getTable(row::class)
-
-        val statement = client.writableDatabase.compileStatement(insertSql(row))
-        table.columns.values
-                .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
-                .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
-
-        statement.executeInsert()
-    }
-
-    override fun insert(vararg rows: Any) {
-        checkRowsAreMapped(*rows)
-
-        rows.forEach { row -> insert(row) }
-    }
-
     override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
             SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
 
     override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
+            SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)*/
 }
 
 /**

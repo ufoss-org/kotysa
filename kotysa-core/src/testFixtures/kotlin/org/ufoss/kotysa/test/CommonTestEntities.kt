@@ -16,9 +16,9 @@ data class RoleEntity(
         val label: String
 )
 
-val mysqlUser = RoleEntity(1, "user")
-val mysqlAdmin = RoleEntity(2,"admin")
-val mysqlGod = RoleEntity(3, "god")
+val roleUser = RoleEntity(1, "user")
+val roleAdmin = RoleEntity(2,"admin")
+val roleGod = RoleEntity(3, "god")
 
 
 data class UserEntity(
@@ -30,8 +30,8 @@ data class UserEntity(
         val alias: String? = null
 )
 
-val mysqlJdoe = UserEntity(1, "John", "Doe", false, mysqlUser.id)
-val mysqlBboss = UserEntity(2, "Big", "Boss", true, mysqlAdmin.id, "TheBoss")
+val userJdoe = UserEntity(1, "John", "Doe", false, roleUser.id)
+val userBboss = UserEntity(2, "Big", "Boss", true, roleAdmin.id, "TheBoss")
 
 open class AllTypesNotNullEntity(
         open val id: Int,
@@ -83,7 +83,7 @@ open class AllTypesNotNullEntity(
     }
 }
 
-val mysqlAllTypesNotNull = AllTypesNotNullEntity(1, "",
+val allTypesNotNull = AllTypesNotNullEntity(1, "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
         LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
         Clock.System.now().toLocalDateTime(TimeZone.UTC), 1)
@@ -102,7 +102,7 @@ data class AllTypesNullableEntity(
         val int: Int?
 )
 
-val mysqlAllTypesNullable = AllTypesNullableEntity(1, null, null, null,
+val allTypesNullable = AllTypesNullableEntity(1, null, null, null,
         null, null, null, null, null, null)
 
 
@@ -119,7 +119,7 @@ data class AllTypesNullableDefaultValueEntity(
         val int: Int? = null
 )
 
-val mysqlAllTypesNullableDefaultValue = AllTypesNullableDefaultValueEntity(1)
+val allTypesNullableDefaultValue = AllTypesNullableDefaultValueEntity(1)
 
 
 data class LocalDateEntity(
@@ -128,8 +128,8 @@ data class LocalDateEntity(
         val localDateNullable: LocalDate? = null
 )
 
-val mysqlLocalDateWithNullable = LocalDateEntity(1, LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))
-val mysqlLocalDateWithoutNullable = LocalDateEntity(2, LocalDate.of(2019, 11, 6))
+val localDateWithNullable = LocalDateEntity(1, LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))
+val localDateWithoutNullable = LocalDateEntity(2, LocalDate.of(2019, 11, 6))
 
 data class KotlinxLocalDateEntity(
         val id: Int,
@@ -137,9 +137,9 @@ data class KotlinxLocalDateEntity(
         val localDateNullable: kotlinx.datetime.LocalDate? = null
 )
 
-val mysqlKotlinxLocalDateWithNullable = KotlinxLocalDateEntity(1, kotlinx.datetime.LocalDate(2019, 11, 4),
+val kotlinxLocalDateWithNullable = KotlinxLocalDateEntity(1, kotlinx.datetime.LocalDate(2019, 11, 4),
         kotlinx.datetime.LocalDate(2018, 11, 4))
-val mysqlKotlinxLocalDateWithoutNullable = KotlinxLocalDateEntity(2, kotlinx.datetime.LocalDate(2019, 11, 6))
+val kotlinxLocalDateWithoutNullable = KotlinxLocalDateEntity(2, kotlinx.datetime.LocalDate(2019, 11, 6))
 
 
 data class LocalDateTimeEntity(
@@ -148,8 +148,8 @@ data class LocalDateTimeEntity(
         val localDateTimeNullable: LocalDateTime? = null
 )
 
-val mysqlLocalDateTimeWithNullable = LocalDateTimeEntity(1, LocalDateTime.of(2019, 11, 4, 0, 0), LocalDateTime.of(2018, 11, 4, 0, 0))
-val mysqlLocalDateTimeWithoutNullable = LocalDateTimeEntity(2, LocalDateTime.of(2019, 11, 6, 0, 0))
+val localDateTimeWithNullable = LocalDateTimeEntity(1, LocalDateTime.of(2019, 11, 4, 0, 0), LocalDateTime.of(2018, 11, 4, 0, 0))
+val localDateTimeWithoutNullable = LocalDateTimeEntity(2, LocalDateTime.of(2019, 11, 6, 0, 0))
 
 
 data class KotlinxLocalDateTimeEntity(
@@ -158,10 +158,10 @@ data class KotlinxLocalDateTimeEntity(
         val localDateTimeNullable: kotlinx.datetime.LocalDateTime? = null
 )
 
-val mysqlKotlinxLocalDateTimeWithNullable = KotlinxLocalDateTimeEntity(1,
+val kotlinxLocalDateTimeWithNullable = KotlinxLocalDateTimeEntity(1,
         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
-val mysqlKotlinxLocalDateTimeWithoutNullable = KotlinxLocalDateTimeEntity(2,
+val kotlinxLocalDateTimeWithoutNullable = KotlinxLocalDateTimeEntity(2,
         kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0))
 
 
@@ -199,11 +199,11 @@ data class OffsetDateTimeEntity(
     }
 }
 
-val mysqlOffsetDateTimeWithNullable = OffsetDateTimeEntity(1,
+val offsetDateTimeWithNullable = OffsetDateTimeEntity(1,
         OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
         OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
                 ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)))
-val mysqlOffsetDateTimeWithoutNullable = OffsetDateTimeEntity(2,
+val offsetDateTimeWithoutNullable = OffsetDateTimeEntity(2,
         OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC))
 
 data class LocalTimeEntity(
@@ -212,8 +212,8 @@ data class LocalTimeEntity(
         val localTimeNullable: LocalTime? = null
 )
 
-val mysqlLocalTimeWithNullable = LocalTimeEntity(1, LocalTime.of(12, 4), LocalTime.of(11, 4))
-val mysqlLocalTimeWithoutNullable = LocalTimeEntity(2, LocalTime.of(12, 6))
+val localTimeWithNullable = LocalTimeEntity(1, LocalTime.of(12, 4), LocalTime.of(11, 4))
+val localTimeWithoutNullable = LocalTimeEntity(2, LocalTime.of(12, 6))
 
 
 data class IntEntity(
@@ -222,8 +222,8 @@ data class IntEntity(
         val id: Int? = null
 )
 
-val mysqlIntWithNullable = IntEntity(10, 6)
-val mysqlIntWithoutNullable = IntEntity(12)
+val intWithNullable = IntEntity(10, 6)
+val intWithoutNullable = IntEntity(12)
 
 data class UuidEntity(
         val uuidNotNull: UUID,
@@ -231,8 +231,8 @@ data class UuidEntity(
         val id: UUID = UUID.randomUUID()
 )
 
-val h2UuidWithNullable = UuidEntity(UUID.randomUUID(), UUID.randomUUID())
-val h2UuidWithoutNullable = UuidEntity(UUID.randomUUID())
+val uuidWithNullable = UuidEntity(UUID.randomUUID(), UUID.randomUUID())
+val uuidWithoutNullable = UuidEntity(UUID.randomUUID())
 
 
 data class UserDto(

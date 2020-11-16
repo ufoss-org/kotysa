@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android.sample
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.android.sqlClient
 
@@ -91,4 +91,4 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
             .where { it[Role::label] eq roleUser.label }
             .execute()
     }
-}
+}*/

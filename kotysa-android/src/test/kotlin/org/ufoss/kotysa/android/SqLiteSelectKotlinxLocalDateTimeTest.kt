@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
@@ -262,4 +262,4 @@ class KotlinxLocalDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, t
         sqlClient.select<SqLiteKotlinxLocalDateTime>()
             .where { it[SqLiteKotlinxLocalDateTime::localDateTimeNullable] afterOrEq localDateTime }
             .fetchAll()
-}
+}*/

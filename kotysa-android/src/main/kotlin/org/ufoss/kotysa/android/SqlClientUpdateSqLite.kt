@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
 import kotlin.reflect.KClass
@@ -110,4 +110,4 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             statement.executeUpdateDelete()
         }
     }
-}
+}*/

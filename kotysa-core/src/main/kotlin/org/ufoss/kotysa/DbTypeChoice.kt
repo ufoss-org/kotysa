@@ -5,6 +5,8 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kotysa.h2.H2Table
+import org.ufoss.kotysa.mysql.MysqlTable
+import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import kotlin.reflect.KClass
 
@@ -31,8 +33,16 @@ public object DbTypeChoice {
         val allTables = mutableMapOf<Table<*>, KotysaTable<*>>()
         val allColumns = mutableMapOf<Column<*, *>, KotysaColumn<*, *>>()
         for (table in tables) {
-            val tableClass = table::class.supertypes
-                    .first { type -> H2Table::class == type.classifier }
+            val tableClass = requireNotNull(table::class.supertypes
+                    .firstOrNull { type ->
+                        when(dbType) {
+                            DbType.SQLITE -> SqLiteTable::class == type.classifier
+                            DbType.MYSQL -> MysqlTable::class == type.classifier
+                            DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
+                            DbType.H2 -> H2Table::class == type.classifier
+                        }
+                    }
+            ) { "Table $table should be a subclass of the platform $dbType Table" }
                     .arguments[0].type!!.classifier as KClass<*>
             check(!allTables.values.map { kotysaTable -> kotysaTable.tableClass }.contains(tableClass)) {
                 "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
@@ -96,7 +106,7 @@ public object DbTypeChoice {
 /**
  * Choose the database's Type
  *
- * @see TablesDsl
+ * @see Tables
  * @see DbTypeChoice
  */
 public fun tables(): DbTypeChoice = DbTypeChoice

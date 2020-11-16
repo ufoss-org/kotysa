@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -137,4 +137,4 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
             .set { it[SqLiteAllTypesNotNull::int] = newInt }
             .where { it[SqLiteAllTypesNotNull::id] eq sqLiteAllTypesNotNull.id }
             .execute()
-}
+}*/

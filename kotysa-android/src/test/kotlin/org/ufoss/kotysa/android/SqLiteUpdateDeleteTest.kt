@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -162,4 +162,4 @@ class UserRepositoryUpdateDelete(
                     .set { it[SqLiteUser::lastname] = newLastname }
                     .where { it[SqLiteUser::id] `in` ids }
                     .execute()
-}
+}*/

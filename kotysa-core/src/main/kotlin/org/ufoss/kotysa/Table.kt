@@ -7,8 +7,9 @@ import kotlin.reflect.KClass
  *
  * @param T Entity type associated with this table
  */
-public abstract class Table<T : Any> {
-    public open lateinit var name: String
+public abstract class Table<T : Any>(private val tableName: String?) {
+
+    internal lateinit var name: String
 
     private val columns = mutableSetOf<DbColumn<T, *>>()
     private lateinit var pk: PrimaryKey<T>
@@ -34,19 +35,6 @@ public abstract class Table<T : Any> {
         return this
     }
 
-    protected fun <V : Any> foreignKey(
-            referencedTable: Table<V>,
-            vararg columns: DbColumn<T, *>,
-            fkName: String? = null
-    ) {
-        foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
-    }
-
-    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: Table<V>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
-        return this
-    }
-
     internal fun addColumn(column: DbColumn<T, *>) {
         require(!columns.any { col -> col.entityGetter == column.entityGetter }) {
             "Trying to map property \"${column.entityGetter}\" to multiple columns"
@@ -55,9 +43,8 @@ public abstract class Table<T : Any> {
     }
 
     internal fun initialize(kClass: KClass<*>): KotysaTable<T> {
-        if (!::name.isInitialized) {
-            name = kClass.simpleName!!
-        }
+        name = tableName ?: kClass.simpleName!!
+
         require(::pk.isInitialized) { "Table primary key is mandatory" }
         require(columns.isNotEmpty()) { "Table must declare at least one column" }
 
@@ -76,7 +63,7 @@ public abstract class Table<T : Any> {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val kotysaTable = KotysaTableImpl(kClass as KClass<T>, this, name, kotysaColumnsMap.values, kotysaPK,
+        val kotysaTable = KotysaTableImpl(kClass as KClass<T>, this, name!!, kotysaColumnsMap.values, kotysaPK,
                 kotysaFKs)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-
+/*
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -40,4 +40,4 @@ class UserRepositoryBooleanSelect(
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::isAdmin] eq value }
             .fetchAll()
-}
+}*/

@@ -22,10 +22,10 @@ public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
 
 @Suppress("UNCHECKED_CAST")
 public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
-        requireNotNull(this.allTables.values.first { kClass -> kClass == tableClass }) as KotysaTable<T>
+        requireNotNull(this.allTables.values.first { kotysaTable -> kotysaTable.tableClass == tableClass }) as KotysaTable<T>
 
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
-    require(this.allTables.values.any { kClass -> kClass == tableClass }) { tableMustBeMapped(tableClass.qualifiedName) }
+    require(this.allTables.values.any { kotysaTable -> kotysaTable.tableClass == tableClass }) { tableMustBeMapped(tableClass.qualifiedName) }
 }
 
 private val logger = Logger.of<DefaultSqlClient>()
