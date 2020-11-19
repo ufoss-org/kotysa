@@ -25,7 +25,7 @@ public sealed class DbVarcharColumnNotNull<T : Any, U : Any> : DbVarcharColumn<T
 
 public class StringDbVarcharColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
-        override val name: String,
+        override val name: String?,
         override val size: Int?,
 ) : DbVarcharColumnNotNull<T, String>(), StringColumnNotNull<T>
 

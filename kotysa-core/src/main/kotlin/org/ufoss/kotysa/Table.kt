@@ -1,7 +1,5 @@
 package org.ufoss.kotysa
 
-import kotlin.reflect.KClass
-
 /**
  * Represents a Table
  *
@@ -9,12 +7,10 @@ import kotlin.reflect.KClass
  */
 public abstract class Table<T : Any>(private val tableName: String?) {
 
-    internal lateinit var name: String
+    internal var name: String? = null
 
-    private val columns = mutableSetOf<DbColumn<T, *>>()
-    private lateinit var pk: PrimaryKey<T>
-
-    @PublishedApi
+    internal val columns = mutableSetOf<DbColumn<T, *>>()
+    internal lateinit var pk: PrimaryKey<T>
     internal val foreignKeys = mutableSetOf<ForeignKey<T, *>>()
 
     protected fun primaryKey(
@@ -42,31 +38,5 @@ public abstract class Table<T : Any>(private val tableName: String?) {
         columns += column
     }
 
-    internal fun initialize(kClass: KClass<*>): KotysaTable<T> {
-        name = tableName ?: kClass.simpleName!!
-
-        require(::pk.isInitialized) { "Table primary key is mandatory" }
-        require(columns.isNotEmpty()) { "Table must declare at least one column" }
-
-        // build KotysaColumns
-        val kotysaColumnsMap = columns.associateWith { column ->
-            KotysaColumnImpl(column, column.entityGetter, column.name, column.sqlType, column.isAutoIncrement,
-                    column.isNullable, column.defaultValue, column.size)
-        }
-
-        // build Kotysa PK
-        val kotysaPK = KotysaPrimaryKey(pk.name, pk.columns.map { column -> kotysaColumnsMap[column]!! })
-
-        // build Kotysa FKs
-        val kotysaFKs = foreignKeys.map { fk ->
-            KotysaForeignKey(fk.referencedTable, fk.columns.map { column -> kotysaColumnsMap[column]!! }, fk.name)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        val kotysaTable = KotysaTableImpl(kClass as KClass<T>, this, name!!, kotysaColumnsMap.values, kotysaPK,
-                kotysaFKs)
-        // associate table to all its columns
-        kotysaTable.columns.forEach { c -> c.table = kotysaTable }
-        return kotysaTable
-    }
+    internal fun isPkInitialized() = ::pk.isInitialized
 }

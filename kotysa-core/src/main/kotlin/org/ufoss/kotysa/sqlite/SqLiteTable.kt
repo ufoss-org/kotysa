@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.sqlite
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.StringDbTextColumnNotNull
 
 /**
  * Represents a SqLite Table
@@ -24,6 +25,10 @@ public abstract class SqLiteTable<T : Any> protected constructor(tableName: Stri
         val column = columnDsl.initialize<U>(columnDsl)
         addColumn(column)
         return column
+    }
+
+    protected fun text(getter: (T) -> String, name: String? = null): StringDbTextColumnNotNull<T> {
+        return StringDbTextColumnNotNull(getter, name)
     }
 
     protected fun <V : Any> foreignKey(

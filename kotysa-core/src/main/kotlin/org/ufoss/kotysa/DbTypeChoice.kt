@@ -35,7 +35,7 @@ public object DbTypeChoice {
         for (table in tables) {
             val tableClass = requireNotNull(table::class.supertypes
                     .firstOrNull { type ->
-                        when(dbType) {
+                        when (dbType) {
                             DbType.SQLITE -> SqLiteTable::class == type.classifier
                             DbType.MYSQL -> MysqlTable::class == type.classifier
                             DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
@@ -47,15 +47,51 @@ public object DbTypeChoice {
             check(!allTables.values.map { kotysaTable -> kotysaTable.tableClass }.contains(tableClass)) {
                 "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
             }
-            val kotysaTable = table.initialize(tableClass)
-            allTables.put(kotysaTable.table, kotysaTable)
             @Suppress("UNCHECKED_CAST")
+            val kotysaTable = initializeTable(table as Table<Any>, tableClass as KClass<Any>)
+            allTables[kotysaTable.table] = kotysaTable
             allColumns.putAll(kotysaTable.columns.associateBy { kotysaColumn -> kotysaColumn.column })
         }
         val tablesModel = Tables(allTables, allColumns, dbType)
         // resolve foreign keys to referenced primary key column
         resolveFkReferences(tablesModel)
         return tablesModel
+    }
+
+    private fun initializeTable(table: Table<Any>, tableClass: KClass<Any>): KotysaTable<*> {
+        val tableName = table.name ?: table::class.simpleName!!
+
+        require(table.isPkInitialized()) { "Table primary key is mandatory" }
+        require(table.columns.isNotEmpty()) { "Table must declare at least one column" }
+
+        // build KotysaColumns
+        val kotysaColumnsMap = table.columns.associateWith { column ->
+
+            val columnName = column.name
+                    ?: table::class.members // If the name of the column is null, use the 'Table mapping' property name
+                            .first { callable ->
+                                Column::class.java.isAssignableFrom((callable.returnType.classifier as KClass<*>).java)
+                                        && column == callable.call(table)
+                            }.name
+
+            KotysaColumnImpl(column, column.entityGetter, columnName, column.sqlType, column.isAutoIncrement,
+                    column.isNullable, column.defaultValue, column.size)
+        }
+
+        // build Kotysa PK
+        val kotysaPK = KotysaPrimaryKey(table.pk.name, table.pk.columns.map { column -> kotysaColumnsMap[column]!! })
+
+        // build Kotysa FKs
+        val kotysaFKs = table.foreignKeys.map { fk ->
+            KotysaForeignKey(fk.referencedTable, fk.columns.map { column -> kotysaColumnsMap[column]!! }, fk.name)
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        val kotysaTable = KotysaTableImpl(tableClass, table, tableName, kotysaColumnsMap.values, kotysaPK,
+                kotysaFKs)
+        // associate table to all its columns
+        kotysaTable.columns.forEach { c -> c.table = kotysaTable }
+        return kotysaTable
     }
 
     /**

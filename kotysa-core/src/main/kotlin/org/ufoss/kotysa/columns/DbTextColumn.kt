@@ -27,7 +27,7 @@ public sealed class DbTextColumnNotNull<T : Any, U : Any> : DbTextColumn<T, U>()
 
 public class StringDbTextColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
-        override val name: String,
+        override val name: String?,
 ) : DbTextColumnNotNull<T, String>(), StringColumnNotNull<T>
 
 public class StringDbTextColumnNullable<T : Any> internal constructor(

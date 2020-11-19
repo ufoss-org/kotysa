@@ -25,7 +25,7 @@ class H2TablesDslTest {
                 .extracting("name", "sqlType", "nullable", "autoIncrement")
                 .containsExactlyInAnyOrder(
                         tuple("id", SqlType.INTEGER, false, false),
-                        tuple("string", SqlType.VARCHAR, false, false),
+                        tuple("string_named", SqlType.VARCHAR, false, false),
                         tuple("boolean", SqlType.BOOLEAN, false, false),
                         tuple("localDate", SqlType.DATE, false, false),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, false),

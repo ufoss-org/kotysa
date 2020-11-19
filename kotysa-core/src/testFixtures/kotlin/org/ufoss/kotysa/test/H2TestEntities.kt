@@ -40,7 +40,7 @@ object H2_USER : H2Table<UserEntity>("users") {
 object H2_ALL_TYPES_NOT_NULL : H2Table<AllTypesNotNullEntity>("all_types") {
     val id = column { it[AllTypesNotNullEntity::id].integer() }
             .primaryKey()
-    val string = column { it[AllTypesNotNullEntity::string].varchar() }
+    val string_named = varchar(AllTypesNotNullEntity::string)
     val boolean = column { it[AllTypesNotNullEntity::boolean].boolean() }
     val localDate = column { it[AllTypesNotNullEntity::localDate].date() }
     val kotlinxLocalDate = column { it[AllTypesNotNullEntity::kotlinxLocalDate].date() }

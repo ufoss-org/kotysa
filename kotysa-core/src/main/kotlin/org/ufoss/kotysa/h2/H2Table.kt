@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.StringDbVarcharColumnNotNull
 
 /**
  * Represents a H2 Table
@@ -22,8 +23,7 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
     ): U {
         val columnDsl = H2ColumnDsl(dsl)
         val column = columnDsl.initialize<U>(columnDsl)
-        addColumn(column)
-        return column
+        return column.also { addColumn(it) }
     }
 
     protected fun <V : Any> foreignKey(
@@ -34,8 +34,10 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
     }
 
-    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: H2Table<V>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
-        return this
+    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: H2Table<V>, fkName: String? = null): U = this.also {
+        foreignKeys.add(ForeignKey(referencedTable, listOf(it), fkName))
     }
+
+    protected fun varchar(getter: (T) -> String, name: String? = null, size: Int? = null): StringDbVarcharColumnNotNull<T> =
+        StringDbVarcharColumnNotNull(getter, name, size).also { addColumn(it) }
 }
