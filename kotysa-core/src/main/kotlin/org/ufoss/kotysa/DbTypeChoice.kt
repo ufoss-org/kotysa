@@ -79,6 +79,7 @@ public object DbTypeChoice {
         }
 
         // build Kotysa PK
+        @Suppress("TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING")
         val kotysaPK = KotysaPrimaryKey(table.pk.name, table.pk.columns.map { column -> kotysaColumnsMap[column]!! })
 
         // build Kotysa FKs
@@ -87,8 +88,7 @@ public object DbTypeChoice {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val kotysaTable = KotysaTableImpl(tableClass, table, tableName, kotysaColumnsMap.values, kotysaPK,
-                kotysaFKs)
+        val kotysaTable = KotysaTableImpl(tableClass, table, tableName, kotysaColumnsMap.values, kotysaPK, kotysaFKs)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
