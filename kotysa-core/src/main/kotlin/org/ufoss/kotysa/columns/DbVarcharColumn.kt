@@ -31,7 +31,7 @@ public class StringDbVarcharColumnNotNull<T : Any> internal constructor(
 
 public class StringDbVarcharColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
-        override val name: String,
+        override val name: String?,
         override val isNullable: Boolean,
         override val defaultValue: String?,
         override val size: Int?,
