@@ -25,13 +25,13 @@ public sealed class DbVarcharColumnNotNull<T : Any, U : Any> : DbVarcharColumn<T
 
 public class StringDbVarcharColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
-        override val name: String?,
+        override val columnName: String?,
         override val size: Int?,
 ) : DbVarcharColumnNotNull<T, String>(), StringColumnNotNull<T>
 
 public class StringDbVarcharColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> String?,
-        override val name: String?,
+        override val columnName: String?,
         override val defaultValue: String?,
         override val size: Int?,
 ) : DbVarcharColumn<T, String>(), StringColumnNullable<T> {

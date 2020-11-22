@@ -23,7 +23,7 @@ object SQLITE_USER : SqLiteTable<UserEntity>("users") {
     val lastname = text(UserEntity::lastname, "lname")
     val isAdmin = integer(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(SQLITE_ROLE, "FK_users_roles")
+            .foreignKey(SQLITE_ROLE.id, "FK_users_roles")
     val alias = text(UserEntity::alias)
 }
 

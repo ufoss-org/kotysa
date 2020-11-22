@@ -77,9 +77,11 @@ public interface DefaultSqlClient {
                         } else {
                             ""
                         }
-                        foreignKeyStatement += "FOREIGN KEY (${foreignKey.columns.joinToString { it.name }})" +
-                                " REFERENCES ${foreignKey.referencedTable.name}" +
-                                " (${foreignKey.referencedColumns.joinToString { it.name }})"
+                        val referencedTable = tables.allColumns[foreignKey.references.values.first()]?.table
+                                ?: error("Referenced table of column ${foreignKey.references.values.first()} is not mapped")
+                        foreignKeyStatement += "FOREIGN KEY (${foreignKey.references.keys.joinToString { it.name }})" +
+                                " REFERENCES ${referencedTable.name}" +
+                                " (${foreignKey.references.values.joinToString { it.name }})"
                         foreignKeyStatement
                     }
                 }

@@ -18,8 +18,8 @@ public interface KotysaTable<T : Any> {
      */
     public val name: String
     public val columns: Collection<KotysaColumn<T, *>>
-    public val primaryKey: KotysaPrimaryKey<T>
-    public val foreignKeys: List<KotysaForeignKey<T, *>>
+    public val primaryKey: PrimaryKey<T, *>
+    public val foreignKeys: Set<ForeignKey<T, *>>
 }
 
 
@@ -28,8 +28,8 @@ internal class KotysaTableImpl<T : Any> internal constructor(
         override val table: Table<T>,
         override val name: String,
         override val columns: Collection<KotysaColumn<T, *>>,
-        override val primaryKey: KotysaPrimaryKey<T>,
-        override val foreignKeys: List<KotysaForeignKey<T, *>>,
+        override val primaryKey: PrimaryKey<T, *>,
+        override val foreignKeys: Set<ForeignKey<T, *>>,
 ) : KotysaTable<T> {
 
     override fun equals(other: Any?): Boolean {

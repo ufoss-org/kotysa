@@ -10,8 +10,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
-
 object H2_ROLE : H2Table<RoleEntity>("roles") {
     val id = column { it[RoleEntity::id].integer() }
             .primaryKey()
@@ -33,7 +31,7 @@ object H2_USER : H2Table<UserEntity>("users") {
     }
     val isAdmin = column { it[UserEntity::isAdmin].boolean() }
     val roleId = column { it[UserEntity::roleId].integer() }
-            .foreignKey(H2_ROLE, "FK_users_roles")
+            .foreignKey(H2_ROLE.id, "FK_users_roles")
     val alias = column { it[UserEntity::alias].varchar() }
 }
 

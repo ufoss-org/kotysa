@@ -23,5 +23,5 @@ public sealed class DbSerialColumnNotNull<T : Any, U : Any> : DbColumn<T, U>() {
 
 public class IntDbSerialColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
-        override val name: String?,
+        override val columnName: String?,
 ) : DbSerialColumnNotNull<T, Int>(), IntColumnNotNull<T>

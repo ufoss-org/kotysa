@@ -26,16 +26,16 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
         return column
     }
 
-    protected fun <V : Any> foreignKey(
+    /*protected fun <V : Any> foreignKey(
             referencedTable: PostgresqlTable<V>,
             vararg columns: DbColumn<T, *>,
             fkName: String? = null
     ) {
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
-    }
+    }*/
 
-    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: PostgresqlTable<V>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
+    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U {
+        foreignKeys.add(ForeignKey(mapOf(this to references), fkName))
         return this
     }
 }

@@ -87,7 +87,7 @@ class H2TablesDslTest {
                         tuple("label", SqlType.VARCHAR, false))
         assertThat(roleTable.primaryKey.name).isNull()
         assertThat(roleTable.primaryKey.columns)
-                .containsExactly(tables.allColumns[H2_ROLE.id])
+                .containsExactly(H2_ROLE.id)
         val userTable = tables.allTables[H2_USER] ?: fail { "require mapped UserEntity" }
         assertThat(userTable.columns)
                 .extracting("name", "sqlType", "nullable")
@@ -98,15 +98,13 @@ class H2TablesDslTest {
                         tuple("isAdmin", SqlType.BOOLEAN, false),
                         tuple("alias", SqlType.VARCHAR, true),
                         tuple("roleId", SqlType.INTEGER, false))
-        assertThat(userTable.foreignKeys)
-                .extracting("referencedTable", "name")
-                .containsExactly(tuple(H2_ROLE, "FK_users_roles"))
         val userTablePk = userTable.primaryKey
         assertThat(userTablePk.columns[0].entityGetter).isEqualTo(UserEntity::id)
         assertThat(userTablePk.name).isEqualTo("PK_users")
         val userTableFk = userTable.foreignKeys.iterator().next()
-        assertThat(userTableFk.referencedColumns)
+        assertThat(userTableFk.name).isEqualTo("FK_users_roles")
+        assertThat(userTableFk.references.values)
                 .hasSize(1)
-                .containsExactly(tables.allColumns[H2_ROLE.id])
+                .containsExactly(H2_ROLE.id)
     }
 }

@@ -22,5 +22,5 @@ public sealed class DbBooleanColumnNotNull<T : Any, U : Any> : DbColumn<T, U>() 
 
 public class BooleanDbBooleanColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> Boolean,
-        override val name: String?,
+        override val columnName: String?,
 ) : DbBooleanColumnNotNull<T, Boolean>(), BooleanColumnNotNull<T>

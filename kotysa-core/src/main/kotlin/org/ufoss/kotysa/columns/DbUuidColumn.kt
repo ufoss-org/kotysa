@@ -28,13 +28,13 @@ public sealed class DbUuidColumnNotNull<T : Any, U : Any> : DbUuidColumn<T, U>()
 
 public class UuidDbUuidColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> UUID?,
-        override val name: String?,
+        override val columnName: String?,
 ) : DbUuidColumnNotNull<T, UUID>(), UuidColumnNotNull<T>
 
 
 public class UuidDbUuidColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> UUID?,
-        override val name: String?,
+        override val columnName: String?,
         override val defaultValue: UUID?,
 ) : DbUuidColumn<T, UUID>(), UuidColumnNullable<T> {
     override val isNullable = defaultValue == null

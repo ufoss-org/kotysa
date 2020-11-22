@@ -52,10 +52,7 @@ public object DbTypeChoice {
             allTables[kotysaTable.table] = kotysaTable
             allColumns.putAll(kotysaTable.columns.associateBy { kotysaColumn -> kotysaColumn.column })
         }
-        val tablesModel = Tables(allTables, allColumns, dbType)
-        // resolve foreign keys to referenced primary key column
-        resolveFkReferences(tablesModel)
-        return tablesModel
+        return Tables(allTables, allColumns, dbType)
     }
 
     private fun initializeTable(table: Table<Any>, tableClass: KClass<Any>): KotysaTable<*> {
@@ -67,45 +64,22 @@ public object DbTypeChoice {
 
         // build KotysaColumns
         val kotysaColumnsMap = table.columns.associateWith { column ->
-
-            val columnName = column.name
-                    ?: table::class.members // If the name of the column is null, use the 'Table mapping' property name
+            // If the name of the column is null, use the 'Table mapping' property name
+            column.name = column.columnName
+                    ?: table::class.members
                             .first { callable ->
                                 Column::class.java.isAssignableFrom((callable.returnType.classifier as KClass<*>).java)
                                         && column == callable.call(table)
                             }.name
 
-            KotysaColumnImpl(column, column.entityGetter, columnName, column.sqlType, column.isAutoIncrement,
+            KotysaColumnImpl(column, column.entityGetter, column.name, column.sqlType, column.isAutoIncrement,
                     column.isNullable, column.defaultValue, column.size)
         }
 
-        // build Kotysa PK
-        @Suppress("TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING")
-        val kotysaPK = KotysaPrimaryKey(table.pk.name, table.pk.columns.map { column -> kotysaColumnsMap[column]!! })
-
-        // build Kotysa FKs
-        val kotysaFKs = table.foreignKeys.map { fk ->
-            KotysaForeignKey(fk.referencedTable, fk.columns.map { column -> kotysaColumnsMap[column]!! }, fk.name)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, kotysaColumnsMap.values, kotysaPK, kotysaFKs)
+        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, kotysaColumnsMap.values, table.pk, table.foreignKeys)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
-    }
-
-    /**
-     * Fill lateinit foreign key data after tables are built
-     */
-    private fun resolveFkReferences(tables: Tables) {
-        tables.allTables.values
-                .flatMap { table -> table.foreignKeys }
-                .forEach { foreignKey ->
-                    val referencedKotysaTable = tables.getTable(foreignKey.referencedTable)
-                    // find primaryKey of referenced table
-                    foreignKey.referencedColumns = referencedKotysaTable.primaryKey.columns
-                }
     }
 
     /*

@@ -12,12 +12,13 @@ package org.ufoss.kotysa
  */
 public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column<T, U> {
     internal abstract val entityGetter: (T) -> U?
-    internal abstract val name: String?
+    internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
     internal abstract val isAutoIncrement: Boolean
     internal abstract val size: Int?
     internal abstract val isNullable: Boolean
     internal abstract val defaultValue: U?
+    internal lateinit var name: String
 
     override fun toString(): String {
         return "DbColumn(name='$name', entityGetter=$entityGetter)"

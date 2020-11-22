@@ -26,18 +26,18 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
         return column.also { addColumn(it) }
     }
 
-    protected fun <V : Any> foreignKey(
+    /*protected fun <V : Any> foreignKey(
             referencedTable: H2Table<V>,
             vararg columns: DbColumn<T, *>,
             fkName: String? = null
     ) {
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
+    }*/
+
+    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U = this.also {
+        foreignKeys.add(ForeignKey(mapOf(this to references), fkName))
     }
 
-    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: H2Table<V>, fkName: String? = null): U = this.also {
-        foreignKeys.add(ForeignKey(referencedTable, listOf(it), fkName))
-    }
-
-    protected fun varchar(getter: (T) -> String, name: String? = null, size: Int? = null): StringDbVarcharColumnNotNull<T> =
-        StringDbVarcharColumnNotNull(getter, name, size).also { addColumn(it) }
+    protected fun varchar(getter: (T) -> String, columnName: String? = null, size: Int? = null): StringDbVarcharColumnNotNull<T> =
+        StringDbVarcharColumnNotNull(getter, columnName, size).also { addColumn(it) }
 }

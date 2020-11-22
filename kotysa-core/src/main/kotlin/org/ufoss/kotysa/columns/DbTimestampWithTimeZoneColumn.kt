@@ -25,13 +25,13 @@ public sealed class DbTimestampWithTimeZoneColumnNotNull<T : Any, U : Any> : DbT
 
 public class OffsetDateTimeDbTimestampWithTimeZoneColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
-        override val name: String?,
+        override val columnName: String?,
         override val size: Int?,
 ) : DbTimestampWithTimeZoneColumnNotNull<T, OffsetDateTime>(), OffsetDateTimeColumnNotNull<T>
 
 public class OffsetDateTimeDbTimestampWithTimeZoneColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
-        override val name: String?,
+        override val columnName: String?,
         override val defaultValue: OffsetDateTime?,
         override val size: Int?,
 ) : DbTimestampWithTimeZoneColumn<T, OffsetDateTime>(), OffsetDateTimeColumnNullable<T> {

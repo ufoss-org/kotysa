@@ -10,20 +10,23 @@ public abstract class Table<T : Any>(internal val tableName: String?) {
     internal lateinit var name: String
 
     internal val columns = mutableSetOf<DbColumn<T, *>>()
-    internal lateinit var pk: PrimaryKey<T>
+    internal lateinit var pk: PrimaryKey<T, *>
     internal val foreignKeys = mutableSetOf<ForeignKey<T, *>>()
 
-    protected fun primaryKey(
-            vararg columns: ColumnNotNull<T, *>,
+    protected fun <U> primaryKey(
+            vararg columns: U,
             pkName: String? = null
-    ): PrimaryKey<T> {
+    ): PrimaryKey<T, *> where U : DbColumn<T, *>,
+                              U : ColumnNotNull<T, *> {
         check(!::pk.isInitialized) {
             "Table must not declare more than one Primary Key"
         }
         return PrimaryKey(pkName, columns.toList())
     }
 
-    protected fun <U : ColumnNotNull<T, *>> U.primaryKey(pkName: String? = null): U {
+    protected fun <U> U.primaryKey(pkName: String? = null)
+            : U where U : DbColumn<T, *>,
+                      U : ColumnNotNull<T, *> {
         check(!::pk.isInitialized) {
             "Table must not declare more than one Primary Key"
         }

@@ -26,13 +26,13 @@ public sealed class DbTimeColumnNotNull<T : Any, U : Any> : DbTimeColumn<T, U>()
 
 public class LocalTimeDbTimeColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
-        override val name: String?,
+        override val columnName: String?,
         override val size: Int?,
 ) : DbTimeColumnNotNull<T, LocalTime>(), LocalTimeColumnNotNull<T>
 
 public class LocalTimeDbTimeColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
-        override val name: String?,
+        override val columnName: String?,
         override val defaultValue: LocalTime?,
         override val size: Int?,
 ) : DbTimeColumn<T, LocalTime>(), LocalTimeColumnNullable<T> {

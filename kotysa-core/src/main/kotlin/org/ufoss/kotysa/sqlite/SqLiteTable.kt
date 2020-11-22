@@ -21,86 +21,86 @@ import java.time.OffsetDateTime
  */
 public abstract class SqLiteTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
 
-    protected fun <V : Any> foreignKey(
+    /*protected fun <V : Any> foreignKey(
             referencedTable: SqLiteTable<V>,
             vararg columns: DbColumn<T, *>,
             fkName: String? = null
     ) {
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
-    }
+    }*/
 
-    protected fun <U : Column<T, *>, V : Any> U.foreignKey(referencedTable: SqLiteTable<V>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(referencedTable, listOf(this), fkName))
+    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U {
+        foreignKeys.add(ForeignKey(mapOf(this to references), fkName))
         return this
     }
 
-    protected fun text(getter: (T) -> String, name: String? = null): StringDbTextColumnNotNull<T> =
-            StringDbTextColumnNotNull(getter, name).also { addColumn(it) }
+    protected fun text(getter: (T) -> String, columnName: String? = null): StringDbTextColumnNotNull<T> =
+            StringDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun text(getter: (T) -> String?, name: String? = null, defaultValue: String? = null): StringDbTextColumnNullable<T> =
-            StringDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+    protected fun text(getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null): StringDbTextColumnNullable<T> =
+            StringDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun text(getter: (T) -> LocalDateTime, name: String? = null): LocalDateTimeDbTextColumnNotNull<T> =
-            LocalDateTimeDbTextColumnNotNull(getter, name).also { addColumn(it) }
+    protected fun text(getter: (T) -> LocalDateTime, columnName: String? = null): LocalDateTimeDbTextColumnNotNull<T> =
+            LocalDateTimeDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> LocalDateTime?, name: String? = null, defaultValue: LocalDateTime? = null
+            getter: (T) -> LocalDateTime?, columnName: String? = null, defaultValue: LocalDateTime? = null
     ): LocalDateTimeDbTextColumnNullable<T> =
-            LocalDateTimeDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+            LocalDateTimeDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> kotlinx.datetime.LocalDateTime, name: String? = null
+            getter: (T) -> kotlinx.datetime.LocalDateTime, columnName: String? = null
     ): KotlinxLocalDateTimeDbTextColumnNotNull<T> =
-            KotlinxLocalDateTimeDbTextColumnNotNull(getter, name).also { addColumn(it) }
+            KotlinxLocalDateTimeDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> kotlinx.datetime.LocalDateTime?, name: String? = null, defaultValue: kotlinx.datetime.LocalDateTime? = null
+            getter: (T) -> kotlinx.datetime.LocalDateTime?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDateTime? = null
     ): KotlinxLocalDateTimeDbTextColumnNullable<T> =
-            KotlinxLocalDateTimeDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+            KotlinxLocalDateTimeDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun text(getter: (T) -> LocalDate, name: String? = null): LocalDateDbTextColumnNotNull<T> =
-            LocalDateDbTextColumnNotNull(getter, name).also { addColumn(it) }
+    protected fun text(getter: (T) -> LocalDate, columnName: String? = null): LocalDateDbTextColumnNotNull<T> =
+            LocalDateDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> LocalDate?, name: String? = null, defaultValue: LocalDate? = null
+            getter: (T) -> LocalDate?, columnName: String? = null, defaultValue: LocalDate? = null
     ): LocalDateDbTextColumnNullable<T> =
-            LocalDateDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+            LocalDateDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> kotlinx.datetime.LocalDate, name: String? = null
+            getter: (T) -> kotlinx.datetime.LocalDate, columnName: String? = null
     ): KotlinxLocalDateDbTextColumnNotNull<T> =
-            KotlinxLocalDateDbTextColumnNotNull(getter, name).also { addColumn(it) }
+            KotlinxLocalDateDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> kotlinx.datetime.LocalDate?, name: String? = null, defaultValue: kotlinx.datetime.LocalDate? = null
+            getter: (T) -> kotlinx.datetime.LocalDate?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDate? = null
     ): KotlinxLocalDateDbTextColumnNullable<T> =
-            KotlinxLocalDateDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+            KotlinxLocalDateDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun text(getter: (T) -> OffsetDateTime, name: String? = null): OffsetDateTimeDbTextColumnNotNull<T> =
-            OffsetDateTimeDbTextColumnNotNull(getter, name).also { addColumn(it) }
+    protected fun text(getter: (T) -> OffsetDateTime, columnName: String? = null): OffsetDateTimeDbTextColumnNotNull<T> =
+            OffsetDateTimeDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> OffsetDateTime?, name: String? = null, defaultValue: OffsetDateTime? = null
+            getter: (T) -> OffsetDateTime?, columnName: String? = null, defaultValue: OffsetDateTime? = null
     ): OffsetDateTimeDbTextColumnNullable<T> =
-            OffsetDateTimeDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+            OffsetDateTimeDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun text(getter: (T) -> LocalTime, name: String? = null): LocalTimeDbTextColumnNotNull<T> =
-            LocalTimeDbTextColumnNotNull(getter, name).also { addColumn(it) }
+    protected fun text(getter: (T) -> LocalTime, columnName: String? = null): LocalTimeDbTextColumnNotNull<T> =
+            LocalTimeDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun text(
-            getter: (T) -> LocalTime?, name: String? = null, defaultValue: LocalTime? = null
+            getter: (T) -> LocalTime?, columnName: String? = null, defaultValue: LocalTime? = null
     ): LocalTimeDbTextColumnNullable<T> =
-            LocalTimeDbTextColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+            LocalTimeDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Int, name: String? = null): IntDbIntegerColumnNotNull<T> =
-            IntDbIntegerColumnNotNull(getter, name, false).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
+            IntDbIntegerColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Int?, name: String? = null, defaultValue: Int? = null): IntDbIntegerColumnNullable<T> =
-            IntDbIntegerColumnNullable(getter, name, defaultValue).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Int?, columnName: String? = null, defaultValue: Int? = null): IntDbIntegerColumnNullable<T> =
+            IntDbIntegerColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun autoIncrementInteger(getter: (T) -> Int?, name: String? = null): IntDbIntegerColumnNotNull<T> =
-            IntDbIntegerColumnNotNull(getter, name, true).also { addColumn(it) }
+    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
+            IntDbIntegerColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Boolean, name: String? = null): BooleanDbIntegerColumnNotNull<T> =
-            BooleanDbIntegerColumnNotNull(getter, name).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Boolean, columnName: String? = null): BooleanDbIntegerColumnNotNull<T> =
+            BooleanDbIntegerColumnNotNull(getter, columnName).also { addColumn(it) }
 }
