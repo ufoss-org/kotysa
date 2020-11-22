@@ -34,6 +34,6 @@ public class StringDbVarcharColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): StringDbVarcharColumnNullable<T> {
         init?.invoke(this)
-        return StringDbVarcharColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue, size)
+        return StringDbVarcharColumnNullable(entityGetter, columnName, defaultValue, size)
     }
 }

@@ -35,7 +35,7 @@ internal class SqlClientSqLite(
 
     override fun <T : Any> createTable(table: Table<T>) {
         val createTableSql = createTableSql(table)
-        return client.writableDatabase.compileStatement(createTableSql).execute()
+        client.writableDatabase.compileStatement(createTableSql).execute()
     }
 
     /*override fun <T : Any> select(
@@ -43,11 +43,6 @@ internal class SqlClientSqLite(
             dsl: (SelectDslApi.(ValueProvider) -> T)?
     ): SqlClientSelect.Select<T> =
             SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
-
-    override fun <T : Any> createTable(tableClass: KClass<T>) {
-        val createTableSql = createTableSql(tableClass)
-        return client.writableDatabase.compileStatement(createTableSql).execute()
-    }
 
     override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
             SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)

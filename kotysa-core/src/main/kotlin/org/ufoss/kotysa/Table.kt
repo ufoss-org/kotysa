@@ -5,9 +5,9 @@ package org.ufoss.kotysa
  *
  * @param T Entity type associated with this table
  */
-public abstract class Table<T : Any>(private val tableName: String?) {
+public abstract class Table<T : Any>(internal val tableName: String?) {
 
-    internal var name: String? = null
+    internal lateinit var name: String
 
     internal val columns = mutableSetOf<DbColumn<T, *>>()
     internal lateinit var pk: PrimaryKey<T>

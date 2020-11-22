@@ -32,7 +32,7 @@ public class IntDbIntegerColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): IntDbIntegerColumnNullable<T> {
         init?.invoke(this)
-        return IntDbIntegerColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return IntDbIntegerColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 

@@ -36,8 +36,7 @@ public class LocalDateTimeDbTimestampColumnNullableDsl<T : Any> internal constru
 
     internal fun initialize(): LocalDateTimeDbTimestampColumnNullable<T> {
         init?.invoke(this)
-        return LocalDateTimeDbTimestampColumnNullable(entityGetter, columnName, defaultValue == null,
-                defaultValue, fractionalSecondsPart)
+        return LocalDateTimeDbTimestampColumnNullable(entityGetter, columnName, defaultValue, fractionalSecondsPart)
     }
 }
 
@@ -63,8 +62,7 @@ public class KotlinxLocalDateTimeDbTimestampColumnNullableDsl<T : Any> internal 
 
     internal fun initialize(): KotlinxLocalDateTimeDbTimestampColumnNullable<T> {
         init?.invoke(this)
-        return KotlinxLocalDateTimeDbTimestampColumnNullable(entityGetter, columnName, defaultValue == null,
-                defaultValue, fractionalSecondsPart)
+        return KotlinxLocalDateTimeDbTimestampColumnNullable(entityGetter, columnName, defaultValue, fractionalSecondsPart)
     }
 }
 
@@ -90,7 +88,6 @@ public class OffsetDateTimeDbTimestampColumnNullableDsl<T : Any> internal constr
 
     internal fun initialize(): OffsetDateTimeDbTimestampColumnNullable<T> {
         init?.invoke(this)
-        return OffsetDateTimeDbTimestampColumnNullable(entityGetter, columnName,
-                defaultValue == null, defaultValue, fractionalSecondsPart)
+        return OffsetDateTimeDbTimestampColumnNullable(entityGetter, columnName, defaultValue, fractionalSecondsPart)
     }
 }

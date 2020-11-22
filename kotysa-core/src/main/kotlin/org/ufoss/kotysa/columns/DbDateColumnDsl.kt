@@ -33,7 +33,7 @@ public class LocalDateDbDateColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): LocalDateDbDateColumnNullable<T> {
         init?.invoke(this)
-        return LocalDateDbDateColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return LocalDateDbDateColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -59,6 +59,6 @@ public class KotlinxLocalDateDbDateColumnNullableDsl<T : Any> internal construct
 
     internal fun initialize(): KotlinxLocalDateDbDateColumnNullable<T> {
         init?.invoke(this)
-        return KotlinxLocalDateDbDateColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return KotlinxLocalDateDbDateColumnNullable(entityGetter, columnName, defaultValue)
     }
 }

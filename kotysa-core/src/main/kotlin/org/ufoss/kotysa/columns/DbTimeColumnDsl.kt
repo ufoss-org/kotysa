@@ -35,7 +35,6 @@ public class LocalTimeDbTimeColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): LocalTimeDbTimeColumnNullable<T> {
         init?.invoke(this)
-        return LocalTimeDbTimeColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue,
-                fractionalSecondsPart)
+        return LocalTimeDbTimeColumnNullable(entityGetter, columnName, defaultValue, fractionalSecondsPart)
     }
 }

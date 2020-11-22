@@ -7,8 +7,8 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 
 @KotysaMarker
-public class DbDbSerialColumnDsl<T : Any> internal constructor(
-        private val init: (DbDbSerialColumnDsl<T>.() -> Unit)?,
+public class DbSerialColumnDsl<T : Any> internal constructor(
+        private val init: (DbSerialColumnDsl<T>.() -> Unit)?,
         private val entityGetter: (T) -> Int?
 ) : ColumnDescriptionDsl<T, Int>(entityGetter) {
 

@@ -35,7 +35,7 @@ public class OffsetDateTimeDbTimestampWithTimeZoneColumnNullableDsl<T : Any> int
 
     internal fun initialize(): OffsetDateTimeDbTimestampWithTimeZoneColumnNullable<T> {
         init?.invoke(this)
-        return OffsetDateTimeDbTimestampWithTimeZoneColumnNullable(entityGetter, columnName,
-                defaultValue == null, defaultValue, fractionalSecondsPart)
+        return OffsetDateTimeDbTimestampWithTimeZoneColumnNullable(entityGetter, columnName, defaultValue,
+                fractionalSecondsPart)
     }
 }

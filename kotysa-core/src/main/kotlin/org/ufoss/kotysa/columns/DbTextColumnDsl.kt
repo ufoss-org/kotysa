@@ -36,7 +36,7 @@ public class StringDbTextColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): StringDbTextColumnNullable<T> {
         init?.invoke(this)
-        return StringDbTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return StringDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -62,7 +62,7 @@ public class LocalDateTimeDbTextColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): LocalDateTimeDbTextColumnNullable<T> {
         init?.invoke(this)
-        return LocalDateTimeDbTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return LocalDateTimeDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -88,8 +88,7 @@ public class KotlinxLocalDateTimeDbTextColumnNullableDsl<T : Any> internal const
 
     internal fun initialize(): KotlinxLocalDateTimeDbTextColumnNullable<T> {
         init?.invoke(this)
-        return KotlinxLocalDateTimeDbTextColumnNullable(entityGetter, columnName, defaultValue == null,
-                defaultValue)
+        return KotlinxLocalDateTimeDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -115,7 +114,7 @@ public class LocalDateDbTextColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): LocalDateDbTextColumnNullable<T> {
         init?.invoke(this)
-        return LocalDateDbTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return LocalDateDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -141,7 +140,7 @@ public class KotlinxLocalDateDbTextColumnNullableDsl<T : Any> internal construct
 
     internal fun initialize(): KotlinxLocalDateDbTextColumnNullable<T> {
         init?.invoke(this)
-        return KotlinxLocalDateDbTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return KotlinxLocalDateDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -167,7 +166,7 @@ public class OffsetDateTimeDbTextColumnNullableDsl<T : Any> internal constructor
 
     internal fun initialize(): OffsetDateTimeDbTextColumnNullable<T> {
         init?.invoke(this)
-        return OffsetDateTimeDbTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return OffsetDateTimeDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }
 
@@ -193,6 +192,6 @@ public class LocalTimeDbTextColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): LocalTimeDbTextColumnNullable<T> {
         init?.invoke(this)
-        return LocalTimeDbTextColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return LocalTimeDbTextColumnNullable(entityGetter, columnName, defaultValue)
     }
 }

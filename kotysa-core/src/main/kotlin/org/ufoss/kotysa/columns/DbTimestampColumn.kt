@@ -31,10 +31,11 @@ public class LocalDateTimeDbTimestampColumnNotNull<T : Any> internal constructor
 public class LocalDateTimeDbTimestampColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalDateTime?,
         override val name: String?,
-        override val isNullable: Boolean,
         override val defaultValue: LocalDateTime?,
         override val size: Int?,
-) : DbTimestampColumn<T, LocalDateTime>(), LocalDateTimeColumnNullable<T>
+) : DbTimestampColumn<T, LocalDateTime>(), LocalDateTimeColumnNullable<T> {
+    override val isNullable = defaultValue == null
+}
 
 public class KotlinxLocalDateTimeDbTimestampColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?,
@@ -45,10 +46,11 @@ public class KotlinxLocalDateTimeDbTimestampColumnNotNull<T : Any> internal cons
 public class KotlinxLocalDateTimeDbTimestampColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> kotlinx.datetime.LocalDateTime?,
         override val name: String?,
-        override val isNullable: Boolean,
         override val defaultValue: kotlinx.datetime.LocalDateTime?,
         override val size: Int?,
-) : DbTimestampColumn<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeColumnNullable<T>
+) : DbTimestampColumn<T, kotlinx.datetime.LocalDateTime>(), KotlinxLocalDateTimeColumnNullable<T> {
+    override val isNullable = defaultValue == null
+}
 
 public class OffsetDateTimeDbTimestampColumnNotNull<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
@@ -59,7 +61,8 @@ public class OffsetDateTimeDbTimestampColumnNotNull<T : Any> internal constructo
 public class OffsetDateTimeDbTimestampColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> OffsetDateTime?,
         override val name: String?,
-        override val isNullable: Boolean,
         override val defaultValue: OffsetDateTime?,
         override val size: Int?,
-) : DbTimestampColumn<T, OffsetDateTime>(), OffsetDateTimeColumnNullable<T>
+) : DbTimestampColumn<T, OffsetDateTime>(), OffsetDateTimeColumnNullable<T> {
+    override val isNullable = defaultValue == null
+}

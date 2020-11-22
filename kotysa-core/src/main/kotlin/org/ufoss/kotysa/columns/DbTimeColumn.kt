@@ -33,7 +33,8 @@ public class LocalTimeDbTimeColumnNotNull<T : Any> internal constructor(
 public class LocalTimeDbTimeColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> LocalTime?,
         override val name: String?,
-        override val isNullable: Boolean,
         override val defaultValue: LocalTime?,
         override val size: Int?,
-) : DbTimeColumn<T, LocalTime>(), LocalTimeColumnNullable<T>
+) : DbTimeColumn<T, LocalTime>(), LocalTimeColumnNullable<T> {
+    override val isNullable = defaultValue == null
+}

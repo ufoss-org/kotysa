@@ -71,6 +71,6 @@ public class PostgresqlColumnDsl<T : Any, U : DbColumn<T, *>> internal construct
     public fun NullableIntColumnProperty<T>.integer(dsl: (IntDbIntegerColumnNullableDsl<T>.() -> Unit)? = null)
             : IntDbIntegerColumnNullable<T> = IntDbIntegerColumnNullableDsl(dsl, getter).initialize()
 
-    public fun NullableIntColumnProperty<T>.serial(dsl: (DbDbSerialColumnDsl<T>.() -> Unit)? = null)
-            : IntDbSerialColumnNotNull<T> = DbDbSerialColumnDsl(dsl, getter).initialize()
+    public fun NullableIntColumnProperty<T>.serial(dsl: (DbSerialColumnDsl<T>.() -> Unit)? = null)
+            : IntDbSerialColumnNotNull<T> = DbSerialColumnDsl(dsl, getter).initialize()
 }

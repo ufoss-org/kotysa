@@ -33,6 +33,6 @@ public class UuidDbUuidColumnNullableDsl<T : Any> internal constructor(
 
     internal fun initialize(): UuidDbUuidColumnNullable<T> {
         init?.invoke(this)
-        return UuidDbUuidColumnNullable(entityGetter, columnName, defaultValue == null, defaultValue)
+        return UuidDbUuidColumnNullable(entityGetter, columnName, defaultValue)
     }
 }

@@ -59,7 +59,8 @@ public object DbTypeChoice {
     }
 
     private fun initializeTable(table: Table<Any>, tableClass: KClass<Any>): KotysaTable<*> {
-        val tableName = table.name ?: table::class.simpleName!!
+        // define table name = provided name or else mapping class simpleName
+        table.name = table.tableName ?: table::class.simpleName!!
 
         require(table.isPkInitialized()) { "Table primary key is mandatory" }
         require(table.columns.isNotEmpty()) { "Table must declare at least one column" }
@@ -88,7 +89,7 @@ public object DbTypeChoice {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val kotysaTable = KotysaTableImpl(tableClass, table, tableName, kotysaColumnsMap.values, kotysaPK, kotysaFKs)
+        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, kotysaColumnsMap.values, kotysaPK, kotysaFKs)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable

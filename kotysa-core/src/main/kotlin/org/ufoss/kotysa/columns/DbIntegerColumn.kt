@@ -29,9 +29,9 @@ public class IntDbIntegerColumnNotNull<T : Any> internal constructor(
 public class IntDbIntegerColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> Int?,
         override val name: String?,
-        override val isNullable: Boolean,
         override val defaultValue: Int?,
 ) : DbIntegerColumn<T, Int>(), IntColumnNullable<T> {
+    override val isNullable = defaultValue == null
     // No auto-increment
     override val isAutoIncrement = false
 }

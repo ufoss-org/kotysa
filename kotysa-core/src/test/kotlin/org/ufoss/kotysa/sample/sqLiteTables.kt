@@ -16,16 +16,12 @@ data class SqLiteUser(
 )
 
 object SQLITE_USER : SqLiteTable<SqLiteUser>() {
-    val id = column { it[SqLiteUser::id].autoIncrementInteger() }
+    val id = autoIncrementInteger(SqLiteUser::id)
             .primaryKey()
-    val firstname = column { it[SqLiteUser::firstname].text {
-        name = "fname"
-    } }
-    val lastname = column { it[SqLiteUser::lastname].text {
-        name = "lname"
-    } }
-    val isAdmin = column { it[SqLiteUser::isAdmin].integer() }
-    val alias = column { it[SqLiteUser::alias].text() }
+    val firstname = text(SqLiteUser::firstname, "fname")
+    val lastname = text(SqLiteUser::lastname, "lname")
+    val isAdmin = integer(SqLiteUser::isAdmin)
+    val alias = text(SqLiteUser::alias)
 }
 
 fun sqLiteTables() = tables().sqlite(SQLITE_USER)
