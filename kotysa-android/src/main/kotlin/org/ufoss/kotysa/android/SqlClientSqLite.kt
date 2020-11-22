@@ -38,14 +38,14 @@ internal class SqlClientSqLite(
         client.writableDatabase.compileStatement(createTableSql).execute()
     }
 
+    override fun <T : Any> deleteFromTable(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
+            SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, table)
+
     /*override fun <T : Any> select(
             resultClass: KClass<T>,
             dsl: (SelectDslApi.(ValueProvider) -> T)?
     ): SqlClientSelect.Select<T> =
             SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
-
-    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
 
     override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
             SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)*/

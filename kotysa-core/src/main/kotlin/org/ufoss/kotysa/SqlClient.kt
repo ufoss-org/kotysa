@@ -18,6 +18,10 @@ public interface SqlClient {
 
     public fun <T : Any> createTable(table: Table<T>)
 
+    public fun <T : Any> deleteFromTable(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
+
+    public fun <T : Any> deleteAllFromTable(table: Table<T>): Int = deleteFromTable(table).execute()
+
     /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
 
     public inline fun <reified T : Any> select(): SqlClientSelect.Select<T> = selectInternal(T::class, null)
@@ -28,10 +32,6 @@ public interface SqlClient {
 
     protected abstract fun <T : Any> select(
             resultClass: KClass<T>, dsl: (SelectDslApi.() -> T)?): SqlClientSelect.Select<T>
-
-    public inline fun <reified T : Any> deleteFromTable(): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> = deleteFromTableInternal(T::class)
-
-    public inline fun <reified T : Any> deleteAllFromTable(): Int = deleteFromTableInternal(T::class).execute()
 
     @PublishedApi
     internal fun <T : Any> deleteFromTableInternal(tableClass: KClass<T>) =
@@ -115,29 +115,25 @@ public class SqlClientSelect private constructor() {
          */
         public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }
-}
+}*/
 
 
 public class SqlClientDeleteOrUpdate private constructor() {
     public abstract class DeleteOrUpdate<T : Any> : Return {
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable =
-                joinInternal(U::class, alias, JoinType.INNER)
+        /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
+                join(joinedTable, alias, JoinType.INNER)
 
-        @PublishedApi
-        internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
-                join(joinClass, alias, type)
+        protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable
 
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable
-
-        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
+        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>*/
     }
 
     public abstract class Update<T : Any> : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
         public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
     }
 
-    public interface Joinable {
+    /*public interface Joinable {
         public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
     }
 
@@ -153,7 +149,7 @@ public class SqlClientDeleteOrUpdate private constructor() {
     public interface TypedWhere<T : Any> : Return {
         public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
         public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-    }
+    }*/
 
     public interface Return {
         /**
@@ -161,4 +157,4 @@ public class SqlClientDeleteOrUpdate private constructor() {
          */
         public fun execute(): Int
     }
-}*/
+}

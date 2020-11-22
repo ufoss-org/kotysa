@@ -5,9 +5,8 @@
 package org.ufoss.kotysa
 
 
-public class JoinClause internal constructor(
-        internal val table: Table<*>,
-        internal val column: Column<*, *>,
+public class JoinClause<T : Any, U : Any> internal constructor(
+        internal val references: Map<DbColumn<T, *>, DbColumn<U, *>>,
         internal val type: JoinType
 )
 

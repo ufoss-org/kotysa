@@ -22,8 +22,8 @@ abstract class AbstractUserRepository(
     }
 
     override fun delete() {
-        //deleteAllFromUsers()
-        //deleteAllFromRoles()
+        deleteAllFromUsers()
+        deleteAllFromRoles()
         sqLiteOpenHelper.close()
     }
 
@@ -40,11 +40,11 @@ abstract class AbstractUserRepository(
         sqlClient.insert(userJdoe, userBboss)
     }
 
-    /*fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<SqLiteUser>()
+    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable(SQLITE_USER)
 
-    private fun deleteAllFromRoles() = sqlClient.deleteAllFromTable<SqLiteRole>()
+    private fun deleteAllFromRoles() = sqlClient.deleteAllFromTable(SQLITE_ROLE)
 
-    fun selectAll() = sqlClient.selectAll<SqLiteUser>()
+    /*fun selectAll() = sqlClient.selectAll<SqLiteUser>()
 
     fun selectFirstByFirstname(firstname: String) =
         sqlClient.select<SqLiteUser>()

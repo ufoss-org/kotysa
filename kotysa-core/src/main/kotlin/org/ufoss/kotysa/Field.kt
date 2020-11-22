@@ -11,11 +11,20 @@ internal fun Column<*, *>?.getCountFieldName(availableColumns: Map<Column<*, *>,
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
     val kotysaColumn = requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" }
-    return if (this is AliasedTable<*>) {
-        "$alias."
+    val kotysaTable = kotysaColumn.table
+    return if (kotysaTable is AliasedTable<*>) {
+        "${kotysaTable.alias}."
     } else {
         "${kotysaColumn.table.name}."
     } + kotysaColumn.name
+}
+
+internal fun KotysaTable<*>.getFieldName(): String {
+    return if (this is AliasedTable<*>) {
+        alias
+    } else {
+        name
+    }
 }
 
 /*

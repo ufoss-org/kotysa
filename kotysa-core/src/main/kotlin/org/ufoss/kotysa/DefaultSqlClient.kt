@@ -24,6 +24,10 @@ public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
 public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
         requireNotNull(this.allTables.values.first { kotysaTable -> kotysaTable.tableClass == tableClass }) as KotysaTable<T>
 
+@Suppress("UNCHECKED_CAST")
+public fun <T : Any> Tables.getTable(column: Column<out T, *>): KotysaTable<T> =
+        requireNotNull(this.allColumns[column]) { "Requested column \"$column\" is not mapped" }.table as KotysaTable<T>
+
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
     require(this.allTables.values.any { kotysaTable -> kotysaTable.tableClass == tableClass }) { tableMustBeMapped(tableClass.qualifiedName) }
 }
@@ -167,55 +171,32 @@ private fun Any?.defaultValue(): String = when (this) {
     else -> "'${this.dbValue()}'"
 }
 
-/*
 public open class DefaultSqlClientCommon protected constructor() {
 
-    public interface Properties {
+    public interface Properties<T : Any> {
         public val tables: Tables
-        public val whereClauses: MutableList<TypedWhereClause>
-        public val joinClauses: MutableList<JoinClause>
-        public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
+        // public val whereClauses: MutableList<TypedWhereClause>
+        public val joinClauses: MutableSet<JoinClause<T, *>>
+        public val availableColumns: MutableSet<KotysaColumn<*, *>>
     }
 
     protected interface Instruction {
         @Suppress("UNCHECKED_CAST")
         public fun <T : Any> addAvailableColumnsFromTable(
-                properties: Properties,
+                properties: Properties<T>,
                 table: KotysaTable<T>
         ) {
             properties.apply {
-                if (joinClauses.isEmpty() ||
-                        !joinClauses.map { joinClause -> joinClause.table.kotysaTable }.contains(table)) {
-                    table.columns.forEach { kotysaColumn ->
-                        // 1) add mapped getter
-                        availableColumns[kotysaColumn.column] = kotysaColumn
-
-                        /*val getterCallable = kotysaColumn.entityGetter.toCallable()
-
-                        // 2) add overridden parent getters associated with this column
-                        table.tableClass.allSuperclasses
-                                .flatMap { superClass -> superClass.members }
-                                .filter { callable ->
-                                    callable.isAbstract
-                                            && callable.name == getterCallable.name
-                                            && (callable is KProperty1<*, *> || callable.name.startsWith("get"))
-                                            && (callable.returnType == getterCallable.returnType
-                                            || callable.returnType.classifier is KTypeParameter)
-                                }
-                                .forEach { callable ->
-                                    availableColumns[callable as (Any) -> Any?] = value
-                                }*/
-                    }
-                }
+                table.columns.forEach { column -> availableColumns.add(column) }
             }
         }
     }
 
-    public interface WithProperties {
-        public val properties: Properties
+    public interface WithProperties<T : Any> {
+        public val properties: Properties<T>
     }
 
-    protected interface Whereable : WithProperties
+    /*protected interface Whereable : WithProperties
 
     protected interface Join : WithProperties, Instruction {
         public fun <T : Any> addJoinClause(dsl: (FieldProvider) -> ColumnField<*, *>, joinClass: KClass<T>, alias: String?, type: JoinType) {
@@ -271,24 +252,26 @@ public open class DefaultSqlClientCommon protected constructor() {
                         TypedWhereDsl(dsl, availableColumns, tables.dbType).initialize(), whereClauseType))
             }
         }
-    }
+    }*/
 
-    public interface Return : WithProperties {
+    public interface Return<T : Any> : WithProperties<T> {
 
         /**
          * Used exclusively by SqLite
          */
         public fun stringValue(value: Any?): String = value.dbValue()
 
-        public fun joins(): String =
-                properties.joinClauses.joinToString { joinClause ->
-                    // fixme handle multiple columns
-                    val joinedTableFieldName = "${joinClause.table.prefix}.${joinClause.table.primaryKey.columns[0].name}"
-
-                    "${joinClause.type.sql} ${joinClause.table.declaration} ON ${joinClause.field.fieldName} = $joinedTableFieldName"
+        public fun joins(): String = with(properties) {
+            properties.joinClauses.joinToString { joinClause ->
+                val ons = joinClause.references.entries.joinToString("and ") { reference ->
+                    "${reference.key.getFieldName(tables.allColumns)} = ${reference.value.getFieldName(tables.allColumns)}"
                 }
 
-        public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
+                "${joinClause.type.sql} ${tables.getTable(joinClause.references.values.first()).getFieldName()} ON $ons"
+            }
+        }
+
+        /*public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
             if (whereClauses.isEmpty()) {
                 return ""
             }
@@ -378,6 +361,6 @@ public open class DefaultSqlClientCommon protected constructor() {
                 where.append(")")
             }
             return where.toString()
-        }
+        }*/
     }
-}*/
+}

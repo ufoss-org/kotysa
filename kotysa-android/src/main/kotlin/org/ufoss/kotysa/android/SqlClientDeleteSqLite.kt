@@ -3,21 +3,23 @@
  */
 
 package org.ufoss.kotysa.android
-/*
+
 import android.database.sqlite.SQLiteDatabase
-import org.ufoss.kotysa.*
-import kotlin.reflect.KClass
+import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
+import org.ufoss.kotysa.SqlClientDeleteOrUpdate
+import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.Tables
 
 internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class Delete<T : Any> internal constructor(
-        override val client: SQLiteDatabase,
-        override val tables: Tables,
-        override val tableClass: KClass<T>
+            override val client: SQLiteDatabase,
+            override val tables: Tables,
+            override val table: Table<T>
     ) : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>(), DeleteOrUpdate<T>, Return<T> {
         override val properties: Properties<T> = initProperties()
 
-        override fun <U : Any> join(
+        /*override fun <U : Any> join(
             joinClass: KClass<U>,
             alias: String?,
             type: JoinType
@@ -28,9 +30,10 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             val where = TypedWhere(client, properties)
             where.addWhereClause(dsl)
             return where
-        }
+        }*/
     }
 
+    /*
     private class Joinable<T : Any, U : Any>(
         private val client: SQLiteDatabase,
         private val properties: Properties<T>,
@@ -87,19 +90,19 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             addOrClause(dsl)
             return this
         }
-    }
+    }*/
 
     private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>,
-        SqlClientDeleteOrUpdate.Return {
+            SqlClientDeleteOrUpdate.Return {
         val client: SQLiteDatabase
 
         override fun execute() = with(properties) {
             val statement = client.compileStatement(deleteFromTableSql())
 
             // add all values from where part
-            bindWhereArgs(statement)
+            //bindWhereArgs(statement)
 
             statement.executeUpdateDelete()
         }
     }
-}*/
+}

@@ -3,9 +3,8 @@
  */
 
 package org.ufoss.kotysa
-/*
+
 import org.ufoss.kolog.Logger
-import kotlin.reflect.KClass
 
 private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()
 
@@ -17,11 +16,11 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             /**
              * targeted table to update
              */
-            public val tableOld: KotysaTableOld<T>,
-            override val availableColumns: MutableMap<(Any) -> Any?, KotysaColumn<*, *>>
-    ) : DefaultSqlClientCommon.Properties {
-        override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()
-        override val joinClauses: MutableList<JoinClause> = mutableListOf()
+            public val table: KotysaTable<T>,
+            override val availableColumns: MutableSet<KotysaColumn<*, *>>
+    ) : DefaultSqlClientCommon.Properties<T> {
+        //override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()
+        override val joinClauses: MutableSet<JoinClause<T, *>> = mutableSetOf()
         public val setValues: MutableMap<KotysaColumn<T, *>, Any?> = mutableMapOf()
     }
 
@@ -32,19 +31,18 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
     protected interface DeleteOrUpdate<T : Any> : Instruction {
 
         public val tables: Tables
-        public val tableClass: KClass<T>
+        public val table: Table<T>
 
         public fun initProperties(): Properties<T> {
-            tables.checkTable(tableClass)
-            val table = tables.getTable(tableClass)
-            val properties = Properties(tables, table, mutableMapOf())
+            val table = tables.getTable(table)
+            val properties = Properties(tables, table, mutableSetOf())
             // init availableColumns with table columns
             addAvailableColumnsFromTable(properties, table)
             return properties
         }
     }
 
-    protected interface Update<T : Any> : DeleteOrUpdate<T>, WithProperties<T> {
+    /*protected interface Update<T : Any> : DeleteOrUpdate<T>, WithProperties<T> {
         public fun addSetValue(dsl: (FieldSetter<T>) -> Unit) {
             properties.apply {
                 val setValue = UpdateSetDsl(dsl, availableColumns, tables.dbType).initialize()
@@ -57,12 +55,12 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
     protected interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
 
-    protected interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>
+    protected interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>*/
 
-    public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
+    public interface Return<T : Any> : DefaultSqlClientCommon.Return<T>, WithProperties<T> {
 
         public fun deleteFromTableSql(): String = with(properties) {
-            val deleteSql = "DELETE FROM ${tableOld.name}"
+            val deleteSql = "DELETE FROM ${table.name}"
             val joinsAndWheres = joinsWithExistsAndWheres()
             logger.debug { "Exec SQL (${tables.dbType.name}) : $deleteSql $joinsAndWheres" }
 
@@ -70,7 +68,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
 
         public fun updateTableSql(): String = with(properties) {
-            val updateSql = "UPDATE ${tableOld.name}"
+            val updateSql = "UPDATE ${table.name}"
             var index = 0
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
                 if (DbType.SQLITE == tables.dbType) {
@@ -90,7 +88,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
          * Then other WHERE clauses
          */
         public fun joinsWithExistsAndWheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
-            val joins = joinsWithExists()
+            /*val joins = joinsWithExists()
 
             var wheres = wheres(false, offset)
 
@@ -110,9 +108,11 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                 } else {
                     "$prefix$wheres"
                 }
-            }
+            }*/
+            return ""
         }
 
+        /*
         /**
          * Handle joins as EXISTS + nested SELECT
          */
@@ -147,6 +147,6 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             } else {
                 null
             }
-        }
+        }*/
     }
-}*/
+}
