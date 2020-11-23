@@ -19,7 +19,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             public val table: KotysaTable<T>,
             override val availableColumns: MutableSet<KotysaColumn<*, *>>
     ) : DefaultSqlClientCommon.Properties<T> {
-        //override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()
+        override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
         override val joinClauses: MutableSet<JoinClause<T, *>> = mutableSetOf()
         public val setValues: MutableMap<KotysaColumn<T, *>, Any?> = mutableMapOf()
     }
@@ -51,11 +51,11 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction
+    protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction*/
 
-    protected interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
+    protected interface Where<T : Any> : DefaultSqlClientCommon.Where<T>, WithProperties<T>
 
-    protected interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>*/
+    protected interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return<T>, WithProperties<T> {
 
@@ -88,11 +88,11 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
          * Then other WHERE clauses
          */
         public fun joinsWithExistsAndWheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
-            /*val joins = joinsWithExists()
+            //val joins = joinsWithExists()
 
             var wheres = wheres(false, offset)
 
-            if (joins.isEmpty() && wheres.isEmpty()) {
+            if (/*joins.isEmpty() &&*/ wheres.isEmpty()) {
                 ""
             } else {
                 val prefix = if (withWhere) {
@@ -100,16 +100,15 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                 } else {
                     ""
                 }
-                if (joins.isNotEmpty()) {
+                /*if (joins.isNotEmpty()) {
                     if (wheres.isNotEmpty()) {
                         wheres = "AND $wheres"
                     }
                     "$prefix$joins $wheres )"
-                } else {
+                } else {*/
                     "$prefix$wheres"
-                }
-            }*/
-            return ""
+                //}
+            }
         }
 
         /*

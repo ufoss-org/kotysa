@@ -3,10 +3,10 @@
  */
 
 package org.ufoss.kotysa
-/*
 
-public class WhereClause internal constructor(
-        internal val field: Field,
+
+public class WhereClause<T : Any> internal constructor(
+        internal val column: Column<T, *>,
         internal val operation: Operation,
         public val value: Any?
 )
@@ -15,11 +15,11 @@ internal enum class Operation {
     EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IS, IN
 }
 
-public class TypedWhereClause internal constructor(
-        public val whereClause: WhereClause,
+public class TypedWhereClause<T : Any> internal constructor(
+        public val whereClause: WhereClause<T>,
         internal val type: WhereClauseType
 )
 
-internal enum class WhereClauseType {
+public enum class WhereClauseType {
     WHERE, AND, OR
-}*/
+}

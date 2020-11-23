@@ -175,7 +175,7 @@ public open class DefaultSqlClientCommon protected constructor() {
 
     public interface Properties<T : Any> {
         public val tables: Tables
-        // public val whereClauses: MutableList<TypedWhereClause>
+        public val whereClauses: MutableList<TypedWhereClause<*>>
         public val joinClauses: MutableSet<JoinClause<T, *>>
         public val availableColumns: MutableSet<KotysaColumn<*, *>>
     }
@@ -196,9 +196,9 @@ public open class DefaultSqlClientCommon protected constructor() {
         public val properties: Properties<T>
     }
 
-    /*protected interface Whereable : WithProperties
+    protected interface Whereable<T : Any> : WithProperties<T>
 
-    protected interface Join : WithProperties, Instruction {
+    /*protected interface Join : WithProperties, Instruction {
         public fun <T : Any> addJoinClause(dsl: (FieldProvider) -> ColumnField<*, *>, joinClass: KClass<T>, alias: String?, type: JoinType) {
             properties.apply {
                 tables.checkTable(joinClass)
@@ -207,52 +207,19 @@ public open class DefaultSqlClientCommon protected constructor() {
                 addAvailableColumnsFromTable(this, aliasedTable)
             }
         }
-    }
-
-    protected interface Where : WithProperties {
-        public fun addWhereClause(dsl: WhereDsl.(FieldProvider) -> WhereClause) {
-            addClause(dsl, WhereClauseType.WHERE)
-        }
-
-        public fun addAndClause(dsl: WhereDsl.(FieldProvider) -> WhereClause) {
-            addClause(dsl, WhereClauseType.AND)
-        }
-
-        public fun addOrClause(dsl: WhereDsl.(FieldProvider) -> WhereClause) {
-            addClause(dsl, WhereClauseType.OR)
-        }
-
-        private fun addClause(dsl: WhereDsl.(FieldProvider) -> WhereClause, whereClauseType: WhereClauseType) {
-            properties.apply {
-                whereClauses.add(TypedWhereClause(
-                        WhereDsl(dsl, availableColumns, tables.dbType).initialize(), whereClauseType))
-            }
-        }
-    }
-
-    protected interface TypedWhere<T : Any> : WithProperties {
-        public fun addWhereClause(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause) {
-            addClause(dsl, WhereClauseType.WHERE)
-        }
-
-        public fun addAndClause(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause) {
-            addClause(dsl, WhereClauseType.AND)
-        }
-
-        public fun addOrClause(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause) {
-            addClause(dsl, WhereClauseType.OR)
-        }
-
-        private fun addClause(
-                dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause,
-                whereClauseType: WhereClauseType
-        ) {
-            properties.apply {
-                whereClauses.add(TypedWhereClause(
-                        TypedWhereDsl(dsl, availableColumns, tables.dbType).initialize(), whereClauseType))
-            }
-        }
     }*/
+
+    protected interface Where<T : Any> : WithProperties<T> {
+        public fun addClause(whereClause: WhereClause<*>, whereClauseType: WhereClauseType) {
+            properties.whereClauses.add(TypedWhereClause(whereClause, whereClauseType))
+        }
+    }
+
+    protected interface TypedWhere<T : Any> : WithProperties<T> {
+        public fun addClause(whereClause: WhereClause<T>, whereClauseType: WhereClauseType) {
+            properties.whereClauses.add(TypedWhereClause(whereClause, whereClauseType))
+        }
+    }
 
     public interface Return<T : Any> : WithProperties<T> {
 
@@ -271,7 +238,7 @@ public open class DefaultSqlClientCommon protected constructor() {
             }
         }
 
-        /*public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
+        public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
             if (whereClauses.isEmpty()) {
                 return ""
             }
@@ -294,66 +261,66 @@ public open class DefaultSqlClientCommon protected constructor() {
                             when (operation) {
                                 Operation.EQ ->
                                     if (value == null) {
-                                        "${field.fieldName} IS NULL"
+                                        "${column.getFieldName(tables.allColumns)} IS NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${field.fieldName} = ?"
+                                            "${column.getFieldName(tables.allColumns)} = ?"
                                         } else {
-                                            "${field.fieldName} = :k${index++}"
+                                            "${column.getFieldName(tables.allColumns)} = :k${index++}"
                                         }
                                     }
                                 Operation.NOT_EQ ->
                                     if (value == null) {
-                                        "${field.fieldName} IS NOT NULL"
+                                        "${column.getFieldName(tables.allColumns)} IS NOT NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${field.fieldName} <> ?"
+                                            "${column.getFieldName(tables.allColumns)} <> ?"
                                         } else {
-                                            "${field.fieldName} <> :k${index++}"
+                                            "${column.getFieldName(tables.allColumns)} <> :k${index++}"
                                         }
                                     }
                                 Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} LIKE ?"
+                                        "${column.getFieldName(tables.allColumns)} LIKE ?"
                                     } else {
-                                        "${field.fieldName} LIKE :k${index++}"
+                                        "${column.getFieldName(tables.allColumns)} LIKE :k${index++}"
                                     }
                                 Operation.INF ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} < ?"
+                                        "${column.getFieldName(tables.allColumns)} < ?"
                                     } else {
-                                        "${field.fieldName} < :k${index++}"
+                                        "${column.getFieldName(tables.allColumns)} < :k${index++}"
                                     }
                                 Operation.INF_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} <= ?"
+                                        "${column.getFieldName(tables.allColumns)} <= ?"
                                     } else {
-                                        "${field.fieldName} <= :k${index++}"
+                                        "${column.getFieldName(tables.allColumns)} <= :k${index++}"
                                     }
                                 Operation.SUP ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} > ?"
+                                        "${column.getFieldName(tables.allColumns)} > ?"
                                     } else {
-                                        "${field.fieldName} > :k${index++}"
+                                        "${column.getFieldName(tables.allColumns)} > :k${index++}"
                                     }
                                 Operation.SUP_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} >= ?"
+                                        "${column.getFieldName(tables.allColumns)} >= ?"
                                     } else {
-                                        "${field.fieldName} >= :k${index++}"
+                                        "${column.getFieldName(tables.allColumns)} >= :k${index++}"
                                     }
                                 Operation.IS ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} IS ?"
+                                        "${column.getFieldName(tables.allColumns)} IS ?"
                                     } else {
-                                        "${field.fieldName} IS :k${index++}"
+                                        "${column.getFieldName(tables.allColumns)} IS :k${index++}"
                                     }
                                 Operation.IN ->
                                     if (DbType.SQLITE == tables.dbType) {
                                         // must put as much '?' as
-                                        "${field.fieldName} IN (${(value as Collection<*>).joinToString { "?" }})"
+                                        "${column.getFieldName(tables.allColumns)} IN (${(value as Collection<*>).joinToString { "?" }})"
                                     } else {
-                                        "${field.fieldName} IN (:k${index++})"
+                                        "${column.getFieldName(tables.allColumns)} IN (:k${index++})"
                                     }
                             }
                     )
@@ -361,6 +328,6 @@ public open class DefaultSqlClientCommon protected constructor() {
                 where.append(")")
             }
             return where.toString()
-        }*/
+        }
     }
 }

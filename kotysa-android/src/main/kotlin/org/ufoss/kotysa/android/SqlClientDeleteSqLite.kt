@@ -5,10 +5,7 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteDatabase
-import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
-import org.ufoss.kotysa.SqlClientDeleteOrUpdate
-import org.ufoss.kotysa.Table
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.*
 
 internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
@@ -24,13 +21,13 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             alias: String?,
             type: JoinType
         ): SqlClientDeleteOrUpdate.Joinable =
-            Joinable(client, properties, joinClass, alias, type)
+            Joinable(client, properties, joinClass, alias, type)*/
 
-        override fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
+        override fun where(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
             val where = TypedWhere(client, properties)
-            where.addWhereClause(dsl)
+            where.addClause(whereClause, WhereClauseType.WHERE)
             return where
-        }*/
+        }
     }
 
     /*
@@ -74,23 +71,23 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             addOrClause(dsl)
             return this
         }
-    }
+    }*/
 
     private class TypedWhere<T : Any>(
         override val client: SQLiteDatabase,
         override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, SqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
 
-        override fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addAndClause(dsl)
+        override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
+            addClause(whereClause, WhereClauseType.AND)
             return this
         }
 
-        override fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addOrClause(dsl)
+        override fun or(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
+            addClause(whereClause, WhereClauseType.OR)
             return this
         }
-    }*/
+    }
 
     private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>,
             SqlClientDeleteOrUpdate.Return {

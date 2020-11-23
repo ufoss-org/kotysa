@@ -124,9 +124,9 @@ public class SqlClientDeleteOrUpdate private constructor() {
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
 
-        protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable
+        protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable*/
 
-        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>*/
+        public abstract fun where(whereClause: WhereClause<T>): TypedWhere<T>
     }
 
     public abstract class Update<T : Any> : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
@@ -144,12 +144,12 @@ public class SqlClientDeleteOrUpdate private constructor() {
     public interface Where : Return {
         public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
         public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }
+    }*/
 
     public interface TypedWhere<T : Any> : Return {
-        public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-        public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-    }*/
+        public fun and(whereClause: WhereClause<T>): TypedWhere<T>
+        public fun or(whereClause: WhereClause<T>): TypedWhere<T>
+    }
 
     public interface Return {
         /**
