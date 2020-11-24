@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteStatement
+import org.ufoss.kotysa.DefaultSqlClientCommon
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -46,7 +47,7 @@ internal fun SQLiteStatement.bind(index: Int, value: Any?) {
         bindNull(index)
     }
 }
-/*
+
 internal fun DefaultSqlClientCommon.Return.bindWhereArgs(statement: SQLiteStatement, idx: Int = 1) = with(properties) {
     var index = idx
     whereValues()
@@ -73,4 +74,4 @@ private fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(prope
                     setOf(whereValue)
                 }
             }
-}*/
+}

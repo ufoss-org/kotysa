@@ -18,9 +18,9 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
              */
             public val table: KotysaTable<T>,
             override val availableColumns: MutableSet<KotysaColumn<*, *>>
-    ) : DefaultSqlClientCommon.Properties<T> {
+    ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
-        override val joinClauses: MutableSet<JoinClause<T, *>> = mutableSetOf()
+        //override val joinClauses: MutableSet<JoinClause<*, *>> = mutableSetOf()
         public val setValues: MutableMap<KotysaColumn<T, *>, Any?> = mutableMapOf()
     }
 
@@ -53,11 +53,14 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
     protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction*/
 
-    protected interface Where<T : Any> : DefaultSqlClientCommon.Where<T>, WithProperties<T>
+    protected interface TypedWhereOpIntColumnNotNull<T : Any>
+        : DefaultSqlClientCommon.TypedWhereOpIntColumnNotNull<T>, WithProperties<T>
+
+    protected interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
 
     protected interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>
 
-    public interface Return<T : Any> : DefaultSqlClientCommon.Return<T>, WithProperties<T> {
+    public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
         public fun deleteFromTableSql(): String = with(properties) {
             val deleteSql = "DELETE FROM ${table.name}"

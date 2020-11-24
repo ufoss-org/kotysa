@@ -13,8 +13,8 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>
-    ) : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>(), DeleteOrUpdate<T>, Return<T> {
-        override val properties: Properties<T> = initProperties()
+    ) : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, DeleteOrUpdate<T>, Return<T> {
+        override val properties = initProperties()
 
         /*override fun <U : Any> join(
             joinClass: KClass<U>,
@@ -23,9 +23,18 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
         ): SqlClientDeleteOrUpdate.Joinable =
             Joinable(client, properties, joinClass, alias, type)*/
 
-        override fun where(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
+        override fun where(intColumnNotNull: IntColumnNotNull<T>): SqlClientDeleteOrUpdate.TypedWhereOpIntColumnNotNull<T> =
+                TypedWhereOpIntColumnNotNull(intColumnNotNull, properties, client)
+    }
+
+    private class TypedWhereOpIntColumnNotNull<T : Any>(
+            private val intColumnNotNull: IntColumnNotNull<T>,
+            override val properties: Properties<T>,
+            private val client: SQLiteDatabase,
+    ) : DefaultSqlClientDeleteOrUpdate.TypedWhereOpIntColumnNotNull<T>, SqlClientDeleteOrUpdate.TypedWhereOpIntColumnNotNull<T> {
+        override fun eq(value: Int): SqlClientDeleteOrUpdate.TypedWhere<T> {
             val where = TypedWhere(client, properties)
-            where.addClause(whereClause, WhereClauseType.WHERE)
+            where.addClause(intColumnNotNull, Operation.EQ, value, WhereClauseType.WHERE)
             return where
         }
     }
@@ -78,7 +87,7 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
         override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, SqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
 
-        override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
+        /*override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
             addClause(whereClause, WhereClauseType.AND)
             return this
         }
@@ -86,18 +95,17 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
         override fun or(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
             addClause(whereClause, WhereClauseType.OR)
             return this
-        }
+        }*/
     }
 
-    private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>,
-            SqlClientDeleteOrUpdate.Return {
+    private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, SqlClientDeleteOrUpdate.Return {
         val client: SQLiteDatabase
 
         override fun execute() = with(properties) {
             val statement = client.compileStatement(deleteFromTableSql())
 
             // add all values from where part
-            //bindWhereArgs(statement)
+            bindWhereArgs(statement)
 
             statement.executeUpdateDelete()
         }

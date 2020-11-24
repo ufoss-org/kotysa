@@ -4,23 +4,20 @@
 
 package org.ufoss.kotysa
 
-import java.util.stream.Stream
-import kotlin.reflect.KClass
-
 /**
  * Sql Client, to be used with a JDBC driver
  */
 public interface SqlClient {
 
-    public fun <T : Any> insert(row: T)
+    public infix fun <T : Any> insert(row: T)
 
     public fun <T : Any> insert(vararg rows: T)
 
-    public fun <T : Any> createTable(table: Table<T>)
+    public infix fun <T : Any> createTable(table: Table<T>)
 
-    public fun <T : Any> deleteFromTable(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
+    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
 
-    public fun <T : Any> deleteAllFromTable(table: Table<T>): Int = deleteFromTable(table).execute()
+    public infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
 
     /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
 
@@ -119,18 +116,22 @@ public class SqlClientSelect private constructor() {
 
 
 public class SqlClientDeleteOrUpdate private constructor() {
-    public abstract class DeleteOrUpdate<T : Any> : Return {
+    public interface DeleteOrUpdate<T : Any> : Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
 
         protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable*/
 
-        public abstract fun where(whereClause: WhereClause<T>): TypedWhere<T>
+        public infix fun where(intColumnNotNull: IntColumnNotNull<T>): TypedWhereOpIntColumnNotNull<T>
     }
 
-    public abstract class Update<T : Any> : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
+    public abstract class Update<T : Any> : DeleteOrUpdate<T> {
         public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
+    }
+
+    public interface TypedWhereOpIntColumnNotNull<T : Any> {
+        public infix fun eq(value: Int): TypedWhere<T>
     }
 
     /*public interface Joinable {
@@ -147,8 +148,8 @@ public class SqlClientDeleteOrUpdate private constructor() {
     }*/
 
     public interface TypedWhere<T : Any> : Return {
-        public fun and(whereClause: WhereClause<T>): TypedWhere<T>
-        public fun or(whereClause: WhereClause<T>): TypedWhere<T>
+        /*public fun and(whereClause: WhereClause<T>): TypedWhere<T>
+        public fun or(whereClause: WhereClause<T>): TypedWhere<T>*/
     }
 
     public interface Return {
