@@ -38,7 +38,7 @@ internal class SqlClientSqLite(
         client.writableDatabase.compileStatement(createTableSql).execute()
     }
 
-    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
+    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T, *> =
             SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, table)
 
     /*override fun <T : Any> select(

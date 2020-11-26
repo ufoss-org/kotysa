@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-public open class DefaultSqlClientCommon protected constructor() {
+public open class DefaultSqlClientCommon protected constructor() : SqlClientQuery() {
 
     public interface Properties {
         public val tables: Tables
@@ -31,7 +31,19 @@ public open class DefaultSqlClientCommon protected constructor() {
 
     protected interface Whereable : WithProperties
 
-    protected interface TypedWhereable<T : Any> : WithProperties
+    public abstract class TypedWhereable<T : Any, U : TypedWhere<T>> protected constructor() :
+            SqlClientQuery.TypedWhereable<T, U>, WithProperties {
+        protected abstract val typedWhere: U
+        private val typedWhereOpIntColumnNotNull: TypedWhereOpIntColumnNotNull<T, U> by lazy {
+            TypedWhereOpIntColumnNotNull(typedWhere, properties)
+        }
+
+        override fun where(intColumnNotNull: IntColumnNotNull<T>): TypedWhereOpIntColumnNotNull<T, U> =
+            typedWhereOpIntColumnNotNull.apply {
+                this.intColumnNotNull = intColumnNotNull
+                type = WhereClauseType.WHERE
+            }
+    }
 
     /*protected interface Join : WithProperties, Instruction {
         public fun <T : Any> addJoinClause(dsl: (FieldProvider) -> ColumnField<*, *>, joinClass: KClass<T>, alias: String?, type: JoinType) {
@@ -44,7 +56,16 @@ public open class DefaultSqlClientCommon protected constructor() {
         }
     }*/
 
-    protected interface TypedWhereOpIntColumnNotNull<T : Any> : WithProperties
+    public class TypedWhereOpIntColumnNotNull<T : Any, U : TypedWhere<T>>(
+            private val typedWhere: U,
+            override val properties: Properties,
+    ) : SqlClientQuery.TypedWhereOpIntColumnNotNull<T, U>, WithProperties {
+        internal lateinit var intColumnNotNull: IntColumnNotNull<T>
+        internal lateinit var type: WhereClauseType
+
+        override fun eq(value: Int): U =
+            typedWhere.apply { addClause(intColumnNotNull, Operation.EQ, value, type) }
+    }
 
     protected interface Where : WithProperties {
         public fun addClause(whereClause: WhereClause<*>, whereClauseType: WhereClauseType) {
@@ -52,7 +73,7 @@ public open class DefaultSqlClientCommon protected constructor() {
         }
     }
 
-    protected interface TypedWhere<T : Any> : WithProperties {
+    public interface TypedWhere<T : Any> : SqlClientQuery.TypedWhere<T>, WithProperties {
         public fun addClause(column: Column<T, *>, operation: Operation, value: Any?, whereClauseType: WhereClauseType) {
             properties.whereClauses.add(TypedWhereClause(WhereClause(column, operation, value), whereClauseType))
         }

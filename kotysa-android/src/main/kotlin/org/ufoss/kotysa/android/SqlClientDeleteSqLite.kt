@@ -13,8 +13,8 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>
-    ) : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, DeleteOrUpdate<T>, Return<T> {
-        override val properties = initProperties()
+    ) :  DeleteOrUpdate<T, TypedWhere<T>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T, TypedWhere<T>>, Return<T> {
+        override val typedWhere: TypedWhere<T> = TypedWhere(client, properties)
 
         /*override fun <U : Any> join(
             joinClass: KClass<U>,
@@ -23,20 +23,6 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
         ): SqlClientDeleteOrUpdate.Joinable =
             Joinable(client, properties, joinClass, alias, type)*/
 
-        override fun where(intColumnNotNull: IntColumnNotNull<T>): SqlClientDeleteOrUpdate.TypedWhereOpIntColumnNotNull<T> =
-                TypedWhereOpIntColumnNotNull(intColumnNotNull, properties, client)
-    }
-
-    private class TypedWhereOpIntColumnNotNull<T : Any>(
-            private val intColumnNotNull: IntColumnNotNull<T>,
-            override val properties: Properties<T>,
-            private val client: SQLiteDatabase,
-    ) : DefaultSqlClientDeleteOrUpdate.TypedWhereOpIntColumnNotNull<T>, SqlClientDeleteOrUpdate.TypedWhereOpIntColumnNotNull<T> {
-        override fun eq(value: Int): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            val where = TypedWhere(client, properties)
-            where.addClause(intColumnNotNull, Operation.EQ, value, WhereClauseType.WHERE)
-            return where
-        }
     }
 
     /*
@@ -82,7 +68,7 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
         }
     }*/
 
-    private class TypedWhere<T : Any>(
+    internal class TypedWhere<T : Any>(
         override val client: SQLiteDatabase,
         override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, SqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {

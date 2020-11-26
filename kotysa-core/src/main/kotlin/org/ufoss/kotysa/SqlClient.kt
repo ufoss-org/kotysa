@@ -5,7 +5,7 @@
 package org.ufoss.kotysa
 
 /**
- * Sql Client, to be used with a JDBC driver
+ * Sql Client, to be used with a blocking driver
  */
 public interface SqlClient {
 
@@ -15,7 +15,7 @@ public interface SqlClient {
 
     public infix fun <T : Any> createTable(table: Table<T>)
 
-    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
+    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T, *>
 
     public infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
 
@@ -115,26 +115,20 @@ public class SqlClientSelect private constructor() {
 }*/
 
 
-public class SqlClientDeleteOrUpdate private constructor() {
-    public interface DeleteOrUpdate<T : Any> : Return {
+public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
+    public interface DeleteOrUpdate<T : Any, U: TypedWhere<T>> : TypedWhereable<T, U>, Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
 
         protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable*/
-
-        public infix fun where(intColumnNotNull: IntColumnNotNull<T>): TypedWhereOpIntColumnNotNull<T>
     }
 
-    public abstract class Update<T : Any> : DeleteOrUpdate<T> {
-        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
+    /*public interface Update<T : Any, U: TypedWhere<T>> : DeleteOrUpdate<T, U> {
+        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T, U>
     }
 
-    public interface TypedWhereOpIntColumnNotNull<T : Any> {
-        public infix fun eq(value: Int): TypedWhere<T>
-    }
-
-    /*public interface Joinable {
+    public interface Joinable {
         public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
     }
 
@@ -147,7 +141,7 @@ public class SqlClientDeleteOrUpdate private constructor() {
         public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
     }*/
 
-    public interface TypedWhere<T : Any> : Return {
+    public interface TypedWhere<T : Any> : SqlClientQuery.TypedWhere<T>, Return {
         /*public fun and(whereClause: WhereClause<T>): TypedWhere<T>
         public fun or(whereClause: WhereClause<T>): TypedWhere<T>*/
     }

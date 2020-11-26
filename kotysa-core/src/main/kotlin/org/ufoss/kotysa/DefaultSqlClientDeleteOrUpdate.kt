@@ -28,17 +28,16 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public val properties: Properties<T>
     }
 
-    protected interface DeleteOrUpdate<T : Any> : Instruction {
+    public abstract class DeleteOrUpdate<T : Any, U : TypedWhere<T>> : TypedWhereable<T, U>(), Instruction {
+        protected abstract val tables: Tables
+        protected abstract val table: Table<T>
 
-        public val tables: Tables
-        public val table: Table<T>
-
-        public fun initProperties(): Properties<T> {
+        override val properties: Properties<T> by lazy {
             val table = tables.getTable(table)
             val properties = Properties(tables, table, mutableSetOf())
             // init availableColumns with table columns
             addAvailableColumnsFromTable(properties, table)
-            return properties
+            properties
         }
     }
 
@@ -53,12 +52,11 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
     protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction*/
 
-    protected interface TypedWhereOpIntColumnNotNull<T : Any>
-        : DefaultSqlClientCommon.TypedWhereOpIntColumnNotNull<T>, WithProperties<T>
+    public abstract class TypedWhereable<T : Any, U : TypedWhere<T>> : DefaultSqlClientCommon.TypedWhereable<T, U>(), WithProperties<T>, Return<T>
 
     protected interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
 
-    protected interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>
+    public interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>, Return<T>
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
