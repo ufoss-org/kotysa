@@ -133,7 +133,7 @@ class UserRepositoryUpdateDelete(
             (sqlClient deleteFrom SQLITE_USER
                     where SQLITE_USER.id eq id
                     ).execute()
-//
+
 
 /*fun deleteUserWithJoin(roleLabel: String) =
         sqlClient.deleteFromTable<SqLiteUser>()

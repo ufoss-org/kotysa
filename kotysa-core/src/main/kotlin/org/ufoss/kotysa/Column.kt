@@ -22,36 +22,50 @@ public interface Column<T : Any, U : Any>
  * Not null column, its return type is <[U]>
  */
 public interface ColumnNotNull<T : Any, U : Any> : Column<T, U>
+
 /**
  * Nullable column, its return type is <[U]?>
  */
 public interface ColumnNullable<T : Any, U : Any> : Column<T, U>
 
-public interface StringColumnNotNull<T : Any> : ColumnNotNull<T, String>
-public interface StringColumnNullable<T : Any> : ColumnNullable<T, String>
+public interface StringColumn<T : Any> : Column<T, String>
+public interface StringColumnNotNull<T : Any> : StringColumn<T>, ColumnNotNull<T, String>
+public interface StringColumnNullable<T : Any> : StringColumn<T>, ColumnNullable<T, String>
 
-public interface LocalDateTimeColumnNotNull<T : Any> : ColumnNotNull<T, LocalDateTime>
-public interface LocalDateTimeColumnNullable<T : Any> : ColumnNullable<T, LocalDateTime>
+public interface LocalDateTimeColumn<T : Any> : Column<T, LocalDateTime>
+public interface LocalDateTimeColumnNotNull<T : Any> : LocalDateTimeColumn<T>, ColumnNotNull<T, LocalDateTime>
+public interface LocalDateTimeColumnNullable<T : Any> : LocalDateTimeColumn<T>, ColumnNullable<T, LocalDateTime>
 
-public interface KotlinxLocalDateTimeColumnNotNull<T : Any> : ColumnNotNull<T, kotlinx.datetime.LocalDateTime>
-public interface KotlinxLocalDateTimeColumnNullable<T : Any> : ColumnNullable<T, kotlinx.datetime.LocalDateTime>
+public interface KotlinxLocalDateTimeColumn<T : Any> : Column<T, kotlinx.datetime.LocalDateTime>
+public interface KotlinxLocalDateTimeColumnNotNull<T : Any> :
+        KotlinxLocalDateTimeColumn<T>, ColumnNotNull<T, kotlinx.datetime.LocalDateTime>
+public interface KotlinxLocalDateTimeColumnNullable<T : Any> :
+        KotlinxLocalDateTimeColumn<T>, ColumnNullable<T, kotlinx.datetime.LocalDateTime>
 
-public interface LocalDateColumnNotNull<T : Any> : ColumnNotNull<T, LocalDate>
-public interface LocalDateColumnNullable<T : Any> : ColumnNullable<T, LocalDate>
+public interface LocalDateColumn<T : Any> : Column<T, LocalDate>
+public interface LocalDateColumnNotNull<T : Any> : LocalDateColumn<T>, ColumnNotNull<T, LocalDate>
+public interface LocalDateColumnNullable<T : Any> : LocalDateColumn<T>, ColumnNullable<T, LocalDate>
 
-public interface KotlinxLocalDateColumnNotNull<T : Any> : ColumnNotNull<T, kotlinx.datetime.LocalDate>
-public interface KotlinxLocalDateColumnNullable<T : Any> : ColumnNullable<T, kotlinx.datetime.LocalDate>
+public interface KotlinxLocalDateColumn<T : Any> : Column<T, kotlinx.datetime.LocalDate>
+public interface KotlinxLocalDateColumnNotNull<T : Any> :
+        KotlinxLocalDateColumn<T>, ColumnNotNull<T, kotlinx.datetime.LocalDate>
+public interface KotlinxLocalDateColumnNullable<T : Any> :
+        KotlinxLocalDateColumn<T>, ColumnNullable<T, kotlinx.datetime.LocalDate>
 
-public interface OffsetDateTimeColumnNotNull<T : Any> : ColumnNotNull<T, OffsetDateTime>
-public interface OffsetDateTimeColumnNullable<T : Any> : ColumnNullable<T, OffsetDateTime>
+public interface OffsetDateTimeColumn<T : Any> : Column<T, OffsetDateTime>
+public interface OffsetDateTimeColumnNotNull<T : Any> : OffsetDateTimeColumn<T>, ColumnNotNull<T, OffsetDateTime>
+public interface OffsetDateTimeColumnNullable<T : Any> : OffsetDateTimeColumn<T>, ColumnNullable<T, OffsetDateTime>
 
-public interface LocalTimeColumnNotNull<T : Any> : ColumnNotNull<T, LocalTime>
-public interface LocalTimeColumnNullable<T : Any> : ColumnNullable<T, LocalTime>
+public interface LocalTimeColumn<T : Any> : Column<T, LocalTime>
+public interface LocalTimeColumnNotNull<T : Any> : LocalTimeColumn<T>, ColumnNotNull<T, LocalTime>
+public interface LocalTimeColumnNullable<T : Any> : LocalTimeColumn<T>, ColumnNullable<T, LocalTime>
 
 public interface BooleanColumnNotNull<T : Any> : ColumnNotNull<T, Boolean>
 
-public interface IntColumnNotNull<T : Any> : ColumnNotNull<T, Int>
-public interface IntColumnNullable<T : Any> : ColumnNullable<T, Int>
+public interface IntColumn<T : Any> : Column<T, Int>
+public interface IntColumnNotNull<T : Any> : IntColumn<T>, ColumnNotNull<T, Int>
+public interface IntColumnNullable<T : Any> : IntColumn<T>, ColumnNullable<T, Int>
 
-public interface UuidColumnNotNull<T : Any> : ColumnNotNull<T, UUID>
-public interface UuidColumnNullable<T : Any> : ColumnNullable<T, UUID>
+public interface UuidColumn<T : Any> : Column<T, UUID>
+public interface UuidColumnNotNull<T : Any> : UuidColumn<T>, ColumnNotNull<T, UUID>
+public interface UuidColumnNullable<T : Any> : UuidColumn<T>, ColumnNullable<T, UUID>

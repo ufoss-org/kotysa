@@ -34,15 +34,34 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     public abstract class TypedWhereable<T : Any, U : TypedWhere<T>> protected constructor() :
             SqlClientQuery.TypedWhereable<T, U>, WithProperties {
         protected abstract val typedWhere: U
-        private val typedWhereOpIntColumnNotNull: TypedWhereOpIntColumnNotNull<T, U> by lazy {
-            TypedWhereOpIntColumnNotNull(typedWhere, properties)
-        }
 
-        override fun where(intColumnNotNull: IntColumnNotNull<T>): TypedWhereOpIntColumnNotNull<T, U> =
-            typedWhereOpIntColumnNotNull.apply {
-                this.intColumnNotNull = intColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        private val typedWhereOpStringColumnNotNull: TypedWhereOpStringColumnNotNull<T, U> by lazy {
+            TypedWhereOpStringColumnNotNull(typedWhere)
+        }
+        private val typedWhereOpStringColumnNullable: TypedWhereOpStringColumnNullable<T, U> by lazy {
+            TypedWhereOpStringColumnNullable(typedWhere)
+        }
+        /*private val typedWhereOpIntColumnNotNull: TypedWhereOpIntColumnNotNull<T, U> by lazy {
+            TypedWhereOpIntColumnNotNull(typedWhere)
+        }*/
+
+        override fun where(stringColumnNotNull: StringColumnNotNull<T>): TypedWhereOpStringColumnNotNull<T, U> =
+                typedWhereOpStringColumnNotNull.apply {
+                    this.column = stringColumnNotNull
+                    type = WhereClauseType.WHERE
+                }
+
+        override fun where(stringColumnNullable: StringColumnNullable<T>): TypedWhereOpStringColumnNullable<T, U> =
+                typedWhereOpStringColumnNullable.apply {
+                    this.column = stringColumnNullable
+                    type = WhereClauseType.WHERE
+                }
+
+        /*override fun where(intColumnNotNull: IntColumnNotNull<T>): TypedWhereOpIntColumnNotNull<T, U> =
+                typedWhereOpIntColumnNotNull.apply {
+                    this.intColumnNotNull = intColumnNotNull
+                    type = WhereClauseType.WHERE
+                }*/
     }
 
     /*protected interface Join : WithProperties, Instruction {
@@ -56,16 +75,73 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }*/
 
-    public class TypedWhereOpIntColumnNotNull<T : Any, U : TypedWhere<T>>(
+    public interface TypedWhereOpColumn<T : Any, U : TypedWhere<T>, V: Any> {
+        public val typedWhere: U
+        public var column: Column<T, V>
+        public var type: WhereClauseType
+    }
+
+    public interface TypedWhereInOpColumn<T : Any, U : TypedWhere<T>, V: Any> :
+            TypedWhereOpColumn<T, U, V>, SqlClientQuery.TypedWhereInOpColumn<T, U, V> {
+        override infix fun `in`(values: Collection<V>): U =
+                typedWhere.apply { addClause(column, Operation.IN, values, type) }
+    }
+
+    public interface TypedWhereOpColumnNotNull<T : Any, U : TypedWhere<T>, V: Any> :
+            TypedWhereOpColumn<T, U, V>, SqlClientQuery.TypedWhereOpColumnNotNull<T, U, V> {
+        override infix fun eq(value: V): U =
+                typedWhere.apply { addClause(column, Operation.EQ, value, type) }
+        override infix fun notEq(value: V): U =
+                typedWhere.apply { addClause(column, Operation.NOT_EQ, value, type) }
+    }
+
+    public interface TypedWhereOpColumnNullable<T : Any, U : TypedWhere<T>, V: Any> :
+            TypedWhereOpColumn<T, U, V>, SqlClientQuery.TypedWhereOpColumnNullable<T, U, V> {
+        override infix fun eq(value: V?): U =
+                typedWhere.apply { addClause(column, Operation.EQ, value, type) }
+        override infix fun notEq(value: V?): U =
+                typedWhere.apply { addClause(column, Operation.NOT_EQ, value, type) }
+    }
+
+    public abstract class AbstractTypedWhereOpColumn<T : Any, U : TypedWhere<T>, V: Any> : TypedWhereOpColumn<T, U, V> {
+        override lateinit var column: Column<T, V>
+        override lateinit var type: WhereClauseType
+    }
+
+    public interface TypedWhereOpStringColumn<T : Any, U : TypedWhere<T>> :
+            TypedWhereInOpColumn<T, U, String>, SqlClientQuery.TypedWhereOpStringColumn<T, U> {
+        override infix fun contains(value: String): U =
+                typedWhere.apply { addClause(column, Operation.CONTAINS, value, type) }
+
+        override infix fun startsWith(value: String): U =
+                typedWhere.apply { addClause(column, Operation.STARTS_WITH, value, type) }
+
+        override infix fun endsWith(value: String): U =
+                typedWhere.apply { addClause(column, Operation.ENDS_WITH, value, type) }
+    }
+
+    public class TypedWhereOpStringColumnNotNull<T : Any, U : TypedWhere<T>>(
+            override val typedWhere: U,
+    ) : AbstractTypedWhereOpColumn<T, U, String>(), TypedWhereOpStringColumn<T, U>,
+            TypedWhereOpColumnNotNull<T, U, String>, SqlClientQuery.TypedWhereOpStringColumnNotNull<T, U>
+
+    public class TypedWhereOpStringColumnNullable<T : Any, U : TypedWhere<T>>(
+            override val typedWhere: U,
+    ) : AbstractTypedWhereOpColumn<T, U, String>(), TypedWhereOpStringColumn<T, U>,
+            TypedWhereOpColumnNullable<T, U, String>, SqlClientQuery.TypedWhereOpStringColumnNullable<T, U>
+
+    /*public class TypedWhereOpIntColumnNotNull<T : Any, U : TypedWhere<T>>(
             private val typedWhere: U,
-            override val properties: Properties,
-    ) : SqlClientQuery.TypedWhereOpIntColumnNotNull<T, U>, WithProperties {
+    ) : SqlClientQuery.TypedWhereOpIntColumnNotNull<T, U> {
         internal lateinit var intColumnNotNull: IntColumnNotNull<T>
         internal lateinit var type: WhereClauseType
 
         override fun eq(value: Int): U =
             typedWhere.apply { addClause(intColumnNotNull, Operation.EQ, value, type) }
-    }
+
+        override fun notEq(value: Int): U =
+                typedWhere.apply { addClause(intColumnNotNull, Operation.NOT_EQ, value, type) }
+    }*/
 
     protected interface Where : WithProperties {
         public fun addClause(whereClause: WhereClause<*>, whereClauseType: WhereClauseType) {
