@@ -19,7 +19,7 @@ public interface SqlClient {
 
     public infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
 
-    public infix fun <T : Any> updateTable(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
+    public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
     /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
 

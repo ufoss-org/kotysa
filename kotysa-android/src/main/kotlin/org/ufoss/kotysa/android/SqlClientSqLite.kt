@@ -41,7 +41,7 @@ internal class SqlClientSqLite(
     override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
             SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, table)
 
-    override fun <T : Any> updateTable(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
+    override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
             SqlClientUpdateSqLite.Update(client.writableDatabase, tables, table)
 }
 
