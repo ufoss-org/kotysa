@@ -15,9 +15,11 @@ public interface SqlClient {
 
     public infix fun <T : Any> createTable(table: Table<T>)
 
-    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T, *>
+    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
 
     public infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
+
+    public infix fun <T : Any> updateTable(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
     /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
 
@@ -29,20 +31,7 @@ public interface SqlClient {
 
     protected abstract fun <T : Any> select(
             resultClass: KClass<T>, dsl: (SelectDslApi.() -> T)?): SqlClientSelect.Select<T>
-
-    @PublishedApi
-    internal fun <T : Any> deleteFromTableInternal(tableClass: KClass<T>) =
-            deleteFromTable(tableClass)
-
-    protected abstract fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
-
-    public inline fun <reified T : Any> updateTable(): SqlClientDeleteOrUpdate.Update<T> = updateTableInternal(T::class)
-
-    @PublishedApi
-    internal fun <T : Any> updateTableInternal(tableClass: KClass<T>) =
-            updateTable(tableClass)
-
-    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T>*/
+     */
 }
 
 /*
@@ -116,7 +105,7 @@ public class SqlClientSelect private constructor() {
 
 
 public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
-    public interface DeleteOrUpdate<T : Any, U: TypedWhere<T>> : TypedWhereable<T, U>, Return {
+    public interface DeleteOrUpdate<T : Any> : TypedWhereable<T, TypedWhere<T>>, Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
@@ -124,11 +113,9 @@ public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
         protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable*/
     }
 
-    /*public interface Update<T : Any, U: TypedWhere<T>> : DeleteOrUpdate<T, U> {
-        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T, U>
-    }
+    public interface Update<T : Any> : DeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
-    public interface Joinable {
+    /*public interface Joinable {
         public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
     }
 

@@ -61,6 +61,19 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
         //assertThat(repository.selectAll())
         //        .hasSize(2)
     }
+
+    @Test
+    fun `Verify updateLastname works`() {
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateLastname("Do"))
+                    .isEqualTo(1)
+            //assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
+            //        .extracting { user -> user?.lastname }
+            //        .isEqualTo("Do")
+        }
+    }
 /*
     @Test
     fun `Verify deleteUserWithJoin works`() {
@@ -72,19 +85,6 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             assertThat(repository.selectAll())
                     .hasSize(1)
                     .containsOnly(sqLiteBboss)
-        }
-    }
-
-    @Test
-    fun `Verify updateLastname works`() {
-        val operator = client.transactionalOp()
-        operator.execute<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateLastname("Do"))
-                    .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
-                    .extracting { user -> user?.lastname }
-                    .isEqualTo("Do")
         }
     }
 
@@ -139,16 +139,16 @@ class UserRepositoryUpdateDelete(
                     where SQLITE_USER.id `in` ids
                     ).execute()
 
+    fun updateLastname(newLastname: String) =
+            sqlClient.updateTable(SQLITE_USER)
+                    .set(SQLITE_USER.lastname, newLastname)
+                    .where(SQLITE_USER.id).eq(userJdoe.id)
+                    .execute()
+
 /*fun deleteUserWithJoin(roleLabel: String) =
         sqlClient.deleteFromTable<SqLiteUser>()
                 .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
                 .where { it[SqLiteRole::label] eq roleLabel }
-                .execute()
-
-fun updateLastname(newLastname: String) =
-        sqlClient.updateTable<SqLiteUser>()
-                .set { it[SqLiteUser::lastname] = newLastname }
-                .where { it[SqLiteUser::id] eq sqLiteJdoe.id }
                 .execute()
 
 fun updateWithJoin(newLastname: String, roleLabel: String) =

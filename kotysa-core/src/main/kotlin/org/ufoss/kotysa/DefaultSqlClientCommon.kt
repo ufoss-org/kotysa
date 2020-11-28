@@ -15,6 +15,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     public interface Properties {
         public val tables: Tables
         public val whereClauses: MutableList<TypedWhereClause<*>>
+
         //public val joinClauses: MutableSet<JoinClause<*, *>>
         public val availableColumns: MutableSet<KotysaColumn<*, *>>
     }
@@ -37,66 +38,66 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     protected interface Whereable : WithProperties
 
-    public abstract class TypedWhereable<T : Any, U : TypedWhere<T>> protected constructor() :
+    public abstract class TypedWhereable<T : Any, U : SqlClientQuery.TypedWhere<T>> protected constructor() :
             SqlClientQuery.TypedWhereable<T, U>, WithProperties {
         protected abstract val typedWhere: U
 
         private val typedWhereOpStringColumnNotNull: TypedWhereOpStringColumnNotNull<T, U> by lazy {
-            TypedWhereOpStringColumnNotNull(typedWhere)
+            TypedWhereOpStringColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpStringColumnNullable: TypedWhereOpStringColumnNullable<T, U> by lazy {
-            TypedWhereOpStringColumnNullable(typedWhere)
+            TypedWhereOpStringColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpLocalDateTimeColumnNotNull: TypedWhereOpDateColumnNotNull<T, U, LocalDateTime> by lazy {
-            TypedWhereOpDateColumnNotNull(typedWhere)
+            TypedWhereOpDateColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpLocalDateTimeColumnNullable: TypedWhereOpDateColumnNullable<T, U, LocalDateTime> by lazy {
-            TypedWhereOpDateColumnNullable(typedWhere)
+            TypedWhereOpDateColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpKotlinxLocalDateTimeColumnNotNull: TypedWhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> by lazy {
-            TypedWhereOpDateColumnNotNull(typedWhere)
+            TypedWhereOpDateColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpKotlinxLocalDateTimeColumnNullable: TypedWhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> by lazy {
-            TypedWhereOpDateColumnNullable(typedWhere)
+            TypedWhereOpDateColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpLocalDateColumnNotNull: TypedWhereOpDateColumnNotNull<T, U, LocalDate> by lazy {
-            TypedWhereOpDateColumnNotNull(typedWhere)
+            TypedWhereOpDateColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpLocalDateColumnNullable: TypedWhereOpDateColumnNullable<T, U, LocalDate> by lazy {
-            TypedWhereOpDateColumnNullable(typedWhere)
+            TypedWhereOpDateColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpKotlinxLocalDateColumnNotNull: TypedWhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> by lazy {
-            TypedWhereOpDateColumnNotNull(typedWhere)
+            TypedWhereOpDateColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpKotlinxLocalDateColumnNullable: TypedWhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> by lazy {
-            TypedWhereOpDateColumnNullable(typedWhere)
+            TypedWhereOpDateColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpOffsetDateTimeColumnNotNull: TypedWhereOpDateColumnNotNull<T, U, OffsetDateTime> by lazy {
-            TypedWhereOpDateColumnNotNull(typedWhere)
+            TypedWhereOpDateColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpOffsetDateTimeColumnNullable: TypedWhereOpDateColumnNullable<T, U, OffsetDateTime> by lazy {
-            TypedWhereOpDateColumnNullable(typedWhere)
+            TypedWhereOpDateColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpLocalTimeColumnNotNull: TypedWhereOpDateColumnNotNull<T, U, LocalTime> by lazy {
-            TypedWhereOpDateColumnNotNull(typedWhere)
+            TypedWhereOpDateColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpLocalTimeColumnNullable: TypedWhereOpDateColumnNullable<T, U, LocalTime> by lazy {
-            TypedWhereOpDateColumnNullable(typedWhere)
+            TypedWhereOpDateColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpBooleanColumnNotNull: TypedWhereOpBooleanColumnNotNull<T, U> by lazy {
-            TypedWhereOpBooleanColumnNotNull(typedWhere)
+            TypedWhereOpBooleanColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpIntColumnNotNull: TypedWhereOpIntColumnNotNull<T, U> by lazy {
-            TypedWhereOpIntColumnNotNull(typedWhere)
+            TypedWhereOpIntColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpIntColumnNullable: TypedWhereOpIntColumnNullable<T, U> by lazy {
-            TypedWhereOpIntColumnNullable(typedWhere)
+            TypedWhereOpIntColumnNullable(typedWhere, properties)
         }
         private val typedWhereOpUuidColumnNotNull: TypedWhereOpUuidColumnNotNull<T, U> by lazy {
-            TypedWhereOpUuidColumnNotNull(typedWhere)
+            TypedWhereOpUuidColumnNotNull(typedWhere, properties)
         }
         private val typedWhereOpUuidColumnNullable: TypedWhereOpUuidColumnNullable<T, U> by lazy {
-            TypedWhereOpUuidColumnNullable(typedWhere)
+            TypedWhereOpUuidColumnNullable(typedWhere, properties)
         }
 
         override fun where(stringColumnNotNull: StringColumnNotNull<T>): TypedWhereOpStringColumnNotNull<T, U> =
@@ -225,52 +226,54 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }*/
 
-    public interface TypedWhereOpColumn<T : Any, U : TypedWhere<T>, V: Any> {
+    public interface TypedWhereOpColumn<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> : TypedWhere<T> {
         public val typedWhere: U
         public var column: Column<T, V>
         public var type: WhereClauseType
     }
 
-    public interface TypedWhereInOpColumn<T : Any, U : TypedWhere<T>, V: Any> :
+    public interface TypedWhereInOpColumn<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> :
             TypedWhereOpColumn<T, U, V>, SqlClientQuery.TypedWhereInOpColumn<T, U, V> {
         override infix fun `in`(values: Collection<V>): U = typedWhere.apply { addClause(column, Operation.IN, values, type) }
     }
 
-    public interface TypedWhereOpColumnNotNull<T : Any, U : TypedWhere<T>, V: Any> :
+    public interface TypedWhereOpColumnNotNull<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> :
             TypedWhereOpColumn<T, U, V>, SqlClientQuery.TypedWhereOpColumnNotNull<T, U, V> {
         override infix fun eq(value: V): U = typedWhere.apply { addClause(column, Operation.EQ, value, type) }
         override infix fun notEq(value: V): U = typedWhere.apply { addClause(column, Operation.NOT_EQ, value, type) }
     }
 
-    public interface TypedWhereOpColumnNullable<T : Any, U : TypedWhere<T>, V: Any> :
+    public interface TypedWhereOpColumnNullable<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> :
             TypedWhereOpColumn<T, U, V>, SqlClientQuery.TypedWhereOpColumnNullable<T, U, V> {
         override infix fun eq(value: V?): U = typedWhere.apply { addClause(column, Operation.EQ, value, type) }
         override infix fun notEq(value: V?): U = typedWhere.apply { addClause(column, Operation.NOT_EQ, value, type) }
     }
 
-    public abstract class AbstractTypedWhereOpColumn<T : Any, U : TypedWhere<T>, V: Any> : TypedWhereOpColumn<T, U, V> {
+    public abstract class AbstractTypedWhereOpColumn<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> : TypedWhereOpColumn<T, U, V> {
         override lateinit var column: Column<T, V>
         override lateinit var type: WhereClauseType
     }
 
-    public interface TypedWhereOpStringColumn<T : Any, U : TypedWhere<T>> :
+    public interface TypedWhereOpStringColumn<T : Any, U : SqlClientQuery.TypedWhere<T>> :
             TypedWhereInOpColumn<T, U, String>, SqlClientQuery.TypedWhereOpStringColumn<T, U> {
         override infix fun contains(value: String): U = typedWhere.apply { addClause(column, Operation.CONTAINS, value, type) }
         override infix fun startsWith(value: String): U = typedWhere.apply { addClause(column, Operation.STARTS_WITH, value, type) }
         override infix fun endsWith(value: String): U = typedWhere.apply { addClause(column, Operation.ENDS_WITH, value, type) }
     }
 
-    public class TypedWhereOpStringColumnNotNull<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpStringColumnNotNull<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, String>(), TypedWhereOpStringColumn<T, U>,
             TypedWhereOpColumnNotNull<T, U, String>, SqlClientQuery.TypedWhereOpStringColumnNotNull<T, U>
 
-    public class TypedWhereOpStringColumnNullable<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpStringColumnNullable<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, String>(), TypedWhereOpStringColumn<T, U>,
             TypedWhereOpColumnNullable<T, U, String>, SqlClientQuery.TypedWhereOpStringColumnNullable<T, U>
 
-    public interface TypedWhereOpDateColumn<T : Any, U : TypedWhere<T>, V : Any> :
+    public interface TypedWhereOpDateColumn<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> :
             TypedWhereInOpColumn<T, U, V>, SqlClientQuery.TypedWhereOpDateColumn<T, U, V> {
         override infix fun before(value: V): U = typedWhere.apply { addClause(column, Operation.INF, value, type) }
         override infix fun after(value: V): U = typedWhere.apply { addClause(column, Operation.SUP, value, type) }
@@ -278,23 +281,26 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun afterOrEq(value: V): U = typedWhere.apply { addClause(column, Operation.SUP_OR_EQ, value, type) }
     }
 
-    public class TypedWhereOpDateColumnNotNull<T : Any, U : TypedWhere<T>, V : Any>(
+    public class TypedWhereOpDateColumnNotNull<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, V>(), TypedWhereOpDateColumn<T, U, V>,
             TypedWhereOpColumnNotNull<T, U, V>, SqlClientQuery.TypedWhereOpDateColumnNotNull<T, U, V>
 
-    public class TypedWhereOpDateColumnNullable<T : Any, U : TypedWhere<T>, V : Any>(
+    public class TypedWhereOpDateColumnNullable<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, V>(), TypedWhereOpDateColumn<T, U, V>,
             TypedWhereOpColumnNullable<T, U, V>, SqlClientQuery.TypedWhereOpDateColumnNullable<T, U, V>
 
-    public class TypedWhereOpBooleanColumnNotNull<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpBooleanColumnNotNull<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, Boolean>(), SqlClientQuery.TypedWhereOpBooleanColumnNotNull<T, U> {
         override infix fun eq(value: Boolean): U = typedWhere.apply { addClause(column, Operation.EQ, value, type) }
     }
 
-    public interface TypedWhereOpIntColumn<T : Any, U : TypedWhere<T>> :
+    public interface TypedWhereOpIntColumn<T : Any, U : SqlClientQuery.TypedWhere<T>> :
             TypedWhereInOpColumn<T, U, Int>, SqlClientQuery.TypedWhereOpIntColumn<T, U> {
         override infix fun inf(value: Int): U = typedWhere.apply { addClause(column, Operation.INF, value, type) }
         override infix fun sup(value: Int): U = typedWhere.apply { addClause(column, Operation.SUP, value, type) }
@@ -302,34 +308,38 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun supOrEq(value: Int): U = typedWhere.apply { addClause(column, Operation.SUP_OR_EQ, value, type) }
     }
 
-    public class TypedWhereOpIntColumnNotNull<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpIntColumnNotNull<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, Int>(), TypedWhereOpIntColumn<T, U>,
             TypedWhereOpColumnNotNull<T, U, Int>, SqlClientQuery.TypedWhereOpIntColumnNotNull<T, U>
 
-    public class TypedWhereOpIntColumnNullable<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpIntColumnNullable<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, Int>(), TypedWhereOpIntColumn<T, U>,
             TypedWhereOpColumnNullable<T, U, Int>, SqlClientQuery.TypedWhereOpIntColumnNullable<T, U>
 
-    public class TypedWhereOpUuidColumnNotNull<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpUuidColumnNotNull<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, UUID>(), TypedWhereInOpColumn<T, U, UUID>,
             TypedWhereOpColumnNotNull<T, U, UUID>, SqlClientQuery.TypedWhereOpUuidColumnNotNull<T, U>
 
-    public class TypedWhereOpUuidColumnNullable<T : Any, U : TypedWhere<T>>(
+    public class TypedWhereOpUuidColumnNullable<T : Any, U : SqlClientQuery.TypedWhere<T>>(
             override val typedWhere: U,
+            override val properties: Properties,
     ) : AbstractTypedWhereOpColumn<T, U, UUID>(), TypedWhereInOpColumn<T, U, UUID>,
             TypedWhereOpColumnNullable<T, U, UUID>, SqlClientQuery.TypedWhereOpUuidColumnNullable<T, U>
 
 
-    protected interface Where : WithProperties {
+    public interface Where : WithProperties {
         public fun addClause(whereClause: WhereClause<*>, whereClauseType: WhereClauseType) {
             properties.whereClauses.add(TypedWhereClause(whereClause, whereClauseType))
         }
     }
 
-    public interface TypedWhere<T : Any> : SqlClientQuery.TypedWhere<T>, WithProperties {
+    public interface TypedWhere<T : Any> : WithProperties {
         public fun addClause(column: Column<T, *>, operation: Operation, value: Any?, whereClauseType: WhereClauseType) {
             properties.whereClauses.add(TypedWhereClause(WhereClause(column, operation, value), whereClauseType))
         }

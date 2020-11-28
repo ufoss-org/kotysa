@@ -12,9 +12,9 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
     internal class Delete<T : Any> internal constructor(
             override val client: SQLiteDatabase,
             override val tables: Tables,
-            override val table: Table<T>
-    ) :  DeleteOrUpdate<T, TypedWhere<T>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T, TypedWhere<T>>, Return<T> {
-        override val typedWhere: TypedWhere<T> = TypedWhere(client, properties)
+            override val table: Table<T>,
+    ) :  DeleteOrUpdate<T, SqlClientDeleteOrUpdate.TypedWhere<T>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+        override val typedWhere = TypedWhere(client, properties)
 
         /*override fun <U : Any> join(
             joinClass: KClass<U>,

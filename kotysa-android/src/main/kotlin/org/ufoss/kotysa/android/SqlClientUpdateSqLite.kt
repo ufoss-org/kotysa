@@ -3,39 +3,30 @@
  */
 
 package org.ufoss.kotysa.android
-/*
+
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
-import kotlin.reflect.KClass
 
 internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class Update<T : Any> internal constructor(
-        override val client: SQLiteDatabase,
-        override val tables: Tables,
-        override val tableClass: KClass<T>
-    ) : SqlClientDeleteOrUpdate.Update<T>(), DefaultSqlClientDeleteOrUpdate.Update<T>, Return<T> {
-        override val properties: Properties<T> = initProperties()
+            override val client: SQLiteDatabase,
+            override val tables: Tables,
+            override val table: Table<T>,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.TypedWhere<T>, SqlClientDeleteOrUpdate.Update<T>>(),
+            SqlClientDeleteOrUpdate.Update<T>, Return<T> {
+        override val typedWhere = TypedWhere(client, properties)
+        override val update = this
 
-        override fun set(dsl: (FieldSetter<T>) -> Unit): SqlClientDeleteOrUpdate.Update<T> {
-            addSetValue(dsl)
-            return this
-        }
-
-        override fun <U : Any> join(
+        /*override fun <U : Any> join(
             joinClass: KClass<U>,
             alias: String?,
             type: JoinType
         ): SqlClientDeleteOrUpdate.Joinable =
-            Joinable(client, properties, joinClass, alias, type)
-
-        override fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            val where = TypedWhere(client, properties)
-            where.addWhereClause(dsl)
-            return where
-        }
+            Joinable(client, properties, joinClass, alias, type)*/
     }
 
+    /*
     private class Joinable<T : Any, U : Any>(
         private val client: SQLiteDatabase,
         private val properties: Properties<T>,
@@ -76,26 +67,25 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             addOrClause(dsl)
             return this
         }
-    }
+    }*/
 
-    private class TypedWhere<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
+    internal class TypedWhere<T : Any>(
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>,
     ) : DefaultSqlClientDeleteOrUpdate.TypedWhere<T>, SqlClientDeleteOrUpdate.TypedWhere<T>, Return<T> {
 
-        override fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addAndClause(dsl)
+        /*override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
+            addClause(whereClause, WhereClauseType.AND)
             return this
         }
 
-        override fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addOrClause(dsl)
+        override fun or(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
+            addClause(whereClause, WhereClauseType.OR)
             return this
-        }
+        }*/
     }
 
-    private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>,
-        SqlClientDeleteOrUpdate.Return {
+    private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, SqlClientDeleteOrUpdate.Return {
         val client: SQLiteDatabase
 
         override fun execute() = with(properties) {
@@ -110,4 +100,4 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             statement.executeUpdateDelete()
         }
     }
-}*/
+}

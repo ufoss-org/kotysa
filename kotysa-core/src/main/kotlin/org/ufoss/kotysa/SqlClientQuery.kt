@@ -12,6 +12,28 @@ import java.util.*
 
 public abstract class SqlClientQuery protected constructor() {
 
+    public interface Update<T : Any, U : Update<T, U>> {
+        public operator fun set(column: StringColumnNotNull<T>, value: String): U
+        public operator fun set(column: StringColumnNullable<T>, value: String?): U
+        public operator fun set(column: LocalDateTimeColumnNotNull<T>, value: LocalDateTime): U
+        public operator fun set(column: LocalDateTimeColumnNullable<T>, value: LocalDateTime?): U
+        public operator fun set(column: KotlinxLocalDateTimeColumnNotNull<T>, value: kotlinx.datetime.LocalDateTime): U
+        public operator fun set(column: KotlinxLocalDateTimeColumnNullable<T>, value: kotlinx.datetime.LocalDateTime?): U
+        public operator fun set(column: LocalDateColumnNotNull<T>, value: LocalDate): U
+        public operator fun set(column: LocalDateColumnNullable<T>, value: LocalDate?): U
+        public operator fun set(column: KotlinxLocalDateColumnNotNull<T>, value: kotlinx.datetime.LocalDate): U
+        public operator fun set(column: KotlinxLocalDateColumnNullable<T>, value: kotlinx.datetime.LocalDate?): U
+        public operator fun set(column: OffsetDateTimeColumnNotNull<T>, value: OffsetDateTime): U
+        public operator fun set(column: OffsetDateTimeColumnNullable<T>, value: OffsetDateTime?): U
+        public operator fun set(column: LocalTimeColumnNotNull<T>, value: LocalTime): U
+        public operator fun set(column: LocalTimeColumnNullable<T>, value: LocalTime?): U
+        public operator fun set(column: BooleanColumnNotNull<T>, value: Boolean): U
+        public operator fun set(column: UuidColumnNotNull<T>, value: UUID): U
+        public operator fun set(column: UuidColumnNullable<T>, value: UUID?): U
+        public operator fun set(column: IntColumnNotNull<T>, value: Int): U
+        public operator fun set(column: IntColumnNullable<T>, value: Int?): U
+    }
+
     public interface TypedWhereable<T : Any, U : TypedWhere<T>> {
         public infix fun where(stringColumnNotNull: StringColumnNotNull<T>): TypedWhereOpStringColumnNotNull<T, U>
         public infix fun where(stringColumnNullable: StringColumnNullable<T>): TypedWhereOpStringColumnNullable<T, U>

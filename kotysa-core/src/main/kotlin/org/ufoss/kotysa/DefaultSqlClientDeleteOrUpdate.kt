@@ -5,6 +5,11 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.util.*
 
 private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()
 
@@ -20,15 +25,17 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             override val availableColumns: MutableSet<KotysaColumn<*, *>>
     ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
+
         //override val joinClauses: MutableSet<JoinClause<*, *>> = mutableSetOf()
-        public val setValues: MutableMap<KotysaColumn<T, *>, Any?> = mutableMapOf()
+        public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
     }
 
     public interface WithProperties<T : Any> {
         public val properties: Properties<T>
     }
 
-    public abstract class DeleteOrUpdate<T : Any, U : TypedWhere<T>> : TypedWhereable<T, U>(), Instruction {
+    public abstract class DeleteOrUpdate<T : Any, U : SqlClientQuery.TypedWhere<T>> protected constructor() : TypedWhereable<T, U>(), Instruction {
+
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
 
@@ -41,20 +48,42 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    /*protected interface Update<T : Any> : DeleteOrUpdate<T>, WithProperties<T> {
-        public fun addSetValue(dsl: (FieldSetter<T>) -> Unit) {
-            properties.apply {
-                val setValue = UpdateSetDsl(dsl, availableColumns, tables.dbType).initialize()
-                setValues[setValue.first.kotysaColumn] = setValue.second
-            }
+    public abstract class Update<T : Any, U : SqlClientQuery.TypedWhere<T>, V : SqlClientQuery.Update<T, V>> protected constructor()
+        : DeleteOrUpdate<T, U>(), SqlClientQuery.Update<T, V> {
+
+        protected abstract val update: V
+
+        private fun addSetValue(column: Column<T, *>, value: Any?) = with(properties) {
+            setValues[column] = value
+            update
         }
+
+        override operator fun set(column: StringColumnNotNull<T>, value: String): V = addSetValue(column, value)
+        override operator fun set(column: StringColumnNullable<T>, value: String?): V = addSetValue(column, value)
+        override operator fun set(column: LocalDateTimeColumnNotNull<T>, value: LocalDateTime): V = addSetValue(column, value)
+        override operator fun set(column: LocalDateTimeColumnNullable<T>, value: LocalDateTime?): V = addSetValue(column, value)
+        override operator fun set(column: KotlinxLocalDateTimeColumnNotNull<T>, value: kotlinx.datetime.LocalDateTime): V = addSetValue(column, value)
+        override operator fun set(column: KotlinxLocalDateTimeColumnNullable<T>, value: kotlinx.datetime.LocalDateTime?): V = addSetValue(column, value)
+        override operator fun set(column: LocalDateColumnNotNull<T>, value: LocalDate): V = addSetValue(column, value)
+        override operator fun set(column: LocalDateColumnNullable<T>, value: LocalDate?): V = addSetValue(column, value)
+        override operator fun set(column: KotlinxLocalDateColumnNotNull<T>, value: kotlinx.datetime.LocalDate): V = addSetValue(column, value)
+        override operator fun set(column: KotlinxLocalDateColumnNullable<T>, value: kotlinx.datetime.LocalDate?): V = addSetValue(column, value)
+        override operator fun set(column: OffsetDateTimeColumnNotNull<T>, value: OffsetDateTime): V = addSetValue(column, value)
+        override operator fun set(column: OffsetDateTimeColumnNullable<T>, value: OffsetDateTime?): V = addSetValue(column, value)
+        override operator fun set(column: LocalTimeColumnNotNull<T>, value: LocalTime): V = addSetValue(column, value)
+        override operator fun set(column: LocalTimeColumnNullable<T>, value: LocalTime?): V = addSetValue(column, value)
+        override operator fun set(column: BooleanColumnNotNull<T>, value: Boolean): V = addSetValue(column, value)
+        override operator fun set(column: UuidColumnNotNull<T>, value: UUID): V = addSetValue(column, value)
+        override operator fun set(column: UuidColumnNullable<T>, value: UUID?): V = addSetValue(column, value)
+        override operator fun set(column: IntColumnNotNull<T>, value: Int): V = addSetValue(column, value)
+        override operator fun set(column: IntColumnNullable<T>, value: Int?): V = addSetValue(column, value)
     }
 
-    protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction*/
+    //protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction
 
-    public abstract class TypedWhereable<T : Any, U : TypedWhere<T>> : DefaultSqlClientCommon.TypedWhereable<T, U>(), WithProperties<T>, Return<T>
+    public abstract class TypedWhereable<T : Any, U : SqlClientQuery.TypedWhere<T>> : DefaultSqlClientCommon.TypedWhereable<T, U>(), WithProperties<T>, Return<T>
 
-    protected interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
+    public interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
 
     public interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>, Return<T>
 
@@ -69,13 +98,13 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
 
         public fun updateTableSql(): String = with(properties) {
-            val updateSql = "UPDATE ${table.name}"
+            val updateSql = "UPDATE ${table.getFieldName()}"
             var index = 0
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
                 if (DbType.SQLITE == tables.dbType) {
-                    "${column.name} = ?"
+                    "${column.getFieldName(tables.allColumns)} = ?"
                 } else {
-                    "${column.name} = :k${index++}"
+                    "${column.getFieldName(tables.allColumns)} = :k${index++}"
                 }
             }
             val joinsAndWheres = joinsWithExistsAndWheres(offset = index)
@@ -107,7 +136,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                     }
                     "$prefix$joins $wheres )"
                 } else {*/
-                    "$prefix$wheres"
+                "$prefix$wheres"
                 //}
             }
         }
