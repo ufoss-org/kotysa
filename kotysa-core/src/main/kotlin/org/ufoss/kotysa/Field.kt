@@ -4,9 +4,8 @@
 
 package org.ufoss.kotysa
 
-internal fun Column<*, *>?.getCountFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
-    val counted = this?.getFieldName(availableColumns) ?: "*"
-    return "COUNT($counted)"
+internal fun Column<*, *>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<*, *> {
+    return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" }
 }
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
@@ -17,6 +16,11 @@ internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, Kotys
     } else {
         "${kotysaColumn.table.name}."
     } + kotysaColumn.name
+}
+
+internal fun Column<*, *>?.getCountFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+    val counted = this?.getFieldName(availableColumns) ?: "*"
+    return "COUNT($counted)"
 }
 
 internal fun KotysaTable<*>.getFieldName(): String {

@@ -17,7 +17,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val whereClauses: MutableList<TypedWhereClause<*>>
 
         //public val joinClauses: MutableSet<JoinClause<*, *>>
-        public val availableColumns: MutableSet<KotysaColumn<*, *>>
+        public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
     }
 
     protected interface Instruction {
@@ -27,7 +27,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 table: KotysaTable<T>
         ) {
             properties.apply {
-                table.columns.forEach { column -> availableColumns.add(column) }
+                table.columns.forEach { column -> availableColumns[column.column] = column }
             }
         }
     }

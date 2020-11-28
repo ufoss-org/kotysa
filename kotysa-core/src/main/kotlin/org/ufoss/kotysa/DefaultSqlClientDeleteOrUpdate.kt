@@ -22,7 +22,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
              * targeted table to update
              */
             public val table: KotysaTable<T>,
-            override val availableColumns: MutableSet<KotysaColumn<*, *>>
+            override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
     ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
 
@@ -41,7 +41,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
         override val properties: Properties<T> by lazy {
             val table = tables.getTable(table)
-            val properties = Properties(tables, table, mutableSetOf())
+            val properties = Properties(tables, table, mutableMapOf())
             // init availableColumns with table columns
             addAvailableColumnsFromTable(properties, table)
             properties
@@ -98,13 +98,13 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
 
         public fun updateTableSql(): String = with(properties) {
-            val updateSql = "UPDATE ${table.getFieldName()}"
+            val updateSql = "UPDATE ${table.name}"
             var index = 0
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
                 if (DbType.SQLITE == tables.dbType) {
-                    "${column.getFieldName(tables.allColumns)} = ?"
+                    "${column.getKotysaColumn(properties.availableColumns).name} = ?"
                 } else {
-                    "${column.getFieldName(tables.allColumns)} = :k${index++}"
+                    "${column.getKotysaColumn(properties.availableColumns).name} = :k${index++}"
                 }
             }
             val joinsAndWheres = joinsWithExistsAndWheres(offset = index)
