@@ -41,6 +41,26 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             //        .hasSize(1)
         }
     }
+
+    @Test
+    fun `Verify deleteUserIn works`() {
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
+                    .isEqualTo(1)
+            //assertThat(repository.selectAll())
+            //        .hasSize(1)
+        }
+    }
+
+    @Test
+    fun `Verify deleteUserIn no match`() {
+        assertThat(repository.deleteUserIn(listOf(99999, 9999999)))
+                .isEqualTo(0)
+        //assertThat(repository.selectAll())
+        //        .hasSize(2)
+    }
 /*
     @Test
     fun `Verify deleteUserWithJoin works`() {
@@ -53,26 +73,6 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
                     .hasSize(1)
                     .containsOnly(sqLiteBboss)
         }
-    }
-
-    @Test
-    fun `Verify deleteUserIn works`() {
-        val operator = client.transactionalOp()
-        operator.execute<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteUserIn(listOf(sqLiteJdoe.id, "no")))
-                    .isEqualTo(1)
-            assertThat(repository.selectAll())
-                    .hasSize(1)
-        }
-    }
-
-    @Test
-    fun `Verify deleteUserIn no match`() {
-        assertThat(repository.deleteUserIn(listOf("no", "nonono")))
-                .isEqualTo(0)
-        assertThat(repository.selectAll())
-                .hasSize(2)
     }
 
     @Test
@@ -134,16 +134,15 @@ class UserRepositoryUpdateDelete(
                     where SQLITE_USER.id eq id
                     ).execute()
 
+    fun deleteUserIn(ids: Collection<Int>) =
+            (sqlClient deleteFrom SQLITE_USER
+                    where SQLITE_USER.id `in` ids
+                    ).execute()
 
 /*fun deleteUserWithJoin(roleLabel: String) =
         sqlClient.deleteFromTable<SqLiteUser>()
                 .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
                 .where { it[SqLiteRole::label] eq roleLabel }
-                .execute()
-
-fun deleteUserIn(ids: Collection<String>) =
-        sqlClient.deleteFromTable<SqLiteUser>()
-                .where { it[SqLiteUser::id] `in` ids }
                 .execute()
 
 fun updateLastname(newLastname: String) =
