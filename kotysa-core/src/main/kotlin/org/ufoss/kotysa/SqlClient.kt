@@ -115,6 +115,7 @@ public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
 
     public interface Update<T : Any> : DeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
+
     /*public interface Joinable {
         public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
     }

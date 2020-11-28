@@ -140,10 +140,10 @@ class UserRepositoryUpdateDelete(
                     ).execute()
 
     fun updateLastname(newLastname: String) =
-            sqlClient.updateTable(SQLITE_USER)
-                    .set(SQLITE_USER.lastname, newLastname)
-                    .where(SQLITE_USER.id).eq(userJdoe.id)
-                    .execute()
+            (sqlClient updateTable SQLITE_USER
+                    set SQLITE_USER.lastname eq newLastname
+                    where SQLITE_USER.id eq userJdoe.id
+                    ).execute()
 
 /*fun deleteUserWithJoin(roleLabel: String) =
         sqlClient.deleteFromTable<SqLiteUser>()

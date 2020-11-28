@@ -13,25 +13,29 @@ import java.util.*
 public abstract class SqlClientQuery protected constructor() {
 
     public interface Update<T : Any, U : Update<T, U>> {
-        public operator fun set(column: StringColumnNotNull<T>, value: String): U
-        public operator fun set(column: StringColumnNullable<T>, value: String?): U
-        public operator fun set(column: LocalDateTimeColumnNotNull<T>, value: LocalDateTime): U
-        public operator fun set(column: LocalDateTimeColumnNullable<T>, value: LocalDateTime?): U
-        public operator fun set(column: KotlinxLocalDateTimeColumnNotNull<T>, value: kotlinx.datetime.LocalDateTime): U
-        public operator fun set(column: KotlinxLocalDateTimeColumnNullable<T>, value: kotlinx.datetime.LocalDateTime?): U
-        public operator fun set(column: LocalDateColumnNotNull<T>, value: LocalDate): U
-        public operator fun set(column: LocalDateColumnNullable<T>, value: LocalDate?): U
-        public operator fun set(column: KotlinxLocalDateColumnNotNull<T>, value: kotlinx.datetime.LocalDate): U
-        public operator fun set(column: KotlinxLocalDateColumnNullable<T>, value: kotlinx.datetime.LocalDate?): U
-        public operator fun set(column: OffsetDateTimeColumnNotNull<T>, value: OffsetDateTime): U
-        public operator fun set(column: OffsetDateTimeColumnNullable<T>, value: OffsetDateTime?): U
-        public operator fun set(column: LocalTimeColumnNotNull<T>, value: LocalTime): U
-        public operator fun set(column: LocalTimeColumnNullable<T>, value: LocalTime?): U
-        public operator fun set(column: BooleanColumnNotNull<T>, value: Boolean): U
-        public operator fun set(column: UuidColumnNotNull<T>, value: UUID): U
-        public operator fun set(column: UuidColumnNullable<T>, value: UUID?): U
-        public operator fun set(column: IntColumnNotNull<T>, value: Int): U
-        public operator fun set(column: IntColumnNullable<T>, value: Int?): U
+        public infix fun set(stringColumnNotNull: StringColumnNotNull<T>): UpdateOpColumn<T, U, String>
+        public infix fun set(stringColumnNullable: StringColumnNullable<T>): UpdateOpColumn<T, U, String?>
+        public infix fun set(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): UpdateOpColumn<T, U, LocalDateTime>
+        public infix fun set(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): UpdateOpColumn<T, U, LocalDateTime?>
+        public infix fun set(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime>
+        public infix fun set(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime?>
+        public infix fun set(localDateColumnNotNull: LocalDateColumnNotNull<T>): UpdateOpColumn<T, U, LocalDate>
+        public infix fun set(localDateColumnNullable: LocalDateColumnNullable<T>): UpdateOpColumn<T, U, LocalDate?>
+        public infix fun set(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate>
+        public infix fun set(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate?>
+        public infix fun set(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): UpdateOpColumn<T, U, OffsetDateTime>
+        public infix fun set(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): UpdateOpColumn<T, U, OffsetDateTime?>
+        public infix fun set(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): UpdateOpColumn<T, U, LocalTime>
+        public infix fun set(localTimeColumnNullable: LocalTimeColumnNullable<T>): UpdateOpColumn<T, U, LocalTime?>
+        public infix fun set(booleanColumnNotNull: BooleanColumnNotNull<T>): UpdateOpColumn<T, U, Boolean>
+        public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpColumn<T, U, Int>
+        public infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpColumn<T, U, Int?>
+        public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID>
+        public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?>
+    }
+
+    public interface UpdateOpColumn<T : Any, U : Update<T, U>, V> {
+        public infix fun eq(value: V): U
     }
 
     public interface TypedWhereable<T : Any, U : TypedWhere<T>> {
@@ -58,8 +62,7 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface TypedWhereInOpColumn<T : Any, U : TypedWhere<T>, V: Any> {
         public infix fun `in`(values: Collection<V>): U
-        public infix fun `in`(values: Sequence<V>): U =
-                this.`in`(values.toSet())
+        public infix fun `in`(values: Sequence<V>): U = this.`in`(values.toSet())
     }
 
     public interface TypedWhereOpColumnNotNull<T : Any, U : TypedWhere<T>, V: Any> {
