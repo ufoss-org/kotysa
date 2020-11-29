@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import kotlin.reflect.KClass
+
 /**
  * One database Table's Column model mapped by entity's [entityGetter]
  *
@@ -17,6 +19,7 @@ public interface KotysaColumn<T : Any, U : Any> {
      */
     public var table: KotysaTable<T>
     public val entityGetter: (T) -> Any?
+    public val columnClass: KClass<Any>
     public val name: String
     public val sqlType: SqlType
     public val isAutoIncrement: Boolean
@@ -28,6 +31,7 @@ public interface KotysaColumn<T : Any, U : Any> {
 internal class KotysaColumnImpl<T : Any, U : Any> internal constructor(
         override val column: Column<T, U>,
         override val entityGetter: (T) -> Any?,
+        override val columnClass: KClass<Any>,
         override val name: String,
         override val sqlType: SqlType,
         override val isAutoIncrement: Boolean,

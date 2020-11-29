@@ -72,7 +72,8 @@ public object DbTypeChoice {
                                         && column == callable.call(table)
                             }.name
 
-            KotysaColumnImpl(column, column.entityGetter, column.name, column.sqlType, column.isAutoIncrement,
+            @Suppress("UNCHECKED_CAST")
+            KotysaColumnImpl(column, column.entityGetter, column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType, column.isAutoIncrement,
                     column.isNullable, column.defaultValue, column.size)
         }
 

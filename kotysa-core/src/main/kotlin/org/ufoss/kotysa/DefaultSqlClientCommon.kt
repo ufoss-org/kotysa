@@ -17,16 +17,18 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val whereClauses: MutableList<TypedWhereClause<*>>
 
         //public val joinClauses: MutableSet<JoinClause<*, *>>
+        public val availableTables: MutableMap<Table<*>, KotysaTable<*>>
         public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
     }
 
     protected interface Instruction {
         @Suppress("UNCHECKED_CAST")
-        public fun <T : Any> addAvailableColumnsFromTable(
+        public fun <T : Any> addAvailableTable(
                 properties: Properties,
                 table: KotysaTable<T>,
         ) {
             properties.apply {
+                availableTables[table.table] = table
                 table.columns.forEach { column -> availableColumns[column.column] = column }
             }
         }
@@ -343,7 +345,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun addClause(column: Column<T, *>, operation: Operation, value: Any?, whereClauseType: WhereClauseType) {
             properties.whereClauses.add(
                     TypedWhereClause(
-                            WhereClause(column.toField(), operation, value),
+                            WhereClause(column.toField(properties), operation, value),
                             whereClauseType,
                     )
             )
@@ -390,66 +392,66 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             when (operation) {
                                 Operation.EQ ->
                                     if (value == null) {
-                                        "${columnField.fieldName(availableColumns)} IS NULL"
+                                        "${columnField.fieldName} IS NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${columnField.fieldName(availableColumns)} = ?"
+                                            "${columnField.fieldName} = ?"
                                         } else {
-                                            "${columnField.fieldName(availableColumns)} = :k${index++}"
+                                            "${columnField.fieldName} = :k${index++}"
                                         }
                                     }
                                 Operation.NOT_EQ ->
                                     if (value == null) {
-                                        "${columnField.fieldName(availableColumns)} IS NOT NULL"
+                                        "${columnField.fieldName} IS NOT NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${columnField.fieldName(availableColumns)} <> ?"
+                                            "${columnField.fieldName} <> ?"
                                         } else {
-                                            "${columnField.fieldName(availableColumns)} <> :k${index++}"
+                                            "${columnField.fieldName} <> :k${index++}"
                                         }
                                     }
                                 Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName(availableColumns)} LIKE ?"
+                                        "${columnField.fieldName} LIKE ?"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} LIKE :k${index++}"
+                                        "${columnField.fieldName} LIKE :k${index++}"
                                     }
                                 Operation.INF ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName(availableColumns)} < ?"
+                                        "${columnField.fieldName} < ?"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} < :k${index++}"
+                                        "${columnField.fieldName} < :k${index++}"
                                     }
                                 Operation.INF_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName(availableColumns)} <= ?"
+                                        "${columnField.fieldName} <= ?"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} <= :k${index++}"
+                                        "${columnField.fieldName} <= :k${index++}"
                                     }
                                 Operation.SUP ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName(availableColumns)} > ?"
+                                        "${columnField.fieldName} > ?"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} > :k${index++}"
+                                        "${columnField.fieldName} > :k${index++}"
                                     }
                                 Operation.SUP_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName(availableColumns)} >= ?"
+                                        "${columnField.fieldName} >= ?"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} >= :k${index++}"
+                                        "${columnField.fieldName} >= :k${index++}"
                                     }
                                 Operation.IS ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName(availableColumns)} IS ?"
+                                        "${columnField.fieldName} IS ?"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} IS :k${index++}"
+                                        "${columnField.fieldName} IS :k${index++}"
                                     }
                                 Operation.IN ->
                                     if (DbType.SQLITE == tables.dbType) {
                                         // must put as much '?' as
-                                        "${columnField.fieldName(availableColumns)} IN (${(value as Collection<*>).joinToString { "?" }})"
+                                        "${columnField.fieldName} IN (${(value as Collection<*>).joinToString { "?" }})"
                                     } else {
-                                        "${columnField.fieldName(availableColumns)} IN (:k${index++})"
+                                        "${columnField.fieldName} IN (:k${index++})"
                                     }
                             }
                     )
