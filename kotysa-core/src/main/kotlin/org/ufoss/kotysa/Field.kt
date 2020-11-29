@@ -4,31 +4,68 @@
 
 package org.ufoss.kotysa
 
-internal fun Column<*, *>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<*, *> {
-    return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" }
+public interface Field<T : Any>{
+    public fun fields(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): List<String>
 }
 
-internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
-    val kotysaColumn = requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" }
+public interface FieldNotNull<T : Any> : Field<T>
+
+public interface FieldNullable<T : Any> : Field<T>
+
+public class CountField<T : Any, U : Any> internal constructor(
+        private val column: Column<T, U>?
+) : FieldNotNull<Int> {
+    override fun fields(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): List<String> {
+        val counted = column?.getFieldName(availableColumns) ?: "*"
+        return listOf("COUNT($counted)")
+    }
+}
+
+public sealed class ColumnField<T : Any, U: Any> (
+        private val column: Column<T, U>
+) : Field<U> {
+    final override fun fields(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): List<String> =
+            listOf(column.getFieldName(availableColumns))
+
+    internal fun fieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>) =
+            column.getFieldName(availableColumns)
+}
+
+public class ColumnFieldNotNull<T : Any, U : Any> internal constructor(
+        column: ColumnNotNull<T, U>
+) : ColumnField<T, U>(column), FieldNotNull<U>
+
+public class ColumnFieldNullable<T : Any, U : Any> internal constructor(
+        private val column: ColumnNullable<T, U>
+) : ColumnField<T, U>(column), FieldNotNull<U>
+
+/**
+ * Not sure if null or not
+ */
+public class TableField<T : Any> internal constructor(
+        internal val table: Table<T>
+) : Field<T> {
+    override fun fields(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): List<String> =
+            table.columns.map { column -> column.getFieldName(availableColumns) }
+}
+
+// Extension functions
+
+internal fun <T : Any, U : Any> Column<T, U>.toField(): ColumnField<T, U> {
+    if (this is ColumnNotNull<T, U>) {
+        return ColumnFieldNotNull(this)
+    }
+    return ColumnFieldNullable(this as ColumnNullable<T, U>)
+}
+
+private fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+    val kotysaColumn = this.getKotysaColumn(availableColumns)
     val kotysaTable = kotysaColumn.table
     return if (kotysaTable is AliasedTable<*>) {
         "${kotysaTable.alias}."
     } else {
         "${kotysaColumn.table.name}."
     } + kotysaColumn.name
-}
-
-internal fun Column<*, *>?.getCountFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
-    val counted = this?.getFieldName(availableColumns) ?: "*"
-    return "COUNT($counted)"
-}
-
-internal fun KotysaTable<*>.getFieldName(): String {
-    return if (this is AliasedTable<*>) {
-        alias
-    } else {
-        name
-    }
 }
 
 /*

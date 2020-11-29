@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-/*
+
 import org.ufoss.kolog.Logger
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,54 +18,55 @@ private val logger = Logger.of<DefaultSqlClientSelect>()
 
 public open class DefaultSqlClientSelect protected constructor() : DefaultSqlClientCommon() {
 
-    public class Properties<T : Any> internal constructor(
+    public class Properties internal constructor(
             override val tables: Tables,
-            public val selectInformation: SelectInformation<T>,
-            override val availableColumns: MutableMap<(Any) -> Any?, KotysaColumn<*, *>>
+            //public val select: SelectDslApi.() -> T,
     ) : DefaultSqlClientCommon.Properties {
-        override val whereClauses: MutableList<TypedWhereClause> = mutableListOf()
-        override val joinClauses: MutableList<JoinClause> = mutableListOf()
+        override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
+        override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
+        internal val selectedFields = mutableListOf<Field<*>>()
+        //override val joinClauses: MutableList<JoinClause> = mutableListOf()
     }
 
     protected interface WithProperties<T : Any> : DefaultSqlClientCommon.WithProperties {
-        override val properties: Properties<T>
+        override val properties: Properties
     }
 
-    @Suppress("UNCHECKED_CAST")
-    protected interface Select<T : Any> : Instruction {
+    protected class SelectField<T : Any> internal constructor(
+            override val tables: Tables,
+            private val field : Field<T>,
+    ): Select<T> {
 
+        override val properties: Properties by lazy {
+            Properties(tables).apply { selectedFields.add(field) }
+        }
+    }
+
+    /*public abstract class SelectDsl<T : Any> : Instruction, WithProperties<T> {
+        public abstract val dsl: () -> T
+    }*/
+
+    //@Suppress("UNCHECKED_CAST")
+    protected interface Select<T : Any> : Instruction, WithProperties<T> {
         public val tables: Tables
-        public val resultClass: KClass<T>
-        public val dsl: (SelectDslApi.(ValueProvider) -> T)?
 
-        public fun initProperties(): Properties<T> {
-            if (dsl == null) {
-                tables.checkTable(resultClass)
-            }
-            val selectInformation = if (dsl != null) {
-                SelectDsl(dsl!!, tables).initialize()
-            } else {
-                selectInformationForSingleClass(resultClass, tables)
-            }
-            val properties = Properties(tables, selectInformation, mutableMapOf())
-            // init availableColumns with all selected tables columns
-            selectInformation.selectedTables
-                    .forEach { table -> addAvailableColumnsFromTable(properties, table) }
-            return properties
+        public fun <U : Any> addSelectedField(field : Field<T>) {
+
         }
 
         @Suppress("UNCHECKED_CAST")
-        private fun selectInformationForSingleClass(resultClass: KClass<T>, tables: Tables): SelectInformation<T> {
-            val table = tables.allTables[resultClass] as KotysaTableOld<T>
-            val fieldIndexMap = mutableMapOf<Field, Int>()
+        public fun <U : Any> addSelectTable(table: Table<U>) {
+            val kotysaTable = tables.getTable(table)
+            super.addAvailableColumnsFromTable(properties, kotysaTable)
+            val selectedColumnIndexMap = mutableMapOf<Column<*, *>, Int>()
 
             // build selectedFields List & fill columnPropertyIndexMap
-            val selectedFields = selectedFieldsFromTable(table.columns, fieldIndexMap)
+            val selectedFields = selectedColumnsFromTable(table.columns, selectedColumnIndexMap)
 
             // Build select Function : (ValueProvider) -> T
             val select: SelectDslApi.(ValueProvider) -> T = { it ->
                 val associatedColumns = mutableListOf<KotysaColumn<*, *>>()
-                val constructor = getTableConstructor(table.tableClass)
+                val constructor = getTableConstructor(kotysaTable.tableClass)
                 val instance = with(constructor!!) {
                     val args = mutableMapOf<KParameter, Any?>()
                     parameters.forEach { param ->
@@ -170,81 +171,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             }
         }
 
-        private fun selectedFieldsFromTable(
-                columns: Map<(T) -> Any?, KotysaColumn<T, *>>,
-                fieldIndexMap: MutableMap<Field, Int>
-        ): List<Field> {
-            val allColumns = tables.allColumns
-            val dbType = tables.dbType
-            var fieldIndex = 0
-            val selectedFields = mutableListOf<Field>()
-            columns.forEach { (getter, _) ->
-                val getterType = getter.toCallable().returnType
-                val field = when (getterType.classifier as KClass<*>) {
-                    String::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableStringColumnField(allColumns, getter as (Any) -> String?, dbType)
-                        } else {
-                            NotNullStringColumnField(allColumns, getter as (Any) -> String, dbType)
-                        }
-                    LocalDateTime::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableLocalDateTimeColumnField(allColumns, getter as (Any) -> LocalDateTime?, dbType)
-                        } else {
-                            NotNullLocalDateTimeColumnField(allColumns, getter as (Any) -> LocalDateTime, dbType)
-                        }
-                    LocalDate::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableLocalDateColumnField(allColumns, getter as (Any) -> LocalDate?, dbType)
-                        } else {
-                            NotNullLocalDateColumnField(allColumns, getter as (Any) -> LocalDate, dbType)
-                        }
-                    OffsetDateTime::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableOffsetDateTimeColumnField(allColumns, getter as (Any) -> OffsetDateTime?, dbType)
-                        } else {
-                            NotNullOffsetDateTimeColumnField(allColumns, getter as (Any) -> OffsetDateTime, dbType)
-                        }
-                    LocalTime::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableLocalTimeColumnField(allColumns, getter as (Any) -> LocalTime?, dbType)
-                        } else {
-                            NotNullLocalTimeColumnField(allColumns, getter as (Any) -> LocalTime, dbType)
-                        }
-                    Boolean::class -> {
-                        require(!getterType.isMarkedNullable) { "$getter is nullable, Boolean must not be nullable" }
-                        NotNullBooleanColumnField(allColumns, getter as (Any) -> Boolean, dbType)
-                    }
-                    UUID::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableUuidColumnField(allColumns, getter as (Any) -> UUID?, dbType)
-                        } else {
-                            NotNullUuidColumnField(allColumns, getter as (Any) -> UUID, dbType)
-                        }
-                    Int::class ->
-                        if (getterType.isMarkedNullable) {
-                            NullableIntColumnField(allColumns, getter as (Any) -> Int?, dbType)
-                        } else {
-                            NotNullIntColumnField(allColumns, getter as (Any) -> Int, dbType)
-                        }
-                    else -> when ((getterType.classifier as KClass<*>).qualifiedName) {
-                        "kotlinx.datetime.LocalDateTime" ->
-                            if (getterType.isMarkedNullable) {
-                                NullableKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime?, dbType)
-                            } else {
-                                NotNullKotlinxLocalDateTimeColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDateTime, dbType)
-                            }
-                        "kotlinx.datetime.LocalDate" ->
-                            if (getterType.isMarkedNullable) {
-                                NullableKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate?, dbType)
-                            } else {
-                                NotNullKotlinxLocalDateColumnField(allColumns, getter as (Any) -> kotlinx.datetime.LocalDate, dbType)
-                            }
-                        else -> throw RuntimeException("should never happen")
-                    }
-                }
-                selectedFields.add(field)
-                fieldIndexMap[field] = fieldIndex++
+        private fun addSelectedColumnsFromTable(
+                columns: Collection<Column<*, *>>,
+                selectedColumnIndexMap: MutableMap<Column<*, *>, Int>
+        ) {
+            columns.forEach{ column ->
+                selectedColumnIndexMap[column] = index
             }
             return selectedFields
         }
@@ -258,7 +190,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {
-            val selects = selectInformation.selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldName }
+            val selects = selectInformation.selectedColumns.joinToString(prefix = "SELECT ") { field -> field.fieldName }
             val froms = selectInformation.selectedTables
                     .filterNot { aliasedTable -> joinClauses.map { joinClause -> joinClause.table }.contains(aliasedTable) }
                     .joinToString(prefix = "FROM ") { aliasedTable -> aliasedTable.declaration }
@@ -270,10 +202,3 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 }
-
-
-public class SelectInformation<T> internal constructor(
-        public val fieldIndexMap: Map<Field, Int>,
-        internal val selectedFields: List<Field>,
-        public val select: SelectDslApi.() -> T
-)*/

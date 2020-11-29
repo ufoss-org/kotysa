@@ -6,7 +6,7 @@ package org.ufoss.kotysa
 
 
 public class WhereClause<T : Any> internal constructor(
-        internal val column: Column<T, *>,
+        internal val columnField: ColumnField<T, *>,
         internal val operation: Operation,
         public val value: Any?
 )

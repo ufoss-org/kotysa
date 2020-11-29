@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import java.util.stream.Stream
+
 /**
  * Sql Client, to be used with a blocking driver
  */
@@ -21,6 +23,10 @@ public interface SqlClient {
 
     public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
+    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.Select<T>
+
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
+
     /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
 
     public inline fun <reified T : Any> select(): SqlClientSelect.Select<T> = selectInternal(T::class, null)
@@ -34,21 +40,21 @@ public interface SqlClient {
      */
 }
 
-/*
-public class SqlClientSelect private constructor() {
-    public abstract class Select<T : Any> : Whereable<T>, Return<T> {
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
+public class SqlClientSelect private constructor() {
+    public abstract class Select<T : Any> : /*Whereable<T>,*/ Return<T> {
+
+        /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
 
         @PublishedApi
         internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
                 join(joinClass, alias, type)
 
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>
+        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>*/
     }
 
-    public interface Joinable<T : Any> {
+    /*public interface Joinable<T : Any> {
         public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join<T>
     }
 
@@ -61,7 +67,7 @@ public class SqlClientSelect private constructor() {
     public interface Where<T : Any> : Return<T> {
         public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
         public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
-    }
+    }*/
 
     public interface Return<T : Any> {
         /**
@@ -101,7 +107,7 @@ public class SqlClientSelect private constructor() {
          */
         public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }
-}*/
+}
 
 
 public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {

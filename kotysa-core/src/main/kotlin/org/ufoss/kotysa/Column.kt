@@ -69,3 +69,9 @@ public interface IntColumnNullable<T : Any> : IntColumn<T>, ColumnNullable<T, In
 public interface UuidColumn<T : Any> : Column<T, UUID>
 public interface UuidColumnNotNull<T : Any> : UuidColumn<T>, ColumnNotNull<T, UUID>
 public interface UuidColumnNullable<T : Any> : UuidColumn<T>, ColumnNullable<T, UUID>
+
+// Extension functions
+
+internal fun Column<*, *>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<*, *> {
+    return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" }
+}

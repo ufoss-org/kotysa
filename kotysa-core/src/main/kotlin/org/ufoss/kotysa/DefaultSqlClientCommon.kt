@@ -24,7 +24,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         @Suppress("UNCHECKED_CAST")
         public fun <T : Any> addAvailableColumnsFromTable(
                 properties: Properties,
-                table: KotysaTable<T>
+                table: KotysaTable<T>,
         ) {
             properties.apply {
                 table.columns.forEach { column -> availableColumns[column.column] = column }
@@ -249,7 +249,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun notEq(value: V?): U = typedWhere.apply { addClause(column, Operation.NOT_EQ, value, type) }
     }
 
-    public abstract class AbstractTypedWhereOpColumn<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> protected constructor(): TypedWhereOpColumn<T, U, V> {
+    public abstract class AbstractTypedWhereOpColumn<T : Any, U : SqlClientQuery.TypedWhere<T>, V : Any> protected constructor() : TypedWhereOpColumn<T, U, V> {
         override lateinit var column: Column<T, V>
         override lateinit var type: WhereClauseType
     }
@@ -341,7 +341,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface TypedWhere<T : Any> : WithProperties {
         public fun addClause(column: Column<T, *>, operation: Operation, value: Any?, whereClauseType: WhereClauseType) {
-            properties.whereClauses.add(TypedWhereClause(WhereClause(column, operation, value), whereClauseType))
+            properties.whereClauses.add(
+                    TypedWhereClause(
+                            WhereClause(column.toField(), operation, value),
+                            whereClauseType,
+                    )
+            )
         }
     }
 
@@ -385,66 +390,66 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             when (operation) {
                                 Operation.EQ ->
                                     if (value == null) {
-                                        "${column.getFieldName(tables.allColumns)} IS NULL"
+                                        "${columnField.fieldName(availableColumns)} IS NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${column.getFieldName(tables.allColumns)} = ?"
+                                            "${columnField.fieldName(availableColumns)} = ?"
                                         } else {
-                                            "${column.getFieldName(tables.allColumns)} = :k${index++}"
+                                            "${columnField.fieldName(availableColumns)} = :k${index++}"
                                         }
                                     }
                                 Operation.NOT_EQ ->
                                     if (value == null) {
-                                        "${column.getFieldName(tables.allColumns)} IS NOT NULL"
+                                        "${columnField.fieldName(availableColumns)} IS NOT NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${column.getFieldName(tables.allColumns)} <> ?"
+                                            "${columnField.fieldName(availableColumns)} <> ?"
                                         } else {
-                                            "${column.getFieldName(tables.allColumns)} <> :k${index++}"
+                                            "${columnField.fieldName(availableColumns)} <> :k${index++}"
                                         }
                                     }
                                 Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${column.getFieldName(tables.allColumns)} LIKE ?"
+                                        "${columnField.fieldName(availableColumns)} LIKE ?"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} LIKE :k${index++}"
+                                        "${columnField.fieldName(availableColumns)} LIKE :k${index++}"
                                     }
                                 Operation.INF ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${column.getFieldName(tables.allColumns)} < ?"
+                                        "${columnField.fieldName(availableColumns)} < ?"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} < :k${index++}"
+                                        "${columnField.fieldName(availableColumns)} < :k${index++}"
                                     }
                                 Operation.INF_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${column.getFieldName(tables.allColumns)} <= ?"
+                                        "${columnField.fieldName(availableColumns)} <= ?"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} <= :k${index++}"
+                                        "${columnField.fieldName(availableColumns)} <= :k${index++}"
                                     }
                                 Operation.SUP ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${column.getFieldName(tables.allColumns)} > ?"
+                                        "${columnField.fieldName(availableColumns)} > ?"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} > :k${index++}"
+                                        "${columnField.fieldName(availableColumns)} > :k${index++}"
                                     }
                                 Operation.SUP_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${column.getFieldName(tables.allColumns)} >= ?"
+                                        "${columnField.fieldName(availableColumns)} >= ?"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} >= :k${index++}"
+                                        "${columnField.fieldName(availableColumns)} >= :k${index++}"
                                     }
                                 Operation.IS ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${column.getFieldName(tables.allColumns)} IS ?"
+                                        "${columnField.fieldName(availableColumns)} IS ?"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} IS :k${index++}"
+                                        "${columnField.fieldName(availableColumns)} IS :k${index++}"
                                     }
                                 Operation.IN ->
                                     if (DbType.SQLITE == tables.dbType) {
                                         // must put as much '?' as
-                                        "${column.getFieldName(tables.allColumns)} IN (${(value as Collection<*>).joinToString { "?" }})"
+                                        "${columnField.fieldName(availableColumns)} IN (${(value as Collection<*>).joinToString { "?" }})"
                                     } else {
-                                        "${column.getFieldName(tables.allColumns)} IN (:k${index++})"
+                                        "${columnField.fieldName(availableColumns)} IN (:k${index++})"
                                     }
                             }
                     )
