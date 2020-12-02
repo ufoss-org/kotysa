@@ -44,9 +44,9 @@ abstract class AbstractUserRepository(
 
     private fun deleteAllFromRoles() = sqlClient.deleteAllFrom(SQLITE_ROLE)
 
-    /*fun selectAll() = sqlClient.selectAll<SqLiteUser>()
+    fun selectAll() = sqlClient.selectAllFrom(SQLITE_USER)
 
-    fun selectFirstByFirstname(firstname: String) =
+    /*fun selectFirstByFirstname(firstname: String) =
         sqlClient.select<SqLiteUser>()
             .where { it[SqLiteUser::firstname] eq firstname }
             .fetchFirstOrNull()*/

@@ -345,7 +345,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun addClause(column: Column<T, *>, operation: Operation, value: Any?, whereClauseType: WhereClauseType) {
             properties.whereClauses.add(
                     TypedWhereClause(
-                            WhereClause(column.toField(properties), operation, value),
+                            WhereClause(column, operation, value),
                             whereClauseType,
                     )
             )
@@ -388,70 +388,71 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 )
                 where.append("(")
                 typedWhereClause.whereClause.apply {
+                    val fieldName = column.getFieldName(availableColumns)
                     where.append(
                             when (operation) {
                                 Operation.EQ ->
                                     if (value == null) {
-                                        "${columnField.fieldName} IS NULL"
+                                        "$fieldName IS NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${columnField.fieldName} = ?"
+                                            "$fieldName = ?"
                                         } else {
-                                            "${columnField.fieldName} = :k${index++}"
+                                            "$fieldName = :k${index++}"
                                         }
                                     }
                                 Operation.NOT_EQ ->
                                     if (value == null) {
-                                        "${columnField.fieldName} IS NOT NULL"
+                                        "$fieldName IS NOT NULL"
                                     } else {
                                         if (DbType.SQLITE == tables.dbType) {
-                                            "${columnField.fieldName} <> ?"
+                                            "$fieldName <> ?"
                                         } else {
-                                            "${columnField.fieldName} <> :k${index++}"
+                                            "$fieldName <> :k${index++}"
                                         }
                                     }
                                 Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName} LIKE ?"
+                                        "$fieldName LIKE ?"
                                     } else {
-                                        "${columnField.fieldName} LIKE :k${index++}"
+                                        "$fieldName LIKE :k${index++}"
                                     }
                                 Operation.INF ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName} < ?"
+                                        "$fieldName < ?"
                                     } else {
-                                        "${columnField.fieldName} < :k${index++}"
+                                        "$fieldName < :k${index++}"
                                     }
                                 Operation.INF_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName} <= ?"
+                                        "$fieldName <= ?"
                                     } else {
-                                        "${columnField.fieldName} <= :k${index++}"
+                                        "$fieldName <= :k${index++}"
                                     }
                                 Operation.SUP ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName} > ?"
+                                        "$fieldName > ?"
                                     } else {
-                                        "${columnField.fieldName} > :k${index++}"
+                                        "$fieldName > :k${index++}"
                                     }
                                 Operation.SUP_OR_EQ ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName} >= ?"
+                                        "$fieldName >= ?"
                                     } else {
-                                        "${columnField.fieldName} >= :k${index++}"
+                                        "$fieldName >= :k${index++}"
                                     }
                                 Operation.IS ->
                                     if (DbType.SQLITE == tables.dbType) {
-                                        "${columnField.fieldName} IS ?"
+                                        "$fieldName IS ?"
                                     } else {
-                                        "${columnField.fieldName} IS :k${index++}"
+                                        "$fieldName IS :k${index++}"
                                     }
                                 Operation.IN ->
                                     if (DbType.SQLITE == tables.dbType) {
                                         // must put as much '?' as
-                                        "${columnField.fieldName} IN (${(value as Collection<*>).joinToString { "?" }})"
+                                        "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
                                     } else {
-                                        "${columnField.fieldName} IN (:k${index++})"
+                                        "$fieldName IN (:k${index++})"
                                     }
                             }
                     )

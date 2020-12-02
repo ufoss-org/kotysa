@@ -58,8 +58,8 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
     fun `Verify deleteUserIn no match`() {
         assertThat(repository.deleteUserIn(listOf(99999, 9999999)))
                 .isEqualTo(0)
-        //assertThat(repository.selectAll())
-        //        .hasSize(2)
+        assertThat(repository.selectAll())
+                .hasSize(2)
     }
 
     @Test

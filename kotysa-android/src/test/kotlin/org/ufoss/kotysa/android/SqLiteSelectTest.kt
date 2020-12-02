@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-/*
+
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -20,10 +20,10 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     fun `Verify selectAll returns all users`() {
         assertThat(repository.selectAll())
             .hasSize(2)
-            .containsExactlyInAnyOrder(sqLiteJdoe, sqLiteBboss)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
-    @Test
+    /*@Test
     fun `Verify selectOneNonUnique throws NonUniqueResultException`() {
         assertThatThrownBy { repository.selectOneNonUnique() }
             .isInstanceOf(NonUniqueResultException::class.java)
@@ -70,7 +70,7 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
         coll.addLast("TheBest")
         assertThat(repository.selectAllIn(coll))
                 .isEmpty()
-    }
+    }*/
 }
 
 class UserRepositorySelect(
@@ -78,7 +78,7 @@ class UserRepositorySelect(
     tables: Tables
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
-    fun selectOneNonUnique() =
+    /*fun selectOneNonUnique() =
         sqlClient.select<SqLiteUser>()
             .fetchOne()
 
@@ -103,4 +103,5 @@ class UserRepositorySelect(
             sqlClient.select<SqLiteUser>()
                     .where { it[SqLiteUser::alias] `in` aliases }
                     .fetchAll()
-}*/
+    */
+}

@@ -14,7 +14,7 @@ import kotlin.reflect.full.primaryConstructor
 public interface Field<T : Any> {
     public val properties: DefaultSqlClientCommon.Properties
     public val fieldNames: List<String>
-    public val builder: (Row, Int) -> T?
+    public val builder: (Row) -> T
 }
 
 public interface FieldNotNull<T : Any> : Field<T>
@@ -27,8 +27,8 @@ public class CountField<T : Any, U : Any> internal constructor(
 ) : FieldNotNull<Int> {
     override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.availableColumns) ?: "*"})")
 
-    override val builder: (Row, Int) -> Int = { row, index ->
-        row[index, Int::class.java]!!
+    override val builder: (Row) -> Int = { row ->
+        row[Int::class.javaObjectType]!!
     }
 }
 
@@ -38,27 +38,22 @@ public sealed class ColumnField<T : Any, U : Any>(
 ) : Field<U> {
     internal val fieldName = column.getFieldName(properties.availableColumns)
     final override val fieldNames: List<String> = listOf(fieldName)
+
+    @Suppress("UNCHECKED_CAST")
+    final override val builder: (Row) -> U = { row ->
+        row[column.getKotysaColumn(properties.availableColumns).columnClass.javaObjectType as Class<U>]!!
+    }
 }
 
 public class ColumnFieldNotNull<T : Any, U : Any> internal constructor(
         properties: DefaultSqlClientCommon.Properties,
         column: ColumnNotNull<T, U>
-) : ColumnField<T, U>(properties, column), FieldNotNull<U> {
-    @Suppress("UNCHECKED_CAST")
-    override val builder: (Row, Int) -> U = { row, index ->
-        row[index, column.getKotysaColumn(properties.availableColumns).columnClass.java as Class<U>]!!
-    }
-}
+) : ColumnField<T, U>(properties, column), FieldNotNull<U>
 
 public class ColumnFieldNullable<T : Any, U : Any> internal constructor(
         properties: DefaultSqlClientCommon.Properties,
-        private val column: ColumnNullable<T, U>
-) : ColumnField<T, U>(properties, column), FieldNotNull<U> {
-    @Suppress("UNCHECKED_CAST")
-    override val builder: (Row, Int) -> U? = { row, index ->
-        row[index, column.getKotysaColumn(properties.availableColumns).columnClass.java as Class<U>]
-    }
-}
+        column: ColumnNullable<T, U>
+) : ColumnField<T, U>(properties, column), FieldNullable<U>
 
 /**
  * Not sure if null or not
@@ -71,8 +66,7 @@ public class TableField<T : Any> internal constructor(
             table.columns.map { column -> column.getFieldName(properties.availableColumns) }
 
     @Suppress("UNCHECKED_CAST")
-    override val builder: (Row, Int) -> T? = { row, index ->
-        var idx = index
+    override val builder: (Row) -> T = { row ->
         val kotysaTable = table.getKotysaTable(properties.availableTables)
         val associatedColumns = mutableListOf<KotysaColumn<*, *>>()
         val constructor = getTableConstructor(kotysaTable.tableClass)
@@ -95,7 +89,7 @@ public class TableField<T : Any> internal constructor(
                     matchFound
                 }
                 if (column != null) {
-                    args[param] = row[idx++, column.columnClass.java]
+                    args[param] = row[column.columnClass.javaObjectType]
                 } else {
                     require(param.isOptional) {
                         "Cannot instanciate Table \"${kotysaTable.tableClass.qualifiedName}\"," +
@@ -114,7 +108,7 @@ public class TableField<T : Any> internal constructor(
                     .forEach { column ->
                         val getter = column.entityGetter
                         if (getter is KMutableProperty1<T, Any?>) {
-                            getter.set(instance, row[idx++, column.columnClass.java])
+                            getter.set(instance, row[column.columnClass.java])
                             associatedColumns.add(column)
                         } else {
                             val callable = getter.toCallable()
@@ -136,7 +130,7 @@ public class TableField<T : Any> internal constructor(
                                     }
                                 }
                                 if (setter != null) {
-                                    setter.call(instance, row[idx++, column.columnClass.java])
+                                    setter.call(instance, row[column.columnClass.java])
                                     associatedColumns.add(column)
                                 }
                             }
@@ -172,7 +166,7 @@ internal fun <T : Any, U : Any> Column<T, U>.toField(properties: DefaultSqlClien
     return ColumnFieldNullable(properties, this as ColumnNullable<T, U>)
 }
 
-private fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
     val kotysaColumn = this.getKotysaColumn(availableColumns)
     val kotysaTable = kotysaColumn.table
     return if (kotysaTable is AliasedTable<*>) {
@@ -181,6 +175,9 @@ private fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, Kotysa
         "${kotysaColumn.table.name}."
     } + kotysaColumn.name
 }
+
+public fun <T : Any> Table<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
+    TableField(properties, this)
 
 /*
 public interface Field {

@@ -44,9 +44,8 @@ internal class SqlClientSqLite(
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
             SqlClientUpdateSqLite.Update(client.writableDatabase, tables, table)
 
-    override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.Select<T> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.Select<T> =
+            SqlClientSelectSqLite.SelectTable(client.readableDatabase, tables, table)
 }
 
 /**

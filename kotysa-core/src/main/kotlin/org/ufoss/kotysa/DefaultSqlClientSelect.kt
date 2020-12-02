@@ -11,9 +11,8 @@ private val logger = Logger.of<DefaultSqlClientSelect>()
 
 public open class DefaultSqlClientSelect protected constructor() : DefaultSqlClientCommon() {
 
-    public class Properties internal constructor(
+    public class Properties<T : Any> internal constructor(
             override val tables: Tables,
-            //public val select: SelectDslApi.() -> T,
     ) : DefaultSqlClientCommon.Properties {
         override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
@@ -21,24 +20,28 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         internal val selectedFields = mutableListOf<Field<*>>()
         internal val selectedTables: MutableSet<Table<*>> = mutableSetOf()
         //override val joinClauses: MutableList<JoinClause> = mutableListOf()
+
+        public lateinit var select: (Row) -> T
     }
 
     protected interface WithProperties<T : Any> : DefaultSqlClientCommon.WithProperties {
-        override val properties: Properties
+        override val properties: Properties<T>
     }
 
-    internal class SelectField<T : Any> internal constructor(
-            private val tables: Tables,
-            private val field : Field<T>,
-    ): Select<T> {
+    public abstract class SelectTable<T : Any> protected constructor(
+            tables: Tables,
+            table: Table<T>,
+    ) : Select<T> {
 
-        override val properties: Properties by lazy {
-            Properties(tables).apply {
-                if (field is TableField<T>) {
-                    super.addAvailableTable(properties, properties.tables.getTable(field.table))
-                    selectedTables.add(field.table)
-                }
-                selectedFields.add(field)
+        public final override val properties: Properties<T> = Properties(tables)
+
+        init {
+            properties.apply {
+                super.addAvailableTable(properties, properties.tables.getTable(table))
+                val tableField = table.toField(properties)
+                select = tableField.builder
+                selectedTables.add(tableField.table)
+                selectedFields.add(tableField)
             }
         }
     }

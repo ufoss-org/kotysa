@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.android
-/*
+
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
@@ -11,27 +11,24 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
-import kotlin.reflect.KClass
 
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
 
-    internal class Select<T : Any> internal constructor(
-        override val client: SQLiteDatabase,
-        override val tables: Tables,
-        override val resultClass: KClass<T>,
-        override val dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ) : SqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
+    internal class SelectTable<T : Any> internal constructor(
+            override val client: SQLiteDatabase,
+            tables: Tables,
+            table: Table<T>
+    ) : DefaultSqlClientSelect.SelectTable<T>(tables, table), SqlClientSelect.Select<T>, Whereable<T>, Return<T> {
 
-        override val properties: Properties<T> = initProperties()
-
-        override fun <U : Any> join(
-            joinClass: KClass<U>,
-            alias: String?,
-            type: JoinType
-        ): SqlClientSelect.Joinable<T> =
-            Joinable(client, properties, joinClass, alias, type)
+        /*override fun <U : Any> join(
+                joinClass: KClass<U>,
+                alias: String?,
+                type: JoinType
+            ): SqlClientSelect.Joinable<T> =
+                Joinable(client, properties, joinClass, alias, type)*/
     }
 
+    /*
     private class Joinable<T : Any, U : Any>(
         private val client: SQLiteDatabase,
         private val properties: Properties<T>,
@@ -77,52 +74,54 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             return this
         }
     }
+     */
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: SQLiteDatabase
 
-        override fun fetchOne() = with(properties.selectInformation) {
+        override fun fetchOne() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
             if (!cursor.isLast) throw NonUniqueResultException()
-            val row = SqLiteRow(cursor, fieldIndexMap)
-            select(row, row)
+            val row = SqLiteRow(cursor)
+            select(row)
         }
 
-        override fun fetchOneOrNull() = with(properties.selectInformation) {
+        override fun fetchOneOrNull() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) {
                 null
             } else {
                 if (!cursor.isLast) throw NonUniqueResultException()
-                val row = SqLiteRow(cursor, fieldIndexMap)
-                select(row, row)
+                val row = SqLiteRow(cursor)
+                select(row)
             }
         }
 
-        override fun fetchFirst() = with(properties.selectInformation) {
+        override fun fetchFirst() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
-            val row = SqLiteRow(cursor, fieldIndexMap)
-            select(row, row)
+            val row = SqLiteRow(cursor)
+            select(row)
         }
 
-        override fun fetchFirstOrNull() = with(properties.selectInformation) {
+        override fun fetchFirstOrNull() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) {
                 null
             } else {
-                val row = SqLiteRow(cursor, fieldIndexMap)
-                select(row, row)
+                val row = SqLiteRow(cursor)
+                select(row)
             }
         }
 
-        override fun fetchAll() = with(properties.selectInformation) {
+        override fun fetchAll() = with(properties) {
             val cursor = fetch()
-            val row = SqLiteRow(cursor, fieldIndexMap)
+            val row = SqLiteRow(cursor)
             val results = mutableListOf<T>()
             while (cursor.moveToNext()) {
-                results.add(select(row, row))
+                results.add(select(row))
+                row.resetIndex()
             }
             results
         }
@@ -131,45 +130,44 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
 
         @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
         private class SqLiteRow(
-            private val sqLiteCursor: Cursor,
-            fieldIndexMap: Map<Field, Int>
-        ) : AbstractRow(fieldIndexMap) {
-            override fun <T> get(index: Int, type: Class<T>) =
-                if (sqLiteCursor.isNull(index)) {
-                    null
-                } else {
-                    when {
-                        Integer::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index)
-                        java.lang.Long::class.java.isAssignableFrom(type) -> sqLiteCursor.getLong(index)
-                        java.lang.Float::class.java.isAssignableFrom(type) -> sqLiteCursor.getFloat(index)
-                        java.lang.Short::class.java.isAssignableFrom(type) -> sqLiteCursor.getShort(index)
-                        java.lang.Double::class.java.isAssignableFrom(type) -> sqLiteCursor.getDouble(index)
-                        String::class.java.isAssignableFrom(type) -> sqLiteCursor.getString(index)
-                        // boolean is stored as Int
-                        java.lang.Boolean::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index) != 0
-                        ByteArray::class.java.isAssignableFrom(type) -> sqLiteCursor.getBlob(index)
-                        // Date are stored as String
-                        LocalDate::class.java.isAssignableFrom(type) -> LocalDate.parse(sqLiteCursor.getString(index))
-                        LocalDateTime::class.java.isAssignableFrom(type) -> LocalDateTime.parse(
-                            sqLiteCursor.getString(index)
-                        )
-                        OffsetDateTime::class.java.isAssignableFrom(type) -> OffsetDateTime.parse(
-                            sqLiteCursor.getString(index)
-                        )
-                        LocalTime::class.java.isAssignableFrom(type) -> LocalTime.parse(sqLiteCursor.getString(index))
-                        else -> when (type.name) {
-                            "kotlinx.datetime.LocalDate" -> kotlinx.datetime.LocalDate.parse(
+                private val sqLiteCursor: Cursor
+        ) : Row() {
+            override fun <T : Any> get(index: Int, clazz: Class<T>) =
+                    if (sqLiteCursor.isNull(index)) {
+                        null
+                    } else {
+                        when {
+                            Integer::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getInt(index)
+                            java.lang.Long::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getLong(index)
+                            java.lang.Float::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getFloat(index)
+                            java.lang.Short::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getShort(index)
+                            java.lang.Double::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getDouble(index)
+                            String::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getString(index)
+                            // boolean is stored as Int
+                            java.lang.Boolean::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getInt(index) != 0
+                            ByteArray::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getBlob(index)
+                            // Date are stored as String
+                            LocalDate::class.java.isAssignableFrom(clazz) -> LocalDate.parse(sqLiteCursor.getString(index))
+                            LocalDateTime::class.java.isAssignableFrom(clazz) -> LocalDateTime.parse(
                                     sqLiteCursor.getString(index)
                             )
-                            "kotlinx.datetime.LocalDateTime" -> kotlinx.datetime.LocalDateTime.parse(
+                            OffsetDateTime::class.java.isAssignableFrom(clazz) -> OffsetDateTime.parse(
                                     sqLiteCursor.getString(index)
                             )
-                            else -> throw UnsupportedOperationException(
-                                    "${type.canonicalName} is not supported by Android SqLite"
-                            )
-                        }
-                    } as T?
-                }
+                            LocalTime::class.java.isAssignableFrom(clazz) -> LocalTime.parse(sqLiteCursor.getString(index))
+                            else -> when (clazz.name) {
+                                "kotlinx.datetime.LocalDate" -> kotlinx.datetime.LocalDate.parse(
+                                        sqLiteCursor.getString(index)
+                                )
+                                "kotlinx.datetime.LocalDateTime" -> kotlinx.datetime.LocalDateTime.parse(
+                                        sqLiteCursor.getString(index)
+                                )
+                                else -> throw UnsupportedOperationException(
+                                        "${clazz.canonicalName} is not supported by Android SqLite"
+                                )
+                            }
+                        } as T?
+                    }
         }
     }
-}*/
+}

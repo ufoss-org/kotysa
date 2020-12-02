@@ -42,7 +42,7 @@ public interface SqlClient {
 
 
 public class SqlClientSelect private constructor() {
-    public abstract class Select<T : Any> : /*Whereable<T>,*/ Return<T> {
+    public interface Select<T : Any> : /*Whereable<T>,*/ Return<T> {
 
         /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
