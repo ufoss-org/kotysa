@@ -23,11 +23,11 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
                     .isEqualTo(2)
-            //assertThat(repository.selectAll())
-            //        .isEmpty()
+            assertThat(repository.selectAll())
+                    .isEmpty()
         }
-        //assertThat(repository.selectAll())
-        //        .hasSize(2)
+        assertThat(repository.selectAll())
+                .hasSize(2)
     }
 
     @Test
@@ -37,8 +37,8 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserById(userJdoe.id))
                     .isEqualTo(1)
-            //assertThat(repository.selectAll())
-            //        .hasSize(1)
+            assertThat(repository.selectAll())
+                    .hasSize(1)
         }
     }
 
@@ -49,8 +49,8 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
-            //assertThat(repository.selectAll())
-            //        .hasSize(1)
+            assertThat(repository.selectAll())
+                    .hasSize(1)
         }
     }
 

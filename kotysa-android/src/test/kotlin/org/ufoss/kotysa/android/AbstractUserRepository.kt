@@ -28,8 +28,8 @@ abstract class AbstractUserRepository(
     }
 
     private fun createTable() {
-        sqlClient.createTable(SQLITE_ROLE)
-        sqlClient.createTable(SQLITE_USER)
+        sqlClient createTable SQLITE_ROLE
+        sqlClient createTable SQLITE_USER
     }
 
     private fun insertRoles() {
@@ -40,11 +40,11 @@ abstract class AbstractUserRepository(
         sqlClient.insert(userJdoe, userBboss)
     }
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFrom(SQLITE_USER)
+    fun deleteAllFromUsers() = sqlClient deleteAllFrom SQLITE_USER
 
-    private fun deleteAllFromRoles() = sqlClient.deleteAllFrom(SQLITE_ROLE)
+    private fun deleteAllFromRoles() = sqlClient deleteAllFrom SQLITE_ROLE
 
-    fun selectAll() = sqlClient.selectAllFrom(SQLITE_USER)
+    fun selectAll() = sqlClient selectAllFrom SQLITE_USER
 
     /*fun selectFirstByFirstname(firstname: String) =
         sqlClient.select<SqLiteUser>()
