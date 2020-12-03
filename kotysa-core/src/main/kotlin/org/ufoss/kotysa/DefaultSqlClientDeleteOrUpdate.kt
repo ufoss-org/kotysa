@@ -23,7 +23,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
              */
             public val table: KotysaTable<T>,
     ) : DefaultSqlClientCommon.Properties {
-        override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
+        override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
 
@@ -35,7 +35,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public val properties: Properties<T>
     }
 
-    public abstract class DeleteOrUpdate<T : Any, U : SqlClientQuery.TypedWhere<T>> protected constructor() : TypedWhereable<T, U>(), Instruction {
+    public abstract class DeleteOrUpdate<T : Any, U : SqlClientQuery.Where> protected constructor() : Whereable<T, U>(), Instruction {
 
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
@@ -49,7 +49,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class Update<T : Any, U : SqlClientQuery.TypedWhere<T>, V : SqlClientQuery.Update<T, V>> protected constructor()
+    public abstract class Update<T : Any, U : SqlClientQuery.Where, V : SqlClientQuery.Update<T, V>> protected constructor()
         : DeleteOrUpdate<T, U>(), SqlClientQuery.Update<T, V> {
 
         protected abstract val update: V
@@ -167,11 +167,9 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
     //protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>, Instruction
 
-    public abstract class TypedWhereable<T : Any, U : SqlClientQuery.TypedWhere<T>> : DefaultSqlClientCommon.TypedWhereable<T, U>(), WithProperties<T>, Return<T>
+    public abstract class Whereable<T : Any, U : SqlClientQuery.Where> : DefaultSqlClientCommon.Whereable<T, U>(), WithProperties<T>, Return<T>
 
-    public interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
-
-    public interface TypedWhere<T : Any> : DefaultSqlClientCommon.TypedWhere<T>, WithProperties<T>, Return<T>
+    public interface Where<T : Any> : DefaultSqlClientCommon.Where<T>, WithProperties<T>, Return<T>
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 

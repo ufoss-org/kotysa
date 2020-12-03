@@ -41,8 +41,8 @@ public interface SqlClient {
 }
 
 
-public class SqlClientSelect private constructor() {
-    public interface Select<T : Any> : /*Whereable<T>,*/ Return<T> {
+public class SqlClientSelect private constructor(): SqlClientQuery() {
+    public interface Select<T : Any> : Whereable<Any, Where<T>>, Return<T> {
 
         /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
@@ -58,16 +58,12 @@ public class SqlClientSelect private constructor() {
         public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join<T>
     }
 
-    public interface Join<T : Any> : Whereable<T>, Return<T>
+    public interface Join<T : Any> : Whereable<T>, Return<T>*/
 
-    public interface Whereable<T : Any> {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+    public interface Where<T : Any> : SqlClientQuery.Where, Return<T> {
+        //public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+        //public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
     }
-
-    public interface Where<T : Any> : Return<T> {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
-    }*/
 
     public interface Return<T : Any> {
         /**
@@ -111,7 +107,7 @@ public class SqlClientSelect private constructor() {
 
 
 public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
-    public interface DeleteOrUpdate<T : Any> : TypedWhereable<T, TypedWhere<T>>, Return {
+    public interface DeleteOrUpdate<T : Any> : Whereable<T, Where>, Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
@@ -135,7 +131,7 @@ public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
         public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
     }*/
 
-    public interface TypedWhere<T : Any> : SqlClientQuery.TypedWhere<T>, Return {
+    public interface Where : SqlClientQuery.Where, Return {
         /*public fun and(whereClause: WhereClause<T>): TypedWhere<T>
         public fun or(whereClause: WhereClause<T>): TypedWhere<T>*/
     }

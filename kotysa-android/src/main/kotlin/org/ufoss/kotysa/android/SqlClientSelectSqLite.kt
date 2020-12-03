@@ -18,7 +18,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             override val client: SQLiteDatabase,
             tables: Tables,
             table: Table<T>
-    ) : DefaultSqlClientSelect.SelectTable<T>(tables, table), SqlClientSelect.Select<T>, Whereable<T>, Return<T> {
+    ) : DefaultSqlClientSelect.SelectTable<T, SqlClientSelect.Where<T>>(tables, table), SqlClientSelect.Select<T>, Return<T> {
+        override val where = Where(client, properties)
 
         /*override fun <U : Any> join(
                 joinClass: KClass<U>,
@@ -58,13 +59,14 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             return where
         }
     }
+     */
 
-    private class Where<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
+    internal class Where<T : Any>(
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T>, SqlClientSelect.Where<T>, Return<T> {
 
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
+        /*override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
             addAndClause(dsl)
             return this
         }
@@ -72,9 +74,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
             addOrClause(dsl)
             return this
-        }
+        }*/
     }
-     */
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: SQLiteDatabase

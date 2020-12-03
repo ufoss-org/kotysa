@@ -15,7 +15,7 @@ public enum class Operation {
     EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IS, IN
 }
 
-public class TypedWhereClause<T : Any> internal constructor(
+public class WhereClauseWithType<T : Any> internal constructor(
         public val whereClause: WhereClause<T>,
         internal val type: WhereClauseType
 )

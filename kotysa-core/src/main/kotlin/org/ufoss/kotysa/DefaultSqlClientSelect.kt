@@ -14,7 +14,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     public class Properties<T : Any> internal constructor(
             override val tables: Tables,
     ) : DefaultSqlClientCommon.Properties {
-        override val whereClauses: MutableList<TypedWhereClause<*>> = mutableListOf()
+        override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
         internal val selectedFields = mutableListOf<Field<*>>()
@@ -28,10 +28,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class SelectTable<T : Any> protected constructor(
+    public abstract class SelectTable<T : Any, U : SqlClientQuery.Where> protected constructor(
             tables: Tables,
             table: Table<T>,
-    ) : Select<T> {
+    ) : Select<T, U>() {
 
         public final override val properties: Properties<T> = Properties(tables)
 
@@ -51,13 +51,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }*/
 
     //@Suppress("UNCHECKED_CAST")
-    protected interface Select<T : Any> : Instruction, WithProperties<T>
-
-    protected interface Whereable<T : Any> : DefaultSqlClientCommon.Whereable, WithProperties<T>
+    public abstract class Select<T : Any, U : SqlClientQuery.Where> : Whereable<T, U>(), Instruction, WithProperties<T>
 
     //protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>
 
-    protected interface Where<T : Any> : DefaultSqlClientCommon.Where, WithProperties<T>
+    public abstract class Whereable<T: Any, U : SqlClientQuery.Where> : DefaultSqlClientCommon.Whereable<Any, U>(), WithProperties<T>, Return<T>
+
+    protected interface Where<T : Any> : DefaultSqlClientCommon.Where<Any>, WithProperties<T>, Return<T>
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {

@@ -69,9 +69,9 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
-            //assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
-            //        .extracting { user -> user?.lastname }
-            //        .isEqualTo("Do")
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
         }
     }
 
@@ -82,9 +82,9 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
-            //assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
-            //        .extracting { user -> user?.lastname }
-            //        .isEqualTo("Do")
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
         }
     }
 
@@ -92,9 +92,9 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
     fun `Verify updateLastnameIn no match`() {
         assertThat(repository.updateLastnameIn("Do", listOf(99999, 9999999)))
                 .isEqualTo(0)
-        //assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
-        //        .extracting { user -> user?.lastname }
-        //        .isEqualTo("Doe")
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Doe")
     }
 /*
     @Test
