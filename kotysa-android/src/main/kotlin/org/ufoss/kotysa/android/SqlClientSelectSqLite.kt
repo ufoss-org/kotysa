@@ -64,7 +64,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     internal class Where<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T>, SqlClientSelect.Where<T>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>>(), SqlClientSelect.Where<T>, Return<T> {
+        override val where = this
 
         /*override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
             addAndClause(dsl)

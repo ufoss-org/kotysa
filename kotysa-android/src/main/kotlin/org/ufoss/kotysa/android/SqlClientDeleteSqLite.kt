@@ -13,7 +13,7 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>,
-    ) :  DeleteOrUpdate<T, SqlClientDeleteOrUpdate.Where>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+    ) :  DeleteOrUpdate<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         override val where = Where(client, properties)
 
         /*override fun <U : Any> join(
@@ -71,17 +71,8 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
     internal class Where<T : Any>(
         override val client: SQLiteDatabase,
         override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Where, Return<T> {
-
-        /*override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addClause(whereClause, WhereClauseType.AND)
-            return this
-        }
-
-        override fun or(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addClause(whereClause, WhereClauseType.OR)
-            return this
-        }*/
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
+        override val where = this
     }
 
     private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, SqlClientDeleteOrUpdate.Return {

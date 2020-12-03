@@ -28,7 +28,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class SelectTable<T : Any, U : SqlClientQuery.Where> protected constructor(
+    public abstract class SelectTable<T : Any, U : SqlClientQuery.Where<Any, U>> protected constructor(
             tables: Tables,
             table: Table<T>,
     ) : Select<T, U>() {
@@ -51,13 +51,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }*/
 
     //@Suppress("UNCHECKED_CAST")
-    public abstract class Select<T : Any, U : SqlClientQuery.Where> : Whereable<T, U>(), Instruction, WithProperties<T>
+    public abstract class Select<T : Any, U : SqlClientQuery.Where<Any, U>> : Whereable<T, U>(), Instruction, WithProperties<T>
 
     //protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>
 
-    public abstract class Whereable<T: Any, U : SqlClientQuery.Where> : DefaultSqlClientCommon.Whereable<Any, U>(), WithProperties<T>, Return<T>
+    public abstract class Whereable<T: Any, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Whereable<Any, U>(), WithProperties<T>, Return<T>
 
-    protected interface Where<T : Any> : DefaultSqlClientCommon.Where<Any>, WithProperties<T>, Return<T>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Where<Any, U>(), WithProperties<T>, Return<T>
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {

@@ -13,7 +13,7 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.Where, SqlClientDeleteOrUpdate.Update<T>>(),
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(),
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties)
         override val update = this
@@ -72,7 +72,8 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
     internal class Where<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Where, Return<T> {
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
+        override val where = this
 
         /*override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
             addClause(whereClause, WhereClauseType.AND)

@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.test.SQLITE_ROLE
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
 
@@ -17,20 +18,20 @@ class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
 
     @Test
     fun `Verify selectRolesByLabels finds BigBoss`() {
-        /*assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
+        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
             .hasSize(2)
-            .containsExactlyInAnyOrder(roleAdmin, roleGod)*/
+            .containsExactlyInAnyOrder(roleAdmin, roleGod)
     }
 }
 
 class UserRepositorySelectOr(
-    sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+        sqLiteOpenHelper: SQLiteOpenHelper,
+        tables: Tables
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
-    /*fun selectRolesByLabels(label1: String, label2: String) =
-        sqlClient.select<SqLiteRole>()
-            .where { it[SqLiteRole::label] eq label1 }
-            .or { it[SqLiteRole::label] eq label2 }
-            .fetchAll()*/
+    fun selectRolesByLabels(label1: String, label2: String) =
+            (sqlClient selectFrom SQLITE_ROLE
+                    where SQLITE_ROLE.label eq label1
+                    or SQLITE_ROLE.label eq label2
+                    ).fetchAll()
 }

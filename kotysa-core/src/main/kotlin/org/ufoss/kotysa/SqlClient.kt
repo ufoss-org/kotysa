@@ -60,7 +60,7 @@ public class SqlClientSelect private constructor(): SqlClientQuery() {
 
     public interface Join<T : Any> : Whereable<T>, Return<T>*/
 
-    public interface Where<T : Any> : SqlClientQuery.Where, Return<T> {
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
         //public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
         //public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
     }
@@ -107,7 +107,7 @@ public class SqlClientSelect private constructor(): SqlClientQuery() {
 
 
 public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
-    public interface DeleteOrUpdate<T : Any> : Whereable<T, Where>, Return {
+    public interface DeleteOrUpdate<T : Any> : Whereable<T, Where<T>>, Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
@@ -131,7 +131,7 @@ public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
         public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
     }*/
 
-    public interface Where : SqlClientQuery.Where, Return {
+    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return {
         /*public fun and(whereClause: WhereClause<T>): TypedWhere<T>
         public fun or(whereClause: WhereClause<T>): TypedWhere<T>*/
     }
