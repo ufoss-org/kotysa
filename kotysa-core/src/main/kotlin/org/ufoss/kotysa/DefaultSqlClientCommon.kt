@@ -301,7 +301,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             override val where: U,
             override val properties: Properties,
     ) : AbstractWhereOpColumn<T, U, Boolean>(), SqlClientQuery.WhereOpBooleanColumnNotNull<T, U> {
-        override infix fun eq(value: Boolean): U = where.apply { addClause(column, Operation.IS, value, type) }
+        override infix fun eq(value: Boolean): U =
+                where.apply {
+                    // SqLite does not support Boolean literal
+                    if (properties.tables.dbType == DbType.SQLITE) {
+                        val intValue = if (value) 1 else 0
+                        addClause(column, Operation.EQ, intValue, type)
+                    } else {
+                        addClause(column, Operation.EQ, value, type)
+                    }
+                }
     }
 
     public interface WhereOpIntColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
@@ -667,12 +676,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                     } else {
                                         "$fieldName >= :k${index++}"
                                     }
-                                Operation.IS ->
+                                /*Operation.IS ->
                                     if (DbType.SQLITE == tables.dbType) {
                                         "$fieldName IS ?"
                                     } else {
                                         "$fieldName IS :k${index++}"
-                                    }
+                                    }*/
                                 Operation.IN ->
                                     if (DbType.SQLITE == tables.dbType) {
                                         // must put as much '?' as
