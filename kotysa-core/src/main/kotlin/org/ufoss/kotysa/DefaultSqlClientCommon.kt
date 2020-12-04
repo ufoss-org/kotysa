@@ -301,7 +301,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             override val where: U,
             override val properties: Properties,
     ) : AbstractWhereOpColumn<T, U, Boolean>(), SqlClientQuery.WhereOpBooleanColumnNotNull<T, U> {
-        override infix fun eq(value: Boolean): U = where.apply { addClause(column, Operation.EQ, value, type) }
+        override infix fun eq(value: Boolean): U = where.apply { addClause(column, Operation.IS, value, type) }
     }
 
     public interface WhereOpIntColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
