@@ -28,7 +28,7 @@ public class CountField<T : Any, U : Any> internal constructor(
     override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.availableColumns) ?: "*"})")
 
     override val builder: (Row) -> Int = { row ->
-        row[Int::class.javaObjectType]!!
+        row.getWithOffset(0, Int::class.javaObjectType)!!
     }
 }
 
@@ -41,7 +41,7 @@ public sealed class ColumnField<T : Any, U : Any>(
 
     @Suppress("UNCHECKED_CAST")
     final override val builder: (Row) -> U = { row ->
-        row[column.getKotysaColumn(properties.availableColumns).columnClass.javaObjectType as Class<U>]!!
+        row.getWithOffset(0, column.getKotysaColumn(properties.availableColumns).columnClass.javaObjectType as Class<U>)!!
     }
 }
 
@@ -78,7 +78,7 @@ public class TableField<T : Any> internal constructor(
                     var getterMatch = false
                     val getterName = column.entityGetter.toCallable().name
                     if (getterName.startsWith("get") && getterName.length > 3) {
-                        if (getterName.substring(3).toLowerCase() == param.name!!.toLowerCase()) {
+                        if (getterName.substring(3).equals(param.name!!, ignoreCase = true)) {
                             getterMatch = true
                         }
                     }
@@ -89,7 +89,7 @@ public class TableField<T : Any> internal constructor(
                     matchFound
                 }
                 if (column != null) {
-                    args[param] = row[column.columnClass.javaObjectType]
+                    args[param] = row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType)
                 } else {
                     require(param.isOptional) {
                         "Cannot instanciate Table \"${kotysaTable.tableClass.qualifiedName}\"," +
@@ -108,7 +108,7 @@ public class TableField<T : Any> internal constructor(
                     .forEach { column ->
                         val getter = column.entityGetter
                         if (getter is KMutableProperty1<T, Any?>) {
-                            getter.set(instance, row[column.columnClass.java])
+                            getter.set(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.java))
                             associatedColumns.add(column)
                         } else {
                             val callable = getter.toCallable()
@@ -130,7 +130,7 @@ public class TableField<T : Any> internal constructor(
                                     }
                                 }
                                 if (setter != null) {
-                                    setter.call(instance, row[column.columnClass.java])
+                                    setter.call(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.java))
                                     associatedColumns.add(column)
                                 }
                             }

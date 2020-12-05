@@ -119,7 +119,7 @@ object SQLITE_LOCAL_TIME : SqLiteTable<LocalTimeEntity>() {
     val localTimeNullable = text(LocalTimeEntity::localTimeNullable)
 }
 
-object SQLITE_INT : SqLiteTable<IntEntity>() {
+object SQLITE_INT : SqLiteTable<IntEntity>("ints") {
     val id = autoIncrementInteger(IntEntity::id)
             .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)

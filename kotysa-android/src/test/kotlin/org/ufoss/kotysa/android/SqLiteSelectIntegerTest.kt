@@ -3,28 +3,25 @@
  */
 
 package org.ufoss.kotysa.android
-/*
+
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.SqLiteInteger
-import org.ufoss.kotysa.test.sqLiteIntegerWithNullable
-import org.ufoss.kotysa.test.sqLiteIntegerWithoutNullable
+import org.ufoss.kotysa.test.*
 
 class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
 
-    private val sqLiteIntegerWithNullable = SqLiteInteger(
-        org.ufoss.kotysa.test.sqLiteIntegerWithNullable.integerNotNull,
-        org.ufoss.kotysa.test.sqLiteIntegerWithNullable.integerNullable,
-        1
+    private val intWithNullable = IntEntity(
+            org.ufoss.kotysa.test.intWithNullable.intNotNull,
+            org.ufoss.kotysa.test.intWithNullable.intNullable,
+            1
     )
 
-    private val sqLiteIntegerWithoutNullable = SqLiteInteger(
-        org.ufoss.kotysa.test.sqLiteIntegerWithoutNullable.integerNotNull,
-        org.ufoss.kotysa.test.sqLiteIntegerWithoutNullable.integerNullable,
-        2
+    private val intWithoutNullable = IntEntity(
+            org.ufoss.kotysa.test.intWithoutNullable.intNotNull,
+            org.ufoss.kotysa.test.intWithoutNullable.intNullable,
+            2
     )
 
     override fun getRepository(sqLiteTables: Tables) = IntegerRepositorySelect(dbHelper, sqLiteTables)
@@ -32,158 +29,158 @@ class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
     @Test
     fun `Verify selectAllByIntegerNotNull finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByIntegerNotNull(10))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullNotEq finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNotNullNotEq(10))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullIn finds both`() {
-        val seq = sequenceOf(sqLiteIntegerWithNullable.integerNotNull, sqLiteIntegerWithoutNullable.integerNotNull)
+        val seq = sequenceOf(intWithNullable.intNotNull, intWithoutNullable.intNotNull)
         assertThat(repository.selectAllByIntegerNotNullIn(seq))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(sqLiteIntegerWithNullable, sqLiteIntegerWithoutNullable)
+                .containsExactlyInAnyOrder(intWithNullable, intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullInf finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByIntegerNotNullInf(11))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullInf finds no results when equals`() {
         assertThat(repository.selectAllByIntegerNotNullInf(10))
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullInfOrEq finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByIntegerNotNullInfOrEq(11))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullInfOrEq finds sqLiteIntegerWithNullable when equals`() {
         assertThat(repository.selectAllByIntegerNotNullInfOrEq(10))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullSup finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNotNullSup(11))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullSup finds no results when equals`() {
         assertThat(repository.selectAllByIntegerNotNullSup(12))
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullSupOrEq finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNotNullSupOrEq(11))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNotNullSupOrEq finds sqLiteIntegerWithoutNullable when equals`() {
         assertThat(repository.selectAllByIntegerNotNullSupOrEq(12))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByIntegerNullable(6))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullable finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNullable(null))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableNotEq finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNullableNotEq(6))
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableNotEq finds no results`() {
         assertThat(repository.selectAllByIntegerNullableNotEq(null))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableInf finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByIntegerNullableInf(7))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableInf finds no results when equals`() {
         assertThat(repository.selectAllByIntegerNullableInf(6))
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableInfOrEq finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByIntegerNullableInfOrEq(7))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableInfOrEq finds sqLiteIntegerWithNullable when equals`() {
         assertThat(repository.selectAllByIntegerNullableInfOrEq(6))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableSup finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNullableSup(5))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableSup finds no results when equals`() {
         assertThat(repository.selectAllByIntegerNullableSup(6))
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableSupOrEq finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByIntegerNullableSupOrEq(5))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntegerNullableSupOrEq finds sqLiteIntegerWithoutNullable when equals`() {
         assertThat(repository.selectAllByIntegerNullableSupOrEq(6))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteIntegerWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 }
 
@@ -201,75 +198,77 @@ class IntegerRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables
     }
 
     private fun createTables() {
-        sqlClient.createTable<SqLiteInteger>()
+        sqlClient createTable SQLITE_INT
     }
 
     private fun insertIntegers() {
-        sqlClient.insert(sqLiteIntegerWithNullable, sqLiteIntegerWithoutNullable)
+        sqlClient.insert(intWithNullable, intWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<SqLiteInteger>()
+    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_INT
 
-    fun selectAllByIntegerNotNull(int: Int) = sqlClient.select<SqLiteInteger>()
-        .where { it[SqLiteInteger::integerNotNull] eq int }
-        .fetchAll()
+    fun selectAllByIntegerNotNull(int: Int) =
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull eq int
+                    ).fetchAll()
 
     fun selectAllByIntegerNotNullNotEq(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNotNull] notEq int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull notEq int
+                    ).fetchAll()
 
-    fun selectAllByIntegerNotNullIn(values: Sequence<Int>) = sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNotNull] `in` values }
-            .fetchAll()
+    fun selectAllByIntegerNotNullIn(values: Sequence<Int>) =
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull `in` values
+                    ).fetchAll()
 
     fun selectAllByIntegerNotNullInf(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNotNull] inf int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull inf int
+                    ).fetchAll()
 
     fun selectAllByIntegerNotNullInfOrEq(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNotNull] infOrEq int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull infOrEq int
+                    ).fetchAll()
 
     fun selectAllByIntegerNotNullSup(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNotNull] sup int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull sup int
+                    ).fetchAll()
 
     fun selectAllByIntegerNotNullSupOrEq(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNotNull] supOrEq int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNotNull supOrEq int
+                    ).fetchAll()
 
     fun selectAllByIntegerNullable(int: Int?) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNullable] eq int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNullable eq int
+                    ).fetchAll()
 
     fun selectAllByIntegerNullableNotEq(int: Int?) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNullable] notEq int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNullable notEq int
+                    ).fetchAll()
 
     fun selectAllByIntegerNullableInf(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNullable] inf int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNullable inf int
+                    ).fetchAll()
 
     fun selectAllByIntegerNullableInfOrEq(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNullable] infOrEq int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNullable infOrEq int
+                    ).fetchAll()
 
     fun selectAllByIntegerNullableSup(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNullable] sup int }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNullable sup int
+                    ).fetchAll()
 
     fun selectAllByIntegerNullableSupOrEq(int: Int) =
-        sqlClient.select<SqLiteInteger>()
-            .where { it[SqLiteInteger::integerNullable] supOrEq int }
-            .fetchAll()
-}*/
+            (sqlClient selectFrom SQLITE_INT
+                    where SQLITE_INT.intNullable supOrEq int
+                    ).fetchAll()
+}

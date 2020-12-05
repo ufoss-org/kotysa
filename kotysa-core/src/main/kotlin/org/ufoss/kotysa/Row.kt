@@ -4,12 +4,13 @@
 
 package org.ufoss.kotysa
 
-public abstract class Row protected constructor(internal var index: Int = 0) {
-    protected abstract operator fun <T : Any> get(index: Int, clazz: Class<T>) : T?
+public abstract class Row protected constructor(internal var offset: Int = 0) {
+    internal final fun <T : Any> getWithOffset(index: Int, clazz: Class<T>) : T? =
+            get(offset + index, clazz)
 
-    internal operator fun <T : Any> get(clazz: Class<T>) : T? = get(index++, clazz)
+    public abstract fun <T : Any> get(index: Int, clazz: Class<T>) : T?
 
     public fun resetIndex() {
-        index = 0
+        offset = 0
     }
 }

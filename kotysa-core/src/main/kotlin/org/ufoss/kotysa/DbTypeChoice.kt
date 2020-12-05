@@ -63,7 +63,8 @@ public object DbTypeChoice {
         require(table.columns.isNotEmpty()) { "Table must declare at least one column" }
 
         // build KotysaColumns
-        val kotysaColumnsMap = table.columns.associateWith { column ->
+        val kotysaColumnsMap = linkedMapOf<Column<Any, *>, KotysaColumn<Any, *>>()
+        table.columns.forEach { column ->
             // If the name of the column is null, use the 'Table mapping' property name
             column.name = column.columnName
                     ?: table::class.members
@@ -73,11 +74,12 @@ public object DbTypeChoice {
                             }.name
 
             @Suppress("UNCHECKED_CAST")
-            KotysaColumnImpl(column, column.entityGetter, column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType, column.isAutoIncrement,
+            val kotysaColumn = KotysaColumnImpl(column, column.entityGetter, column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType, column.isAutoIncrement,
                     column.isNullable, column.defaultValue, column.size)
+            kotysaColumnsMap[column] = kotysaColumn
         }
 
-        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, kotysaColumnsMap.values, table.pk, table.foreignKeys)
+        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, ArrayList(kotysaColumnsMap.values), table.pk, table.foreignKeys)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
