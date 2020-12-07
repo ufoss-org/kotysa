@@ -56,7 +56,8 @@ object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>("all_type
     val int = integer(AllTypesNullableEntity::int)
 }
 
-object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE : SqLiteTable<AllTypesNullableDefaultValueEntity>() {
+object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE :
+        SqLiteTable<AllTypesNullableDefaultValueEntity>("all_types_nullable_default_value") {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
     val string = text(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -77,42 +78,42 @@ object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE : SqLiteTable<AllTypesNullableDef
     val int = integer(AllTypesNullableDefaultValueEntity::int, "sqlite_integer", 42)
 }
 
-object SQLITE_LOCAL_DATE : SqLiteTable<LocalDateEntity>() {
+object SQLITE_LOCAL_DATE : SqLiteTable<LocalDateEntity>("local_date") {
     val id = integer(LocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = text(LocalDateEntity::localDateNotNull)
     val localDateNullable = text(LocalDateEntity::localDateNullable)
 }
 
-object SQLITE_KOTLINX_LOCAL_DATE : SqLiteTable<KotlinxLocalDateEntity>() {
+object SQLITE_KOTLINX_LOCAL_DATE : SqLiteTable<KotlinxLocalDateEntity>("kotlinx_local_date") {
     val id = integer(KotlinxLocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = text(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = text(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object SQLITE_LOCAL_DATE_TIME : SqLiteTable<LocalDateTimeEntity>() {
+object SQLITE_LOCAL_DATE_TIME : SqLiteTable<LocalDateTimeEntity>("local_date_time") {
     val id = integer(LocalDateTimeEntity::id)
             .primaryKey()
     val localDateTimeNotNull = text(LocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = text(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object SQLITE_KOTLINX_LOCAL_DATE_TIME : SqLiteTable<KotlinxLocalDateTimeEntity>() {
+object SQLITE_KOTLINX_LOCAL_DATE_TIME : SqLiteTable<KotlinxLocalDateTimeEntity>("kotlinx_local_date_time") {
     val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
     val localDateTimeNotNull = text(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = text(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object SQLITE_OFFSET_LOCAL_DATE_TIME : SqLiteTable<OffsetDateTimeEntity>() {
+object SQLITE_OFFSET_LOCAL_DATE_TIME : SqLiteTable<OffsetDateTimeEntity>("offset_local_date_time") {
     val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
     val offsetDateTimeNotNull = text(OffsetDateTimeEntity::offsetDateTimeNotNull)
     val offsetDateTimeNullable = text(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
-object SQLITE_LOCAL_TIME : SqLiteTable<LocalTimeEntity>() {
+object SQLITE_LOCAL_TIME : SqLiteTable<LocalTimeEntity>("local_time") {
     val id = integer(LocalTimeEntity::id)
             .primaryKey()
     val localTimeNotNull = text(LocalTimeEntity::localTimeNotNull)
