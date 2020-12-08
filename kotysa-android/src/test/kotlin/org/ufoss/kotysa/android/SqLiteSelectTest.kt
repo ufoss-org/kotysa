@@ -10,7 +10,9 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.SQLITE_USER
+import org.ufoss.kotysa.test.userBboss
+import org.ufoss.kotysa.test.userJdoe
 
 class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
 
@@ -19,17 +21,17 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     @Test
     fun `Verify selectAll returns all users`() {
         assertThat(repository.selectAll())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(userJdoe, userBboss)
+                .hasSize(2)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
-    /*@Test
+    @Test
     fun `Verify selectOneNonUnique throws NonUniqueResultException`() {
         assertThatThrownBy { repository.selectOneNonUnique() }
             .isInstanceOf(NonUniqueResultException::class.java)
     }
 
-    @Test
+    /*@Test
     fun `Verify selectAllMappedToDto does the mapping`() {
         assertThat(repository.selectAllMappedToDto().toList())
             .hasSize(2)
@@ -48,19 +50,20 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
                 UserWithRoleDto(sqLiteBboss.lastname, sqLiteAdmin.label)
             )
     }
+     */
 
     @Test
     fun `Verify selectAllStream returns all users`() {
         assertThat(repository.selectAllStream())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(sqLiteJdoe, sqLiteBboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllIn returns TheBoss`() {
         assertThat(repository.selectAllIn(setOf("TheBoss", "TheStar", "TheBest")))
                 .hasSize(1)
-                .containsExactly(sqLiteBboss)
+                .containsExactly(userBboss)
     }
 
     @Test
@@ -70,19 +73,19 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
         coll.addLast("TheBest")
         assertThat(repository.selectAllIn(coll))
                 .isEmpty()
-    }*/
+    }
 }
 
 class UserRepositorySelect(
-    sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+        sqLiteOpenHelper: SQLiteOpenHelper,
+        tables: Tables
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
-    /*fun selectOneNonUnique() =
-        sqlClient.select<SqLiteUser>()
-            .fetchOne()
+    fun selectOneNonUnique() =
+            (sqlClient selectFrom SQLITE_USER
+                    ).fetchOne()
 
-    fun selectAllMappedToDto() =
+    /*fun selectAllMappedToDto() =
         sqlClient.select {
             UserDto(
                 "${it[SqLiteUser::firstname]} ${it[SqLiteUser::lastname]}",
@@ -95,13 +98,14 @@ class UserRepositorySelect(
             .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
             .fetchAll()
 
+     */
+
     fun selectAllStream() =
-            sqlClient.select<SqLiteUser>()
-                    .fetchAllStream()
+            (sqlClient selectFrom SQLITE_USER
+                    ).fetchAllStream()
 
     fun selectAllIn(aliases: Collection<String>) =
-            sqlClient.select<SqLiteUser>()
-                    .where { it[SqLiteUser::alias] `in` aliases }
-                    .fetchAll()
-    */
+            (sqlClient selectFrom SQLITE_USER
+                    where SQLITE_USER.alias `in` aliases
+                    ).fetchAll()
 }

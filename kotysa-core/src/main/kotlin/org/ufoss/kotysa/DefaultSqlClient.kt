@@ -25,7 +25,7 @@ public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> 
         requireNotNull(this.allTables.values.first { kotysaTable -> kotysaTable.tableClass == tableClass }) as KotysaTable<T>
 
 @Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(column: Column<out T, *>): KotysaTable<T> =
+public fun <T : Any> Tables.getTable(column: Column<T, *>): KotysaTable<T> =
         requireNotNull(this.allColumns[column]) { "Requested column \"$column\" is not mapped" }.table as KotysaTable<T>
 
 public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
