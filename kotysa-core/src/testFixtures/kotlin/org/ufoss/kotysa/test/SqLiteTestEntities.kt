@@ -106,7 +106,7 @@ object SQLITE_KOTLINX_LOCAL_DATE_TIME : SqLiteTable<KotlinxLocalDateTimeEntity>(
     val localDateTimeNullable = text(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object SQLITE_OFFSET_LOCAL_DATE_TIME : SqLiteTable<OffsetDateTimeEntity>("offset_local_date_time") {
+object SQLITE_OFFSET_DATE_TIME : SqLiteTable<OffsetDateTimeEntity>("offset_date_time") {
     val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
     val offsetDateTimeNotNull = text(OffsetDateTimeEntity::offsetDateTimeNotNull)
@@ -137,7 +137,7 @@ val sqLiteTables = tables().sqlite(
         SQLITE_KOTLINX_LOCAL_DATE,
         SQLITE_LOCAL_DATE_TIME,
         SQLITE_KOTLINX_LOCAL_DATE_TIME,
-        SQLITE_OFFSET_LOCAL_DATE_TIME,
+        SQLITE_OFFSET_DATE_TIME,
         SQLITE_LOCAL_TIME,
         SQLITE_INT,
 )
