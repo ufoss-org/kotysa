@@ -9,8 +9,8 @@ import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepository(
-    private val sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+        private val sqLiteOpenHelper: SQLiteOpenHelper,
+        tables: Tables
 ) : Repository {
 
     protected val sqlClient = sqLiteOpenHelper.sqlClient(tables)
@@ -48,6 +48,6 @@ abstract class AbstractUserRepository(
 
     fun selectFirstByFirstname(firstname: String) =
             (sqlClient selectFrom SQLITE_USER
-            where SQLITE_USER.firstname eq firstname
+                    where SQLITE_USER.firstname eq firstname
                     ).fetchFirstOrNull()
 }

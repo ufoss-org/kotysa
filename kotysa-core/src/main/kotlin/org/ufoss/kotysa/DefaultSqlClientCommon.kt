@@ -260,9 +260,9 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface WhereOpStringColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
             WhereInOpColumn<T, U, String>, SqlClientQuery.WhereOpStringColumn<T, U> {
-        override infix fun contains(value: String): U = where.apply { addClause(column, Operation.CONTAINS, value, type) }
-        override infix fun startsWith(value: String): U = where.apply { addClause(column, Operation.STARTS_WITH, value, type) }
-        override infix fun endsWith(value: String): U = where.apply { addClause(column, Operation.ENDS_WITH, value, type) }
+        override infix fun contains(value: String): U = where.apply { addClause(column, Operation.CONTAINS, "%$value%", type) }
+        override infix fun startsWith(value: String): U = where.apply { addClause(column, Operation.STARTS_WITH, "$value%", type) }
+        override infix fun endsWith(value: String): U = where.apply { addClause(column, Operation.ENDS_WITH, "%$value", type) }
     }
 
     public class WhereOpStringColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
