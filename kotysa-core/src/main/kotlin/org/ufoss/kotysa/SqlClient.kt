@@ -23,7 +23,7 @@ public interface SqlClient {
 
     public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
-    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.Select<T>
+    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T>
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
 
@@ -41,8 +41,12 @@ public interface SqlClient {
 }
 
 
-public class SqlClientSelect private constructor(): SqlClientQuery() {
-    public interface Select<T : Any> : Whereable<Any, Where<T>>, Return<T> {
+public class SqlClientSelect private constructor() : SqlClientQuery() {
+    public interface Selectable : SqlClientQuery.Selectable<Select, From<Any>>
+
+    public interface Select : SqlClientQuery.Select<Select, From<Any>>
+
+    public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
 
         /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
@@ -61,8 +65,6 @@ public class SqlClientSelect private constructor(): SqlClientQuery() {
     public interface Join<T : Any> : Whereable<T>, Return<T>*/
 
     public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
-        //public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
-        //public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
     }
 
     public interface Return<T : Any> {
@@ -106,8 +108,8 @@ public class SqlClientSelect private constructor(): SqlClientQuery() {
 }
 
 
-public class SqlClientDeleteOrUpdate private constructor(): SqlClientQuery() {
-    public interface DeleteOrUpdate<T : Any> : Whereable<T, Where<T>>, Return {
+public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
+    public interface DeleteOrUpdate<T : Any> : From<DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)

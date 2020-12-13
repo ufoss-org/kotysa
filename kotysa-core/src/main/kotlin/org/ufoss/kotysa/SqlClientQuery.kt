@@ -12,6 +12,16 @@ import java.util.*
 
 public abstract class SqlClientQuery protected constructor() {
 
+    public interface Selectable<T : Select<T, U>, U : From<U>> {
+        public infix fun <V : Any> select(table: Table<V>): T
+    }
+
+    public interface Select<T : Select<T, U>, U : From<U>> {
+        public infix fun <V : Any> from(table: Table<V>): U
+    }
+
+    public interface From<T : From<T>>
+
     public interface Update<T : Any, U : Update<T, U>> {
         public infix fun set(stringColumnNotNull: StringColumnNotNull<T>): UpdateOpColumn<T, U, String>
         public infix fun set(stringColumnNullable: StringColumnNullable<T>): UpdateOpColumn<T, U, String?>
@@ -60,17 +70,17 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun where(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
     }
 
-    public interface WhereInOpColumn<T : Any, U : Where<T, U>, V: Any> {
+    public interface WhereInOpColumn<T : Any, U : Where<T, U>, V : Any> {
         public infix fun `in`(values: Collection<V>): U
         public infix fun `in`(values: Sequence<V>): U = this.`in`(values.toSet())
     }
 
-    public interface WhereOpColumnNotNull<T : Any, U : Where<T, U>, V: Any> {
+    public interface WhereOpColumnNotNull<T : Any, U : Where<T, U>, V : Any> {
         public infix fun eq(value: V): U
         public infix fun notEq(value: V): U
     }
 
-    public interface WhereOpColumnNullable<T : Any, U : Where<T, U>, V: Any> {
+    public interface WhereOpColumnNullable<T : Any, U : Where<T, U>, V : Any> {
         public infix fun eq(value: V?): U
         public infix fun notEq(value: V?): U
     }

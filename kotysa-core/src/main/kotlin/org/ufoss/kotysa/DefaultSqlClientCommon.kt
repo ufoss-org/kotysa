@@ -21,11 +21,15 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
     }
 
-    protected interface Instruction {
+    public interface WithProperties {
+        public val properties: Properties
+    }
+
+    public interface From<T : SqlClientQuery.From<T>> : SqlClientQuery.From<T> {
         @Suppress("UNCHECKED_CAST")
-        public fun <T : Any> addAvailableTable(
+        public fun <U : Any> addAvailableTable(
                 properties: Properties,
-                table: KotysaTable<T>,
+                table: KotysaTable<U>,
         ) {
             properties.apply {
                 availableTables[table.table] = table
@@ -34,11 +38,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public interface WithProperties {
-        public val properties: Properties
-    }
-
-    public abstract class WithWhere<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(): WithProperties {
+    public abstract class WithWhere<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithProperties {
         protected abstract val where: U
 
         internal val whereOpStringColumnNotNull: WhereOpStringColumnNotNull<T, U> by lazy {
@@ -356,7 +356,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(): WithWhere<T, U>(), SqlClientQuery.Where<T, U>, WhereCommon<T> {
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithWhere<T, U>(), SqlClientQuery.Where<T, U>, WhereCommon<T> {
 
         override fun and(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U> =
                 whereOpStringColumnNotNull.apply {

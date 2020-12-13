@@ -5,7 +5,10 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteDatabase
-import org.ufoss.kotysa.*
+import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
+import org.ufoss.kotysa.SqlClientDeleteOrUpdate
+import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.Tables
 
 internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
@@ -13,7 +16,7 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>,
-    ) :  DeleteOrUpdate<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         override val where = Where(client, properties)
 
         /*override fun <U : Any> join(
@@ -69,8 +72,8 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
     }*/
 
     internal class Where<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>
     ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
         override val where = this
     }

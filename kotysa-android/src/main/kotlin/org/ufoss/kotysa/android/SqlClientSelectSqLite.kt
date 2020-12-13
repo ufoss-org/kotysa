@@ -14,12 +14,28 @@ import java.time.OffsetDateTime
 
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
 
-    internal class SelectTable<T : Any> internal constructor(
-            override val client: SQLiteDatabase,
+    internal class Selectable internal constructor(
+            client: SQLiteDatabase,
             tables: Tables,
-            table: Table<T>
-    ) : DefaultSqlClientSelect.SelectTable<T, SqlClientSelect.Where<T>>(tables, table), SqlClientSelect.Select<T>, Return<T> {
+    ) : DefaultSqlClientSelect.Selectable<SqlClientSelect.Select, SqlClientSelect.From<Any>>(tables), SqlClientSelect.Selectable {
+        override val select: DefaultSqlClientSelect.Select<SqlClientSelect.Select, SqlClientSelect.From<Any>> =
+                Select(client, properties)
+    }
+
+    internal class Select internal constructor(
+            client: SQLiteDatabase,
+            properties: Properties<Any>,
+    ) : DefaultSqlClientSelect.Select<SqlClientSelect.Select, SqlClientSelect.From<Any>>(properties), SqlClientSelect.Select {
+        override val from: DefaultSqlClientSelect.From<*, SqlClientSelect.From<Any>, *> = From(client, properties)
+        override val select: SqlClientSelect.Select = this
+    }
+
+    internal class From<T : Any> internal constructor(
+            override val client: SQLiteDatabase,
+            properties: Properties<T>,
+    ) : DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, SqlClientSelect.Where<T>>(properties), SqlClientSelect.From<T>, Return<T> {
         override val where = Where(client, properties)
+        override val from: SqlClientSelect.From<T> = this
 
         /*override fun <U : Any> join(
                 joinClass: KClass<U>,

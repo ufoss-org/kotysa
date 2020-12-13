@@ -56,14 +56,15 @@ public class ColumnFieldNullable<T : Any, U : Any> internal constructor(
 ) : ColumnField<T, U>(properties, column), FieldNullable<U>
 
 /**
- * Not sure if null or not
+ * Selected field
  */
 public class TableField<T : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         internal val table: Table<T>,
 ) : Field<T> {
+
     override val fieldNames: List<String> =
-            table.columns.map { column -> column.getFieldName(properties.availableColumns) }
+            table.columns.map { column -> column.getFieldName(properties.tables.allColumns) }
 
     @Suppress("UNCHECKED_CAST")
     override val builder: (Row) -> T = { row ->
@@ -177,7 +178,7 @@ internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, Kotys
 }
 
 public fun <T : Any> Table<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
-    TableField(properties, this)
+        TableField(properties, this)
 
 /*
 public interface Field {

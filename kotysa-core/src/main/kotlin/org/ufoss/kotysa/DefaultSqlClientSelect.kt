@@ -28,21 +28,47 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class SelectTable<T : Any, U : SqlClientQuery.Where<Any, U>> protected constructor(
+    public abstract class Selectable<T : SqlClientQuery.Select<T, U>, U : SqlClientQuery.From<U>> protected constructor(
             tables: Tables,
-            table: Table<T>,
-    ) : Select<T, U>() {
+    ) : SqlClientQuery.Selectable<T, U>, WithProperties<Any> {
+        public final override val properties: Properties<Any> = Properties(tables)
+        protected abstract val select: Select<T, U>
 
-        public final override val properties: Properties<T> = Properties(tables)
+        override fun <V : Any> select(table: Table<V>): T = select.addSelectTable(table)
+    }
 
-        init {
-            properties.apply {
-                super.addAvailableTable(properties, properties.tables.getTable(table))
-                val tableField = table.toField(properties)
-                select = tableField.builder
-                selectedTables.add(tableField.table)
-                selectedFields.add(tableField)
+    public abstract class Select<T : SqlClientQuery.Select<T, U>, U : SqlClientQuery.From<U>> protected constructor(
+            final override val properties: Properties<Any>,
+    ) : SqlClientQuery.Select<T, U>, WithProperties<Any> {
+        protected abstract val from: From<*, U, *>
+        protected abstract val select: T
+
+        override fun <V : Any> from(table: Table<V>): U = with(properties) {
+            // 'select' phase is finished, start 'from' phase
+            if (selectedFields.size == 1) {
+                select = selectedFields[0].builder
+            } else {
+                throw TODO("implement other cases")
             }
+            from.addFromTable(table)
+        }
+
+        internal fun <V : Any> addSelectTable(table: Table<V>): T = with(properties) {
+            selectedFields.add(table.toField(properties))
+            this@Select.select
+        }
+    }
+
+    public abstract class From<T : Any, U : SqlClientQuery.From<U>, V : SqlClientQuery.Where<Any, V>> protected constructor(
+            final override val properties: Properties<T>,
+    ) : Whereable<T, V>(), DefaultSqlClientCommon.From<U> {
+        protected abstract val from: U
+
+
+        internal fun <W : Any> addFromTable(table: Table<W>): U = with(properties) {
+            super.addAvailableTable(properties, properties.tables.getTable(table))
+            selectedTables.add(table)
+            from
         }
     }
 
@@ -50,12 +76,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public abstract val dsl: () -> T
     }*/
 
-    //@Suppress("UNCHECKED_CAST")
-    public abstract class Select<T : Any, U : SqlClientQuery.Where<Any, U>> : Whereable<T, U>(), Instruction, WithProperties<T>
-
     //protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>
 
-    public abstract class Whereable<T: Any, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Whereable<Any, U>(), WithProperties<T>, Return<T>
+    public abstract class Whereable<T : Any, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Whereable<Any, U>(), WithProperties<T>, Return<T>
 
     public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Where<Any, U>(), WithProperties<T>, Return<T>
 
