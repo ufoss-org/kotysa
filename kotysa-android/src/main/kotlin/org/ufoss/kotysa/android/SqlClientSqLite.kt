@@ -46,7 +46,7 @@ internal class SqlClientSqLite(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table).from(table) as SqlClientSelect.From<T>
+            SqlClientSelectSqLite.Selectable<T>(client.readableDatabase, tables).select(table).from(table)
 }
 
 /**

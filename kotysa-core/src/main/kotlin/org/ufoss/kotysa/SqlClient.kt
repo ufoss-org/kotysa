@@ -42,9 +42,15 @@ public interface SqlClient {
 
 
 public class SqlClientSelect private constructor() : SqlClientQuery() {
-    public interface Selectable : SqlClientQuery.Selectable<Select, From<Any>>
+    public interface Selectable<T : Any> : SqlClientQuery.Selectable<T, FirstSelect<T, Any>, From<T>> {
+        override fun select(table: Table<T>): FirstSelect<T, Any>
+    }
 
-    public interface Select : SqlClientQuery.Select<Select, From<Any>>
+    public interface FirstSelect<T : Any, U : Any> : SqlClientQuery.Select<FirstSelect<T, U>, From<T>>,
+            SelectAndable<Pair<T, U>, Select<Pair<T, U>>, From<Pair<T, U>>>
+
+    public interface Select<T : Any> : SqlClientQuery.Select<Select<T>, From<T>>,
+            SelectAndable<Array<Any>, Select<Array<Any>>, From<Array<Any>>>
 
     public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
 

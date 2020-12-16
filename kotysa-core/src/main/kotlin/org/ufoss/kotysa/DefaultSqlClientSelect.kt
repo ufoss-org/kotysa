@@ -28,32 +28,39 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class Selectable<T : SqlClientQuery.Select<T, U>, U : SqlClientQuery.From<U>> protected constructor(
+    public abstract class Selectable<T : Any, U : SqlClientQuery.Select<U, V>, V : SqlClientQuery.From<V>> protected constructor(
             tables: Tables,
-    ) : SqlClientQuery.Selectable<T, U>, WithProperties<Any> {
-        public final override val properties: Properties<Any> = Properties(tables)
-        protected abstract val select: Select<T, U>
+    ) : SqlClientQuery.Selectable<T, U, V>, WithProperties<T> {
+        public final override val properties: Properties<T> = Properties(tables)
+        protected abstract val select: Select<T, U, V, *, *, *>
 
-        override fun <V : Any> select(table: Table<V>): T = select.addSelectTable(table)
+        override fun select(table: Table<T>): U = select.addSelectTable(table)
     }
 
-    public abstract class Select<T : SqlClientQuery.Select<T, U>, U : SqlClientQuery.From<U>> protected constructor(
-            final override val properties: Properties<Any>,
-    ) : SqlClientQuery.Select<T, U>, WithProperties<Any> {
-        protected abstract val from: From<*, U, *>
-        protected abstract val select: T
+    public abstract class Select<T : Any, U : SqlClientQuery.Select<U, V>, V : SqlClientQuery.From<V>,
+            W : Any, X : SqlClientQuery.Select<X, Y>, Y: SqlClientQuery.From<Y>> protected constructor(
+            final override val properties: Properties<T>,
+    ) : SqlClientQuery.Select<U, V>, SelectAndable<W, X, Y>, WithProperties<T> {
+        protected abstract val from: From<*, V, *>
+        protected abstract val select: U
+        protected abstract val nextSelect: Select<W, X, *, *, *, *>
 
-        override fun <V : Any> from(table: Table<V>): U = with(properties) {
+        @Suppress("UNCHECKED_CAST")
+        override fun <Z : Any> from(table: Table<Z>): V = with(properties) {
             // 'select' phase is finished, start 'from' phase
             if (selectedFields.size == 1) {
-                select = selectedFields[0].builder
+                select = selectedFields[0].builder as (Row) -> T
+            } else if (selectedFields.size == 2) {
+                select = { row: Row -> Pair(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row)) } as (Row) -> T
             } else {
                 throw TODO("implement other cases")
             }
             from.addFromTable(table)
         }
 
-        internal fun <V : Any> addSelectTable(table: Table<V>): T = with(properties) {
+        override fun and(table: Table<W>): X = nextSelect.addSelectTable(table)
+
+        internal fun <V : Any> addSelectTable(table: Table<V>): U = with(properties) {
             selectedFields.add(table.toField(properties))
             this@Select.select
         }

@@ -14,20 +14,44 @@ import java.time.OffsetDateTime
 
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
 
-    internal class Selectable internal constructor(
+    internal class Selectable<T : Any> internal constructor(
             client: SQLiteDatabase,
             tables: Tables,
-    ) : DefaultSqlClientSelect.Selectable<SqlClientSelect.Select, SqlClientSelect.From<Any>>(tables), SqlClientSelect.Selectable {
-        override val select: DefaultSqlClientSelect.Select<SqlClientSelect.Select, SqlClientSelect.From<Any>> =
-                Select(client, properties)
+    ) : DefaultSqlClientSelect.Selectable<T, SqlClientSelect.FirstSelect<T, Any>, SqlClientSelect.From<T>>(tables),
+            SqlClientSelect.Selectable<T> {
+        override val select:
+                DefaultSqlClientSelect.Select<T, SqlClientSelect.FirstSelect<T, Any>, SqlClientSelect.From<T>, *, *, *> =
+                FirstSelect(client, properties)
     }
 
-    internal class Select internal constructor(
+    internal class FirstSelect<T : Any, U : Any> internal constructor(
             client: SQLiteDatabase,
-            properties: Properties<Any>,
-    ) : DefaultSqlClientSelect.Select<SqlClientSelect.Select, SqlClientSelect.From<Any>>(properties), SqlClientSelect.Select {
-        override val from: DefaultSqlClientSelect.From<*, SqlClientSelect.From<Any>, *> = From(client, properties)
-        override val select: SqlClientSelect.Select = this
+            properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.FirstSelect<T, U>, SqlClientSelect.From<T>, Pair<T, U>,
+            SqlClientSelect.Select<Pair<T, U>>, SqlClientSelect.From<Pair<T, U>>>(properties), SqlClientSelect.FirstSelect<T, U> {
+        override val from: DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, *> by lazy {
+            From(client, properties)
+        }
+        override val select: SqlClientSelect.FirstSelect<T, U> = this
+        override val nextSelect:
+                DefaultSqlClientSelect.Select<Pair<T, U>, SqlClientSelect.Select<Pair<T, U>>, *, *, *, *> by lazy {
+            @Suppress("UNCHECKED_CAST")
+            Select(client, properties as Properties<Pair<T, U>>)
+        }
+    }
+
+    internal class Select<T : Any> internal constructor(
+            client: SQLiteDatabase,
+            properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.Select<T>, SqlClientSelect.From<T>, Array<Any>,
+            SqlClientSelect.Select<Array<Any>>, SqlClientSelect.From<Array<Any>>>(properties), SqlClientSelect.Select<T> {
+        override val from: DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, *> = From(client, properties)
+        override val select: SqlClientSelect.Select<T> = this
+        override val nextSelect:
+                DefaultSqlClientSelect.Select<Array<Any>, SqlClientSelect.Select<Array<Any>>, *, *, *, *> by lazy {
+            @Suppress("UNCHECKED_CAST")
+            Select(client, properties as Properties<Array<Any>>)
+        }
     }
 
     internal class From<T : Any> internal constructor(
