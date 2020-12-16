@@ -43,14 +43,14 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     internal class Select<T : Any> internal constructor(
             client: SQLiteDatabase,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.Select<T>, SqlClientSelect.From<T>, Array<Any>,
-            SqlClientSelect.Select<Array<Any>>, SqlClientSelect.From<Array<Any>>>(properties), SqlClientSelect.Select<T> {
+    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.Select<T>, SqlClientSelect.From<T>, List<Any>,
+            SqlClientSelect.Select<List<Any>>, SqlClientSelect.From<List<Any>>>(properties), SqlClientSelect.Select<T> {
         override val from: DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, *> = From(client, properties)
         override val select: SqlClientSelect.Select<T> = this
         override val nextSelect:
-                DefaultSqlClientSelect.Select<Array<Any>, SqlClientSelect.Select<Array<Any>>, *, *, *, *> by lazy {
+                DefaultSqlClientSelect.Select<List<Any>, SqlClientSelect.Select<List<Any>>, *, *, *, *> by lazy {
             @Suppress("UNCHECKED_CAST")
-            Select(client, properties as Properties<Array<Any>>)
+            Select(client, properties as Properties<List<Any>>)
         }
     }
 

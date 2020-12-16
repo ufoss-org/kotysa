@@ -45,22 +45,30 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         protected abstract val select: U
         protected abstract val nextSelect: Select<W, X, *, *, *, *>
 
+        /**
+         * 'select' phase is finished, start 'from' phase
+         */
         @Suppress("UNCHECKED_CAST")
         override fun <Z : Any> from(table: Table<Z>): V = with(properties) {
-            // 'select' phase is finished, start 'from' phase
-            if (selectedFields.size == 1) {
-                select = selectedFields[0].builder as (Row) -> T
-            } else if (selectedFields.size == 2) {
-                select = { row: Row -> Pair(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row)) } as (Row) -> T
-            } else {
-                throw TODO("implement other cases")
+            select = when(selectedFields.size) {
+                1 -> selectedFields[0].builder as (Row) -> T
+                2 -> {
+                    { row: Row -> Pair(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row)) } as (Row) -> T
+                }
+                3 -> {
+                    { row: Row -> Triple(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row),
+                            selectedFields[2].builder.invoke(row)) } as (Row) -> T
+                }
+                else -> {
+                    { row: Row -> selectedFields.map { selectedField -> selectedField.builder.invoke(row) } } as (Row) -> T
+                }
             }
             from.addFromTable(table)
         }
 
         override fun and(table: Table<W>): X = nextSelect.addSelectTable(table)
 
-        internal fun <V : Any> addSelectTable(table: Table<V>): U = with(properties) {
+        internal fun <Z : Any> addSelectTable(table: Table<Z>): U = with(properties) {
             selectedFields.add(table.toField(properties))
             this@Select.select
         }

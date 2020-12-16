@@ -50,7 +50,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
             SelectAndable<Pair<T, U>, Select<Pair<T, U>>, From<Pair<T, U>>>
 
     public interface Select<T : Any> : SqlClientQuery.Select<Select<T>, From<T>>,
-            SelectAndable<Array<Any>, Select<Array<Any>>, From<Array<Any>>>
+            SelectAndable<List<Any>, Select<List<Any>>, From<List<Any>>>
 
     public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
 
