@@ -42,15 +42,19 @@ public interface SqlClient {
 
 
 public class SqlClientSelect private constructor() : SqlClientQuery() {
-    public interface Selectable<T : Any> : SqlClientQuery.Selectable<T, FirstSelect<T, Any>, From<T>> {
-        override fun select(table: Table<T>): FirstSelect<T, Any>
-    }
+    public interface Selectable<T : Any> : SqlClientQuery.Selectable<T, FirstSelect<T, Any, Any>, From<T>>
 
-    public interface FirstSelect<T : Any, U : Any> : SqlClientQuery.Select<FirstSelect<T, U>, From<T>>,
-            SelectAndable<Pair<T, U>, Select<Pair<T, U>>, From<Pair<T, U>>>
+    public interface FirstSelect<T : Any, U : Any, V : Any> : SqlClientQuery.Select<FirstSelect<T, U, V>, From<T>>,
+            SelectAndable<Pair<T, U>, SecondSelect<T, U, V>, From<Pair<T, U>>>
 
-    public interface Select<T : Any> : SqlClientQuery.Select<Select<T>, From<T>>,
-            SelectAndable<List<Any>, Select<List<Any>>, From<List<Any>>>
+    public interface SecondSelect<T : Any, U : Any, V : Any> : SqlClientQuery.Select<SecondSelect<T, U, V>, From<Pair<T, U>>>,
+            SelectAndable<Triple<T, U, V>, ThirdSelect<T, U, V>, From<Triple<T, U, V>>>
+
+    public interface ThirdSelect<T : Any, U : Any, V : Any> : SqlClientQuery.Select<ThirdSelect<T, U, V>, From<Triple<T, U, V>>>,
+            SelectAndable<List<Any>, Select, From<List<Any>>>
+
+    public interface Select : SqlClientQuery.Select<Select, From<List<Any>>>,
+            SelectAndable<List<Any>, Select, From<List<Any>>>
 
     public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
 

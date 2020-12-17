@@ -4,54 +4,78 @@
 
 package org.ufoss.kotysa.android
 
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
 
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
 
     internal class Selectable<T : Any> internal constructor(
             client: SQLiteDatabase,
             tables: Tables,
-    ) : DefaultSqlClientSelect.Selectable<T, SqlClientSelect.FirstSelect<T, Any>, SqlClientSelect.From<T>>(tables),
+    ) : DefaultSqlClientSelect.Selectable<T, SqlClientSelect.FirstSelect<T, Any, Any>, SqlClientSelect.From<T>>(tables),
             SqlClientSelect.Selectable<T> {
         override val select:
-                DefaultSqlClientSelect.Select<T, SqlClientSelect.FirstSelect<T, Any>, SqlClientSelect.From<T>, *, *, *> =
+                DefaultSqlClientSelect.Select<T, SqlClientSelect.FirstSelect<T, Any, Any>, SqlClientSelect.From<T>, *, *, *> =
                 FirstSelect(client, properties)
     }
 
-    internal class FirstSelect<T : Any, U : Any> internal constructor(
+    internal class FirstSelect<T : Any, U : Any, V : Any> internal constructor(
             client: SQLiteDatabase,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.FirstSelect<T, U>, SqlClientSelect.From<T>, Pair<T, U>,
-            SqlClientSelect.Select<Pair<T, U>>, SqlClientSelect.From<Pair<T, U>>>(properties), SqlClientSelect.FirstSelect<T, U> {
+    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.FirstSelect<T, U, V>, SqlClientSelect.From<T>, Pair<T, U>,
+            SqlClientSelect.SecondSelect<T, U, V>, SqlClientSelect.From<Pair<T, U>>>(properties), SqlClientSelect.FirstSelect<T, U, V> {
         override val from: DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, *> by lazy {
             From(client, properties)
         }
-        override val select: SqlClientSelect.FirstSelect<T, U> = this
+        override val select: SqlClientSelect.FirstSelect<T, U, V> = this
         override val nextSelect:
-                DefaultSqlClientSelect.Select<Pair<T, U>, SqlClientSelect.Select<Pair<T, U>>, *, *, *, *> by lazy {
+                DefaultSqlClientSelect.Select<Pair<T, U>, SqlClientSelect.SecondSelect<T, U, V>, *, *, *, *> by lazy {
             @Suppress("UNCHECKED_CAST")
-            Select(client, properties as Properties<Pair<T, U>>)
+            SecondSelect(client, properties as Properties<Pair<T, U>>)
         }
     }
 
-    internal class Select<T : Any> internal constructor(
+    internal class SecondSelect<T : Any, U : Any, V : Any> internal constructor(
             client: SQLiteDatabase,
-            properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.Select<T>, SqlClientSelect.From<T>, List<Any>,
-            SqlClientSelect.Select<List<Any>>, SqlClientSelect.From<List<Any>>>(properties), SqlClientSelect.Select<T> {
-        override val from: DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, *> = From(client, properties)
-        override val select: SqlClientSelect.Select<T> = this
-        override val nextSelect:
-                DefaultSqlClientSelect.Select<List<Any>, SqlClientSelect.Select<List<Any>>, *, *, *, *> by lazy {
+            properties: Properties<Pair<T, U>>,
+    ) : DefaultSqlClientSelect.Select<Pair<T, U>, SqlClientSelect.SecondSelect<T, U, V>, SqlClientSelect.From<Pair<T, U>>,
+            Triple<T, U, V>, SqlClientSelect.ThirdSelect<T, U, V>, SqlClientSelect.From<Triple<T, U, V>>>(properties),
+            SqlClientSelect.SecondSelect<T, U, V> {
+        override val from: DefaultSqlClientSelect.From<Pair<T, U>, SqlClientSelect.From<Pair<T, U>>, *> by lazy {
+            From(client, properties)
+        }
+        override val select: SqlClientSelect.SecondSelect<T, U, V> = this
+        override val nextSelect: DefaultSqlClientSelect.Select<Triple<T, U, V>,
+                SqlClientSelect.ThirdSelect<T, U, V>, *, *, *, *> by lazy {
+            @Suppress("UNCHECKED_CAST")
+            ThirdSelect(client, properties as Properties<Triple<T, U, V>>)
+        }
+    }
+
+    internal class ThirdSelect<T : Any, U : Any, V : Any> internal constructor(
+            client: SQLiteDatabase,
+            properties: Properties<Triple<T, U, V>>,
+    ) : DefaultSqlClientSelect.Select<Triple<T, U, V>, SqlClientSelect.ThirdSelect<T, U, V>,
+            SqlClientSelect.From<Triple<T, U, V>>, List<Any>, SqlClientSelect.Select,
+            SqlClientSelect.From<List<Any>>>(properties), SqlClientSelect.ThirdSelect<T, U, V> {
+        override val from: DefaultSqlClientSelect.From<Triple<T, U, V>, SqlClientSelect.From<Triple<T, U, V>>, *> by lazy {
+            From(client, properties)
+        }
+        override val select: SqlClientSelect.ThirdSelect<T, U, V> = this
+        override val nextSelect: DefaultSqlClientSelect.Select<List<Any>, SqlClientSelect.Select, *, *, *, *> by lazy {
             @Suppress("UNCHECKED_CAST")
             Select(client, properties as Properties<List<Any>>)
         }
+    }
+
+    internal class Select internal constructor(
+            client: SQLiteDatabase,
+            properties: Properties<List<Any>>,
+    ) : DefaultSqlClientSelect.Select<List<Any>, SqlClientSelect.Select, SqlClientSelect.From<List<Any>>, List<Any>,
+            SqlClientSelect.Select, SqlClientSelect.From<List<Any>>>(properties), SqlClientSelect.Select {
+        override val from: DefaultSqlClientSelect.From<*, SqlClientSelect.From<List<Any>>, *> = From(client, properties)
+        override val select: SqlClientSelect.Select = this
+        override val nextSelect: DefaultSqlClientSelect.Select<List<Any>, SqlClientSelect.Select, *, *, *, *> = this
     }
 
     internal class From<T : Any> internal constructor(
@@ -169,47 +193,5 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         }
 
         private fun fetch() = client.rawQuery(selectSql(), buildWhereArgs())
-
-        @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-        private class SqLiteRow(
-                private val sqLiteCursor: Cursor
-        ) : Row() {
-            override fun <T : Any> get(index: Int, clazz: Class<T>) =
-                    if (sqLiteCursor.isNull(index)) {
-                        null
-                    } else {
-                        when {
-                            Integer::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getInt(index)
-                            java.lang.Long::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getLong(index)
-                            java.lang.Float::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getFloat(index)
-                            java.lang.Short::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getShort(index)
-                            java.lang.Double::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getDouble(index)
-                            String::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getString(index)
-                            // boolean is stored as Int
-                            java.lang.Boolean::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getInt(index) != 0
-                            ByteArray::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getBlob(index)
-                            // Date are stored as String
-                            LocalDate::class.java.isAssignableFrom(clazz) -> LocalDate.parse(sqLiteCursor.getString(index))
-                            LocalDateTime::class.java.isAssignableFrom(clazz) -> LocalDateTime.parse(
-                                    sqLiteCursor.getString(index)
-                            )
-                            OffsetDateTime::class.java.isAssignableFrom(clazz) -> OffsetDateTime.parse(
-                                    sqLiteCursor.getString(index)
-                            )
-                            LocalTime::class.java.isAssignableFrom(clazz) -> LocalTime.parse(sqLiteCursor.getString(index))
-                            else -> when (clazz.name) {
-                                "kotlinx.datetime.LocalDate" -> kotlinx.datetime.LocalDate.parse(
-                                        sqLiteCursor.getString(index)
-                                )
-                                "kotlinx.datetime.LocalDateTime" -> kotlinx.datetime.LocalDateTime.parse(
-                                        sqLiteCursor.getString(index)
-                                )
-                                else -> throw UnsupportedOperationException(
-                                        "${clazz.canonicalName} is not supported by Android SqLite"
-                                )
-                            }
-                        } as T?
-                    }
-        }
     }
 }
