@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.SQLITE_USER
@@ -74,6 +75,24 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
         assertThat(repository.selectAllIn(coll))
                 .isEmpty()
     }
+
+    @Test
+    fun `Verify selectOneById returns TheBoss`() {
+        assertThat(repository.selectOneById(userBboss.id))
+                .isEqualTo(userBboss)
+    }
+
+    @Test
+    fun `Verify selectOneById finds no result for -1, throws NoResultException`() {
+        assertThatThrownBy { repository.selectOneById(-1) }
+                .isInstanceOf(NoResultException::class.java)
+    }
+
+    @Test
+    fun `Verify selectFirstnameById returns TheBoss firstname`() {
+        assertThat(repository.selectFirstnameById(userBboss.id))
+                .isEqualTo(userBboss.firstname)
+    }
 }
 
 class UserRepositorySelect(
@@ -108,4 +127,16 @@ class UserRepositorySelect(
             (sqlClient selectFrom SQLITE_USER
                     where SQLITE_USER.alias `in` aliases
                     ).fetchAll()
+
+    fun selectOneById(id: Int) =
+            (sqlClient select SQLITE_USER
+                    from SQLITE_USER
+                    where SQLITE_USER.id eq id
+                    ).fetchOne()
+
+    fun selectFirstnameById(id: Int) =
+            (sqlClient select SQLITE_USER.firstname
+                    from SQLITE_USER
+                    where SQLITE_USER.id eq id
+                    ).fetchOne()
 }

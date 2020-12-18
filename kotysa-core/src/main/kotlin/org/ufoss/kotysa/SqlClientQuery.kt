@@ -14,6 +14,7 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface Selectable<T : Any, U : Select<U, V>, V : From<V>> {
         public infix fun select(table: Table<T>): U
+        public infix fun select(column: Column<*, T>): U
     }
 
     public interface SelectAndable<T : Any, U : Select<U, V>, V : From<V>> {

@@ -23,6 +23,10 @@ public interface SqlClient {
 
     public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
+    public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T, Any, Any>
+
+    public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U, Any, Any>
+
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T>
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()

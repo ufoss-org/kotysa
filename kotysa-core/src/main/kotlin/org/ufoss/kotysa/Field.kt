@@ -25,7 +25,7 @@ public class CountField<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>?,
 ) : FieldNotNull<Int> {
-    override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.availableColumns) ?: "*"})")
+    override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
 
     override val builder: (Row) -> Int = { row ->
         row.getWithOffset(0, Int::class.javaObjectType)!!
@@ -36,7 +36,7 @@ public sealed class ColumnField<T : Any, U : Any>(
         final override val properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>
 ) : Field<U> {
-    internal val fieldName = column.getFieldName(properties.availableColumns)
+    internal val fieldName = column.getFieldName(properties.tables.allColumns)
     final override val fieldNames: List<String> = listOf(fieldName)
 
     @Suppress("UNCHECKED_CAST")

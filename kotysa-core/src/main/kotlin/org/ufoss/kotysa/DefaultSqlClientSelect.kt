@@ -35,6 +35,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         protected abstract val select: Select<T, U, V, *, *, *>
 
         override fun select(table: Table<T>): U = select.addSelectTable(table)
+        override fun select(column: Column<*, T>): U = select.addSelectColumn(column)
     }
 
     public abstract class Select<T : Any, U : SqlClientQuery.Select<U, V>, V : SqlClientQuery.From<V>,
@@ -70,6 +71,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         internal fun <Z : Any> addSelectTable(table: Table<Z>): U = with(properties) {
             selectedFields.add(table.toField(properties))
+            this@Select.select
+        }
+
+        internal fun <Z : Any> addSelectColumn(column: Column<*, Z>): U = with(properties) {
+            selectedFields.add(column.toField(properties))
             this@Select.select
         }
     }
