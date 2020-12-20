@@ -139,4 +139,10 @@ class UserRepositorySelect(
                     from SQLITE_USER
                     where SQLITE_USER.id eq id
                     ).fetchOne()
+
+    fun selectFirstnameAndAliasById(id: Int) =
+            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.alias
+                    from SQLITE_USER
+                    where SQLITE_USER.id eq id
+                    ).fetchOne()
 }

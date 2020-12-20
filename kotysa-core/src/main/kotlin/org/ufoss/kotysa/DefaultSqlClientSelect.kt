@@ -28,29 +28,28 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class Selectable<T : Any, U : SqlClientQuery.Select<U, V>, V : SqlClientQuery.From<V>> protected constructor(
+    public abstract class Selectable<T : Any, U : Andable<U>> protected constructor(
             tables: Tables,
-    ) : SqlClientQuery.Selectable<T, U, V>, WithProperties<T> {
+    ) : SqlClientQuery.Selectable<T, U>, WithProperties<T> {
         public final override val properties: Properties<T> = Properties(tables)
-        protected abstract val select: Select<T, U, V, *, *, *>
+        protected abstract val select: Select<T, *, U>
 
         override fun select(table: Table<T>): U = select.addSelectTable(table)
         override fun select(column: Column<*, T>): U = select.addSelectColumn(column)
     }
 
-    public abstract class Select<T : Any, U : SqlClientQuery.Select<U, V>, V : SqlClientQuery.From<V>,
-            W : Any, X : SqlClientQuery.Select<X, Y>, Y: SqlClientQuery.From<Y>> protected constructor(
-            final override val properties: Properties<T>,
-    ) : SqlClientQuery.Select<U, V>, SelectAndable<W, X, Y>, WithProperties<T> {
-        protected abstract val from: From<*, V, *>
-        protected abstract val select: U
-        protected abstract val nextSelect: Select<W, X, *, *, *, *>
+
+    public abstract class Select<T : Any, U : SqlClientQuery.From<U>, V : Andable<V>> protected constructor() :
+            Fromable<U>, Andable<V>, WithProperties<T> {
+        protected abstract val from: From<*, U, *>
+        protected abstract val select: V
+
 
         /**
          * 'select' phase is finished, start 'from' phase
          */
         @Suppress("UNCHECKED_CAST")
-        override fun <Z : Any> from(table: Table<Z>): V = with(properties) {
+        override fun <Z : Any> from(table: Table<Z>): U = with(properties) {
             select = when(selectedFields.size) {
                 1 -> selectedFields[0].builder as (Row) -> T
                 2 -> {
@@ -67,14 +66,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             from.addFromTable(table)
         }
 
-        override fun and(table: Table<W>): X = nextSelect.addSelectTable(table)
-
-        internal fun <Z : Any> addSelectTable(table: Table<Z>): U = with(properties) {
+        public fun <Z : Any> addSelectTable(table: Table<Z>): V = with(properties) {
             selectedFields.add(table.toField(properties))
             this@Select.select
         }
 
-        internal fun <Z : Any> addSelectColumn(column: Column<*, Z>): U = with(properties) {
+        public fun <Z : Any> addSelectColumn(column: Column<*, Z>): V = with(properties) {
             selectedFields.add(column.toField(properties))
             this@Select.select
         }

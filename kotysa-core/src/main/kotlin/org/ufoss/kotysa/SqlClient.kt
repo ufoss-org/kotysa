@@ -23,42 +23,40 @@ public interface SqlClient {
 
     public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
-    public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T, Any, Any>
+    public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
 
-    public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U, Any, Any>
+    public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T>
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
 
-    /*public fun <T : Any> select(tableOrColumn: TableOrColumn<T>): SqlClientSelect.Select<T>
-
-    public inline fun <reified T : Any> select(): SqlClientSelect.Select<T> = selectInternal(T::class, null)
-
-    public inline fun <reified T : Any> selectAll(): List<T> = selectInternal(T::class, null).fetchAll()
-
-    public inline fun <reified T : Any> countAll(): Long = selectInternal(Long::class) { count<T>() }.fetchOne()
-
-    protected abstract fun <T : Any> select(
+    /*protected abstract fun <T : Any> select(
             resultClass: KClass<T>, dsl: (SelectDslApi.() -> T)?): SqlClientSelect.Select<T>
      */
 }
 
 
 public class SqlClientSelect private constructor() : SqlClientQuery() {
-    public interface Selectable<T : Any> : SqlClientQuery.Selectable<T, FirstSelect<T, Any, Any>, From<T>>
+    public interface Selectable<T : Any> : SqlClientQuery.Selectable<T, FirstSelect<T>>
 
-    public interface FirstSelect<T : Any, U : Any, V : Any> : SqlClientQuery.Select<FirstSelect<T, U, V>, From<T>>,
-            SelectAndable<Pair<T, U>, SecondSelect<T, U, V>, From<Pair<T, U>>>
+    public interface FirstSelect<T : Any> : Fromable<From<T>>, Andable<FirstSelect<T>> {
+        override fun <U : Any> and(column: Column<*, U>): SecondSelect<T, U>
+        override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
+    }
 
-    public interface SecondSelect<T : Any, U : Any, V : Any> : SqlClientQuery.Select<SecondSelect<T, U, V>, From<Pair<T, U>>>,
-            SelectAndable<Triple<T, U, V>, ThirdSelect<T, U, V>, From<Triple<T, U, V>>>
+    public interface SecondSelect<T : Any, U : Any> : Fromable<From<Pair<T, U>>>, Andable<SecondSelect<T, U>> {
+        override fun <V : Any> and(column: Column<*, V>): ThirdSelect<T, U, V>
+        override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
+    }
 
-    public interface ThirdSelect<T : Any, U : Any, V : Any> : SqlClientQuery.Select<ThirdSelect<T, U, V>, From<Triple<T, U, V>>>,
-            SelectAndable<List<Any>, Select, From<List<Any>>>
+    public interface ThirdSelect<T : Any, U : Any, V : Any> : Fromable<From<Triple<T, U, V>>>,
+            Andable<ThirdSelect<T, U, V>> {
+        override fun <W : Any> and(column: Column<*, W>): Select
+        override fun <W : Any> and(table: Table<W>): Select
+            }
 
-    public interface Select : SqlClientQuery.Select<Select, From<List<Any>>>,
-            SelectAndable<List<Any>, Select, From<List<Any>>>
+    public interface Select : Fromable<From<List<Any>>>, Andable<Select>
 
     public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
 

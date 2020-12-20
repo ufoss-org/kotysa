@@ -44,10 +44,10 @@ internal class SqlClientSqLite(
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
             SqlClientUpdateSqLite.Update(client.writableDatabase, tables, table)
 
-    override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T, Any, Any> =
+    override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
             SqlClientSelectSqLite.Selectable<T>(client.readableDatabase, tables).select(table)
 
-    override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U, Any, Any> =
+    override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSqLite.Selectable<U>(client.readableDatabase, tables).select(column)
 
     @Suppress("UNCHECKED_CAST")
