@@ -23,9 +23,9 @@ public interface SqlClient {
 
     public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
+    public infix fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?>
     public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
-
-    public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T>
 
@@ -38,27 +38,33 @@ public interface SqlClient {
 
 
 public class SqlClientSelect private constructor() : SqlClientQuery() {
-    public interface Selectable<T : Any> : SqlClientQuery.Selectable<T, FirstSelect<T>>
+    public interface Selectable : SqlClientQuery.Selectable {
+        override fun <T : Any> select(column: ColumnNotNull<*, T>): FirstSelect<T>
+        override fun <T : Any> select(column: ColumnNullable<*, T>): FirstSelect<T?>
+        override fun <T : Any> select(table: Table<T>): FirstSelect<T>
+    }
 
-    public interface FirstSelect<T : Any> : Fromable<From<T>>, Andable<FirstSelect<T>> {
-        override fun <U : Any> and(column: Column<*, U>): SecondSelect<T, U>
+    public interface FirstSelect<T> : Fromable<From<T>>, Andable {
+        override fun <U : Any> and(column: ColumnNotNull<*, U>): SecondSelect<T, U>
+        override fun <U : Any> and(column: ColumnNullable<*, U>): SecondSelect<T, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
     }
 
-    public interface SecondSelect<T : Any, U : Any> : Fromable<From<Pair<T, U>>>, Andable<SecondSelect<T, U>> {
-        override fun <V : Any> and(column: Column<*, V>): ThirdSelect<T, U, V>
+    public interface SecondSelect<T, U> : Fromable<From<Pair<T, U>>>, Andable {
+        override fun <V : Any> and(column: ColumnNotNull<*, V>): ThirdSelect<T, U, V>
+        override fun <V : Any> and(column: ColumnNullable<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
     }
 
-    public interface ThirdSelect<T : Any, U : Any, V : Any> : Fromable<From<Triple<T, U, V>>>,
-            Andable<ThirdSelect<T, U, V>> {
-        override fun <W : Any> and(column: Column<*, W>): Select
+    public interface ThirdSelect<T, U, V> : Fromable<From<Triple<T, U, V>>>, Andable {
+        override fun <W : Any> and(column: ColumnNotNull<*, W>): Select
+        override fun <W : Any> and(column: ColumnNullable<*, W>): Select
         override fun <W : Any> and(table: Table<W>): Select
             }
 
-    public interface Select : Fromable<From<List<Any>>>, Andable<Select>
+    public interface Select : Fromable<From<List<Any?>>>, Andable
 
-    public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
+    public interface From<T> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
 
         /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
@@ -76,12 +82,12 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
     public interface Join<T : Any> : Whereable<T>, Return<T>*/
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
+    public interface Where<T> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
     }
 
-    public interface Return<T : Any> {
+    public interface Return<T> {
         /**
-         * This Query return one result
+         * This query return one result
          *
          * @throws NoResultException if no results
          * @throws NonUniqueResultException if more than one result
@@ -89,31 +95,31 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         public fun fetchOne(): T
 
         /**
-         * This Query return one result, or null if no results
+         * This query return one result, or null if no results
          *
          * @throws NonUniqueResultException if more than one result
          */
         public fun fetchOneOrNull(): T?
 
         /**
-         * This Query return the first result
+         * This query return the first result
          *
          * @throws NoResultException if no results
          */
         public fun fetchFirst(): T
 
         /**
-         * This Query return the first result, or null if no results
+         * This query return the first result, or null if no results
          */
         public fun fetchFirstOrNull(): T?
 
         /**
-         * This Query can return several results as [List], can be empty if no results
+         * This query can return several results as [List], can be empty if no results
          */
         public fun fetchAll(): List<T>
 
         /**
-         * This Query can return several results as [Stream] (for lazy result iteration), can be empty if no results
+         * This query can return several results as [Stream] (for lazy result iteration), can be empty if no results
          */
         public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }

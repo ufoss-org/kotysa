@@ -12,18 +12,20 @@ import java.util.*
 
 public abstract class SqlClientQuery protected constructor() {
 
-    public interface Selectable<T : Any, U : Andable<U>> {
-        public infix fun select(table: Table<T>): U
-        public infix fun select(column: Column<*, T>): U
+    public interface Selectable {
+        public infix fun <T : Any> select(table: Table<T>): Andable
+        public infix fun <T : Any> select(column: ColumnNotNull<*, T>): Andable
+        public infix fun <T : Any> select(column: ColumnNullable<*, T>): Andable
     }
 
     public interface Fromable<T : From<T>> {
         public infix fun <U : Any> from(table: Table<U>): T
     }
 
-    public interface Andable<T : Andable<T>> {
-        public infix fun <V : Any> and(table: Table<V>): Andable<*>
-        public infix fun <V : Any> and(column: Column<*, V>): Andable<*>
+    public interface Andable {
+        public infix fun <U : Any> and(table: Table<U>): Andable
+        public infix fun <U : Any> and(column: ColumnNotNull<*, U>): Andable
+        public infix fun <U : Any> and(column: ColumnNullable<*, U>): Andable
     }
 
     public interface From<T : From<T>>

@@ -93,6 +93,40 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
         assertThat(repository.selectFirstnameById(userBboss.id))
                 .isEqualTo(userBboss.firstname)
     }
+
+    @Test
+    fun `Verify selectAliasById returns null as J Doe alias`() {
+        assertThat(repository.selectAliasById(userJdoe.id))
+                .isNull()
+    }
+
+    @Test
+    fun `Verify selectFirstnameAndAliasById returns J Doe firstname and alias`() {
+        assertThat(repository.selectFirstnameAndAliasById(userJdoe.id))
+                .isEqualTo(Pair(userJdoe.firstname, null))
+    }
+
+    @Test
+    fun `Verify selectAllFirstnameAndAlias returns all users firstname and alias`() {
+        assertThat(repository.selectAllFirstnameAndAlias())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(
+                        Pair(userJdoe.firstname, null),
+                        Pair(userBboss.firstname, userBboss.alias),
+                )
+    }
+
+    @Test
+    fun `Verify selectFirstnameAndLastnameAndAliasById returns J Doe firstname, lastname and alias`() {
+        assertThat(repository.selectFirstnameAndLastnameAndAliasById(userJdoe.id))
+                .isEqualTo(Triple(userJdoe.firstname, userJdoe.lastname, null))
+    }
+
+    @Test
+    fun `Verify selectFirstnameAndLastnameAndAliasAndIsAdminById returns J Doe firstname, lastname, alias and isAdmin`() {
+        assertThat(repository.selectFirstnameAndLastnameAndAliasAndIsAdminById(userJdoe.id))
+                .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
+    }
 }
 
 class UserRepositorySelect(
@@ -140,8 +174,31 @@ class UserRepositorySelect(
                     where SQLITE_USER.id eq id
                     ).fetchOne()
 
+    fun selectAliasById(id: Int) =
+            (sqlClient select SQLITE_USER.alias
+                    from SQLITE_USER
+                    where SQLITE_USER.id eq id
+                    ).fetchOne()
+
     fun selectFirstnameAndAliasById(id: Int) =
             (sqlClient select SQLITE_USER.firstname and SQLITE_USER.alias
+                    from SQLITE_USER
+                    where SQLITE_USER.id eq id
+                    ).fetchOne()
+
+    fun selectAllFirstnameAndAlias() =
+            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.alias
+                    from SQLITE_USER
+                    ).fetchAll()
+
+    fun selectFirstnameAndLastnameAndAliasById(id: Int) =
+            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.lastname and SQLITE_USER.alias
+                    from SQLITE_USER
+                    where SQLITE_USER.id eq id
+                    ).fetchOne()
+
+    fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
+            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.lastname and SQLITE_USER.alias and SQLITE_USER.isAdmin
                     from SQLITE_USER
                     where SQLITE_USER.id eq id
                     ).fetchOne()

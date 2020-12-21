@@ -11,7 +11,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.primaryConstructor
 
-public interface Field<T : Any> {
+public interface Field<T> {
     public val properties: DefaultSqlClientCommon.Properties
     public val fieldNames: List<String>
     public val builder: (Row) -> T
@@ -19,7 +19,7 @@ public interface Field<T : Any> {
 
 public interface FieldNotNull<T : Any> : Field<T>
 
-public interface FieldNullable<T : Any> : Field<T>
+public interface FieldNullable<T : Any> : Field<T?>
 
 public class CountField<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
@@ -28,32 +28,38 @@ public class CountField<T : Any, U : Any> internal constructor(
     override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
 
     override val builder: (Row) -> Int = { row ->
-        row.getWithOffset(0, Int::class.javaObjectType)!!
+        row.getAndIncrement(Int::class.javaObjectType)!!
     }
 }
 
 public sealed class ColumnField<T : Any, U : Any>(
-        final override val properties: DefaultSqlClientCommon.Properties,
-        column: Column<T, U>
-) : Field<U> {
-    private val fieldName = column.getFieldName(properties.tables.allColumns)
-    final override val fieldNames: List<String> = listOf(fieldName)
+        properties: DefaultSqlClientCommon.Properties,
+        column: Column<T, U>,
+) {
+    protected val columnFieldNames: List<String> = listOf(column.getFieldName(properties.tables.allColumns))
 
     @Suppress("UNCHECKED_CAST")
-    final override val builder: (Row) -> U = { row ->
-        row.getWithOffset(0, column.getKotysaColumn(properties.availableColumns).columnClass.javaObjectType as Class<U>)!!
+    internal val columnBuilder: (Row) -> U? = { row ->
+        row.getAndIncrement(column.getKotysaColumn(properties.availableColumns).columnClass.javaObjectType as Class<U>)
     }
 }
 
 public class ColumnFieldNotNull<T : Any, U : Any> internal constructor(
-        properties: DefaultSqlClientCommon.Properties,
-        column: ColumnNotNull<T, U>
-) : ColumnField<T, U>(properties, column), FieldNotNull<U>
+        override val properties: DefaultSqlClientCommon.Properties,
+        column: ColumnNotNull<T, U>,
+) : ColumnField<T, U>(properties, column), FieldNotNull<U> {
+    override val fieldNames: List<String> = columnFieldNames
+    @Suppress("UNCHECKED_CAST")
+    override val builder: (Row) -> U = columnBuilder as (Row) -> U
+}
 
 public class ColumnFieldNullable<T : Any, U : Any> internal constructor(
-        properties: DefaultSqlClientCommon.Properties,
+        override val properties: DefaultSqlClientCommon.Properties,
         column: ColumnNullable<T, U>
-) : ColumnField<T, U>(properties, column), FieldNullable<U>
+) : ColumnField<T, U>(properties, column), FieldNullable<U> {
+    override val fieldNames: List<String> = columnFieldNames
+    override val builder: (Row) -> U? = columnBuilder
+}
 
 /**
  * Selected field
@@ -138,6 +144,8 @@ public class TableField<T : Any> internal constructor(
                         }
                     }
         }
+        // increment row index by the number of selected columns in this table
+        row.incrementWithDelayedIndex()
         instance
     }
 
@@ -160,12 +168,13 @@ public class TableField<T : Any> internal constructor(
 
 // Extension functions
 
-internal fun <T : Any, U : Any> Column<T, U>.toField(properties: DefaultSqlClientCommon.Properties): ColumnField<T, U> {
-    if (this is ColumnNotNull<T, U>) {
-        return ColumnFieldNotNull(properties, this)
-    }
-    return ColumnFieldNullable(properties, this as ColumnNullable<T, U>)
-}
+internal fun <T : Any, U : Any> ColumnNotNull<T, U>.toField(
+        properties: DefaultSqlClientCommon.Properties
+): ColumnFieldNotNull<T, U> = ColumnFieldNotNull(properties, this)
+
+internal fun <T : Any, U : Any> ColumnNullable<T, U>.toField(
+        properties: DefaultSqlClientCommon.Properties
+): ColumnFieldNullable<T, U> = ColumnFieldNullable(properties, this)
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
     val kotysaColumn = this.getKotysaColumn(availableColumns)

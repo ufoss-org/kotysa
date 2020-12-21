@@ -4,13 +4,26 @@
 
 package org.ufoss.kotysa
 
-public abstract class Row protected constructor(internal var offset: Int = 0) {
-    internal final fun <T : Any> getWithOffset(index: Int, clazz: Class<T>) : T? =
-            get(offset + index, clazz)
+public abstract class Row protected constructor() {
+    private var index = 0
+    private var delayedIndex = 0
+    internal fun <T : Any> getWithOffset(offset: Int, clazz: Class<T>): T? {
+        delayedIndex++
+        return get(this.index + offset, clazz)
+    }
+    internal fun <T : Any> getAndIncrement(clazz: Class<T>) : T? =
+            get(this.index++, clazz)
+    internal fun incrementWithDelayedIndex() {
+        this.index += this.delayedIndex
+        this.delayedIndex = 0
+    }
 
-    public abstract fun <T : Any> get(index: Int, clazz: Class<T>) : T?
+
+    protected abstract fun <T : Any> get(index: Int, clazz: Class<T>) : T?
+
+
 
     public fun resetIndex() {
-        offset = 0
+        index = 0
     }
 }
