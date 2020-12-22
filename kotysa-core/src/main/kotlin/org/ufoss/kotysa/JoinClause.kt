@@ -6,12 +6,12 @@ package org.ufoss.kotysa
 
 
 public class JoinClause<T : Any, U : Any> internal constructor(
-        internal val references: Map<DbColumn<T, *>, DbColumn<U, *>>,
-        internal val type: JoinType
+        internal val references: Map<Column<T, *>, Column<U, *>>,
+        internal val type: JoinClauseType
 )
 
 
-public enum class JoinType(internal val sql: String) {
+public enum class JoinClauseType(internal val sql: String) {
     INNER("INNER JOIN"),
     LEFT_OUTER("LEFT OUTER JOIN"),
     RIGHT_OUTER("RIGHT OUTER JOIN"),

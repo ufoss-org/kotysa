@@ -23,12 +23,12 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
              */
             public val table: KotysaTable<T>,
     ) : DefaultSqlClientCommon.Properties {
+        public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
+        override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
+
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
-
-        //override val joinClauses: MutableSet<JoinClause<*, *>> = mutableSetOf()
-        public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
     }
 
     public interface WithProperties<T : Any> {
@@ -45,7 +45,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             val kotysaTable = tables.getTable(table)
             val properties = Properties(tables, kotysaTable)
             // init availableColumns with table columns
-            addAvailableTable(properties, kotysaTable)
+            addFromTable(properties, kotysaTable)
             properties
         }
     }

@@ -14,9 +14,9 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface Properties {
         public val tables: Tables
+        public val fromClauses: MutableList<FromClause<*>>
         public val whereClauses: MutableList<WhereClauseWithType<*>>
 
-        //public val joinClauses: MutableSet<JoinClause<*, *>>
         public val availableTables: MutableMap<Table<*>, KotysaTable<*>>
         public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
     }
@@ -27,13 +27,17 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface From<T : SqlClientQuery.From<T>> : SqlClientQuery.From<T> {
         @Suppress("UNCHECKED_CAST")
-        public fun <U : Any> addAvailableTable(
+        public fun <U : Any> addFromTable(
                 properties: Properties,
                 table: KotysaTable<U>,
         ) {
             properties.apply {
+                // This table becomes available
                 availableTables[table.table] = table
+                // All columns of this table become available
                 table.columns.forEach { column -> availableColumns[column.column] = column }
+                // Add table from clause list
+                fromClauses.add(FromClause(table.table))
             }
         }
     }

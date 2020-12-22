@@ -14,12 +14,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     public class Properties<T>(
             override val tables: Tables,
     ) : DefaultSqlClientCommon.Properties {
+        internal val selectedFields = mutableListOf<Field<*>>()
+        override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
+
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
-        internal val selectedFields = mutableListOf<Field<*>>()
-        internal val selectedTables: MutableSet<Table<*>> = mutableSetOf()
-        //override val joinClauses: MutableList<JoinClause> = mutableListOf()
 
         public lateinit var select: (Row) -> T
     }
@@ -73,8 +73,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
 
         internal fun <W : Any> addFromTable(table: Table<W>): U = with(properties) {
-            super.addAvailableTable(properties, properties.tables.getTable(table))
-            selectedTables.add(table)
+            super.addFromTable(properties, properties.tables.getTable(table))
             from
         }
     }
@@ -92,7 +91,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     protected interface Return<T> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
-            val froms = selectedTables
+            val froms = fromClauses
+                    .map(FromClause<*>::table)
                     //.filterNot { aliasedTable -> joinClauses.map { joinClause -> joinClause.table }.contains(aliasedTable) }
                     .joinToString(prefix = "FROM ") { table -> table.getKotysaTable(properties.availableTables).name }
             val joins = "" // joins()
