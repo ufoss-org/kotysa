@@ -2,6 +2,8 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
+@file:Suppress("UNCHECKED_CAST")
+
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
@@ -28,55 +30,47 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class Select<T, U : SqlClientQuery.From<U>, V : Andable> protected constructor() :
-            Fromable<U>, Andable, WithProperties<T> {
-        protected abstract val from: From<*, U, *>
+    public abstract class Select<T> protected constructor() :
+            Fromable, Andable, WithProperties<T> {
 
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        @Suppress("UNCHECKED_CAST")
-        override fun <Z : Any> from(table: Table<Z>): U = with(properties) {
-            select = when(selectedFields.size) {
+        public fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *>): V = with(properties) {
+            select = when (selectedFields.size) {
                 1 -> selectedFields[0].builder as (Row) -> T
                 2 -> {
                     { row: Row -> Pair(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row)) } as (Row) -> T
                 }
                 3 -> {
-                    { row: Row -> Triple(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row),
-                            selectedFields[2].builder.invoke(row)) } as (Row) -> T
+                    { row: Row ->
+                        Triple(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row),
+                                selectedFields[2].builder.invoke(row))
+                    } as (Row) -> T
                 }
                 else -> {
                     { row: Row -> selectedFields.map { selectedField -> selectedField.builder.invoke(row) } } as (Row) -> T
                 }
             }
-            from.addFromTable(table)
+            from.apply { addFromTable(table) } as V
         }
 
-        public fun <Z : Any> addSelectTable(table: Table<Z>) {
+        public fun <U : Any> addSelectTable(table: Table<U>) {
             properties.selectedFields.add(table.toField(properties))
         }
 
-        public fun <Z : Any> addSelectColumn(column: ColumnNotNull<*, Z>) {
+        public fun <U : Any> addSelectColumn(column: ColumnNotNull<*, U>) {
             properties.selectedFields.add(column.toField(properties))
         }
 
-        public fun <Z : Any> addSelectColumn(column: ColumnNullable<*, Z>) {
+        public fun <U : Any> addSelectColumn(column: ColumnNullable<*, U>) {
             properties.selectedFields.add(column.toField(properties))
         }
     }
 
-    public abstract class From<T, U : SqlClientQuery.From<U>, V : SqlClientQuery.Where<Any, V>> protected constructor(
+    public abstract class FromWhereable<T, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>> protected constructor(
             final override val properties: Properties<T>,
-    ) : Whereable<T, V>(), DefaultSqlClientCommon.From<U> {
-        protected abstract val from: U
-
-
-        internal fun <W : Any> addFromTable(table: Table<W>): U = with(properties) {
-            super.addFromTable(properties, properties.tables.getTable(table))
-            from
-        }
-    }
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), Return<T>
 
     /*public abstract class SelectDsl<T : Any> : Instruction, WithProperties<T> {
         public abstract val dsl: () -> T
@@ -84,9 +78,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
     //protected interface Join<T : Any> : DefaultSqlClientCommon.Join, WithProperties<T>
 
-    public abstract class Whereable<T, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Whereable<Any, U>(), WithProperties<T>, Return<T>
-
-    public abstract class Where<T, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Where<Any, U>(), WithProperties<T>, Return<T>
+    public abstract class Where<T, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Where<Any, U>(), Return<T>
 
     protected interface Return<T> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {

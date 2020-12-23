@@ -20,6 +20,7 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
+        override val from = this
 
         /*override fun <U : Any> join(
             joinClass: KClass<U>,

@@ -51,7 +51,7 @@ internal class SqlClientSqLite(
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
 
-    override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T> =
+    override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table).from(table)
 }
 

@@ -27,7 +27,7 @@ public interface SqlClient {
     public infix fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?>
     public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
 
-    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T>
+    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T>
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
 
@@ -44,27 +44,31 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
     }
 
-    public interface FirstSelect<T> : Fromable<From<T>>, Andable {
+    public interface Fromable<T> : SqlClientQuery.Fromable {
+        override fun <U : Any> from(table: Table<U>): From<T, U>
+    }
+
+    public interface FirstSelect<T> : Fromable<T>, Andable {
         override fun <U : Any> and(column: ColumnNotNull<*, U>): SecondSelect<T, U>
         override fun <U : Any> and(column: ColumnNullable<*, U>): SecondSelect<T, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
     }
 
-    public interface SecondSelect<T, U> : Fromable<From<Pair<T, U>>>, Andable {
+    public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
         override fun <V : Any> and(column: ColumnNotNull<*, V>): ThirdSelect<T, U, V>
         override fun <V : Any> and(column: ColumnNullable<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
     }
 
-    public interface ThirdSelect<T, U, V> : Fromable<From<Triple<T, U, V>>>, Andable {
+    public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
         override fun <W : Any> and(column: ColumnNotNull<*, W>): Select
         override fun <W : Any> and(column: ColumnNullable<*, W>): Select
         override fun <W : Any> and(table: Table<W>): Select
-            }
+    }
 
-    public interface Select : Fromable<From<List<Any?>>>, Andable
+    public interface Select : Fromable<List<Any?>>, Andable
 
-    public interface From<T> : SqlClientQuery.From<From<T>>, Whereable<Any, Where<T>>, Return<T> {
+    public interface From<T, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T> {
 
         /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
                 joinInternal(U::class, alias, JoinType.INNER)
@@ -75,12 +79,6 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
         protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>*/
     }
-
-    /*public interface Joinable<T : Any> {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join<T>
-    }
-
-    public interface Join<T : Any> : Whereable<T>, Return<T>*/
 
     public interface Where<T> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
     }
@@ -127,7 +125,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
 
 public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
-    public interface DeleteOrUpdate<T : Any> : From<DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return {
+    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return {
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)

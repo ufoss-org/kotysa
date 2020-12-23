@@ -18,8 +18,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> select(column: ColumnNullable<*, T>): Andable
     }
 
-    public interface Fromable<T : From<T>> {
-        public infix fun <U : Any> from(table: Table<U>): T
+    public interface Fromable {
+        public infix fun <T : Any> from(table: Table<T>): From<T, *>
     }
 
     public interface Andable {
@@ -28,7 +28,17 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(column: ColumnNullable<*, U>): Andable
     }
 
-    public interface From<T : From<T>>
+    public interface From<T : Any, U : From<T, U>> {
+        public infix fun <V : Any> innerJoin(table: Table<V>): Joinable<T, U, V>
+    }
+
+    public interface Joinable<T : Any, U : From<T, U>, V : Any> {
+        public infix fun on(column: Column<T, *>): Join<T, U, V>
+    }
+
+    public interface Join<T : Any, U : From<T, U>, V : Any> {
+        public infix fun eq(column: Column<V, *>): U
+    }
 
     public interface Update<T : Any, U : Update<T, U>> {
         public infix fun set(stringColumnNotNull: StringColumnNotNull<T>): UpdateOpColumn<T, U, String>

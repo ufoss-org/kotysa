@@ -25,11 +25,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     internal class FirstSelect<T> internal constructor(
             private val client: SQLiteDatabase,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Select<T, SqlClientSelect.From<T>, SqlClientSelect.FirstSelect<T>>(),
-            SqlClientSelect.FirstSelect<T> {
-        override val from: DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, *> by lazy {
-            From(client, properties)
+    ) : DefaultSqlClientSelect.Select<T>(), SqlClientSelect.FirstSelect<T> {
+        private val from: From<T, *> by lazy {
+            From<T, Any>(client, properties)
         }
+
+        override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
 
         override fun <U : Any> and(column: ColumnNotNull<*, U>): SqlClientSelect.SecondSelect<T, U> =
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectColumn(column) }
@@ -42,11 +44,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     internal class SecondSelect<T, U> internal constructor(
             private val client: SQLiteDatabase,
             override val properties: Properties<Pair<T, U>>,
-    ) : DefaultSqlClientSelect.Select<Pair<T, U>, SqlClientSelect.From<Pair<T, U>>,
-            SqlClientSelect.SecondSelect<T, U>>(), SqlClientSelect.SecondSelect<T, U> {
-        override val from: DefaultSqlClientSelect.From<Pair<T, U>, SqlClientSelect.From<Pair<T, U>>, *> by lazy {
-            From(client, properties)
+    ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), SqlClientSelect.SecondSelect<T, U> {
+        private val from: From<Pair<T, U>, *> by lazy {
+            From<Pair<T, U>, Any>(client, properties)
         }
+
+        override fun <V : Any> from(table: Table<V>): SqlClientSelect.From<Pair<T, U>, V> =
+                addFromTable(table, from as From<Pair<T, U>, V>)
 
         override fun <V : Any> and(column: ColumnNotNull<*, V>): SqlClientSelect.ThirdSelect<T, U, V> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectColumn(column) }
@@ -59,11 +63,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     internal class ThirdSelect<T, U, V> internal constructor(
             private val client: SQLiteDatabase,
             override val properties: Properties<Triple<T, U, V>>,
-    ) : DefaultSqlClientSelect.Select<Triple<T, U, V>, SqlClientSelect.From<Triple<T, U, V>>,
-            SqlClientSelect.ThirdSelect<T, U, V>>(), SqlClientSelect.ThirdSelect<T, U, V> {
-        override val from: DefaultSqlClientSelect.From<Triple<T, U, V>, SqlClientSelect.From<Triple<T, U, V>>, *> by lazy {
-            From(client, properties)
+    ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), SqlClientSelect.ThirdSelect<T, U, V> {
+        private val from: From<Triple<T, U, V>, *> by lazy {
+            From<Triple<T, U, V>, Any>(client, properties)
         }
+
+        override fun <W : Any> from(table: Table<W>): SqlClientSelect.From<Triple<T, U, V>, W> =
+                addFromTable(table, from as From<Triple<T, U, V>, W>)
 
         override fun <W : Any> and(column: ColumnNotNull<*, W>): SqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -76,21 +82,23 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     internal class Select internal constructor(
             client: SQLiteDatabase,
             override val properties: Properties<List<Any?>>,
-    ) : DefaultSqlClientSelect.Select<List<Any?>, SqlClientSelect.From<List<Any?>>, SqlClientSelect.Select>(),
-            SqlClientSelect.Select {
-        override val from: DefaultSqlClientSelect.From<*, SqlClientSelect.From<List<Any?>>, *> = From(client, properties)
+    ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
+        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<List<Any?>, U> =
+                addFromTable(table, from as From<List<Any?>, U>)
 
         override fun <V : Any> and(column: ColumnNotNull<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(column: ColumnNullable<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
     }
 
-    internal class From<T> internal constructor(
+    internal class From<T, U : Any> internal constructor(
             override val client: SQLiteDatabase,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.From<T, SqlClientSelect.From<T>, SqlClientSelect.Where<T>>(properties), SqlClientSelect.From<T>, Return<T> {
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>>(properties), SqlClientSelect.From<T, U>, Return<T> {
         override val where = Where(client, properties)
-        override val from: SqlClientSelect.From<T> = this
+        override val from = this
 
         /*override fun <U : Any> join(
                 joinClass: KClass<U>,

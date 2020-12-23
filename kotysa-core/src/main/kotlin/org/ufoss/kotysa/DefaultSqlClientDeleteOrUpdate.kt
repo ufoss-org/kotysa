@@ -35,8 +35,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public val properties: Properties<T>
     }
 
-    public abstract class DeleteOrUpdate<T : Any, U : SqlClientQuery.From<U>, V : SqlClientQuery.Where<T, V>> protected constructor(
-    ) : Whereable<T, V>(), From<U> {
+    public abstract class DeleteOrUpdate<T : Any, U : From<T, U>, V : SqlClientQuery.Where<T, V>> protected constructor(
+    ) : FromWhereable<T, U, T, V>(), From<T, U> {
 
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
@@ -50,7 +50,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class Update<T : Any, U : SqlClientQuery.From<U>, V : SqlClientQuery.Where<T, V>, W : SqlClientQuery.Update<T, W>> protected constructor(
+    public abstract class Update<T : Any, U : From<T, U>, V : SqlClientQuery.Where<T, V>, W : SqlClientQuery.Update<T, W>> protected constructor(
     ) : DeleteOrUpdate<T, U, V>(), SqlClientQuery.Update<T, W> {
         protected abstract val update: W
 

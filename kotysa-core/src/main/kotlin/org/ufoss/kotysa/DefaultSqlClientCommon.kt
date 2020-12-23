@@ -25,12 +25,15 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val properties: Properties
     }
 
-    public interface From<T : SqlClientQuery.From<T>> : SqlClientQuery.From<T> {
+    public abstract class FromWhereable<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> :
+            Whereable<V, W>(), From<T, U> {
+        protected abstract val from: U
+        private val joinable: Joinable<T, U, *> by lazy {
+            Joinable<T, U, Any>(properties, from)
+        }
+
         @Suppress("UNCHECKED_CAST")
-        public fun <U : Any> addFromTable(
-                properties: Properties,
-                table: KotysaTable<U>,
-        ) {
+        protected fun <U : Any> addFromTable(properties: Properties, table: KotysaTable<U>) {
             properties.apply {
                 // This table becomes available
                 availableTables[table.table] = table
@@ -40,68 +43,47 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 fromClauses.add(FromClause(table.table))
             }
         }
+
+        internal fun <X : Any> addFromTable(table: Table<X>): U = with(properties) {
+            addFromTable(this, tables.getTable(table))
+            from
+        }
+
+        override fun <X : Any> innerJoin(table: Table<X>): SqlClientQuery.Joinable<T, U, X> {
+            joinable.type = JoinClauseType.INNER
+            return joinable as SqlClientQuery.Joinable<T, U, X>
+        }
     }
 
-    public abstract class WithWhere<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithProperties {
-        protected abstract val where: U
+    public class Joinable<U : Any, V : From<U, V>, W : Any> internal constructor(
+            override val properties: Properties,
+            from: V,
+    ) : SqlClientQuery.Joinable<U, V, W>, WithProperties {
+        internal lateinit var type: JoinClauseType
 
-        internal val whereOpStringColumnNotNull: WhereOpStringColumnNotNull<T, U> by lazy {
-            WhereOpStringColumnNotNull(where, properties)
+        private val join = Join<U, V, W>(properties, from)
+
+        override fun on(column: Column<U, *>): SqlClientQuery.Join<U, V, W> =
+                join.apply {
+                    type = this@Joinable.type
+                    this.column = column
+                }
+    }
+
+    public class Join<U : Any, V : From<U, V>, W : Any> internal constructor(
+            override val properties: Properties,
+            private val from: V,
+    ) : SqlClientQuery.Join<U, V, W>, WithProperties {
+        internal lateinit var type: JoinClauseType
+        internal lateinit var column: Column<U, *>
+
+        override fun eq(column: Column<W, *>): V = with(properties) {
+            // get last from
+            val joinClause = JoinClause(mapOf(Pair(this@Join.column, column)), type)
+            (fromClauses[fromClauses.size - 1] as FromClause<U>).joinClauses.add(joinClause)
+            from
         }
-        internal val whereOpStringColumnNullable: WhereOpStringColumnNullable<T, U> by lazy {
-            WhereOpStringColumnNullable(where, properties)
-        }
-        internal val whereOpLocalDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalDateTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpLocalDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, LocalDateTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpLocalDateColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalDate> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpLocalDateColumnNullable: WhereOpDateColumnNullable<T, U, LocalDate> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateColumnNotNull: WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateColumnNullable: WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpOffsetDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, OffsetDateTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpOffsetDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, OffsetDateTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpLocalTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpLocalTimeColumnNullable: WhereOpDateColumnNullable<T, U, LocalTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpBooleanColumnNotNull: WhereOpBooleanColumnNotNull<T, U> by lazy {
-            WhereOpBooleanColumnNotNull(where, properties)
-        }
-        internal val whereOpIntColumnNotNull: WhereOpIntColumnNotNull<T, U> by lazy {
-            WhereOpIntColumnNotNull(where, properties)
-        }
-        internal val whereOpIntColumnNullable: WhereOpIntColumnNullable<T, U> by lazy {
-            WhereOpIntColumnNullable(where, properties)
-        }
-        internal val whereOpUuidColumnNotNull: WhereOpUuidColumnNotNull<T, U> by lazy {
-            WhereOpUuidColumnNotNull(where, properties)
-        }
-        internal val whereOpUuidColumnNullable: WhereOpUuidColumnNullable<T, U> by lazy {
-            WhereOpUuidColumnNullable(where, properties)
-        }
+
     }
 
     public abstract class Whereable<T : Any, U : SqlClientQuery.Where<T, U>> protected constructor() :
@@ -699,6 +681,68 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 where.append(")")
             }
             return where.toString()
+        }
+    }
+
+    public abstract class WithWhere<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithProperties {
+        protected abstract val where: U
+
+        internal val whereOpStringColumnNotNull: WhereOpStringColumnNotNull<T, U> by lazy {
+            WhereOpStringColumnNotNull(where, properties)
+        }
+        internal val whereOpStringColumnNullable: WhereOpStringColumnNullable<T, U> by lazy {
+            WhereOpStringColumnNullable(where, properties)
+        }
+        internal val whereOpLocalDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalDateTime> by lazy {
+            WhereOpDateColumnNotNull(where, properties)
+        }
+        internal val whereOpLocalDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, LocalDateTime> by lazy {
+            WhereOpDateColumnNullable(where, properties)
+        }
+        internal val whereOpKotlinxLocalDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> by lazy {
+            WhereOpDateColumnNotNull(where, properties)
+        }
+        internal val whereOpKotlinxLocalDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> by lazy {
+            WhereOpDateColumnNullable(where, properties)
+        }
+        internal val whereOpLocalDateColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalDate> by lazy {
+            WhereOpDateColumnNotNull(where, properties)
+        }
+        internal val whereOpLocalDateColumnNullable: WhereOpDateColumnNullable<T, U, LocalDate> by lazy {
+            WhereOpDateColumnNullable(where, properties)
+        }
+        internal val whereOpKotlinxLocalDateColumnNotNull: WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> by lazy {
+            WhereOpDateColumnNotNull(where, properties)
+        }
+        internal val whereOpKotlinxLocalDateColumnNullable: WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> by lazy {
+            WhereOpDateColumnNullable(where, properties)
+        }
+        internal val whereOpOffsetDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, OffsetDateTime> by lazy {
+            WhereOpDateColumnNotNull(where, properties)
+        }
+        internal val whereOpOffsetDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, OffsetDateTime> by lazy {
+            WhereOpDateColumnNullable(where, properties)
+        }
+        internal val whereOpLocalTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalTime> by lazy {
+            WhereOpDateColumnNotNull(where, properties)
+        }
+        internal val whereOpLocalTimeColumnNullable: WhereOpDateColumnNullable<T, U, LocalTime> by lazy {
+            WhereOpDateColumnNullable(where, properties)
+        }
+        internal val whereOpBooleanColumnNotNull: WhereOpBooleanColumnNotNull<T, U> by lazy {
+            WhereOpBooleanColumnNotNull(where, properties)
+        }
+        internal val whereOpIntColumnNotNull: WhereOpIntColumnNotNull<T, U> by lazy {
+            WhereOpIntColumnNotNull(where, properties)
+        }
+        internal val whereOpIntColumnNullable: WhereOpIntColumnNullable<T, U> by lazy {
+            WhereOpIntColumnNullable(where, properties)
+        }
+        internal val whereOpUuidColumnNotNull: WhereOpUuidColumnNotNull<T, U> by lazy {
+            WhereOpUuidColumnNotNull(where, properties)
+        }
+        internal val whereOpUuidColumnNullable: WhereOpUuidColumnNullable<T, U> by lazy {
+            WhereOpUuidColumnNullable(where, properties)
         }
     }
 }
