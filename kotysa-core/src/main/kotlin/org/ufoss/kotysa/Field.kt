@@ -176,15 +176,21 @@ internal fun <T : Any, U : Any> ColumnNullable<T, U>.toField(
         properties: DefaultSqlClientCommon.Properties
 ): ColumnFieldNullable<T, U> = ColumnFieldNullable(properties, this)
 
-internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
-    val kotysaColumn = this.getKotysaColumn(availableColumns)
-    val kotysaTable = kotysaColumn.table
-    return if (kotysaTable is AliasedTable<*>) {
-        "${kotysaTable.alias}."
-    } else {
-        "${kotysaColumn.table.name}."
-    } + kotysaColumn.name
-}
-
 public fun <T : Any> Table<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
         TableField(properties, this)
+
+internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+    val kotysaColumn = getKotysaColumn(availableColumns)
+    val kotysaTable = kotysaColumn.table
+    return "${kotysaTable.getFieldName()}.${kotysaColumn.name}"
+}
+
+internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
+    getKotysaTable(availableTables).getFieldName()
+
+private fun KotysaTable<*>.getFieldName() =
+        if (this is AliasedTable<*>) {
+            alias
+        } else {
+            name
+        }

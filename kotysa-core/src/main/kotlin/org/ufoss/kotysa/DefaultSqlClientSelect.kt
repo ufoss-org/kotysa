@@ -2,15 +2,13 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-@file:Suppress("UNCHECKED_CAST")
-
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
 
 private val logger = Logger.of<DefaultSqlClientSelect>()
 
-
+@Suppress("UNCHECKED_CAST")
 public open class DefaultSqlClientSelect protected constructor() : DefaultSqlClientCommon() {
 
     public class Properties<T>(
@@ -83,15 +81,15 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     protected interface Return<T> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
-            val froms = fromClauses
+            /*val froms = fromClauses
                     .map(FromClause<*>::table)
                     //.filterNot { aliasedTable -> joinClauses.map { joinClause -> joinClause.table }.contains(aliasedTable) }
-                    .joinToString(prefix = "FROM ") { table -> table.getKotysaTable(properties.availableTables).name }
-            val joins = "" // joins()
+                    .joinToString(prefix = "FROM ") { table -> table.getKotysaTable(properties.availableTables).name }*/
+            val froms = froms()
             val wheres = wheres()
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $joins $wheres" }
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres" }
 
-            "$selects $froms $joins $wheres"
+            "$selects $froms $wheres"
         }
     }
 }

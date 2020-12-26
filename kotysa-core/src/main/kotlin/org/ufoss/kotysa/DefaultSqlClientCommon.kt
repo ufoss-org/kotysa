@@ -10,6 +10,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.*
 
+@Suppress("UNCHECKED_CAST")
 public open class DefaultSqlClientCommon protected constructor() : SqlClientQuery() {
 
     public interface Properties {
@@ -33,15 +34,9 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
 
         @Suppress("UNCHECKED_CAST")
-        protected fun <U : Any> addFromTable(properties: Properties, table: KotysaTable<U>) {
-            properties.apply {
-                // This table becomes available
-                availableTables[table.table] = table
-                // All columns of this table become available
-                table.columns.forEach { column -> availableColumns[column.column] = column }
-                // Add table from clause list
-                fromClauses.add(FromClause(table.table))
-            }
+        protected fun <X : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<X>) {
+            isAvailable(properties, kotysaTable)
+            properties.fromClauses.add(FromClause(kotysaTable.table))
         }
 
         internal fun <X : Any> addFromTable(table: Table<X>): U = with(properties) {
@@ -50,8 +45,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
 
         override fun <X : Any> innerJoin(table: Table<X>): SqlClientQuery.Joinable<T, U, X> {
+            isAvailable(properties, properties.tables.getTable(table))
+            val joinable = (joinable as Joinable<T, U, X>)
             joinable.type = JoinClauseType.INNER
-            return joinable as SqlClientQuery.Joinable<T, U, X>
+            joinable.table = table
+            return joinable
+        }
+
+        private fun <X : Any> isAvailable(properties: Properties, kotysaTable: KotysaTable<X>) {
+            properties.apply {
+                // This table becomes available
+                availableTables[kotysaTable.table] = kotysaTable
+                // All columns of this table become available
+                kotysaTable.columns.forEach { column -> availableColumns[column.column] = column }
+            }
         }
     }
 
@@ -60,12 +67,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             from: V,
     ) : SqlClientQuery.Joinable<U, V, W>, WithProperties {
         internal lateinit var type: JoinClauseType
+        internal lateinit var table: Table<W>
 
         private val join = Join<U, V, W>(properties, from)
 
         override fun on(column: Column<U, *>): SqlClientQuery.Join<U, V, W> =
                 join.apply {
                     type = this@Joinable.type
+                    table = this@Joinable.table
                     this.column = column
                 }
     }
@@ -75,11 +84,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             private val from: V,
     ) : SqlClientQuery.Join<U, V, W>, WithProperties {
         internal lateinit var type: JoinClauseType
+        internal lateinit var table: Table<W>
         internal lateinit var column: Column<U, *>
 
         override fun eq(column: Column<W, *>): V = with(properties) {
             // get last from
-            val joinClause = JoinClause(mapOf(Pair(this@Join.column, column)), type)
+            val joinClause = JoinClause(table, mapOf(Pair(this@Join.column, column)), type)
             (fromClauses[fromClauses.size - 1] as FromClause<U>).joinClauses.add(joinClause)
             from
         }
@@ -203,17 +213,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                     type = WhereClauseType.WHERE
                 }
     }
-
-    /*protected interface Join : WithProperties, Instruction {
-        public fun <T : Any> addJoinClause(dsl: (FieldProvider) -> ColumnField<*, *>, joinClass: KClass<T>, alias: String?, type: JoinType) {
-            properties.apply {
-                tables.checkTable(joinClass)
-                val aliasedTable = AliasedKotysaTable(tables.getTable(joinClass), alias)
-                joinClauses.add(JoinDsl(dsl, aliasedTable, type, availableColumns, tables.dbType).initialize())
-                addAvailableColumnsFromTable(this, aliasedTable)
-            }
-        }
-    }*/
 
     public interface WhereOpColumn<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> : WhereCommon<T> {
         public val where: U
@@ -580,15 +579,22 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
          */
         public fun stringValue(value: Any?): String = value.dbValue()
 
-        /*public fun joins(): String = with(properties) {
-            properties.joinClauses.joinToString { joinClause ->
-                val ons = joinClause.references.entries.joinToString("and ") { reference ->
-                    "${reference.key.getFieldName(tables.allColumns)} = ${reference.value.getFieldName(tables.allColumns)}"
-                }
-
-                "${joinClause.type.sql} ${tables.getTable(joinClause.references.values.first()).getFieldName()} ON $ons"
+        public fun froms(withFrom: Boolean = true): String = with(properties) {
+            val prefix = if (withFrom) {
+                "FROM "
+            } else {
+                ""
             }
-        }*/
+            fromClauses.joinToString(prefix = prefix) { fromClause ->
+                fromClause.table.getFieldName(availableTables) + " " + fromClause.joinClauses.joinToString { joinClause ->
+                    val ons = joinClause.references.entries.joinToString("and ") { reference ->
+                        "${reference.key.getFieldName(availableColumns)} = ${reference.value.getFieldName(availableColumns)}"
+                    }
+
+                    "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)} ON $ons"
+                }
+            }
+        }
 
         public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
             if (whereClauses.isEmpty()) {

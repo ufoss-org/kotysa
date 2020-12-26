@@ -12,21 +12,26 @@ import org.ufoss.kotysa.Tables
 
 internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
-    internal class Delete<T : Any> internal constructor(
+    internal class FirstDelete<T : Any> internal constructor(
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, SqlClientDeleteOrUpdate.Where<T>>(),
-            SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T, SqlClientDeleteOrUpdate.Where<T>>(),
+            SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         override val where = Where(client, properties)
-        override val from = this
+        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+            Delete(client, properties)
+        }
+    }
 
-        /*override fun <U : Any> join(
-            joinClass: KClass<U>,
-            alias: String?,
-            type: JoinType
-        ): SqlClientDeleteOrUpdate.Joinable =
-            Joinable(client, properties, joinClass, alias, type)*/
+    internal class Delete<T : Any>(
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>,
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any, SqlClientDeleteOrUpdate.Where<Any>>(),
+            SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+        @Suppress("UNCHECKED_CAST")
+        override val where = Where(client, properties as Properties<Any>)
+        override val from = this
     }
 
     /*

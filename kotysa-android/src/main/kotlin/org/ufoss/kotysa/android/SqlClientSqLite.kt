@@ -38,11 +38,11 @@ internal class SqlClientSqLite(
         client.writableDatabase.compileStatement(createTableSql).execute()
     }
 
-    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, table)
+    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+            SqlClientDeleteSqLite.FirstDelete(client.writableDatabase, tables, table)
 
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSqLite.Update(client.writableDatabase, tables, table)
+            SqlClientUpdateSqLite.FirstUpdate(client.writableDatabase, tables, table)
 
     override fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(column)

@@ -17,8 +17,7 @@ public interface SqlClient {
 
     public infix fun <T : Any> createTable(table: Table<T>)
 
-    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
-
+    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
     public infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
 
     public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
@@ -125,15 +124,16 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
 
 public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
-    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return {
+    public interface FirstDeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return
+
+    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Any, Where<Any>>, Return
 
         /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
                 join(joinedTable, alias, JoinType.INNER)
 
         protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable*/
-    }
 
-    public interface Update<T : Any> : DeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
+    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
 
     /*public interface Joinable {
