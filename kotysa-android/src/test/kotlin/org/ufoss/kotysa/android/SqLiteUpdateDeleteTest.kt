@@ -108,20 +108,19 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Doe")
     }
-/*
+
     @Test
     fun `Verify updateWithJoin works`() {
         val operator = client.transactionalOp()
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.updateWithJoin("Do", sqLiteUser.label))
+            assertThat(repository.updateWithJoin("Do", roleUser.label))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(sqLiteJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
     }
-*/
 }
 
 class UserRepositoryUpdateDelete(
@@ -139,6 +138,12 @@ class UserRepositoryUpdateDelete(
                     where SQLITE_USER.id `in` ids
                     ).execute()
 
+    fun deleteUserWithJoin(roleLabel: String) =
+            (sqlClient deleteFrom SQLITE_USER
+                    innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
+                    where SQLITE_ROLE.label eq roleLabel
+                    ).execute()
+
     fun updateLastname(newLastname: String) =
             (sqlClient update SQLITE_USER
                     set SQLITE_USER.lastname eq newLastname
@@ -151,17 +156,10 @@ class UserRepositoryUpdateDelete(
                     where SQLITE_USER.id `in` ids
                     ).execute()
 
-fun deleteUserWithJoin(roleLabel: String) =
-        (sqlClient deleteFrom SQLITE_USER
-                innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
-                where SQLITE_ROLE.label eq roleLabel
-                ).execute()
-
-/*fun updateWithJoin(newLastname: String, roleLabel: String) =
-        sqlClient.updateTable<SqLiteUser>()
-                .set { it[SqLiteUser::lastname] = newLastname }
-                .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
-                .where { it[SqLiteRole::label] eq roleLabel }
-                .execute()
-*/
+    fun updateWithJoin(newLastname: String, roleLabel: String) =
+            (sqlClient update SQLITE_USER
+                    set SQLITE_USER.lastname eq newLastname
+                    innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
+                    where SQLITE_ROLE.label eq roleLabel
+                    ).execute()
 }
