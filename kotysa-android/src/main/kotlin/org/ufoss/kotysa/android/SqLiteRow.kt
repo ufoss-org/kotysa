@@ -12,9 +12,7 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 
 @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-internal class SqLiteRow(
-        private val sqLiteCursor: Cursor
-) : Row() {
+internal class SqLiteRow internal constructor(private val sqLiteCursor: Cursor) : Row {
     override fun <T : Any> get(index: Int, clazz: Class<T>) =
             if (sqLiteCursor.isNull(index)) {
                 null

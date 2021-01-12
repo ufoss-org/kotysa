@@ -33,7 +33,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             Joinable<T, U, Any>(properties, from)
         }
 
-        @Suppress("UNCHECKED_CAST")
         protected fun <X : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<X>) {
             isAvailable(properties, kotysaTable)
             properties.fromClauses.add(FromClause(kotysaTable.table))

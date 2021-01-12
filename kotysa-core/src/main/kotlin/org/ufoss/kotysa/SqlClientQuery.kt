@@ -16,6 +16,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> select(table: Table<T>): Andable
         public infix fun <T : Any> select(column: ColumnNotNull<*, T>): Andable
         public infix fun <T : Any> select(column: ColumnNullable<*, T>): Andable
+        public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable
     }
 
     public interface Fromable {

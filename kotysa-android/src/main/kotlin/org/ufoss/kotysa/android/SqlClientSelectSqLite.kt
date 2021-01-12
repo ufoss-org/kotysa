@@ -20,6 +20,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 FirstSelect<T?>(client, Properties(tables)).apply { addSelectColumn(column) }
         override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+                SelectWithDsl(client, Properties(tables), dsl)
     }
 
     internal class FirstSelect<T> internal constructor(
@@ -93,52 +95,24 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
     }
 
+    internal class SelectWithDsl<T : Any> internal constructor(
+            client: SQLiteDatabase,
+            properties: Properties<T>,
+            dsl: (ValueProvider) -> T,
+    ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), SqlClientSelect.Fromable<T> {
+        private val from: From<T, *> = From<T, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+    }
+
     internal class From<T, U : Any> internal constructor(
             override val client: SQLiteDatabase,
             properties: Properties<T>,
     ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>>(properties), SqlClientSelect.From<T, U>, Return<T> {
         override val where = Where(client, properties)
         override val from = this
-
-        /*override fun <U : Any> join(
-                joinClass: KClass<U>,
-                alias: String?,
-                type: JoinType
-            ): SqlClientSelect.Joinable<T> =
-                Joinable(client, properties, joinClass, alias, type)*/
     }
-
-    /*
-    private class Joinable<T : Any, U : Any>(
-        private val client: SQLiteDatabase,
-        private val properties: Properties<T>,
-        private val joinClass: KClass<U>,
-        private val alias: String?,
-        private val type: JoinType
-    ) : SqlClientSelect.Joinable<T> {
-
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): SqlClientSelect.Join<T> {
-            val join = Join(client, properties)
-            join.addJoinClause(dsl, joinClass, alias, type)
-            return join
-        }
-    }
-
-    private class Join<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Join<T>, SqlClientSelect.Join<T>, Whereable<T>, Return<T>
-
-    private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, SqlClientSelect.Whereable<T> {
-        val client: SQLiteDatabase
-
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
-            val where = Where(client, properties)
-            where.addWhereClause(dsl)
-            return where
-        }
-    }
-     */
 
     internal class Where<T>(
             override val client: SQLiteDatabase,
@@ -164,9 +138,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
             if (!cursor.isLast) throw NonUniqueResultException()
-            val row = SqLiteRow(cursor)
-            select(row)
+            select(cursor.toRow())
         }
+
+
 
         override fun fetchOneOrNull() = with(properties) {
             val cursor = fetch()
@@ -174,16 +149,14 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 null
             } else {
                 if (!cursor.isLast) throw NonUniqueResultException()
-                val row = SqLiteRow(cursor)
-                select(row)
+                select(cursor.toRow())
             }
         }
 
         override fun fetchFirst() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
-            val row = SqLiteRow(cursor)
-            select(row)
+            select(cursor.toRow())
         }
 
         override fun fetchFirstOrNull() = with(properties) {
@@ -191,14 +164,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             if (!cursor.moveToFirst()) {
                 null
             } else {
-                val row = SqLiteRow(cursor)
-                select(row)
+                select(cursor.toRow())
             }
         }
 
         override fun fetchAll() = with(properties) {
             val cursor = fetch()
-            val row = SqLiteRow(cursor)
+            val row = cursor.toRow()
             val results = mutableListOf<T>()
             while (cursor.moveToNext()) {
                 results.add(select(row))

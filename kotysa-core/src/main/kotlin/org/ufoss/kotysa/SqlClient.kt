@@ -25,14 +25,11 @@ public interface SqlClient {
     public infix fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U>
     public infix fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?>
     public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
+    public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T>
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
-
-    /*protected abstract fun <T : Any> select(
-            resultClass: KClass<T>, dsl: (SelectDslApi.() -> T)?): SqlClientSelect.Select<T>
-     */
 }
 
 
@@ -41,6 +38,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(column: ColumnNotNull<*, T>): FirstSelect<T>
         override fun <T : Any> select(column: ColumnNullable<*, T>): FirstSelect<T?>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
     }
 
     public interface Fromable<T> : SqlClientQuery.Fromable {
@@ -67,17 +65,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
     public interface Select : Fromable<List<Any?>>, Andable
 
-    public interface From<T, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T> {
-
-        /*public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
-                joinInternal(U::class, alias, JoinType.INNER)
-
-        @PublishedApi
-        internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
-                join(joinClass, alias, type)
-
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>*/
-    }
+    public interface From<T, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T>
 
     public interface Where<T> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
     }
@@ -128,31 +116,9 @@ public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
 
     public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Any, Where<Any>>, Return
 
-        /*public fun <U : Any> innerJoin(joinedTable: Table<U>, alias: String? = null): Joinable =
-                join(joinedTable, alias, JoinType.INNER)
-
-        protected abstract fun <U : Any> join(joinedTable: Table<U>, alias: String?, type: JoinType): Joinable*/
-
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
-
-    /*public interface Joinable {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
-    }
-
-    public interface Join : Return {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }
-
-    public interface Where : Return {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }*/
-
-    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return {
-        /*public fun and(whereClause: WhereClause<T>): TypedWhere<T>
-        public fun or(whereClause: WhereClause<T>): TypedWhere<T>*/
-    }
+    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return
 
     public interface Return {
         /**

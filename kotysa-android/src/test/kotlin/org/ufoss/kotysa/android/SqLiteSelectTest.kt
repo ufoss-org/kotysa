@@ -11,9 +11,7 @@ import org.junit.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.SQLITE_USER
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.*
 
 class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
 
@@ -29,10 +27,10 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     @Test
     fun `Verify selectOneNonUnique throws NonUniqueResultException`() {
         assertThatThrownBy { repository.selectOneNonUnique() }
-            .isInstanceOf(NonUniqueResultException::class.java)
+                .isInstanceOf(NonUniqueResultException::class.java)
     }
 
-    /*@Test
+    @Test
     fun `Verify selectAllMappedToDto does the mapping`() {
         assertThat(repository.selectAllMappedToDto().toList())
             .hasSize(2)
@@ -42,7 +40,7 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
             )
     }
 
-    @Test
+    /* @Test
     fun `Verify selectWithJoin works correctly`() {
         assertThat(repository.selectWithJoin())
             .hasSize(2)
@@ -138,20 +136,17 @@ class UserRepositorySelect(
             (sqlClient selectFrom SQLITE_USER
                     ).fetchOne()
 
-    /*fun selectAllMappedToDto() =
-        sqlClient.select {
-            UserDto(
-                "${it[SqLiteUser::firstname]} ${it[SqLiteUser::lastname]}",
-                it[SqLiteUser::alias]
-            )
-        }.fetchAll()
+    fun selectAllMappedToDto() =
+            (sqlClient select {
+                UserDto("${it[SQLITE_USER.firstname]} ${it[SQLITE_USER.lastname]}", it[SQLITE_USER.alias])
+            }
+                    from SQLITE_USER
+                    ).fetchAll()
 
     fun selectWithJoin() =
-        sqlClient.select { UserWithRoleDto(it[SqLiteUser::lastname], it[SqLiteRole::label]) }
-            .innerJoin<SqLiteRole>().on { it[SqLiteUser::roleId] }
-            .fetchAll()
-
-     */
+            (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname], it[SQLITE_ROLE.label]) }
+                    from SQLITE_USER innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
+                    ).fetchAll()
 
     fun selectAllStream() =
             (sqlClient selectFrom SQLITE_USER

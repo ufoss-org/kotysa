@@ -14,7 +14,7 @@ import kotlin.reflect.full.primaryConstructor
 public interface Field<T> {
     public val properties: DefaultSqlClientCommon.Properties
     public val fieldNames: List<String>
-    public val builder: (Row) -> T
+    public val builder: (RowImpl) -> T
 }
 
 public interface FieldNotNull<T : Any> : Field<T>
@@ -27,44 +27,41 @@ public class CountField<T : Any, U : Any> internal constructor(
 ) : FieldNotNull<Int> {
     override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
 
-    override val builder: (Row) -> Int = { row ->
+    override val builder: (RowImpl) -> Int = { row ->
         row.getAndIncrement(Int::class.javaObjectType)!!
     }
 }
 
-public sealed class ColumnField<T : Any, U : Any>(
+internal sealed class ColumnField<T : Any, U : Any>(
         properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>,
 ) {
     protected val columnFieldNames: List<String> = listOf(column.getFieldName(properties.tables.allColumns))
 
-    @Suppress("UNCHECKED_CAST")
-    internal val columnBuilder: (Row) -> U? = { row ->
-        row.getAndIncrement(column.getKotysaColumn(properties.availableColumns).columnClass.javaObjectType as Class<U>)
-    }
+    internal val columnBuilder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
 }
 
-public class ColumnFieldNotNull<T : Any, U : Any> internal constructor(
+internal class ColumnFieldNotNull<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         column: ColumnNotNull<T, U>,
 ) : ColumnField<T, U>(properties, column), FieldNotNull<U> {
     override val fieldNames: List<String> = columnFieldNames
     @Suppress("UNCHECKED_CAST")
-    override val builder: (Row) -> U = columnBuilder as (Row) -> U
+    override val builder: (RowImpl) -> U = columnBuilder as (RowImpl) -> U
 }
 
-public class ColumnFieldNullable<T : Any, U : Any> internal constructor(
+internal class ColumnFieldNullable<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         column: ColumnNullable<T, U>
 ) : ColumnField<T, U>(properties, column), FieldNullable<U> {
     override val fieldNames: List<String> = columnFieldNames
-    override val builder: (Row) -> U? = columnBuilder
+    override val builder: (RowImpl) -> U? = columnBuilder
 }
 
 /**
  * Selected field
  */
-public class TableField<T : Any> internal constructor(
+internal class TableField<T : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         internal val table: Table<T>,
 ) : Field<T> {
@@ -73,7 +70,7 @@ public class TableField<T : Any> internal constructor(
             table.columns.map { column -> column.getFieldName(properties.tables.allColumns) }
 
     @Suppress("UNCHECKED_CAST")
-    override val builder: (Row) -> T = { row ->
+    override val builder: (RowImpl) -> T = { row ->
         val kotysaTable = table.getKotysaTable(properties.availableTables)
         val associatedColumns = mutableListOf<KotysaColumn<*, *>>()
         val constructor = getTableConstructor(kotysaTable.tableClass)
@@ -166,6 +163,20 @@ public class TableField<T : Any> internal constructor(
     }
 }
 
+internal class FieldDsl<T : Any>(
+        override val properties: DefaultSqlClientSelect.Properties<T>,
+        private val dsl: (ValueProvider) -> T
+): FieldNotNull<T> {
+    private val selectDsl = SelectDsl(properties)
+
+    override val fieldNames: List<String> = FieldValueProvider(properties).initialize(dsl)
+
+    override val builder: (RowImpl) -> T = { row ->
+        selectDsl.row = row
+        dsl(selectDsl)
+    }
+}
+
 // Extension functions
 
 internal fun <T : Any, U : Any> ColumnNotNull<T, U>.toField(
@@ -176,7 +187,7 @@ internal fun <T : Any, U : Any> ColumnNullable<T, U>.toField(
         properties: DefaultSqlClientCommon.Properties
 ): ColumnFieldNullable<T, U> = ColumnFieldNullable(properties, this)
 
-public fun <T : Any> Table<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
+internal fun <T : Any> Table<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
         TableField(properties, this)
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
