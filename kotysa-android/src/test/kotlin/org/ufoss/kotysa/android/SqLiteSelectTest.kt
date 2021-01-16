@@ -33,23 +33,22 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() {
         assertThat(repository.selectAllMappedToDto().toList())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
-            )
+                .hasSize(2)
+                .containsExactlyInAnyOrder(
+                        UserDto("John Doe", null),
+                        UserDto("Big Boss", "TheBoss")
+                )
     }
 
-    /* @Test
+    @Test
     fun `Verify selectWithJoin works correctly`() {
         assertThat(repository.selectWithJoin())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(
-                UserWithRoleDto(sqLiteJdoe.lastname, sqLiteUser.label),
-                UserWithRoleDto(sqLiteBboss.lastname, sqLiteAdmin.label)
-            )
+                .hasSize(2)
+                .containsExactlyInAnyOrder(
+                        UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                        UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                )
     }
-     */
 
     @Test
     fun `Verify selectAllStream returns all users`() {

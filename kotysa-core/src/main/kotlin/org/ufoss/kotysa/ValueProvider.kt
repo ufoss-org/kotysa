@@ -4,6 +4,12 @@
 
 package org.ufoss.kotysa
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.util.*
+
 
 public interface ValueProvider {
     public operator fun <T : Any, U : Any> get(column: ColumnNotNull<T, U>): U
@@ -20,9 +26,23 @@ internal class FieldValueProvider<T> internal constructor(
                 field is CountField<*, *> && field.dsl == dsl && field.alias == alias
             }.values.first()]!!*/
 
-    override fun <T : Any, U : Any> get(column: ColumnNotNull<T, U>): Nothing {
+    override fun <T : Any, U : Any> get(column: ColumnNotNull<T, U>): U {
         addSelectedFieldName(column.getFieldName(properties.tables.allColumns))
-        return null as Nothing
+        val columnClass = column.getKotysaColumn(properties.tables.allColumns).columnClass
+        @Suppress("UNCHECKED_CAST")
+        return when (columnClass) {
+            String::class -> ""
+            LocalDateTime::class -> LocalDateTime.MAX
+            kotlinx.datetime.LocalDateTime::class -> kotlinx.datetime.LocalDateTime(2016, 2, 15, 16, 57, 0, 0)
+            LocalDate::class -> LocalDate.MAX
+            kotlinx.datetime.LocalDate::class -> kotlinx.datetime.LocalDate(2016, 2, 15)
+            OffsetDateTime::class -> OffsetDateTime.now()
+            LocalTime::class -> LocalTime.MAX
+            Boolean::class -> false
+            UUID::class -> UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f")
+            Int::class -> 42
+            else -> throw RuntimeException("$columnClass is not supported yet")
+        } as U
     }
 
     override fun <T : Any, U : Any> get(column: ColumnNullable<T, U>): U? {
