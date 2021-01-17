@@ -52,6 +52,8 @@ internal class SqlClientSqLite(
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+    override fun <T : Any> count(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).count(column)
 
 
     override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =

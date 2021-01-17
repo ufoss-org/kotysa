@@ -26,6 +26,7 @@ public interface SqlClient {
     public infix fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?>
     public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
+    public infix fun <T : Any> count(column: Column<*, T>): SqlClientSelect.FirstSelect<Int>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T>
 
@@ -39,6 +40,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(column: ColumnNullable<*, T>): FirstSelect<T?>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
+        override fun <T : Any> count(column: Column<*, T>): FirstSelect<Int>
     }
 
     public interface Fromable<T> : SqlClientQuery.Fromable {

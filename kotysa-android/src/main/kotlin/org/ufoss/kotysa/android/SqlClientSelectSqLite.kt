@@ -22,6 +22,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
         override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, Properties(tables), dsl)
+        override fun <T : Any> count(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> =
+                FirstSelect<Int>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 
     internal class FirstSelect<T> internal constructor(

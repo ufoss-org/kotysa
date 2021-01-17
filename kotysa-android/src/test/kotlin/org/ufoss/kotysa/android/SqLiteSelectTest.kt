@@ -25,6 +25,12 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     }
 
     @Test
+    fun `Verify countAll returns all users' count`() {
+        assertThat(repository.countAllUsers())
+                .isEqualTo(2)
+    }
+
+    @Test
     fun `Verify selectOneNonUnique throws NonUniqueResultException`() {
         assertThatThrownBy { repository.selectOneNonUnique() }
                 .isInstanceOf(NonUniqueResultException::class.java)

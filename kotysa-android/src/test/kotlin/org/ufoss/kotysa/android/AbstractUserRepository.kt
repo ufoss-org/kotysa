@@ -46,6 +46,11 @@ abstract class AbstractUserRepository(
 
     fun selectAll() = sqlClient selectAllFrom SQLITE_USER
 
+    fun countAllUsers() =
+            (sqlClient count SQLITE_USER.id
+                    from SQLITE_USER
+                    ).fetchOne()
+
     fun selectFirstByFirstname(firstname: String) =
             (sqlClient selectFrom SQLITE_USER
                     where SQLITE_USER.firstname eq firstname

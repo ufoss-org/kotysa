@@ -63,6 +63,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public fun <U : Any> addSelectColumn(column: ColumnNullable<*, U>) {
             properties.selectedFields.add(column.toField(properties))
         }
+
+        public fun <U : Any> addCountColumn(column: Column<*, U>) {
+            properties.selectedFields.add(CountField(properties, column))
+        }
     }
 
     public abstract class SelectWithDsl<T : Any> protected constructor(

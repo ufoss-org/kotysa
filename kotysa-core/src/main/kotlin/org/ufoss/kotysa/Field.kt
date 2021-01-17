@@ -21,7 +21,7 @@ public interface FieldNotNull<T : Any> : Field<T>
 
 public interface FieldNullable<T : Any> : Field<T?>
 
-public class CountField<T : Any, U : Any> internal constructor(
+internal class CountField<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>?,
 ) : FieldNotNull<Int> {
