@@ -12,12 +12,12 @@ import org.ufoss.kotysa.tables
 @Suppress("UNUSED_VARIABLE")
 class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
 
-    data class Role(
+    private data class Role(
             val label: String,
             val id: String
     )
 
-    data class User(
+    private data class User(
             val firstname: String,
             val lastname: String,
             val isAdmin: Boolean,
@@ -26,12 +26,12 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
             val id: String
     )
 
-    object SQLITE_ROLE : SqLiteTable<Role>("roles") {
+    private object SQLITE_ROLE : SqLiteTable<Role>("roles") {
         val id = text(Role::id).primaryKey()
         val label = text(Role::label)
     }
 
-    object SQLITE_USER : SqLiteTable<User>("users") {
+    private object SQLITE_USER : SqLiteTable<User>("users") {
         val id = text(User::id).primaryKey()
         val firstname = text(User::firstname, "fname")
         val lastname = text(User::lastname, "lname")
@@ -41,7 +41,7 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
         val alias = text(User::alias)
     }
 
-    val tables = tables().sqlite(
+    private val tables = tables().sqlite(
             SQLITE_ROLE,
             SQLITE_USER,
     )

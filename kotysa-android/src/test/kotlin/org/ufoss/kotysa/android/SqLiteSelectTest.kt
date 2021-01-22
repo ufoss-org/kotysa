@@ -130,6 +130,12 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
         assertThat(repository.selectFirstnameAndLastnameAndAliasAndIsAdminById(userJdoe.id))
                 .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
     }
+
+    @Test
+    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleNameFromUserId(userBboss.id))
+                .isEqualTo(roleAdmin.label)
+    }
 }
 
 class UserRepositorySelect(
@@ -202,4 +208,16 @@ class UserRepositorySelect(
                     from SQLITE_USER
                     where SQLITE_USER.id eq id
                     ).fetchOne()
+
+    fun countAllUsersAndAliases() =
+            (sqlClient selectCount SQLITE_USER.id
+                    andCount SQLITE_USER.alias
+                    from SQLITE_USER
+                    ).fetchOne()
+
+    fun selectRoleNameFromUserId(userId: Int) =
+            (sqlClient select SQLITE_ROLE.label
+                    from SQLITE_ROLE innerJoin SQLITE_USER on SQLITE_ROLE.id eq SQLITE_USER.roleId
+                    where SQLITE_USER.id eq userId)
+                    .fetchOne()
 }
