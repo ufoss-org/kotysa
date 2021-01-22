@@ -22,7 +22,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
         override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, Properties(tables), dsl)
-        override fun <T : Any> count(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> =
+        override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> =
                 FirstSelect<Int>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 
@@ -43,6 +43,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 SecondSelect(client, properties as Properties<Pair<T, U?>>).apply { addSelectColumn(column) }
         override fun <U : Any> and(table: Table<U>): SqlClientSelect.SecondSelect<T, U> =
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
+        override fun <U : Any> andCount(column: Column<*, U>): SqlClientSelect.SecondSelect<T, Int> =
+                SecondSelect(client, properties as Properties<Pair<T, Int>>).apply { addCountColumn(column) }
     }
 
     internal class SecondSelect<T, U> internal constructor(
@@ -62,6 +64,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.ThirdSelect<T, U, V> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, Int> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Int>>).apply { addCountColumn(column) }
     }
 
     internal class ThirdSelect<T, U, V> internal constructor(
@@ -81,6 +85,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
         override fun <W : Any> and(table: Table<W>): SqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
+        override fun <W : Any> andCount(column: Column<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
     }
 
     internal class Select internal constructor(
@@ -95,6 +101,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> and(column: ColumnNotNull<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(column: ColumnNullable<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.Select = this.apply { addCountColumn(column) }
     }
 
     internal class SelectWithDsl<T : Any> internal constructor(

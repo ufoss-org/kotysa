@@ -25,9 +25,9 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     }
 
     @Test
-    fun `Verify countAll returns all users' count`() {
-        assertThat(repository.countAllUsers())
-                .isEqualTo(2)
+    fun `Verify countAllUsersAndAliases returns all users' count`() {
+        assertThat(repository.countAllUsersAndAliases())
+                .isEqualTo(Pair(2, 1))
     }
 
     @Test

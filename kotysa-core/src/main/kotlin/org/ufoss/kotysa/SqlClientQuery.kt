@@ -17,7 +17,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> select(column: ColumnNotNull<*, T>): Andable
         public infix fun <T : Any> select(column: ColumnNullable<*, T>): Andable
         public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable
-        public infix fun <T : Any> count(column: Column<*, T>): Andable
+        public infix fun <T : Any> selectCount(column: Column<*, T>): Andable
     }
 
     public interface Fromable {
@@ -28,6 +28,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(table: Table<U>): Andable
         public infix fun <U : Any> and(column: ColumnNotNull<*, U>): Andable
         public infix fun <U : Any> and(column: ColumnNullable<*, U>): Andable
+        public infix fun <T : Any> andCount(column: Column<*, T>): Andable
     }
 
     public interface From<T : Any, U : From<T, U>> {

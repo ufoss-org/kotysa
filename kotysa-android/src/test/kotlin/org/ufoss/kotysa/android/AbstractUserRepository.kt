@@ -46,8 +46,9 @@ abstract class AbstractUserRepository(
 
     fun selectAll() = sqlClient selectAllFrom SQLITE_USER
 
-    fun countAllUsers() =
-            (sqlClient count SQLITE_USER.id
+    fun countAllUsersAndAliases() =
+            (sqlClient selectCount SQLITE_USER.id
+                    andCount SQLITE_USER.alias
                     from SQLITE_USER
                     ).fetchOne()
 
