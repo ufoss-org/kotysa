@@ -17,16 +17,12 @@ data class H2User(
 )
 
 object H2_USER : H2Table<H2User>() {
-    val id = column { it[H2User::id].uuid() }
+    val id = uuid(H2User::id)
             .primaryKey()
-    val firstname = column { it[H2User::firstname].varchar {
-        name = "fname"
-    } }
-    val lastname = column { it[H2User::lastname].varchar {
-        name = "lname"
-    } }
-    val isAdmin = column { it[H2User::isAdmin].boolean() }
-    val alias = column { it[H2User::alias].varchar() }
+    val firstname = varchar(H2User::firstname, "fname")
+    val lastname = varchar(H2User::lastname, "lname")
+    val isAdmin = boolean(H2User::isAdmin)
+    val alias = varchar(H2User::alias)
 }
 
 fun h2Tables() = tables().h2(H2_USER)

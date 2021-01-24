@@ -10,21 +10,11 @@ import org.ufoss.kotysa.*
  * Represents a MySQL Table
  *
  * **Extend this class with an object**
+ *
+ * supported types follow : [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
  * @param T Entity type associated with this table
  */
 public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
-
-    /**
-     * Declare a Column, supported types follow : [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
-     */
-    protected fun <U : DbColumn<T, *>> column(
-            @BuilderInference dsl: MysqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
-    ): U {
-        val columnDsl = MysqlColumnDsl(dsl)
-        val column = columnDsl.initialize<U>(columnDsl)
-        addColumn(column)
-        return column
-    }
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: MysqlTable<V>,

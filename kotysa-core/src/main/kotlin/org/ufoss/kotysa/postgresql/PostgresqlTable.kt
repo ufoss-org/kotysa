@@ -10,21 +10,11 @@ import org.ufoss.kotysa.*
  * Represents a PostgreSQL Table
  *
  * **Extend this class with an object**
+ *
+ * supported types follow : [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
  * @param T Entity type associated with this table
  */
 public abstract class PostgresqlTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
-
-    /**
-     * Declare a Column, supported types follow : [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
-     */
-    protected fun <U : DbColumn<T, *>> column(
-            @BuilderInference dsl:PostgresqlColumnDsl<T, U>.(TableColumnPropertyProvider<T>) -> U
-    ): U {
-        val columnDsl = PostgresqlColumnDsl(dsl)
-        val column = columnDsl.initialize<U>(columnDsl)
-        addColumn(column)
-        return column
-    }
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: PostgresqlTable<V>,

@@ -21,6 +21,23 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
     internal lateinit var name: String
 
     override fun toString(): String {
-        return "DbColumn(name='$name', entityGetter=$entityGetter)"
+        return "DbColumn(entityGetter=$entityGetter)"
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as DbColumn<*, *>
+
+        if (entityGetter != other.entityGetter) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return entityGetter.hashCode()
+    }
+
+
 }

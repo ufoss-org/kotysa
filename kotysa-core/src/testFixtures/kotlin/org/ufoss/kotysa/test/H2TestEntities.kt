@@ -11,163 +11,126 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 object H2_ROLE : H2Table<RoleEntity>("roles") {
-    val id = column { it[RoleEntity::id].integer() }
+    val id = integer(RoleEntity::id)
             .primaryKey()
-    val label = column { it[RoleEntity::label].varchar() }
+    val label = varchar(RoleEntity::label)
 }
 
 object H2_USER : H2Table<UserEntity>("users") {
-    val id = column { it[UserEntity::id].integer() }
+    val id = integer(UserEntity::id)
             .primaryKey("PK_users")
-    val firstname = column {
-        it[UserEntity::firstname].varchar {
-            name = "fname"
-        }
-    }
-    val lastname = column {
-        it[UserEntity::lastname].varchar {
-            name = "lname"
-        }
-    }
-    val isAdmin = column { it[UserEntity::isAdmin].boolean() }
-    val roleId = column { it[UserEntity::roleId].integer() }
-            .foreignKey(H2_ROLE.id, "FK_users_roles")
-    val alias = column { it[UserEntity::alias].varchar() }
+    val firstname = varchar(UserEntity::firstname, "fname")
+    val lastname = varchar(UserEntity::lastname, "lname")
+    val isAdmin = boolean(UserEntity::isAdmin)
+    val roleId = integer(UserEntity::roleId)
+            .foreignKey(SQLITE_ROLE.id, "FK_users_roles")
+    val alias = varchar(UserEntity::alias)
 }
 
 object H2_ALL_TYPES_NOT_NULL : H2Table<AllTypesNotNullEntity>("all_types") {
-    val id = column { it[AllTypesNotNullEntity::id].integer() }
+    val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
     val string_named = varchar(AllTypesNotNullEntity::string)
-    val boolean = column { it[AllTypesNotNullEntity::boolean].boolean() }
-    val localDate = column { it[AllTypesNotNullEntity::localDate].date() }
-    val kotlinxLocalDate = column { it[AllTypesNotNullEntity::kotlinxLocalDate].date() }
-    val localTime = column { it[AllTypesNotNullEntity::localTim].time() } // todo test fractionalSecondsPart later
-    val localDateTime1 = column { it[AllTypesNotNullEntity::localDateTime1].dateTime() }
-    val localDateTime2 = column { it[AllTypesNotNullEntity::localDateTime2].timestamp() }
-    val kotlinxLocalDateTime1 = column { it[AllTypesNotNullEntity::kotlinxLocalDateTime1].dateTime() }
-    val kotlinxLocalDateTime2 = column { it[AllTypesNotNullEntity::kotlinxLocalDateTime2].timestamp() }
-    val int = column { it[AllTypesNotNullEntity::int].integer() }
+    val boolean = boolean(AllTypesNotNullEntity::boolean)
+    val localDate = date(AllTypesNotNullEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
+    val localTime = time(AllTypesNotNullEntity::localTim) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
+    val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
+    val int = integer(AllTypesNotNullEntity::int)
 }
 
 object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>("all_types_nullable") {
-    val id = column { it[AllTypesNullableEntity::id].integer() }
+    val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
-    val string = column { it[AllTypesNullableEntity::string].varchar() }
-    val localDate = column { it[AllTypesNullableEntity::localDate].date() }
-    val kotlinxLocalDate = column { it[AllTypesNullableEntity::kotlinxLocalDate].date() }
-    val localTime = column { it[AllTypesNullableEntity::localTim].time() } // todo test fractionalSecondsPart later
-    val localDateTime1 = column { it[AllTypesNullableEntity::localDateTime1].dateTime() }
-    val localDateTime2 = column { it[AllTypesNullableEntity::localDateTime2].timestamp() }
-    val kotlinxLocalDateTime1 = column { it[AllTypesNullableEntity::kotlinxLocalDateTime1].dateTime() }
-    val kotlinxLocalDateTime2 = column { it[AllTypesNullableEntity::kotlinxLocalDateTime2].timestamp() }
-    val int = column { it[AllTypesNullableEntity::int].integer() }
+    val string = varchar(AllTypesNullableEntity::string)
+    val localDate = date(AllTypesNullableEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
+    val localTime = time(AllTypesNullableEntity::localTim) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
+    val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime2)
+    val int = integer(AllTypesNullableEntity::int)
 }
 
 object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValueEntity>() {
-    val id = column { it[AllTypesNullableDefaultValueEntity::id].integer() }
+    val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
-    val string = column {
-        it[AllTypesNullableDefaultValueEntity::string].varchar {
-            defaultValue = "default"
-        }
-    }
-    val localDate = column {
-        it[AllTypesNullableDefaultValueEntity::localDate].date {
-            defaultValue = LocalDate.of(2019, 11, 4)
-        }
-    }
-    val kotlinxLocalDate = column {
-        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDate].date {
-            defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
-        }
-    }
-    val localTime = column {
-        it[AllTypesNullableDefaultValueEntity::localTim].time {
-            defaultValue = LocalTime.of(11, 25, 55, 123456789)
-        }
-    }
-    val localDateTime1 = column {
-        it[AllTypesNullableDefaultValueEntity::localDateTime1].dateTime {
-            defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
-        }
-    }
-    val localDateTime2 = column {
-        it[AllTypesNullableDefaultValueEntity::localDateTime2].timestamp {
-            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
-        }
-    }
-    val kotlinxLocalDateTime1 = column {
-        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1].dateTime {
-            defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
-        }
-    }
-    val kotlinxLocalDateTime2 = column {
-        it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2].timestamp {
-            defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
-        }
-    }
-    val int = column {
-        it[AllTypesNullableDefaultValueEntity::int].integer {
-            defaultValue = 42
-        }
-    }
+    val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
+    val localDate = date(AllTypesNullableDefaultValueEntity::localDate,
+            defaultValue = LocalDate.of(2019, 11, 4))
+    val kotlinxLocalDate = date(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+            defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
+    val localTime = time(AllTypesNullableDefaultValueEntity::localTim,
+            defaultValue = LocalTime.of(11, 25, 55, 123456789))
+    val localDateTime1 = dateTime(AllTypesNullableDefaultValueEntity::localDateTime1,
+            defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))
+    val localDateTime2 = timestamp(AllTypesNullableDefaultValueEntity::localDateTime2,
+            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0))
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+            defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
+    val kotlinxLocalDateTime2 = timestamp(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+            defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0))
+    val int = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
 }
 
 object H2_LOCAL_DATE : H2Table<LocalDateEntity>() {
-    val id = column { it[LocalDateEntity::id].integer() }
+    val id = integer(LocalDateEntity::id)
             .primaryKey()
-    val localDateNotNull = column { it[LocalDateEntity::localDateNotNull].date() }
-    val localDateNullable = column { it[LocalDateEntity::localDateNullable].date() }
+    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
+    val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
 object H2_KOTLINX_LOCAL_DATE : H2Table<KotlinxLocalDateEntity>() {
-    val id = column { it[KotlinxLocalDateEntity::id].integer() }
+    val id = integer(KotlinxLocalDateEntity::id)
             .primaryKey()
-    val localDateNotNull = column { it[KotlinxLocalDateEntity::localDateNotNull].date() }
-    val localDateNullable = column { it[KotlinxLocalDateEntity::localDateNullable].date() }
+    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
+    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
 object H2_LOCAL_DATE_TIME : H2Table<LocalDateTimeEntity>() {
-    val id = column { it[LocalDateTimeEntity::id].integer() }
+    val id = integer(LocalDateTimeEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = column { it[LocalDateTimeEntity::localDateTimeNotNull].dateTime() }
-    val localDateTimeNullable = column { it[LocalDateTimeEntity::localDateTimeNullable].dateTime() }
+    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
 object H2_KOTLINX_LOCAL_DATE_TIME : H2Table<KotlinxLocalDateTimeEntity>() {
-    val id = column { it[KotlinxLocalDateTimeEntity::id].integer() }
+    val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = column { it[KotlinxLocalDateTimeEntity::localDateTimeNotNull].dateTime() }
-    val localDateTimeNullable = column { it[KotlinxLocalDateTimeEntity::localDateTimeNullable].dateTime() }
+    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
 object H2_OFFSET_LOCAL_DATE_TIME : H2Table<OffsetDateTimeEntity>() {
-    val id = column { it[OffsetDateTimeEntity::id].integer() }
+    val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
-    val offsetDateTimeNotNull = column { it[OffsetDateTimeEntity::offsetDateTimeNotNull].timestampWithTimeZone() }
-    val offsetDateTimeNullable = column { it[OffsetDateTimeEntity::offsetDateTimeNullable].timestampWithTimeZone() }
+    val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
+    val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
 object H2_LOCAL_TIME : H2Table<LocalTimeEntity>() {
-    val id = column { it[LocalTimeEntity::id].integer() }
+    val id = integer(LocalTimeEntity::id)
             .primaryKey()
-    val localTimeNotNull = column { it[LocalTimeEntity::localTimeNotNull].time() }
-    val localTimeNullable = column { it[LocalTimeEntity::localTimeNullable].time() }
+    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
 object H2_INT : H2Table<IntEntity>() {
-    val id = column { it[IntEntity::id].autoIncrementInteger() }
+    val id = autoIncrementInteger(IntEntity::id)
             .primaryKey()
-    val intNotNull = column { it[IntEntity::intNotNull].integer() }
-    val intNullable = column { it[IntEntity::intNullable].integer() }
+    val intNotNull = integer(IntEntity::intNotNull)
+    val intNullable = integer(IntEntity::intNullable)
 }
 
 object H2_UUID : H2Table<UuidEntity>() {
-    val id = column { it[UuidEntity::id].uuid() }
+    val id = uuid(UuidEntity::id)
             .primaryKey()
-    val uuidNotNull = column { it[UuidEntity::uuidNotNull].uuid() }
-    val uuidNullable = column { it[UuidEntity::uuidNullable].uuid() }
+    val uuidNotNull = uuid(UuidEntity::uuidNotNull)
+    val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
 val h2Tables = tables().h2(

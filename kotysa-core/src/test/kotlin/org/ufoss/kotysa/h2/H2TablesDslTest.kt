@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.ufoss.kotysa.DbTypeChoice
 import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,7 +30,7 @@ class H2TablesDslTest {
                         tuple("boolean", SqlType.BOOLEAN, false, false),
                         tuple("localDate", SqlType.DATE, false, false),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, false),
-                        tuple("localTim", SqlType.TIME, false, false),
+                        tuple("localTime", SqlType.TIME, false, false),
                         tuple("localDateTime1", SqlType.DATE_TIME, false, false),
                         tuple("localDateTime2", SqlType.TIMESTAMP, false, false),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, false),
@@ -47,7 +48,7 @@ class H2TablesDslTest {
                         tuple("string", SqlType.VARCHAR, true, false),
                         tuple("localDate", SqlType.DATE, true, false),
                         tuple("kotlinxLocalDate", SqlType.DATE, true, false),
-                        tuple("localTim", SqlType.TIME, true, false),
+                        tuple("localTime", SqlType.TIME, true, false),
                         tuple("localDateTime1", SqlType.DATE_TIME, true, false),
                         tuple("localDateTime2", SqlType.TIMESTAMP, true, false),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, true, false),
@@ -65,7 +66,7 @@ class H2TablesDslTest {
                         tuple("string", SqlType.VARCHAR, false, "default"),
                         tuple("localDate", SqlType.DATE, false, LocalDate.of(2019, 11, 4)),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, kotlinx.datetime.LocalDate(2019, 11, 6)),
-                        tuple("localTim", SqlType.TIME, false, LocalTime.of(11, 25, 55, 123456789)),
+                        tuple("localTime", SqlType.TIME, false, LocalTime.of(11, 25, 55, 123456789)),
                         tuple("localDateTime1", SqlType.DATE_TIME, false, LocalDateTime.of(2018, 11, 4, 0, 0)),
                         tuple("localDateTime2", SqlType.TIMESTAMP, false, LocalDateTime.of(2019, 11, 4, 0, 0)),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)),
@@ -75,7 +76,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test primary and foreign key`() {
-        val tables = DbTypeChoice.h2(
+        val tables = tables().h2(
                 H2_ROLE,
                 H2_USER
         )
