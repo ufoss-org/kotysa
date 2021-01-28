@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc
-
+/*
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
@@ -51,3 +51,4 @@ abstract class JavaUserRepository(client: JdbcOperations, tables: Tables) : Repo
                         it[JavaUser::getAlias1])
             }.fetchAll()
 }
+*/

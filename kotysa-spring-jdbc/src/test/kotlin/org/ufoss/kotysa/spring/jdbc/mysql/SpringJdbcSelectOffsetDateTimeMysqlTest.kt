@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -261,3 +261,4 @@ class OffsetDateTimeRepositoryMysqlSelect(client: JdbcOperations) : Repository {
             .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
             .fetchAll()
 }
+*/

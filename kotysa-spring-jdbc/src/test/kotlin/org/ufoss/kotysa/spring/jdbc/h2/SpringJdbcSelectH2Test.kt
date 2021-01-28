@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -121,3 +121,4 @@ class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRep
                     .where { it[H2User::alias] `in` aliases }
                     .fetchAll()
 }
+*/

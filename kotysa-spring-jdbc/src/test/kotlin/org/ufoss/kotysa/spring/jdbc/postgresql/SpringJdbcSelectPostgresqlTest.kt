@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
@@ -89,3 +89,4 @@ class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcOperations) : Abstrac
                     .innerJoin<PostgresqlRole>().on { it[PostgresqlUser::roleId] }
                     .fetchAll()
 }
+*/

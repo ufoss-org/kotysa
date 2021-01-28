@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
@@ -44,3 +44,4 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
                     .where { it[MysqlUser::firstname] eq firstname }
                     .fetchFirstOrNull()
 }
+*/

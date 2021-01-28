@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-
+/*
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
@@ -43,3 +43,4 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
             .where { it[PostgresqlUser::firstname] eq firstname }
             .fetchFirstOrNull()
 }
+*/

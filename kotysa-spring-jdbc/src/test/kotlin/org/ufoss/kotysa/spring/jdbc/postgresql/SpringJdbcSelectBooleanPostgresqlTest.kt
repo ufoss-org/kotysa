@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -44,3 +44,4 @@ class UserRepositorySpringJdbcPostgresqlSelectBoolean(client: JdbcOperations) : 
             .where { it[PostgresqlUser::isAdmin] eq value }
             .fetchAll()
 }
+*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
@@ -254,3 +254,4 @@ class KotlinxLocalDateRepositoryMysqlSelect(client: JdbcOperations) : Repository
             .where { it[MysqlKotlinxLocalDate::localDateNullable] afterOrEq localDate }
             .fetchAll()
 }
+*/

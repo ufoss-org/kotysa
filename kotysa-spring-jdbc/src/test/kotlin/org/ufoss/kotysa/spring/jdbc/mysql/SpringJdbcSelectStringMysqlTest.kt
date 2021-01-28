@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
@@ -205,3 +205,4 @@ class UserRepositorySpringJdbcMysqlSelectString(client: JdbcOperations) : Abstra
             .where { it[MysqlUser::alias] endsWith aliasEndsWith }
             .fetchAll()
 }
+*/

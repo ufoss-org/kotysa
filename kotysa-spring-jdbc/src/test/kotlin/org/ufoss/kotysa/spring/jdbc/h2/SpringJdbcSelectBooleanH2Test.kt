@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
@@ -39,3 +39,4 @@ class UserRepositorySpringJdbcH2SelectBoolean(client: JdbcOperations) : Abstract
             .where { it[H2User::isAdmin] eq value }
             .fetchAll()
 }
+*/

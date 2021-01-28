@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -130,3 +130,4 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
                     .where { it[MysqlAllTypesNotNull::id] eq mysqlAllTypesNotNull.id }
                     .execute()
 }
+*/

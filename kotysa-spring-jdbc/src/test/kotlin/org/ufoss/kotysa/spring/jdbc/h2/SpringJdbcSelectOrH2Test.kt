@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
@@ -33,3 +33,4 @@ class UserRepositorySpringJdbcH2SelectOr(client: JdbcOperations) : AbstractUserR
             .or { it[H2Role::label] eq label2 }
             .fetchAll()
 }
+*/

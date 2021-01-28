@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -125,3 +125,4 @@ class UserRepositorySpringJdbcMysqlUpdateDelete(client: JdbcOperations) : Abstra
             .where { it[MysqlRole::label] eq roleLabel }
             .execute()
 }
+*/

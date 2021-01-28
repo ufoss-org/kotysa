@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
@@ -44,3 +44,4 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
             .where { it[H2User::firstname] eq firstname }
             .fetchFirstOrNull()
 }
+*/

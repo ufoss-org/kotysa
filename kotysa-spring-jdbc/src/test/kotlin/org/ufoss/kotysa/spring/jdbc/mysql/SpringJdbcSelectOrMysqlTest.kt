@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -36,3 +36,4 @@ class UserRepositorySpringJdbcMysqlSelectOr(client: JdbcOperations) : AbstractUs
             .or { it[MysqlRole::label] eq label2 }
             .fetchAll()
 }
+*/

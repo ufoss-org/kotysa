@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -250,3 +250,4 @@ class IntRepositoryMysqlSelect(client: JdbcOperations) : Repository {
             .where { it[MysqlInt::intNullable] supOrEq int }
             .fetchAll()
 }
+*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
@@ -58,3 +58,4 @@ private val tables =
 
 
 class JavaUserMysqlRepository(client: JdbcOperations) : JavaUserRepository(client, tables)
+*/

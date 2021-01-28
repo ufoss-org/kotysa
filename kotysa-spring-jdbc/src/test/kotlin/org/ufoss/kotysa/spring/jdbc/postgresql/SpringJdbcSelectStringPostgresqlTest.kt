@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
@@ -205,3 +205,4 @@ class UserRepositorySpringJdbcPostgresqlSelectString(client: JdbcOperations) : A
             .where { it[PostgresqlUser::alias] endsWith aliasEndsWith }
             .fetchAll()
 }
+*/

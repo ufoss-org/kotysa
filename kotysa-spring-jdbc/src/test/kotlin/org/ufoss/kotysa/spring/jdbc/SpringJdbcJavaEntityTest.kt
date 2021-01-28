@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.UserDto
@@ -93,3 +93,4 @@ interface SpringJdbcJavaEntityTest<T : JavaUserRepository>: SpringJdbcRepository
         }
     }
 }
+*/

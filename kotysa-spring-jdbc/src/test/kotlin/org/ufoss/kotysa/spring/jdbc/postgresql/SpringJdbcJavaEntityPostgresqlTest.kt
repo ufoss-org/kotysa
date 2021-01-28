@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-
+/*
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
@@ -48,3 +48,4 @@ private val tables =
 
 
 class JavaUserPostgresqlRepository(client: JdbcOperations) : JavaUserRepository(client, tables)
+*/

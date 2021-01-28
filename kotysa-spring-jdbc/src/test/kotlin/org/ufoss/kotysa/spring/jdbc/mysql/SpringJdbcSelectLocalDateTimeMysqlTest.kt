@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -241,3 +241,4 @@ class LocalDateTimeRepositoryMysqlSelect(client: JdbcOperations) : Repository {
             .where { it[MysqlLocalDateTime::localDateTimeNullable] afterOrEq localDateTime }
             .fetchAll()
 }
+*/

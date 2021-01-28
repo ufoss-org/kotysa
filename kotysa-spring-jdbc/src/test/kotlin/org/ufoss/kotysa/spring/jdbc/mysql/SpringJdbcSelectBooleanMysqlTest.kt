@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -45,3 +45,4 @@ class UserRepositorySpringJdbcMysqlSelectBoolean(client: JdbcOperations) : Abstr
                     .where { it[MysqlUser::isAdmin] eq value }
                     .fetchAll()
 }
+*/

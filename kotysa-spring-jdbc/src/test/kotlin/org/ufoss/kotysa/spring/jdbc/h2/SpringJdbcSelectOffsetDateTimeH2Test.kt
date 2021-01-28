@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
@@ -273,3 +273,4 @@ class OffsetDateTimeRepositoryH2Select(client: JdbcOperations) : Repository {
             .where { it[H2OffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
             .fetchAll()
 }
+*/

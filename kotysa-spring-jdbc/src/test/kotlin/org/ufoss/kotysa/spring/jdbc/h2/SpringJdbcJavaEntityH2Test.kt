@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
 import org.ufoss.kotysa.spring.jdbc.SpringJdbcJavaEntityTest
@@ -42,3 +42,4 @@ private val tables =
 
 
 class JavaUserH2Repository(client: JdbcOperations) : JavaUserRepository(client, tables)
+*/

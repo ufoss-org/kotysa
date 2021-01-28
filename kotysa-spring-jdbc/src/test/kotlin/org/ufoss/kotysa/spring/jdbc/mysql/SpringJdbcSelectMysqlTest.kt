@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
@@ -89,3 +89,4 @@ class UserRepositorySpringJdbcMysqlSelect(client: JdbcOperations) : AbstractUser
                     .innerJoin<MysqlRole>().on { it[MysqlUser::roleId] }
                     .fetchAll()
 }
+*/

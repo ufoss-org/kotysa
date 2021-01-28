@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.sample
-
+/*
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.tables
@@ -94,3 +94,4 @@ class UserRepositorySpringJdbc(client: JdbcOperations) {
                 .execute()
     }
 }
+*/

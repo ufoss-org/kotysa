@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
@@ -236,3 +236,4 @@ class LocalDateTimeAsTimestampRepositoryH2Select(client: JdbcOperations) : Repos
             .where { it[H2LocalDateTime::localDateTimeAsTimestampNullable] afterOrEq localDateTime }
             .fetchAll()
 }
+*/
