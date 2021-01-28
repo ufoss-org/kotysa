@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 internal class SqlClientSpringJdbc(
         private val client: JdbcOperations,
         override val tables: Tables
-) : SqlClient(), DefaultSqlClient {
+) : SqlClient, DefaultSqlClient {
 
     /**
      * Computed property : only created once on first call
@@ -35,6 +35,12 @@ internal class SqlClientSpringJdbc(
         return client.execute(createTableSql)
     }
 
+    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
+            SqlClientDeleteSpringJdbc.Delete(namedParameterJdbcOperations, tables, tableClass)
+
+    override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
+            SqlClientUpdateSpringJdbc.Update(namedParameterJdbcOperations, tables, tableClass)
+
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
 
@@ -51,17 +57,47 @@ internal class SqlClientSpringJdbc(
         namedParameterJdbcOperations.update(insertSql(row), parameters)
     }
 
-    override fun insert(vararg rows: Any) {
+    override fun <T : Any> insert(vararg rows: T) {
         checkRowsAreMapped(*rows)
 
         rows.forEach { row -> insert(row) }
     }
 
-    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteSpringJdbc.Delete(namedParameterJdbcOperations, tables, tableClass)
+    override fun <T : Any> createTable(table: Table<T>) {
+        TODO("Not yet implemented")
+    }
 
-    override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSpringJdbc.Update(namedParameterJdbcOperations, tables, tableClass)
+    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> {
+        TODO("Not yet implemented")
+    }
 }
 
 /**
