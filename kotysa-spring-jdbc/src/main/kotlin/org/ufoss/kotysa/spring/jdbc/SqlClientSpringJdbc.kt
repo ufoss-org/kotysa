@@ -45,7 +45,7 @@ internal class SqlClientSpringJdbc(
         val table = tables.getTable(row::class)
 
         val parameters = MapSqlParameterSource()
-        table.columns.values
+        table.columns
                 // do nothing for null values with default or Serial type
                 .filterNot { column ->
                     column.entityGetter(row) == null
