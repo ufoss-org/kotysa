@@ -18,7 +18,7 @@ private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableNam
 
 @Suppress("UNCHECKED_CAST")
 public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
-        requireNotNull(this.allTables[table]) { tableMustBeMapped(table.name) } as KotysaTable<T>
+        requireNotNull(this.allTables[table]) { tableMustBeMapped(table.toString()) } as KotysaTable<T>
 
 @Suppress("UNCHECKED_CAST")
 public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =

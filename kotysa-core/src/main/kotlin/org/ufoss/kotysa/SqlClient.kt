@@ -28,7 +28,8 @@ public interface SqlClient {
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
     public infix fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Int>
 
-    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T>
+    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
+            select(table).from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
 }

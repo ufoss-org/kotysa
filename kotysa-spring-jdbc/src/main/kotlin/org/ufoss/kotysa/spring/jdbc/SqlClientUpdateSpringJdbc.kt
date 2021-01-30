@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc
-
+/*
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.ufoss.kotysa.*
@@ -114,3 +114,4 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 }
+*/
