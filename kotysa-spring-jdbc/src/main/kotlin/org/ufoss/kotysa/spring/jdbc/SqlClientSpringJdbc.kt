@@ -56,8 +56,7 @@ internal class SqlClientSpringJdbc(
             SqlClientDeleteSpringJdbc.FirstDelete(namedParameterJdbcOperations, tables, table)
 
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-            throw TODO()
-            //SqlClientUpdateSpringJdbc.Update(namedParameterJdbcOperations, tables, table)
+            SqlClientUpdateSpringJdbc.FirstUpdate(namedParameterJdbcOperations, tables, table)
 
     override fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)

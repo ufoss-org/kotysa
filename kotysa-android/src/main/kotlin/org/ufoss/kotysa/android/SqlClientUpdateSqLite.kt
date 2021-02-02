@@ -34,64 +34,11 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
         override val from = this
     }
 
-    /*
-    private class Joinable<T : Any, U : Any>(
-        private val client: SQLiteDatabase,
-        private val properties: Properties<T>,
-        private val joinClass: KClass<U>,
-        private val alias: String?,
-        private val type: JoinType
-    ) : SqlClientDeleteOrUpdate.Joinable {
-
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): SqlClientDeleteOrUpdate.Join {
-            val join = Join(client, properties)
-            join.addJoinClause(dsl, joinClass, alias, type)
-            return join
-        }
-    }
-
-    private class Join<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Join<T>, SqlClientDeleteOrUpdate.Join, Return<T> {
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientDeleteOrUpdate.Where {
-            val where = Where(client, properties)
-            where.addWhereClause(dsl)
-            return where
-        }
-    }
-
-    private class Where<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Where, Return<T> {
-
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientDeleteOrUpdate.Where {
-            addAndClause(dsl)
-            return this
-        }
-
-        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientDeleteOrUpdate.Where {
-            addOrClause(dsl)
-            return this
-        }
-    }*/
-
     internal class Where<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
         override val where = this
-
-        /*override fun and(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addClause(whereClause, WhereClauseType.AND)
-            return this
-        }
-
-        override fun or(whereClause: WhereClause<T>): SqlClientDeleteOrUpdate.TypedWhere<T> {
-            addClause(whereClause, WhereClauseType.OR)
-            return this
-        }*/
     }
 
     private interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T>, SqlClientDeleteOrUpdate.Return {

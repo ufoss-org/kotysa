@@ -23,7 +23,7 @@ object H2_USER : H2Table<UserEntity>("users") {
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(SQLITE_ROLE.id, "FK_users_roles")
+            .foreignKey(H2_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 

@@ -110,6 +110,24 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
     }
 
     @Test
+    fun `Verify updateAlias works`() {
+        val operator = client.transactionalOp()
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAlias("TheBigBoss"))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                    .extracting { user -> user?.alias }
+                    .isEqualTo("TheBigBoss")
+            assertThat(repository.updateAlias(null))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                    .extracting { user -> user?.alias }
+                    .isEqualTo(null)
+        }
+    }
+
+    @Test
     fun `Verify updateWithJoin works`() {
         val operator = client.transactionalOp()
         operator.execute<Unit> { transaction ->
@@ -154,6 +172,12 @@ class UserRepositoryUpdateDelete(
             (sqlClient update SQLITE_USER
                     set SQLITE_USER.lastname eq newLastname
                     where SQLITE_USER.id `in` ids
+                    ).execute()
+
+    fun updateAlias(newAlias: String?) =
+            (sqlClient update SQLITE_USER
+                    set SQLITE_USER.alias eq newAlias
+                    where SQLITE_USER.id eq userBboss.id
                     ).execute()
 
     fun updateWithJoin(newLastname: String, roleLabel: String) =
