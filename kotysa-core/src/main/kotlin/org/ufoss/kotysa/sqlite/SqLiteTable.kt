@@ -19,7 +19,7 @@ import java.time.OffsetDateTime
  * supported types follow : [SqLite Data types](https://www.sqlite.org/datatype3.html)
  * @param T Entity type associated with this table
  */
-public abstract class SqLiteTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
+public abstract class SqLiteTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: SqLiteTable<V>,

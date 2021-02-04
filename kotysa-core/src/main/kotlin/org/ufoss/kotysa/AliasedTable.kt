@@ -8,9 +8,9 @@ package org.ufoss.kotysa
  * A table with an alias (that may be null)
  */
 internal class AliasedTable<T : Any> internal constructor(
-        table: Table<T>,
+        table: AbstractTable<T>,
         internal val alias: String
-) : Table<T>(table.name) {
+) : AbstractTable<T>(table.tableName) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

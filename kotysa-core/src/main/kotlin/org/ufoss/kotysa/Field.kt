@@ -63,7 +63,7 @@ internal class ColumnFieldNullable<T : Any, U : Any> internal constructor(
  */
 internal class TableField<T : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
-        internal val table: Table<T>,
+        internal val table: AbstractTable<T>,
 ) : Field<T> {
 
     override val fieldNames: List<String> =
@@ -187,7 +187,7 @@ internal fun <T : Any, U : Any> ColumnNullable<T, U>.toField(
         properties: DefaultSqlClientCommon.Properties
 ): ColumnFieldNullable<T, U> = ColumnFieldNullable(properties, this)
 
-internal fun <T : Any> Table<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
+internal fun <T : Any> AbstractTable<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
         TableField(properties, this)
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {

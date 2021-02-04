@@ -14,7 +14,7 @@ import org.ufoss.kotysa.*
  * supported types follow : [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
  * @param T Entity type associated with this table
  */
-public abstract class PostgresqlTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
+public abstract class PostgresqlTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: PostgresqlTable<V>,

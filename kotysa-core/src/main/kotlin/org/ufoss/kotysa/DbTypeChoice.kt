@@ -28,7 +28,7 @@ public object DbTypeChoice {
      */
     public fun sqlite(vararg tables: SqLiteTable<*>): Tables = fillTables(DbType.SQLITE, *tables)
 
-    private fun fillTables(dbType: DbType, vararg tables: Table<*>): Tables {
+    private fun fillTables(dbType: DbType, vararg tables: AbstractTable<*>): Tables {
         require(tables.isNotEmpty()) { "Tables must declare at least one table" }
 
         val allTables = mutableMapOf<Table<*>, KotysaTable<*>>()
@@ -49,14 +49,14 @@ public object DbTypeChoice {
                 "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
             }
             @Suppress("UNCHECKED_CAST")
-            val kotysaTable = initializeTable(table as Table<Any>, tableClass as KClass<Any>)
+            val kotysaTable = initializeTable(table as AbstractTable<Any>, tableClass as KClass<Any>)
             allTables[kotysaTable.table] = kotysaTable
             allColumns.putAll(kotysaTable.columns.associateBy { kotysaColumn -> kotysaColumn.column })
         }
         return Tables(allTables, allColumns, dbType)
     }
 
-    private fun initializeTable(table: Table<Any>, tableClass: KClass<Any>): KotysaTable<*> {
+    private fun initializeTable(table: AbstractTable<Any>, tableClass: KClass<Any>): KotysaTable<*> {
         // define table name = provided name or else mapping class simpleName
         table.name = table.tableName ?: table::class.simpleName!!
 

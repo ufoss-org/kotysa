@@ -8,6 +8,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
+import org.ufoss.kotysa.BooleanColumnNotNull
+import org.ufoss.kotysa.StringColumnNotNull
+import org.ufoss.kotysa.StringColumnNullable
+import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.h2.H2Table
 import java.time.*
 import java.util.*
 
@@ -316,3 +321,13 @@ val javaBboss: JavaUser
         javaUser.alias3 = "TheBoss"
         return javaUser
     }
+
+interface JAVA_USER : Table<JavaUser> {
+    val login: StringColumnNotNull<JavaUser>
+    val firstname: StringColumnNotNull<JavaUser>
+    val lastname: StringColumnNotNull<JavaUser>
+    val isAdmin: BooleanColumnNotNull<JavaUser>
+    val alias1: StringColumnNullable<JavaUser>
+    val alias2: StringColumnNullable<JavaUser>
+    val alias3: StringColumnNullable<JavaUser>
+}

@@ -20,7 +20,7 @@ import java.util.*
  * supported types follow : [H2 Data types](http://h2database.com/html/datatypes.html)
  * @param T Entity type associated with this table
  */
-public abstract class H2Table<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
+public abstract class H2Table<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: H2Table<V>,

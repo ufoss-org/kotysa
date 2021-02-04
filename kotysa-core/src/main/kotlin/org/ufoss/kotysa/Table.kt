@@ -1,11 +1,13 @@
 package org.ufoss.kotysa
 
+public interface Table<T : Any>
+
 /**
  * Represents a Table
  *
  * @param T Entity type associated with this table
  */
-public abstract class Table<T : Any>(internal val tableName: String?) {
+public abstract class AbstractTable<T : Any>(internal val tableName: String? = null) : Table<T> {
 
     internal lateinit var name: String
 

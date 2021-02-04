@@ -14,7 +14,7 @@ import org.ufoss.kotysa.*
  * supported types follow : [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
  * @param T Entity type associated with this table
  */
-public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) : Table<T>(tableName) {
+public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: MysqlTable<V>,
