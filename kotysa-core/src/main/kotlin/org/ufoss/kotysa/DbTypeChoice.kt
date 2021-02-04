@@ -9,6 +9,7 @@ import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import kotlin.reflect.KClass
+import kotlin.reflect.full.allSupertypes
 
 /**
  * Supported Database Choice
@@ -33,7 +34,7 @@ public object DbTypeChoice {
         val allTables = mutableMapOf<Table<*>, KotysaTable<*>>()
         val allColumns = mutableMapOf<Column<*, *>, KotysaColumn<*, *>>()
         for (table in tables) {
-            val tableClass = requireNotNull(table::class.supertypes
+            val tableClass = requireNotNull(table::class.allSupertypes
                     .firstOrNull { type ->
                         when (dbType) {
                             DbType.SQLITE -> SqLiteTable::class == type.classifier

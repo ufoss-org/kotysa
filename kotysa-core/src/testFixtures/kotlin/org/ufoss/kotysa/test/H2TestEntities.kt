@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.test
 
+import org.ufoss.kotysa.StringColumnNotNull
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.tables
 import java.time.LocalDate
@@ -133,6 +134,20 @@ object H2_UUID : H2Table<UuidEntity>() {
     val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
+abstract class Parent<T> : H2Table<T>()
+        where T : Entity<String>,
+              T : Nameable {
+    abstract val id: StringColumnNotNull<T>
+    abstract val name: StringColumnNotNull<T>
+}
+
+object H2_INHERITED : Parent<Inherited>() {
+    override val id = varchar(Inherited::getId)
+            .primaryKey()
+    override val name = varchar(Inherited::name)
+    val firstname = varchar(Inherited::firstname)
+}
+
 val h2Tables = tables().h2(
         H2_ROLE,
         H2_USER,
@@ -146,5 +161,6 @@ val h2Tables = tables().h2(
         H2_OFFSET_LOCAL_DATE_TIME,
         H2_LOCAL_TIME,
         H2_INT,
-        H2_UUID
+        H2_UUID,
+        H2_INHERITED
 )
