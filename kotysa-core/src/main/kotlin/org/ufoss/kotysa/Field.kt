@@ -112,7 +112,7 @@ internal class TableField<T : Any> internal constructor(
                     .forEach { column ->
                         val getter = column.entityGetter
                         if (getter is KMutableProperty1<T, Any?>) {
-                            getter.set(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.java))
+                            getter.set(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType))
                             associatedColumns.add(column)
                         } else {
                             val callable = getter.toCallable()
@@ -134,7 +134,7 @@ internal class TableField<T : Any> internal constructor(
                                     }
                                 }
                                 if (setter != null) {
-                                    setter.call(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.java))
+                                    setter.call(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType))
                                     associatedColumns.add(column)
                                 }
                             }

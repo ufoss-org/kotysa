@@ -14,6 +14,6 @@ public inline class JdbcTransactionalOp(private val template: TransactionOperati
 }
 
 /**
- * Create a [JdbcTransactionalOp] from a [TransactionOperations]
+ * Create a [TransactionalOp] from a [TransactionOperations]
  */
 public fun TransactionOperations.transactionalOp(): TransactionalOp = JdbcTransactionalOp(this)
