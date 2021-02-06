@@ -44,7 +44,7 @@ abstract class AbstractUserRepository(
 
     private fun deleteAllFromRoles() = sqlClient deleteAllFrom SQLITE_ROLE
 
-    fun selectAll() = sqlClient selectAllFrom SQLITE_USER
+    fun selectAllUsers() = sqlClient selectAllFrom SQLITE_USER
 
     fun selectFirstByFirstname(firstname: String) =
             (sqlClient selectFrom SQLITE_USER

@@ -147,7 +147,10 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 client.queryForObject(selectSql(), parameters) { rs, _ ->
                     select(rs.toRow())
                 }
-            } catch (_: IncorrectResultSizeDataAccessException) {
+            } catch (e: IncorrectResultSizeDataAccessException) {
+                if (e.actualSize == 0) {
+                    return null
+                }
                 throw NonUniqueResultException()
             }
         }

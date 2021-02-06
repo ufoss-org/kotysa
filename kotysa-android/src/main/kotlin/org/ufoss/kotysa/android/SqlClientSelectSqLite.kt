@@ -137,7 +137,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
             if (!cursor.isLast) throw NonUniqueResultException()
-            select(cursor.toRow())
+            select(cursor.toRow()) ?: throw NoResultException()
         }
 
 

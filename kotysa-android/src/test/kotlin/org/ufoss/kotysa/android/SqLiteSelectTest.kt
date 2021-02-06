@@ -18,8 +18,8 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     override fun getRepository(sqLiteTables: Tables) = UserRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAll returns all users`() {
-        assertThat(repository.selectAll())
+    fun `Verify selectAllUsers returns all users`() {
+        assertThat(repository.selectAllUsers())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
@@ -184,7 +184,7 @@ class UserRepositorySelect(
             (sqlClient select SQLITE_USER.alias
                     from SQLITE_USER
                     where SQLITE_USER.id eq id
-                    ).fetchOne()
+                    ).fetchOneOrNull()
 
     fun selectFirstnameAndAliasById(id: Int) =
             (sqlClient select SQLITE_USER.firstname and SQLITE_USER.alias

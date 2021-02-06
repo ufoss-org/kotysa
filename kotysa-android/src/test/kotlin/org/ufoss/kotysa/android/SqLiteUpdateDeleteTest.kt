@@ -22,10 +22,10 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
                     .isEqualTo(2)
-            assertThat(repository.selectAll())
+            assertThat(repository.selectAllUsers())
                     .isEmpty()
         }
-        assertThat(repository.selectAll())
+        assertThat(repository.selectAllUsers())
                 .hasSize(2)
     }
 
@@ -36,7 +36,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserById(userJdoe.id))
                     .isEqualTo(1)
-            assertThat(repository.selectAll())
+            assertThat(repository.selectAllUsers())
                     .hasSize(1)
         }
     }
@@ -48,7 +48,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
-            assertThat(repository.selectAll())
+            assertThat(repository.selectAllUsers())
                     .hasSize(1)
         }
     }
@@ -57,7 +57,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
     fun `Verify deleteUserIn no match`() {
         assertThat(repository.deleteUserIn(listOf(99999, 9999999)))
                 .isEqualTo(0)
-        assertThat(repository.selectAll())
+        assertThat(repository.selectAllUsers())
                 .hasSize(2)
     }
 
@@ -68,7 +68,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserWithJoin(roleUser.label))
                     .isEqualTo(1)
-            assertThat(repository.selectAll())
+            assertThat(repository.selectAllUsers())
                     .hasSize(1)
                     .containsOnly(userBboss)
         }
