@@ -25,6 +25,7 @@ dependencies {
     testFixturesImplementation "org.springframework:spring-core"
     testFixturesImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testFixturesImplementation "org.assertj:assertj-core:$assertj_version"
     testFixturesImplementation 'org.testcontainers:postgresql'
     testFixturesImplementation 'org.testcontainers:mysql'
 

@@ -322,6 +322,14 @@ val javaBboss: JavaUser
         return javaUser
     }
 
+interface ENTITY<T : Entity<String>> : Table<T> {
+    val id: StringColumnNotNull<T>
+}
+
+interface NAMEABLE<T : Nameable> : Table<T> {
+    val name: StringColumnNotNull<T>
+}
+
 interface JAVA_USER : Table<JavaUser> {
     val login: StringColumnNotNull<JavaUser>
     val firstname: StringColumnNotNull<JavaUser>

@@ -2,15 +2,19 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.jdbc
-/*
+package org.ufoss.kotysa.test.repositories
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.test.JAVA_USER
 import org.ufoss.kotysa.test.UserDto
 import org.ufoss.kotysa.test.javaBboss
 import org.ufoss.kotysa.test.javaJdoe
+import org.ufoss.kotysa.transaction.TransactionalOp
 
-interface SpringJdbcJavaEntityTest<T : JavaUserRepository>: SpringJdbcRepositoryTest<T> {
+interface JavaEntityTest<T : JAVA_USER, U : JavaUserRepository<T>> {
+    val repository: U
+    val operator: TransactionalOp
 
     @Test
     fun `Verify selectAll returns all users`() {
@@ -93,4 +97,3 @@ interface SpringJdbcJavaEntityTest<T : JavaUserRepository>: SpringJdbcRepository
         }
     }
 }
-*/

@@ -3,43 +3,27 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-/*
+
+import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
-import org.ufoss.kotysa.spring.jdbc.SpringJdbcJavaEntityTest
-import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
+import org.ufoss.kotysa.test.H2_JAVA_USER
+import org.ufoss.kotysa.test.h2Tables
+import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityH2Test :
-        AbstractSpringJdbcH2Test<JavaUserH2Repository>(), SpringJdbcJavaEntityTest<JavaUserH2Repository> {
+        AbstractSpringJdbcH2Test<JavaUserH2Repository>(), JavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
     override var context = startContext<JavaUserH2Repository>()
     override var repository = getContextRepository<JavaUserH2Repository>()
+    private val transactionManager = context.getBean<PlatformTransactionManager>()
+    override val operator = TransactionTemplate(transactionManager).transactionalOp()
 }
 
-private val tables =
-        tables().h2Old {
-            table<JavaUser> {
-                name = "java_users"
-                column { it[JavaUser::getLogin].varchar() }
-                        .primaryKey()
-                column {
-                    it[JavaUser::getFirstname].varchar {
-                        name = "fname"
-                    }
-                }
-                column {
-                    it[JavaUser::getLastname].varchar {
-                        name = "lname"
-                    }
-                }
-                column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar() }
-                column { it[JavaUser::getAlias2].varchar() }
-                column { it[JavaUser::getAlias3].varchar() }
-            }
-        }
 
-
-class JavaUserH2Repository(client: JdbcOperations) : JavaUserRepository(client, tables)
-*/
+class JavaUserH2Repository(client: JdbcOperations)
+    : JavaUserRepository<H2_JAVA_USER>(client.sqlClient(h2Tables), H2_JAVA_USER)

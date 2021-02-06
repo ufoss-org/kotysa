@@ -4,11 +4,8 @@
 
 package org.ufoss.kotysa.test
 
-import org.ufoss.kotysa.StringColumnNotNull
-import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.H2_USER.foreignKey
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -136,30 +133,22 @@ object H2_UUID : H2Table<UuidEntity>() {
     val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
-interface H2_ENTITY<T : Entity<String>> : Table<T> {
-    val id: StringColumnNotNull<T>
-}
-
-interface H2_NAMEABLE<T : Nameable> : Table<T> {
-    val name: StringColumnNotNull<T>
-}
-
-object H2_INHERITED : H2Table<Inherited>(), H2_ENTITY<Inherited>, H2_NAMEABLE<Inherited> {
+object H2_INHERITED : H2Table<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
             .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
-object H2_JAVA_USER : H2Table<JavaUser>("java_users") {
-    val login = varchar(JavaUser::getLogin)
+object H2_JAVA_USER : H2Table<JavaUser>("java_users"), JAVA_USER {
+    override val login = varchar(JavaUser::getLogin)
             .primaryKey()
-    val firstname = varchar(JavaUser::getFirstname, "fname")
-    val lastname = varchar(JavaUser::getLastname, "lname")
-    val isAdmin = boolean(JavaUser::isAdmin)
-    val alias1 = varchar(JavaUser::getAlias1)
-    val alias2 = varchar(JavaUser::getAlias2)
-    val alias3 = varchar(JavaUser::getAlias3)
+    override val firstname = varchar(JavaUser::getFirstname, "fname")
+    override val lastname = varchar(JavaUser::getLastname, "lname")
+    override val isAdmin = boolean(JavaUser::isAdmin)
+    override val alias1 = varchar(JavaUser::getAlias1)
+    override val alias2 = varchar(JavaUser::getAlias2)
+    override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
 val h2Tables = tables().h2(

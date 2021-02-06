@@ -79,17 +79,17 @@ class InheritanceH2Repository(client: JdbcOperations) : Repository {
                     where H2_INHERITED.id eq id
                     ).fetchOne()
 
-    fun <T : H2_ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
+    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
             (sqlClient selectFrom table
                     where table.id eq id
                     ).fetchOne()
 
-    fun <T : H2_NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
+    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
             (sqlClient selectFrom table
                     where table.name eq name
                     ).fetchFirst()
 
-    fun <T : H2_ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
+    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
             (sqlClient deleteFrom table
                     where table.id eq id
                     ).execute()
