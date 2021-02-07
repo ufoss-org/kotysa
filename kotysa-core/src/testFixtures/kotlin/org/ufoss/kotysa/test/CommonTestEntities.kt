@@ -157,6 +157,15 @@ val localDateTimeWithNullable = LocalDateTimeEntity(1, LocalDateTime.of(2019, 11
 val localDateTimeWithoutNullable = LocalDateTimeEntity(2, LocalDateTime.of(2019, 11, 6, 0, 0))
 
 
+data class LocalDateTimeAsTimestampEntity(
+        val id: Int,
+        val localDateTimeNotNull: LocalDateTime,
+        val localDateTimeNullable: LocalDateTime? = null
+)
+
+val localDateTimeAsTimestampWithNullable = LocalDateTimeAsTimestampEntity(1, LocalDateTime.of(2019, 11, 4, 0, 0), LocalDateTime.of(2018, 11, 4, 0, 0))
+val localDateTimeAsTimestampWithoutNullable = LocalDateTimeAsTimestampEntity(2, LocalDateTime.of(2019, 11, 6, 0, 0))
+
 data class KotlinxLocalDateTimeEntity(
         val id: Int,
         val localDateTimeNotNull: kotlinx.datetime.LocalDateTime,
@@ -167,6 +176,18 @@ val kotlinxLocalDateTimeWithNullable = KotlinxLocalDateTimeEntity(1,
         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
 val kotlinxLocalDateTimeWithoutNullable = KotlinxLocalDateTimeEntity(2,
+        kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0))
+
+data class KotlinxLocalDateTimeAsTimestampEntity(
+        val id: Int,
+        val localDateTimeNotNull: kotlinx.datetime.LocalDateTime,
+        val localDateTimeNullable: kotlinx.datetime.LocalDateTime? = null
+)
+
+val kotlinxLocalDateTimeAsTimestampWithNullable = KotlinxLocalDateTimeAsTimestampEntity(1,
+        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
+val kotlinxLocalDateTimeAsTimestampWithoutNullable = KotlinxLocalDateTimeAsTimestampEntity(2,
         kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0))
 
 

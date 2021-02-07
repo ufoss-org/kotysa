@@ -3,15 +3,15 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.test.H2User
-import org.ufoss.kotysa.test.h2Bboss
-import org.ufoss.kotysa.test.h2Jdoe
+import org.ufoss.kotysa.test.H2_USER
+import org.ufoss.kotysa.test.userBboss
+import org.ufoss.kotysa.test.userJdoe
 
 
 class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectString>() {
@@ -21,8 +21,8 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
-        assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
-                .isEqualTo(h2Jdoe)
+        assertThat(repository.selectFirstByFirstname("John"))
+                .isEqualTo(userJdoe)
     }
 
     @Test
@@ -39,43 +39,43 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 
     @Test
     fun `Verify selectByAlias finds BigBoss`() {
-        assertThat(repository.selectAllByAlias(h2Bboss.alias))
+        assertThat(repository.selectByAlias(userBboss.alias))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Bboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() {
-        assertThat(repository.selectAllByAlias(null))
+        assertThat(repository.selectByAlias(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Jdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstnameNotEq(h2Jdoe.firstname))
+        assertThat(repository.selectAllByFirstnameNotEq(userJdoe.firstname))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Bboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
         assertThat(repository.selectAllByFirstnameNotEq("Unknown"))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
-        val seq = sequenceOf(h2Jdoe.firstname, h2Bboss.firstname)
+        val seq = sequenceOf(userJdoe.firstname, userBboss.firstname)
         assertThat(repository.selectAllByFirstnameIn(seq))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(h2Jdoe, h2Bboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllByAliasNotEq ignore BigBoss`() {
-        assertThat(repository.selectAllByAliasNotEq(h2Bboss.alias))
+        assertThat(repository.selectAllByAliasNotEq(userBboss.alias))
                 .hasSize(0)
     }
 
@@ -83,14 +83,14 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify selectAllByAliasNotEq with null alias finds BigBoss`() {
         assertThat(repository.selectAllByAliasNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Bboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameContains get John by searching oh`() {
         assertThat(repository.selectAllByFirstnameContains("oh"))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Jdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -103,7 +103,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
         assertThat(repository.selectAllByFirstnameStartsWith("Joh"))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Jdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -116,7 +116,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
         assertThat(repository.selectAllByFirstnameEndsWith("ohn"))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Jdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -129,7 +129,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify selectAllByAliasContains get Boss by searching heBos`() {
         assertThat(repository.selectAllByAliasContains("heBos"))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Bboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -142,7 +142,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify selectAllByAliasStartsWith get Boss by searching TheBo`() {
         assertThat(repository.selectAllByAliasStartsWith("TheBo"))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Bboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -155,7 +155,7 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify selectAllByAliasEndsWith get Boss by searching Boss`() {
         assertThat(repository.selectAllByAliasEndsWith("Boss"))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2Bboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -168,48 +168,58 @@ class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 
 class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
-    fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<H2User>()
-            .where { it[H2User::firstname] eq firstname }
-            .fetchFirst()
+    fun selectFirstByFirstnameNotNullable(firstname: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname eq firstname
+                    ).fetchFirst()
 
-    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<H2User>()
-            .where { it[H2User::firstname] notEq firstname }
-            .fetchAll()
+    fun selectAllByFirstnameNotEq(firstname: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname notEq firstname
+                    ).fetchAll()
 
-    fun selectAllByFirstnameIn(firstnames: Sequence<String>) = sqlClient.select<H2User>()
-            .where { it[H2User::firstname] `in` firstnames }
-            .fetchAll()
+    fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname `in` firstnames
+                    ).fetchAll()
 
-    fun selectAllByAlias(alias: String?) = sqlClient.select<H2User>()
-            .where { it[H2User::alias] eq alias }
-            .fetchAll()
+    fun selectByAlias(alias: String?) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.alias eq alias
+                    ).fetchAll()
 
-    fun selectAllByAliasNotEq(alias: String?) = sqlClient.select<H2User>()
-            .where { it[H2User::alias] notEq alias }
-            .fetchAll()
+    fun selectAllByAliasNotEq(alias: String?) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.alias notEq alias
+                    ).fetchAll()
 
-    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<H2User>()
-            .where { it[H2User::firstname] contains firstnameContains }
-            .fetchAll()
+    fun selectAllByFirstnameContains(firstnameContains: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname contains firstnameContains
+                    ).fetchAll()
 
-    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<H2User>()
-            .where { it[H2User::firstname] startsWith firstnameStartsWith }
-            .fetchAll()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname startsWith firstnameStartsWith
+                    ).fetchAll()
 
-    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<H2User>()
-            .where { it[H2User::firstname] endsWith firstnameEndsWith }
-            .fetchAll()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname endsWith firstnameEndsWith
+                    ).fetchAll()
 
-    fun selectAllByAliasContains(aliasContains: String) = sqlClient.select<H2User>()
-            .where { it[H2User::alias] contains aliasContains }
-            .fetchAll()
+    fun selectAllByAliasContains(aliasContains: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.alias contains aliasContains
+                    ).fetchAll()
 
-    fun selectAllByAliasStartsWith(aliasStartsWith: String) = sqlClient.select<H2User>()
-            .where { it[H2User::alias] startsWith aliasStartsWith }
-            .fetchAll()
+    fun selectAllByAliasStartsWith(aliasStartsWith: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.alias startsWith aliasStartsWith
+                    ).fetchAll()
 
-    fun selectAllByAliasEndsWith(aliasEndsWith: String) = sqlClient.select<H2User>()
-            .where { it[H2User::alias] endsWith aliasEndsWith }
-            .fetchAll()
+    fun selectAllByAliasEndsWith(aliasEndsWith: String) =
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.alias endsWith aliasEndsWith
+                    ).fetchAll()
 }
-*/

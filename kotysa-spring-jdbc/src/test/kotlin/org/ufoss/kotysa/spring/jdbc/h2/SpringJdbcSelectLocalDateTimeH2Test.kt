@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
@@ -18,34 +18,34 @@ class SpringJdbcSelectLocalDateTimeH2Test : AbstractSpringJdbcH2Test<LocalDateTi
     override val repository = getContextRepository<LocalDateTimeRepositoryH2Select>()
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNull finds h2LocalDateTimeWithNullable`() {
+    fun `Verify selectAllByLocalDateTimeNotNull finds localDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNull(LocalDateTime.of(2019, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds h2LocalDateTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds localDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(LocalDateTime.of(2019, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
         val seq = sequenceOf(
-                h2LocalDateTimeWithNullable.localDateTimeNotNull,
-                h2LocalDateTimeWithoutNullable.localDateTimeNotNull)
+                localDateTimeWithNullable.localDateTimeNotNull,
+                localDateTimeWithoutNullable.localDateTimeNotNull)
         assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable, h2LocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable, localDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBefore finds h2LocalDateTimeWithNullable`() {
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds localDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime.of(2019, 11, 4, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
@@ -55,24 +55,24 @@ class SpringJdbcSelectLocalDateTimeH2Test : AbstractSpringJdbcH2Test<LocalDateTi
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds h2LocalDateTimeWithNullable`() {
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds localDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime.of(2019, 11, 4, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds h2LocalDateTimeWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds localDateTimeWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime.of(2019, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfter finds h2LocalDateTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds localDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime.of(2019, 11, 5, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithoutNullable)
     }
 
     @Test
@@ -82,31 +82,31 @@ class SpringJdbcSelectLocalDateTimeH2Test : AbstractSpringJdbcH2Test<LocalDateTi
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds h2LocalDateTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds localDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime.of(2019, 11, 5, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds h2LocalDateTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds localDateTimeWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime.of(2019, 11, 6, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNullable(LocalDateTime.of(2018, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNullable finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithoutNullable)
     }
 
     @Test
@@ -119,14 +119,14 @@ class SpringJdbcSelectLocalDateTimeH2Test : AbstractSpringJdbcH2Test<LocalDateTi
     fun `Verify selectAllByLocalDateTimeNullableNotEq finds no results`() {
         assertThat(repository.selectAllByLocalDateTimeNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBefore finds h2LocalDateTimeWithNullable`() {
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds localDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime.of(2018, 11, 4, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
@@ -136,24 +136,24 @@ class SpringJdbcSelectLocalDateTimeH2Test : AbstractSpringJdbcH2Test<LocalDateTi
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds h2LocalDateTimeWithNullable`() {
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds localDateTimeWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime.of(2018, 11, 5, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds h2LocalDateTimeWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds localDateTimeWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime.of(2018, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfter finds h2LocalDateTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds localDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime.of(2018, 11, 3, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
@@ -163,17 +163,17 @@ class SpringJdbcSelectLocalDateTimeH2Test : AbstractSpringJdbcH2Test<LocalDateTi
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds h2LocalDateTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds localDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime.of(2018, 11, 3, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds h2LocalDateTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds localDateTimeWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime.of(2018, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2LocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeWithNullable)
     }
 }
 
@@ -191,64 +191,78 @@ class LocalDateTimeRepositoryH2Select(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<H2LocalDateTime>()
+    private fun createTables() {
+        sqlClient createTable H2_LOCAL_DATE_TIME
+    }
 
-    private fun insertLocalDateTimes() = sqlClient.insert(h2LocalDateTimeWithNullable, h2LocalDateTimeWithoutNullable)
+    private fun insertLocalDateTimes() {
+        sqlClient.insert(localDateTimeWithNullable, localDateTimeWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<H2LocalDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom H2_LOCAL_DATE_TIME
 
-    fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNotNull] eq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNotNull] notEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+                    ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-            sqlClient.select<H2LocalDateTime>()
-                    .where { it[H2LocalDateTime::localDateTimeNotNull] `in` values }
-                    .fetchAll()
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNotNull] before localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNotNull] beforeOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNotNull] after localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNotNull] afterOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNullable] eq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNullable] notEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNullable] before localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNullable] beforeOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNullable] after localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) = sqlClient.select<H2LocalDateTime>()
-            .where { it[H2LocalDateTime::localDateTimeNullable] afterOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_LOCAL_DATE_TIME
+                    where H2_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+                    ).fetchAll()
 }
-*/

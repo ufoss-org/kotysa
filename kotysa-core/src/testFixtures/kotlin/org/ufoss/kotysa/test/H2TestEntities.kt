@@ -98,6 +98,13 @@ object H2_LOCAL_DATE_TIME : H2Table<LocalDateTimeEntity>() {
     val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
+object H2_LOCAL_DATE_TIME_AS_TIMESTAMP : H2Table<LocalDateTimeAsTimestampEntity>() {
+    val id = integer(LocalDateTimeAsTimestampEntity::id)
+            .primaryKey()
+    val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
+    val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
+}
+
 object H2_KOTLINX_LOCAL_DATE_TIME : H2Table<KotlinxLocalDateTimeEntity>() {
     val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
@@ -105,7 +112,14 @@ object H2_KOTLINX_LOCAL_DATE_TIME : H2Table<KotlinxLocalDateTimeEntity>() {
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2_OFFSET_LOCAL_DATE_TIME : H2Table<OffsetDateTimeEntity>() {
+object H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP : H2Table<KotlinxLocalDateTimeAsTimestampEntity>() {
+    val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
+            .primaryKey()
+    val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
+    val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
+}
+
+object H2_OFFSET_DATE_TIME : H2Table<OffsetDateTimeEntity>() {
     val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
     val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
@@ -160,11 +174,13 @@ val h2Tables = tables().h2(
         H2_LOCAL_DATE,
         H2_KOTLINX_LOCAL_DATE,
         H2_LOCAL_DATE_TIME,
+        H2_LOCAL_DATE_TIME_AS_TIMESTAMP,
         H2_KOTLINX_LOCAL_DATE_TIME,
-        H2_OFFSET_LOCAL_DATE_TIME,
+        H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP,
+        H2_OFFSET_DATE_TIME,
         H2_LOCAL_TIME,
         H2_INT,
         H2_UUID,
         H2_INHERITED,
-        H2_JAVA_USER
+        H2_JAVA_USER,
 )

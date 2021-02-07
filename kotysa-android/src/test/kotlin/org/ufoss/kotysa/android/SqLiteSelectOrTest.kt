@@ -17,10 +17,10 @@ class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
     override fun getRepository(sqLiteTables: Tables) = UserRepositorySelectOr(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectRolesByLabels finds BigBoss`() {
+    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
         assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
-            .hasSize(2)
-            .containsExactlyInAnyOrder(roleAdmin, roleGod)
+                .hasSize(2)
+                .containsExactlyInAnyOrder(roleAdmin, roleGod)
     }
 }
 
