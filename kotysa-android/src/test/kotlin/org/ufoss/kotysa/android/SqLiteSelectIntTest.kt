@@ -10,7 +10,7 @@ import org.junit.Test
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 
-class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
+class SqLiteSelectIntTest : AbstractSqLiteTest<IntRepositorySelect>() {
 
     private val intWithNullable = IntEntity(
             org.ufoss.kotysa.test.intWithNullable.intNotNull,
@@ -24,7 +24,7 @@ class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
             2
     )
 
-    override fun getRepository(sqLiteTables: Tables) = IntegerRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: Tables) = IntRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByIntegerNotNull finds sqLiteIntegerWithNullable`() {
@@ -184,7 +184,7 @@ class SqLiteSelectIntegerTest : AbstractSqLiteTest<IntegerRepositorySelect>() {
     }
 }
 
-class IntegerRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class IntRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

@@ -15,6 +15,18 @@ internal fun DefaultSqlClientCommon.Properties.bindWhereParams(
     with(this) {
         whereClauses
                 .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                .map { dbValue ->
+                    if (dbValue is Set<*>) {
+                        // create new Set with transformed values
+                        mutableSetOf<Any?>().apply {
+                            dbValue.forEach { dbVal ->
+                                add(tables.getDbValue(dbVal))
+                            }
+                        }
+                    } else {
+                        tables.getDbValue(dbValue)
+                    }
+                }
                 .forEach { dbValue -> parameters.addValue("k${index++}", dbValue) }
     }
 }
