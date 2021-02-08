@@ -34,7 +34,7 @@ object SQLITE_ALL_TYPES_NOT_NULL : SqLiteTable<AllTypesNotNullEntity>("all_types
     val boolean = integer(AllTypesNotNullEntity::boolean)
     val localDate = text(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = text(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTime = text(AllTypesNotNullEntity::localTim)
+    val localTime = text(AllTypesNotNullEntity::localTime)
     val localDateTime1 = text(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = text(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = text(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -48,7 +48,7 @@ object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>("all_type
     val string = text(AllTypesNullableEntity::string)
     val localDate = text(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = text(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTime = text(AllTypesNullableEntity::localTim)
+    val localTime = text(AllTypesNullableEntity::localTime)
     val localDateTime1 = text(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = text(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = text(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -65,7 +65,7 @@ object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE :
             defaultValue = LocalDate.of(2019, 11, 4))
     val kotlinxLocalDate = text(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
             defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
-    val localTime = text(AllTypesNullableDefaultValueEntity::localTim,
+    val localTime = text(AllTypesNullableDefaultValueEntity::localTime,
             defaultValue = LocalTime.of(11, 25, 55))
     val localDateTime1 = text(AllTypesNullableDefaultValueEntity::localDateTime1,
             defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.h2
-/*
+
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -34,7 +34,7 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                 .hasSize(1)
                 .containsExactly(h2AllTypesNotNull)
     }
-
+/*
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue())
@@ -75,16 +75,16 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                    newKotlinxLocalDateTime, newUuid, newInt)
+                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime, newUuid)
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
                     .containsExactlyInAnyOrder(
-                            H2AllTypesNotNull(h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
-                                    newOffsetDateTime, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                    newKotlinxLocalDateTime, newUuid, newInt))
+                            H2AllTypesNotNullEntity(h2AllTypesNotNull.id, "new", false, newLocalDate,
+                                    newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
+                                    newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime,
+                                    newUuid))
         }
-    }
+    }*/
 }
 
 
@@ -98,46 +98,46 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
     }
 
     override fun delete() {
-        deleteAllFromAllTypesNotNull()
-        deleteAllFromAllTypesNullable()
+        sqlClient deleteAllFrom H2_ALL_TYPES_NOT_NULL
+        sqlClient deleteAllFrom H2_ALL_TYPES_NULLABLE
+        sqlClient deleteAllFrom H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun createTables() {
-        sqlClient.createTable<H2AllTypesNotNull>()
-        sqlClient.createTable<H2AllTypesNullable>()
-        sqlClient.createTable<H2AllTypesNullableDefaultValue>()
+        sqlClient createTable H2_ALL_TYPES_NOT_NULL
+        sqlClient createTable H2_ALL_TYPES_NULLABLE
+        sqlClient createTable H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
-    private fun insertAllTypes() = sqlClient.insert(h2AllTypesNotNull, h2AllTypesNullable, h2AllTypesNullableDefaultValue)
+    private fun insertAllTypes() {
+        sqlClient.insert(h2AllTypesNotNull, allTypesNullable, allTypesNullableDefaultValue)
+    }
 
-    private fun deleteAllFromAllTypesNotNull() = sqlClient.deleteAllFromTable<H2AllTypesNotNull>()
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom H2_ALL_TYPES_NOT_NULL
 
-    private fun deleteAllFromAllTypesNullable() = sqlClient.deleteAllFromTable<H2AllTypesNullable>()
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom H2_ALL_TYPES_NULLABLE
 
-    fun selectAllAllTypesNotNull() = sqlClient.selectAll<H2AllTypesNotNull>()
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
 
-    fun selectAllAllTypesNullable() = sqlClient.selectAll<H2AllTypesNullable>()
-
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<H2AllTypesNullableDefaultValue>()
-
-    fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate, newKotlinxLocalDate: kotlinx.datetime.LocalDate,
-                              newOffsetDateTime: OffsetDateTime, newLocalTim: LocalTime, newLocalDateTime1: LocalDateTime,
-                              newLocalDateTime2: LocalDateTime, newKotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
-                              newKotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime, newUuid: UUID, newInt: Int) =
-            sqlClient.updateTable<H2AllTypesNotNull>()
-                    .set { it[H2AllTypesNotNull::string] = newString }
-                    .set { it[H2AllTypesNotNull::boolean] = newBoolean }
-                    .set { it[H2AllTypesNotNull::localDate] = newLocalDate }
-                    .set { it[H2AllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
-                    .set { it[H2AllTypesNotNull::offsetDateTime] = newOffsetDateTime }
-                    .set { it[H2AllTypesNotNull::localTim] = newLocalTim }
-                    .set { it[H2AllTypesNotNull::localDateTime1] = newLocalDateTime1 }
-                    .set { it[H2AllTypesNotNull::localDateTime2] = newLocalDateTime2 }
-                    .set { it[H2AllTypesNotNull::kotlinxLocalDateTime1] = newKotlinxLocalDateTime1 }
-                    .set { it[H2AllTypesNotNull::kotlinxLocalDateTime2] = newKotlinxLocalDateTime2 }
-                    .set { it[H2AllTypesNotNull::uuid] = newUuid }
-                    .set { it[H2AllTypesNotNull::int] = newInt }
-                    .where { it[H2AllTypesNotNull::id] eq h2AllTypesNotNull.id }
-                    .execute()
+    /*fun updateAllTypesNotNull(
+            newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
+            newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
+            newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
+            newOffsetDateTime: OffsetDateTime, newUuid: UUID
+    ) =
+            (sqlClient update H2_ALL_TYPES_NOT_NULL
+                    set H2_ALL_TYPES_NOT_NULL.string eq newString
+                    set H2_ALL_TYPES_NOT_NULL.boolean eq newBoolean
+                    set H2_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
+                    set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
+                    set H2_ALL_TYPES_NOT_NULL.localTime eq newLocalTime
+                    set H2_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
+                    set H2_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
+                    set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set H2_ALL_TYPES_NOT_NULL.int eq newInt
+                    set H2_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
+                    set H2_ALL_TYPES_NOT_NULL.uuid eq newUuid
+                    where H2_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    ).execute()*/
 }
-*/

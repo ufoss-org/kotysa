@@ -4,11 +4,14 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.tables
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.*
+import java.util.*
 
 object H2_ROLE : H2Table<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
@@ -27,19 +30,44 @@ object H2_USER : H2Table<UserEntity>("users") {
     val alias = varchar(UserEntity::alias)
 }
 
-object H2_ALL_TYPES_NOT_NULL : H2Table<AllTypesNotNullEntity>("all_types") {
+data class H2AllTypesNotNullEntity(
+        override val id: Int,
+        override val string: String,
+        override val boolean: Boolean,
+        override val localDate: LocalDate,
+        override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+        override val localTime: LocalTime,
+        override val localDateTime1: LocalDateTime,
+        override val localDateTime2: LocalDateTime,
+        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+        override val int: Int,
+        val offsetDateTime: OffsetDateTime,
+        val uuid: UUID,
+) : AllTypesNotNullEntity(id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int)
+
+val h2AllTypesNotNull = H2AllTypesNotNullEntity(1, "",
+        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
+        LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)), UUID.randomUUID())
+
+object H2_ALL_TYPES_NOT_NULL : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
-    val string_named = varchar(AllTypesNotNullEntity::string)
+    val string = varchar(AllTypesNotNullEntity::string)
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTime = time(AllTypesNotNullEntity::localTim) // todo test fractionalSecondsPart later
+    val localTim = time(AllTypesNotNullEntity::localTime, precision = 9)
     val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNotNullEntity::int)
+    val offsetDateTime = timestampWithTimeZone(H2AllTypesNotNullEntity::offsetDateTime)
+    val uuid = uuid(H2AllTypesNotNullEntity::uuid)
 }
 
 object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>("all_types_nullable") {
@@ -48,7 +76,7 @@ object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>("all_types_nullab
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTime = time(AllTypesNullableEntity::localTim) // todo test fractionalSecondsPart later
+    val localTim = time(AllTypesNullableEntity::localTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -64,7 +92,7 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValu
             defaultValue = LocalDate.of(2019, 11, 4))
     val kotlinxLocalDate = date(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
             defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
-    val localTime = time(AllTypesNullableDefaultValueEntity::localTim,
+    val localTim = time(AllTypesNullableDefaultValueEntity::localTime,
             defaultValue = LocalTime.of(11, 25, 55, 123456789))
     val localDateTime1 = dateTime(AllTypesNullableDefaultValueEntity::localDateTime1,
             defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))

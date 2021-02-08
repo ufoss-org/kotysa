@@ -12,7 +12,6 @@ import org.ufoss.kotysa.BooleanColumnNotNull
 import org.ufoss.kotysa.StringColumnNotNull
 import org.ufoss.kotysa.StringColumnNullable
 import org.ufoss.kotysa.Table
-import org.ufoss.kotysa.h2.H2Table
 import java.time.*
 import java.util.*
 
@@ -44,13 +43,14 @@ open class AllTypesNotNullEntity(
         open val boolean: Boolean,
         open val localDate: LocalDate,
         open val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-        open val localTim: LocalTime,
+        open val localTime: LocalTime,
         open val localDateTime1: LocalDateTime,
         open val localDateTime2: LocalDateTime,
         open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         open val int: Int
 ) {
+    // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -62,7 +62,7 @@ open class AllTypesNotNullEntity(
         if (boolean != other.boolean) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTim != other.localTim) return false
+        if (localTime != other.localTime) return false
         if (localDateTime1 != other.localDateTime1) return false
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
@@ -78,7 +78,7 @@ open class AllTypesNotNullEntity(
         result = 31 * result + boolean.hashCode()
         result = 31 * result + localDate.hashCode()
         result = 31 * result + kotlinxLocalDate.hashCode()
-        result = 31 * result + localTim.hashCode()
+        result = 31 * result + localTime.hashCode()
         result = 31 * result + localDateTime1.hashCode()
         result = 31 * result + localDateTime2.hashCode()
         result = 31 * result + kotlinxLocalDateTime1.hashCode()
@@ -99,7 +99,7 @@ data class AllTypesNullableEntity(
         val string: String?,
         val localDate: LocalDate?,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
-        val localTim: LocalTime?,
+        val localTime: LocalTime?,
         val localDateTime1: LocalDateTime?,
         val localDateTime2: LocalDateTime?,
         val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
@@ -116,7 +116,7 @@ data class AllTypesNullableDefaultValueEntity(
         val string: String? = null,
         val localDate: LocalDate? = null,
         val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
-        val localTim: LocalTime? = null,
+        val localTime: LocalTime? = null,
         val localDateTime1: LocalDateTime? = null,
         val localDateTime2: LocalDateTime? = null,
         val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
