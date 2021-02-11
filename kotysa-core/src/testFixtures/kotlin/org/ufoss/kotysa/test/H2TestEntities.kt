@@ -70,7 +70,26 @@ object H2_ALL_TYPES_NOT_NULL : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val uuid = uuid(H2AllTypesNotNullEntity::uuid)
 }
 
-object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>("all_types_nullable") {
+data class H2AllTypesNullableEntity(
+        override val id: Int,
+        override val string: String?,
+        override val localDate: LocalDate?,
+        override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
+        override val localTime: LocalTime?,
+        override val localDateTime1: LocalDateTime?,
+        override val localDateTime2: LocalDateTime?,
+        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
+        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
+        override val int: Int?,
+        val offsetDateTime: OffsetDateTime?,
+        val uuid: UUID?,
+) : AllTypesNullableEntity(id, string, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int)
+
+val h2AllTypesNullable = H2AllTypesNullableEntity(1, null, null, null, null,
+        null, null, null, null, null, null, null)
+
+object H2_ALL_TYPES_NULLABLE : H2Table<H2AllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
@@ -82,9 +101,29 @@ object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>("all_types_nullab
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNullableEntity::int)
+    val offsetDateTime = timestampWithTimeZone(H2AllTypesNullableEntity::offsetDateTime)
+    val uuid = uuid(H2AllTypesNullableEntity::uuid)
 }
 
-object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValueEntity>() {
+data class H2AllTypesNullableDefaultValueEntity(
+        override val id: Int,
+        override val string: String? = null,
+        override val localDate: LocalDate? = null,
+        override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
+        override val localTime: LocalTime? = null,
+        override val localDateTime1: LocalDateTime? = null,
+        override val localDateTime2: LocalDateTime? = null,
+        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
+        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
+        override val int: Int? = null,
+        val offsetDateTime: OffsetDateTime? = null,
+        val uuid: UUID? = null,
+) : AllTypesNullableDefaultValueEntity(id, string, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int)
+
+val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
+
+object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<H2AllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -92,7 +131,7 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValu
             defaultValue = LocalDate.of(2019, 11, 4))
     val kotlinxLocalDate = date(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
             defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
-    val localTim = time(AllTypesNullableDefaultValueEntity::localTime,
+    val localTim = time(AllTypesNullableDefaultValueEntity::localTime, precision = 9,
             defaultValue = LocalTime.of(11, 25, 55, 123456789))
     val localDateTime1 = dateTime(AllTypesNullableDefaultValueEntity::localDateTime1,
             defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))
@@ -103,6 +142,10 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValu
     val kotlinxLocalDateTime2 = timestamp(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
             defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0))
     val int = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
+    val offsetDateTime = timestampWithTimeZone(H2AllTypesNullableDefaultValueEntity::offsetDateTime,
+            defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
+                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)))
+    val uuid = uuid(H2AllTypesNullableDefaultValueEntity::uuid, defaultValue = UUID.fromString(defaultUuid))
 }
 
 object H2_LOCAL_DATE : H2Table<LocalDateEntity>() {

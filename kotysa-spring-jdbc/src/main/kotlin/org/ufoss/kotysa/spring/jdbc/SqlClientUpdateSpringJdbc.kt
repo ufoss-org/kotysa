@@ -56,7 +56,9 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
 
             var index = 0
             // 1) add all values from set part
-            setValues.values.forEach { value -> parameters.addValue("k${index++}", value) }
+            setValues.values
+                    .map { value -> tables.getDbValue(value) }
+                    .forEach { value -> parameters.addValue("k${index++}", value) }
             // 2) add all values from where part
             bindWhereParams(parameters, index)
 

@@ -15,6 +15,8 @@ import org.ufoss.kotysa.Table
 import java.time.*
 import java.util.*
 
+const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
+
 data class RoleEntity(
         val id: Int,
         val label: String
@@ -48,7 +50,7 @@ open class AllTypesNotNullEntity(
         open val localDateTime2: LocalDateTime,
         open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
-        open val int: Int
+        open val int: Int,
 ) {
     // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
@@ -94,35 +96,105 @@ val allTypesNotNull = AllTypesNotNullEntity(1, "",
         Clock.System.now().toLocalDateTime(TimeZone.UTC), 1)
 
 
-data class AllTypesNullableEntity(
-        val id: Int,
-        val string: String?,
-        val localDate: LocalDate?,
-        val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
-        val localTime: LocalTime?,
-        val localDateTime1: LocalDateTime?,
-        val localDateTime2: LocalDateTime?,
-        val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
-        val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
-        val int: Int?
-)
+open class AllTypesNullableEntity(
+        open val id: Int,
+        open val string: String?,
+        open val localDate: LocalDate?,
+        open val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
+        open val localTime: LocalTime?,
+        open val localDateTime1: LocalDateTime?,
+        open val localDateTime2: LocalDateTime?,
+        open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
+        open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
+        open val int: Int?,
+) {
+    // just base equals and hashcode (this class is not a data class)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AllTypesNullableEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime != other.localTime) return false
+        if (localDateTime1 != other.localDateTime1) return false
+        if (localDateTime2 != other.localDateTime2) return false
+        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
+        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (int != other.int) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + (string?.hashCode() ?: 0)
+        result = 31 * result + (localDate?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
+        result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (int ?: 0)
+        return result
+    }
+}
 
 val allTypesNullable = AllTypesNullableEntity(1, null, null, null,
         null, null, null, null, null, null)
 
 
-data class AllTypesNullableDefaultValueEntity(
-        val id: Int,
-        val string: String? = null,
-        val localDate: LocalDate? = null,
-        val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
-        val localTime: LocalTime? = null,
-        val localDateTime1: LocalDateTime? = null,
-        val localDateTime2: LocalDateTime? = null,
-        val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
-        val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
-        val int: Int? = null
-)
+open class AllTypesNullableDefaultValueEntity(
+        open val id: Int,
+        open val string: String? = null,
+        open val localDate: LocalDate? = null,
+        open val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
+        open val localTime: LocalTime? = null,
+        open val localDateTime1: LocalDateTime? = null,
+        open val localDateTime2: LocalDateTime? = null,
+        open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
+        open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
+        open val int: Int? = null,
+) {
+    // just base equals and hashcode (this class is not a data class)
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as AllTypesNullableDefaultValueEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime != other.localTime) return false
+        if (localDateTime1 != other.localDateTime1) return false
+        if (localDateTime2 != other.localDateTime2) return false
+        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
+        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (int != other.int) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + (string?.hashCode() ?: 0)
+        result = 31 * result + (localDate?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
+        result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (int ?: 0)
+        return result
+    }
+}
 
 val allTypesNullableDefaultValue = AllTypesNullableDefaultValueEntity(1)
 

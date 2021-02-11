@@ -12,9 +12,8 @@ import org.ufoss.kotysa.DbTypeChoice
 import org.ufoss.kotysa.SqlType
 import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.*
+import java.util.*
 
 
 class H2TablesDslTest {
@@ -26,16 +25,19 @@ class H2TablesDslTest {
                 .extracting("name", "sqlType", "nullable", "autoIncrement")
                 .containsExactlyInAnyOrder(
                         tuple("id", SqlType.INTEGER, false, false),
-                        tuple("string_named", SqlType.VARCHAR, false, false),
+                        tuple("string", SqlType.VARCHAR, false, false),
                         tuple("boolean", SqlType.BOOLEAN, false, false),
                         tuple("localDate", SqlType.DATE, false, false),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, false),
-                        tuple("localTime", SqlType.TIME, false, false),
+                        tuple("localTim", SqlType.TIME, false, false),
                         tuple("localDateTime1", SqlType.DATE_TIME, false, false),
                         tuple("localDateTime2", SqlType.TIMESTAMP, false, false),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, false),
                         tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, false, false),
-                        tuple("int", SqlType.INTEGER, false, false))
+                        tuple("int", SqlType.INTEGER, false, false),
+                        tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, false),
+                        tuple("uuid", SqlType.UUID, false, false),
+                )
     }
 
     @Test
@@ -48,12 +50,15 @@ class H2TablesDslTest {
                         tuple("string", SqlType.VARCHAR, true, false),
                         tuple("localDate", SqlType.DATE, true, false),
                         tuple("kotlinxLocalDate", SqlType.DATE, true, false),
-                        tuple("localTime", SqlType.TIME, true, false),
+                        tuple("localTim", SqlType.TIME, true, false),
                         tuple("localDateTime1", SqlType.DATE_TIME, true, false),
                         tuple("localDateTime2", SqlType.TIMESTAMP, true, false),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, true, false),
                         tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, true, false),
-                        tuple("int", SqlType.INTEGER, true, false))
+                        tuple("int", SqlType.INTEGER, true, false),
+                        tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, true, false),
+                        tuple("uuid", SqlType.UUID, true, false),
+                )
     }
 
     @Test
@@ -66,12 +71,16 @@ class H2TablesDslTest {
                         tuple("string", SqlType.VARCHAR, false, "default"),
                         tuple("localDate", SqlType.DATE, false, LocalDate.of(2019, 11, 4)),
                         tuple("kotlinxLocalDate", SqlType.DATE, false, kotlinx.datetime.LocalDate(2019, 11, 6)),
-                        tuple("localTime", SqlType.TIME, false, LocalTime.of(11, 25, 55, 123456789)),
+                        tuple("localTim", SqlType.TIME, false, LocalTime.of(11, 25, 55, 123456789)),
                         tuple("localDateTime1", SqlType.DATE_TIME, false, LocalDateTime.of(2018, 11, 4, 0, 0)),
                         tuple("localDateTime2", SqlType.TIMESTAMP, false, LocalDateTime.of(2019, 11, 4, 0, 0)),
                         tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)),
                         tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, false, kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)),
-                        tuple("int", SqlType.INTEGER, false, 42))
+                        tuple("int", SqlType.INTEGER, false, 42),
+                        tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))),
+                        tuple("uuid", SqlType.UUID, false, UUID.fromString(defaultUuid)),
+                )
     }
 
     @Test

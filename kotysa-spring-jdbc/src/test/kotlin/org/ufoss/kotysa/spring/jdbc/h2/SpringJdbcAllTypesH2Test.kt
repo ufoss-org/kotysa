@@ -34,24 +34,25 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                 .hasSize(1)
                 .containsExactly(h2AllTypesNotNull)
     }
-/*
+
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue())
                 .hasSize(1)
-                .containsExactly(H2AllTypesNullableDefaultValue(
+                .containsExactly(H2AllTypesNullableDefaultValueEntity(
+                        1,
                         "default",
-                        LocalDate.MAX,
+                        LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
-                        OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
-                        LocalTime.MAX,
+                        LocalTime.of(11, 25, 55, 123456789),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         LocalDateTime.of(2019, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                        UUID.fromString(defaultUuid),
                         42,
-                        h2AllTypesNullableDefaultValue.id
+                        OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
+                        UUID.fromString(defaultUuid),
                 ))
     }
 
@@ -84,7 +85,7 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                                     newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime,
                                     newUuid))
         }
-    }*/
+    }
 }
 
 
@@ -110,7 +111,7 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(h2AllTypesNotNull, allTypesNullable, allTypesNullableDefaultValue)
+        sqlClient.insert(h2AllTypesNotNull, h2AllTypesNullable, h2AllTypesNullableDefaultValue)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom H2_ALL_TYPES_NOT_NULL
@@ -119,7 +120,7 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
 
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
 
-    /*fun updateAllTypesNotNull(
+    fun updateAllTypesNotNull(
             newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
             newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
             newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
@@ -130,7 +131,7 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
                     set H2_ALL_TYPES_NOT_NULL.boolean eq newBoolean
                     set H2_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
                     set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                    set H2_ALL_TYPES_NOT_NULL.localTime eq newLocalTime
+                    set H2_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
                     set H2_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
                     set H2_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
                     set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
@@ -139,5 +140,5 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
                     set H2_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
                     set H2_ALL_TYPES_NOT_NULL.uuid eq newUuid
                     where H2_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
-                    ).execute()*/
+                    ).execute()
 }
