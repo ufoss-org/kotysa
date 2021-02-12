@@ -3,30 +3,25 @@
  */
 
 package org.ufoss.kotysa.sample
-/*
-import org.ufoss.kotysa.tables
 
-fun mysqlTables() =
-        tables().mysql { // choose database type
-            table<MySqlUser> {
-                name = "users"
-                column { it[MySqlUser::id].autoIncrementInteger() }
-                        .primaryKey()
-                column { it[MySqlUser::firstname].varchar {
-                    name = "fname"
-                } }
-                column { it[MySqlUser::lastname].varchar {
-                    name = "lname"
-                } }
-                column { it[MySqlUser::isAdmin].boolean() }
-                column { it[MySqlUser::alias].varchar() }
-            }
-        }
+import org.ufoss.kotysa.mysql.MysqlTable
+import org.ufoss.kotysa.tables
 
 data class MySqlUser(
         val firstname: String,
         val lastname: String,
         val isAdmin: Boolean,
         val alias: String? = null,
-        val id: Int? = null
-)*/
+        val id: Int?
+)
+
+object MYSQL_USER : MysqlTable<MySqlUser>() {
+    val id = autoIncrementInteger(MySqlUser::id)
+            .primaryKey()
+    val firstname = varchar(MySqlUser::firstname, "fname")
+    val lastname = varchar(MySqlUser::lastname, "lname")
+    val isAdmin = boolean(MySqlUser::isAdmin)
+    val alias = varchar(MySqlUser::alias)
+}
+
+fun mysqlTables() = tables().mysql(MYSQL_USER)

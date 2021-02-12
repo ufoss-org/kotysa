@@ -4,280 +4,130 @@
 
 package org.ufoss.kotysa.test
 
-/*
-object H2_ROLE : H2Table<RoleEntity>() {
-    override var name = "roles"
-    val id = column { it[RoleEntity::id].integer() }
+import kotlinx.datetime.toJavaLocalDateTime
+import org.ufoss.kotysa.mysql.MysqlTable
+import org.ufoss.kotysa.tables
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
+
+
+object MYSQL_ROLE : MysqlTable<RoleEntity>("roles") {
+    val id = integer(RoleEntity::id)
             .primaryKey()
-    val lable = column { it[RoleEntity::label].varchar {
-        size = 255
-    } }
+    val label = varchar(RoleEntity::label)
 }
 
-object H2_USER : H2Table<UserEntity>() {
-    override var name = "users"
-    val id = column { it[UserEntity::id].integer() }
-            .primaryKey("PK_users")
-    val firstname = column { it[UserEntity::firstname].varchar {
-        name = "fname"
-        size = 255
-    } }
-    val lastname = column { it[UserEntity::lastname].varchar {
-        name = "lname"
-        size = 255
-    } }
-    val isAdmin = column { it[UserEntity::isAdmin].boolean() }
-    val roleId = column { it[UserEntity::roleId].integer() }
-            .foreignKey(H2_ROLE, "FK_users_roles")
-    val alias = column { it[UserEntity::alias].varchar {
-        size = 255
-    } }
-}
-
-object H2_ALL_TYPES : H2Table<AllTypesNotNullEntity>() {
-    override var name = "all_types"
-    val id = column { it[AllTypesNotNullEntity::id].integer() }
+object MYSQL_USER : MysqlTable<UserEntity>("users") {
+    val id = integer(UserEntity::id, "PK_users")
             .primaryKey()
-    val string = column { it[AllTypesNotNullEntity::string].varchar {
-        size = 255
-    } }
-    val boolean = column { it[AllTypesNotNullEntity::boolean].boolean() }
-    val localDate = column { it[AllTypesNotNullEntity::localDate].date() }
-    val kotlinxLocalDate = column { it[AllTypesNotNullEntity::kotlinxLocalDate].date() }
-    val localTime = column { it[AllTypesNotNullEntity::localTim].time() } // todo test fractionalSecondsPart later
-    val localDateTime1 = column { it[AllTypesNotNullEntity::localDateTime1].dateTime() }
-    val localDateTime2 = column { it[AllTypesNotNullEntity::localDateTime2].timestamp() }
-    val kotlinxLocalDateTime1 = column { it[AllTypesNotNullEntity::kotlinxLocalDateTime1].dateTime() }
-    val kotlinxLocalDateTime2 = column { it[AllTypesNotNullEntity::kotlinxLocalDateTime2].timestamp() }
-    val int = column { it[AllTypesNotNullEntity::int].integer() }
+    val firstname = varchar(UserEntity::firstname, "fname")
+    val lastname = varchar(UserEntity::lastname, "lname")
+    val isAdmin = boolean(UserEntity::isAdmin)
+    val roleId = integer(UserEntity::roleId)
+            .foreignKey(MYSQL_ROLE.id, "FK_users_roles")
+    val alias = varchar(UserEntity::alias)
 }
 
-object H2_ALL_TYPES_NULLABLE : H2Table<AllTypesNullableEntity>() {
-    override var name = "all_types_nullable"
-    val id = column { it[AllTypesNullableEntity::id].integer() }
+object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<AllTypesNotNullEntity>("all_types") {
+    val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
-    val string = column { it[AllTypesNullableEntity::string].varchar {
-        size = 255
-    } }
-    val localDate = column { it[AllTypesNullableEntity::localDate].date() }
-    val kotlinxLocalDate = column { it[AllTypesNullableEntity::kotlinxLocalDate].date() }
-    val localTime = column { it[AllTypesNullableEntity::localTim].time() } // todo test fractionalSecondsPart later
-    val localDateTime = column { it[AllTypesNullableEntity::localDateTime].dateTime() }
-    val kotlinxLocalDateTime = column { it[AllTypesNullableEntity::kotlinxLocalDateTime].dateTime() }
-    val int = column { it[AllTypesNullableEntity::int].integer() }
+    val string = varchar(AllTypesNotNullEntity::string)
+    val boolean = boolean(AllTypesNotNullEntity::boolean)
+    val localDate = date(AllTypesNotNullEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
+    val localTime = time(AllTypesNotNullEntity::localTime) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
+    val localDateTime2 = dateTime(AllTypesNotNullEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
+    val int = integer(AllTypesNotNullEntity::int)
 }
 
-object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<AllTypesNullableDefaultValueEntity>() {
-    val id = column { it[AllTypesNullableDefaultValueEntity::id].integer() }
-    .primaryKey()
-    val string = column { it[AllTypesNullableDefaultValueEntity::string].varchar {
-        defaultValue = "default"
-        size = 255
-    } }
-    val localDate = column { it[AllTypesNullableDefaultValueEntity::localDate].date {
-        defaultValue = LocalDate.of(2019, 11, 4)
-    } }
-    val kotlinxLocalDate = column { it[AllTypesNullableDefaultValueEntity::kotlinxLocalDate].date {
-        defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
-    } }
-    val localTime = column { it[AllTypesNullableDefaultValueEntity::localTim].time {
-        defaultValue = LocalTime.of(11, 25, 55)
-    } }
-    val localDateTime = column { it[AllTypesNullableDefaultValueEntity::localDateTime].dateTime() {
-        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
-    } }
-    val kotlinxLocalDateTime = column { it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime].dateTime {
-        defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
-    } }
-    val int = column { it[AllTypesNullableDefaultValueEntity::int].integer {
-        name = "mysql_integer"
-        defaultValue = 42
-    } }
-}
-
-object H2_LOCAL_DATE : H2Table<LocalDateEntity>() {
-    val id = column { it[LocalDateEntity::id].integer() }
+object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_nullable") {
+    val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
-    val localDateNotNull = column { it[LocalDateEntity::localDateNotNull].date() }
-    val localDateNullable = column { it[LocalDateEntity::localDateNullable].date() }
+    val string = varchar(AllTypesNullableEntity::string)
+    val localDate = date(AllTypesNullableEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
+    val localTime = time(AllTypesNullableEntity::localTime) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
+    val localDateTime2 = dateTime(AllTypesNullableEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
+    val int = integer(AllTypesNullableEntity::int)
 }
 
-object H2_KOTLINX_LOCAL_DATE : H2Table<KotlinxLocalDateEntity>() {
-    val id = column { it[KotlinxLocalDateEntity::id].integer() }
+object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueEntity>() {
+    val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
-    val localDateNotNull = column { it[KotlinxLocalDateEntity::localDateNotNull].date() }
-    val localDateNullable = column { it[KotlinxLocalDateEntity::localDateNullable].date() }
+    val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
+    val localDate = date(AllTypesNullableDefaultValueEntity::localDate,
+            defaultValue = LocalDate.of(2019, 11, 4))
+    val kotlinxLocalDate = date(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+            defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
+    val localTim = time(AllTypesNullableDefaultValueEntity::localTime, precision = 9,
+            defaultValue = LocalTime.of(11, 25, 55, 123456789))
+    val localDateTime1 = dateTime(AllTypesNullableDefaultValueEntity::localDateTime1,
+            defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))
+    val localDateTime2 = dateTime(AllTypesNullableDefaultValueEntity::localDateTime2,
+            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0))
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+            defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
+    val kotlinxLocalDateTime2 = dateTime(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+            defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0))
+    val int = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
 }
 
-object H2_LOCAL_DATE_TIME : H2Table<LocalDateTimeEntity>() {
-    val id = column { it[LocalDateTimeEntity::id].integer() }
+object MYSQL_LOCAL_DATE : MysqlTable<LocalDateEntity>() {
+    val id = integer(LocalDateEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = column { it[LocalDateTimeEntity::localDateTimeNotNull].dateTime() }
-    val localDateTimeNullable = column { it[LocalDateTimeEntity::localDateTimeNullable].dateTime() }
+    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
+    val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object H2_KOTLINX_LOCAL_DATE_TIME : H2Table<KotlinxLocalDateTimeEntity>() {
-    val id = column { it[KotlinxLocalDateTimeEntity::id].integer() }
+object MYSQL_KOTLINX_LOCAL_DATE : MysqlTable<KotlinxLocalDateEntity>() {
+    val id = integer(KotlinxLocalDateEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = column { it[KotlinxLocalDateTimeEntity::localDateTimeNotNull].dateTime() }
-    val localDateTimeNullable = column { it[KotlinxLocalDateTimeEntity::localDateTimeNullable].dateTime() }
+    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
+    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object H2_OFFSET_LOCAL_DATE_TIME : H2Table<OffsetDateTimeEntity>() {
-    val id = column { it[OffsetDateTimeEntity::id].integer() }
+object MYSQL_LOCAL_DATE_TIME : MysqlTable<LocalDateTimeEntity>() {
+    val id = integer(LocalDateTimeEntity::id)
             .primaryKey()
-    val offsetDateTimeNotNull = column { it[OffsetDateTimeEntity::offsetDateTimeNotNull].timestamp() }
-    val offsetDateTimeNullable = column { it[OffsetDateTimeEntity::offsetDateTimeNullable].timestamp() }
+    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2_LOCAL_TIME : H2Table<LocalTimeEntity>() {
-    val id = column { it[LocalTimeEntity::id].integer() }
+object MYSQL_KOTLINX_LOCAL_DATE_TIME : MysqlTable<KotlinxLocalDateTimeEntity>() {
+    val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
-    val localTimeNotNull = column { it[LocalTimeEntity::localTimeNotNull].time() }
-    val localTimeNullable = column { it[LocalTimeEntity::localTimeNullable].time() }
+    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2_INT : H2Table<IntEntity>() {
-    val id = column { it[IntEntity::id].autoIncrementInteger() }
+object MYSQL_OFFSET_DATE_TIME : MysqlTable<OffsetDateTimeEntity>() {
+    val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
-    val intNotNull = column { it[IntEntity::intNotNull].integer() }
-    val intNullable = column { it[IntEntity::intNullable].integer() }
+    val offsetDateTimeNotNull = timestamp(OffsetDateTimeEntity::offsetDateTimeNotNull)
+    val offsetDateTimeNullable = timestamp(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
-val mysqlTables =
-        tables().mysql {
-            table<RoleEntity> {
-                name = "roles"
-                column { it[RoleEntity::id].integer() }
-                        .primaryKey()
-                column { it[RoleEntity::label].varchar {
-                    size = 255
-                } }
-            }
-            table<UserEntity> {
-                name = "users"
-                column { it[UserEntity::id].integer() }
-                        .primaryKey("PK_users")
-                column { it[UserEntity::firstname].varchar {
-                    name = "fname"
-                    size = 255
-                } }
-                column { it[UserEntity::lastname].varchar() {
-                    name = "lname"
-                    size = 255
-                } }
-                column { it[UserEntity::isAdmin].boolean() }
-                column { it[UserEntity::roleId].integer() }
-                        .foreignKey<RoleEntity>("FK_users_roles")
-                column { it[UserEntity::alias].varchar {
-                    size = 255
-                } }
-            }
-            table<AllTypesNotNullEntity> {
-                name = "all_types"
-                column { it[AllTypesNotNullEntity::id].integer() }
-                        .primaryKey()
-                column { it[AllTypesNotNullEntity::string].varchar {
-                    size = 255
-                } }
-                column { it[AllTypesNotNullEntity::boolean].boolean() }
-                column { it[AllTypesNotNullEntity::localDate].date() }
-                column { it[AllTypesNotNullEntity::kotlinxLocalDate].date() }
-                column { it[AllTypesNotNullEntity::localTim].time() }
-                column { it[AllTypesNotNullEntity::localDateTime].dateTime() }
-                column { it[AllTypesNotNullEntity::kotlinxLocalDateTime].dateTime() }
-                column { it[AllTypesNotNullEntity::int].integer {
-                    name = "mysql_integer"
-                } }
-            }
-            table<AllTypesNullableEntity> {
-                name = "all_types_nullable"
-                column { it[AllTypesNullableEntity::id].integer() }
-                        .primaryKey()
-                column { it[AllTypesNullableEntity::string].varchar {
-                    size = 255
-                } }
-                column { it[AllTypesNullableEntity::localDate].date() }
-                column { it[AllTypesNullableEntity::kotlinxLocalDate].date() }
-                column { it[AllTypesNullableEntity::localTim].time {
-                    fractionalSecondsPart = 0
-                } }
-                column { it[AllTypesNullableEntity::localDateTime].dateTime() }
-                column { it[AllTypesNullableEntity::kotlinxLocalDateTime].dateTime() }
-                column { it[AllTypesNullableEntity::int].integer {
-                    name = "mysql_integer"
-                } }
-            }
-            table<AllTypesNullableDefaultValueEntity> {
-                column { it[AllTypesNullableDefaultValueEntity::id].integer() }
-                        .primaryKey()
-                column { it[AllTypesNullableDefaultValueEntity::string].varchar {
-                    defaultValue = "default"
-                    size = 255
-                } }
-                column { it[AllTypesNullableDefaultValueEntity::localDate].date {
-                    defaultValue = LocalDate.of(2019, 11, 4)
-                } }
-                column { it[AllTypesNullableDefaultValueEntity::kotlinxLocalDate].date {
-                    defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
-                } }
-                column { it[AllTypesNullableDefaultValueEntity::localTim].time {
-                    defaultValue = LocalTime.of(11, 25, 55)
-                } }
-                column { it[AllTypesNullableDefaultValueEntity::localDateTime].dateTime() {
-                    defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
-                } }
-                column { it[AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime].dateTime {
-                    defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
-                } }
-                column { it[AllTypesNullableDefaultValueEntity::int].integer {
-                    name = "mysql_integer"
-                    defaultValue = 42
-                } }
-            }
-            table<LocalDateEntity> {
-                column { it[LocalDateEntity::id].integer() }
-                        .primaryKey()
-                column { it[LocalDateEntity::localDateNotNull].date() }
-                column { it[LocalDateEntity::localDateNullable].date() }
-            }
-            table<KotlinxLocalDateEntity> {
-                column { it[KotlinxLocalDateEntity::id].integer() }
-                        .primaryKey()
-                column { it[KotlinxLocalDateEntity::localDateNotNull].date() }
-                column { it[KotlinxLocalDateEntity::localDateNullable].date() }
-            }
-            table<LocalDateTimeEntity> {
-                column { it[LocalDateTimeEntity::id].integer() }
-                        .primaryKey()
-                column { it[LocalDateTimeEntity::localDateTimeNotNull].dateTime() }
-                column { it[LocalDateTimeEntity::localDateTimeNullable].dateTime() }
-            }
-            table<KotlinxLocalDateTimeEntity> {
-                column { it[KotlinxLocalDateTimeEntity::id].integer() }
-                        .primaryKey()
-                column { it[KotlinxLocalDateTimeEntity::localDateTimeNotNull].dateTime() }
-                column { it[KotlinxLocalDateTimeEntity::localDateTimeNullable].dateTime() }
-            }
-            table<OffsetDateTimeEntity> {
-                column { it[OffsetDateTimeEntity::id].integer() }
-                        .primaryKey()
-                column { it[OffsetDateTimeEntity::offsetDateTimeNotNull].timestamp() }
-                column { it[OffsetDateTimeEntity::offsetDateTimeNullable].timestamp() }
-            }
-            table<LocalTimeEntity> {
-                column { it[LocalTimeEntity::id].integer() }
-                        .primaryKey()
-                column { it[LocalTimeEntity::localTimeNotNull].time() }
-                column { it[LocalTimeEntity::localTimeNullable].time() }
-            }
-            table<IntEntity> {
-                column { it[IntEntity::id].autoIncrementInteger() }
-                        .primaryKey()
-                column { it[IntEntity::intNotNull].integer() }
-                column { it[IntEntity::intNullable].integer() }
-            }
-        }
+object MYSQL_LOCAL_TIME : MysqlTable<LocalTimeEntity>() {
+    val id = integer(LocalTimeEntity::id)
+            .primaryKey()
+    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+}
+
+object MYSQL_INT : MysqlTable<IntEntity>() {
+    val id = autoIncrementInteger(IntEntity::id)
+            .primaryKey()
+    val intNotNull = integer(IntEntity::intNotNull)
+    val intNullable = integer(IntEntity::intNullable)
+}
 
 private fun LocalTime.roundToSecond(): LocalTime {
     var time = this
@@ -301,12 +151,15 @@ data class MysqlAllTypesNotNull(
         override val boolean: Boolean,
         override val localDate: LocalDate,
         override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-        override val localTim: LocalTime,
-        override val localDateTime: LocalDateTime,
-        override val kotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        override val localTime: LocalTime,
+        override val localDateTime1: LocalDateTime,
+        override val localDateTime2: LocalDateTime,
+        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         override val int: Int
 ) : AllTypesNotNullEntity(
-        id, string, boolean, localDate, kotlinxLocalDate, localTim, localDateTime, kotlinxLocalDateTime, int
+        id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -318,10 +171,13 @@ data class MysqlAllTypesNotNull(
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTim.roundToSecond() != other.localTim.roundToSecond()) return false
-        if (localDateTime.roundToSecond() != other.localDateTime.roundToSecond()) return false
-        if (kotlinxLocalDateTime.toJavaLocalDateTime().roundToSecond()
-                != other.kotlinxLocalDateTime.toJavaLocalDateTime().roundToSecond()) return false
+        if (localTime.roundToSecond() != other.localTime.roundToSecond()) return false
+        if (localDateTime1.roundToSecond() != other.localDateTime1.roundToSecond()) return false
+        if (localDateTime2.roundToSecond() != other.localDateTime2.roundToSecond()) return false
+        if (kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
+                != other.kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()) return false
+        if (kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
+                != other.kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()) return false
         if (int != other.int) return false
         if (id != other.id) return false
 
@@ -332,11 +188,49 @@ data class MysqlAllTypesNotNull(
         var result = string.hashCode()
         result = 31 * result + (localDate.hashCode())
         result = 31 * result + (kotlinxLocalDate.hashCode())
-        result = 31 * result + (localTim.hashCode())
-        result = 31 * result + (localDateTime.hashCode())
-        result = 31 * result + (kotlinxLocalDateTime.hashCode())
+        result = 31 * result + (localTime.hashCode())
+        result = 31 * result + (localDateTime1.hashCode())
+        result = 31 * result + (localDateTime2.hashCode())
+        result = 31 * result + (kotlinxLocalDateTime1.hashCode())
+        result = 31 * result + (kotlinxLocalDateTime2.hashCode())
         result = 31 * result + (int)
         result = 31 * result + (id)
         return result
     }
-}*/
+}
+
+object MYSQL_INHERITED : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+    override val id = varchar(Inherited::getId)
+            .primaryKey()
+    override val name = varchar(Inherited::name)
+    val firstname = varchar(Inherited::firstname)
+}
+
+object MYSQL_JAVA_USER : MysqlTable<JavaUser>("java_users"), JAVA_USER {
+    override val login = varchar(JavaUser::getLogin)
+            .primaryKey()
+    override val firstname = varchar(JavaUser::getFirstname, "fname")
+    override val lastname = varchar(JavaUser::getLastname, "lname")
+    override val isAdmin = boolean(JavaUser::isAdmin)
+    override val alias1 = varchar(JavaUser::getAlias1)
+    override val alias2 = varchar(JavaUser::getAlias2)
+    override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
+}
+
+val mysqlTables =
+        tables().mysql(
+                MYSQL_ROLE,
+                MYSQL_USER,
+                MYSQL_ALL_TYPES_NOT_NULL,
+                MYSQL_ALL_TYPES_NULLABLE,
+                MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
+                MYSQL_LOCAL_DATE,
+                MYSQL_KOTLINX_LOCAL_DATE,
+                MYSQL_LOCAL_DATE_TIME,
+                MYSQL_KOTLINX_LOCAL_DATE_TIME,
+                MYSQL_OFFSET_DATE_TIME,
+                MYSQL_LOCAL_TIME,
+                MYSQL_INT,
+                MYSQL_INHERITED,
+                MYSQL_JAVA_USER,
+        )

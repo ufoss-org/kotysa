@@ -5,7 +5,8 @@ dependencies {
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
     testImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
 
-    implementation "org.springframework:spring-jdbc:$spring_core_version"
+    //implementation "org.springframework:spring-jdbc:$spring_core_version"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc:$spring_boot_version"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"

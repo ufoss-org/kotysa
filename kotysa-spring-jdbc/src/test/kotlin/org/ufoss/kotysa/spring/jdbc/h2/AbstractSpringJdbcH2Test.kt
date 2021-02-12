@@ -10,6 +10,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
+import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 
 
@@ -25,7 +26,7 @@ abstract class AbstractSpringJdbcH2Test<T : Repository> {
                 listener<ApplicationReadyEvent> {
                     ref<U>().init()
                 }
-                jdbc {
+                jdbc(DataSourceType.Embedded) {
                     url = "jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
                 }
             }.run()

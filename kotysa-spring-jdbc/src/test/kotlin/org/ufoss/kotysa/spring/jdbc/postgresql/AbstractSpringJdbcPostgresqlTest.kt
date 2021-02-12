@@ -12,6 +12,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
+import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.ufoss.kotysa.spring.jdbc.SpringJdbcRepositoryTest
 import org.ufoss.kotysa.test.Repository
@@ -30,7 +31,7 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : SpringJdbcRepo
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
             }
-            jdbc {
+            jdbc(DataSourceType.Generic) {
                 url = "jdbc:postgresql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
                 username = "postgres"
                 password = "test"

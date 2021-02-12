@@ -12,6 +12,7 @@ import org.springframework.beans.factory.getBean
 import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
+import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.ufoss.kotysa.spring.jdbc.SpringJdbcRepositoryTest
 import org.ufoss.kotysa.test.Repository
@@ -33,7 +34,7 @@ abstract class AbstractSpringJdbcMysqlTest<T : Repository> : SpringJdbcRepositor
                 listener<ApplicationReadyEvent> {
                     ref<U>().init()
                 }
-                jdbc {
+                jdbc(DataSourceType.Hikari) {
                     url = "jdbc:mysql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
                     username = "mysql"
                     password = "test"

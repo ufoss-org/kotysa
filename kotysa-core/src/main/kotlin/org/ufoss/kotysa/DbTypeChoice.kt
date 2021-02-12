@@ -23,6 +23,12 @@ public object DbTypeChoice {
     public fun h2(vararg tables: H2Table<*>): Tables = fillTables(DbType.H2, *tables)
 
     /**
+     * Configure Functional Table Mapping support for MySQL
+     * @sample org.ufoss.kotysa.sample.mysqlTables
+     */
+    public fun mysql(vararg tables: MysqlTable<*>): Tables = fillTables(DbType.MYSQL, *tables)
+
+    /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
      */

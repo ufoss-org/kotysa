@@ -51,10 +51,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     test {
-        useJUnitPlatform {
-            // TODO remove this exclusion when https://github.com/spring-projects-experimental/spring-fu/issues/322 is fixed
-            excludeTags("spring-jdbc-testcontainers")
-        }
+        useJUnitPlatform()
         testLogging {
             events 'passed', 'failed', 'skipped'
             showStandardStreams = true
