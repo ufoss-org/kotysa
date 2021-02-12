@@ -31,7 +31,7 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : SpringJdbcRepo
             listener<ApplicationReadyEvent> {
                 ref<U>().init()
             }
-            jdbc(DataSourceType.Generic) {
+            jdbc(DataSourceType.Hikari) {
                 url = "jdbc:postgresql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
                 username = "postgres"
                 password = "test"
