@@ -108,12 +108,12 @@ object MYSQL_KOTLINX_LOCAL_DATE_TIME : MysqlTable<KotlinxLocalDateTimeEntity>() 
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MYSQL_OFFSET_DATE_TIME : MysqlTable<OffsetDateTimeEntity>() {
-    val id = integer(OffsetDateTimeEntity::id)
-            .primaryKey()
-    val offsetDateTimeNotNull = timestamp(OffsetDateTimeEntity::offsetDateTimeNotNull)
-    val offsetDateTimeNullable = timestamp(OffsetDateTimeEntity::offsetDateTimeNullable)
-}
+// object MYSQL_OFFSET_DATE_TIME : MysqlTable<OffsetDateTimeEntity>() {
+//     val id = integer(OffsetDateTimeEntity::id)
+//             .primaryKey()
+//     val offsetDateTimeNotNull = timestamp(OffsetDateTimeEntity::offsetDateTimeNotNull)
+//     val offsetDateTimeNullable = timestamp(OffsetDateTimeEntity::offsetDateTimeNullable)
+// }
 
 object MYSQL_LOCAL_TIME : MysqlTable<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
@@ -228,7 +228,7 @@ val mysqlTables =
                 MYSQL_KOTLINX_LOCAL_DATE,
                 MYSQL_LOCAL_DATE_TIME,
                 MYSQL_KOTLINX_LOCAL_DATE_TIME,
-                MYSQL_OFFSET_DATE_TIME,
+//                 MYSQL_OFFSET_DATE_TIME,
                 MYSQL_LOCAL_TIME,
                 MYSQL_INT,
                 MYSQL_INHERITED,
