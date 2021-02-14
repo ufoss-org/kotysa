@@ -11,7 +11,6 @@ import org.ufoss.kotysa.columns.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.OffsetDateTime
 
 /**
  * Represents a MySQL Table
@@ -79,11 +78,11 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
     protected fun dateTime(getter: (T) -> kotlinx.datetime.LocalDateTime?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDateTime? = null, precision: Int? = null): KotlinxLocalDateTimeDbDateTimeColumnNullable<T> =
             KotlinxLocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
-    protected fun timestamp(getter: (T) -> OffsetDateTime, columnName: String? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNotNull<T> =
-            OffsetDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }
-
-    protected fun timestamp(getter: (T) -> OffsetDateTime?, columnName: String? = null, defaultValue: OffsetDateTime? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNullable<T> =
-            OffsetDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+//     protected fun timestamp(getter: (T) -> OffsetDateTime, columnName: String? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNotNull<T> =
+//             OffsetDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+//
+//     protected fun timestamp(getter: (T) -> OffsetDateTime?, columnName: String? = null, defaultValue: OffsetDateTime? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNullable<T> =
+//             OffsetDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
     protected fun time(getter: (T) -> LocalTime, columnName: String? = null, precision: Int? = null): LocalTimeDbTimeColumnNotNull<T> =
             LocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
