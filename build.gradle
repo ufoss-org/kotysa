@@ -40,7 +40,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     compileTestJava {
-        sourceCompatibility = 11
+        sourceCompatibility = 8
     }
 
     compileTestKotlin {

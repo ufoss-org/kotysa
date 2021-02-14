@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -23,24 +23,34 @@ class SpringJdbcSelectLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNull finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNotNull finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNull(LocalTime.of(12, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullNotEq finds mysqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullNotEq finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullNotEq(LocalTime.of(12, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullBefore finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                localTimeWithNullable.localTimeNotNull,
+                localTimeWithoutNullable.localTimeNotNull)
+        assertThat(repository.selectAllByLocalTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(localTimeWithNullable, localTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalTimeNotNullBefore finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullBefore(LocalTime.of(12, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
@@ -50,24 +60,24 @@ class SpringJdbcSelectLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullBeforeOrEq(LocalTime.of(12, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds mysqlLocalTimeWithNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds localTimeWithNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNotNullBeforeOrEq(LocalTime.of(12, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullAfter finds mysqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullAfter finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullAfter(LocalTime.of(12, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
@@ -77,31 +87,31 @@ class SpringJdbcSelectLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds mysqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullAfterOrEq(LocalTime.of(12, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds mysqlLocalTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds localTimeWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNotNullAfterOrEq(LocalTime.of(12, 6)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullable finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullable finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullable(LocalTime.of(11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullable finds mysqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNullable finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
@@ -111,17 +121,17 @@ class SpringJdbcSelectLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableNotEq finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullableNotEq finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableBefore finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullableBefore finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableBefore(LocalTime.of(11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
@@ -131,24 +141,24 @@ class SpringJdbcSelectLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds mysqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableBeforeOrEq(LocalTime.of(11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds mysqlLocalTimeWithNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds localTimeWithNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNullableBeforeOrEq(LocalTime.of(11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableAfter finds mysqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNullableAfter finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableAfter(LocalTime.of(11, 3)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
@@ -158,17 +168,17 @@ class SpringJdbcSelectLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds mysqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableAfterOrEq(LocalTime.of(11, 3)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds mysqlLocalTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds localTimeWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNullableAfterOrEq(LocalTime.of(11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 }
 
@@ -186,59 +196,78 @@ class LocalTimeRepositoryMysqlSelect(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<MysqlLocalTime>()
+    private fun createTables() {
+        sqlClient createTable MYSQL_LOCAL_TIME
+    }
 
-    private fun insertLocalTimes() = sqlClient.insert(mysqlLocalTimeWithNullable, mysqlLocalTimeWithoutNullable)
+    private fun insertLocalTimes() {
+        sqlClient.insert(localTimeWithNullable, localTimeWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<MysqlLocalTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_LOCAL_TIME
 
-    fun selectAllByLocalTimeNotNull(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNotNull] eq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNull(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull eq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNotNull] notEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull notEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNotNull] before localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullIn(values: Sequence<LocalTime>) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNotNull] beforeOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull before localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNotNull] after localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull beforeOrEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNotNull] afterOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull after localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullable(localTime: LocalTime?) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNullable] eq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNotNull afterOrEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNullable] notEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullable(localTime: LocalTime?) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNullable eq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNullable] before localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNullable notEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNullable] beforeOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNullable before localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNullable] after localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNullable beforeOrEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) = sqlClient.select<MysqlLocalTime>()
-            .where { it[MysqlLocalTime::localTimeNullable] afterOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNullable after localTime
+                    ).fetchAll()
+
+    fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom MYSQL_LOCAL_TIME
+                    where MYSQL_LOCAL_TIME.localTimeNullable afterOrEq localTime
+                    ).fetchAll()
 }
-*/

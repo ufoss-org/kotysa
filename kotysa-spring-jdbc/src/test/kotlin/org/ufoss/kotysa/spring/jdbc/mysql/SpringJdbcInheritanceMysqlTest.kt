@@ -3,13 +3,12 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
@@ -23,20 +22,20 @@ class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMy
     }
 
     @Test
-    fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById<Inherited>("id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
     fun `Verify selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id"))
                 .isEqualTo(inherited)
     }
 
     @Test
+    fun `Verify extension function selectById finds inherited`() {
+        assertThat(repository.selectById(MYSQL_INHERITED, "id"))
+                .isEqualTo(inherited)
+    }
+
+    @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName<Inherited>("name"))
+        assertThat(repository.selectFirstByName(MYSQL_INHERITED, "name"))
                 .isEqualTo(inherited)
     }
 
@@ -44,7 +43,7 @@ class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMy
     fun `Verify deleteById deletes inherited`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById<Inherited>("id"))
+            assertThat(repository.deleteById(MYSQL_INHERITED, "id"))
                     .isEqualTo(1)
             assertThat(repository.selectAll())
                     .isEmpty()
@@ -52,33 +51,10 @@ class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMy
     }
 }
 
-private val tables =
-        tables().mysql {
-            table<Inherited> {
-                name = "inherited"
-                column {
-                    it[Inherited::getId].varchar {
-                        size = 255
-                    }
-                }
-                        .primaryKey()
-                column {
-                    it[Inherited::name].varchar {
-                        size = 255
-                    }
-                }
-                column {
-                    it[Inherited::firstname].varchar {
-                        size = 255
-                    }
-                }
-            }
-        }
-
 
 class InheritanceMysqlRepository(client: JdbcOperations) : Repository {
 
-    val sqlClient = client.sqlClient(tables)
+    val sqlClient = client.sqlClient(mysqlTables)
 
     override fun init() {
         createTable()
@@ -89,24 +65,31 @@ class InheritanceMysqlRepository(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTable() = sqlClient.createTable<Inherited>()
+    private fun createTable() = sqlClient createTable MYSQL_INHERITED
 
-    fun insert() = sqlClient.insert(inherited)
+    fun insert() = sqlClient insert inherited
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<Inherited>()
+    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INHERITED
 
-    fun selectAll() = sqlClient.selectAll<Inherited>()
+    fun selectAll() = sqlClient selectAllFrom MYSQL_INHERITED
 
     fun selectInheritedById(id: String) =
-            sqlClient.select<Inherited>().where { it[Inherited::getId] eq id }.fetchOne()
+            (sqlClient selectFrom MYSQL_INHERITED
+                    where MYSQL_INHERITED.id eq id
+                    ).fetchOne()
+
+    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
+            (sqlClient selectFrom table
+                    where table.id eq id
+                    ).fetchOne()
+
+    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
+            (sqlClient selectFrom table
+                    where table.name eq name
+                    ).fetchFirst()
+
+    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
+            (sqlClient deleteFrom table
+                    where table.id eq id
+                    ).execute()
 }
-
-inline fun <reified T : Entity<String>> InheritanceMysqlRepository.selectById(id: String) =
-        sqlClient.select<T>().where { it[Entity<String>::getId] eq id }.fetchOne()
-
-inline fun <reified T : Nameable> InheritanceMysqlRepository.selectFirstByName(name: String) =
-        sqlClient.select<T>().where { it[Nameable::name] eq name }.fetchFirst()
-
-inline fun <reified T : Entity<String>> InheritanceMysqlRepository.deleteById(id: String) =
-        sqlClient.deleteFromTable<T>().where { it[Entity<String>::getId] eq id }.execute()
-*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.mysql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -23,172 +23,183 @@ class SpringJdbcSelectOffsetDateTimeMysqlTest : AbstractSpringJdbcMysqlTest<Offs
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNull finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNull(
+    fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNull(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds mysqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullNotEq finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullNotEq(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBefore finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(
+    fun `Verify selectAllByOffsetDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
+                OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)
+        )
+        assertThat(repository.selectAllByOffsetDateTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNotNullBefore finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBefore(
                 OffsetDateTime.of(2019, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(
+    fun `Verify selectAllByOffsetDateTimeNotNullBefore finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBefore(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
                 OffsetDateTime.of(2019, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds mysqlOffsetDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds offsetDateTimeWithNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfter finds mysqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfter finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfter(
                 OffsetDateTime.of(2019, 11, 5, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfter finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfter(
                 OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds mysqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
                 OffsetDateTime.of(2019, 11, 5, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds mysqlOffsetDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds offsetDateTimeWithoutNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
                 OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullable finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullable(
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullable(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullable finds mysqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullable(null))
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(
+    fun `Verify selectAllByOffsetDateTimeNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableNotEq(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableNotEq finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(null))
+    fun `Verify selectAllByOffsetDateTimeNullableNotEq finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBefore finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBefore(
+    fun `Verify selectAllByOffsetDateTimeNullableBefore finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBefore(
                 OffsetDateTime.of(2018, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBefore(
+    fun `Verify selectAllByOffsetDateTimeNullableBefore finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBefore(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds mysqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(
+    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
                 OffsetDateTime.of(2018, 11, 5, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds mysqlOffsetDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(
+    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds offsetDateTimeWithNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfter finds mysqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfter(
+    fun `Verify selectAllByOffsetDateTimeNullableAfter finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfter(
                 OffsetDateTime.of(2018, 11, 3, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfter(
+    fun `Verify selectAllByOffsetDateTimeNullableAfter finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfter(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds mysqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(
+    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfterOrEq(
                 OffsetDateTime.of(2018, 11, 3, 12, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds mysqlOffsetDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(
+    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds offsetDateTimeWithoutNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfterOrEq(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 }
 
@@ -206,59 +217,78 @@ class OffsetDateTimeRepositoryMysqlSelect(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<MysqlOffsetDateTime>()
+    private fun createTables() {
+        sqlClient createTable MYSQL_OFFSET_DATE_TIME
+    }
 
-    private fun insertOffsetDateTimes() = sqlClient.insert(mysqlOffsetDateTimeWithNullable, mysqlOffsetDateTimeWithoutNullable)
+    private fun insertOffsetDateTimes() {
+        sqlClient.insert(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<MysqlOffsetDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_OFFSET_DATE_TIME
 
-    fun selectAllByLocalDateTimeNotNull(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNotNull] eq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNull(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull eq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNotNull] notEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull notEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNotNull] before offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNotNull] beforeOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull before offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNotNull] after offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull beforeOrEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNotNull] afterOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull after offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullable(offsetDateTime: OffsetDateTime?) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] eq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNotNull afterOrEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] notEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullable(offsetDateTime: OffsetDateTime?) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNullable eq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableBefore(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] before offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNullable notEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] beforeOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableBefore(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNullable before offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableAfter(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] after offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNullable beforeOrEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<MysqlOffsetDateTime>()
-            .where { it[MysqlOffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableAfter(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNullable after offsetDateTime
+                    ).fetchAll()
+
+    fun selectAllByOffsetDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom MYSQL_OFFSET_DATE_TIME
+                    where MYSQL_OFFSET_DATE_TIME.offsetDateTimeNullable afterOrEq offsetDateTime
+                    ).fetchAll()
 }
-*/
