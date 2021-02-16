@@ -21,15 +21,15 @@ dependencies {
     testImplementation 'io.r2dbc:r2dbc-h2'
     testImplementation 'io.r2dbc:r2dbc-postgresql'
     testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'dev.miku:r2dbc-mysql'
     testImplementation 'org.testcontainers:mysql'
-    // needed to start mysql testcontainer
-    testImplementation "mysql:mysql-connector-java"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_coroutines_version"
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
 
+    testRuntimeOnly 'dev.miku:r2dbc-mysql'
+    // needed to start mysql testcontainer
+    testRuntimeOnly "mysql:mysql-connector-java"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 

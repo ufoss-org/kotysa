@@ -29,6 +29,12 @@ public object DbTypeChoice {
     public fun mysql(vararg tables: MysqlTable<*>): Tables = fillTables(DbType.MYSQL, *tables)
 
     /**
+     * Configure Functional Table Mapping support for PostgreSQL
+     * @sample org.ufoss.kotysa.sample.postgresqlTables
+     */
+    public fun postgresql(vararg tables: PostgresqlTable<*>): Tables = fillTables(DbType.POSTGRESQL, *tables)
+
+    /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
      */
@@ -86,7 +92,7 @@ public object DbTypeChoice {
             kotysaColumnsMap[column] = kotysaColumn
         }
 
-        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, ArrayList(kotysaColumnsMap.values), table.pk, table.foreignKeys)
+        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, kotysaColumnsMap.values.toList(), table.pk, table.foreignKeys)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable

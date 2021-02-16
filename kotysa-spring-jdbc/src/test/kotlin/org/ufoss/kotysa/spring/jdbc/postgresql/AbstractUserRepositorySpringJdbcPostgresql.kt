@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-/*
+
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
@@ -25,22 +25,26 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
     }
 
     private fun createTables() {
-        sqlClient.createTable<PostgresqlRole>()
-        sqlClient.createTable<PostgresqlUser>()
+        sqlClient createTable POSTGRESQL_ROLE
+        sqlClient createTable POSTGRESQL_USER
     }
 
-    private fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin, postgresqlGod)
+    private fun insertRoles() {
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
+    }
 
-    private fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
+    private fun insertUsers() {
+        sqlClient.insert(userJdoe, userBboss)
+    }
 
-    private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
+    fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<PostgresqlUser>()
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
 
-    fun selectAllUsers() = sqlClient.selectAll<PostgresqlUser>()
+    fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
 
-    fun selectFirstByFirstname(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] eq firstname }
-            .fetchFirstOrNull()
+    fun selectFirstByFirstname(firstname: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname eq firstname
+                    ).fetchFirstOrNull()
 }
-*/

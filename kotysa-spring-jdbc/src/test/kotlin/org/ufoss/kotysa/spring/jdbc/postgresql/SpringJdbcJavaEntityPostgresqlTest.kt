@@ -3,18 +3,19 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-/*
+
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.repositories.JavaUserRepository
-import org.ufoss.kotysa.spring.jdbc.SpringJdbcJavaEntityTest
-import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.test.POSTGRESQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.postgresqlTables
+import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
-class SpringJdbcJavaEntityPostgresqlTest :
-        AbstractSpringJdbcPostgresqlTest<JavaUserPostgresqlRepository>(), SpringJdbcJavaEntityTest<JavaUserPostgresqlRepository> {
+class SpringJdbcJavaEntityPostgresqlTest : AbstractSpringJdbcPostgresqlTest<JavaUserPostgresqlRepository>(),
+        JavaEntityTest<POSTGRESQL_JAVA_USER, JavaUserPostgresqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,29 +24,6 @@ class SpringJdbcJavaEntityPostgresqlTest :
     }
 }
 
-private val tables =
-        tables().postgresql {
-            table<JavaUser> {
-                name = "java_users"
-                column { it[JavaUser::getLogin].varchar() }
-                        .primaryKey()
-                column {
-                    it[JavaUser::getFirstname].varchar {
-                        name = "fname"
-                    }
-                }
-                column {
-                    it[JavaUser::getLastname].varchar {
-                        name = "lname"
-                    }
-                }
-                column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar() }
-                column { it[JavaUser::getAlias2].varchar() }
-                column { it[JavaUser::getAlias3].varchar() }
-            }
-        }
 
-
-class JavaUserPostgresqlRepository(client: JdbcOperations) : JavaUserRepository(client, tables)
-*/
+class JavaUserPostgresqlRepository(client: JdbcOperations)
+    : JavaUserRepository<POSTGRESQL_JAVA_USER>(client.sqlClient(postgresqlTables), POSTGRESQL_JAVA_USER)

@@ -3,31 +3,26 @@
  */
 
 package org.ufoss.kotysa.sample
-/*
+
+import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.tables
 import java.util.*
 
-fun postgresqlTables() =
-        tables().postgresql { // choose database type
-            table<PostgresUser> {
-                name = "users"
-                column { it[PostgresUser::id].uuid() }
-                        .primaryKey()
-                column { it[PostgresUser::firstname].varchar {
-                    name = "fname"
-                } }
-                column { it[PostgresUser::lastname].varchar {
-                    name = "lname"
-                } }
-                column { it[PostgresUser::isAdmin].boolean() }
-                column { it[PostgresUser::alias].varchar() }
-            }
-        }
-
-data class PostgresUser(
+data class PostgresqlUser(
         val firstname: String,
         val lastname: String,
         val isAdmin: Boolean,
         val alias: String? = null,
         val id: UUID
-)*/
+)
+
+object POSTGRESQL_USER : PostgresqlTable<PostgresqlUser>() {
+    val id = uuid(PostgresqlUser::id)
+            .primaryKey()
+    val firstname = varchar(PostgresqlUser::firstname, "fname")
+    val lastname = varchar(PostgresqlUser::lastname, "lname")
+    val isAdmin = boolean(PostgresqlUser::isAdmin)
+    val alias = varchar(PostgresqlUser::alias)
+}
+
+fun postgresqlTables() = tables().postgresql(POSTGRESQL_USER)
