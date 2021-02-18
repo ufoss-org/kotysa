@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -243,3 +243,4 @@ class LocalTimeRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
             .where { it[MysqlLocalTime::localTimeNullable] afterOrEq localTime }
             .fetchAll()
 }
+*/

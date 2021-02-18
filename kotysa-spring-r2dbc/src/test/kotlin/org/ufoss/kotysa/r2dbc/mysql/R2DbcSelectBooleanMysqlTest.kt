@@ -1,13 +1,9 @@
-/*@BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMyqlSelectBoolean>(resource)
-        repository = getContextRepository()
-    }
+/*
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -46,3 +42,4 @@ class UserRepositoryMyqlSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUse
             .where { it[MysqlUser::isAdmin] eq value }
             .fetchAll()
 }
+*/

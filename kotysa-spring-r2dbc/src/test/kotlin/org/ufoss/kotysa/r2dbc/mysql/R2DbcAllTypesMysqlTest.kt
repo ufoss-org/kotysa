@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -132,3 +132,4 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
                     .where { it[MysqlAllTypesNotNull::id] eq mysqlAllTypesNotNull.id }
                     .execute()
 }
+*/

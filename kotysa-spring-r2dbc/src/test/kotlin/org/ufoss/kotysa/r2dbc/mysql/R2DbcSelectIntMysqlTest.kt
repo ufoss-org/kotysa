@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -252,3 +252,4 @@ class IntRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
             .where { it[MysqlInt::intNullable] supOrEq int }
             .fetchAll()
 }
+*/

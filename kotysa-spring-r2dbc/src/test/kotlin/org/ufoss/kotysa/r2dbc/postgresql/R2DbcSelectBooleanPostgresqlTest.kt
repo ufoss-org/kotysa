@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -44,3 +44,4 @@ class UserRepositoryPostgresqlSelectBoolean(sqlClient: ReactorSqlClient) : Abstr
             .where { it[PostgresqlUser::isAdmin] eq value }
             .fetchAll()
 }
+*/

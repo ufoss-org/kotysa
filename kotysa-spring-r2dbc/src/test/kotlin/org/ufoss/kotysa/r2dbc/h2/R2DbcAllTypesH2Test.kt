@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -146,3 +146,4 @@ class AllTypesRepositoryH2(
                     .where { it[H2AllTypesNotNull::id] eq h2AllTypesNotNull.id }
                     .execute()
 }
+*/

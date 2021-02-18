@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
@@ -256,3 +256,4 @@ class KotlinxLocalDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) :
                     .where { it[PostgresqlKotlinxLocalDateTime::localDateTimeAsTimestampNullable] afterOrEq localDateTime }
                     .fetchAll()
 }
+*/

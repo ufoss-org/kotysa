@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
@@ -99,3 +99,4 @@ inline fun <reified T : Nameable> InheritanceH2Repository.selectFirstByName(name
 
 inline fun <reified T : Entity<String>> InheritanceH2Repository.deleteById(id: String) =
         sqlClient.deleteFromTable<T>().where { it[Entity<String>::getId] eq id }.execute()
+*/

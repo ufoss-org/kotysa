@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
@@ -275,3 +275,4 @@ class OffsetDateTimeRepositoryH2Select(private val sqlClient: ReactorSqlClient) 
             .where { it[H2OffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
             .fetchAll()
 }
+*/

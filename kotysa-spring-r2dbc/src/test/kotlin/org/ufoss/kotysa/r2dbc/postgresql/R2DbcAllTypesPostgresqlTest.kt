@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -136,3 +136,4 @@ class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
                     .where { it[PostgresqlAllTypesNotNull::id] eq postgresqlAllTypesNotNull.id }
                     .execute()
 }
+*/

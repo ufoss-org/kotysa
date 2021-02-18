@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -159,3 +159,4 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
             .where { it[H2User::id] eq h2Jdoe.id }
             .execute()
 }
+*/

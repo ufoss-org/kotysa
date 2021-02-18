@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -266,3 +266,4 @@ class KotlinxLocalDateRepositoryH2Select(private val sqlClient: ReactorSqlClient
                     .where { it[H2KotlinxLocalDate::localDateNullable] afterOrEq localDate }
                     .fetchAll()
 }
+*/

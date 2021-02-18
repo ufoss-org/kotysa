@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -108,3 +108,4 @@ class UserRepositoryH2Select(
                     .where { it[H2User::alias] `in` aliases }
                     .fetchAll()
 }
+*/

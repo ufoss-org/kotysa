@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
@@ -89,3 +89,4 @@ class UserRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
                     .innerJoin<MysqlRole>().on { it[MysqlUser::roleId] }
                     .fetchAll()
 }
+*/

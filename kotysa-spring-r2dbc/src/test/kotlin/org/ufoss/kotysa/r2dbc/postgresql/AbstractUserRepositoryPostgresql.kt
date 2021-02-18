@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.*
@@ -42,3 +42,4 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: Reactor
             .where { it[PostgresqlUser::firstname] eq firstname }
             .fetchFirst()
 }
+*/

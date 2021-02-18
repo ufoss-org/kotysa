@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -247,3 +247,4 @@ class LocalTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository
             .where { it[PostgresqlLocalTime::localTimeNullable] afterOrEq localTime }
             .fetchAll()
 }
+*/

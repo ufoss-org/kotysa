@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
@@ -113,3 +113,4 @@ class UuidRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
             .where { it[H2Uuid::roleIdNullable] notEq roleId }
             .fetchAll()
 }
+*/

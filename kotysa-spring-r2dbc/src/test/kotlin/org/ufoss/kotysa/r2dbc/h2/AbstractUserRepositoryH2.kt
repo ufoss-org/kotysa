@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
@@ -43,3 +43,4 @@ abstract class AbstractUserRepositoryH2(
             .where { it[H2User::firstname] eq firstname }
             .fetchFirst()
 }
+*/

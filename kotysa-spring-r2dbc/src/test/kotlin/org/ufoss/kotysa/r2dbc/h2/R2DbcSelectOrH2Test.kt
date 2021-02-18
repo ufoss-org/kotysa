@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.reactive.TransactionalOperator
@@ -36,3 +36,4 @@ class UserRepositoryH2SelectOr(
             .or { it[H2Role::label] eq label2 }
             .fetchAll()
 }
+*/

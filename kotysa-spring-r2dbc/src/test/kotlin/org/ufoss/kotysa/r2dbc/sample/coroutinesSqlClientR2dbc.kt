@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.sample
-
+/*
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.tables
@@ -94,3 +94,4 @@ class UserRepositoryR2dbcCoroutines(dbClient: DatabaseClient) {
                 .execute()
     }
 }
+*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -256,3 +256,4 @@ class IntRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository {
             .where { it[PostgresqlInt::intNullable] supOrEq int }
             .fetchAll()
 }
+*/

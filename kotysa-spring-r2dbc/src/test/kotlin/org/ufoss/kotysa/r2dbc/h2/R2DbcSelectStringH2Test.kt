@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.reactive.TransactionalOperator
@@ -203,3 +203,4 @@ class UserRepositoryH2SelectString(
             .where { it[H2User::alias] endsWith aliasEndsWith }
             .fetchAll()
 }
+*/

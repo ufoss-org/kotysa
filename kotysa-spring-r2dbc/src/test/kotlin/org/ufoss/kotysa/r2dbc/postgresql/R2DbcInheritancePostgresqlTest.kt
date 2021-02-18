@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -104,3 +104,4 @@ inline fun <reified T : Nameable> InheritancePostgresqlRepository.selectFirstByN
 
 inline fun <reified T : Entity<String>> InheritancePostgresqlRepository.deleteById(id: String) =
         sqlClient.deleteFromTable<T>().where { it[Entity<String>::getId] eq id }.execute()
+*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -38,3 +38,4 @@ class UserRepositoryPostgresqlSelectOr(sqlClient: ReactorSqlClient) : AbstractUs
             .or { it[PostgresqlRole::label] eq label2 }
             .fetchAll()
 }
+*/

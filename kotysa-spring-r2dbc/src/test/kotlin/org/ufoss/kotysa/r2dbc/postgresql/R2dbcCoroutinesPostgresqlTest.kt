@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -163,3 +163,4 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
             .where { it[PostgresqlUser::id] eq postgresqlJdoe.id }
             .execute()
 }
+*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -109,3 +109,4 @@ inline fun <reified T : Nameable> InheritanceMysqlRepository.selectFirstByName(n
 
 inline fun <reified T : Entity<String>> InheritanceMysqlRepository.deleteById(id: String) =
         sqlClient.deleteFromTable<T>().where { it[Entity<String>::getId] eq id }.execute()
+*/

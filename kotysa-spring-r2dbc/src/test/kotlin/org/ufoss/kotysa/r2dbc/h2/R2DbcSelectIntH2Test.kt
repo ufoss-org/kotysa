@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
@@ -259,3 +259,4 @@ class IntRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repositor
             .where { it[H2Int::intNullable] supOrEq int }
             .fetchAll()
 }
+*/

@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.h2
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.getBean
@@ -179,3 +179,4 @@ class UserRepositoryH2UpdateDelete(
                     .where { it[H2User::id] `in` ids }
                     .execute()
 }
+*/

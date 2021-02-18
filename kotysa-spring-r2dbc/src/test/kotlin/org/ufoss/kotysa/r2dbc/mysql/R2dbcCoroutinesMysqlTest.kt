@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -163,3 +163,4 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
             .where { it[MysqlUser::id] eq mysqlJdoe.id }
             .execute()
 }
+*/

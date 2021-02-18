@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -203,3 +203,4 @@ class UserRepositoryPostgresqlSelectString(sqlClient: ReactorSqlClient) : Abstra
             .where { it[PostgresqlUser::alias] endsWith aliasEndsWith }
             .fetchAll()
 }
+*/

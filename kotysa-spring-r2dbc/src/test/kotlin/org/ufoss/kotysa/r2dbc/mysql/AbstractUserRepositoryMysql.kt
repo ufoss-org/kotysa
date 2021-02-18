@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-
+/*
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.*
@@ -42,3 +42,4 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
             .where { it[MysqlUser::firstname] eq firstname }
             .fetchFirst()
 }
+*/
