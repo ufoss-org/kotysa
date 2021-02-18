@@ -3,15 +3,13 @@
  */
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.PostgresqlUser
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.postgresqlBboss
-import org.ufoss.kotysa.test.postgresqlJdoe
 
 
 class SpringJdbcSelectBooleanPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectBoolean>() {
@@ -26,22 +24,22 @@ class SpringJdbcSelectBooleanPostgresqlTest : AbstractSpringJdbcPostgresqlTest<U
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
         assertThat(repository.selectAllByIsAdminEq(true))
                 .hasSize(1)
-                .containsExactly(postgresqlBboss)
+                .containsExactly(userBboss)
     }
 
     @Test
     fun `Verify selectAllByIsAdminEq false finds John`() {
         assertThat(repository.selectAllByIsAdminEq(false))
                 .hasSize(1)
-                .containsExactly(postgresqlJdoe)
+                .containsExactly(userJdoe)
     }
 }
 
 
 class UserRepositorySpringJdbcPostgresqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
-    fun selectAllByIsAdminEq(value: Boolean) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::isAdmin] eq value }
-            .fetchAll()
+    fun selectAllByIsAdminEq(value: Boolean) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.isAdmin eq value
+                    ).fetchAll()
 }
-*/

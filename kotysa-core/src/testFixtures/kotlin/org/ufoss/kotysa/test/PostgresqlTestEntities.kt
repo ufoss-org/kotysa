@@ -101,7 +101,7 @@ object POSTGRESQL_ALL_TYPES_NOT_NULL : PostgresqlTable<PostgresqlAllTypesNotNull
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNotNullEntity::localTime, precision = 9)
+    val localTim = time(AllTypesNotNullEntity::localTime)
     val localDateTime1 = timestamp(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -136,7 +136,7 @@ object POSTGRESQL_ALL_TYPES_NULLABLE : PostgresqlTable<PostgresqlAllTypesNullabl
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNullableEntity::localTime) // todo test fractionalSecondsPart later
+    val localTim = time(AllTypesNullableEntity::localTime)
     val localDateTime1 = timestamp(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -176,7 +176,11 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         } else if (other.offsetDateTime != null) {
             return false
         }
-        if (localTime != other.localTime) return false
+        if (localTime != null) {
+            if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime?.truncatedTo(ChronoUnit.SECONDS)) return false
+        } else if (other.localTime != null) {
+            return false
+        }
         if (localDateTime1 != other.localDateTime1) return false
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
@@ -215,7 +219,7 @@ object POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : PostgresqlTable<PostgresqlA
             defaultValue = LocalDate.of(2019, 11, 4))
     val kotlinxLocalDate = date(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
             defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
-    val localTim = time(AllTypesNullableDefaultValueEntity::localTime, precision = 9,
+    val localTim = time(AllTypesNullableDefaultValueEntity::localTime,
             defaultValue = LocalTime.of(11, 25, 55, 123456789))
     val localDateTime1 = timestamp(AllTypesNullableDefaultValueEntity::localDateTime1,
             defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))
@@ -246,18 +250,18 @@ object POSTGRESQL_KOTLINX_LOCAL_DATE : PostgresqlTable<KotlinxLocalDateEntity>()
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object POSTGRESQL_LOCAL_DATE_TIME : PostgresqlTable<LocalDateTimeEntity>() {
-    val id = integer(LocalDateTimeEntity::id)
+object POSTGRESQL_LOCAL_DATE_TIME : PostgresqlTable<LocalDateTimeAsTimestampEntity>() {
+    val id = integer(LocalDateTimeAsTimestampEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = timestamp(LocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = timestamp(LocalDateTimeEntity::localDateTimeNullable)
+    val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
+    val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object POSTGRESQL_KOTLINX_LOCAL_DATE_TIME : PostgresqlTable<KotlinxLocalDateTimeEntity>() {
-    val id = integer(KotlinxLocalDateTimeEntity::id)
+object POSTGRESQL_KOTLINX_LOCAL_DATE_TIME : PostgresqlTable<KotlinxLocalDateTimeAsTimestampEntity>() {
+    val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = timestamp(KotlinxLocalDateTimeEntity::localDateTimeNullable)
+    val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
+    val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
 object POSTGRESQL_OFFSET_DATE_TIME : PostgresqlTable<OffsetDateTimeEntity>() {

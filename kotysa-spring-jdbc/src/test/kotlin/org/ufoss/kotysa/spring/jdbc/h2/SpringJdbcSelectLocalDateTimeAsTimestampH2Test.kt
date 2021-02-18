@@ -32,6 +32,16 @@ class SpringJdbcSelectLocalDateTimeAsTimestampH2Test : AbstractSpringJdbcH2Test<
     }
 
     @Test
+    fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                localDateTimeWithNullable.localDateTimeNotNull,
+                localDateTimeWithoutNullable.localDateTimeNotNull)
+        assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable, localDateTimeAsTimestampWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByLocalDateTimeNotNullBefore finds localDateTimeAsTimestampWithNullable`() {
         assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime.of(2019, 11, 4, 12, 0)))
                 .hasSize(1)
