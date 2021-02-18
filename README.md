@@ -7,10 +7,10 @@
 The idiomatic way to write **Ko**tlin **ty**pe-**sa**fe SQL.
 
 ```kotlin
-val admins = sqlClient.select<User>()
-        .innerJoin<Role>().on { it[User::roleId] }
-        .where { it[Role::label] eq "admin" }
-        .fetchAll() // returns all admin users
+val admins = (sqlClient selectFrom USER
+        innerJoin ROLE on USER.roleId eq ROLE.id
+        where ROLE.label eq "admin"
+        ).fetchAll() // returns all admin users
 ```
 
 <p align="center">
@@ -21,8 +21,8 @@ val admins = sqlClient.select<User>()
 
 Contributions are very welcome.
 
-* To compile Kotysa use a JDK 11.
-* You need a local docker, like docker-ce. Some integration tests use testcontainers to start real databases like PostgreSQL, MySQL...
+* To compile Kotysa use a JDK 8.
+* You need a local docker, like docker-ce : some tests use testcontainers to start real databases like PostgreSQL, MySQL...
 
 1. Clone this repo
 
