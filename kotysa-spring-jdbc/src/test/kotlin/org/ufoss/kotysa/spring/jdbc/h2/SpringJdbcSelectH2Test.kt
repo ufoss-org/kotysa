@@ -28,7 +28,7 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
     @Test
     fun `Verify countAllUsersAndAliases returns all users' count`() {
         assertThat(repository.countAllUsersAndAliases())
-                .isEqualTo(Pair(2, 1))
+                .isEqualTo(Pair(2L, 1L))
     }
 
     @Test

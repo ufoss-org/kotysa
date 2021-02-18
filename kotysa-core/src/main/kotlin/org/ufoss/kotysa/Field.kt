@@ -24,11 +24,11 @@ public interface FieldNullable<T : Any> : Field<T?>
 internal class CountField<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>?,
-) : FieldNotNull<Int> {
+) : FieldNotNull<Long> {
     override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
 
-    override val builder: (RowImpl) -> Int = { row ->
-        row.getAndIncrement(Int::class.javaObjectType)!!
+    override val builder: (RowImpl) -> Long = { row ->
+        row.getAndIncrement(Long::class.javaObjectType)!!
     }
 }
 
