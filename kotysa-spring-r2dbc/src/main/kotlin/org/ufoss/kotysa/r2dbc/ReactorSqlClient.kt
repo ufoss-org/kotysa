@@ -7,78 +7,80 @@ package org.ufoss.kotysa.r2dbc
 import org.ufoss.kotysa.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import kotlin.reflect.KClass
 
 /**
- * Reactive (using Reactor Mono and Flux) Sql Client, to be used with R2dbc
+ * Reactive (using Reactor Mono and Flux) Sql Client, to be used with R2DBC
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-public abstract class ReactorSqlClient {
+public interface ReactorSqlClient {
 
-    public abstract fun <T : Any> insert(row: T): Mono<Void>
+    public infix fun <T : Any> insert(row: T)
 
-    public abstract fun insert(vararg rows: Any): Mono<Void>
+    public fun <T : Any> insert(vararg rows: T)
 
-    public inline fun <reified T : Any> select(noinline dsl: SelectDslApi.(ValueProvider) -> T)
-            : ReactorSqlClientSelect.Select<T> = select(T::class, dsl)
+    public infix fun <T : Any> createTable(table: Table<T>)
 
-    public inline fun <reified T : Any> select(): ReactorSqlClientSelect.Select<T> = select(T::class, null)
+    public infix fun <T : Any> deleteFrom(table: Table<T>): ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
+    public infix fun <T : Any> deleteAllFrom(table: Table<T>): Mono<Int> = deleteFrom(table).execute()
 
-    public inline fun <reified T : Any> selectAll(): Flux<T> = select(T::class, null).fetchAll()
+    public infix fun <T : Any> update(table: Table<T>): ReactorSqlClientDeleteOrUpdate.Update<T>
 
-    public inline fun <reified T : Any> countAll(): Mono<Long> = select(Long::class) { count<T>() }.fetchOne()
+    public infix fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): ReactorSqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): ReactorSqlClientSelect.FirstSelect<U?>
+    public infix fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T>
+    public infix fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T>
+    public infix fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Int>
 
-    @PublishedApi
-    internal abstract fun <T : Any> select(resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): ReactorSqlClientSelect.Select<T>
+    public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.From<T, T> =
+            select(table).from(table)
 
-    public inline fun <reified T : Any> createTable(): Mono<Void> = createTable(T::class)
-
-    @PublishedApi
-    internal abstract fun <T : Any> createTable(tableClass: KClass<T>): Mono<Void>
-
-    public inline fun <reified T : Any> deleteFromTable(): ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            deleteFromTable(T::class)
-
-    public inline fun <reified T : Any> deleteAllFromTable(): Mono<Int> = deleteFromTable(T::class).execute()
-
-    @PublishedApi
-    internal abstract fun <T : Any> deleteFromTable(tableClass: KClass<T>): ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>
-
-    public inline fun <reified T : Any> updateTable(): ReactorSqlClientDeleteOrUpdate.Update<T> = updateTable(T::class)
-
-    @PublishedApi
-    internal abstract fun <T : Any> updateTable(tableClass: KClass<T>): ReactorSqlClientDeleteOrUpdate.Update<T>
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T> = selectFrom(table).fetchAll()
 }
 
 
+public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
 
-public class ReactorSqlClientSelect private constructor() {
-
-    public abstract class Select<T : Any> : Whereable<T>, Return<T> {
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
-                join(U::class, alias, JoinType.INNER)
-
-        @PublishedApi
-        internal abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>
+    public interface Selectable : SqlClientQuery.Selectable {
+        override fun <T : Any> select(column: ColumnNotNull<*, T>): FirstSelect<T>
+        override fun <T : Any> select(column: ColumnNullable<*, T>): FirstSelect<T?>
+        override fun <T : Any> select(table: Table<T>): FirstSelect<T>
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
+        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
     }
 
-    public interface Joinable<T : Any> {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join<T>
+    public interface Fromable<T> : SqlClientQuery.Fromable {
+        override fun <U : Any> from(table: Table<U>): From<T, U>
     }
 
-    public interface Join<T : Any> : Whereable<T>, Return<T>
-
-    public interface Whereable<T : Any> {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+    public interface FirstSelect<T> : Fromable<T>, Andable {
+        override fun <U : Any> and(column: ColumnNotNull<*, U>): SecondSelect<T, U>
+        override fun <U : Any> and(column: ColumnNullable<*, U>): SecondSelect<T, U?>
+        override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
+        override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
     }
 
-    public interface Where<T : Any> : Return<T> {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+    public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
+        override fun <V : Any> and(column: ColumnNotNull<*, V>): ThirdSelect<T, U, V>
+        override fun <V : Any> and(column: ColumnNullable<*, V>): ThirdSelect<T, U, V?>
+        override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
+        override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
     }
 
-    public interface Return<T : Any> {
+    public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
+        override fun <W : Any> and(column: ColumnNotNull<*, W>): Select
+        override fun <W : Any> and(column: ColumnNullable<*, W>): Select
+        override fun <W : Any> and(table: Table<W>): Select
+        override fun <W : Any> andCount(column: Column<*, W>): Select
+    }
+
+    public interface Select : Fromable<List<Any?>>, Andable
+
+    public interface From<T, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T>
+
+    public interface Where<T> : SqlClientQuery.Where<Any, Where<T>>, Return<T>
+
+    public interface Return<T> {
         /**
          * This Query return one result as [Mono], or an empty [Mono] if no result
          *
@@ -101,37 +103,13 @@ public class ReactorSqlClientSelect private constructor() {
 
 public class ReactorSqlClientDeleteOrUpdate private constructor() {
 
-    public abstract class DeleteOrUpdate<T : Any> : Return {
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable =
-                join(U::class, alias, JoinType.INNER)
+    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.From<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<T, Where<T>>, Return
 
-        @PublishedApi
-        internal abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable
+    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.From<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Any, Where<Any>>, Return
 
-        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-    }
+    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
-    public abstract class Update<T : Any> : DeleteOrUpdate<T>() {
-        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
-    }
-
-    public interface Joinable {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
-    }
-
-    public interface Join : Return {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }
-
-    public interface Where : Return {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }
-
-    public interface TypedWhere<T : Any> : Return {
-        public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-        public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-    }
+    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return
 
     public interface Return {
         /**

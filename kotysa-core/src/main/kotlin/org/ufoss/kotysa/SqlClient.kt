@@ -41,7 +41,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(column: ColumnNullable<*, T>): FirstSelect<T?>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
-        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Int>
+        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
     }
 
     public interface Fromable<T> : SqlClientQuery.Fromable {
@@ -52,14 +52,14 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> and(column: ColumnNotNull<*, U>): SecondSelect<T, U>
         override fun <U : Any> and(column: ColumnNullable<*, U>): SecondSelect<T, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
-        override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Int>
+        override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
         override fun <V : Any> and(column: ColumnNotNull<*, V>): ThirdSelect<T, U, V>
         override fun <V : Any> and(column: ColumnNullable<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
-        override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Int>
+        override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
     }
 
     public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
@@ -73,8 +73,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
     public interface From<T, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T>
 
-    public interface Where<T> : SqlClientQuery.Where<Any, Where<T>>, Return<T> {
-    }
+    public interface Where<T> : SqlClientQuery.Where<Any, Where<T>>, Return<T>
 
     public interface Return<T> {
         /**
