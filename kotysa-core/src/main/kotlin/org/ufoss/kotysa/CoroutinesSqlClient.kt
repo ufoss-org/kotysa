@@ -5,90 +5,72 @@
 package org.ufoss.kotysa
 
 import kotlinx.coroutines.flow.Flow
-import kotlin.reflect.KClass
 
 /**
  * Coroutines Sql Client
  */
-public abstract class CoroutinesSqlClient {
+public interface CoroutinesSqlClient {
 
-    public abstract suspend fun <T : Any> insert(row: T)
+    public suspend infix fun <T : Any> insert(row: T)
 
-    public abstract suspend fun insert(vararg rows: Any)
+    public suspend fun <T : Any> insert(vararg rows: T)
 
-    public inline fun <reified T : Any> select(
-            noinline dsl: SelectDslApi.(ValueProvider) -> T
-    ): CoroutinesSqlClientSelect.Select<T> = selectInternal(T::class, dsl)
+    public suspend infix fun <T : Any> createTable(table: Table<T>)
 
-    public inline fun <reified T : Any> select(): CoroutinesSqlClientSelect.Select<T> = selectInternal(T::class, null)
+    public infix fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
+    public suspend infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
 
-    public inline fun <reified T : Any> selectAll(): Flow<T> = selectInternal(T::class, null).fetchAll()
+    public infix fun <T : Any> update(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T>
 
-    public suspend inline fun <reified T : Any> countAll(): Long = selectInternal(Long::class) { count<T>() }.fetchOne()
+    public infix fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T>
+    public infix fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T>
+    public infix fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long>
 
-    @PublishedApi
-    internal fun <T : Any> selectInternal(resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?) =
-            select(resultClass, dsl)
+    public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.From<T, T> =
+            select(table).from(table)
 
-    protected abstract fun <T : Any> select(
-            resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): CoroutinesSqlClientSelect.Select<T>
-
-    public suspend inline fun <reified T : Any> createTable(): Unit = createTableInternal(T::class)
-
-    @PublishedApi
-    internal suspend fun <T : Any> createTableInternal(tableClass: KClass<T>) = createTable(tableClass)
-
-    protected abstract suspend fun <T : Any> createTable(tableClass: KClass<T>)
-
-    public inline fun <reified T : Any> deleteFromTable(): CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            deleteFromTableInternal(T::class)
-
-    public suspend inline fun <reified T : Any> deleteAllFromTable(): Int = deleteFromTableInternal(T::class).execute()
-
-    @PublishedApi
-    internal fun <T : Any> deleteFromTableInternal(tableClass: KClass<T>) =
-            deleteFromTable(tableClass)
-
-    protected abstract fun <T : Any> deleteFromTable(tableClass: KClass<T>): CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>
-
-    public inline fun <reified T : Any> updateTable(): CoroutinesSqlClientDeleteOrUpdate.Update<T> = updateTableInternal(T::class)
-
-    @PublishedApi
-    internal fun <T : Any> updateTableInternal(tableClass: KClass<T>) = updateTable(tableClass)
-
-    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T>
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): Flow<T?> = selectFrom(table).fetchAll()
 }
 
 
 
-public class CoroutinesSqlClientSelect private constructor() {
+public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() {
 
-    public abstract class Select<T : Any> : CoroutinesSqlClientSelect.Whereable<T>, CoroutinesSqlClientSelect.Return<T> {
-
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): CoroutinesSqlClientSelect.Joinable<T> =
-                joinInternal(U::class, alias, JoinType.INNER)
-
-        @PublishedApi
-        internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
-                join(joinClass, alias, type)
-
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): CoroutinesSqlClientSelect.Joinable<T>
+    public interface Selectable : SqlClientQuery.Selectable {
+        override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
+        override fun <T : Any> select(table: Table<T>): FirstSelect<T>
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
+        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
     }
 
-    public interface Joinable<T : Any> {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): CoroutinesSqlClientSelect.Join<T>
+    public interface Fromable<T : Any> : SqlClientQuery.Fromable {
+        override fun <U : Any> from(table: Table<U>): From<T, U>
     }
 
-    public interface Join<T : Any> : CoroutinesSqlClientSelect.Whereable<T>, CoroutinesSqlClientSelect.Return<T>
-
-    public interface Whereable<T : Any> {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientSelect.Where<T>
+    public interface FirstSelect<T : Any> : Fromable<T>, Andable {
+        override fun <U : Any> and(column: Column<*, U>): SecondSelect<T?, U?>
+        override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
+        override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
     }
 
-    public interface Where<T : Any> : CoroutinesSqlClientSelect.Return<T> {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientSelect.Where<T>
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientSelect.Where<T>
+    public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
+        override fun <V : Any> and(column: Column<*, V>): ThirdSelect<T, U, V?>
+        override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
+        override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
     }
+
+    public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
+        override fun <W : Any> and(column: Column<*, W>): Select
+        override fun <W : Any> and(table: Table<W>): Select
+        override fun <W : Any> andCount(column: Column<*, W>): Select
+    }
+
+    public interface Select : Fromable<List<Any?>>, Andable
+
+    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T>
+
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, Return<T>
 
     public interface Return<T : Any> {
         /**
@@ -97,7 +79,7 @@ public class CoroutinesSqlClientSelect private constructor() {
          * @throws NoResultException if no results
          * @throws NonUniqueResultException if more than one result
          */
-        public suspend fun fetchOne(): T
+        public suspend fun fetchOne(): T?
 
         /**
          * This Query return one result, or null if no results
@@ -111,7 +93,7 @@ public class CoroutinesSqlClientSelect private constructor() {
          *
          * @throws NoResultException if no results
          */
-        public suspend fun fetchFirst(): T
+        public suspend fun fetchFirst(): T?
 
         /**
          * This Query return the first result, or null if no results
@@ -121,48 +103,20 @@ public class CoroutinesSqlClientSelect private constructor() {
         /**
          * This Query can return several results as [Flow], can be empty if no results
          */
-        public fun fetchAll(): Flow<T>
+        public fun fetchAll(): Flow<T?>
     }
 }
 
 
-public class CoroutinesSqlClientDeleteOrUpdate private constructor() {
+public class CoroutinesSqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
 
-    public abstract class DeleteOrUpdate<T : Any> : CoroutinesSqlClientDeleteOrUpdate.Return {
+    public interface FirstDeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): CoroutinesSqlClientDeleteOrUpdate.Joinable =
-                joinInternal(U::class, alias, JoinType.INNER)
+    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Any, Where<Any>>, Return
 
-        @PublishedApi
-        internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
-                join(joinClass, alias, type)
+    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): CoroutinesSqlClientDeleteOrUpdate.Joinable
-
-        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): CoroutinesSqlClientDeleteOrUpdate.TypedWhere<T>
-    }
-
-    public abstract class Update<T : Any> : CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
-        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): CoroutinesSqlClientDeleteOrUpdate.Update<T>
-    }
-
-    public interface Joinable {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): CoroutinesSqlClientDeleteOrUpdate.Join
-    }
-
-    public interface Join : CoroutinesSqlClientDeleteOrUpdate.Return {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientDeleteOrUpdate.Where
-    }
-
-    public interface Where : CoroutinesSqlClientDeleteOrUpdate.Return {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientDeleteOrUpdate.Where
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientDeleteOrUpdate.Where
-    }
-
-    public interface TypedWhere<T : Any> : CoroutinesSqlClientDeleteOrUpdate.Return {
-        public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): CoroutinesSqlClientDeleteOrUpdate.TypedWhere<T>
-        public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): CoroutinesSqlClientDeleteOrUpdate.TypedWhere<T>
-    }
+    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return
 
     public interface Return {
         /**

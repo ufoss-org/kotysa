@@ -9,75 +9,125 @@ import kotlinx.coroutines.flow.Flow
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.*
-import kotlin.reflect.KClass
 
 
+@Suppress("UNCHECKED_CAST")
 internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSqlClientSelectR2dbc() {
 
-    internal class Select<T : Any> internal constructor(
-            override val client: DatabaseClient,
-            override val tables: Tables,
-            override val resultClass: KClass<T>,
-            override val dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ) : CoroutinesSqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
-        override val properties: Properties<T> = initProperties()
-
-        override fun <U : Any> join(
-                joinClass: KClass<U>,
-                alias: String?, type: JoinType
-        ): CoroutinesSqlClientSelect.Joinable<T> =
-                Joinable(client, properties, joinClass, alias, type)
-    }
-
-    private class Joinable<T : Any, U : Any>(
+    internal class Selectable internal constructor(
             private val client: DatabaseClient,
-            private val properties: Properties<T>,
-            private val joinClass: KClass<U>,
-            private val alias: String?,
-            private val type: JoinType
-    ) : CoroutinesSqlClientSelect.Joinable<T> {
-
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): CoroutinesSqlClientSelect.Join<T> {
-            val join = Join(client, properties)
-            join.addJoinClause(dsl, joinClass, alias, type)
-            return join
-        }
+            private val tables: Tables,
+    ) : CoroutinesSqlClientSelect.Selectable {
+        override fun <T : Any> select(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
+        override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
+                SelectWithDsl(client, Properties(tables), dsl)
+        override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+                FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 
-    private class Join<T : Any>(
-            override val client: DatabaseClient,
-            override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Join<T>, CoroutinesSqlClientSelect.Join<T>, Whereable<T>, Return<T>
-
-    private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, CoroutinesSqlClientSelect.Whereable<T> {
-        val client: DatabaseClient
-
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientSelect.Where<T> {
-            val where = Where(client, properties)
-            where.addWhereClause(dsl)
-            return where
+    internal class FirstSelect<T : Any> internal constructor(
+            private val client: DatabaseClient,
+            override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Select<T>(), CoroutinesSqlClientSelect.FirstSelect<T> {
+        private val from: From<T, *> by lazy {
+            From<T, Any>(client, properties)
         }
+
+        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+
+        override fun <U : Any> and(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
+        override fun <U : Any> and(table: Table<U>): CoroutinesSqlClientSelect.SecondSelect<T, U> =
+                SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
+        override fun <U : Any> andCount(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T, Long> =
+                SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
     }
 
-    private class Where<T : Any>(
+    internal class SecondSelect<T, U> internal constructor(
+            private val client: DatabaseClient,
+            override val properties: Properties<Pair<T, U>>,
+    ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), CoroutinesSqlClientSelect.SecondSelect<T, U> {
+        private val from: From<Pair<T, U>, *> by lazy {
+            From<Pair<T, U>, Any>(client, properties)
+        }
+
+        override fun <V : Any> from(table: Table<V>): CoroutinesSqlClientSelect.From<Pair<T, U>, V> =
+                addFromTable(table, from as From<Pair<T, U>, V>)
+
+        override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
+        override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+    }
+
+    internal class ThirdSelect<T, U, V> internal constructor(
+            private val client: DatabaseClient,
+            override val properties: Properties<Triple<T, U, V>>,
+    ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), CoroutinesSqlClientSelect.ThirdSelect<T, U, V> {
+        private val from: From<Triple<T, U, V>, *> by lazy {
+            From<Triple<T, U, V>, Any>(client, properties)
+        }
+
+        override fun <W : Any> from(table: Table<W>): CoroutinesSqlClientSelect.From<Triple<T, U, V>, W> =
+                addFromTable(table, from as From<Triple<T, U, V>, W>)
+
+        override fun <W : Any> and(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
+        override fun <W : Any> and(table: Table<W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
+        override fun <W : Any> andCount(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+    }
+
+    internal class Select internal constructor(
+            client: DatabaseClient,
+            override val properties: Properties<List<Any?>>,
+    ) : DefaultSqlClientSelect.Select<List<Any?>>(), CoroutinesSqlClientSelect.Select {
+        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.From<List<Any?>, U> =
+                addFromTable(table, from as From<List<Any?>, U>)
+
+        override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectColumn(column) }
+        override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addCountColumn(column) }
+    }
+
+    internal class SelectWithDsl<T : Any> internal constructor(
+            client: DatabaseClient,
+            properties: Properties<T>,
+            dsl: (ValueProvider) -> T,
+    ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), CoroutinesSqlClientSelect.Fromable<T> {
+        private val from: From<T, *> = From<T, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+    }
+
+    internal class From<T : Any, U : Any> internal constructor(
             override val client: DatabaseClient,
-            override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.Where<T>, Return<T> {
+            properties: Properties<T>,
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>, CoroutinesSqlClientSelect.Where<T>>(properties), CoroutinesSqlClientSelect.From<T, U>, Return<T> {
+        override val where = Where(client, properties)
+        override val from = this
+    }
 
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientSelect.Where<T> {
-            addAndClause(dsl)
-            return this
-        }
-
-        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): CoroutinesSqlClientSelect.Where<T> {
-            addOrClause(dsl)
-            return this
-        }
+    internal class Where<T : Any> constructor(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>>(), CoroutinesSqlClientSelect.Where<T>, Return<T> {
+        override val where = this
     }
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, CoroutinesSqlClientSelect.Return<T> {
 
-        override suspend fun fetchOne(): T =
+        override suspend fun fetchOne(): T? =
                 try {
                     fetch().awaitOne()
                 } catch (_: EmptyResultDataAccessException) {
@@ -93,7 +143,7 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                     throw NonUniqueResultException()
                 }
 
-        override suspend fun fetchFirst(): T =
+        override suspend fun fetchFirst(): T? =
                 try {
                     fetch().awaitSingle()
                 } catch (_: EmptyResultDataAccessException) {
@@ -102,6 +152,6 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
 
         override suspend fun fetchFirstOrNull(): T? = fetch().awaitSingleOrNull()
 
-        override fun fetchAll(): Flow<T> = fetch().flow()
+        override fun fetchAll(): Flow<T?> = fetch().flow()
     }
 }

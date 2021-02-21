@@ -42,8 +42,6 @@ internal class SqlClientSpringJdbc(
     }
 
     override fun <T : Any> insert(vararg rows: T) {
-        checkRowsAreMapped(*rows)
-
         rows.forEach { row -> insert(row) }
     }
 
@@ -58,10 +56,7 @@ internal class SqlClientSpringJdbc(
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
             SqlClientUpdateSpringJdbc.FirstUpdate(namedParameterJdbcOperations, tables, table)
 
-    override fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)
-
-    override fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?> =
+    override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)
 
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
@@ -70,7 +65,7 @@ internal class SqlClientSpringJdbc(
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(dsl)
 
-    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> =
+    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount(column)
 }
 

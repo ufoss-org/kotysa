@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa
 
-public class SelectDsl<T> internal constructor(
+public class SelectDsl<T : Any> internal constructor(
         private val properties: DefaultSqlClientSelect.Properties<T>,
 ) : ValueProvider {
     internal lateinit var row: RowImpl
@@ -14,11 +14,7 @@ public class SelectDsl<T> internal constructor(
                 field is CountField<*, *> && field.dsl == dsl && field.alias == alias
             }.values.first()]!!*/
 
-    override fun <T : Any, U : Any> get(column: ColumnNotNull<T, U>): U {
-        return row.getAndIncrement(column, properties) as U
-    }
-
-    override fun <T : Any, U : Any> get(column: ColumnNullable<T, U>): U? {
+    override fun <T : Any, U : Any> get(column: Column<T, U>): U? {
         return row.getAndIncrement(column, properties)
     }
 }

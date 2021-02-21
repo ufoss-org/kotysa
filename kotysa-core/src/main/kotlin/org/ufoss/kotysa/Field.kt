@@ -32,30 +32,12 @@ internal class CountField<T : Any, U : Any> internal constructor(
     }
 }
 
-internal sealed class ColumnField<T : Any, U : Any>(
-        properties: DefaultSqlClientCommon.Properties,
+internal class ColumnField<T : Any, U : Any>(
+        override val properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>,
-) {
-    protected val columnFieldNames: List<String> = listOf(column.getFieldName(properties.tables.allColumns))
-
-    internal val columnBuilder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
-}
-
-internal class ColumnFieldNotNull<T : Any, U : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        column: ColumnNotNull<T, U>,
-) : ColumnField<T, U>(properties, column), FieldNotNull<U> {
-    override val fieldNames: List<String> = columnFieldNames
-    @Suppress("UNCHECKED_CAST")
-    override val builder: (RowImpl) -> U = columnBuilder as (RowImpl) -> U
-}
-
-internal class ColumnFieldNullable<T : Any, U : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        column: ColumnNullable<T, U>
-) : ColumnField<T, U>(properties, column), FieldNullable<U> {
-    override val fieldNames: List<String> = columnFieldNames
-    override val builder: (RowImpl) -> U? = columnBuilder
+) : FieldNullable<U> {
+    override val fieldNames: List<String> = listOf(column.getFieldName(properties.tables.allColumns))
+    override val builder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
 }
 
 /**
@@ -179,13 +161,9 @@ internal class FieldDsl<T : Any>(
 
 // Extension functions
 
-internal fun <T : Any, U : Any> ColumnNotNull<T, U>.toField(
+internal fun <T : Any, U : Any> Column<T, U>.toField(
         properties: DefaultSqlClientCommon.Properties
-): ColumnFieldNotNull<T, U> = ColumnFieldNotNull(properties, this)
-
-internal fun <T : Any, U : Any> ColumnNullable<T, U>.toField(
-        properties: DefaultSqlClientCommon.Properties
-): ColumnFieldNullable<T, U> = ColumnFieldNullable(properties, this)
+): ColumnField<T, U> = ColumnField(properties, this)
 
 internal fun <T : Any> AbstractTable<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
         TableField(properties, this)

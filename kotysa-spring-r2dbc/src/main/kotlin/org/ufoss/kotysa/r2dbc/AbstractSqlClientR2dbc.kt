@@ -5,10 +5,7 @@
 package org.ufoss.kotysa.r2dbc
 
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.DefaultSqlClient
-import org.ufoss.kotysa.SqlType
-import org.ufoss.kotysa.getTable
-import org.ufoss.kotysa.toCallable
+import org.ufoss.kotysa.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
@@ -20,13 +17,12 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
 
     val client: DatabaseClient
 
-    fun <T : Any> executeCreateTable(tableClass: KClass<T>) =
-            client.sql(createTableSql(tableClass))
+    fun <T : Any> executeCreateTable(table: Table<T>): DatabaseClient.GenericExecuteSpec = client.sql(createTableSql(table))
 
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec {
         val table = tables.getTable(row::class)
         var index = 0
-        return table.columns.values
+        return table.columns
                 .fold(client.sql(insertSql(row))) { execSpec, column ->
                     val value = column.entityGetter(row)
                     if (value == null) {

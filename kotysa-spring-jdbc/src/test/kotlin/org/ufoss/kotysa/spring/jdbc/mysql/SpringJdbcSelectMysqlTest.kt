@@ -159,7 +159,7 @@ class UserRepositorySpringJdbcMysqlSelect(client: JdbcOperations) : AbstractUser
                     ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname], it[MYSQL_ROLE.label]) }
+            (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname]!!, it[MYSQL_ROLE.label]!!) }
                     from MYSQL_USER innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
                     ).fetchAll()
 

@@ -154,7 +154,7 @@ class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRep
                     ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[H2_USER.lastname], it[H2_ROLE.label]) }
+            (sqlClient select { UserWithRoleDto(it[H2_USER.lastname]!!, it[H2_ROLE.label]!!) }
                     from H2_USER innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
                     ).fetchAll()
 

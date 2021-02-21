@@ -95,11 +95,6 @@ public interface DefaultSqlClient {
         return createTableSql
     }
 
-    public fun checkRowsAreMapped(vararg rows: Any) {
-        // fail-fast : check that all tables are mapped Tables
-        rows.forEach { row -> tables.checkTable(row::class) }
-    }
-
     public fun <T : Any> insertSql(row: T): String {
         val insertSqlQuery = insertSqlQuery(row)
         logger.debug { "Exec SQL (${tables.dbType.name}) : $insertSqlQuery" }

@@ -159,7 +159,7 @@ class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcOperations) : Abstrac
                     ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[POSTGRESQL_USER.lastname], it[POSTGRESQL_ROLE.label]) }
+            (sqlClient select { UserWithRoleDto(it[POSTGRESQL_USER.lastname]!!, it[POSTGRESQL_ROLE.label]!!) }
                     from POSTGRESQL_USER innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER.roleId eq POSTGRESQL_ROLE.id
                     ).fetchAll()
 

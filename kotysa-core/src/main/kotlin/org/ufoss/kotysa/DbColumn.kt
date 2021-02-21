@@ -11,7 +11,7 @@ package org.ufoss.kotysa
  * @param U return type of associated getter to this column
  */
 public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column<T, U> {
-    internal abstract val entityGetter: (T) -> U?
+    public abstract val entityGetter: (T) -> U?
     internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
     internal abstract val isAutoIncrement: Boolean

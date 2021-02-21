@@ -12,11 +12,10 @@ import java.util.*
 
 
 public interface ValueProvider {
-    public operator fun <T : Any, U : Any> get(column: ColumnNotNull<T, U>): U
-    public operator fun <T : Any, U : Any> get(column: ColumnNullable<T, U>): U?
+    public operator fun <T : Any, U : Any> get(column: Column<T, U>): U?
 }
 
-internal class FieldValueProvider<T> internal constructor(
+internal class FieldValueProvider<T : Any> internal constructor(
         private val properties: DefaultSqlClientSelect.Properties<T>,
 ) : ValueProvider {
     private val selectedFieldNames = mutableListOf<String>()
@@ -26,7 +25,7 @@ internal class FieldValueProvider<T> internal constructor(
                 field is CountField<*, *> && field.dsl == dsl && field.alias == alias
             }.values.first()]!!*/
 
-    override fun <T : Any, U : Any> get(column: ColumnNotNull<T, U>): U {
+    override fun <T : Any, U : Any> get(column: Column<T, U>): U {
         addSelectedFieldName(column.getFieldName(properties.tables.allColumns))
         val columnClass = column.getKotysaColumn(properties.tables.allColumns).columnClass
         @Suppress("UNCHECKED_CAST")
@@ -43,11 +42,6 @@ internal class FieldValueProvider<T> internal constructor(
             Int::class -> 42
             else -> throw RuntimeException("$columnClass is not supported yet")
         } as U
-    }
-
-    override fun <T : Any, U : Any> get(column: ColumnNullable<T, U>): U? {
-        addSelectedFieldName(column.getFieldName(properties.tables.allColumns))
-        return null
     }
 
     private fun addSelectedFieldName(fieldName: String) {

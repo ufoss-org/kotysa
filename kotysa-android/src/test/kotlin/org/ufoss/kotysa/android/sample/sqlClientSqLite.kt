@@ -72,7 +72,7 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
 
         val all = sqlClient selectAllFrom USER
 
-        val johny = (sqlClient select { UserWithRoleDto(it[USER.lastname], it[ROLE.label]) }
+        val johny = (sqlClient select { UserWithRoleDto(it[USER.lastname]!!, it[ROLE.label]!!) }
                 from USER innerJoin ROLE on USER.roleId eq ROLE.id
                 where USER.alias eq "Johny"
                 // null String accepted        ^^^^^ , if alias=null, gives "WHERE user.alias IS NULL"

@@ -155,7 +155,7 @@ class UserRepositorySelect(
                     ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname], it[SQLITE_ROLE.label]) }
+            (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname]!!, it[SQLITE_ROLE.label]!!) }
                     from SQLITE_USER innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
                     ).fetchAll()
 

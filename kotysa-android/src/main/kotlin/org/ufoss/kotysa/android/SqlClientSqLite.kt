@@ -28,8 +28,6 @@ internal class SqlClientSqLite(
     }
 
     override fun <T : Any> insert(vararg rows: T) {
-        checkRowsAreMapped(*rows)
-
         rows.forEach { row -> insert(row) }
     }
 
@@ -44,15 +42,13 @@ internal class SqlClientSqLite(
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
             SqlClientUpdateSqLite.FirstUpdate(client.writableDatabase, tables, table)
 
-    override fun <T : Any, U : Any> select(column: ColumnNotNull<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(column)
-    override fun <T : Any, U : Any> select(column: ColumnNullable<T, U>): SqlClientSelect.FirstSelect<U?> =
+    override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(column)
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
-    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Int> =
+    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount(column)
 }
 
