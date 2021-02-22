@@ -2,32 +2,29 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.test.repositories
+package org.ufoss.kotysa.r2dbc
 
-import org.ufoss.kotysa.SqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class JavaUserRepository<T : JAVA_USER>(
-        private val sqlClient: SqlClient,
+abstract class R2dbcJavaUserRepository<T : JAVA_USER>(
+        private val sqlClient: ReactorSqlClient,
         private val table: T,
 ) : Repository {
 
     override fun init() {
         createTable()
-        insert()
+                .then(insert())
+                .block()
     }
 
     override fun delete() {
         deleteAll()
+                .block()
     }
 
-    private fun createTable() {
-        sqlClient createTable table
-    }
+    private fun createTable() = sqlClient createTable table
 
-    fun insert() {
-        sqlClient.insert(javaJdoe, javaBboss)
-    }
+    fun insert() = sqlClient.insert(javaJdoe, javaBboss)
 
     fun deleteAll() = sqlClient deleteAllFrom table
 
@@ -36,7 +33,7 @@ abstract class JavaUserRepository<T : JAVA_USER>(
     fun selectFirstByFirstname(firstname: String) =
             (sqlClient selectFrom table
                     where table.firstname eq firstname
-                    ).fetchFirstOrNull()
+                    ).fetchFirst()
 
     fun selectByAlias1(alias: String?) =
             (sqlClient selectFrom table
