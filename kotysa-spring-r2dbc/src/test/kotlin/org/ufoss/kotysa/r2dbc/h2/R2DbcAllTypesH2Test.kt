@@ -22,10 +22,12 @@ import java.util.*
 
 
 class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
-    override val context = startContext<AllTypesRepositoryH2>()
 
-    override val repository = getContextRepository<AllTypesRepositoryH2>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<IntRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

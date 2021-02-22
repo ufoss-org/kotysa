@@ -16,10 +16,12 @@ import java.util.*
 
 
 class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete>() {
-    override val context = startContext<UserRepositoryH2UpdateDelete>()
 
-    override val repository = getContextRepository<UserRepositoryH2UpdateDelete>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<UserRepositoryH2UpdateDelete>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() {

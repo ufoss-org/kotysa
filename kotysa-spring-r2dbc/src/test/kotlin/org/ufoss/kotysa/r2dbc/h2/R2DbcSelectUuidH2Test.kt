@@ -12,9 +12,12 @@ import java.util.*
 
 
 class R2DbcSelectUuidH2Test : AbstractR2dbcH2Test<UuidRepositoryH2Select>() {
-    override val context = startContext<UuidRepositoryH2Select>()
 
-    override val repository = getContextRepository<UuidRepositoryH2Select>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<UuidRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByRoleIdNotNull finds both results`() {

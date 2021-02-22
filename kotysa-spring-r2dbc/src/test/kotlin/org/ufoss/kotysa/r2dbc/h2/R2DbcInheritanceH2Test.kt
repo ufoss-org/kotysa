@@ -5,24 +5,24 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 
 
 class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
-    override val context = startContext<InheritanceH2Repository>()
 
-    override val repository = getContextRepository<InheritanceH2Repository>()
-    private val operator = context.getBean<TransactionalOperator>().transactionalOp()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<InheritanceH2Repository>()
+        repository = getContextRepository()
+    }
 
     @Test
-    fun `Verify extension function selectById finds inherited`() {
+    fun `Verify extension function selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id").block())
                 .isEqualTo(inherited)
     }
@@ -30,6 +30,12 @@ class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
     @Test
     fun `Verify selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id").block())
+                .isEqualTo(inherited)
+    }
+
+    @Test
+    fun `Verify extension function selectById finds inherited`() {
+        assertThat(repository.selectById(H2_INHERITED, "id").block())
                 .isEqualTo(inherited)
     }
 

@@ -5,15 +5,19 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 
 class R2DbcSelectIntH2Test : AbstractR2dbcH2Test<IntRepositoryH2Select>() {
-    override val context = startContext<IntRepositoryH2Select>()
 
-    override val repository = getContextRepository<IntRepositoryH2Select>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<IntRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     private val intWithNullable = IntEntity(
             org.ufoss.kotysa.test.intWithNullable.intNotNull,

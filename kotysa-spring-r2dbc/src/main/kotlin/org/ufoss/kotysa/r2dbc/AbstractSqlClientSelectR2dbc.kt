@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.RowsFetchSpec
 import org.ufoss.kotysa.DefaultSqlClientSelect
+import java.util.*
 
 
 internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : DefaultSqlClientSelect() {
@@ -24,8 +25,8 @@ internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : D
                         execSpec.bind("k${index}", value)
                     }
 
-            executeSpec.map { r, _ ->
-                select(r.toRow())
+            executeSpec.map { r ->
+                select(r.toRow()) // Optional.ofNullable(
             }
         }
     }

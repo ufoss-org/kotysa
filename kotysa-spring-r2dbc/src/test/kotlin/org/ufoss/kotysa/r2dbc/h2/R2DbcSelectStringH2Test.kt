@@ -14,9 +14,12 @@ import org.ufoss.kotysa.test.h2Jdoe
 
 
 class R2DbcSelectStringH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectString>() {
-    override val context = startContext<UserRepositoryH2SelectString>()
 
-    override val repository = getContextRepository<UserRepositoryH2SelectString>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<UserRepositoryH2SelectString>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

@@ -16,9 +16,12 @@ import java.time.ZoneOffset
 
 
 class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcH2Test<OffsetDateTimeRepositoryH2Select>() {
-    override val context = startContext<OffsetDateTimeRepositoryH2Select>()
 
-    override val repository = getContextRepository<OffsetDateTimeRepositoryH2Select>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<OffsetDateTimeRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds h2OffsetDateTimeWithNullable`() {

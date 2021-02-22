@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc
 
 import org.ufoss.kotysa.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.*

@@ -21,10 +21,12 @@ import org.ufoss.kotysa.test.*
 
 @ExperimentalCoroutinesApi
 class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() {
-    override val context = startContext<CoroutinesUserH2Repository>()
 
-    override val repository = getContextRepository<CoroutinesUserH2Repository>()
-    private val operator = context.getBean<TransactionalOperator>().coTransactionalOp()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<IntRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {

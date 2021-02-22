@@ -15,9 +15,12 @@ import org.ufoss.kotysa.test.h2KotlinxLocalDateTimeWithoutNullable
 
 
 class R2DbcSelectKotlinxLocalDateTimeAsTimestampH2Test : AbstractR2dbcH2Test<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>() {
-    override val context = startContext<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>()
 
-    override val repository = getContextRepository<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalDateTimeAsTimestampNotNull finds h2KotlinxLocalDateTimeWithNullable`() {

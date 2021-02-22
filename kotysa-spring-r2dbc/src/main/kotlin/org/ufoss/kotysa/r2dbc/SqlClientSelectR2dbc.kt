@@ -127,10 +127,10 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
 
-        override fun fetchOne(): Mono<T> = fetch().one()
+        override fun fetchOne(): Mono<T?> = fetch().one()
                 .onErrorMap(IncorrectResultSizeDataAccessException::class.java) { NonUniqueResultException() }
 
-        override fun fetchFirst(): Mono<T> = fetch().first()
-        override fun fetchAll(): Flux<T> = fetch().all()
+        override fun fetchFirst(): Mono<T?> = fetch().first()
+        override fun fetchAll(): Flux<T?> = fetch().all()
     }
 }

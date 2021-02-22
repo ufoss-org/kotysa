@@ -14,9 +14,12 @@ import org.ufoss.kotysa.test.h2God
 
 
 class R2DbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectOr>() {
-    override val context = startContext<UserRepositoryH2SelectOr>()
 
-    override val repository = getContextRepository<UserRepositoryH2SelectOr>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<UserRepositoryH2SelectOr>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectRolesByLabels finds h2Admin and h2God`() {

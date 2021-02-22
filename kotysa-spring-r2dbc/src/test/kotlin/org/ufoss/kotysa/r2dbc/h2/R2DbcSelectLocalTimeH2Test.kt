@@ -15,9 +15,12 @@ import java.time.LocalTime
 
 
 class R2DbcSelectLocalTimeH2Test : AbstractR2dbcH2Test<LocalTimeRepositoryH2Select>() {
-    override val context = startContext<LocalTimeRepositoryH2Select>()
 
-    override val repository = getContextRepository<LocalTimeRepositoryH2Select>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<LocalTimeRepositoryH2Select>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectAllByLocalTimeNotNull finds h2LocalTimeWithNullable`() {
