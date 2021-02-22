@@ -154,9 +154,13 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             this[0]
         }
 
-        override fun fetchFirstOrNull() = fetchAll().firstOrNull()
+        override fun fetchFirstOrNull() = fetchAllNullable().firstOrNull()
 
-        override fun fetchAll(): List<T?> = with(properties) {
+        override fun fetchAll(): List<T> =
+                fetchAllNullable()
+                        .filterNotNull()
+
+        private fun fetchAllNullable(): List<T?> = with(properties) {
             val parameters = MapSqlParameterSource()
             bindWhereParams(parameters)
 
@@ -165,7 +169,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             }
         }
 
-        override fun fetchAllStream(): Stream<T?> = with(properties) {
+        override fun fetchAllStream(): Stream<T> = with(properties) {
             val parameters = MapSqlParameterSource()
             bindWhereParams(parameters)
 

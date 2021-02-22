@@ -103,7 +103,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         /**
          * This Query can return several results as [Flow], can be empty if no results
          */
-        public fun fetchAll(): Flow<T?>
+        public fun fetchAll(): Flow<T>
     }
 }
 

@@ -98,7 +98,9 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
 
     @Test
     fun `Verify selectAliasById returns null as J Doe alias`() {
-        repository.selectAliasById(userJdoe.id).blockOptional()
+        repository.selectAliasById(userJdoe.id)
+                .test()
+                .verifyComplete()
     }
 
     @Test

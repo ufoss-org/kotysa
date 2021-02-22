@@ -4,11 +4,12 @@
 
 package org.ufoss.kotysa.r2dbc
 
-import org.ufoss.kotysa.*
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.publisher.SynchronousSink
 
 
 @Suppress("UNCHECKED_CAST")
@@ -20,10 +21,13 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
     ) : ReactorSqlClientSelect.Selectable {
         override fun <T : Any> select(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
+
         override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+
         override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, Properties(tables), dsl)
+
         override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
     }
@@ -41,8 +45,10 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
         override fun <U : Any> and(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T?, U?> =
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
+
         override fun <U : Any> and(table: Table<U>): ReactorSqlClientSelect.SecondSelect<T, U> =
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
+
         override fun <U : Any> andCount(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T, Long> =
                 SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
     }
@@ -60,8 +66,10 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
         override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, V?> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
+
         override fun <V : Any> and(table: Table<V>): ReactorSqlClientSelect.ThirdSelect<T, U, V> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
+
         override fun <V : Any> andCount(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
     }
@@ -79,8 +87,10 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
         override fun <W : Any> and(column: Column<*, W>): ReactorSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
+
         override fun <W : Any> and(table: Table<W>): ReactorSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
+
         override fun <W : Any> andCount(column: Column<*, W>): ReactorSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
     }
@@ -127,10 +137,23 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
 
-        override fun fetchOne(): Mono<T?> = fetch().one()
-                .onErrorMap(IncorrectResultSizeDataAccessException::class.java) { NonUniqueResultException() }
+        override fun fetchOne(): Mono<T> =
+                fetch().one()
+                        .handle { opt, sink : SynchronousSink<T> ->
+                            opt.ifPresent(sink::next)
+                        }
+                        .onErrorMap(IncorrectResultSizeDataAccessException::class.java) { NonUniqueResultException() }
 
-        override fun fetchFirst(): Mono<T?> = fetch().first()
-        override fun fetchAll(): Flux<T?> = fetch().all()
+        override fun fetchFirst(): Mono<T> =
+                fetch().first()
+                        .handle { opt, sink : SynchronousSink<T> ->
+                            opt.ifPresent(sink::next)
+                        }
+
+        override fun fetchAll(): Flux<T> =
+                fetch().all()
+                        .handle { opt, sink : SynchronousSink<T> ->
+                            opt.ifPresent(sink::next)
+                        }
     }
 }

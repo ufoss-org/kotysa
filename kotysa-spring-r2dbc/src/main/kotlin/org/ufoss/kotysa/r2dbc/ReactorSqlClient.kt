@@ -34,7 +34,7 @@ public interface ReactorSqlClient {
     public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.From<T, T> =
             select(table).from(table)
 
-    public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T?> = selectFrom(table).fetchAll()
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T> = selectFrom(table).fetchAll()
 }
 
 
@@ -81,17 +81,17 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
          *
          * @throws NonUniqueResultException if more than one result
          */
-        public fun fetchOne(): Mono<T?>
+        public fun fetchOne(): Mono<T>
 
         /**
          * This Query return one result as [Mono], or an empty [Mono] if no result
          */
-        public fun fetchFirst(): Mono<T?>
+        public fun fetchFirst(): Mono<T>
 
         /**
          * This Query can return several results as [Flux], or an empty [Flux] if no result
          */
-        public fun fetchAll(): Flux<T?>
+        public fun fetchAll(): Flux<T>
     }
 }
 

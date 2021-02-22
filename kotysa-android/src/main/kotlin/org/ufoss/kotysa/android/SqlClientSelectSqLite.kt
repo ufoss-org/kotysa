@@ -161,9 +161,12 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun fetchAll() = with(properties) {
             val cursor = fetch()
             val row = cursor.toRow()
-            val results = mutableListOf<T?>()
+            val results = mutableListOf<T>()
             while (cursor.moveToNext()) {
-                results.add(select(row))
+                val result = select(row)
+                if (result != null) {
+                    results.add(result)
+                }
                 row.resetIndex()
             }
             results

@@ -6,7 +6,8 @@ package org.ufoss.kotysa.r2dbc
 
 import org.ufoss.kotysa.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.*
@@ -130,29 +131,55 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
 
         override suspend fun fetchOne(): T? =
                 try {
-                    fetch().awaitOne()
+                    val opt = fetch().awaitOne()
+                    if (opt.isPresent) {
+                        opt.get()
+                    } else {
+                        null
+                    }
                 } catch (_: EmptyResultDataAccessException) {
                     throw NoResultException()
                 } catch (_: IncorrectResultSizeDataAccessException) {
                     throw NonUniqueResultException()
                 }
 
-        override suspend fun fetchOneOrNull(): T? =
-                try {
-                    fetch().awaitOneOrNull()
-                } catch (_: IncorrectResultSizeDataAccessException) {
-                    throw NonUniqueResultException()
+        override suspend fun fetchOneOrNull(): T? {
+            try {
+                val opt = fetch().awaitOneOrNull() ?: return null
+                return if (opt.isPresent) {
+                    opt.get()
+                } else {
+                    null
                 }
+            } catch (_: IncorrectResultSizeDataAccessException) {
+                throw NonUniqueResultException()
+            }
+        }
 
         override suspend fun fetchFirst(): T? =
                 try {
-                    fetch().awaitSingle()
+                    val opt = fetch().awaitSingle()
+                    if (opt.isPresent) {
+                        opt.get()
+                    } else {
+                        null
+                    }
                 } catch (_: EmptyResultDataAccessException) {
                     throw NoResultException()
                 }
 
-        override suspend fun fetchFirstOrNull(): T? = fetch().awaitSingleOrNull()
+        override suspend fun fetchFirstOrNull(): T? {
+            val opt = fetch().awaitSingleOrNull() ?: return null
+            return if (opt.isPresent) {
+                opt.get()
+            } else {
+                null
+            }
+        }
 
-        override fun fetchAll(): Flow<T?> = fetch().flow()
+        override fun fetchAll(): Flow<T> =
+                fetch().flow()
+                        .filter { opt -> opt.isPresent }
+                        .map { opt -> opt.get() }
     }
 }

@@ -16,7 +16,7 @@ internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : D
 
         val client: DatabaseClient
 
-        fun fetch(): RowsFetchSpec<T> = with(properties) {
+        fun fetch(): RowsFetchSpec<Optional<T>> = with(properties) {
             var executeSpec = client.sql(selectSql())
 
             executeSpec = whereClauses
@@ -26,7 +26,7 @@ internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : D
                     }
 
             executeSpec.map { r ->
-                select(r.toRow()) // Optional.ofNullable(
+                Optional.ofNullable(select(r.toRow()))
             }
         }
     }

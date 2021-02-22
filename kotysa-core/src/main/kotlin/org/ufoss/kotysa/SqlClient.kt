@@ -102,12 +102,12 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         /**
          * This query can return several results as [List], can be empty if no results
          */
-        public fun fetchAll(): List<T?>
+        public fun fetchAll(): List<T>
 
         /**
          * This query can return several results as [Stream] (for lazy result iteration), can be empty if no results
          */
-        public fun fetchAllStream(): Stream<T?> = fetchAll().stream()
+        public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }
 }
 
