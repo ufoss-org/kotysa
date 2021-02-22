@@ -66,9 +66,13 @@ class InheritanceH2Repository(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTable() = sqlClient createTable H2_INHERITED
+    private fun createTable() {
+        sqlClient createTable H2_INHERITED
+    }
 
-    fun insert() = sqlClient insert inherited
+    fun insert() {
+        sqlClient insert inherited
+    }
 
     private fun deleteAll() = sqlClient deleteAllFrom H2_INHERITED
 
