@@ -11,29 +11,9 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.reflect.KClass
 
-
-private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
-
-@Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
-        requireNotNull(this.allTables[table]) { tableMustBeMapped(table.toString()) } as KotysaTable<T>
-
-@Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
-        requireNotNull(this.allTables.values.first { kotysaTable -> kotysaTable.tableClass == tableClass }) as KotysaTable<T>
-
-@Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(column: Column<T, *>): KotysaTable<T> =
-        requireNotNull(this.allColumns[column]) { "Requested column \"$column\" is not mapped" }.table as KotysaTable<T>
-
-public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
-    require(this.allTables.values.any { kotysaTable -> kotysaTable.tableClass == tableClass }) { tableMustBeMapped(tableClass.qualifiedName) }
-}
 
 private val logger = Logger.of<DefaultSqlClient>()
-
 
 public interface DefaultSqlClient {
     public val tables: Tables
