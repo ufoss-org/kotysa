@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 /*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +18,6 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
-@ExperimentalCoroutinesApi
 class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepository>() {
 
     @BeforeAll

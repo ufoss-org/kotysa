@@ -7,7 +7,9 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.H2_ROLE
+import org.ufoss.kotysa.test.roleAdmin
+import org.ufoss.kotysa.test.roleGod
 
 
 class SpringJdbcSelectOrH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectOr>() {

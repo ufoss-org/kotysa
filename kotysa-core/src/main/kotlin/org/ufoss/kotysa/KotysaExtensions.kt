@@ -16,15 +16,15 @@ public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> 
 
 public fun List<WhereClauseWithType<*>>.dbValues(tables: Tables): List<Any> =
         mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
-                .map { dbValue ->
-                    if (dbValue is Set<*>) {
+                .map { value ->
+                    if (value is Set<*>) {
                         // create new Set with transformed values
                         mutableSetOf<Any?>().apply {
-                            dbValue.forEach { dbVal ->
+                            value.forEach { dbVal ->
                                 add(tables.getDbValue(dbVal))
                             }
                         }
                     } else {
-                        tables.getDbValue(dbValue)
+                        tables.getDbValue(value)
                     } as Any
                 }
