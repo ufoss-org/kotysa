@@ -37,6 +37,16 @@ class SpringJdbcSelectKotlinxLocalDateMysqlTest : AbstractSpringJdbcMysqlTest<Ko
     }
 
     @Test
+    fun `Verify selectAllByLocalDateNotNullIn finds both`() {
+        val seq = sequenceOf(
+                kotlinxLocalDateWithNullable.localDateNotNull,
+                kotlinxLocalDateWithoutNullable.localDateNotNull)
+        assertThat(repository.selectAllByLocalDateNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable, kotlinxLocalDateWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByLocalDateNotNullBefore finds kotlinxLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate(2019, 11, 5)))
                 .hasSize(1)

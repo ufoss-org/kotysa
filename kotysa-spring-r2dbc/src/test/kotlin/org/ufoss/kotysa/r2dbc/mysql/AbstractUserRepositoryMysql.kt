@@ -3,9 +3,8 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-/*
+
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.*
 
 
@@ -25,21 +24,21 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
     }
 
     private fun createTables() =
-            sqlClient.createTable<MysqlRole>()
-                    .then(sqlClient.createTable<MysqlUser>())
+            (sqlClient createTable MYSQL_ROLE)
+                    .then(sqlClient createTable MYSQL_USER)
 
-    private fun insertRoles() = sqlClient.insert(mysqlUser, mysqlAdmin, mysqlGod)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
-    private fun insertUsers() = sqlClient.insert(mysqlJdoe, mysqlBboss)
+    private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<MysqlRole>()
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<MysqlUser>()
+    fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
 
-    fun selectAllUsers() = sqlClient.selectAll<MysqlUser>()
+    fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
 
-    fun selectFirstByFirstname(firstname: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] eq firstname }
-            .fetchFirst()
+    fun selectFirstByFirstname(firstname: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname eq firstname
+                    ).fetchFirst()
 }
-*/

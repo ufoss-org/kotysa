@@ -48,6 +48,14 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
     }
 
     @Test
+    fun `Verify selectAllByIntNotNullIn finds both`() {
+        val seq = sequenceOf(intWithNullable.intNotNull, intWithoutNullable.intNotNull)
+        assertThat(repository.selectAllByIntNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(intWithNullable, intWithoutNullable)
+    }
+
+    @Test
     fun `Verify selectAllByIntNotNullInf finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNullInf(11))
                 .hasSize(1)

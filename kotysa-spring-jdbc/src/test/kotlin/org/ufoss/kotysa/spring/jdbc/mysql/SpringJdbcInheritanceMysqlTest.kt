@@ -65,9 +65,13 @@ class InheritanceMysqlRepository(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTable() = sqlClient createTable MYSQL_INHERITED
+    private fun createTable() {
+        sqlClient createTable MYSQL_INHERITED
+    }
 
-    fun insert() = sqlClient insert inherited
+    fun insert() {
+        sqlClient insert inherited
+    }
 
     private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INHERITED
 

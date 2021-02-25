@@ -84,7 +84,7 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
     }
 
     @Test
-    fun `Verify selectOneById finds no result for -1, throws NoResultException`() {
+    fun `Verify selectOneById finds no result for -1`() {
         repository.selectOneById(-1)
                 .test()
                 .verifyComplete()

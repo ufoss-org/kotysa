@@ -34,7 +34,7 @@ class R2DbcSelectStringH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectString
     }
 
     @Test
-    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown, throws NoResultException`() {
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown`() {
         assertThat(repository.selectFirstByFirstnameNotNullable("Unknown").block())
                 .isNull()
     }

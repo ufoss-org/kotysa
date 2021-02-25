@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-/*
+
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -30,13 +30,13 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
         assertThat(repository.selectAllUsers().toList())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(mysqlJdoe, mysqlBboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("John"))
-                .isEqualTo(mysqlJdoe)
+                .isEqualTo(userJdoe)
     }
 
     @Test
@@ -63,14 +63,14 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     fun `Verify selectByAlias finds TheBoss`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias("TheBoss").toList())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias(null).toList())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -97,10 +97,10 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
-        repository.updateLastname(mysqlJdoe.lastname)
+        repository.updateLastname(userJdoe.lastname)
     }
 }
 
@@ -121,44 +121,50 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
     }
 
     private suspend fun createTables() {
-        sqlClient.createTable<MysqlRole>()
-        sqlClient.createTable<MysqlUser>()
+        sqlClient createTable MYSQL_ROLE
+        sqlClient createTable MYSQL_USER
     }
 
-    private suspend fun insertRoles() = sqlClient.insert(mysqlUser, mysqlAdmin)
+    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
-    suspend fun insertUsers() = sqlClient.insert(mysqlJdoe, mysqlBboss)
+    private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient.deleteAllFromTable<MysqlRole>()
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
 
-    suspend fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<MysqlUser>()
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
 
-    fun selectAllUsers() = sqlClient.selectAll<MysqlUser>()
+    fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
 
-    suspend fun selectFirstByFirstname(firstname: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] eq firstname }
-            .fetchFirstOrNull()
+    suspend fun selectFirstByFirstname(firstname: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname eq firstname
+                    ).fetchFirstOrNull()
 
-    suspend fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] eq firstname }
-            .fetchFirst()
+    suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname eq firstname
+                    ).fetchFirst()
 
-    suspend fun selectOneNonUnique() = sqlClient.select<MysqlUser>()
-            .fetchOne()
+    suspend fun selectOneNonUnique() =
+            (sqlClient selectFrom MYSQL_USER
+                    ).fetchOne()
 
-    fun selectByAlias(alias: String?) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::alias] eq alias }
-            .fetchAll()
+    fun selectByAlias(alias: String?) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.alias eq alias
+                    ).fetchAll()
 
     fun selectAllMappedToDto() =
-            sqlClient.select {
-                UserDto("${it[MysqlUser::firstname]} ${it[MysqlUser::lastname]}",
-                        it[MysqlUser::alias])
-            }.fetchAll()
+            (sqlClient.select {
+                UserDto("${it[MYSQL_USER.firstname]} ${it[MYSQL_USER.lastname]}",
+                        it[MYSQL_USER.alias])
+            }
+                    from MYSQL_USER
+                    ).fetchAll()
 
-    suspend fun updateLastname(newLastname: String) = sqlClient.updateTable<MysqlUser>()
-            .set { it[MysqlUser::lastname] = newLastname }
-            .where { it[MysqlUser::id] eq mysqlJdoe.id }
-            .execute()
+    suspend fun updateLastname(newLastname: String) =
+            (sqlClient update MYSQL_USER
+                    set MYSQL_USER.lastname eq newLastname
+                    where MYSQL_USER.id eq userJdoe.id
+                    ).execute()
 }
-*/

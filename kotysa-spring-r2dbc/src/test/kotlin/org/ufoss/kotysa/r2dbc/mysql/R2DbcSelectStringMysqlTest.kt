@@ -3,15 +3,15 @@
  */
 
 package org.ufoss.kotysa.r2dbc.mysql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.MysqlUser
+import org.ufoss.kotysa.test.MYSQL_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.mysqlBboss
-import org.ufoss.kotysa.test.mysqlJdoe
+import org.ufoss.kotysa.test.userBboss
+import org.ufoss.kotysa.test.userJdoe
 
 
 class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectString>() {
@@ -24,8 +24,8 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
-        assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname).block())
-                .isEqualTo(mysqlJdoe)
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname).block())
+                .isEqualTo(userJdoe)
     }
 
     @Test
@@ -35,36 +35,50 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     }
 
     @Test
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstnameNotNullable("Unknown").block())
+                .isNull()
+    }
+
+    @Test
     fun `Verify selectByAlias finds BigBoss`() {
-        assertThat(repository.selectAllByAlias(mysqlBboss.alias).toIterable())
+        assertThat(repository.selectByAlias(userBboss.alias).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() {
-        assertThat(repository.selectAllByAlias(null).toIterable())
+        assertThat(repository.selectByAlias(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstnameNotEq(mysqlJdoe.firstname).toIterable())
+        assertThat(repository.selectAllByFirstnameNotEq(userJdoe.firstname).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
         assertThat(repository.selectAllByFirstnameNotEq("Unknown").toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(mysqlJdoe, mysqlBboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
+        val seq = sequenceOf(userJdoe.firstname, userBboss.firstname)
+        assertThat(repository.selectAllByFirstnameIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllByAliasNotEq ignore BigBoss`() {
-        assertThat(repository.selectAllByAliasNotEq(mysqlBboss.alias).toIterable())
+        assertThat(repository.selectAllByAliasNotEq(userBboss.alias).toIterable())
                 .hasSize(0)
     }
 
@@ -72,14 +86,14 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     fun `Verify selectAllByAliasNotEq with null alias finds BigBoss`() {
         assertThat(repository.selectAllByAliasNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameContains get John by searching oh`() {
         assertThat(repository.selectAllByFirstnameContains("oh").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -92,7 +106,7 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
         assertThat(repository.selectAllByFirstnameStartsWith("Joh").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -105,7 +119,7 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
         assertThat(repository.selectAllByFirstnameEndsWith("ohn").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -118,7 +132,7 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     fun `Verify selectAllByAliasContains get Boss by searching heBos`() {
         assertThat(repository.selectAllByAliasContains("heBos").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -131,7 +145,7 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     fun `Verify selectAllByAliasStartsWith get Boss by searching TheBo`() {
         assertThat(repository.selectAllByAliasStartsWith("TheBo").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -144,7 +158,7 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
     fun `Verify selectAllByAliasEndsWith get Boss by searching Boss`() {
         assertThat(repository.selectAllByAliasEndsWith("Boss").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -157,40 +171,58 @@ class R2DbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSel
 
 class UserRepositoryMysqlSelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
 
-    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] notEq firstname }
-            .fetchAll()
+    fun selectFirstByFirstnameNotNullable(firstname: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname eq firstname
+                    ).fetchFirst()
 
-    fun selectAllByAlias(alias: String?) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::alias] eq alias }
-            .fetchAll()
+    fun selectAllByFirstnameNotEq(firstname: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname notEq firstname
+                    ).fetchAll()
 
-    fun selectAllByAliasNotEq(alias: String?) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::alias] notEq alias }
-            .fetchAll()
+    fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname `in` firstnames
+                    ).fetchAll()
 
-    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] contains firstnameContains }
-            .fetchAll()
+    fun selectByAlias(alias: String?) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.alias eq alias
+                    ).fetchAll()
 
-    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] startsWith firstnameStartsWith }
-            .fetchAll()
+    fun selectAllByAliasNotEq(alias: String?) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.alias notEq alias
+                    ).fetchAll()
 
-    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::firstname] endsWith firstnameEndsWith }
-            .fetchAll()
+    fun selectAllByFirstnameContains(firstnameContains: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname contains firstnameContains
+                    ).fetchAll()
 
-    fun selectAllByAliasContains(aliasContains: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::alias] contains aliasContains }
-            .fetchAll()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname startsWith firstnameStartsWith
+                    ).fetchAll()
 
-    fun selectAllByAliasStartsWith(aliasStartsWith: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::alias] startsWith aliasStartsWith }
-            .fetchAll()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.firstname endsWith firstnameEndsWith
+                    ).fetchAll()
 
-    fun selectAllByAliasEndsWith(aliasEndsWith: String) = sqlClient.select<MysqlUser>()
-            .where { it[MysqlUser::alias] endsWith aliasEndsWith }
-            .fetchAll()
+    fun selectAllByAliasContains(aliasContains: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.alias contains aliasContains
+                    ).fetchAll()
+
+    fun selectAllByAliasStartsWith(aliasStartsWith: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.alias startsWith aliasStartsWith
+                    ).fetchAll()
+
+    fun selectAllByAliasEndsWith(aliasEndsWith: String) =
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.alias endsWith aliasEndsWith
+                    ).fetchAll()
 }
-*/
