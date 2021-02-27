@@ -8,27 +8,28 @@ private val role_admin_uuid = UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691
 
 class UserRepository(private val client: SqlClient) {
 
-    fun count() = client.countAll<User>()
+    fun count() = client selectCountAllFrom USER
 
-    fun findAll() = client.selectAll<User>()
+    fun findAll() = client selectAllFrom USER
 
     fun findOne(id: Int) =
-            client.select<User>()
-                    .where { it[User::id] eq id }
-                    .fetchOne()
+            (client selectFrom USER
+                    where USER.id eq id
+                    ).fetchOne()!!
 
     fun selectWithJoin() =
-            client.select {
-                UserDto("${it[User::firstname]} ${it[User::lastname]}", it[User::alias], it[Role::label]) }
-                    .innerJoin<Role>().on { it[User::roleId] }
-                    .fetchAll()
+            (client.select {
+                UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
+            }
+                    from USER innerJoin ROLE on USER.roleId eq ROLE.id
+                    ).fetchAll()
 
-    fun deleteAll() = client.deleteAllFromTable<User>()
+    fun deleteAll() = client deleteAllFrom USER
 
-    fun save(user: User) = client.insert(user)
+    fun save(user: User) = client insert user
 
     fun init() {
-        client.createTable<User>()
+        client createTable USER
         deleteAll()
         save(User("John", "Doe", false, role_user_uuid, id = 123))
         save(User("Big", "Boss", true, role_admin_uuid, "TheBoss"))
@@ -36,12 +37,12 @@ class UserRepository(private val client: SqlClient) {
 }
 
 class RoleRepository(private val client: SqlClient) {
-    fun deleteAll() = client.deleteAllFromTable<Role>()
+    fun deleteAll() = client deleteAllFrom ROLE
 
-    fun save(role: Role) = client.insert(role)
+    fun save(role: Role) = client insert role
 
     fun init() {
-        client.createTable<Role>()
+        client createTable ROLE
         deleteAll()
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))

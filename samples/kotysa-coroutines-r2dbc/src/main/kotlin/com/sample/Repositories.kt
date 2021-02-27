@@ -15,7 +15,7 @@ class UserRepository(private val client: CoroutinesSqlClient) {
     suspend fun findOne(id: Int) =
             (client selectFrom USER
                     where USER.id eq id
-                    ).fetchOne()
+                    ).fetchOne()!!
 
     fun selectWithJoin() =
             (client.select {
