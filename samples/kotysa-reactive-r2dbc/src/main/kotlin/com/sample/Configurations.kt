@@ -8,10 +8,11 @@ import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
 
+private val h2Tables = tables().h2(ROLE, USER)
+
 val dataConfig = configuration {
     beans {
-        val tables = if (profiles.contains("test")) h2Tables else postgresqlTables
-        bean { ref<DatabaseClient>().sqlClient(tables) }
+        bean { ref<DatabaseClient>().sqlClient(h2Tables) }
         bean<RoleRepository>()
         bean<UserRepository>()
     }
@@ -21,97 +22,10 @@ val dataConfig = configuration {
             ref<UserRepository>().init()
         }
     }
-    if (profiles.contains("test")) {
-        r2dbc {
-            url = "r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
-        }
-    } else {
-        r2dbc {
-            url = "r2dbc:tc:postgresql:///db?TC_IMAGE_TAG=13.0-alpine"
-            username = "test"
-            password = "test"
-        }
+    r2dbc {
+        url = "r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1"
     }
 }
-
-internal val h2Tables =
-        tables().h2 {
-            table<Role> {
-                name = "roles"
-                column { it[Role::id].uuid() }.primaryKey()
-                column { it[Role::label].varchar() }
-            }
-            table<User> {
-                name = "users"
-                column { it[User::id].autoIncrementInteger() }
-                        .primaryKey("PK_users")
-                column {
-                    it[User::firstname].varchar {
-                        name = "fname"
-                    }
-                }
-                column {
-                    it[User::lastname].varchar {
-                        name = "lname"
-                    }
-                }
-                column {
-                    it[User::isAdmin].boolean {
-                        name = "is_admin"
-                    }
-                }
-                column {
-                    it[User::roleId].uuid {
-                        name = "role_id"
-                    }
-                }.foreignKey<Role>("FK_users_roles")
-                column {
-                    it[User::creationTime].dateTime {
-                        name = "creation_time"
-                    }
-                }
-                column { it[User::alias].varchar() }
-            }
-        }
-
-internal val postgresqlTables =
-        tables().postgresql {
-            table<Role> {
-                name = "roles"
-                column { it[Role::id].uuid() }.primaryKey()
-                column { it[Role::label].varchar() }
-            }
-            table<User> {
-                name = "users"
-                column { it[User::id].serial() }.primaryKey("PK_users")
-                column {
-                    it[User::firstname].varchar {
-                        name = "fname"
-                    }
-                }
-                column {
-                    it[User::lastname].varchar {
-                        name = "lname"
-                    }
-                }
-                column {
-                    it[User::isAdmin].boolean {
-                        name = "is_admin"
-                    }
-                }
-                column {
-                    it[User::roleId].uuid {
-                        name = "role_id"
-                    }
-                }.foreignKey<Role>("FK_users_roles")
-                column {
-                    it[User::creationTime].timestamp {
-                        name = "creation_time"
-                    }
-                }
-                column { it[User::alias].varchar() }
-            }
-        }
 
 val webConfig = configuration {
     beans {
