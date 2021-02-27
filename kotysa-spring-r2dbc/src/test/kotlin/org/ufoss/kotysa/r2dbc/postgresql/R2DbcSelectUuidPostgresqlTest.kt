@@ -3,12 +3,11 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
@@ -24,43 +23,52 @@ class R2DbcSelectUuidPostgresqlTest : AbstractR2dbcPostgresqlTest<UuidRepository
     }
 
     @Test
-    fun `Verify selectAllByRoleIdNotNull finds both results`() {
-        assertThat(repository.selectAllByRoleIdNotNull(postgresqlUser.id).toIterable())
+    fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {
+        assertThat(repository.selectAllByUuidIdNotNull(uuidWithNullable.uuidNotNull).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(uuidWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByUuidNotNullNotEq finds uuidWithoutNullable`() {
+        assertThat(repository.selectAllByUuidNotNullNotEq(uuidWithNullable.uuidNotNull).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(uuidWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByUuidNotNullIn finds both`() {
+        val seq = sequenceOf(uuidWithNullable.id, uuidWithoutNullable.id)
+        assertThat(repository.selectAllByUuidNotNullIn(seq).toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlUuidWithNullable, postgresqlUuidWithoutNullable)
+                .containsExactlyInAnyOrder(uuidWithNullable, uuidWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByRoleIdNotNullNotEq finds no results`() {
-        assertThat(repository.selectAllByRoleIdNotNullNotEq(postgresqlUser.id).toIterable())
+    fun `Verify selectAllByUuidNullable finds uuidWithNullable`() {
+        assertThat(repository.selectAllByUuidNullable(uuidWithNullable.uuidNullable).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(uuidWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByUuidNullable finds uuidWithoutNullable`() {
+        assertThat(repository.selectAllByUuidNullable(null).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(uuidWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByUuidNullableNotEq finds uuidWithoutNullable`() {
+        assertThat(repository.selectAllByUuidNullableNotEq(uuidWithNullable.uuidNullable).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByRoleIdNullable finds postgresqlUuidWithNullable`() {
-        assertThat(repository.selectAllByRoleIdNullable(postgresqlAdmin.id).toIterable())
+    fun `Verify selectAllByUuidNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByUuidNullableNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlUuidWithNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByRoleIdNullable finds postgresqlUuidWithoutNullable`() {
-        assertThat(repository.selectAllByRoleIdNullable(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlUuidWithoutNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByRoleIdNullableNotEq finds postgresqlUuidWithoutNullable`() {
-        assertThat(repository.selectAllByRoleIdNullableNotEq(postgresqlAdmin.id).toIterable())
-                .isEmpty()
-    }
-
-    @Test
-    fun `Verify selectAllByRoleIdNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByRoleIdNullableNotEq(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlUuidWithNullable)
+                .containsExactlyInAnyOrder(uuidWithNullable)
     }
 }
 
@@ -71,43 +79,43 @@ class UuidRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertRoles())
                 .then(insertUuids())
                 .block()
     }
 
     override fun delete() {
-        deleteAllFromUuid()
-                .then(deleteAllFromRole())
+        deleteAll()
                 .block()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<PostgresqlRole>()
-                    .then(sqlClient.createTable<PostgresqlUuid>())
+    private fun createTables() = sqlClient createTable POSTGRESQL_UUID
 
-    private fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin)
+    private fun insertUuids() = sqlClient.insert(uuidWithNullable, uuidWithoutNullable)
 
-    private fun insertUuids() = sqlClient.insert(postgresqlUuidWithNullable, postgresqlUuidWithoutNullable)
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_UUID
 
-    private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
+    fun selectAllByUuidIdNotNull(uuid: UUID) =
+            (sqlClient selectFrom POSTGRESQL_UUID
+                    where POSTGRESQL_UUID.uuidNotNull eq uuid
+                    ).fetchAll()
 
-    private fun deleteAllFromUuid() = sqlClient.deleteAllFromTable<PostgresqlUuid>()
+    fun selectAllByUuidNotNullNotEq(uuid: UUID) =
+            (sqlClient selectFrom POSTGRESQL_UUID
+                    where POSTGRESQL_UUID.uuidNotNull notEq uuid
+                    ).fetchAll()
 
-    fun selectAllByRoleIdNotNull(roleId: UUID) = sqlClient.select<PostgresqlUuid>()
-            .where { it[PostgresqlUuid::roleIdNotNull] eq roleId }
-            .fetchAll()
+    fun selectAllByUuidNotNullIn(uuids: Sequence<UUID>) =
+            (sqlClient selectFrom POSTGRESQL_UUID
+                    where POSTGRESQL_UUID.id `in` uuids
+                    ).fetchAll()
 
-    fun selectAllByRoleIdNotNullNotEq(roleId: UUID) = sqlClient.select<PostgresqlUuid>()
-            .where { it[PostgresqlUuid::roleIdNotNull] notEq roleId }
-            .fetchAll()
+    fun selectAllByUuidNullable(uuid: UUID?) =
+            (sqlClient selectFrom POSTGRESQL_UUID
+                    where POSTGRESQL_UUID.uuidNullable eq uuid
+                    ).fetchAll()
 
-    fun selectAllByRoleIdNullable(roleId: UUID?) = sqlClient.select<PostgresqlUuid>()
-            .where { it[PostgresqlUuid::roleIdNullable] eq roleId }
-            .fetchAll()
-
-    fun selectAllByRoleIdNullableNotEq(roleId: UUID?) = sqlClient.select<PostgresqlUuid>()
-            .where { it[PostgresqlUuid::roleIdNullable] notEq roleId }
-            .fetchAll()
+    fun selectAllByUuidNullableNotEq(uuid: UUID?) =
+            (sqlClient selectFrom POSTGRESQL_UUID
+                    where POSTGRESQL_UUID.uuidNullable notEq uuid
+                    ).fetchAll()
 }
-*/

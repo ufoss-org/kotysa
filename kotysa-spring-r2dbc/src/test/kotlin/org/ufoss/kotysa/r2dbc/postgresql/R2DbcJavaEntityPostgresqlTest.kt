@@ -3,18 +3,19 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-/*
+
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.JavaUserRepository
-import org.ufoss.kotysa.r2dbc.SpringR2dbcJavaEntityTest
-import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.r2dbc.R2dbcJavaEntityTest
+import org.ufoss.kotysa.r2dbc.R2dbcJavaUserRepository
+import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.test.POSTGRESQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.postgresqlTables
 
 
-class R2DbcJavaEntityPostgresqlTest :
-        AbstractR2dbcPostgresqlTest<JavaUserPostgresqlRepository>(), SpringR2dbcJavaEntityTest<JavaUserPostgresqlRepository> {
+class R2DbcJavaEntityPostgresqlTest : AbstractR2dbcPostgresqlTest<JavaUserPostgresqlRepository>(),
+        R2dbcJavaEntityTest<POSTGRESQL_JAVA_USER, JavaUserPostgresqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,29 +24,6 @@ class R2DbcJavaEntityPostgresqlTest :
     }
 }
 
-private val tables =
-        tables().postgresql {
-            table<JavaUser> {
-                name = "java_users"
-                column { it[JavaUser::getLogin].varchar() }
-                        .primaryKey()
-                column {
-                    it[JavaUser::getFirstname].varchar {
-                        name = "fname"
-                    }
-                }
-                column {
-                    it[JavaUser::getLastname].varchar {
-                        name = "lname"
-                    }
-                }
-                column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar() }
-                column { it[JavaUser::getAlias2].varchar() }
-                column { it[JavaUser::getAlias3].varchar() }
-            }
-        }
 
-
-class JavaUserPostgresqlRepository(client: DatabaseClient) : JavaUserRepository(client, tables)
-*/
+class JavaUserPostgresqlRepository(client: DatabaseClient)
+    : R2dbcJavaUserRepository<POSTGRESQL_JAVA_USER>(client.sqlClient(postgresqlTables), POSTGRESQL_JAVA_USER)

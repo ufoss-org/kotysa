@@ -3,18 +3,14 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.test.PostgresqlLocalTime
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.postgresqlLocalTimeWithNullable
-import org.ufoss.kotysa.test.postgresqlLocalTimeWithoutNullable
-import org.ufoss.kotysa.test.postgresqlTables
 import java.time.LocalTime
 
 
@@ -27,24 +23,34 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNull finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNotNull finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNull(LocalTime.of(12, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullNotEq finds postgresqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullNotEq finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullNotEq(LocalTime.of(12, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullBefore finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                localTimeWithNullable.localTimeNotNull,
+                localTimeWithoutNullable.localTimeNotNull)
+        assertThat(repository.selectAllByLocalTimeNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(localTimeWithNullable, localTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalTimeNotNullBefore finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullBefore(LocalTime.of(12, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
@@ -54,24 +60,24 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullBeforeOrEq(LocalTime.of(12, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds postgresqlLocalTimeWithNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNotNullBeforeOrEq finds localTimeWithNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNotNullBeforeOrEq(LocalTime.of(12, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullAfter finds postgresqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullAfter finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullAfter(LocalTime.of(12, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
@@ -81,31 +87,31 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds postgresqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNotNullAfterOrEq(LocalTime.of(12, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds postgresqlLocalTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNotNullAfterOrEq finds localTimeWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNotNullAfterOrEq(LocalTime.of(12, 6)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullable finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullable finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullable(LocalTime.of(11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullable finds postgresqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNullable finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNullable(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localTimeWithoutNullable)
     }
 
     @Test
@@ -115,17 +121,17 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableNotEq finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullableNotEq finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableBefore finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullableBefore finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableBefore(LocalTime.of(11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
@@ -135,24 +141,24 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds postgresqlLocalTimeWithNullable`() {
+    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds localTimeWithNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableBeforeOrEq(LocalTime.of(11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds postgresqlLocalTimeWithNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNullableBeforeOrEq finds localTimeWithNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNullableBeforeOrEq(LocalTime.of(11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableAfter finds postgresqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNullableAfter finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableAfter(LocalTime.of(11, 3)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
@@ -162,17 +168,17 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds postgresqlLocalTimeWithoutNullable`() {
+    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds localTimeWithoutNullable`() {
         assertThat(repository.selectAllByLocalTimeNullableAfterOrEq(LocalTime.of(11, 3)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds postgresqlLocalTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalTimeNullableAfterOrEq finds localTimeWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalTimeNullableAfterOrEq(LocalTime.of(11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalTimeWithNullable)
+                .containsExactlyInAnyOrder(localTimeWithNullable)
     }
 }
 
@@ -192,59 +198,74 @@ class LocalTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository
                 .block()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<PostgresqlLocalTime>()
+    private fun createTables() = sqlClient createTable POSTGRESQL_LOCAL_TIME
 
-    private fun insertLocalTimes() = sqlClient.insert(postgresqlLocalTimeWithNullable, postgresqlLocalTimeWithoutNullable)
+    private fun insertLocalTimes() = sqlClient.insert(localTimeWithNullable, localTimeWithoutNullable)
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<PostgresqlLocalTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_LOCAL_TIME
 
-    fun selectAllByLocalTimeNotNull(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNotNull] eq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNull(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull eq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNotNull] notEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull notEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNotNull] before localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullIn(values: Sequence<LocalTime>) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNotNull] beforeOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull before localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNotNull] after localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull beforeOrEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNotNull] afterOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull after localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullable(localTime: LocalTime?) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNullable] eq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull afterOrEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNullable] notEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullable(localTime: LocalTime?) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNullable eq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNullable] before localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNullable notEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNullable] beforeOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNullable before localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNullable] after localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNullable beforeOrEq localTime
+                    ).fetchAll()
 
-    fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) = sqlClient.select<PostgresqlLocalTime>()
-            .where { it[PostgresqlLocalTime::localTimeNullable] afterOrEq localTime }
-            .fetchAll()
+    fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNullable after localTime
+                    ).fetchAll()
+
+    fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
+                    where POSTGRESQL_LOCAL_TIME.localTimeNullable afterOrEq localTime
+                    ).fetchAll()
 }
-*/

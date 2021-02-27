@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-/*
+
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -22,8 +22,8 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
-        assertThat(repository.selectFirstByFirstname(postgresqlJdoe.firstname).block())
-                .isEqualTo(postgresqlJdoe)
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname).block())
+                .isEqualTo(userJdoe)
     }
 
     @Test
@@ -34,35 +34,41 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
     @Test
     fun `Verify selectByAlias finds BigBoss`() {
-        assertThat(repository.selectAllByAlias(postgresqlBboss.alias).toIterable())
+        assertThat(repository.selectByAlias(userBboss.alias).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() {
-        assertThat(repository.selectAllByAlias(null).toIterable())
+        assertThat(repository.selectByAlias(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
+    }
+
+    @Test
+    fun `Verify selectFirstByFirstnameNotNullable finds no Unknown`() {
+        assertThat(repository.selectFirstByFirstnameNotNullable("Unknown").block())
+                .isNull()
     }
 
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore John`() {
-        assertThat(repository.selectAllByFirstnameNotEq(postgresqlJdoe.firstname).toIterable())
+        assertThat(repository.selectAllByFirstnameNotEq(userJdoe.firstname).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameNotEq ignore unknow`() {
         assertThat(repository.selectAllByFirstnameNotEq("Unknown").toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllByAliasNotEq ignore BigBoss`() {
-        assertThat(repository.selectAllByAliasNotEq(postgresqlBboss.alias).toIterable())
+        assertThat(repository.selectAllByAliasNotEq(userBboss.alias).toIterable())
                 .hasSize(0)
     }
 
@@ -70,22 +76,22 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify selectAllByAliasNotEq with null alias finds BigBoss`() {
         assertThat(repository.selectAllByAliasNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameIn finds John and BigBoss`() {
-        val seq = sequenceOf(postgresqlJdoe.firstname, postgresqlBboss.firstname)
+        val seq = sequenceOf(userJdoe.firstname, userBboss.firstname)
         assertThat(repository.selectAllByFirstnameIn(seq).toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllByFirstnameContains get John by searching oh`() {
         assertThat(repository.selectAllByFirstnameContains("oh").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -98,7 +104,7 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
         assertThat(repository.selectAllByFirstnameStartsWith("Joh").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -111,7 +117,7 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
         assertThat(repository.selectAllByFirstnameEndsWith("ohn").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -124,7 +130,7 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify selectAllByAliasContains get Boss by searching heBos`() {
         assertThat(repository.selectAllByAliasContains("heBos").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -137,7 +143,7 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify selectAllByAliasStartsWith get Boss by searching TheBo`() {
         assertThat(repository.selectAllByAliasStartsWith("TheBo").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -150,7 +156,7 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     fun `Verify selectAllByAliasEndsWith get Boss by searching Boss`() {
         assertThat(repository.selectAllByAliasEndsWith("Boss").toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
@@ -163,44 +169,58 @@ class R2DbcSelectStringPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
 
 class UserRepositoryPostgresqlSelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
-    fun selectAllByFirstnameNotEq(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] notEq firstname }
-            .fetchAll()
+    fun selectFirstByFirstnameNotNullable(firstname: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname eq firstname
+                    ).fetchFirst()
 
-    fun selectAllByFirstnameIn(firstnames: Sequence<String>) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] `in` firstnames }
-            .fetchAll()
+    fun selectAllByFirstnameNotEq(firstname: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname notEq firstname
+                    ).fetchAll()
 
-    fun selectAllByAlias(alias: String?) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] eq alias }
-            .fetchAll()
+    fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname `in` firstnames
+                    ).fetchAll()
 
-    fun selectAllByAliasNotEq(alias: String?) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] notEq alias }
-            .fetchAll()
+    fun selectByAlias(alias: String?) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.alias eq alias
+                    ).fetchAll()
 
-    fun selectAllByFirstnameContains(firstnameContains: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] contains firstnameContains }
-            .fetchAll()
+    fun selectAllByAliasNotEq(alias: String?) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.alias notEq alias
+                    ).fetchAll()
 
-    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] startsWith firstnameStartsWith }
-            .fetchAll()
+    fun selectAllByFirstnameContains(firstnameContains: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname contains firstnameContains
+                    ).fetchAll()
 
-    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] endsWith firstnameEndsWith }
-            .fetchAll()
+    fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname startsWith firstnameStartsWith
+                    ).fetchAll()
 
-    fun selectAllByAliasContains(aliasContains: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] contains aliasContains }
-            .fetchAll()
+    fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname endsWith firstnameEndsWith
+                    ).fetchAll()
 
-    fun selectAllByAliasStartsWith(aliasStartsWith: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] startsWith aliasStartsWith }
-            .fetchAll()
+    fun selectAllByAliasContains(aliasContains: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.alias contains aliasContains
+                    ).fetchAll()
 
-    fun selectAllByAliasEndsWith(aliasEndsWith: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] endsWith aliasEndsWith }
-            .fetchAll()
+    fun selectAllByAliasStartsWith(aliasStartsWith: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.alias startsWith aliasStartsWith
+                    ).fetchAll()
+
+    fun selectAllByAliasEndsWith(aliasEndsWith: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.alias endsWith aliasEndsWith
+                    ).fetchAll()
 }
-*/

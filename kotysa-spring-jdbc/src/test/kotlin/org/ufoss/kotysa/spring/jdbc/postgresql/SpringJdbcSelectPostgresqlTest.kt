@@ -44,7 +44,7 @@ class SpringJdbcSelectPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepo
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() {
-        assertThat(repository.selectAllMappedToDto().toList())
+        assertThat(repository.selectAllMappedToDto())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
                         UserDto("John Doe", null),

@@ -113,7 +113,7 @@ class SpringJdbcSelectOffsetDateTimePostgresqlTest : AbstractSpringJdbcPostgresq
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullable finds h2UuidWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithNullable`() {
         assertThat(
                 repository.selectAllByOffsetDateTimeNullable(
                         OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
@@ -125,7 +125,7 @@ class SpringJdbcSelectOffsetDateTimePostgresqlTest : AbstractSpringJdbcPostgresq
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullable finds h2UuidWithoutNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByOffsetDateTimeNullable(null))
                 .hasSize(1)
                 .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)

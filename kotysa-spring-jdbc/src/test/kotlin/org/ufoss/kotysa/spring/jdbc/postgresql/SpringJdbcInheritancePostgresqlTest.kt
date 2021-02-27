@@ -65,9 +65,13 @@ class InheritancePostgresqlRepository(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTable() = sqlClient createTable POSTGRESQL_INHERITED
+    private fun createTable() {
+        sqlClient createTable POSTGRESQL_INHERITED
+    }
 
-    fun insert() = sqlClient insert inherited
+    fun insert() {
+        sqlClient insert inherited
+    }
 
     private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_INHERITED
 

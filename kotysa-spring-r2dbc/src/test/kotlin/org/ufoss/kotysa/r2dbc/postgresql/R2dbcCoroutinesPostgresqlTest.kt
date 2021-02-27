@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.postgresql
-/*
+
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -30,17 +30,17 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
         assertThat(repository.selectAllUsers().toList())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlJdoe, postgresqlBboss)
+                .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("John"))
-                .isEqualTo(postgresqlJdoe)
+                .isEqualTo(userJdoe)
     }
 
     @Test
-    fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
+    fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking {
         assertThat(repository.selectFirstByFirstname("Unknown"))
                 .isNull()
     }
@@ -63,14 +63,14 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     fun `Verify selectByAlias finds TheBoss`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias("TheBoss").toList())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlBboss)
+                .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias(null).toList())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlJdoe)
+                .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
@@ -97,10 +97,10 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstname(postgresqlJdoe.firstname))
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                 .extracting { user -> user?.lastname }
                 .isEqualTo("Do")
-        repository.updateLastname(postgresqlJdoe.lastname)
+        repository.updateLastname(userJdoe.lastname)
     }
 }
 
@@ -121,44 +121,50 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient.createTable<PostgresqlRole>()
-        sqlClient.createTable<PostgresqlUser>()
+        sqlClient createTable POSTGRESQL_ROLE
+        sqlClient createTable POSTGRESQL_USER
     }
 
-    private suspend fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin)
+    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
-    suspend fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
+    private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
 
-    suspend fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<PostgresqlUser>()
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
 
-    fun selectAllUsers() = sqlClient.selectAll<PostgresqlUser>()
+    fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
 
-    suspend fun selectFirstByFirstname(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] eq firstname }
-            .fetchFirstOrNull()
+    suspend fun selectFirstByFirstname(firstname: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname eq firstname
+                    ).fetchFirstOrNull()
 
-    suspend fun selectFirstByFirstnameNotNullable(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] eq firstname }
-            .fetchFirst()
+    suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname eq firstname
+                    ).fetchFirst()
 
-    suspend fun selectOneNonUnique() = sqlClient.select<PostgresqlUser>()
-            .fetchOne()
+    suspend fun selectOneNonUnique() =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    ).fetchOne()
 
-    fun selectByAlias(alias: String?) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::alias] eq alias }
-            .fetchAll()
+    fun selectByAlias(alias: String?) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.alias eq alias
+                    ).fetchAll()
 
     fun selectAllMappedToDto() =
-            sqlClient.select {
-                UserDto("${it[PostgresqlUser::firstname]} ${it[PostgresqlUser::lastname]}",
-                        it[PostgresqlUser::alias])
-            }.fetchAll()
+            (sqlClient.select {
+                UserDto("${it[POSTGRESQL_USER.firstname]} ${it[POSTGRESQL_USER.lastname]}",
+                        it[POSTGRESQL_USER.alias])
+            }
+                    from POSTGRESQL_USER
+                    ).fetchAll()
 
-    suspend fun updateLastname(newLastname: String) = sqlClient.updateTable<PostgresqlUser>()
-            .set { it[PostgresqlUser::lastname] = newLastname }
-            .where { it[PostgresqlUser::id] eq postgresqlJdoe.id }
-            .execute()
+    suspend fun updateLastname(newLastname: String) =
+            (sqlClient update POSTGRESQL_USER
+                    set POSTGRESQL_USER.lastname eq newLastname
+                    where POSTGRESQL_USER.id eq userJdoe.id
+                    ).execute()
 }
-*/

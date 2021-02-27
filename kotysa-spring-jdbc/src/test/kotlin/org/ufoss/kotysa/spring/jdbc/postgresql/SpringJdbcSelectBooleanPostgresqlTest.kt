@@ -36,7 +36,8 @@ class SpringJdbcSelectBooleanPostgresqlTest : AbstractSpringJdbcPostgresqlTest<U
 }
 
 
-class UserRepositorySpringJdbcPostgresqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySpringJdbcPostgresqlSelectBoolean(client: JdbcOperations)
+    : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
             (sqlClient selectFrom POSTGRESQL_USER

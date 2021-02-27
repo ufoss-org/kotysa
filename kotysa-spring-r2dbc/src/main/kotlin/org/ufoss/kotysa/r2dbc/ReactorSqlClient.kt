@@ -54,7 +54,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
     public interface FirstSelect<T : Any> : Fromable<T>, Andable {
         override fun <U : Any> and(column: Column<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
-        override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
+        public override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
