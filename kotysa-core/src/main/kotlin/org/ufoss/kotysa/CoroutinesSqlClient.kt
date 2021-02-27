@@ -33,7 +33,7 @@ public interface CoroutinesSqlClient {
     public infix fun <T : Any> selectCountFrom(table: Table<T>): CoroutinesSqlClientSelect.From<Long, T> =
             selectCount().from(table)
 
-    public infix fun <T : Any> selectAllFrom(table: Table<T>): Flow<T?> = selectFrom(table).fetchAll()
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): Flow<T> = selectFrom(table).fetchAll()
     public suspend infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
 

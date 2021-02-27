@@ -33,7 +33,7 @@ public interface SqlClient {
     public infix fun <T : Any> selectCountFrom(table: Table<T>): SqlClientSelect.From<Long, T> =
             selectCount().from(table)
 
-    public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T?> = selectFrom(table).fetchAll()
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T> = selectFrom(table).fetchAll()
     public infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
 
