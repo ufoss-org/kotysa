@@ -14,6 +14,6 @@ class UserHandler(private val repository: UserRepository) {
     suspend fun userApi(request: ServerRequest) = ServerResponse
             .ok()
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValueAndAwait(repository.findOne(request.pathVariable("id").toInt()))
+            .bodyValueAndAwait(repository.findOne(request.pathVariable("id").toInt())!!)
 
 }

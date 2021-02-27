@@ -1,6 +1,5 @@
 package com.sample
 
-import org.ufoss.kotysa.*
 import org.ufoss.kotysa.h2.H2Table
 import java.time.LocalDateTime
 import java.util.*
@@ -34,11 +33,13 @@ data class UserDto(
 
 object ROLE : H2Table<Role>() {
     val id = uuid(Role::id)
+            .primaryKey()
     val label = varchar(Role::label)
 }
 
 object USER : H2Table<User>() {
     val id = autoIncrementInteger(User::id)
+            .primaryKey()
     val firstname = varchar(User::firstname)
     val lastname = varchar(User::lastname)
     val isAdmin = boolean(User::isAdmin)

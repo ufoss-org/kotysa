@@ -8,28 +8,28 @@ private val role_admin_uuid = UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691
 
 class UserRepository(private val client: CoroutinesSqlClient) {
 
-    suspend fun count() = client.countAll<User>()
+    suspend fun count() = client selectCountAllFrom USER
 
-    fun findAll() = client.selectAll<User>()
+    fun findAll() = client selectAllFrom USER
 
     suspend fun findOne(id: Int) =
-            client.select<User>()
-                    .where { it[User::id] eq id }
-                    .fetchOne()
+            (client selectFrom USER
+                    where USER.id eq id
+                    ).fetchOne()
 
     fun selectWithJoin() =
-            client.select {
-                UserDto("${it[User::firstname]} ${it[User::lastname]}", it[User::alias], it[Role::label])
+            (client.select {
+                UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
             }
-                    .innerJoin<Role>().on { it[User::roleId] }
-                    .fetchAll()
+                    from USER innerJoin ROLE on USER.roleId eq ROLE.id
+                    ).fetchAll()
 
-    suspend fun deleteAll() = client.deleteAllFromTable<User>()
+    suspend fun deleteAll() = client deleteAllFrom USER
 
-    suspend fun save(user: User) = client.insert(user)
+    suspend fun save(user: User) = client insert user
 
     suspend fun init() {
-        client.createTable<User>()
+        client createTable USER
         deleteAll()
         save(User("John", "Doe", false, role_user_uuid, id = 123))
         save(User("Big", "Boss", true, role_admin_uuid, "TheBoss"))
@@ -37,12 +37,12 @@ class UserRepository(private val client: CoroutinesSqlClient) {
 }
 
 class RoleRepository(private val client: CoroutinesSqlClient) {
-    suspend fun deleteAll() = client.deleteAllFromTable<Role>()
+    suspend fun deleteAll() = client deleteAllFrom ROLE
 
-    suspend fun save(role: Role) = client.insert(role)
+    suspend fun save(role: Role) = client insert role
 
     suspend fun init() {
-        client.createTable<Role>()
+        client createTable ROLE
         deleteAll()
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))
