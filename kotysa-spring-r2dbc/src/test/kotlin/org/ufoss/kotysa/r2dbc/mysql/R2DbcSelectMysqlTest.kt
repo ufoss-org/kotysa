@@ -136,6 +136,12 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
         assertThat(repository.selectRoleNameFromUserId(userBboss.id).block())
                 .isEqualTo(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify countAllUsers returns 2`() {
+        assertThat(repository.countAllUsers().block()!!)
+                .isEqualTo(2L)
+    }
 }
 
 
@@ -214,4 +220,6 @@ class UserRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
                     from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
                     where MYSQL_USER.id eq userId)
                     .fetchOne()
+
+    fun countAllUsers() = sqlClient selectCountAllFrom MYSQL_USER
 }

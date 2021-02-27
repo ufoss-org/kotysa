@@ -136,6 +136,12 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
         assertThat(repository.selectRoleNameFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify countAllUsers returns 2`() {
+        assertThat(repository.countAllUsers())
+                .isEqualTo(2L)
+    }
 }
 
 class UserRepositorySelect(
@@ -220,4 +226,6 @@ class UserRepositorySelect(
                     from SQLITE_ROLE innerJoin SQLITE_USER on SQLITE_ROLE.id eq SQLITE_USER.roleId
                     where SQLITE_USER.id eq userId)
                     .fetchOne()
+
+    fun countAllUsers() = sqlClient selectCountAllFrom SQLITE_USER
 }

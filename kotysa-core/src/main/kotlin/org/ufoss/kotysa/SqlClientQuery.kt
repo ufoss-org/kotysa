@@ -13,10 +13,10 @@ import java.util.*
 public abstract class SqlClientQuery protected constructor() {
 
     public interface Selectable {
-        public infix fun <T : Any> select(table: Table<T>): Andable
         public infix fun <T : Any> select(column: Column<*, T>): Andable
+        public infix fun <T : Any> select(table: Table<T>): Andable
         public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable
-        public infix fun <T : Any> selectCount(column: Column<*, T>): Andable
+        public infix fun <T : Any> selectCount(column: Column<*, T>?): Andable
     }
 
     public interface Fromable {

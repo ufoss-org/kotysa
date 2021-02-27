@@ -58,13 +58,12 @@ internal class SqlClientSpringJdbc(
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)
-
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(table)
-
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(dsl)
-
+    override fun selectCount(): SqlClientSelect.Fromable<Long> =
+            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount(column)
 }

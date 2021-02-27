@@ -148,7 +148,7 @@ internal class TableField<T : Any> internal constructor(
 internal class FieldDsl<T : Any>(
         override val properties: DefaultSqlClientSelect.Properties<T>,
         private val dsl: (ValueProvider) -> T
-): FieldNotNull<T> {
+) : FieldNotNull<T> {
     private val selectDsl = SelectDsl(properties)
 
     override val fieldNames: List<String> = FieldValueProvider(properties).initialize(dsl)
@@ -175,7 +175,7 @@ internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, Kotys
 }
 
 internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
-    getKotysaTable(availableTables).getFieldName()
+        getKotysaTable(availableTables).getFieldName()
 
 private fun KotysaTable<*>.getFieldName() =
         if (this is AliasedTable<*>) {

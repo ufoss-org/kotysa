@@ -21,14 +21,11 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
     ) : ReactorSqlClientSelect.Selectable {
         override fun <T : Any> select(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
-
         override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
-
         override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, Properties(tables), dsl)
-
-        override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
+        override fun <T : Any> selectCount(column: Column<*, T>?): ReactorSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 

@@ -39,10 +39,10 @@ private class CoroutinesSqlClientR2Dbc(
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).select(dsl)
+    override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
+            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
-
-
 }
 
 /**

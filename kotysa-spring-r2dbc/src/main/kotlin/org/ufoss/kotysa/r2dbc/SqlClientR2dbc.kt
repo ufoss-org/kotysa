@@ -37,6 +37,8 @@ private class SqlClientR2dbc(
             SqlClientSelectR2dbc.Selectable(client, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
             SqlClientSelectR2dbc.Selectable(client, tables).select(dsl)
+    override fun selectCount(): ReactorSqlClientSelect.Fromable<Long> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
             SqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
 }

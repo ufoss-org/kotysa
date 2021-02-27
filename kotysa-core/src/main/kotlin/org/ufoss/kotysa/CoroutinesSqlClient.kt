@@ -25,12 +25,16 @@ public interface CoroutinesSqlClient {
     public infix fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>
     public infix fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T>
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T>
+    public fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.From<T, T> =
             select(table).from(table)
+    public infix fun <T : Any> selectCountFrom(table: Table<T>): CoroutinesSqlClientSelect.From<Long, T> =
+            selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flow<T?> = selectFrom(table).fetchAll()
+    public suspend infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
 
 
@@ -41,7 +45,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
-        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
+        override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable {

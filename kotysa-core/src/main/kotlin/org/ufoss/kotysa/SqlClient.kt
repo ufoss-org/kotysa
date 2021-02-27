@@ -25,12 +25,16 @@ public interface SqlClient {
     public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
     public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
+    public fun selectCount(): SqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
             select(table).from(table)
+    public infix fun <T : Any> selectCountFrom(table: Table<T>): SqlClientSelect.From<Long, T> =
+            selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T?> = selectFrom(table).fetchAll()
+    public infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
 
 
@@ -40,7 +44,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
-        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
+        override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable {

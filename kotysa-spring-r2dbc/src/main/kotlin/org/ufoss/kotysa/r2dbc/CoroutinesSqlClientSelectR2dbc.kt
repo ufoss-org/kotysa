@@ -26,7 +26,7 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
         override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, Properties(tables), dsl)
-        override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+        override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 

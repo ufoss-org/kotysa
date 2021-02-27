@@ -142,6 +142,12 @@ class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpri
         assertThat(repository.selectRoleNameFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify countAllUsers returns 2`() {
+        assertThat(repository.countAllUsers())
+                .isEqualTo(2L)
+    }
 }
 
 
@@ -224,4 +230,6 @@ class UserRepositorySpringJdbcMysqlSelect(client: JdbcOperations) : AbstractUser
                     from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
                     where MYSQL_USER.id eq userId)
                     .fetchOne()
+
+    fun countAllUsers() = sqlClient selectCountAllFrom MYSQL_USER
 }

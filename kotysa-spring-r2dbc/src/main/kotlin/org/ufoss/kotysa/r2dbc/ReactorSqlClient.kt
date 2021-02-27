@@ -29,12 +29,16 @@ public interface ReactorSqlClient {
     public infix fun <T : Any, U : Any> select(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U>
     public infix fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T>
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T>
+    public fun selectCount(): ReactorSqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.From<T, T> =
             select(table).from(table)
+    public infix fun <T : Any> selectCountFrom(table: Table<T>): ReactorSqlClientSelect.From<Long, T> =
+            selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T> = selectFrom(table).fetchAll()
+    public infix fun <T : Any> selectCountAllFrom(table: Table<T>): Mono<Long> = selectCountFrom(table).fetchOne()
 }
 
 
@@ -44,7 +48,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
-        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
+        override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable {

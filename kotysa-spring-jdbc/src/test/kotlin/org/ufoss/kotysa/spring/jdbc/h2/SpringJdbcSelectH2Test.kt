@@ -137,6 +137,12 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
         assertThat(repository.selectRoleNameFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify countAllUsers returns 2`() {
+        assertThat(repository.countAllUsers())
+                .isEqualTo(2L)
+    }
 }
 
 
@@ -219,4 +225,6 @@ class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRep
                     from H2_ROLE innerJoin H2_USER on H2_ROLE.id eq H2_USER.roleId
                     where H2_USER.id eq userId)
                     .fetchOne()
+
+    fun countAllUsers() = sqlClient selectCountAllFrom H2_USER
 }

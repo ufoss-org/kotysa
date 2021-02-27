@@ -136,6 +136,12 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
         assertThat(repository.selectRoleNameFromUserId(userBboss.id).block())
                 .isEqualTo(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify countAllUsers returns 2`() {
+        assertThat(repository.countAllUsers().block()!!)
+                .isEqualTo(2L)
+    }
 }
 
 
@@ -216,4 +222,6 @@ class UserRepositoryH2Select(
                     from H2_ROLE innerJoin H2_USER on H2_ROLE.id eq H2_USER.roleId
                     where H2_USER.id eq userId)
                     .fetchOne()
+
+    fun countAllUsers() = sqlClient selectCountAllFrom H2_USER
 }

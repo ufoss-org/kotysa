@@ -136,6 +136,12 @@ class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPost
         assertThat(repository.selectRoleNameFromUserId(userBboss.id).block())
                 .isEqualTo(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify countAllUsers returns 2`() {
+        assertThat(repository.countAllUsers().block()!!)
+                .isEqualTo(2L)
+    }
 }
 
 
@@ -214,4 +220,6 @@ class UserRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractUser
                     from POSTGRESQL_ROLE innerJoin POSTGRESQL_USER on POSTGRESQL_ROLE.id eq POSTGRESQL_USER.roleId
                     where POSTGRESQL_USER.id eq userId)
                     .fetchOne()
+
+    fun countAllUsers() = sqlClient selectCountAllFrom POSTGRESQL_USER
 }

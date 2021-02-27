@@ -60,7 +60,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add(column.toField(properties))
         }
 
-        public fun <U : Any> addCountColumn(column: Column<*, U>) {
+        public fun <U : Any> addCountColumn(column: Column<*, U>? = null) {
             properties.selectedFields.add(CountField(properties, column))
         }
     }
