@@ -12,7 +12,6 @@ import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
-import java.util.*
 
 
 class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2UpdateDelete>() {
@@ -37,11 +36,11 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify deleteUserById works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteUserById(h2Jdoe.id))
+            assertThat(repository.deleteUserById(userJdoe.id))
                     .isEqualTo(1)
             assertThat(repository.selectAllUsers())
                     .hasSize(1)
-                    .containsOnly(h2Bboss)
+                    .containsOnly(userBboss)
         }
     }
 
@@ -49,11 +48,11 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify deleteUserWithJoin works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteUserWithJoin(h2User.label))
+            assertThat(repository.deleteUserWithJoin(roleUser.label))
                     .isEqualTo(1)
             assertThat(repository.selectAllUsers())
                     .hasSize(1)
-                    .containsOnly(h2Bboss)
+                    .containsOnly(userBboss)
         }
     }
 
@@ -61,7 +60,7 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     fun `Verify deleteUserIn works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteUserIn(listOf(h2Jdoe.id, UUID.randomUUID())))
+            assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
             assertThat(repository.selectAllUsers())
                     .hasSize(1)
@@ -70,7 +69,7 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
 
     @Test
     fun `Verify deleteUserIn no match`() {
-        assertThat(repository.deleteUserIn(listOf(UUID.randomUUID(), UUID.randomUUID())))
+        assertThat(repository.deleteUserIn(listOf(99999, 9999999)))
                 .isEqualTo(0)
         assertThat(repository.selectAllUsers())
                 .hasSize(2)
@@ -82,22 +81,31 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
     }
 
     @Test
-    fun `Verify updateWithJoin works`() {
+    fun `Verify updateLastnameIn works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.updateWithJoin("Do", h2User.label))
+            assertThat(repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
+    }
+
+    @Test
+    fun `Verify updateLastnameIn no match`() {
+        assertThat(repository.updateLastnameIn("Do", listOf(99999, 9999999)))
+                .isEqualTo(0)
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Doe")
     }
 
     @Test
@@ -106,75 +114,71 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(h2Bboss.firstname))
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo("TheBigBoss")
             assertThat(repository.updateAlias(null))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(h2Bboss.firstname))
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo(null)
         }
     }
 
     @Test
-    fun `Verify updateLastnameIn works`() {
+    fun `Verify updateWithJoin works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.updateLastnameIn("Do", listOf(h2Jdoe.id, UUID.randomUUID())))
+            assertThat(repository.updateWithJoin("Do", roleUser.label))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
-    }
-
-    @Test
-    fun `Verify updateLastnameIn no match`() {
-        assertThat(repository.updateLastnameIn("Do", listOf(UUID.randomUUID(), UUID.randomUUID())))
-                .isEqualTo(0)
-        assertThat(repository.selectFirstByFirstname(h2Jdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Doe")
     }
 }
 
 
 class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
-    fun deleteUserById(id: UUID) = sqlClient.deleteFromTable<H2User>()
-            .where { it[H2User::id] eq id }
-            .execute()
+    fun deleteUserById(id: Int) =
+            (sqlClient deleteFrom H2_USER
+                    where H2_USER.id eq id
+                    ).execute()
 
-    fun deleteUserWithJoin(roleLabel: String) = sqlClient.deleteFromTable<H2User>()
-            .innerJoin<H2Role>().on { it[H2User::roleId] }
-            .where { it[H2Role::label] eq roleLabel }
-            .execute()
+    fun deleteUserIn(ids: Collection<Int>) =
+            (sqlClient deleteFrom H2_USER
+                    where H2_USER.id `in` ids
+                    ).execute()
 
-    fun deleteUserIn(ids: Collection<UUID>) =
-            sqlClient.deleteFromTable<H2User>()
-                    .where { it[H2User::id] `in` ids }
-                    .execute()
+    fun deleteUserWithJoin(roleLabel: String) =
+            (sqlClient deleteFrom H2_USER
+                    innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
+                    where H2_ROLE.label eq roleLabel
+                    ).execute()
 
-    fun updateLastname(newLastname: String) = sqlClient.updateTable<H2User>()
-            .set { it[H2User::lastname] = newLastname }
-            .where { it[H2User::id] eq h2Jdoe.id }
-            .execute()
+    fun updateLastname(newLastname: String) =
+            (sqlClient update H2_USER
+                    set H2_USER.lastname eq newLastname
+                    where H2_USER.id eq userJdoe.id
+                    ).execute()
 
-    fun updateAlias(newAlias: String?) = sqlClient.updateTable<H2User>()
-            .set { it[H2User::alias] = newAlias }
-            .where { it[H2User::id] eq h2Bboss.id }
-            .execute()
+    fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
+            (sqlClient update H2_USER
+                    set H2_USER.lastname eq newLastname
+                    where H2_USER.id `in` ids
+                    ).execute()
 
-    fun updateWithJoin(newLastname: String, roleLabel: String) = sqlClient.updateTable<H2User>()
-            .set { it[H2User::lastname] = newLastname }
-            .innerJoin<H2Role>().on { it[H2User::roleId] }
-            .where { it[H2Role::label] eq roleLabel }
-            .execute()
+    fun updateAlias(newAlias: String?) =
+            (sqlClient update H2_USER
+                    set H2_USER.alias eq newAlias
+                    where H2_USER.id eq userBboss.id
+                    ).execute()
 
-    fun updateLastnameIn(newLastname: String, ids: Collection<UUID>) =
-            sqlClient.updateTable<H2User>()
-                    .set { it[H2User::lastname] = newLastname }
-                    .where { it[H2User::id] `in` ids }
-                    .execute()
+    fun updateWithJoin(newLastname: String, roleLabel: String) =
+            (sqlClient update H2_USER
+                    set H2_USER.lastname eq newLastname
+                    innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
+                    where H2_ROLE.label eq roleLabel
+                    ).execute()
 }

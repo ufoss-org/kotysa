@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc
-
+/*
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
@@ -53,3 +53,4 @@ abstract class JavaUserRepository(client: DatabaseClient, tables: Tables) : Repo
                         it[JavaUser::getAlias1])
             }.fetchAll()
 }
+*/

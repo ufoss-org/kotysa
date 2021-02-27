@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.FetchSpec
 import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
+import org.ufoss.kotysa.dbValues
 
 
 internal abstract class AbstractSqlClientDeleteR2dbc protected constructor() : DefaultSqlClientDeleteOrUpdate() {
@@ -18,7 +19,7 @@ internal abstract class AbstractSqlClientDeleteR2dbc protected constructor() : D
             var executeSpec = client.sql(deleteFromTableSql())
 
             executeSpec = whereClauses
-                    .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                    .dbValues(tables)
                     .foldIndexed(executeSpec) { index, execSpec, value ->
                         execSpec.bind("k${index}", value)
                     }

@@ -12,46 +12,47 @@ import java.util.*
 
 
 public interface ValueProvider {
+    public operator fun <T : Any, U : Any> get(column: Column<T, U>): U?
+}
 
-    public operator fun <T : Any> get(getter: (T) -> String, alias: String? = null): String
+internal class FieldValueProvider<T : Any> internal constructor(
+        private val properties: DefaultSqlClientSelect.Properties<T>,
+) : ValueProvider {
+    private val selectedFieldNames = mutableListOf<String>()
 
-    public operator fun <T : Any> get(getter: (T) -> String?, alias: String? = null, `_`: Nullable = Nullable.TRUE): String?
+    /*override fun <T : Any> count(resultClass: KClass<T>, dsl: ((FieldProvider) -> ColumnField<T, *>)?, alias: String?): Long =
+            this[fieldIndexMap.filterKeys { field ->
+                field is CountField<*, *> && field.dsl == dsl && field.alias == alias
+            }.values.first()]!!*/
 
-    public operator fun <T : Any> get(getter: (T) -> LocalDateTime, alias: String? = null): LocalDateTime
+    override fun <T : Any, U : Any> get(column: Column<T, U>): U {
+        addSelectedFieldName(column.getFieldName(properties.tables.allColumns))
+        val columnClass = column.getKotysaColumn(properties.tables.allColumns).columnClass
+        @Suppress("UNCHECKED_CAST")
+        return when (columnClass) {
+            String::class -> ""
+            LocalDateTime::class -> LocalDateTime.MAX
+            kotlinx.datetime.LocalDateTime::class -> kotlinx.datetime.LocalDateTime(2016, 2, 15, 16, 57, 0, 0)
+            LocalDate::class -> LocalDate.MAX
+            kotlinx.datetime.LocalDate::class -> kotlinx.datetime.LocalDate(2016, 2, 15)
+            OffsetDateTime::class -> OffsetDateTime.now()
+            LocalTime::class -> LocalTime.MAX
+            Boolean::class -> false
+            UUID::class -> UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f")
+            Int::class -> 42
+            else -> throw RuntimeException("$columnClass is not supported yet")
+        } as U
+    }
 
-    public operator fun <T : Any> get(getter: (T) -> LocalDateTime?, alias: String? = null, `_`: Nullable = Nullable.TRUE): LocalDateTime?
+    private fun addSelectedFieldName(fieldName: String) {
+        require(!selectedFieldNames.contains(fieldName)) {
+            "\"$fieldName\" is already selected, you cannot select the same field multiple times"
+        }
+        selectedFieldNames.add(fieldName)
+    }
 
-    public operator fun <T : Any> get(getter: (T) -> kotlinx.datetime.LocalDateTime, alias: String? = null): kotlinx.datetime.LocalDateTime
-
-    public operator fun <T : Any> get(
-            getter: (T) -> kotlinx.datetime.LocalDateTime?, alias: String? = null, `_`: Nullable = Nullable.TRUE
-    ): kotlinx.datetime.LocalDateTime?
-
-    public operator fun <T : Any> get(getter: (T) -> LocalDate, alias: String? = null): LocalDate
-
-    public operator fun <T : Any> get(getter: (T) -> LocalDate?, alias: String? = null, `_`: Nullable = Nullable.TRUE): LocalDate?
-
-    public operator fun <T : Any> get(getter: (T) -> kotlinx.datetime.LocalDate, alias: String? = null): kotlinx.datetime.LocalDate
-
-    public operator fun <T : Any> get(
-            getter: (T) -> kotlinx.datetime.LocalDate?, alias: String? = null, `_`: Nullable = Nullable.TRUE
-    ): kotlinx.datetime.LocalDate?
-
-    public operator fun <T : Any> get(getter: (T) -> OffsetDateTime, alias: String? = null): OffsetDateTime
-
-    public operator fun <T : Any> get(getter: (T) -> OffsetDateTime?, alias: String? = null, `_`: Nullable = Nullable.TRUE): OffsetDateTime?
-
-    public operator fun <T : Any> get(getter: (T) -> LocalTime, alias: String? = null): LocalTime
-
-    public operator fun <T : Any> get(getter: (T) -> LocalTime?, alias: String? = null, `_`: Nullable = Nullable.TRUE): LocalTime?
-
-    public operator fun <T : Any> get(getter: (T) -> Boolean, alias: String? = null): Boolean
-
-    public operator fun <T : Any> get(getter: (T) -> UUID, alias: String? = null): UUID
-
-    public operator fun <T : Any> get(getter: (T) -> UUID?, alias: String? = null, `_`: Nullable = Nullable.TRUE): UUID?
-
-    public operator fun <T : Any> get(getter: (T) -> Int, alias: String? = null): Int
-
-    public operator fun <T : Any> get(getter: (T) -> Int?, alias: String? = null, `_`: Nullable = Nullable.TRUE): Int?
+    internal fun initialize(init: (ValueProvider) -> T): List<String> {
+        init(this)
+        return selectedFieldNames
+    }
 }

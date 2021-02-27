@@ -17,63 +17,63 @@ class SqLiteSelectOffsetDateTimeTest : AbstractSqLiteTest<OffsetDateTimeReposito
     override fun getRepository(sqLiteTables: Tables) = OffsetDateTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNull finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNull(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNull(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                4,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNull finds sqLiteOffsetDateTimeWithoutNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithoutNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNull(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    6,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNull(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                6,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullNotEq finds sqLiteOffsetDateTimeWithoutNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullNotEq finds offsetDateTimeWithoutNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullNotEq(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullNotEq(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                4,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
@@ -102,376 +102,336 @@ class SqLiteSelectOffsetDateTimeTest : AbstractSqLiteTest<OffsetDateTimeReposito
         )
         assertThat(repository.selectAllByOffsetDateTimeNotNullIn(seq))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable, sqLiteOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullBefore finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullBefore finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullBefore(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    4,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullBefore(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                4,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNullBefore finds no results when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullBefore(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullBefore(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                4,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    4,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                4,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds sqLiteOffsetDateTimeWithNullable when equals`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds offsetDateTimeWithNullable when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                4,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullAfter finds sqLiteOffsetDateTimeWithoutNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullAfter finds offsetDateTimeWithoutNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullAfter(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    5,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullAfter(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                5,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNullAfter finds no results when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullAfter(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    6,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullAfter(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                6,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds sqLiteOffsetDateTimeWithoutNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds offsetDateTimeWithoutNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    5,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                5,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds sqLiteOffsetDateTimeWithoutNullable when equals`() {
+    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds offsetDateTimeWithoutNullable when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
-                OffsetDateTime.of(
-                    2019,
-                    11,
-                    6,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
+                        OffsetDateTime.of(
+                                2019,
+                                11,
+                                6,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullable finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullable(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullable(
+                        OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullable finds sqLiteOffsetDateTimeWithoutNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithoutNullable`() {
         assertThat(repository.selectAllByOffsetDateTimeNullable(null))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithoutNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNullableNotEq finds no result`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableNotEq(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableNotEq(
+                        OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
                 )
-            )
         )
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNullableNotEq finds no results`() {
         assertThat(repository.selectAllByOffsetDateTimeNullableNotEq(null))
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullableBefore finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullableBefore finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableBefore(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableBefore(
+                        OffsetDateTime.of(2018, 11, 4, 12, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNullableBefore finds no results when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableBefore(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableBefore(
+                        OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
                 )
-            )
         )
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    5,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
+                        OffsetDateTime.of(
+                                2018,
+                                11,
+                                5,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds sqLiteOffsetDateTimeWithNullable when equals`() {
+    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds offsetDateTimeWithNullable when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
+                        OffsetDateTime.of(
+                                2018,
+                                11,
+                                4,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullableAfter finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullableAfter finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableAfter(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    3,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableAfter(
+                        OffsetDateTime.of(
+                                2018,
+                                11,
+                                3,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNullableAfter finds no results when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableAfter(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableAfter(
+                        OffsetDateTime.of(
+                                2018,
+                                11,
+                                4,
+                                0,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .isEmpty()
+                .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds sqLiteOffsetDateTimeWithNullable`() {
+    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds offsetDateTimeWithNullable`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableAfterOrEq(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    3,
-                    12,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableAfterOrEq(
+                        OffsetDateTime.of(
+                                2018,
+                                11,
+                                3,
+                                12,
+                                0,
+                                0,
+                                0,
+                                ZoneOffset.UTC
+                        )
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds sqLiteOffsetDateTimeWithNullable when equals`() {
+    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds offsetDateTimeWithNullable when equals`() {
         assertThat(
-            repository.selectAllByOffsetDateTimeNullableAfterOrEq(
-                OffsetDateTime.of(
-                    2018,
-                    11,
-                    4,
-                    0,
-                    0,
-                    0,
-                    0,
-                    ZoneOffset.UTC
+                repository.selectAllByOffsetDateTimeNullableAfterOrEq(
+                        OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
                 )
-            )
         )
-            .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteOffsetDateTimeWithNullable)
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 }
 
@@ -489,77 +449,77 @@ class OffsetDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables:
     }
 
     private fun createTables() {
-        sqlClient.createTable<SqLiteOffsetDateTime>()
+        sqlClient createTable SQLITE_OFFSET_DATE_TIME
     }
 
     private fun insertOffsetDateTimes() {
-        sqlClient.insert(sqLiteOffsetDateTimeWithNullable, sqLiteOffsetDateTimeWithoutNullable)
+        sqlClient.insert(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<SqLiteOffsetDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_OFFSET_DATE_TIME
 
     fun selectAllByOffsetDateTimeNotNull(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] eq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull eq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] notEq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull notEq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
-            sqlClient.select<SqLiteOffsetDateTime>()
-                    .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] `in` values }
-                    .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull `in` values
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] before offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull before offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] beforeOrEq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull beforeOrEq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] after offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull after offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNotNull] afterOrEq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull afterOrEq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullable(offsetDateTime: OffsetDateTime?) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] eq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable eq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] notEq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable notEq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBefore(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] before offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable before offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] beforeOrEq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable beforeOrEq offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfter(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] after offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable after offsetDateTime
+                    ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) =
-        sqlClient.select<SqLiteOffsetDateTime>()
-            .where { it[SqLiteOffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
+                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable afterOrEq offsetDateTime
+                    ).fetchAll()
 }

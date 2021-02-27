@@ -4,41 +4,25 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
+import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.JavaUserRepository
-import org.ufoss.kotysa.r2dbc.SpringR2dbcJavaEntityTest
-import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.r2dbc.R2dbcJavaEntityTest
+import org.ufoss.kotysa.r2dbc.R2dbcJavaUserRepository
+import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.test.H2_JAVA_USER
+import org.ufoss.kotysa.test.h2Tables
 
 
 class R2DbcJavaEntityH2Test :
-        AbstractR2dbcH2Test<JavaUserH2Repository>(), SpringR2dbcJavaEntityTest<JavaUserH2Repository> {
-    override var context = startContext<JavaUserH2Repository>()
-    override var repository = getContextRepository<JavaUserH2Repository>()
+        AbstractR2dbcH2Test<JavaUserH2Repository>(), R2dbcJavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
+
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<JavaUserH2Repository>()
+        repository = getContextRepository()
+    }
 }
 
-private val tables =
-        tables().h2 {
-            table<JavaUser> {
-                name = "java_users"
-                column { it[JavaUser::getLogin].varchar() }
-                        .primaryKey()
-                column {
-                    it[JavaUser::getFirstname].varchar {
-                        name = "fname"
-                    }
-                }
-                column {
-                    it[JavaUser::getLastname].varchar {
-                        name = "lname"
-                    }
-                }
-                column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar() }
-                column { it[JavaUser::getAlias2].varchar() }
-                column { it[JavaUser::getAlias3].varchar() }
-            }
-        }
 
-
-class JavaUserH2Repository(client: DatabaseClient) : JavaUserRepository(client, tables)
+class JavaUserH2Repository(client: DatabaseClient)
+    : R2dbcJavaUserRepository<H2_JAVA_USER>(client.sqlClient(h2Tables), H2_JAVA_USER)

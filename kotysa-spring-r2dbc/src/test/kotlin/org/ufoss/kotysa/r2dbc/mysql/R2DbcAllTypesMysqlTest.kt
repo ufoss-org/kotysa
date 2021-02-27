@@ -36,19 +36,20 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                 .containsExactly(mysqlAllTypesNotNull)
     }
 
-    @Disabled
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toIterable())
                 .hasSize(1)
-                .containsExactly(MysqlAllTypesNullableDefaultValue(
-                        mysqlAllTypesNullableDefaultValue.id,
+                .containsExactly(AllTypesNullableDefaultValueEntity(
+                        allTypesNullableDefaultValue.id,
                         "default",
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
                         LocalTime.of(11, 25, 55),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42
                 ))
     }
@@ -57,7 +58,7 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() {
         assertThat(repository.selectAllAllTypesNullable().toIterable())
                 .hasSize(1)
-                .containsExactly(mysqlAllTypesNullable)
+                .containsExactly(allTypesNullable)
     }
 
     @Test
@@ -76,8 +77,8 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                     .thenMany(repository.selectAllAllTypesNotNull())
         }.test()
                 .expectNext(MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false,
-                        newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
-                        newKotlinxLocalDateTime, newInt))
+                        newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
+                        newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt))
                 .verifyComplete()
     }
 }
@@ -94,41 +95,41 @@ class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
     }
 
     override fun delete() {
-        deleteAllFromAllTypesNotNull()
-                .then(deleteAllFromAllTypesNullable())
+        (sqlClient deleteAllFrom MYSQL_ALL_TYPES_NOT_NULL)
+                .then(sqlClient deleteAllFrom MYSQL_ALL_TYPES_NULLABLE)
+                .then(sqlClient deleteAllFrom MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
                 .block()
     }
 
     private fun createTables() =
-            sqlClient.createTable<MysqlAllTypesNotNull>()
-                    .then(sqlClient.createTable<MysqlAllTypesNullable>())
-    //.then(sqlClient.createTable<MysqlAllTypesNullableDefaultValue>())
+            (sqlClient createTable MYSQL_ALL_TYPES_NOT_NULL)
+                    .then(sqlClient createTable MYSQL_ALL_TYPES_NULLABLE)
+                    .then(sqlClient createTable MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
-    private fun insertAllTypes() = sqlClient.insert(mysqlAllTypesNotNull, mysqlAllTypesNullable/*, mysqlAllTypesNullableDefaultValue*/)
+    private fun insertAllTypes() =
+            sqlClient.insert(mysqlAllTypesNotNull, allTypesNullable, allTypesNullableDefaultValue)
 
-    private fun deleteAllFromAllTypesNotNull() = sqlClient.deleteAllFromTable<MysqlAllTypesNotNull>()
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NOT_NULL
 
-    private fun deleteAllFromAllTypesNullable() = sqlClient.deleteAllFromTable<MysqlAllTypesNullable>()
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NULLABLE
 
-    fun selectAllAllTypesNotNull() = sqlClient.selectAll<MysqlAllTypesNotNull>()
-
-    fun selectAllAllTypesNullable() = sqlClient.selectAll<MysqlAllTypesNullable>()
-
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<MysqlAllTypesNullableDefaultValue>()
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
 
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
                               newKotlinxLocalDate: kotlinx.datetime.LocalDate,
-                              newLocalTim: LocalTime, newLocalDateTime: LocalDateTime,
+                              newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
                               newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
-            sqlClient.updateTable<MysqlAllTypesNotNull>()
-                    .set { it[MysqlAllTypesNotNull::string] = newString }
-                    .set { it[MysqlAllTypesNotNull::boolean] = newBoolean }
-                    .set { it[MysqlAllTypesNotNull::localDate] = newLocalDate }
-                    .set { it[MysqlAllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
-                    .set { it[MysqlAllTypesNotNull::localTim] = newLocalTim }
-                    .set { it[MysqlAllTypesNotNull::localDateTime] = newLocalDateTime }
-                    .set { it[MysqlAllTypesNotNull::kotlinxLocalDateTime] = newKotlinxLocalDateTime }
-                    .set { it[MysqlAllTypesNotNull::int] = newInt }
-                    .where { it[MysqlAllTypesNotNull::id] eq mysqlAllTypesNotNull.id }
-                    .execute()
+            (sqlClient update MYSQL_ALL_TYPES_NOT_NULL
+                    set MYSQL_ALL_TYPES_NOT_NULL.string eq newString
+                    set MYSQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
+                    set MYSQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
+                    set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
+                    set MYSQL_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
+                    set MYSQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
+                    set MYSQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
+                    set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set MYSQL_ALL_TYPES_NOT_NULL.inte eq newInt
+                    where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    ).execute()
 }

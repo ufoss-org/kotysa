@@ -8,13 +8,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.test.PostgresqlOffsetDateTime
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.postgresqlOffsetDateTimeWithNullable
-import org.ufoss.kotysa.test.postgresqlOffsetDateTimeWithoutNullable
-import org.ufoss.kotysa.test.postgresqlTables
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
@@ -28,172 +24,193 @@ class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcPostgresqlTest<OffsetDateTi
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNull finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNull(
+    fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNull(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds postgresqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullNotEq finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullNotEq(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBefore finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(
+    fun `Verify selectAllByOffsetDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
+                OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)
+        )
+        assertThat(repository.selectAllByOffsetDateTimeNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNotNullBefore finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBefore(
                 OffsetDateTime.of(2019, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(
+    fun `Verify selectAllByOffsetDateTimeNotNullBefore finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBefore(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
                 OffsetDateTime.of(2019, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds postgresqlOffsetDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullBeforeOrEq finds offsetDateTimeWithNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullBeforeOrEq(
                 OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfter finds postgresqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfter finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfter(
                 OffsetDateTime.of(2019, 11, 5, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfter finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfter(
                 OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds postgresqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
                 OffsetDateTime.of(2019, 11, 5, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds postgresqlOffsetDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(
+    fun `Verify selectAllByOffsetDateTimeNotNullAfterOrEq finds offsetDateTimeWithoutNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNotNullAfterOrEq(
                 OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullable finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullable(
-                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullable(
+                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
+        ).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullable finds postgresqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullable(null).toIterable())
+    fun `Verify selectAllByOffsetDateTimeNullable finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullable(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(
-                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
+    fun `Verify selectAllByOffsetDateTimeNullableNotEq finds no result`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableNotEq(
+                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
+        ).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableNotEq finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(null).toIterable())
+    fun `Verify selectAllByOffsetDateTimeNullableNotEq finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBefore finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBefore(
+    fun `Verify selectAllByOffsetDateTimeNullableBefore finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBefore(
                 OffsetDateTime.of(2018, 11, 4, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBefore(
+    fun `Verify selectAllByOffsetDateTimeNullableBefore finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBefore(
+                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
+        ).toIterable())
+                .isEmpty()
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds offsetDateTimeWithNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
+                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
+        ).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNullableBeforeOrEq finds offsetDateTimeWithNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableBeforeOrEq(
+                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNullableAfter finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfter(
+                OffsetDateTime.of(2018, 11, 3, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByOffsetDateTimeNullableAfter finds no results when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfter(
                 OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds postgresqlOffsetDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(
-                OffsetDateTime.of(2018, 11, 5, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds postgresqlOffsetDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(
-                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfter finds postgresqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfter(
+    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds offsetDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfterOrEq(
                 OffsetDateTime.of(2018, 11, 3, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfter(
-                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
-                .isEmpty()
-    }
-
-    @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds postgresqlOffsetDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(
-                OffsetDateTime.of(2018, 11, 3, 12, 0, 0, 0, ZoneOffset.UTC)).toIterable())
+    fun `Verify selectAllByOffsetDateTimeNullableAfterOrEq finds offsetDateTimeWithoutNullable when equals`() {
+        assertThat(repository.selectAllByOffsetDateTimeNullableAfterOrEq(
+                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3))
+        ).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds postgresqlOffsetDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(
-                OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC)).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlOffsetDateTimeWithNullable)
+                .containsExactlyInAnyOrder(offsetDateTimeWithNullable)
     }
 }
 
@@ -213,58 +230,74 @@ class OffsetDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repos
                 .block()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<PostgresqlOffsetDateTime>()
+    private fun createTables() = sqlClient createTable POSTGRESQL_OFFSET_DATE_TIME
 
-    private fun insertOffsetDateTimes() = sqlClient.insert(postgresqlOffsetDateTimeWithNullable, postgresqlOffsetDateTimeWithoutNullable)
+    private fun insertOffsetDateTimes() = sqlClient.insert(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<PostgresqlOffsetDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_OFFSET_DATE_TIME
 
-    fun selectAllByLocalDateTimeNotNull(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull] eq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNull(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull eq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull] notEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull notEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull] before offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull] beforeOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull before offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull] after offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull beforeOrEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNotNull] afterOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull after offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullable(offsetDateTime: OffsetDateTime?) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNullable] eq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull afterOrEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNullable] notEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullable(offsetDateTime: OffsetDateTime?) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable eq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableBefore(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNullable] before offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable notEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNullable] beforeOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableBefore(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable before offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableAfter(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNullable] after offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable beforeOrEq offsetDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) = sqlClient.select<PostgresqlOffsetDateTime>()
-            .where { it[PostgresqlOffsetDateTime::offsetDateTimeNullable] afterOrEq offsetDateTime }
-            .fetchAll()
+    fun selectAllByOffsetDateTimeNullableAfter(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable after offsetDateTime
+                    ).fetchAll()
+
+    fun selectAllByOffsetDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) =
+            (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
+                    where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable afterOrEq offsetDateTime
+                    ).fetchAll()
 }

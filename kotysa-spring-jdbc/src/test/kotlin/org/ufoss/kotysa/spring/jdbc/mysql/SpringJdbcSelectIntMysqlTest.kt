@@ -21,35 +21,45 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
         repository = getContextRepository()
     }
 
-    private val mysqlIntWithNullable = MysqlInt(
-            org.ufoss.kotysa.test.mysqlIntWithNullable.intNotNull,
-            org.ufoss.kotysa.test.mysqlIntWithNullable.intNullable,
-            1)
+    private val intWithNullable = IntEntity(
+            org.ufoss.kotysa.test.intWithNullable.intNotNull,
+            org.ufoss.kotysa.test.intWithNullable.intNullable,
+            1
+    )
 
-    private val mysqlIntWithoutNullable = MysqlInt(
-            org.ufoss.kotysa.test.mysqlIntWithoutNullable.intNotNull,
-            org.ufoss.kotysa.test.mysqlIntWithoutNullable.intNullable,
-            2)
+    private val intWithoutNullable = IntEntity(
+            org.ufoss.kotysa.test.intWithoutNullable.intNotNull,
+            org.ufoss.kotysa.test.intWithoutNullable.intNullable,
+            2
+    )
 
     @Test
-    fun `Verify selectAllByIntNotNull finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNotNull finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNull(10))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullNotEq finds mysqlIntWithoutNullable`() {
+    fun `Verify selectAllByIntNotNullNotEq finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNotNullNotEq(10))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullInf finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNotNullIn finds both`() {
+        val seq = sequenceOf(intWithNullable.intNotNull, intWithoutNullable.intNotNull)
+        assertThat(repository.selectAllByIntNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(intWithNullable, intWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByIntNotNullInf finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNullInf(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
@@ -59,24 +69,24 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullInfOrEq finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNotNullInfOrEq finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNullInfOrEq(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullInfOrEq finds mysqlIntWithNullable when equals`() {
+    fun `Verify selectAllByIntNotNullInfOrEq finds intWithNullable when equals`() {
         assertThat(repository.selectAllByIntNotNullInfOrEq(10))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullSup finds mysqlIntWithoutNullable`() {
+    fun `Verify selectAllByIntNotNullSup finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNotNullSup(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
@@ -86,31 +96,31 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullSupOrEq finds mysqlIntWithoutNullable`() {
+    fun `Verify selectAllByIntNotNullSupOrEq finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNotNullSupOrEq(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullSupOrEq finds mysqlIntWithoutNullable when equals`() {
+    fun `Verify selectAllByIntNotNullSupOrEq finds intWithoutNullable when equals`() {
         assertThat(repository.selectAllByIntNotNullSupOrEq(12))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullable finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNullable finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullable(6))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullable finds mysqlIntWithoutNullable`() {
+    fun `Verify selectAllByIntNullable finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
@@ -120,17 +130,17 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
     }
 
     @Test
-    fun `Verify selectAllByIntNullableNotEq finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNullableNotEq finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableInf finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNullableInf finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableInf(7))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
@@ -140,24 +150,24 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
     }
 
     @Test
-    fun `Verify selectAllByIntNullableInfOrEq finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNullableInfOrEq finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableInfOrEq(7))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableInfOrEq finds mysqlIntWithNullable when equals`() {
+    fun `Verify selectAllByIntNullableInfOrEq finds intWithNullable when equals`() {
         assertThat(repository.selectAllByIntNullableInfOrEq(6))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableSup finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNullableSup finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableSup(5))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
@@ -167,17 +177,17 @@ class SpringJdbcSelectIntMysqlTest : AbstractSpringJdbcMysqlTest<IntRepositoryMy
     }
 
     @Test
-    fun `Verify selectAllByIntNullableSupOrEq finds mysqlIntWithNullable`() {
+    fun `Verify selectAllByIntNullableSupOrEq finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableSupOrEq(5))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableSupOrEq finds mysqlIntWithNullable when equals`() {
+    fun `Verify selectAllByIntNullableSupOrEq finds intWithNullable when equals`() {
         assertThat(repository.selectAllByIntNullableSupOrEq(6))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlIntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 }
 
@@ -195,58 +205,78 @@ class IntRepositoryMysqlSelect(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<MysqlInt>()
+    private fun createTables() {
+        sqlClient createTable MYSQL_INT
+    }
 
-    private fun insertInts() = sqlClient.insert(mysqlIntWithNullable, mysqlIntWithoutNullable)
+    private fun insertInts() {
+        sqlClient.insert(intWithNullable, intWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<MysqlInt>()
+    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INT
 
-    fun selectAllByIntNotNull(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNotNull] eq int }
-            .fetchAll()
+    fun selectAllByIntNotNull(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull eq int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullNotEq(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNotNull] notEq int }
-            .fetchAll()
+    fun selectAllByIntNotNullNotEq(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull notEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullInf(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNotNull] inf int }
-            .fetchAll()
+    fun selectAllByIntNotNullIn(values: Sequence<Int>) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullInfOrEq(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNotNull] infOrEq int }
-            .fetchAll()
+    fun selectAllByIntNotNullInf(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull inf int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullSup(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNotNull] sup int }
-            .fetchAll()
+    fun selectAllByIntNotNullInfOrEq(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull infOrEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullSupOrEq(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNotNull] supOrEq int }
-            .fetchAll()
+    fun selectAllByIntNotNullSup(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull sup int
+                    ).fetchAll()
 
-    fun selectAllByIntNullable(int: Int?) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNullable] eq int }
-            .fetchAll()
+    fun selectAllByIntNotNullSupOrEq(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNotNull supOrEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableNotEq(int: Int?) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNullable] notEq int }
-            .fetchAll()
+    fun selectAllByIntNullable(int: Int?) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNullable eq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableInf(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNullable] inf int }
-            .fetchAll()
+    fun selectAllByIntNullableNotEq(int: Int?) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNullable notEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableInfOrEq(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNullable] infOrEq int }
-            .fetchAll()
+    fun selectAllByIntNullableInf(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNullable inf int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableSup(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNullable] sup int }
-            .fetchAll()
+    fun selectAllByIntNullableInfOrEq(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNullable infOrEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableSupOrEq(int: Int) = sqlClient.select<MysqlInt>()
-            .where { it[MysqlInt::intNullable] supOrEq int }
-            .fetchAll()
+    fun selectAllByIntNullableSup(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNullable sup int
+                    ).fetchAll()
+
+    fun selectAllByIntNullableSupOrEq(int: Int) =
+            (sqlClient selectFrom MYSQL_INT
+                    where MYSQL_INT.intNullable supOrEq int
+                    ).fetchAll()
 }

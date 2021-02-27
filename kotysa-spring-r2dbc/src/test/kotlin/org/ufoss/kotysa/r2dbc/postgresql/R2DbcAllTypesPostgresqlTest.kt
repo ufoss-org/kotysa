@@ -39,17 +39,20 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toIterable())
                 .hasSize(1)
-                .containsExactly(PostgresqlAllTypesNullableDefaultValue(
+                .containsExactly(PostgresqlAllTypesNullableDefaultValueEntity(
+                        1,
                         "default",
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
-                        OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
-                        LocalTime.of(11, 25, 55),
+                        LocalTime.of(11, 25, 55, 123456789),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        UUID.fromString(defaultUuid),
+                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42,
-                        postgresqlAllTypesNullableDefaultValue.id
+                        OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
+                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
+                        UUID.fromString(defaultUuid),
                 ))
     }
 
@@ -73,13 +76,13 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newOffsetDateTime, newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newUuid, newInt)
+                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime, newUuid)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAllAllTypesNotNull())
         }.test()
-                .expectNext(PostgresqlAllTypesNotNull(postgresqlAllTypesNotNull.id, "new", false,
-                        newLocalDate, newKotlinxLocalDate, newOffsetDateTime, newLocalTime, newLocalDateTime,
-                        newKotlinxLocalDateTime, newUuid, newInt))
+                .expectNext(PostgresqlAllTypesNotNullEntity(postgresqlAllTypesNotNull.id, "new", false,
+                        newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
+                        newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime, newUuid))
                 .verifyComplete()
     }
 }
@@ -96,43 +99,45 @@ class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
     }
 
     override fun delete() {
-        deleteAllFromAllTypesNotNull()
-                .then(deleteAllFromAllTypesNullable())
+        (sqlClient deleteAllFrom POSTGRESQL_ALL_TYPES_NOT_NULL)
+                .then(sqlClient deleteAllFrom POSTGRESQL_ALL_TYPES_NULLABLE)
+                .then(sqlClient deleteAllFrom POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
                 .block()
     }
 
     private fun createTables() =
-            sqlClient.createTable<PostgresqlAllTypesNotNull>()
-                    .then(sqlClient.createTable<PostgresqlAllTypesNullable>())
-                    .then(sqlClient.createTable<PostgresqlAllTypesNullableDefaultValue>())
+            (sqlClient createTable POSTGRESQL_ALL_TYPES_NOT_NULL)
+                    .then(sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE)
+                    .then(sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
-    private fun insertAllTypes() = sqlClient.insert(postgresqlAllTypesNotNull, postgresqlAllTypesNullable, postgresqlAllTypesNullableDefaultValue)
+    private fun insertAllTypes() =
+            sqlClient.insert(postgresqlAllTypesNotNull, postgresqlAllTypesNullable, postgresqlAllTypesNullableDefaultValue)
 
-    private fun deleteAllFromAllTypesNotNull() = sqlClient.deleteAllFromTable<PostgresqlAllTypesNotNull>()
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NOT_NULL
 
-    private fun deleteAllFromAllTypesNullable() = sqlClient.deleteAllFromTable<PostgresqlAllTypesNullable>()
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NULLABLE
 
-    fun selectAllAllTypesNotNull() = sqlClient.selectAll<PostgresqlAllTypesNotNull>()
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
 
-    fun selectAllAllTypesNullable() = sqlClient.selectAll<PostgresqlAllTypesNullable>()
-
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient.selectAll<PostgresqlAllTypesNullableDefaultValue>()
-
-    fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-                              newKotlinxLocalDate: kotlinx.datetime.LocalDate, newOffsetDateTime: OffsetDateTime,
-                              newLocalTim: LocalTime, newLocalDateTime: LocalDateTime,
-                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newUuid: UUID, newInt: Int) =
-            sqlClient.updateTable<PostgresqlAllTypesNotNull>()
-                    .set { it[PostgresqlAllTypesNotNull::string] = newString }
-                    .set { it[PostgresqlAllTypesNotNull::boolean] = newBoolean }
-                    .set { it[PostgresqlAllTypesNotNull::localDate] = newLocalDate }
-                    .set { it[PostgresqlAllTypesNotNull::kotlinxLocalDate] = newKotlinxLocalDate }
-                    .set { it[PostgresqlAllTypesNotNull::offsetDateTime] = newOffsetDateTime }
-                    .set { it[PostgresqlAllTypesNotNull::localTim] = newLocalTim }
-                    .set { it[PostgresqlAllTypesNotNull::localDateTime] = newLocalDateTime }
-                    .set { it[PostgresqlAllTypesNotNull::kotlinxLocalDateTime] = newKotlinxLocalDateTime }
-                    .set { it[PostgresqlAllTypesNotNull::uuid] = newUuid }
-                    .set { it[PostgresqlAllTypesNotNull::int] = newInt }
-                    .where { it[PostgresqlAllTypesNotNull::id] eq postgresqlAllTypesNotNull.id }
-                    .execute()
+    fun updateAllTypesNotNull(
+            newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
+            newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
+            newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
+            newOffsetDateTime: OffsetDateTime, newUuid: UUID
+    ) =
+            (sqlClient update POSTGRESQL_ALL_TYPES_NOT_NULL
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.string eq newString
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.int eq newInt
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
+                    set POSTGRESQL_ALL_TYPES_NOT_NULL.uuid eq newUuid
+                    where POSTGRESQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    ).execute()
 }

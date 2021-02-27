@@ -9,8 +9,8 @@ import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepository(
-    private val sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+        private val sqLiteOpenHelper: SQLiteOpenHelper,
+        tables: Tables
 ) : Repository {
 
     protected val sqlClient = sqLiteOpenHelper.sqlClient(tables)
@@ -28,26 +28,26 @@ abstract class AbstractUserRepository(
     }
 
     private fun createTable() {
-        sqlClient.createTable<SqLiteRole>()
-        sqlClient.createTable<SqLiteUser>()
+        sqlClient createTable SQLITE_ROLE
+        sqlClient createTable SQLITE_USER
     }
 
     private fun insertRoles() {
-        sqlClient.insert(sqLiteUser, sqLiteAdmin, sqLiteGod)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private fun insertUsers() {
-        sqlClient.insert(sqLiteJdoe, sqLiteBboss)
+        sqlClient.insert(userJdoe, userBboss)
     }
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<SqLiteUser>()
+    fun deleteAllFromUsers() = sqlClient deleteAllFrom SQLITE_USER
 
-    private fun deleteAllFromRoles() = sqlClient.deleteAllFromTable<SqLiteRole>()
+    private fun deleteAllFromRoles() = sqlClient deleteAllFrom SQLITE_ROLE
 
-    fun selectAll() = sqlClient.selectAll<SqLiteUser>()
+    fun selectAllUsers() = sqlClient selectAllFrom SQLITE_USER
 
     fun selectFirstByFirstname(firstname: String) =
-        sqlClient.select<SqLiteUser>()
-            .where { it[SqLiteUser::firstname] eq firstname }
-            .fetchFirstOrNull()
+            (sqlClient selectFrom SQLITE_USER
+                    where SQLITE_USER.firstname eq firstname
+                    ).fetchFirstOrNull()
 }

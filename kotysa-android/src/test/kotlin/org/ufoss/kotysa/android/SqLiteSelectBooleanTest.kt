@@ -8,9 +8,9 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.SqLiteUser
-import org.ufoss.kotysa.test.sqLiteBboss
-import org.ufoss.kotysa.test.sqLiteJdoe
+import org.ufoss.kotysa.test.SQLITE_USER
+import org.ufoss.kotysa.test.userBboss
+import org.ufoss.kotysa.test.userJdoe
 
 class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>() {
 
@@ -19,25 +19,25 @@ class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>(
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
         assertThat(repository.selectAllByIsAdminEq(true))
-            .hasSize(1)
-            .containsExactly(sqLiteBboss)
+                .hasSize(1)
+                .containsExactly(userBboss)
     }
 
     @Test
     fun `Verify selectAllByIsAdminEq false finds John`() {
         assertThat(repository.selectAllByIsAdminEq(false))
-            .hasSize(1)
-            .containsExactly(sqLiteJdoe)
+                .hasSize(1)
+                .containsExactly(userJdoe)
     }
 }
 
 class UserRepositoryBooleanSelect(
-    sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+        sqLiteOpenHelper: SQLiteOpenHelper,
+        tables: Tables
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-        sqlClient.select<SqLiteUser>()
-            .where { it[SqLiteUser::isAdmin] eq value }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_USER
+                    where SQLITE_USER.isAdmin eq value
+                    ).fetchAll()
 }

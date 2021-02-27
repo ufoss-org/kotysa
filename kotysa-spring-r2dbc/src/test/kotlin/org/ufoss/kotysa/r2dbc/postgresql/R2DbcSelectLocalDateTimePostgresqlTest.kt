@@ -8,13 +8,9 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.test.PostgresqlLocalDateTime
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.postgresqlLocalDateTimeWithNullable
-import org.ufoss.kotysa.test.postgresqlLocalDateTimeWithoutNullable
-import org.ufoss.kotysa.test.postgresqlTables
 import java.time.LocalDateTime
 
 
@@ -27,152 +23,162 @@ class R2DbcSelectLocalDateTimePostgresqlTest : AbstractR2dbcPostgresqlTest<Local
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNull finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNull(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNull finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNull(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullNotEq finds postgresqlLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullNotEq(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds localDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBefore finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBefore(LocalDateTime.of(2019, 11, 4, 12, 0)).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+    fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                localDateTimeWithNullable.localDateTimeNotNull,
+                localDateTimeWithoutNullable.localDateTimeNotNull)
+        assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable, localDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBefore(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime.of(2019, 11, 4, 12, 0)).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(LocalDateTime.of(2019, 11, 4, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime.of(2019, 11, 4, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq finds postgresqlLocalDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds localDateTimeAsTimestampWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime.of(2019, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfter finds postgresqlLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfter(LocalDateTime.of(2019, 11, 5, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds localDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime.of(2019, 11, 5, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfter(LocalDateTime.of(2019, 11, 6, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime.of(2019, 11, 6, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq finds postgresqlLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(LocalDateTime.of(2019, 11, 5, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds localDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime.of(2019, 11, 5, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq finds postgresqlLocalDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(LocalDateTime.of(2019, 11, 6, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds localDateTimeAsTimestampWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime.of(2019, 11, 6, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullable finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullable(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullable finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullable(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullable finds postgresqlLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullable(null).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullable finds localDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullable(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableNotEq finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableNotEq(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableNotEq finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableNotEq(null).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBefore finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBefore(LocalDateTime.of(2018, 11, 4, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime.of(2018, 11, 4, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBefore(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq finds postgresqlLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(LocalDateTime.of(2018, 11, 5, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds localDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime.of(2018, 11, 5, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq finds postgresqlLocalDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds localDateTimeAsTimestampWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfter finds postgresqlLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfter(LocalDateTime.of(2018, 11, 3, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds localDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime.of(2018, 11, 3, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfter(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfterOrEq finds postgresqlLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(LocalDateTime.of(2018, 11, 3, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds localDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime.of(2018, 11, 3, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfterOrEq finds postgresqlLocalDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds localDateTimeAsTimestampWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime.of(2018, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(localDateTimeAsTimestampWithNullable)
     }
 }
 
@@ -192,58 +198,75 @@ class LocalDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Reposi
                 .block()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<PostgresqlLocalDateTime>()
+    private fun createTables() = sqlClient createTable POSTGRESQL_LOCAL_DATE_TIME
 
-    private fun insertLocalDateTimes() = sqlClient.insert(postgresqlLocalDateTimeWithNullable, postgresqlLocalDateTimeWithoutNullable)
+    private fun insertLocalDateTimes() =
+            sqlClient.insert(localDateTimeAsTimestampWithNullable, localDateTimeAsTimestampWithoutNullable)
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<PostgresqlLocalDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_LOCAL_DATE_TIME
 
-    fun selectAllByLocalDateTimeAsTimestampNotNull(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull] eq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullNotEq(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull] notEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullBefore(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull] before localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull] beforeOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullAfter(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull] after localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNotNull] afterOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullable(localDateTime: LocalDateTime?) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable] eq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableNotEq(localDateTime: LocalDateTime?) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable] notEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableBefore(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable] before localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable] beforeOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableAfter(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable] after localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(localDateTime: LocalDateTime) = sqlClient.select<PostgresqlLocalDateTime>()
-            .where { it[PostgresqlLocalDateTime::localDateTimeAsTimestampNullable] afterOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+                    ).fetchAll()
+
+    fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
+                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+                    ).fetchAll()
 }

@@ -25,7 +25,11 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
 
         testImplementation "org.assertj:assertj-core:$assertj_version"
 
-        testRuntimeOnly "ch.qos.logback:logback-classic:$logback_version"
+        testRuntimeOnly "org.slf4j:slf4j-simple:$slf4j_version"
+    }
+
+    configurations {
+        all*.exclude module : 'spring-boot-starter-logging'
     }
 
     compileJava {
@@ -40,7 +44,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     compileTestJava {
-        sourceCompatibility = 11
+        sourceCompatibility = 8
     }
 
     compileTestKotlin {
@@ -51,10 +55,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     }
 
     test {
-        useJUnitPlatform {
-            // TODO remove this exclusion when https://github.com/spring-projects-experimental/spring-fu/issues/322 is fixed
-            excludeTags("spring-jdbc-testcontainers")
-        }
+        useJUnitPlatform()
         testLogging {
             events 'passed', 'failed', 'skipped'
             showStandardStreams = true
@@ -150,6 +151,6 @@ task build {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '6.7'
+    gradleVersion = '6.8.3'
     distributionType = Wrapper.DistributionType.ALL
 }

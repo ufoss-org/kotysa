@@ -16,34 +16,34 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     override fun getRepository(sqLiteTables: Tables) = LocalDateRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllByLocalDateNotNull finds SqLiteLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNull finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNull(LocalDate.of(2019, 11, 4)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullNotEq finds SqLiteLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullNotEq finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullNotEq(LocalDate.of(2019, 11, 4)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithoutNullable)
+            .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullIn finds both`() {
         val seq = sequenceOf(
-                sqLiteLocalDateWithNullable.localDateNotNull,
-                sqLiteLocalDateWithoutNullable.localDateNotNull)
+                localDateWithNullable.localDateNotNull,
+                localDateWithoutNullable.localDateNotNull)
         assertThat(repository.selectAllByLocalDateNotNullIn(seq))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable, sqLiteLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable, localDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBefore finds SqLiteLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNullBefore finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate.of(2019, 11, 5)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
@@ -53,24 +53,24 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds SqLiteLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 5)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds SqLiteLocalDateWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds localDateWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 4)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfter finds SqLiteLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullAfter finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate.of(2019, 11, 5)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithoutNullable)
+            .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
@@ -80,31 +80,31 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds SqLiteLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 5)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithoutNullable)
+            .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds SqLiteLocalDateWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds localDateWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 6)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithoutNullable)
+            .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(LocalDate.of(2018, 11, 4)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullable finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(null))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithoutNullable)
+            .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
@@ -117,14 +117,14 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     fun `Verify selectAllByLocalDateNullableNotEq finds no results`() {
         assertThat(repository.selectAllByLocalDateNullableNotEq(null))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBefore finds SqLiteLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableBefore finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate.of(2018, 11, 5)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
@@ -134,24 +134,24 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds SqLiteLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 5)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds SqLiteLocalDateWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds localDateWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 4)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfter finds SqLiteLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableAfter finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate.of(2018, 11, 3)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
@@ -161,17 +161,17 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds SqLiteLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableAfterOrEq finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 3)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds SqLiteLocalDateWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateNullableAfterOrEq finds localDateWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 4)))
             .hasSize(1)
-            .containsExactlyInAnyOrder(sqLiteLocalDateWithNullable)
+            .containsExactlyInAnyOrder(localDateWithNullable)
     }
 }
 
@@ -189,77 +189,77 @@ class LocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tabl
     }
 
     private fun createTables() {
-        sqlClient.createTable<SqLiteLocalDate>()
+        sqlClient createTable SQLITE_LOCAL_DATE
     }
 
     private fun insertLocalDates() {
-        sqlClient.insert(sqLiteLocalDateWithNullable, sqLiteLocalDateWithoutNullable)
+        sqlClient.insert(localDateWithNullable, localDateWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<SqLiteLocalDate>()
+    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_LOCAL_DATE
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNotNull] eq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull eq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNotNull] notEq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull notEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-            sqlClient.select<SqLiteLocalDate>()
-                    .where { it[SqLiteLocalDate::localDateNotNull] `in` values }
-                    .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull `in` values
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNotNull] before localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull before localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNotNull] beforeOrEq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNotNull] after localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull after localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNotNull] afterOrEq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNotNull afterOrEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNullable] eq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNullable eq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNullable] notEq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNullable notEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNullable] before localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNullable before localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNullable] beforeOrEq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNullable beforeOrEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNullable] after localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNullable after localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-        sqlClient.select<SqLiteLocalDate>()
-            .where { it[SqLiteLocalDate::localDateNullable] afterOrEq localDate }
-            .fetchAll()
+            (sqlClient selectFrom SQLITE_LOCAL_DATE
+                    where SQLITE_LOCAL_DATE.localDateNullable afterOrEq localDate
+                    ).fetchAll()
 }

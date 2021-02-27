@@ -6,6 +6,7 @@ package org.ufoss.kotysa.spring.jdbc
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.ufoss.kotysa.DefaultSqlClientCommon
+import org.ufoss.kotysa.dbValues
 
 internal fun DefaultSqlClientCommon.Properties.bindWhereParams(
         parameters: MapSqlParameterSource,
@@ -14,7 +15,7 @@ internal fun DefaultSqlClientCommon.Properties.bindWhereParams(
     var index = offset
     with(this) {
         whereClauses
-                .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+                .dbValues(tables)
                 .forEach { dbValue -> parameters.addValue("k${index++}", dbValue) }
     }
 }

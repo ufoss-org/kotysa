@@ -6,15 +6,16 @@ package org.ufoss.kotysa.spring.jdbc.mysql
 
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.spring.jdbc.JavaUserRepository
-import org.ufoss.kotysa.spring.jdbc.SpringJdbcJavaEntityTest
-import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.test.MYSQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityMysqlTest :
-        AbstractSpringJdbcMysqlTest<JavaUserMysqlRepository>(), SpringJdbcJavaEntityTest<JavaUserMysqlRepository> {
+        AbstractSpringJdbcMysqlTest<JavaUserMysqlRepository>(), JavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,38 +24,6 @@ class SpringJdbcJavaEntityMysqlTest :
     }
 }
 
-private val tables =
-        tables().mysql {
-            table<JavaUser> {
-                name = "java_users"
-                column { it[JavaUser::getLogin].varchar {
-                    size = 255
-                } }
-                        .primaryKey()
-                column {
-                    it[JavaUser::getFirstname].varchar {
-                        name = "fname"
-                        size = 255
-                    }
-                }
-                column {
-                    it[JavaUser::getLastname].varchar {
-                        name = "lname"
-                        size = 255
-                    }
-                }
-                column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar {
-                    size = 255
-                } }
-                column { it[JavaUser::getAlias2].varchar {
-                    size = 255
-                } }
-                column { it[JavaUser::getAlias3].varchar {
-                    size = 255
-                } }
-            }
-        }
 
-
-class JavaUserMysqlRepository(client: JdbcOperations) : JavaUserRepository(client, tables)
+class JavaUserMysqlRepository(client: JdbcOperations)
+    : JavaUserRepository<MYSQL_JAVA_USER>(client.sqlClient(mysqlTables), MYSQL_JAVA_USER)

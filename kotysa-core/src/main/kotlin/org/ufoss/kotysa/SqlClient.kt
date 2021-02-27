@@ -5,164 +5,121 @@
 package org.ufoss.kotysa
 
 import java.util.stream.Stream
-import kotlin.reflect.KClass
 
 /**
- * Blocking Sql Client, to be used with any blocking JDBC driver
+ * Sql Client, to be used with a blocking driver
  */
-public abstract class SqlClient {
+public interface SqlClient {
 
-    public abstract fun <T : Any> insert(row: T)
+    public infix fun <T : Any> insert(row: T)
 
-    public abstract fun insert(vararg rows: Any)
+    public fun <T : Any> insert(vararg rows: T)
 
-    public inline fun <reified T : Any> select(noinline dsl: SelectDslApi.(ValueProvider) -> T): SqlClientSelect.Select<T> = selectInternal(T::class, dsl)
+    public infix fun <T : Any> createTable(table: Table<T>)
 
-    public inline fun <reified T : Any> select(): SqlClientSelect.Select<T> = selectInternal(T::class, null)
+    public infix fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
+    public infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
 
-    public inline fun <reified T : Any> selectAll(): List<T> = selectInternal(T::class, null).fetchAll()
+    public infix fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T>
 
-    public inline fun <reified T : Any> countAll(): Long = selectInternal(Long::class) { count<T>() }.fetchOne()
+    public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
+    public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
+    public infix fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long>
 
-    @PublishedApi
-    internal fun <T : Any> selectInternal(resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?) =
-            select(resultClass, dsl)
+    public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
+            select(table).from(table)
 
-    protected abstract fun <T : Any> select(
-            resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): SqlClientSelect.Select<T>
-
-    public inline fun <reified T : Any> createTable(): Unit = createTableInternal(T::class)
-
-    @PublishedApi
-    internal fun <T : Any> createTableInternal(tableClass: KClass<T>) = createTable(tableClass)
-
-    protected abstract fun <T : Any> createTable(tableClass: KClass<T>)
-
-    public inline fun <reified T : Any> deleteFromTable(): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> = deleteFromTableInternal(T::class)
-
-    public inline fun <reified T : Any> deleteAllFromTable(): Int = deleteFromTableInternal(T::class).execute()
-
-    @PublishedApi
-    internal fun <T : Any> deleteFromTableInternal(tableClass: KClass<T>) =
-            deleteFromTable(tableClass)
-
-    protected abstract fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T>
-
-    public inline fun <reified T : Any> updateTable(): SqlClientDeleteOrUpdate.Update<T> = updateTableInternal(T::class)
-
-    @PublishedApi
-    internal fun <T : Any> updateTableInternal(tableClass: KClass<T>) =
-            updateTable(tableClass)
-
-    protected abstract fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T>
+    public infix fun <T : Any> selectAllFrom(table: Table<T>): List<T?> = selectFrom(table).fetchAll()
 }
 
 
-public class SqlClientSelect private constructor() {
-    public abstract class Select<T : Any> : Whereable<T>, Return<T> {
+public class SqlClientSelect private constructor() : SqlClientQuery() {
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable<T> =
-                joinInternal(U::class, alias, JoinType.INNER)
-
-        @PublishedApi
-        internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
-                join(joinClass, alias, type)
-
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable<T>
+    public interface Selectable : SqlClientQuery.Selectable {
+        override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
+        override fun <T : Any> select(table: Table<T>): FirstSelect<T>
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
+        override fun <T : Any> selectCount(column: Column<*, T>): FirstSelect<Long>
     }
 
-    public interface Joinable<T : Any> {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join<T>
+    public interface Fromable<T : Any> : SqlClientQuery.Fromable {
+        override fun <U : Any> from(table: Table<U>): From<T, U>
     }
 
-    public interface Join<T : Any> : Whereable<T>, Return<T>
-
-    public interface Whereable<T : Any> {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+    public interface FirstSelect<T : Any> : Fromable<T>, Andable {
+        override fun <U : Any> and(column: Column<*, U>): SecondSelect<T?, U?>
+        override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
+        override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
     }
 
-    public interface Where<T : Any> : Return<T> {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where<T>
+    public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
+        override fun <V : Any> and(column: Column<*, V>): ThirdSelect<T, U, V?>
+        override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
+        override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
     }
+
+    public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
+        override fun <W : Any> and(column: Column<*, W>): Select
+        override fun <W : Any> and(table: Table<W>): Select
+        override fun <W : Any> andCount(column: Column<*, W>): Select
+    }
+
+    public interface Select : Fromable<List<Any?>>, Andable
+
+    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T>
+
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, Return<T>
 
     public interface Return<T : Any> {
         /**
-         * This Query return one result
+         * This query return one result
          *
          * @throws NoResultException if no results
          * @throws NonUniqueResultException if more than one result
          */
-        public fun fetchOne(): T
+        public fun fetchOne(): T?
 
         /**
-         * This Query return one result, or null if no results
+         * This query return one result, or null if no results
          *
          * @throws NonUniqueResultException if more than one result
          */
         public fun fetchOneOrNull(): T?
 
         /**
-         * This Query return the first result
+         * This query return the first result
          *
          * @throws NoResultException if no results
          */
-        public fun fetchFirst(): T
+        public fun fetchFirst(): T?
 
         /**
-         * This Query return the first result, or null if no results
+         * This query return the first result, or null if no results
          */
         public fun fetchFirstOrNull(): T?
 
         /**
-         * This Query can return several results as [List], can be empty if no results
+         * This query can return several results as [List], can be empty if no results
          */
         public fun fetchAll(): List<T>
 
         /**
-         * This Query can return several results as [Stream] (for lazy result iteration), can be empty if no results
+         * This query can return several results as [Stream] (for lazy result iteration), can be empty if no results
          */
         public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }
 }
 
 
-public class SqlClientDeleteOrUpdate private constructor() {
-    public abstract class DeleteOrUpdate<T : Any> : Return {
+public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
+    public interface FirstDeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return
 
-        public inline fun <reified U : Any> innerJoin(alias: String? = null): Joinable =
-                joinInternal(U::class, alias, JoinType.INNER)
+    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Any, Where<Any>>, Return
 
-        @PublishedApi
-        internal fun <U : Any> joinInternal(joinClass: KClass<U>, alias: String?, type: JoinType) =
-                join(joinClass, alias, type)
+    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
-        protected abstract fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): Joinable
-
-        public abstract fun where(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-    }
-
-    public abstract class Update<T : Any> : SqlClientDeleteOrUpdate.DeleteOrUpdate<T>() {
-        public abstract fun set(dsl: (FieldSetter<T>) -> Unit): Update<T>
-    }
-
-    public interface Joinable {
-        public fun on(dsl: (FieldProvider) -> ColumnField<*, *>): Join
-    }
-
-    public interface Join : Return {
-        public fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }
-
-    public interface Where : Return {
-        public fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-        public fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): Where
-    }
-
-    public interface TypedWhere<T : Any> : Return {
-        public fun and(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-        public fun or(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause): TypedWhere<T>
-    }
+    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return
 
     public interface Return {
         /**

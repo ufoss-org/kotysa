@@ -8,6 +8,5 @@ package org.ufoss.kotysa.test;
  * Basic Entity Superclass
  */
 public interface Entity<ID> {
-
     ID getId();
 }

@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.tables
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
@@ -24,7 +23,7 @@ class SpringJdbcInheritancePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Inh
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById<Inherited>("id"))
+        assertThat(repository.selectById(POSTGRESQL_INHERITED, "id"))
                 .isEqualTo(inherited)
     }
 
@@ -36,7 +35,7 @@ class SpringJdbcInheritancePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Inh
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName<Inherited>("name"))
+        assertThat(repository.selectFirstByName(POSTGRESQL_INHERITED, "name"))
                 .isEqualTo(inherited)
     }
 
@@ -44,7 +43,7 @@ class SpringJdbcInheritancePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Inh
     fun `Verify deleteById deletes inherited`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById<Inherited>("id"))
+            assertThat(repository.deleteById(POSTGRESQL_INHERITED, "id"))
                     .isEqualTo(1)
             assertThat(repository.selectAll())
                     .isEmpty()
@@ -52,21 +51,10 @@ class SpringJdbcInheritancePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Inh
     }
 }
 
-private val tables =
-        tables().postgresql {
-            table<Inherited> {
-                name = "inherited"
-                column { it[Inherited::getId].varchar() }
-                        .primaryKey()
-                column { it[Inherited::name].varchar() }
-                column { it[Inherited::firstname].varchar() }
-            }
-        }
-
 
 class InheritancePostgresqlRepository(client: JdbcOperations) : Repository {
 
-    val sqlClient = client.sqlClient(tables)
+    val sqlClient = client.sqlClient(postgresqlTables)
 
     override fun init() {
         createTable()
@@ -77,23 +65,35 @@ class InheritancePostgresqlRepository(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTable() = sqlClient.createTable<Inherited>()
+    private fun createTable() {
+        sqlClient createTable POSTGRESQL_INHERITED
+    }
 
-    fun insert() = sqlClient.insert(inherited)
+    fun insert() {
+        sqlClient insert inherited
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<Inherited>()
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_INHERITED
 
-    fun selectAll() = sqlClient.selectAll<Inherited>()
+    fun selectAll() = sqlClient selectAllFrom POSTGRESQL_INHERITED
 
     fun selectInheritedById(id: String) =
-            sqlClient.select<Inherited>().where { it[Inherited::getId] eq id }.fetchOne()
+            (sqlClient selectFrom POSTGRESQL_INHERITED
+                    where POSTGRESQL_INHERITED.id eq id
+                    ).fetchOne()
+
+    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
+            (sqlClient selectFrom table
+                    where table.id eq id
+                    ).fetchOne()
+
+    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
+            (sqlClient selectFrom table
+                    where table.name eq name
+                    ).fetchFirst()
+
+    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
+            (sqlClient deleteFrom table
+                    where table.id eq id
+                    ).execute()
 }
-
-inline fun <reified T : Entity<String>> InheritancePostgresqlRepository.selectById(id: String) =
-        sqlClient.select<T>().where { it[Entity<String>::getId] eq id }.fetchOne()
-
-inline fun <reified T : Nameable> InheritancePostgresqlRepository.selectFirstByName(name: String) =
-        sqlClient.select<T>().where { it[Nameable::name] eq name }.fetchFirst()
-
-inline fun <reified T : Entity<String>> InheritancePostgresqlRepository.deleteById(id: String) =
-        sqlClient.deleteFromTable<T>().where { it[Entity<String>::getId] eq id }.execute()

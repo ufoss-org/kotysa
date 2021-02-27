@@ -25,20 +25,21 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: Reactor
     }
 
     private fun createTables() =
-            sqlClient.createTable<PostgresqlRole>()
-                    .then(sqlClient.createTable<PostgresqlUser>())
+            (sqlClient createTable POSTGRESQL_ROLE)
+                    .then(sqlClient createTable POSTGRESQL_USER)
 
-    private fun insertRoles() = sqlClient.insert(postgresqlUser, postgresqlAdmin, postgresqlGod)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
-    private fun insertUsers() = sqlClient.insert(postgresqlJdoe, postgresqlBboss)
+    private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<PostgresqlRole>()
+    fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<PostgresqlUser>()
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
 
-    fun selectAllUsers() = sqlClient.selectAll<PostgresqlUser>()
+    fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
 
-    fun selectFirstByFirstname(firstname: String) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::firstname] eq firstname }
-            .fetchFirst()
+    fun selectFirstByFirstname(firstname: String) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.firstname eq firstname
+                    ).fetchFirst()
 }

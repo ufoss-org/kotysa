@@ -4,172 +4,174 @@
 
 package org.ufoss.kotysa.android
 
-import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import kotlin.reflect.KClass
 
+@Suppress("UNCHECKED_CAST")
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
 
-    internal class Select<T : Any> internal constructor(
-        override val client: SQLiteDatabase,
-        override val tables: Tables,
-        override val resultClass: KClass<T>,
-        override val dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ) : SqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
-
-        override val properties: Properties<T> = initProperties()
-
-        override fun <U : Any> join(
-            joinClass: KClass<U>,
-            alias: String?,
-            type: JoinType
-        ): SqlClientSelect.Joinable<T> =
-            Joinable(client, properties, joinClass, alias, type)
+    internal class Selectable internal constructor(
+            private val client: SQLiteDatabase,
+            private val tables: Tables,
+    ) : SqlClientSelect.Selectable {
+        override fun <T : Any> select(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
+        override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+                SelectWithDsl(client, Properties(tables), dsl)
+        override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
+                FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 
-    private class Joinable<T : Any, U : Any>(
-        private val client: SQLiteDatabase,
-        private val properties: Properties<T>,
-        private val joinClass: KClass<U>,
-        private val alias: String?,
-        private val type: JoinType
-    ) : SqlClientSelect.Joinable<T> {
-
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): SqlClientSelect.Join<T> {
-            val join = Join(client, properties)
-            join.addJoinClause(dsl, joinClass, alias, type)
-            return join
+    internal class FirstSelect<T : Any> internal constructor(
+            private val client: SQLiteDatabase,
+            override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Select<T>(), SqlClientSelect.FirstSelect<T> {
+        private val from: From<T, *> by lazy {
+            From<T, Any>(client, properties)
         }
+
+        override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+
+        override fun <U : Any> and(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
+        override fun <U : Any> and(table: Table<U>): SqlClientSelect.SecondSelect<T, U> =
+                SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
+        override fun <U : Any> andCount(column: Column<*, U>): SqlClientSelect.SecondSelect<T, Long> =
+                SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
     }
 
-    private class Join<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Join<T>, SqlClientSelect.Join<T>, Whereable<T>, Return<T>
-
-    private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, SqlClientSelect.Whereable<T> {
-        val client: SQLiteDatabase
-
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
-            val where = Where(client, properties)
-            where.addWhereClause(dsl)
-            return where
+    internal class SecondSelect<T, U> internal constructor(
+            private val client: SQLiteDatabase,
+            override val properties: Properties<Pair<T, U>>,
+    ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), SqlClientSelect.SecondSelect<T, U> {
+        private val from: From<Pair<T, U>, *> by lazy {
+            From<Pair<T, U>, Any>(client, properties)
         }
+
+        override fun <V : Any> from(table: Table<V>): SqlClientSelect.From<Pair<T, U>, V> =
+                addFromTable(table, from as From<Pair<T, U>, V>)
+
+        override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
+        override fun <V : Any> and(table: Table<V>): SqlClientSelect.ThirdSelect<T, U, V> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, Long> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
     }
 
-    private class Where<T : Any>(
-        override val client: SQLiteDatabase,
-        override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T>, SqlClientSelect.Where<T>, Return<T> {
-
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
-            addAndClause(dsl)
-            return this
+    internal class ThirdSelect<T, U, V> internal constructor(
+            private val client: SQLiteDatabase,
+            override val properties: Properties<Triple<T, U, V>>,
+    ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), SqlClientSelect.ThirdSelect<T, U, V> {
+        private val from: From<Triple<T, U, V>, *> by lazy {
+            From<Triple<T, U, V>, Any>(client, properties)
         }
 
-        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): SqlClientSelect.Where<T> {
-            addOrClause(dsl)
-            return this
-        }
+        override fun <W : Any> from(table: Table<W>): SqlClientSelect.From<Triple<T, U, V>, W> =
+                addFromTable(table, from as From<Triple<T, U, V>, W>)
+
+        override fun <W : Any> and(column: Column<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
+        override fun <W : Any> and(table: Table<W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
+        override fun <W : Any> andCount(column: Column<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+    }
+
+    internal class Select internal constructor(
+            client: SQLiteDatabase,
+            override val properties: Properties<List<Any?>>,
+    ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
+        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<List<Any?>, U> =
+                addFromTable(table, from as From<List<Any?>, U>)
+
+        override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
+        override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.Select = this.apply { addCountColumn(column) }
+    }
+
+    internal class SelectWithDsl<T : Any> internal constructor(
+            client: SQLiteDatabase,
+            properties: Properties<T>,
+            dsl: (ValueProvider) -> T,
+    ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), SqlClientSelect.Fromable<T> {
+        private val from: From<T, *> = From<T, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+    }
+
+    internal class From<T : Any, U : Any> internal constructor(
+            override val client: SQLiteDatabase,
+            properties: Properties<T>,
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>>(properties), SqlClientSelect.From<T, U>, Return<T> {
+        override val where = Where(client, properties)
+        override val from = this
+    }
+
+    internal class Where<T : Any>(
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>>(), SqlClientSelect.Where<T>, Return<T> {
+        override val where = this
     }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: SQLiteDatabase
 
-        override fun fetchOne() = with(properties.selectInformation) {
+        override fun fetchOne() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
             if (!cursor.isLast) throw NonUniqueResultException()
-            val row = SqLiteRow(cursor, fieldIndexMap)
-            select(row, row)
+            select(cursor.toRow()) ?: throw NoResultException()
         }
 
-        override fun fetchOneOrNull() = with(properties.selectInformation) {
+
+
+        override fun fetchOneOrNull() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) {
                 null
             } else {
                 if (!cursor.isLast) throw NonUniqueResultException()
-                val row = SqLiteRow(cursor, fieldIndexMap)
-                select(row, row)
+                select(cursor.toRow())
             }
         }
 
-        override fun fetchFirst() = with(properties.selectInformation) {
+        override fun fetchFirst() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) throw NoResultException()
-            val row = SqLiteRow(cursor, fieldIndexMap)
-            select(row, row)
+            select(cursor.toRow())
         }
 
-        override fun fetchFirstOrNull() = with(properties.selectInformation) {
+        override fun fetchFirstOrNull() = with(properties) {
             val cursor = fetch()
             if (!cursor.moveToFirst()) {
                 null
             } else {
-                val row = SqLiteRow(cursor, fieldIndexMap)
-                select(row, row)
+                select(cursor.toRow())
             }
         }
 
-        override fun fetchAll() = with(properties.selectInformation) {
+        override fun fetchAll() = with(properties) {
             val cursor = fetch()
-            val row = SqLiteRow(cursor, fieldIndexMap)
+            val row = cursor.toRow()
             val results = mutableListOf<T>()
             while (cursor.moveToNext()) {
-                results.add(select(row, row))
+                val result = select(row)
+                if (result != null) {
+                    results.add(result)
+                }
+                row.resetIndex()
             }
             results
         }
 
         private fun fetch() = client.rawQuery(selectSql(), buildWhereArgs())
-
-        @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-        private class SqLiteRow(
-            private val sqLiteCursor: Cursor,
-            fieldIndexMap: Map<Field, Int>
-        ) : AbstractRow(fieldIndexMap) {
-            override fun <T> get(index: Int, type: Class<T>) =
-                if (sqLiteCursor.isNull(index)) {
-                    null
-                } else {
-                    when {
-                        Integer::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index)
-                        java.lang.Long::class.java.isAssignableFrom(type) -> sqLiteCursor.getLong(index)
-                        java.lang.Float::class.java.isAssignableFrom(type) -> sqLiteCursor.getFloat(index)
-                        java.lang.Short::class.java.isAssignableFrom(type) -> sqLiteCursor.getShort(index)
-                        java.lang.Double::class.java.isAssignableFrom(type) -> sqLiteCursor.getDouble(index)
-                        String::class.java.isAssignableFrom(type) -> sqLiteCursor.getString(index)
-                        // boolean is stored as Int
-                        java.lang.Boolean::class.java.isAssignableFrom(type) -> sqLiteCursor.getInt(index) != 0
-                        ByteArray::class.java.isAssignableFrom(type) -> sqLiteCursor.getBlob(index)
-                        // Date are stored as String
-                        LocalDate::class.java.isAssignableFrom(type) -> LocalDate.parse(sqLiteCursor.getString(index))
-                        LocalDateTime::class.java.isAssignableFrom(type) -> LocalDateTime.parse(
-                            sqLiteCursor.getString(index)
-                        )
-                        OffsetDateTime::class.java.isAssignableFrom(type) -> OffsetDateTime.parse(
-                            sqLiteCursor.getString(index)
-                        )
-                        LocalTime::class.java.isAssignableFrom(type) -> LocalTime.parse(sqLiteCursor.getString(index))
-                        else -> when (type.name) {
-                            "kotlinx.datetime.LocalDate" -> kotlinx.datetime.LocalDate.parse(
-                                    sqLiteCursor.getString(index)
-                            )
-                            "kotlinx.datetime.LocalDateTime" -> kotlinx.datetime.LocalDateTime.parse(
-                                    sqLiteCursor.getString(index)
-                            )
-                            else -> throw UnsupportedOperationException(
-                                    "${type.canonicalName} is not supported by Android SqLite"
-                            )
-                        }
-                    } as T?
-                }
-        }
     }
 }

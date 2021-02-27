@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc
-
+/*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.UserDto
@@ -94,3 +94,4 @@ interface SpringR2dbcJavaEntityTest<T : JavaUserRepository> : R2dbcRepositoryTes
                 .verifyComplete()
     }
 }
+*/

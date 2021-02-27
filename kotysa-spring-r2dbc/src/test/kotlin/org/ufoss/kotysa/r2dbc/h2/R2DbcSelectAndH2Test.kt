@@ -5,34 +5,37 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.H2Role
-import org.ufoss.kotysa.test.h2God
+import org.ufoss.kotysa.test.H2_ROLE
+import org.ufoss.kotysa.test.roleGod
 
 
 class R2DbcSelectAndH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectAnd>() {
-    override val context = startContext<UserRepositoryH2SelectAnd>()
 
-    override val repository = getContextRepository<UserRepositoryH2SelectAnd>()
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<UserRepositoryH2SelectAnd>()
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectRolesByLabels finds h2God`() {
         assertThat(repository.selectRolesByLabels("d", "g").toIterable())
                 .hasSize(1)
-                .containsExactly(h2God)
+                .containsExactly(roleGod)
     }
 }
 
 
 class UserRepositoryH2SelectAnd(
         sqlClient: ReactorSqlClient,
-        transactionalOperator: TransactionalOperator
-) : AbstractUserRepositoryH2(sqlClient, transactionalOperator) {
+) : AbstractUserRepositoryH2(sqlClient) {
 
-    fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<H2Role>()
-            .where { it[H2Role::label] contains label1 }
-            .and { it[H2Role::label] contains label2 }
-            .fetchAll()
+    fun selectRolesByLabels(label1: String, label2: String) =
+            (sqlClient selectFrom H2_ROLE
+                    where H2_ROLE.label contains label1
+                    and H2_ROLE.label contains label2
+                    ).fetchAll()
 }

@@ -8,10 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.PostgresqlRole
+import org.ufoss.kotysa.test.POSTGRESQL_ROLE
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.postgresqlAdmin
-import org.ufoss.kotysa.test.postgresqlGod
+import org.ufoss.kotysa.test.roleAdmin
+import org.ufoss.kotysa.test.roleGod
 
 
 class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectOr>() {
@@ -23,18 +23,19 @@ class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRe
     }
 
     @Test
-    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
-        assertThat(repository.selectRolesByLabels(postgresqlAdmin.label, postgresqlGod.label))
+    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
+        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(postgresqlAdmin, postgresqlGod)
+                .containsExactlyInAnyOrder(roleAdmin, roleGod)
     }
 }
 
 
 class UserRepositorySpringJdbcPostgresqlSelectOr(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
-    fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<PostgresqlRole>()
-            .where { it[PostgresqlRole::label] eq label1 }
-            .or { it[PostgresqlRole::label] eq label2 }
-            .fetchAll()
+    fun selectRolesByLabels(label1: String, label2: String) =
+            (sqlClient selectFrom POSTGRESQL_ROLE
+                    where POSTGRESQL_ROLE.label eq label1
+                    or POSTGRESQL_ROLE.label eq label2
+                    ).fetchAll()
 }

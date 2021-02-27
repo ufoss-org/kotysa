@@ -5,7 +5,8 @@ dependencies {
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
     testImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
 
-    implementation "org.springframework:spring-jdbc:$spring_core_version"
+    //implementation "org.springframework:spring-jdbc:$spring_core_version"
+    implementation "org.springframework.boot:spring-boot-starter-jdbc:$spring_boot_version"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
@@ -15,11 +16,12 @@ dependencies {
     testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
     testImplementation 'org.testcontainers:postgresql'
     testImplementation 'org.testcontainers:mysql'
-    testImplementation "com.h2database:h2"
-    testImplementation "mysql:mysql-connector-java"
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
 
+    testRuntimeOnly "com.h2database:h2"
+    testRuntimeOnly "mysql:mysql-connector-java"
+    testRuntimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 

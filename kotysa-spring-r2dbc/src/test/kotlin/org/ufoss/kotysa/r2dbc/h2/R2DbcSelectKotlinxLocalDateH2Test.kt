@@ -6,48 +6,52 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.H2KotlinxLocalDate
+import org.ufoss.kotysa.test.H2_KOTLINX_LOCAL_DATE
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.h2KotlinxLocalDateWithNullable
-import org.ufoss.kotysa.test.h2KotlinxLocalDateWithoutNullable
+import org.ufoss.kotysa.test.kotlinxLocalDateWithNullable
+import org.ufoss.kotysa.test.kotlinxLocalDateWithoutNullable
 
 
 class R2DbcSelectKotlinxLocalDateH2Test : AbstractR2dbcH2Test<KotlinxLocalDateRepositoryH2Select>() {
-    override val context = startContext<KotlinxLocalDateRepositoryH2Select>()
 
-    override val repository = getContextRepository<KotlinxLocalDateRepositoryH2Select>()
-
-    @Test
-    fun `Verify selectAllByLocalDateNotNull finds h2KotlinxLocalDateWithNullable`() {
-        assertThat(repository.selectAllByLocalDateNotNull(LocalDate(2019, 11, 4)).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+    @BeforeAll
+    fun beforeAll() {
+        context = startContext<KotlinxLocalDateRepositoryH2Select>()
+        repository = getContextRepository()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullNotEq finds h2KotlinxLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNull finds kotlinxLocalDateWithNullable`() {
+        assertThat(repository.selectAllByLocalDateNotNull(LocalDate(2019, 11, 4)).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalDateNotNullNotEq finds kotlinxLocalDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullNotEq(LocalDate(2019, 11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNotNullIn finds both`() {
         val seq = sequenceOf(
-                h2KotlinxLocalDateWithNullable.localDateNotNull,
-                h2KotlinxLocalDateWithoutNullable.localDateNotNull)
+                kotlinxLocalDateWithNullable.localDateNotNull,
+                kotlinxLocalDateWithoutNullable.localDateNotNull)
         assertThat(repository.selectAllByLocalDateNotNullIn(seq).toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable, h2KotlinxLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable, kotlinxLocalDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBefore finds h2KotlinxLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNullBefore finds kotlinxLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate(2019, 11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
@@ -57,24 +61,24 @@ class R2DbcSelectKotlinxLocalDateH2Test : AbstractR2dbcH2Test<KotlinxLocalDateRe
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds h2KotlinxLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds kotlinxLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate(2019, 11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds h2KotlinxLocalDateWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds kotlinxLocalDateWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate(2019, 11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfter finds h2KotlinxLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullAfter finds kotlinxLocalDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate(2019, 11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithoutNullable)
     }
 
     @Test
@@ -84,31 +88,31 @@ class R2DbcSelectKotlinxLocalDateH2Test : AbstractR2dbcH2Test<KotlinxLocalDateRe
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds h2KotlinxLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds kotlinxLocalDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate(2019, 11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds h2KotlinxLocalDateWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds kotlinxLocalDateWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate(2019, 11, 6)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(LocalDate(2018, 11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLocalDateNullable finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithoutNullable)
     }
 
     @Test
@@ -121,14 +125,14 @@ class R2DbcSelectKotlinxLocalDateH2Test : AbstractR2dbcH2Test<KotlinxLocalDateRe
     fun `Verify selectAllByLocalDateNullableNotEq finds no results`() {
         assertThat(repository.selectAllByLocalDateNullableNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBefore finds h2KotlinxLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableBefore finds kotlinxLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate(2018, 11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
@@ -138,24 +142,24 @@ class R2DbcSelectKotlinxLocalDateH2Test : AbstractR2dbcH2Test<KotlinxLocalDateRe
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds h2KotlinxLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds kotlinxLocalDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate(2018, 11, 5)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds h2KotlinxLocalDateWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds kotlinxLocalDateWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate(2018, 11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfter finds h2KotlinxLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableAfter finds kotlinxLocalDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate(2018, 11, 3)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
@@ -165,17 +169,17 @@ class R2DbcSelectKotlinxLocalDateH2Test : AbstractR2dbcH2Test<KotlinxLocalDateRe
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds h2KotlinxLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableAfterOrEq finds kotlinxLocalDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate(2018, 11, 3)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds h2KotlinxLocalDateWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateNullableAfterOrEq finds kotlinxLocalDateWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate(2018, 11, 4)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateWithNullable)
     }
 }
 
@@ -193,76 +197,74 @@ class KotlinxLocalDateRepositoryH2Select(private val sqlClient: ReactorSqlClient
                 .block()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<H2KotlinxLocalDate>()
+    private fun createTables() = sqlClient createTable H2_KOTLINX_LOCAL_DATE
 
-    private fun insertLocalDates() =
-            sqlClient.insert(h2KotlinxLocalDateWithNullable, h2KotlinxLocalDateWithoutNullable)
+    private fun insertLocalDates() = sqlClient.insert(kotlinxLocalDateWithNullable, kotlinxLocalDateWithoutNullable)
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<H2KotlinxLocalDate>()
+    private fun deleteAll() = sqlClient deleteAllFrom H2_KOTLINX_LOCAL_DATE
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] eq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull eq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] notEq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull notEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] `in` values }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull `in` values
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] before localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull before localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] beforeOrEq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] after localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull after localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNotNull] afterOrEq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNotNull afterOrEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNullable] eq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNullable eq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNullable] notEq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNullable notEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNullable] before localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNullable before localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNullable] beforeOrEq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNullable beforeOrEq localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNullable] after localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNullable after localDate
+                    ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-            sqlClient.select<H2KotlinxLocalDate>()
-                    .where { it[H2KotlinxLocalDate::localDateNullable] afterOrEq localDate }
-                    .fetchAll()
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE
+                    where H2_KOTLINX_LOCAL_DATE.localDateNullable afterOrEq localDate
+                    ).fetchAll()
 }

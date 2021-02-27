@@ -11,32 +11,17 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.full.allSuperclasses
 
-
-private fun tableMustBeMapped(tableName: String?) = "Requested table \"$tableName\" is not mapped"
-
-@Suppress("UNCHECKED_CAST")
-public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): Table<T> =
-        requireNotNull(this.allTables[tableClass] as Table<T>?) { tableMustBeMapped(tableClass.qualifiedName) }
-
-public fun <T : Any> Tables.checkTable(tableClass: KClass<out T>) {
-    require(this.allTables.containsKey(tableClass)) { tableMustBeMapped(tableClass.qualifiedName) }
-}
 
 private val logger = Logger.of<DefaultSqlClient>()
-
 
 public interface DefaultSqlClient {
     public val tables: Tables
 
-    public fun createTableSql(tableClass: KClass<*>): String {
-        val table = tables.getTable(tableClass)
+    public fun createTableSql(table: Table<*>): String {
+        val kotysaTable = tables.getTable(table)
 
-        val columns = table.columns.values.joinToString { column ->
+        val columns = kotysaTable.columns.joinToString { column ->
             if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
                 requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
             }
@@ -58,7 +43,7 @@ public interface DefaultSqlClient {
             "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
         }
 
-        val pk = table.primaryKey
+        val pk = kotysaTable.primaryKey
         var primaryKey = if (pk.name != null) {
             "CONSTRAINT ${pk.name} "
         } else {
@@ -67,30 +52,27 @@ public interface DefaultSqlClient {
         primaryKey += "PRIMARY KEY (${pk.columns.joinToString { it.name }})"
 
         val foreignKeys =
-                if (table.foreignKeys.isEmpty()) {
+                if (kotysaTable.foreignKeys.isEmpty()) {
                     ""
                 } else {
-                    table.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
+                    kotysaTable.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
                         var foreignKeyStatement = if (foreignKey.name != null) {
                             "CONSTRAINT ${foreignKey.name} "
                         } else {
                             ""
                         }
-                        foreignKeyStatement += "FOREIGN KEY (${foreignKey.columns.joinToString { it.name }})" +
-                                " REFERENCES ${foreignKey.referencedTable.name}" +
-                                " (${foreignKey.referencedColumns.joinToString { it.name }})"
+                        val referencedTable = tables.allColumns[foreignKey.references.values.first()]?.table
+                                ?: error("Referenced table of column ${foreignKey.references.values.first()} is not mapped")
+                        foreignKeyStatement += "FOREIGN KEY (${foreignKey.references.keys.joinToString { it.name }})" +
+                                " REFERENCES ${referencedTable.name}" +
+                                " (${foreignKey.references.values.joinToString { it.name }})"
                         foreignKeyStatement
                     }
                 }
 
-        val createTableSql = "CREATE TABLE IF NOT EXISTS ${table.name} ($columns, $primaryKey$foreignKeys)"
+        val createTableSql = "CREATE TABLE IF NOT EXISTS ${kotysaTable.name} ($columns, $primaryKey$foreignKeys)"
         logger.debug { "Exec SQL (${tables.dbType.name}) : $createTableSql" }
         return createTableSql
-    }
-
-    public fun checkRowsAreMapped(vararg rows: Any) {
-        // fail-fast : check that all tables are mapped Tables
-        rows.forEach { row -> tables.checkTable(row::class) }
     }
 
     public fun <T : Any> insertSql(row: T): String {
@@ -104,10 +86,10 @@ public interface DefaultSqlClient {
     }
 
     public fun <T : Any> insertSqlQuery(row: T): String {
-        val table = tables.getTable(row::class)
+        val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         var index = 0
-        val values = table.columns.values
+        val values = kotysaTable.columns
                 // filter out null values with default value or Serial type
                 .filterNot { column ->
                     column.entityGetter(row) == null
@@ -122,11 +104,11 @@ public interface DefaultSqlClient {
                     }
                 }
 
-        return "INSERT INTO ${table.name} (${columnNames.joinToString()}) VALUES ($values)"
+        return "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
     }
 }
 
-private fun Any?.dbValue(): String = when (this) {
+internal fun Any?.dbValue(): String = when (this) {
     null -> "null"
     is String -> "$this"
     is Boolean -> "$this"
@@ -162,219 +144,4 @@ private fun Any?.dbValue(): String = when (this) {
 private fun Any?.defaultValue(): String = when (this) {
     is Int -> "$this"
     else -> "'${this.dbValue()}'"
-}
-
-
-public open class DefaultSqlClientCommon protected constructor() {
-
-    public interface Properties {
-        public val tables: Tables
-        public val whereClauses: MutableList<TypedWhereClause>
-        public val joinClauses: MutableList<JoinClause>
-        public val availableColumns: MutableMap<(Any) -> Any?, Column<*, *>>
-    }
-
-    protected interface Instruction {
-        @Suppress("UNCHECKED_CAST")
-        public fun <T : Any> addAvailableColumnsFromTable(
-                properties: Properties,
-                table: Table<T>
-        ) {
-            properties.apply {
-                if (joinClauses.isEmpty() ||
-                        !joinClauses.map { joinClause -> joinClause.table.table }.contains(table)) {
-                    table.columns.forEach { (key, value) ->
-                        // 1) add mapped getter
-                        availableColumns[key as (Any) -> Any?] = value
-
-                        val getterCallable = key.toCallable()
-
-                        // 2) add overridden parent getters associated with this column
-                        table.tableClass.allSuperclasses
-                                .flatMap { superClass -> superClass.members }
-                                .filter { callable ->
-                                    callable.isAbstract
-                                            && callable.name == getterCallable.name
-                                            && (callable is KProperty1<*, *> || callable.name.startsWith("get"))
-                                            && (callable.returnType == getterCallable.returnType
-                                            || callable.returnType.classifier is KTypeParameter)
-                                }
-                                .forEach { callable ->
-                                    availableColumns[callable as (Any) -> Any?] = value
-                                }
-                    }
-                }
-            }
-        }
-    }
-
-    public interface WithProperties {
-        public val properties: Properties
-    }
-
-    protected interface Whereable : WithProperties
-
-    protected interface Join : WithProperties, Instruction {
-        public fun <T : Any> addJoinClause(dsl: (FieldProvider) -> ColumnField<*, *>, joinClass: KClass<T>, alias: String?, type: JoinType) {
-            properties.apply {
-                tables.checkTable(joinClass)
-                val aliasedTable = AliasedTable(tables.getTable(joinClass), alias)
-                joinClauses.add(JoinDsl(dsl, aliasedTable, type, availableColumns, tables.dbType).initialize())
-                addAvailableColumnsFromTable(this, aliasedTable)
-            }
-        }
-    }
-
-    protected interface Where : WithProperties {
-        public fun addWhereClause(dsl: WhereDsl.(FieldProvider) -> WhereClause) {
-            addClause(dsl, WhereClauseType.WHERE)
-        }
-
-        public fun addAndClause(dsl: WhereDsl.(FieldProvider) -> WhereClause) {
-            addClause(dsl, WhereClauseType.AND)
-        }
-
-        public fun addOrClause(dsl: WhereDsl.(FieldProvider) -> WhereClause) {
-            addClause(dsl, WhereClauseType.OR)
-        }
-
-        private fun addClause(dsl: WhereDsl.(FieldProvider) -> WhereClause, whereClauseType: WhereClauseType) {
-            properties.apply {
-                whereClauses.add(TypedWhereClause(
-                        WhereDsl(dsl, availableColumns, tables.dbType).initialize(), whereClauseType))
-            }
-        }
-    }
-
-    protected interface TypedWhere<T : Any> : WithProperties {
-        public fun addWhereClause(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause) {
-            addClause(dsl, WhereClauseType.WHERE)
-        }
-
-        public fun addAndClause(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause) {
-            addClause(dsl, WhereClauseType.AND)
-        }
-
-        public fun addOrClause(dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause) {
-            addClause(dsl, WhereClauseType.OR)
-        }
-
-        private fun addClause(
-                dsl: TypedWhereDsl<T>.(TypedFieldProvider<T>) -> WhereClause,
-                whereClauseType: WhereClauseType
-        ) {
-            properties.apply {
-                whereClauses.add(TypedWhereClause(
-                        TypedWhereDsl(dsl, availableColumns, tables.dbType).initialize(), whereClauseType))
-            }
-        }
-    }
-
-    public interface Return : WithProperties {
-
-        /**
-         * Used exclusively by SqLite
-         */
-        public fun stringValue(value: Any?): String = value.dbValue()
-
-        public fun joins(): String =
-                properties.joinClauses.joinToString { joinClause ->
-                    // fixme handle multiple columns
-                    val joinedTableFieldName = "${joinClause.table.prefix}.${joinClause.table.primaryKey.columns[0].name}"
-
-                    "${joinClause.type.sql} ${joinClause.table.declaration} ON ${joinClause.field.fieldName} = $joinedTableFieldName"
-                }
-
-        public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
-            if (whereClauses.isEmpty()) {
-                return ""
-            }
-            val where = StringBuilder()
-            if (withWhere) {
-                where.append("WHERE ")
-            }
-            var index = offset
-            whereClauses.forEach { typedWhereClause ->
-                where.append(
-                        when (typedWhereClause.type) {
-                            WhereClauseType.AND -> " AND "
-                            WhereClauseType.OR -> " OR "
-                            else -> ""
-                        }
-                )
-                where.append("(")
-                typedWhereClause.whereClause.apply {
-                    where.append(
-                            when (operation) {
-                                Operation.EQ ->
-                                    if (value == null) {
-                                        "${field.fieldName} IS NULL"
-                                    } else {
-                                        if (DbType.SQLITE == tables.dbType) {
-                                            "${field.fieldName} = ?"
-                                        } else {
-                                            "${field.fieldName} = :k${index++}"
-                                        }
-                                    }
-                                Operation.NOT_EQ ->
-                                    if (value == null) {
-                                        "${field.fieldName} IS NOT NULL"
-                                    } else {
-                                        if (DbType.SQLITE == tables.dbType) {
-                                            "${field.fieldName} <> ?"
-                                        } else {
-                                            "${field.fieldName} <> :k${index++}"
-                                        }
-                                    }
-                                Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} LIKE ?"
-                                    } else {
-                                        "${field.fieldName} LIKE :k${index++}"
-                                    }
-                                Operation.INF ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} < ?"
-                                    } else {
-                                        "${field.fieldName} < :k${index++}"
-                                    }
-                                Operation.INF_OR_EQ ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} <= ?"
-                                    } else {
-                                        "${field.fieldName} <= :k${index++}"
-                                    }
-                                Operation.SUP ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} > ?"
-                                    } else {
-                                        "${field.fieldName} > :k${index++}"
-                                    }
-                                Operation.SUP_OR_EQ ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} >= ?"
-                                    } else {
-                                        "${field.fieldName} >= :k${index++}"
-                                    }
-                                Operation.IS ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "${field.fieldName} IS ?"
-                                    } else {
-                                        "${field.fieldName} IS :k${index++}"
-                                    }
-                                Operation.IN ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        // must put as much '?' as
-                                        "${field.fieldName} IN (${(value as Collection<*>).joinToString { "?" }})"
-                                    } else {
-                                        "${field.fieldName} IN (:k${index++})"
-                                    }
-                            }
-                    )
-                }
-                where.append(")")
-            }
-            return where.toString()
-        }
-    }
 }

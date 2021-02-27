@@ -8,23 +8,9 @@ package org.ufoss.kotysa
  * A table with an alias (that may be null)
  */
 internal class AliasedTable<T : Any> internal constructor(
-        internal val table: Table<T>,
-        internal val alias: String? = null
-) : Table<T> by table {
-
-    /**
-     * The prefix : alias if exists, or table name
-     */
-    internal val prefix = alias ?: name
-
-    /**
-     * Declaration in queries : "tableName AS alias" if alias exists, or "tableName"
-     */
-    internal val declaration = if (alias != null) {
-        "$name AS $alias"
-    } else {
-        name
-    }
+        table: AbstractTable<T>,
+        internal val alias: String
+) : AbstractTable<T>(table.tableName) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -40,7 +26,7 @@ internal class AliasedTable<T : Any> internal constructor(
 
     override fun hashCode(): Int {
         var result = name.hashCode()
-        result = 31 * result + (alias?.hashCode() ?: 0)
+        result = 31 * result + alias.hashCode()
         return result
     }
 }

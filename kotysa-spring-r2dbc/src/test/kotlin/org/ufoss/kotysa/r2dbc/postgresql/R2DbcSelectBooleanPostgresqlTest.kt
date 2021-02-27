@@ -8,10 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.PostgresqlUser
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.postgresqlBboss
-import org.ufoss.kotysa.test.postgresqlJdoe
 
 
 class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectBoolean>() {
@@ -26,21 +24,22 @@ class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposit
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
         assertThat(repository.selectAllByIsAdminEq(true).toIterable())
                 .hasSize(1)
-                .containsExactly(postgresqlBboss)
+                .containsExactly(userBboss)
     }
 
     @Test
     fun `Verify selectAllByIsAdminEq false finds John`() {
         assertThat(repository.selectAllByIsAdminEq(false).toIterable())
                 .hasSize(1)
-                .containsExactly(postgresqlJdoe)
+                .containsExactly(userJdoe)
     }
 }
 
 
 class UserRepositoryPostgresqlSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
-    fun selectAllByIsAdminEq(value: Boolean) = sqlClient.select<PostgresqlUser>()
-            .where { it[PostgresqlUser::isAdmin] eq value }
-            .fetchAll()
+    fun selectAllByIsAdminEq(value: Boolean) =
+            (sqlClient selectFrom POSTGRESQL_USER
+                    where POSTGRESQL_USER.isAdmin eq value
+                    ).fetchAll()
 }

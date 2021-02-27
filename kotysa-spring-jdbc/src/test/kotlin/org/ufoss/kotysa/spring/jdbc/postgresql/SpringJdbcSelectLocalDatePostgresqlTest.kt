@@ -23,24 +23,34 @@ class SpringJdbcSelectLocalDatePostgresqlTest : AbstractSpringJdbcPostgresqlTest
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNull finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNull finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNull(LocalDate.of(2019, 11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullNotEq finds postgresqlLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullNotEq finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullNotEq(LocalDate.of(2019, 11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBefore finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNullIn finds both`() {
+        val seq = sequenceOf(
+                localDateWithNullable.localDateNotNull,
+                localDateWithoutNullable.localDateNotNull)
+        assertThat(repository.selectAllByLocalDateNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(localDateWithNullable, localDateWithoutNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalDateNotNullBefore finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBefore(LocalDate.of(2019, 11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
@@ -50,24 +60,24 @@ class SpringJdbcSelectLocalDatePostgresqlTest : AbstractSpringJdbcPostgresqlTest
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds postgresqlLocalDateWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateNotNullBeforeOrEq finds localDateWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNotNullBeforeOrEq(LocalDate.of(2019, 11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfter finds postgresqlLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullAfter finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullAfter(LocalDate.of(2019, 11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
@@ -77,31 +87,31 @@ class SpringJdbcSelectLocalDatePostgresqlTest : AbstractSpringJdbcPostgresqlTest
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds postgresqlLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds postgresqlLocalDateWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateNotNullAfterOrEq finds localDateWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNotNullAfterOrEq(LocalDate.of(2019, 11, 6)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullable finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullable finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(LocalDate.of(2018, 11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullable finds postgresqlLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullable finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithoutNullable)
+                .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
@@ -111,17 +121,17 @@ class SpringJdbcSelectLocalDatePostgresqlTest : AbstractSpringJdbcPostgresqlTest
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableNotEq finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableNotEq finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBefore finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableBefore finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableBefore(LocalDate.of(2018, 11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
@@ -131,24 +141,24 @@ class SpringJdbcSelectLocalDatePostgresqlTest : AbstractSpringJdbcPostgresqlTest
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds postgresqlLocalDateWithNullable`() {
+    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 5)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds postgresqlLocalDateWithNullable when equals`() {
+    fun `Verify selectAllByLocalDateNullableBeforeOrEq finds localDateWithNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNullableBeforeOrEq(LocalDate.of(2018, 11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfter finds postgresqlLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableAfter finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullableAfter(LocalDate.of(2018, 11, 3)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
@@ -158,17 +168,17 @@ class SpringJdbcSelectLocalDatePostgresqlTest : AbstractSpringJdbcPostgresqlTest
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds postgresqlLocalDateWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableAfterOrEq finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 3)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableAfterOrEq finds postgresqlLocalDateWithoutNullable when equals`() {
+    fun `Verify selectAllByLocalDateNullableAfterOrEq finds localDateWithoutNullable when equals`() {
         assertThat(repository.selectAllByLocalDateNullableAfterOrEq(LocalDate.of(2018, 11, 4)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(postgresqlLocalDateWithNullable)
+                .containsExactlyInAnyOrder(localDateWithNullable)
     }
 }
 
@@ -186,58 +196,78 @@ class LocalDateRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<PostgresqlLocalDate>()
+    private fun createTables() {
+        sqlClient createTable POSTGRESQL_LOCAL_DATE
+    }
 
-    private fun insertLocalDates() = sqlClient.insert(postgresqlLocalDateWithNullable, postgresqlLocalDateWithoutNullable)
+    private fun insertLocalDates() {
+        sqlClient.insert(localDateWithNullable, localDateWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<PostgresqlLocalDate>()
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_LOCAL_DATE
 
-    fun selectAllByLocalDateNotNull(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNotNull] eq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNull(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull eq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNotNull] notEq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull notEq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNotNull] before localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNotNull] beforeOrEq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull before localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNotNull] after localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNotNull] afterOrEq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull after localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNullable(localDate: LocalDate?) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNullable] eq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNotNull afterOrEq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNullable] notEq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNullable(localDate: LocalDate?) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNullable eq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNullableBefore(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNullable] before localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNullable notEq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNullable] beforeOrEq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNullable before localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNullableAfter(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNullable] after localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNullable beforeOrEq localDate
+                    ).fetchAll()
 
-    fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) = sqlClient.select<PostgresqlLocalDate>()
-            .where { it[PostgresqlLocalDate::localDateNullable] afterOrEq localDate }
-            .fetchAll()
+    fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNullable after localDate
+                    ).fetchAll()
+
+    fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
+            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE
+                    where POSTGRESQL_LOCAL_DATE.localDateNullable afterOrEq localDate
+                    ).fetchAll()
 }

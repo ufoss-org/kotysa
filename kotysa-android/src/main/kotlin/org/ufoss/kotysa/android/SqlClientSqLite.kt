@@ -7,7 +7,6 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.*
-import kotlin.reflect.KClass
 
 /**
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
@@ -15,41 +14,42 @@ import kotlin.reflect.KClass
 internal class SqlClientSqLite(
         private val client: SQLiteOpenHelper,
         override val tables: Tables
-) : SqlClient(), DefaultSqlClient {
-
-    override fun <T : Any> select(
-            resultClass: KClass<T>,
-            dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ): SqlClientSelect.Select<T> =
-            SqlClientSelectSqLite.Select(client.readableDatabase, tables, resultClass, dsl)
-
-    override fun <T : Any> createTable(tableClass: KClass<T>) {
-        val createTableSql = createTableSql(tableClass)
-        return client.writableDatabase.compileStatement(createTableSql).execute()
-    }
+) : SqlClient, DefaultSqlClient {
 
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
 
         val statement = client.writableDatabase.compileStatement(insertSql(row))
-        table.columns.values
+        table.columns
                 .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
                 .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
 
         statement.executeInsert()
     }
 
-    override fun insert(vararg rows: Any) {
-        checkRowsAreMapped(*rows)
-
+    override fun <T : Any> insert(vararg rows: T) {
         rows.forEach { row -> insert(row) }
     }
 
-    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteSqLite.Delete(client.writableDatabase, tables, tableClass)
+    override fun <T : Any> createTable(table: Table<T>) {
+        val createTableSql = createTableSql(table)
+        client.writableDatabase.compileStatement(createTableSql).execute()
+    }
 
-    override fun <T : Any> updateTable(tableClass: KClass<T>): SqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSqLite.Update(client.writableDatabase, tables, tableClass)
+    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+            SqlClientDeleteSqLite.FirstDelete(client.writableDatabase, tables, table)
+
+    override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
+            SqlClientUpdateSqLite.FirstUpdate(client.writableDatabase, tables, table)
+
+    override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(column)
+    override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
+    override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount(column)
 }
 
 /**

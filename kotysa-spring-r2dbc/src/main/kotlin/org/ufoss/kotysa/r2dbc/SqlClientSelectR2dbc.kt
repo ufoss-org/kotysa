@@ -4,80 +4,156 @@
 
 package org.ufoss.kotysa.r2dbc
 
-import org.ufoss.kotysa.*
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import kotlin.reflect.KClass
+import reactor.core.publisher.SynchronousSink
 
 
+@Suppress("UNCHECKED_CAST")
 internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSelectR2dbc() {
 
-    internal class Select<T : Any> internal constructor(
-            override val client: DatabaseClient,
-            override val tables: Tables,
-            override val resultClass: KClass<T>,
-            override val dsl: (SelectDslApi.(ValueProvider) -> T)?
-    ) : ReactorSqlClientSelect.Select<T>(), DefaultSqlClientSelect.Select<T>, Whereable<T>, Return<T> {
-        override val properties: Properties<T> = initProperties()
-
-        override fun <U : Any> join(joinClass: KClass<U>, alias: String?, type: JoinType): ReactorSqlClientSelect.Joinable<T> =
-                Joinable(client, properties, joinClass, alias, type)
-    }
-
-    private class Joinable<T : Any, U : Any>(
+    internal class Selectable internal constructor(
             private val client: DatabaseClient,
-            private val properties: Properties<T>,
-            private val joinClass: KClass<U>,
-            private val alias: String?,
-            private val type: JoinType
-    ) : ReactorSqlClientSelect.Joinable<T> {
+            private val tables: Tables,
+    ) : ReactorSqlClientSelect.Selectable {
+        override fun <T : Any> select(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
 
-        override fun on(dsl: (FieldProvider) -> ColumnField<*, *>): ReactorSqlClientSelect.Join<T> {
-            val join = Join(client, properties)
-            join.addJoinClause(dsl, joinClass, alias, type)
-            return join
-        }
+        override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+
+        override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
+                SelectWithDsl(client, Properties(tables), dsl)
+
+        override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
+                FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
     }
 
-    private class Join<T : Any>(
-            override val client: DatabaseClient,
-            override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Join<T>, ReactorSqlClientSelect.Join<T>, Whereable<T>, Return<T>
-
-    private interface Whereable<T : Any> : DefaultSqlClientSelect.Whereable<T>, ReactorSqlClientSelect.Whereable<T> {
-        val client: DatabaseClient
-
-        override fun where(dsl: WhereDsl.(FieldProvider) -> WhereClause): ReactorSqlClientSelect.Where<T> {
-            val where = Where(client, properties)
-            where.addWhereClause(dsl)
-            return where
+    internal class FirstSelect<T : Any> internal constructor(
+            private val client: DatabaseClient,
+            override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Select<T>(), ReactorSqlClientSelect.FirstSelect<T> {
+        private val from: From<T, *> by lazy {
+            From<T, Any>(client, properties)
         }
+
+        override fun <U : Any> from(table: Table<U>): ReactorSqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+
+        override fun <U : Any> and(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
+
+        override fun <U : Any> and(table: Table<U>): ReactorSqlClientSelect.SecondSelect<T, U> =
+                SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
+
+        override fun <U : Any> andCount(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T, Long> =
+                SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
     }
 
-    private class Where<T : Any>(
+    internal class SecondSelect<T, U> internal constructor(
+            private val client: DatabaseClient,
+            override val properties: Properties<Pair<T, U>>,
+    ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), ReactorSqlClientSelect.SecondSelect<T, U> {
+        private val from: From<Pair<T, U>, *> by lazy {
+            From<Pair<T, U>, Any>(client, properties)
+        }
+
+        override fun <V : Any> from(table: Table<V>): ReactorSqlClientSelect.From<Pair<T, U>, V> =
+                addFromTable(table, from as From<Pair<T, U>, V>)
+
+        override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
+
+        override fun <V : Any> and(table: Table<V>): ReactorSqlClientSelect.ThirdSelect<T, U, V> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
+
+        override fun <V : Any> andCount(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, Long> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+    }
+
+    internal class ThirdSelect<T, U, V> internal constructor(
+            private val client: DatabaseClient,
+            override val properties: Properties<Triple<T, U, V>>,
+    ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), ReactorSqlClientSelect.ThirdSelect<T, U, V> {
+        private val from: From<Triple<T, U, V>, *> by lazy {
+            From<Triple<T, U, V>, Any>(client, properties)
+        }
+
+        override fun <W : Any> from(table: Table<W>): ReactorSqlClientSelect.From<Triple<T, U, V>, W> =
+                addFromTable(table, from as From<Triple<T, U, V>, W>)
+
+        override fun <W : Any> and(column: Column<*, W>): ReactorSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
+
+        override fun <W : Any> and(table: Table<W>): ReactorSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
+
+        override fun <W : Any> andCount(column: Column<*, W>): ReactorSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+    }
+
+    internal class Select internal constructor(
+            client: DatabaseClient,
+            override val properties: Properties<List<Any?>>,
+    ) : DefaultSqlClientSelect.Select<List<Any?>>(), ReactorSqlClientSelect.Select {
+        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): ReactorSqlClientSelect.From<List<Any?>, U> =
+                addFromTable(table, from as From<List<Any?>, U>)
+
+        override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.Select = this.apply { addSelectColumn(column) }
+        override fun <V : Any> and(table: Table<V>): ReactorSqlClientSelect.Select = this.apply { addSelectTable(table) }
+        override fun <V : Any> andCount(column: Column<*, V>): ReactorSqlClientSelect.Select = this.apply { addCountColumn(column) }
+    }
+
+    internal class SelectWithDsl<T : Any> internal constructor(
+            client: DatabaseClient,
+            properties: Properties<T>,
+            dsl: (ValueProvider) -> T,
+    ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), ReactorSqlClientSelect.Fromable<T> {
+        private val from: From<T, *> = From<T, Any>(client, properties)
+
+        override fun <U : Any> from(table: Table<U>): ReactorSqlClientSelect.From<T, U> =
+                addFromTable(table, from as From<T, U>)
+    }
+
+    internal class From<T : Any, U : Any> internal constructor(
             override val client: DatabaseClient,
-            override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T>, ReactorSqlClientSelect.Where<T>, Return<T> {
+            properties: Properties<T>,
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>>(properties), ReactorSqlClientSelect.From<T, U>, Return<T> {
+        override val where = Where(client, properties)
+        override val from = this
+    }
 
-        override fun and(dsl: WhereDsl.(FieldProvider) -> WhereClause): ReactorSqlClientSelect.Where<T> {
-            addAndClause(dsl)
-            return this
-        }
-
-        override fun or(dsl: WhereDsl.(FieldProvider) -> WhereClause): ReactorSqlClientSelect.Where<T> {
-            addOrClause(dsl)
-            return this
-        }
+    internal class Where<T : Any> constructor(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.Where<T, ReactorSqlClientSelect.Where<T>>(), ReactorSqlClientSelect.Where<T>, Return<T> {
+        override val where = this
     }
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
 
-        override fun fetchOne(): Mono<T> = fetch().one()
-                .onErrorMap(IncorrectResultSizeDataAccessException::class.java) { NonUniqueResultException() }
+        override fun fetchOne(): Mono<T> =
+                fetch().one()
+                        .handle { opt, sink : SynchronousSink<T> ->
+                            opt.ifPresent(sink::next)
+                        }
+                        .onErrorMap(IncorrectResultSizeDataAccessException::class.java) { NonUniqueResultException() }
 
-        override fun fetchFirst(): Mono<T> = fetch().first()
-        override fun fetchAll(): Flux<T> = fetch().all()
+        override fun fetchFirst(): Mono<T> =
+                fetch().first()
+                        .handle { opt, sink : SynchronousSink<T> ->
+                            opt.ifPresent(sink::next)
+                        }
+
+        override fun fetchAll(): Flux<T> =
+                fetch().all()
+                        .handle { opt, sink : SynchronousSink<T> ->
+                            opt.ifPresent(sink::next)
+                        }
     }
 }

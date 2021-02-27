@@ -18,152 +18,162 @@ class SpringJdbcSelectKotlinxLocalDateTimeAsTimestampH2Test : AbstractSpringJdbc
     override val repository = getContextRepository<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>()
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNull finds h2KotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNull(LocalDateTime(2019, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNull finds kotlinxLocalDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNull(LocalDateTime(2019, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullNotEq finds h2KotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullNotEq(LocalDateTime(2019, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds kotlinxLocalDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(LocalDateTime(2019, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBefore finds h2KotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBefore(LocalDateTime(2019, 11, 4, 12, 0)))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+    fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                kotlinxLocalDateTimeWithNullable.localDateTimeNotNull,
+                kotlinxLocalDateTimeWithoutNullable.localDateTimeNotNull)
+        assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable, kotlinxLocalDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBefore(LocalDateTime(2019, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds kotlinxLocalDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime(2019, 11, 4, 12, 0)))
+                .hasSize(1)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime(2019, 11, 4, 0, 0)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq finds h2KotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds kotlinxLocalDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq finds h2KotlinxLocalDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds kotlinxLocalDateTimeAsTimestampWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfter finds h2KotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfter(LocalDateTime(2019, 11, 5, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds kotlinxLocalDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime(2019, 11, 5, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfter(LocalDateTime(2019, 11, 6, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime(2019, 11, 6, 0, 0)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq finds h2KotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(LocalDateTime(2019, 11, 5, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds kotlinxLocalDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime(2019, 11, 5, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq finds h2KotlinxLocalDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(LocalDateTime(2019, 11, 6, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds kotlinxLocalDateTimeAsTimestampWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime(2019, 11, 6, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullable finds h2UuidWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullable(LocalDateTime(2018, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNullable finds h2UuidWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullable(LocalDateTime(2018, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullable finds h2UuidWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullable(null))
+    fun `Verify selectAllByLocalDateTimeNullable finds h2UuidWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableNotEq finds h2UuidWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableNotEq(LocalDateTime(2018, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableNotEq finds h2UuidWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(LocalDateTime(2018, 11, 4, 0, 0)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableNotEq(null))
+    fun `Verify selectAllByLocalDateTimeNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBefore finds h2KotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBefore(LocalDateTime(2018, 11, 4, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds kotlinxLocalDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime(2018, 11, 4, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBefore(LocalDateTime(2018, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime(2018, 11, 4, 0, 0)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq finds h2KotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(LocalDateTime(2018, 11, 5, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds kotlinxLocalDateTimeAsTimestampWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime(2018, 11, 5, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq finds h2KotlinxLocalDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(LocalDateTime(2018, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds kotlinxLocalDateTimeAsTimestampWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime(2018, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfter finds h2KotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfter(LocalDateTime(2018, 11, 3, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds kotlinxLocalDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime(2018, 11, 3, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfter(LocalDateTime(2018, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime(2018, 11, 4, 0, 0)))
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfterOrEq finds h2KotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(LocalDateTime(2018, 11, 3, 12, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds kotlinxLocalDateTimeAsTimestampWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime(2018, 11, 3, 12, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfterOrEq finds h2KotlinxLocalDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(LocalDateTime(2018, 11, 4, 0, 0)))
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds kotlinxLocalDateTimeAsTimestampWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime(2018, 11, 4, 0, 0)))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2KotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeAsTimestampWithNullable)
     }
 }
 
@@ -181,71 +191,78 @@ class KotlinxLocalDateTimeAsTimestampRepositoryH2Select(client: JdbcOperations) 
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<H2KotlinxLocalDateTime>()
+    private fun createTables() {
+        sqlClient createTable H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+    }
 
-    private fun insertLocalDateTimes() =
-            sqlClient.insert(h2KotlinxLocalDateTimeWithNullable, h2KotlinxLocalDateTimeWithoutNullable)
+    private fun insertLocalDateTimes() {
+        sqlClient.insert(kotlinxLocalDateTimeAsTimestampWithNullable, kotlinxLocalDateTimeAsTimestampWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<H2KotlinxLocalDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
 
-    fun selectAllByLocalDateTimeAsTimestampNotNull(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull] eq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullNotEq(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull] notEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullBefore(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull] before localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull] beforeOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullAfter(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull] after localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNotNull] afterOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull after localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullable(localDateTime: LocalDateTime?) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable] eq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull afterOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableNotEq(localDateTime: LocalDateTime?) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable] notEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableBefore(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable] before localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable] beforeOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableAfter(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable] after localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<H2KotlinxLocalDateTime>()
-            .where { it[H2KotlinxLocalDateTime::localDateTimeAsTimestampNullable] afterOrEq localDateTime }
-            .fetchAll()
+    fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable after localDateTime
+                    ).fetchAll()
+
+    fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP
+                    where H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable afterOrEq localDateTime
+                    ).fetchAll()
 }

@@ -8,10 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.MysqlUser
+import org.ufoss.kotysa.test.MYSQL_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.mysqlBboss
-import org.ufoss.kotysa.test.mysqlJdoe
+import org.ufoss.kotysa.test.userBboss
+import org.ufoss.kotysa.test.userJdoe
 
 
 class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectBoolean>() {
@@ -26,14 +26,14 @@ class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserReposit
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
         assertThat(repository.selectAllByIsAdminEq(true))
                 .hasSize(1)
-                .containsExactly(mysqlBboss)
+                .containsExactly(userBboss)
     }
 
     @Test
     fun `Verify selectAllByIsAdminEq false finds John`() {
         assertThat(repository.selectAllByIsAdminEq(false))
                 .hasSize(1)
-                .containsExactly(mysqlJdoe)
+                .containsExactly(userJdoe)
     }
 }
 
@@ -41,7 +41,7 @@ class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserReposit
 class UserRepositorySpringJdbcMysqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            sqlClient.select<MysqlUser>()
-                    .where { it[MysqlUser::isAdmin] eq value }
-                    .fetchAll()
+            (sqlClient selectFrom MYSQL_USER
+                    where MYSQL_USER.isAdmin eq value
+                    ).fetchAll()
 }

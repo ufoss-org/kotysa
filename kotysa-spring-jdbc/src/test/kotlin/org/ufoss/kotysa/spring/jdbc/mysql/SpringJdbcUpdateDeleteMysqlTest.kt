@@ -35,23 +35,42 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
     fun `Verify deleteUserById works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteUserById(mysqlJdoe.id))
+            assertThat(repository.deleteUserById(userJdoe.id))
                     .isEqualTo(1)
             assertThat(repository.selectAllUsers())
                     .hasSize(1)
-                    .containsOnly(mysqlBboss)
+                    .containsOnly(userBboss)
         }
+    }
+
+    @Test
+    fun `Verify deleteUserIn works`() {
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
+                    .isEqualTo(1)
+            assertThat(repository.selectAllUsers())
+                    .hasSize(1)
+        }
+    }
+
+    @Test
+    fun `Verify deleteUserIn no match`() {
+        assertThat(repository.deleteUserIn(listOf(99999, 9999999)))
+                .isEqualTo(0)
+        assertThat(repository.selectAllUsers())
+                .hasSize(2)
     }
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteUserWithJoin(mysqlUser.label))
+            assertThat(repository.deleteUserWithJoin(roleUser.label))
                     .isEqualTo(1)
             assertThat(repository.selectAllUsers())
                     .hasSize(1)
-                    .containsOnly(mysqlBboss)
+                    .containsOnly(userBboss)
         }
     }
 
@@ -61,19 +80,40 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
     }
 
     @Test
+    fun `Verify updateLastnameIn works`() {
+        operator.execute<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999)))
+                    .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                    .extracting { user -> user?.lastname }
+                    .isEqualTo("Do")
+        }
+    }
+
+    @Test
+    fun `Verify updateLastnameIn no match`() {
+        assertThat(repository.updateLastnameIn("Do", listOf(99999, 9999999)))
+                .isEqualTo(0)
+        assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.lastname }
+                .isEqualTo("Doe")
+    }
+
+    @Test
     fun `Verify updateWithJoin works`() {
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.updateWithJoin("Do", mysqlUser.label))
+            assertThat(repository.updateWithJoin("Do", roleUser.label))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(mysqlJdoe.firstname))
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
                     .extracting { user -> user?.lastname }
                     .isEqualTo("Do")
         }
@@ -85,12 +125,12 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(mysqlBboss.firstname))
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo("TheBigBoss")
             assertThat(repository.updateAlias(null))
                     .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(mysqlBboss.firstname))
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
                     .extracting { user -> user?.alias }
                     .isEqualTo(null)
         }
@@ -100,28 +140,44 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
 
 class UserRepositorySpringJdbcMysqlUpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
 
-    fun deleteUserById(id: Int) = sqlClient.deleteFromTable<MysqlUser>()
-            .where { it[MysqlUser::id] eq id }
-            .execute()
+    fun deleteUserById(id: Int) =
+            (sqlClient deleteFrom MYSQL_USER
+                    where MYSQL_USER.id eq id
+                    ).execute()
 
-    fun deleteUserWithJoin(roleLabel: String) = sqlClient.deleteFromTable<MysqlUser>()
-            .innerJoin<MysqlRole>().on { it[MysqlUser::roleId] }
-            .where { it[MysqlRole::label] eq roleLabel }
-            .execute()
+    fun deleteUserIn(ids: Collection<Int>) =
+            (sqlClient deleteFrom MYSQL_USER
+                    where MYSQL_USER.id `in` ids
+                    ).execute()
 
-    fun updateLastname(newLastname: String) = sqlClient.updateTable<MysqlUser>()
-            .set { it[MysqlUser::lastname] = newLastname }
-            .where { it[MysqlUser::id] eq mysqlJdoe.id }
-            .execute()
+    fun deleteUserWithJoin(roleLabel: String) =
+            (sqlClient deleteFrom MYSQL_USER
+                    innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
+                    where MYSQL_ROLE.label eq roleLabel
+                    ).execute()
 
-    fun updateAlias(newAlias: String?) = sqlClient.updateTable<MysqlUser>()
-            .set { it[MysqlUser::alias] = newAlias }
-            .where { it[MysqlUser::id] eq mysqlBboss.id }
-            .execute()
+    fun updateLastname(newLastname: String) =
+            (sqlClient update MYSQL_USER
+                    set MYSQL_USER.lastname eq newLastname
+                    where MYSQL_USER.id eq userJdoe.id
+                    ).execute()
 
-    fun updateWithJoin(newLastname: String, roleLabel: String) = sqlClient.updateTable<MysqlUser>()
-            .set { it[MysqlUser::lastname] = newLastname }
-            .innerJoin<MysqlRole>().on { it[MysqlUser::roleId] }
-            .where { it[MysqlRole::label] eq roleLabel }
-            .execute()
+    fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
+            (sqlClient update MYSQL_USER
+                    set MYSQL_USER.lastname eq newLastname
+                    where MYSQL_USER.id `in` ids
+                    ).execute()
+
+    fun updateAlias(newAlias: String?) =
+            (sqlClient update MYSQL_USER
+                    set MYSQL_USER.alias eq newAlias
+                    where MYSQL_USER.id eq userBboss.id
+                    ).execute()
+
+    fun updateWithJoin(newLastname: String, roleLabel: String) =
+            (sqlClient update MYSQL_USER
+                    set MYSQL_USER.lastname eq newLastname
+                    innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
+                    where MYSQL_ROLE.label eq roleLabel
+                    ).execute()
 }

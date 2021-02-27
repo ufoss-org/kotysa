@@ -16,43 +16,45 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
 
     override val repository = getContextRepository<IntRepositoryH2Select>()
 
-    private val h2IntWithNullable = H2Int(
-            org.ufoss.kotysa.test.h2IntWithNullable.intNotNull,
-            org.ufoss.kotysa.test.h2IntWithNullable.intNullable,
-            1)
+    private val intWithNullable = IntEntity(
+            org.ufoss.kotysa.test.intWithNullable.intNotNull,
+            org.ufoss.kotysa.test.intWithNullable.intNullable,
+            1
+    )
 
-    private val h2IntWithoutNullable = H2Int(
-            org.ufoss.kotysa.test.h2IntWithoutNullable.intNotNull,
-            org.ufoss.kotysa.test.h2IntWithoutNullable.intNullable,
-            2)
+    private val intWithoutNullable = IntEntity(
+            org.ufoss.kotysa.test.intWithoutNullable.intNotNull,
+            org.ufoss.kotysa.test.intWithoutNullable.intNullable,
+            2
+    )
 
     @Test
-    fun `Verify selectAllByIntNotNull finds h2IntWithNullable`() {
+    fun `Verify selectAllByIntNotNull finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNull(10))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullNotEq finds h2IntWithoutNullable`() {
+    fun `Verify selectAllByIntNotNullNotEq finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNotNullNotEq(10))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntegerNotNullIn finds both`() {
-        val seq = sequenceOf(h2IntWithNullable.intNotNull, h2IntWithoutNullable.intNotNull)
-        assertThat(repository.selectAllByIntegerNotNullIn(seq))
+    fun `Verify selectAllByIntNotNullIn finds both`() {
+        val seq = sequenceOf(intWithNullable.intNotNull, intWithoutNullable.intNotNull)
+        assertThat(repository.selectAllByIntNotNullIn(seq))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(h2IntWithNullable, h2IntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithNullable, intWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullInf finds h2IntWithNullable`() {
+    fun `Verify selectAllByIntNotNullInf finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNullInf(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
@@ -62,24 +64,24 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullInfOrEq finds h2IntWithNullable`() {
+    fun `Verify selectAllByIntNotNullInfOrEq finds intWithNullable`() {
         assertThat(repository.selectAllByIntNotNullInfOrEq(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullInfOrEq finds h2IntWithNullable when equals`() {
+    fun `Verify selectAllByIntNotNullInfOrEq finds intWithNullable when equals`() {
         assertThat(repository.selectAllByIntNotNullInfOrEq(10))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullSup finds h2IntWithoutNullable`() {
+    fun `Verify selectAllByIntNotNullSup finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNotNullSup(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
@@ -89,31 +91,31 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullSupOrEq finds h2IntWithoutNullable`() {
+    fun `Verify selectAllByIntNotNullSupOrEq finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNotNullSupOrEq(11))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNotNullSupOrEq finds h2IntWithoutNullable when equals`() {
+    fun `Verify selectAllByIntNotNullSupOrEq finds intWithoutNullable when equals`() {
         assertThat(repository.selectAllByIntNotNullSupOrEq(12))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByIntNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByIntNullable(6))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
     fun `Verify selectAllByIntNullable finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByIntNullable(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithoutNullable)
+                .containsExactlyInAnyOrder(intWithoutNullable)
     }
 
     @Test
@@ -126,14 +128,14 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
     fun `Verify selectAllByIntNullableNotEq finds no results`() {
         assertThat(repository.selectAllByIntNullableNotEq(null))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableInf finds h2IntWithNullable`() {
+    fun `Verify selectAllByIntNullableInf finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableInf(7))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
@@ -143,24 +145,24 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
     }
 
     @Test
-    fun `Verify selectAllByIntNullableInfOrEq finds h2IntWithNullable`() {
+    fun `Verify selectAllByIntNullableInfOrEq finds intWithNullable`() {
         assertThat(repository.selectAllByIntNullableInfOrEq(7))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableInfOrEq finds h2IntWithNullable when equals`() {
+    fun `Verify selectAllByIntNullableInfOrEq finds intWithNullable when equals`() {
         assertThat(repository.selectAllByIntNullableInfOrEq(6))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableSup finds h2IntWithoutNullable`() {
+    fun `Verify selectAllByIntNullableSup finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNullableSup(5))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
@@ -170,17 +172,17 @@ class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select
     }
 
     @Test
-    fun `Verify selectAllByIntNullableSupOrEq finds h2IntWithoutNullable`() {
+    fun `Verify selectAllByIntNullableSupOrEq finds intWithoutNullable`() {
         assertThat(repository.selectAllByIntNullableSupOrEq(5))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByIntNullableSupOrEq finds h2IntWithoutNullable when equals`() {
+    fun `Verify selectAllByIntNullableSupOrEq finds intWithoutNullable when equals`() {
         assertThat(repository.selectAllByIntNullableSupOrEq(6))
                 .hasSize(1)
-                .containsExactlyInAnyOrder(h2IntWithNullable)
+                .containsExactlyInAnyOrder(intWithNullable)
     }
 }
 
@@ -198,62 +200,78 @@ class IntRepositoryH2Select(client: JdbcOperations) : Repository {
         deleteAll()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<H2Int>()
+    private fun createTables() {
+        sqlClient createTable H2_INT
+    }
 
-    private fun insertInts() = sqlClient.insert(h2IntWithNullable, h2IntWithoutNullable)
+    private fun insertInts() {
+        sqlClient.insert(intWithNullable, intWithoutNullable)
+    }
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<H2Int>()
+    private fun deleteAll() = sqlClient deleteAllFrom H2_INT
 
-    fun selectAllByIntNotNull(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] eq int }
-            .fetchAll()
+    fun selectAllByIntNotNull(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull eq int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullNotEq(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] notEq int }
-            .fetchAll()
+    fun selectAllByIntNotNullNotEq(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull notEq int
+                    ).fetchAll()
 
-    fun selectAllByIntegerNotNullIn(values: Sequence<Int>) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] `in` values }
-            .fetchAll()
+    fun selectAllByIntNotNullIn(values: Sequence<Int>) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullInf(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] inf int }
-            .fetchAll()
+    fun selectAllByIntNotNullInf(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull inf int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullInfOrEq(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] infOrEq int }
-            .fetchAll()
+    fun selectAllByIntNotNullInfOrEq(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull infOrEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullSup(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] sup int }
-            .fetchAll()
+    fun selectAllByIntNotNullSup(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull sup int
+                    ).fetchAll()
 
-    fun selectAllByIntNotNullSupOrEq(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNotNull] supOrEq int }
-            .fetchAll()
+    fun selectAllByIntNotNullSupOrEq(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNotNull supOrEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullable(int: Int?) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNullable] eq int }
-            .fetchAll()
+    fun selectAllByIntNullable(int: Int?) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNullable eq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableNotEq(int: Int?) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNullable] notEq int }
-            .fetchAll()
+    fun selectAllByIntNullableNotEq(int: Int?) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNullable notEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableInf(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNullable] inf int }
-            .fetchAll()
+    fun selectAllByIntNullableInf(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNullable inf int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableInfOrEq(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNullable] infOrEq int }
-            .fetchAll()
+    fun selectAllByIntNullableInfOrEq(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNullable infOrEq int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableSup(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNullable] sup int }
-            .fetchAll()
+    fun selectAllByIntNullableSup(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNullable sup int
+                    ).fetchAll()
 
-    fun selectAllByIntNullableSupOrEq(int: Int) = sqlClient.select<H2Int>()
-            .where { it[H2Int::intNullable] supOrEq int }
-            .fetchAll()
+    fun selectAllByIntNullableSupOrEq(int: Int) =
+            (sqlClient selectFrom H2_INT
+                    where H2_INT.intNullable supOrEq int
+                    ).fetchAll()
 }

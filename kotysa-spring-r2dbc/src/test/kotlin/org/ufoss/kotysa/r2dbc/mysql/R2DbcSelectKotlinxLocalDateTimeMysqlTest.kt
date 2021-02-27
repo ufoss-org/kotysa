@@ -23,152 +23,162 @@ class R2DbcSelectKotlinxLocalDateTimeMysqlTest : AbstractR2dbcMysqlTest<KotlinxL
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNull finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNull(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNull finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNull(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullNotEq finds mysqlKotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullNotEq(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullNotEq finds kotlinxLocalDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullNotEq(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBefore finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBefore(LocalDateTime(2019, 11, 4, 12, 0)).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+    fun `Verify selectAllByLocalDateTimeNotNullIn finds both`() {
+        val seq = sequenceOf(
+                kotlinxLocalDateTimeWithNullable.localDateTimeNotNull,
+                kotlinxLocalDateTimeWithoutNullable.localDateTimeNotNull)
+        assertThat(repository.selectAllByLocalDateTimeNotNullIn(seq).toIterable())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable, kotlinxLocalDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBefore(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime(2019, 11, 4, 12, 0)).toIterable())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
+    }
+
+    @Test
+    fun `Verify selectAllByLocalDateTimeNotNullBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBefore(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq finds mysqlKotlinxLocalDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullBeforeOrEq finds kotlinxLocalDateTimeWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullBeforeOrEq(LocalDateTime(2019, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfter finds mysqlKotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfter(LocalDateTime(2019, 11, 5, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds kotlinxLocalDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime(2019, 11, 5, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfter(LocalDateTime(2019, 11, 6, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfter(LocalDateTime(2019, 11, 6, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq finds mysqlKotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(LocalDateTime(2019, 11, 5, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds kotlinxLocalDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime(2019, 11, 5, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq finds mysqlKotlinxLocalDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(LocalDateTime(2019, 11, 6, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNotNullAfterOrEq finds kotlinxLocalDateTimeWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNotNullAfterOrEq(LocalDateTime(2019, 11, 6, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullable finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullable(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullable finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullable(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullable finds mysqlKotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullable(null).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullable finds kotlinxLocalDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullable(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithoutNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableNotEq finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableNotEq(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableNotEq finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableNotEq(null).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableNotEq(null).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBefore finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBefore(LocalDateTime(2018, 11, 4, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime(2018, 11, 4, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBefore finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBefore(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBefore finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBefore(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq finds mysqlKotlinxLocalDateTimeWithNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(LocalDateTime(2018, 11, 5, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds kotlinxLocalDateTimeWithNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime(2018, 11, 5, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq finds mysqlKotlinxLocalDateTimeWithNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableBeforeOrEq finds kotlinxLocalDateTimeWithNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableBeforeOrEq(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfter finds mysqlKotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfter(LocalDateTime(2018, 11, 3, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds kotlinxLocalDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime(2018, 11, 3, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfter finds no results when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfter(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfter finds no results when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfter(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfterOrEq finds mysqlKotlinxLocalDateTimeWithoutNullable`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(LocalDateTime(2018, 11, 3, 12, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds kotlinxLocalDateTimeWithoutNullable`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime(2018, 11, 3, 12, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateTimeAsTimestampNullableAfterOrEq finds mysqlKotlinxLocalDateTimeWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
+    fun `Verify selectAllByLocalDateTimeNullableAfterOrEq finds kotlinxLocalDateTimeWithoutNullable when equals`() {
+        assertThat(repository.selectAllByLocalDateTimeNullableAfterOrEq(LocalDateTime(2018, 11, 4, 0, 0)).toIterable())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mysqlKotlinxLocalDateTimeWithNullable)
+                .containsExactlyInAnyOrder(kotlinxLocalDateTimeWithNullable)
     }
 }
 
@@ -188,71 +198,75 @@ class KotlinxLocalDateTimeRepositoryMysqlSelect(dbClient: DatabaseClient) : Repo
                 .block()
     }
 
-    private fun createTables() =
-            sqlClient.createTable<MysqlKotlinxLocalDateTime>()
+    private fun createTables() = sqlClient createTable MYSQL_KOTLINX_LOCAL_DATE_TIME
 
     private fun insertLocalDateTimes() =
-            sqlClient.insert(mysqlKotlinxLocalDateTimeWithNullable, mysqlKotlinxLocalDateTimeWithoutNullable)
+            sqlClient.insert(kotlinxLocalDateTimeWithNullable, kotlinxLocalDateTimeWithoutNullable)
 
-    private fun deleteAll() = sqlClient.deleteAllFromTable<MysqlKotlinxLocalDateTime>()
+    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
 
-    fun selectAllByLocalDateTimeAsTimestampNotNull(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] eq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullNotEq(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] notEq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullBefore(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] before localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] beforeOrEq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullAfter(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] after localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNotNull] afterOrEq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullable(localDateTime: LocalDateTime?) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] eq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableNotEq(localDateTime: LocalDateTime?) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] notEq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableBefore(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] before localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] beforeOrEq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableAfter(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] after localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+                    ).fetchAll()
 
-    fun selectAllByLocalDateTimeAsTimestampNullableAfterOrEq(localDateTime: LocalDateTime) =
-            sqlClient.select<MysqlKotlinxLocalDateTime>()
-                    .where { it[MysqlKotlinxLocalDateTime::localDateTimeNullable] afterOrEq localDateTime }
-                    .fetchAll()
+    fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+                    ).fetchAll()
+
+    fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
+            (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE_TIME
+                    where MYSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+                    ).fetchAll()
 }

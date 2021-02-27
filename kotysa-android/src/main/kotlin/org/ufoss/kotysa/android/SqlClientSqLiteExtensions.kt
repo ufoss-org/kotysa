@@ -4,8 +4,10 @@
 
 package org.ufoss.kotysa.android
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import org.ufoss.kotysa.DefaultSqlClientCommon
+import org.ufoss.kotysa.RowImpl
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -63,6 +65,8 @@ internal fun DefaultSqlClientCommon.Return.buildWhereArgs(): Array<String>? = wi
         null
     }
 }
+
+internal fun Cursor.toRow() = RowImpl(SqLiteRow(this))
 
 private fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(properties) {
     whereClauses

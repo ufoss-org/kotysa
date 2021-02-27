@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa
-
+/*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -109,7 +109,7 @@ public interface TypedFieldProvider<T : Any> {
 }
 
 public open class SimpleFieldProvider internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Set<KotysaColumn<*, *>>,
         dbType: DbType
 ) : FieldProvider {
 
@@ -178,7 +178,7 @@ public open class SimpleFieldProvider internal constructor(
 }
 
 public open class SimpleTypedFieldProvider<T : Any> internal constructor(
-        availableColumns: Map<out (Any) -> Any?, Column<*, *>>,
+        availableColumns: Map<out (Any) -> Any?, KotysaColumn<*, *>>,
         dbType: DbType
 ) : TypedFieldProvider<T> {
 
@@ -242,4 +242,4 @@ public open class SimpleTypedFieldProvider<T : Any> internal constructor(
 
     override fun get(getter: (T) -> Int?, alias: String?): NullableIntColumnField<T> =
             fieldAccess.getField(getter, alias)
-}
+}*/

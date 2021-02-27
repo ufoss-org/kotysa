@@ -3,7 +3,7 @@
  */
 
 package org.ufoss.kotysa.r2dbc.sample
-
+/*
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.tables
@@ -28,7 +28,7 @@ class UserRepositoryR2dbcCoroutines(dbClient: DatabaseClient) {
     )
 
     private val tables =
-            tables().h2 {
+            tables().h2Old {
                 table<Role> {
                     name = "roles"
                     column { it[Role::id].uuid() }
@@ -94,3 +94,4 @@ class UserRepositoryR2dbcCoroutines(dbClient: DatabaseClient) {
                 .execute()
     }
 }
+*/

@@ -32,7 +32,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> : R2dbcRepositoryTest<T> {
                 beans {
                     bean<U>()
                     bean { ref<DatabaseClient>().sqlClient(mysqlTables) }
-                    bean { ref<DatabaseClient>().coSqlClient(postgresqlTables) }
+                    bean { ref<DatabaseClient>().coSqlClient(mysqlTables) }
                 }
                 listener<ApplicationReadyEvent> {
                     ref<U>().init()

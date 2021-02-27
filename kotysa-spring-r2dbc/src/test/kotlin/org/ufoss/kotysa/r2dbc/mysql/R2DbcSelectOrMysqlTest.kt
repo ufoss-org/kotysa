@@ -8,8 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.MYSQL_ROLE
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.roleAdmin
+import org.ufoss.kotysa.test.roleGod
 
 
 class R2DbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectOr>() {
@@ -21,18 +23,19 @@ class R2DbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectO
     }
 
     @Test
-    fun `Verify selectRolesByLabels finds mysqlAdmin and mysqlGod`() {
-        assertThat(repository.selectRolesByLabels(mysqlAdmin.label, mysqlGod.label).toIterable())
+    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
+        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label).toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(mysqlAdmin, mysqlGod)
+                .containsExactlyInAnyOrder(roleAdmin, roleGod)
     }
 }
 
 
 class UserRepositoryMysqlSelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
 
-    fun selectRolesByLabels(label1: String, label2: String) = sqlClient.select<MysqlRole>()
-            .where { it[MysqlRole::label] eq label1 }
-            .or { it[MysqlRole::label] eq label2 }
-            .fetchAll()
+    fun selectRolesByLabels(label1: String, label2: String) =
+            (sqlClient selectFrom MYSQL_ROLE
+                    where MYSQL_ROLE.label eq label1
+                    or MYSQL_ROLE.label eq label2
+                    ).fetchAll()
 }

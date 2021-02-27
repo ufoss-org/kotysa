@@ -5,11 +5,8 @@
 package org.ufoss.kotysa.r2dbc
 
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.SelectDslApi
-import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.ValueProvider
+import org.ufoss.kotysa.*
 import reactor.core.publisher.Mono
-import kotlin.reflect.KClass
 
 /**
  * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/reference/html/#reference)
@@ -18,28 +15,30 @@ import kotlin.reflect.KClass
 private class SqlClientR2dbc(
         override val client: DatabaseClient,
         override val tables: Tables
-) : ReactorSqlClient(), AbstractSqlClientR2dbc {
-
-    override fun <T : Any> select(resultClass: KClass<T>, dsl: (SelectDslApi.(ValueProvider) -> T)?): ReactorSqlClientSelect.Select<T> =
-            SqlClientSelectR2dbc.Select(client, tables, resultClass, dsl)
-
-    override fun <T : Any> createTable(tableClass: KClass<T>) =
-            executeCreateTable(tableClass).then()
-
+) : ReactorSqlClient, AbstractSqlClientR2dbc {
     override fun <T : Any> insert(row: T) =
             executeInsert(row).then()
 
-    override fun insert(vararg rows: Any): Mono<Void> {
-        checkRowsAreMapped(*rows)
+    override fun <T : Any> insert(vararg rows: T) =
+            rows.fold(Mono.empty<Void>(), { mono, row -> mono.then(insert(row)) })
 
-        return rows.fold(Mono.empty(), { mono, row -> mono.then(insert(row)) })
-    }
+    override fun <T : Any> createTable(table: Table<T>) =
+            executeCreateTable(table).then()
 
-    override fun <T : Any> deleteFromTable(tableClass: KClass<T>): ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> =
-            SqlClientDeleteR2dbc.Delete(client, tables, tableClass)
+    override fun <T : Any> deleteFrom(table: Table<T>): ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+            SqlClientDeleteR2dbc.FirstDelete(client, tables, table)
 
-    override fun <T : Any> updateTable(tableClass: KClass<T>): ReactorSqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateR2dbc.Update(client, tables, tableClass)
+    override fun <T : Any> update(table: Table<T>): ReactorSqlClientDeleteOrUpdate.Update<T> =
+            SqlClientUpdateR2dbc.FirstUpdate(client, tables, table)
+
+    override fun <T : Any, U : Any> select(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
+            SqlClientSelectR2dbc.Selectable(client, tables).select(column)
+    override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
+            SqlClientSelectR2dbc.Selectable(client, tables).select(table)
+    override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
+            SqlClientSelectR2dbc.Selectable(client, tables).select(dsl)
+    override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
 }
 
 /**

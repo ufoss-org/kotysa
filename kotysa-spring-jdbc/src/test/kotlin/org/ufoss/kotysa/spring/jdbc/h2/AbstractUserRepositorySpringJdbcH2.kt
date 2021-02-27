@@ -25,22 +25,26 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
     }
 
     private fun createTables() {
-        sqlClient.createTable<H2Role>()
-        sqlClient.createTable<H2User>()
+        sqlClient createTable H2_ROLE
+        sqlClient createTable H2_USER
     }
 
-    private fun insertRoles() = sqlClient.insert(h2User, h2Admin, h2God)
+    private fun insertRoles() {
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
+    }
 
-    private fun insertUsers() = sqlClient.insert(h2Jdoe, h2Bboss)
+    private fun insertUsers() {
+        sqlClient.insert(userJdoe, userBboss)
+    }
 
-    private fun deleteAllFromRole() = sqlClient.deleteAllFromTable<H2Role>()
+    fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
+    
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom H2_ROLE
 
-    fun deleteAllFromUsers() = sqlClient.deleteAllFromTable<H2User>()
-
-    fun selectAllUsers() = sqlClient.selectAll<H2User>()
+    fun selectAllUsers() = sqlClient selectAllFrom H2_USER
 
     fun selectFirstByFirstname(firstname: String) =
-            sqlClient.select<H2User>()
-            .where { it[H2User::firstname] eq firstname }
-            .fetchFirstOrNull()
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname eq firstname
+                    ).fetchFirstOrNull()
 }

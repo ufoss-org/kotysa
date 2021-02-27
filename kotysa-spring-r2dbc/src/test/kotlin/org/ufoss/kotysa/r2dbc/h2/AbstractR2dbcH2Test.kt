@@ -12,14 +12,13 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.r2dbc.R2dbcRepositoryTest
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.h2Tables
 
 
-abstract class AbstractR2dbcH2Test<T : Repository> {
-
-    protected abstract val repository: T
+abstract class AbstractR2dbcH2Test<T : Repository> : R2dbcRepositoryTest<T> {
 
     protected inline fun <reified U : Repository> startContext() =
             application {
@@ -37,7 +36,8 @@ abstract class AbstractR2dbcH2Test<T : Repository> {
                 }
             }.run()
 
-    protected abstract val context: ConfigurableApplicationContext
+    override lateinit var context: ConfigurableApplicationContext
+    override lateinit var repository: T
 
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
 

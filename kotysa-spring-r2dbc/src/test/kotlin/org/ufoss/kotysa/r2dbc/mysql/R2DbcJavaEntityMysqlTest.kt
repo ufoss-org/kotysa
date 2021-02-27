@@ -6,15 +6,16 @@ package org.ufoss.kotysa.r2dbc.mysql
 
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.r2dbc.JavaUserRepository
-import org.ufoss.kotysa.r2dbc.SpringR2dbcJavaEntityTest
-import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.JavaUser
+import org.ufoss.kotysa.r2dbc.R2dbcJavaEntityTest
+import org.ufoss.kotysa.r2dbc.R2dbcJavaUserRepository
+import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.test.MYSQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
 
 
 class R2DbcJavaEntityMysqlTest :
-        AbstractR2dbcMysqlTest<JavaUserMysqlRepository>(), SpringR2dbcJavaEntityTest<JavaUserMysqlRepository> {
+        AbstractR2dbcMysqlTest<JavaUserMysqlRepository>(), R2dbcJavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,37 +24,6 @@ class R2DbcJavaEntityMysqlTest :
     }
 }
 
-private val tables =
-        tables().mysql {
-            table<JavaUser> {
-                name = "java_users"
-                column { it[JavaUser::getLogin].varchar {
-                    size = 255
-                } }.primaryKey()
-                column {
-                    it[JavaUser::getFirstname].varchar {
-                        name = "fname"
-                        size = 255
-                    }
-                }
-                column {
-                    it[JavaUser::getLastname].varchar {
-                        name = "lname"
-                        size = 255
-                    }
-                }
-                column { it[JavaUser::isAdmin].boolean() }
-                column { it[JavaUser::getAlias1].varchar {
-                    size = 255
-                } }
-                column { it[JavaUser::getAlias2].varchar {
-                    size = 255
-                } }
-                column { it[JavaUser::getAlias3].varchar {
-                    size = 255
-                } }
-            }
-        }
 
-
-class JavaUserMysqlRepository(client: DatabaseClient) : JavaUserRepository(client, tables)
+class JavaUserMysqlRepository(client: DatabaseClient)
+    : R2dbcJavaUserRepository<MYSQL_JAVA_USER>(client.sqlClient(mysqlTables), MYSQL_JAVA_USER)
