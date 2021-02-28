@@ -132,8 +132,8 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id))
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -141,6 +141,13 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id))
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -221,11 +228,17 @@ class UserRepositorySelect(
                     from SQLITE_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select SQLITE_ROLE.label
                     from SQLITE_ROLE innerJoin SQLITE_USER on SQLITE_ROLE.id eq SQLITE_USER.roleId
                     where SQLITE_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom SQLITE_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select SQLITE_ROLE.label
+                    from SQLITE_USER_ROLE innerJoin SQLITE_ROLE on SQLITE_USER_ROLE.roleId eq SQLITE_ROLE.id
+                    where SQLITE_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

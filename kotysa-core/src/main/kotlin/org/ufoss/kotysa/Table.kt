@@ -7,7 +7,7 @@ public interface Table<T : Any>
  *
  * @param T Entity type associated with this table
  */
-public abstract class AbstractTable<T : Any>(internal val tableName: String? = null) : Table<T> {
+public abstract class AbstractTable<T : Any>(internal val tableName: String?) : Table<T> {
 
     internal lateinit var name: String
 
@@ -23,7 +23,7 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String? = n
         check(!::pk.isInitialized) {
             "Table must not declare more than one Primary Key"
         }
-        return PrimaryKey(pkName, columns.toList())
+        return PrimaryKey(pkName, columns.toList()).also { primaryKey -> pk = primaryKey }
     }
 
     protected fun <U> U.primaryKey(pkName: String? = null)

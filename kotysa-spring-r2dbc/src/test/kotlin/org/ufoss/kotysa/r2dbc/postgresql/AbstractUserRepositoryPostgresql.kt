@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.*
 
 
@@ -15,11 +14,13 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: Reactor
         createTables()
                 .then(insertRoles())
                 .then(insertUsers())
+                .then(insertUserRoles())
                 .block()
     }
 
     override fun delete() {
-        deleteAllFromUsers()
+        deleteAllFromUserRoles()
+                .then(deleteAllFromUsers())
                 .then(deleteAllFromRole())
                 .block()
     }
@@ -27,14 +28,21 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: Reactor
     private fun createTables() =
             (sqlClient createTable POSTGRESQL_ROLE)
                     .then(sqlClient createTable POSTGRESQL_USER)
+                    .then(sqlClient createTable POSTGRESQL_USER_ROLE)
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
+    private fun insertUserRoles() = sqlClient insert userRoleBboss
+
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
+
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom POSTGRESQL_USER_ROLE
+
+    fun countAllUserRoles() = sqlClient selectCountAllFrom POSTGRESQL_USER_ROLE
 
     fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
 

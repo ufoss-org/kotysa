@@ -9,6 +9,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.h2.H2Table
+import org.ufoss.kotysa.sqlite.SqLiteTable
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.util.*
@@ -28,6 +29,14 @@ object H2_USER : H2Table<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
             .foreignKey(H2_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+}
+
+object H2_USER_ROLE : H2Table<UserRoleEntity>("userRoles") {
+    val userId = integer(UserRoleEntity::userId)
+            .foreignKey(H2_USER.id)
+    val roleId = integer(UserRoleEntity::roleId)
+            .foreignKey(H2_ROLE.id)
+    val pk = primaryKey(userId, roleId)
 }
 
 data class H2AllTypesNotNullEntity(
@@ -239,6 +248,7 @@ object H2_JAVA_USER : H2Table<JavaUser>("java_users"), JAVA_USER {
 val h2Tables = tables().h2(
         H2_ROLE,
         H2_USER,
+        H2_USER_ROLE,
         H2_ALL_TYPES_NOT_NULL,
         H2_ALL_TYPES_NULLABLE,
         H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE,

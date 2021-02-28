@@ -132,8 +132,8 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id).block())
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id).block())
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -141,6 +141,13 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers().block()!!)
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id).toIterable())
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -215,11 +222,17 @@ class UserRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
                     from MYSQL_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select MYSQL_ROLE.label
                     from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
                     where MYSQL_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom MYSQL_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select MYSQL_ROLE.label
+                    from MYSQL_USER_ROLE innerJoin MYSQL_ROLE on MYSQL_USER_ROLE.roleId eq MYSQL_ROLE.id
+                    where MYSQL_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

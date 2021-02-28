@@ -6,6 +6,7 @@ package org.ufoss.kotysa.test
 
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import org.ufoss.kotysa.tables
+import org.ufoss.kotysa.test.SQLITE_USER.foreignKey
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -25,6 +26,14 @@ object SQLITE_USER : SqLiteTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
             .foreignKey(SQLITE_ROLE.id, "FK_users_roles")
     val alias = text(UserEntity::alias)
+}
+
+object SQLITE_USER_ROLE : SqLiteTable<UserRoleEntity>("userRoles") {
+    val userId = integer(UserRoleEntity::userId)
+            .foreignKey(SQLITE_USER.id)
+    val roleId = integer(UserRoleEntity::roleId)
+            .foreignKey(SQLITE_ROLE.id)
+    val pk = primaryKey(userId, roleId)
 }
 
 object SQLITE_ALL_TYPES_NOT_NULL : SqLiteTable<AllTypesNotNullEntity>("all_types") {
@@ -130,6 +139,7 @@ object SQLITE_INT : SqLiteTable<IntEntity>("ints") {
 val sqLiteTables = tables().sqlite(
         SQLITE_ROLE,
         SQLITE_USER,
+        SQLITE_USER_ROLE,
         SQLITE_ALL_TYPES_NOT_NULL,
         SQLITE_ALL_TYPES_NULLABLE,
         SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE,

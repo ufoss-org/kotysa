@@ -17,9 +17,11 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
         createTables()
         insertRoles()
         insertUsers()
+        insertUserRoles()
     }
 
     override fun delete() {
+        deleteAllFromUserRoles()
         deleteAllFromUsers()
         deleteAllFromRole()
     }
@@ -27,6 +29,7 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
     private fun createTables() {
         sqlClient createTable POSTGRESQL_ROLE
         sqlClient createTable POSTGRESQL_USER
+        sqlClient createTable POSTGRESQL_USER_ROLE
     }
 
     private fun insertRoles() {
@@ -37,9 +40,17 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
         sqlClient.insert(userJdoe, userBboss)
     }
 
-    fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
+    private fun insertUserRoles() {
+        sqlClient insert userRoleBboss
+    }
+
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
+
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom POSTGRESQL_USER_ROLE
+
+    fun countAllUserRoles() = sqlClient selectCountAllFrom POSTGRESQL_USER_ROLE
 
     fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
 

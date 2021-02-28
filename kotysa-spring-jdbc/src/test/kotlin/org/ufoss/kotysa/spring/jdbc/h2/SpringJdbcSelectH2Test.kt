@@ -133,8 +133,8 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id))
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -142,6 +142,13 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id))
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -220,11 +227,17 @@ class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRep
                     from H2_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select H2_ROLE.label
                     from H2_ROLE innerJoin H2_USER on H2_ROLE.id eq H2_USER.roleId
                     where H2_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom H2_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select H2_ROLE.label
+                    from H2_USER_ROLE innerJoin H2_ROLE on H2_USER_ROLE.roleId eq H2_ROLE.id
+                    where H2_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

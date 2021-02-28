@@ -22,13 +22,14 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     }
 
     @Test
-    fun `Verify deleteAllFromUser works correctly`() {
+    fun `Verify deleteAllFromUserRoles works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            repository.deleteAllFromUsers()
-                    .doOnNext { n -> assertThat(n).isEqualTo(2) }
-                    .thenMany(repository.selectAllUsers())
+            repository.deleteAllFromUserRoles()
+                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                    .thenMany(repository.countAllUserRoles())
         }.test()
+                .expectNext(0)
                 .verifyComplete()
     }
 

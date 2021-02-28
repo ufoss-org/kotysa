@@ -132,8 +132,8 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id).block())
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id).block())
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -141,6 +141,13 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers().block()!!)
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id).toIterable())
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -217,11 +224,17 @@ class UserRepositoryH2Select(
                     from H2_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select H2_ROLE.label
                     from H2_ROLE innerJoin H2_USER on H2_ROLE.id eq H2_USER.roleId
                     where H2_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom H2_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select H2_ROLE.label
+                    from H2_USER_ROLE innerJoin H2_ROLE on H2_USER_ROLE.roleId eq H2_ROLE.id
+                    where H2_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

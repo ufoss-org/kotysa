@@ -17,9 +17,11 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
         createTables()
         insertRoles()
         insertUsers()
+        insertUserRoles()
     }
 
     override fun delete() {
+        deleteAllFromUserRoles()
         deleteAllFromUsers()
         deleteAllFromRole()
     }
@@ -27,15 +29,24 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
     private fun createTables() {
         sqlClient createTable MYSQL_ROLE
         sqlClient createTable MYSQL_USER
+        sqlClient createTable MYSQL_USER_ROLE
     }
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
+    private fun insertUserRoles() {
+        sqlClient insert userRoleBboss
+    }
+
     private fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
 
-    fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MYSQL_USER_ROLE
+
+    fun countAllUserRoles() = sqlClient selectCountAllFrom MYSQL_USER_ROLE
 
     fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
 

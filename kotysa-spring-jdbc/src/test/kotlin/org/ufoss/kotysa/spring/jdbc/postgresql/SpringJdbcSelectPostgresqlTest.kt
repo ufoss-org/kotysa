@@ -138,8 +138,8 @@ class SpringJdbcSelectPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepo
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id))
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -147,6 +147,13 @@ class SpringJdbcSelectPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepo
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id))
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -225,11 +232,17 @@ class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcOperations) : Abstrac
                     from POSTGRESQL_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select POSTGRESQL_ROLE.label
                     from POSTGRESQL_ROLE innerJoin POSTGRESQL_USER on POSTGRESQL_ROLE.id eq POSTGRESQL_USER.roleId
                     where POSTGRESQL_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom POSTGRESQL_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select POSTGRESQL_ROLE.label
+                    from POSTGRESQL_USER_ROLE innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER_ROLE.roleId eq POSTGRESQL_ROLE.id
+                    where POSTGRESQL_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

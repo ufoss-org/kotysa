@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.test
 
 import kotlinx.datetime.*
+import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.tables
 import java.time.LocalDate
@@ -28,6 +29,14 @@ object MYSQL_USER : MysqlTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
             .foreignKey(MYSQL_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+}
+
+object MYSQL_USER_ROLE : MysqlTable<UserRoleEntity>("userRoles") {
+    val userId = integer(UserRoleEntity::userId)
+            .foreignKey(MYSQL_USER.id)
+    val roleId = integer(UserRoleEntity::roleId)
+            .foreignKey(MYSQL_ROLE.id)
+    val pk = primaryKey(userId, roleId)
 }
 
 object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") {
@@ -226,6 +235,7 @@ val mysqlTables =
         tables().mysql(
                 MYSQL_ROLE,
                 MYSQL_USER,
+                MYSQL_USER_ROLE,
                 MYSQL_ALL_TYPES_NOT_NULL,
                 MYSQL_ALL_TYPES_NULLABLE,
                 MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,

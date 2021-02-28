@@ -138,8 +138,8 @@ class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpri
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id))
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id))
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -147,6 +147,13 @@ class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpri
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id))
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -225,11 +232,17 @@ class UserRepositorySpringJdbcMysqlSelect(client: JdbcOperations) : AbstractUser
                     from MYSQL_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select MYSQL_ROLE.label
                     from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
                     where MYSQL_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom MYSQL_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select MYSQL_ROLE.label
+                    from MYSQL_USER_ROLE innerJoin MYSQL_ROLE on MYSQL_USER_ROLE.roleId eq MYSQL_ROLE.id
+                    where MYSQL_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

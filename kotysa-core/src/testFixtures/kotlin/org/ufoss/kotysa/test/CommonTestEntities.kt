@@ -19,11 +19,11 @@ const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
 
 data class RoleEntity(
         val id: Int,
-        val label: String
+        val label: String,
 )
 
 val roleUser = RoleEntity(1, "user")
-val roleAdmin = RoleEntity(2,"admin")
+val roleAdmin = RoleEntity(2, "admin")
 val roleGod = RoleEntity(3, "god")
 
 
@@ -33,11 +33,18 @@ data class UserEntity(
         val lastname: String,
         val isAdmin: Boolean,
         val roleId: Int,
-        val alias: String? = null
+        val alias: String? = null,
 )
 
 val userJdoe = UserEntity(1, "John", "Doe", false, roleUser.id)
 val userBboss = UserEntity(2, "Big", "Boss", true, roleAdmin.id, "TheBoss")
+
+data class UserRoleEntity(
+        val userId: Int,
+        val roleId: Int,
+)
+
+val userRoleBboss = UserRoleEntity(2, 2)
 
 open class AllTypesNotNullEntity(
         open val id: Int,
@@ -366,8 +373,8 @@ open class Inherited(
 
     // try to bring ambiguity for reflection on name val
     protected fun name() = ""
-
     internal fun getName() = ""
+
     @Suppress("UNUSED_PARAMETER")
     fun getName(dummyParam: Boolean) = ""
 
@@ -392,28 +399,22 @@ open class Inherited(
     }
 }
 
-val javaJdoe: JavaUser
-    get() {
-        val javaUser = JavaUser()
-        javaUser.login = "jdoe"
-        javaUser.firstname = "John"
-        javaUser.lastname = "Doe"
-        javaUser.isAdmin = false
-        return javaUser
-    }
+val javaJdoe = JavaUser().apply {
+    login = "jdoe"
+    firstname = "John"
+    lastname = "Doe"
+    isAdmin = false
+}
 
-val javaBboss: JavaUser
-    get() {
-        val javaUser = JavaUser()
-        javaUser.login = "bboss"
-        javaUser.firstname = "Big"
-        javaUser.lastname = "Boss"
-        javaUser.isAdmin = true
-        javaUser.alias1 = "TheBoss"
-        javaUser.alias2 = "TheBoss"
-        javaUser.alias3 = "TheBoss"
-        return javaUser
-    }
+val javaBboss = JavaUser().apply {
+    login = "bboss"
+    firstname = "Big"
+    lastname = "Boss"
+    isAdmin = true
+    alias1 = "TheBoss"
+    alias2 = "TheBoss"
+    alias3 = "TheBoss"
+}
 
 interface ENTITY<T : Entity<String>> : Table<T> {
     val id: StringColumnNotNull<T>

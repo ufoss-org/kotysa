@@ -17,9 +17,11 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
         createTables()
         insertRoles()
         insertUsers()
+        insertUserRoles()
     }
 
     override fun delete() {
+        deleteAllFromUserRoles()
         deleteAllFromUsers()
         deleteAllFromRole()
     }
@@ -27,6 +29,7 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
     private fun createTables() {
         sqlClient createTable H2_ROLE
         sqlClient createTable H2_USER
+        sqlClient createTable H2_USER_ROLE
     }
 
     private fun insertRoles() {
@@ -37,9 +40,17 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
         sqlClient.insert(userJdoe, userBboss)
     }
 
-    fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
+    private fun insertUserRoles() {
+        sqlClient insert userRoleBboss
+    }
+
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
     
     private fun deleteAllFromRole() = sqlClient deleteAllFrom H2_ROLE
+
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom H2_USER_ROLE
+
+    fun countAllUserRoles() = sqlClient selectCountAllFrom H2_USER_ROLE
 
     fun selectAllUsers() = sqlClient selectAllFrom H2_USER
 

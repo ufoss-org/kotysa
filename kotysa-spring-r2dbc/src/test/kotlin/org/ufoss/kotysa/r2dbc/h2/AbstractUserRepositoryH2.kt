@@ -16,33 +16,42 @@ abstract class AbstractUserRepositoryH2(
         createTables()
                 .then(insertRoles())
                 .then(insertUsers())
+                .then(insertUserRoles())
                 .block()
     }
 
     override fun delete() {
-        deleteAllFromUsers()
+        deleteAllFromUserRoles()
+                .then(deleteAllFromUsers())
                 .then(deleteAllFromRole())
                 .block()
     }
 
     private fun createTables() =
-        (sqlClient createTable H2_ROLE)
-            .then(sqlClient createTable H2_USER)
+            (sqlClient createTable H2_ROLE)
+                    .then(sqlClient createTable H2_USER)
+                    .then(sqlClient createTable H2_USER_ROLE)
 
     private fun insertRoles() =
-        sqlClient.insert(roleUser, roleAdmin, roleGod)
+            sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() =
-        sqlClient.insert(userJdoe, userBboss)
+            sqlClient.insert(userJdoe, userBboss)
 
-    fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
+    private fun insertUserRoles() = sqlClient insert userRoleBboss
+
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom H2_ROLE
+
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom H2_USER_ROLE
+
+    fun countAllUserRoles() = sqlClient selectCountAllFrom H2_USER_ROLE
 
     fun selectAllUsers() = sqlClient selectAllFrom H2_USER
 
     fun selectFirstByFirstname(firstname: String) =
-        (sqlClient selectFrom H2_USER
-                where H2_USER.firstname eq firstname
-                ).fetchFirst()
+            (sqlClient selectFrom H2_USER
+                    where H2_USER.firstname eq firstname
+                    ).fetchFirst()
 }

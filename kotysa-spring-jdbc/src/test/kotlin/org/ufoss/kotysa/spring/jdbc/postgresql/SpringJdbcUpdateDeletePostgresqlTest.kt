@@ -21,14 +21,16 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
     }
 
     @Test
-    fun `Verify deleteAllFromUser works correctly`() {
+    fun `Verify deleteAllFromUserRoles works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteAllFromUsers())
-                    .isEqualTo(2)
-            assertThat(repository.selectAllUsers())
-                    .isEmpty()
+            assertThat(repository.deleteAllFromUserRoles())
+                    .isEqualTo(1)
+            assertThat(repository.countAllUserRoles())
+                    .isEqualTo(0)
         }
+        assertThat(repository.countAllUserRoles())
+                .isEqualTo(1)
     }
 
     @Test

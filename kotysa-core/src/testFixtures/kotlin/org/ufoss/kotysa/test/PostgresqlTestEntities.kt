@@ -8,8 +8,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
+import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.tables
+import org.ufoss.kotysa.test.MYSQL_USER_ROLE.foreignKey
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -30,6 +32,14 @@ object POSTGRESQL_USER : PostgresqlTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
             .foreignKey(POSTGRESQL_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+}
+
+object POSTGRESQL_USER_ROLE : PostgresqlTable<UserRoleEntity>("userRoles") {
+    val userId = integer(UserRoleEntity::userId)
+            .foreignKey(POSTGRESQL_USER.id)
+    val roleId = integer(UserRoleEntity::roleId)
+            .foreignKey(POSTGRESQL_ROLE.id)
+    val pk = primaryKey(userId, roleId)
 }
 
 data class PostgresqlAllTypesNotNullEntity(
@@ -313,6 +323,7 @@ object POSTGRESQL_JAVA_USER : PostgresqlTable<JavaUser>("java_users"), JAVA_USER
 val postgresqlTables = tables().postgresql(
         POSTGRESQL_ROLE,
         POSTGRESQL_USER,
+        POSTGRESQL_USER_ROLE,
         POSTGRESQL_ALL_TYPES_NOT_NULL,
         POSTGRESQL_ALL_TYPES_NULLABLE,
         POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,

@@ -132,8 +132,8 @@ class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPost
     }
 
     @Test
-    fun `Verify selectRoleNameFromUserId returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleNameFromUserId(userBboss.id).block())
+    fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserId(userBboss.id).block())
                 .isEqualTo(roleAdmin.label)
     }
 
@@ -141,6 +141,13 @@ class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPost
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers().block()!!)
                 .isEqualTo(2L)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelsFromUserId(userBboss.id).toIterable())
+                .hasSize(1)
+                .containsExactly(roleAdmin.label)
     }
 }
 
@@ -215,11 +222,17 @@ class UserRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractUser
                     from POSTGRESQL_USER
                     ).fetchOne()
 
-    fun selectRoleNameFromUserId(userId: Int) =
+    fun selectRoleLabelFromUserId(userId: Int) =
             (sqlClient select POSTGRESQL_ROLE.label
                     from POSTGRESQL_ROLE innerJoin POSTGRESQL_USER on POSTGRESQL_ROLE.id eq POSTGRESQL_USER.roleId
                     where POSTGRESQL_USER.id eq userId)
                     .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom POSTGRESQL_USER
+
+    fun selectRoleLabelsFromUserId(userId: Int) =
+            (sqlClient select POSTGRESQL_ROLE.label
+                    from POSTGRESQL_USER_ROLE innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER_ROLE.roleId eq POSTGRESQL_ROLE.id
+                    where POSTGRESQL_USER_ROLE.userId eq userId)
+                    .fetchAll()
 }

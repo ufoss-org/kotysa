@@ -14,11 +14,13 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
         createTables()
                 .then(insertRoles())
                 .then(insertUsers())
+                .then(insertUserRoles())
                 .block()
     }
 
     override fun delete() {
-        deleteAllFromUsers()
+        deleteAllFromUserRoles()
+                .then(deleteAllFromUsers())
                 .then(deleteAllFromRole())
                 .block()
     }
@@ -26,14 +28,21 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
     private fun createTables() =
             (sqlClient createTable MYSQL_ROLE)
                     .then(sqlClient createTable MYSQL_USER)
+                    .then(sqlClient createTable MYSQL_USER_ROLE)
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
+    private fun insertUserRoles() = sqlClient insert userRoleBboss
+
     private fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
 
-    fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MYSQL_USER_ROLE
+
+    fun countAllUserRoles() = sqlClient selectCountAllFrom MYSQL_USER_ROLE
 
     fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
 
