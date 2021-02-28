@@ -45,10 +45,7 @@ class UserRepositorySpringJdbc(client: JdbcOperations) {
         val alias = varchar(User::alias)
     }
 
-    private val tables = tables().h2(
-            ROLE,
-            USER
-    )
+    private val tables = tables().h2(ROLE, USER)
 
     private val roleUser = Role("user")
     private val roleAdmin = Role("admin")
@@ -72,7 +69,7 @@ class UserRepositorySpringJdbc(client: JdbcOperations) {
         sqlClient deleteAllFrom USER
         sqlClient.insert(userJdoe, userBboss)
 
-        // val count = sqlClient countAll<User>()
+        val count = sqlClient selectCountAllFrom USER
 
         val all = sqlClient selectAllFrom USER
 
@@ -94,5 +91,10 @@ class UserRepositorySpringJdbc(client: JdbcOperations) {
                 innerJoin ROLE on USER.roleId eq ROLE.id
                 where ROLE.label eq roleUser.label
                 ).execute()
+
+        val admins = (sqlClient selectFrom USER
+                innerJoin ROLE on USER.roleId eq ROLE.id
+                where ROLE.label eq "admin"
+                ).fetchAll() // returns all admin users
     }
 }

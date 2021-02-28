@@ -68,7 +68,7 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
         sqlClient deleteAllFrom USER
         sqlClient.insert(userJdoe, userBboss)
 
-        // val count = sqlClient countAll<User>()
+        val count = sqlClient selectCountAllFrom USER
 
         val all = sqlClient selectAllFrom USER
 
@@ -90,5 +90,10 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
                 innerJoin ROLE on USER.roleId eq ROLE.id
                 where ROLE.label eq roleUser.label
                 ).execute()
+
+        val admins = (sqlClient selectFrom USER
+                innerJoin ROLE on USER.roleId eq ROLE.id
+                where ROLE.label eq "admin"
+                ).fetchAll() // returns all admin users
     }
 }
