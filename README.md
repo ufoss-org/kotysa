@@ -25,9 +25,10 @@ data class User(
 )
 ```
 
-### step 2 -> Describe database model with our type-safe Table description DSL
+### step 2 -> Describe database model
 
-Declare mapping based on these entities, using a Kotlin object for each table
+Use our type-safe Tables DSL to map your entities with the database tables,
+this is the ORM (object-relational mapping) step
 
 ```kotlin
 object ROLE : H2Table<Role>("roles") {
@@ -49,9 +50,9 @@ object USER : H2Table<User>("users") {
 private val tables = tables().h2(ROLE, USER)
 ```
 
-### step 3 -> Write SQL queries with our type-safe SqlClient DSL
+### step 3 -> Write SQL queries
 
-Kotysa will generate SQL for you !
+Use our type-safe SqlClient DSL, Kotysa generates SQL for you !
 
 ```kotlin
 val admins = (sqlClient selectFrom USER
