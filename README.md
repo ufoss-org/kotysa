@@ -6,6 +6,53 @@
 
 The idiomatic way to write **Ko**tlin **ty**pe-**sa**fe SQL.
 
+## Easy to use : 3 steps only
+### step 1 -> Create Kotlin entities
+
+data classes are great for that !
+
+```kotlin
+data class Role(
+        val label: String,
+        val id: UUID = UUID.randomUUID()
+)
+
+data class User(
+        val firstname: String,
+        val roleId: UUID,
+        val alias: String? = null,
+        val id: UUID = UUID.randomUUID()
+)
+```
+
+### step 2 -> Describe database model with our type-safe Table description DSL
+
+Declare mapping based on these entities, using a Kotlin object for each table
+
+```kotlin
+object ROLE : H2Table<Role>("roles") {
+    val id = uuid(Role::id)
+        .primaryKey()
+    val label = varchar(Role::label)
+}
+
+object USER : H2Table<User>("users") {
+    val id = uuid(User::id)
+        .primaryKey("PK_users")
+    val firstname = varchar(User::firstname, "fname")
+    val roleId = uuid(User::roleId)
+        .foreignKey(ROLE.id, "FK_users_roles")
+    val alias = varchar(User::alias)
+}
+
+// List all your mapped tables
+private val tables = tables().h2(ROLE, USER)
+```
+
+### step 3 -> Write SQL queries with our type-safe SqlClient DSL
+
+Kotysa will generate SQL for you !
+
 ```kotlin
 val admins = (sqlClient selectFrom USER
         innerJoin ROLE on USER.roleId eq ROLE.id
@@ -13,8 +60,12 @@ val admins = (sqlClient selectFrom USER
         ).fetchAll() // returns all admin users
 ```
 
+**No annotations, no code generation, just regular Kotlin code ! No JPA, just pure SQL !**
+
+## Getting started
+
 <p align="center">
-<a href="https://ufoss.org/kotysa/kotysa.html">Read Documentation</a>
+<a href="https://ufoss.org/kotysa/kotysa.html">Full documentation</a>
 </p>
 
 ## Contributors
