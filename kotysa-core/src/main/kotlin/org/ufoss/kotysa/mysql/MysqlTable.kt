@@ -60,23 +60,11 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
     protected fun date(getter: (T) -> LocalDate?, columnName: String? = null, defaultValue: LocalDate? = null): LocalDateDbDateColumnNullable<T> =
             LocalDateDbDateColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun date(getter: (T) -> kotlinx.datetime.LocalDate, columnName: String? = null): KotlinxLocalDateDbDateColumnNotNull<T> =
-            KotlinxLocalDateDbDateColumnNotNull(getter, columnName).also { addColumn(it) }
-
-    protected fun date(getter: (T) -> kotlinx.datetime.LocalDate?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDate? = null): KotlinxLocalDateDbDateColumnNullable<T> =
-            KotlinxLocalDateDbDateColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
-
     protected fun dateTime(getter: (T) -> LocalDateTime, columnName: String? = null, precision: Int? = null): LocalDateTimeDbDateTimeColumnNotNull<T> =
             LocalDateTimeDbDateTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
 
     protected fun dateTime(getter: (T) -> LocalDateTime?, columnName: String? = null, defaultValue: LocalDateTime? = null, precision: Int? = null): LocalDateTimeDbDateTimeColumnNullable<T> =
             LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
-
-    protected fun dateTime(getter: (T) -> kotlinx.datetime.LocalDateTime, columnName: String? = null, precision: Int? = null): KotlinxLocalDateTimeDbDateTimeColumnNotNull<T> =
-            KotlinxLocalDateTimeDbDateTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
-
-    protected fun dateTime(getter: (T) -> kotlinx.datetime.LocalDateTime?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDateTime? = null, precision: Int? = null): KotlinxLocalDateTimeDbDateTimeColumnNullable<T> =
-            KotlinxLocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
 //     protected fun timestamp(getter: (T) -> OffsetDateTime, columnName: String? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNotNull<T> =
 //             OffsetDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }

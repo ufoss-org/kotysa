@@ -8,10 +8,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
-import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.postgresql.PostgresqlTable
+import org.ufoss.kotysa.postgresql.date
+import org.ufoss.kotysa.postgresql.timestamp
 import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.MYSQL_USER_ROLE.foreignKey
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*

@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.test
 
 import org.ufoss.kotysa.sqlite.SqLiteTable
+import org.ufoss.kotysa.sqlite.text
 import org.ufoss.kotysa.tables
-import org.ufoss.kotysa.test.SQLITE_USER.foreignKey
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
