@@ -32,7 +32,7 @@ class PostgreSqlContainerExecutionHook : ParameterResolver {
     }
 }
 
-internal class KPostgreSqlContainer : PostgreSQLContainer<KPostgreSqlContainer>("postgres:13.0-alpine")
+internal class KPostgreSqlContainer : PostgreSQLContainer<KPostgreSqlContainer>("postgres:13.2-alpine")
 
 class PostgreSqlContainerResource internal constructor(
         private val dbContainer: KPostgreSqlContainer

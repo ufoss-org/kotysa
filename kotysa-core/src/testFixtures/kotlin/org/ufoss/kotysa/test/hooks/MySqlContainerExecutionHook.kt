@@ -31,7 +31,7 @@ class MySqlContainerExecutionHook : ParameterResolver {
     }
 }
 
-internal class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.22")
+internal class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.23")
 
 class MySqlContainerResource internal constructor(
         private val dbContainer: KMySQLContainer
