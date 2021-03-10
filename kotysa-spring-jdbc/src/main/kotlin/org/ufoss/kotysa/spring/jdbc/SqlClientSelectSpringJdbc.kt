@@ -114,17 +114,24 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     internal class From<T : Any, U : Any> internal constructor(
             override val client: NamedParameterJdbcOperations,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>>(properties), SqlClientSelect.From<T, U>, Return<T> {
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>>(properties),
+            SqlClientSelect.From<T, U>, LimitOffset<T> {
         override val where = Where(client, properties)
         override val from = this
+        override val limitOffset = this
     }
 
     internal class Where<T : Any> constructor(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>>(), SqlClientSelect.Where<T>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>>(),
+            SqlClientSelect.Where<T>, LimitOffset<T> {
         override val where = this
+        override val limitOffset = this
     }
+
+    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>,
+            SqlClientSelect.LimitOffset<T>, Return<T>
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: NamedParameterJdbcOperations
