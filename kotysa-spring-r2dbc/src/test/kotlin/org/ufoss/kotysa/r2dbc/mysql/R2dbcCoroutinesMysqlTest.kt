@@ -102,6 +102,12 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
                 .isEqualTo("Do")
         repository.updateLastname(userJdoe.lastname)
     }
+
+    @Test
+    fun `Verify selectAllLimitOffset returns 1 user`() = runBlocking<Unit> {
+        assertThat(repository.selectAllLimitOffset().toList())
+                .hasSize(1)
+    }
 }
 
 
@@ -167,4 +173,9 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
                     set MYSQL_USER.lastname eq newLastname
                     where MYSQL_USER.id eq userJdoe.id
                     ).execute()
+
+    fun selectAllLimitOffset() =
+            (sqlClient selectFrom MYSQL_USER
+                    limit 1 offset 1
+                    ).fetchAll()
 }

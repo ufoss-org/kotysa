@@ -109,9 +109,19 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
             val froms = froms()
             val wheres = wheres()
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres" }
+            val limit = if (limit != null) {
+                "LIMIT $limit"
+            } else {
+                ""
+            }
+            val offset = if (offset != null) {
+                "OFFSET $offset"
+            } else {
+                ""
+            }
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $limit $offset" }
 
-            "$selects $froms $wheres"
+            "$selects $froms $wheres $limit $offset"
         }
     }
 }

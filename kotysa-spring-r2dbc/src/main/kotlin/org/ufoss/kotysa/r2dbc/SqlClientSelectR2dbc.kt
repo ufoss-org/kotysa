@@ -120,17 +120,24 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
     internal class From<T : Any, U : Any> internal constructor(
             override val client: DatabaseClient,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>>(properties), ReactorSqlClientSelect.From<T, U>, Return<T> {
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>,
+            ReactorSqlClientSelect.LimitOffset<T>>(properties), ReactorSqlClientSelect.From<T, U>, LimitOffset<T> {
         override val where = Where(client, properties)
         override val from = this
+        override val limitOffset = this
     }
 
     internal class Where<T : Any> constructor(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Where<T, ReactorSqlClientSelect.Where<T>>(), ReactorSqlClientSelect.Where<T>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T, ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>>(),
+            ReactorSqlClientSelect.Where<T>, LimitOffset<T> {
         override val where = this
+        override val limitOffset = this
     }
+
+    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>,
+            ReactorSqlClientSelect.LimitOffset<T>, Return<T>
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
 
