@@ -22,6 +22,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
 
         public lateinit var select: (RowImpl) -> T?
+
+        public var limit: Int? = null
+        public var offset: Int? = null
     }
 
     protected interface WithProperties<T : Any> : DefaultSqlClientCommon.WithProperties {
@@ -33,7 +36,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *>): V = with(properties) {
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *>): V = with(properties) {
             select = when (selectedFields.size) {
                 1 -> selectedFields[0].builder as (RowImpl) -> T?
                 2 -> {
@@ -75,24 +78,50 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.select = field.builder
         }
 
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *>): V =
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *>): V =
             from.addFromTable(table)
     }
 
-    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>> protected constructor(
+    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>, X : SqlClientQuery.LimitOffset<X>> protected constructor(
             final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), Return<T>
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>> : DefaultSqlClientCommon.Where<Any, U>(), Return<T>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>> protected constructor()
+        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>
+
+    protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
+        : SqlClientQuery.LimitOffset<U>, Return<T> {
+        public val limitOffset: U
+
+        override fun limit(limit: Int): U {
+            properties.limit = limit
+            return limitOffset
+        }
+
+        override fun offset(offset: Int): U {
+            properties.offset = offset
+            return limitOffset
+        }
+    }
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
             val froms = froms()
             val wheres = wheres()
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres" }
+            val limit = if (limit != null) {
+                "LIMIT $limit"
+            } else {
+                ""
+            }
+            val offset = if (offset != null) {
+                "OFFSET $offset"
+            } else {
+                ""
+            }
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $limit $offset" }
 
-            "$selects $froms $wheres"
+            "$selects $froms $wheres $limit $offset"
         }
     }
 }

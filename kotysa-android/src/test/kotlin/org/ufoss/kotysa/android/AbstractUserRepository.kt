@@ -6,6 +6,7 @@ package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.android.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepository(
@@ -36,7 +37,10 @@ abstract class AbstractUserRepository(
     }
 
     private fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod)
+        val operator = sqLiteOpenHelper.writableDatabase.transactionalOp()
+        operator.execute {
+            sqlClient.insert(roleUser, roleAdmin, roleGod)
+        }
     }
 
     private fun insertUsers() {

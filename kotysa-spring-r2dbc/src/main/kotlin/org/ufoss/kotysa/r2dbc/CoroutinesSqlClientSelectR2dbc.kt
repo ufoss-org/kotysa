@@ -115,17 +115,25 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
     internal class From<T : Any, U : Any> internal constructor(
             override val client: DatabaseClient,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>, CoroutinesSqlClientSelect.Where<T>>(properties), CoroutinesSqlClientSelect.From<T, U>, Return<T> {
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>,
+            CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>>(properties),
+            CoroutinesSqlClientSelect.From<T, U>, LimitOffset<T> {
         override val where = Where(client, properties)
         override val from = this
+        override val limitOffset = this
     }
 
     internal class Where<T : Any> constructor(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>>(), CoroutinesSqlClientSelect.Where<T>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>>(),
+            CoroutinesSqlClientSelect.Where<T>, LimitOffset<T> {
         override val where = this
+        override val limitOffset = this
     }
+
+    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>,
+            CoroutinesSqlClientSelect.LimitOffset<T>, Return<T>
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, CoroutinesSqlClientSelect.Return<T> {
 

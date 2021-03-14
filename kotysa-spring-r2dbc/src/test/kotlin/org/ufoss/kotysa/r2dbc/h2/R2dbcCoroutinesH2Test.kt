@@ -100,6 +100,12 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
                 .isEqualTo("Do")
         repository.updateLastname(userJdoe.lastname)
     }
+
+    @Test
+    fun `Verify selectAllLimitOffset returns 1 user`() = runBlocking<Unit> {
+        assertThat(repository.selectAllLimitOffset().toList())
+                .hasSize(1)
+    }
 }
 
 
@@ -163,4 +169,9 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
                     set H2_USER.lastname eq newLastname
                     where H2_USER.id eq userJdoe.id
                     ).execute()
+
+    fun selectAllLimitOffset() =
+            (sqlClient selectFrom H2_USER
+                    limit 1 offset 1
+                    ).fetchAll()
 }

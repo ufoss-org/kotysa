@@ -193,4 +193,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun or(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
         public infix fun or(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
     }
+
+    public interface LimitOffset<T : LimitOffset<T>> {
+        public infix fun limit(limit: Int): T
+        public infix fun offset(offset: Int): T
+    }
 }

@@ -75,9 +75,11 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
 
     public interface Select : Fromable<List<Any?>>, Andable
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, Return<T>
+    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, LimitOffset<T>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, Return<T>
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, LimitOffset<T>
+
+    public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 
     public interface Return<T : Any> {
         /**
