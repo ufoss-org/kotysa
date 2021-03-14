@@ -106,7 +106,9 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(allTypesNotNull, allTypesNullable, allTypesNullableDefaultValue)
+        sqlClient.insert(allTypesNotNull)
+        sqlClient.insert(allTypesNullable)
+        sqlClient.insert(allTypesNullableDefaultValue)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom SQLITE_ALL_TYPES_NOT_NULL

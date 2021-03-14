@@ -18,7 +18,6 @@ internal class SqlClientSqLite(
 
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
-
         val statement = client.writableDatabase.compileStatement(insertSql(row))
         table.columns
                 .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
@@ -27,9 +26,22 @@ internal class SqlClientSqLite(
         statement.executeInsert()
     }
 
+    /**
+     * To speed these insert up, use inside a transaction
+     */
     override fun <T : Any> insert(vararg rows: T) {
-        rows.forEach { row -> insert(row) }
+        val firstRow = rows[0]
+        val table = tables.getTable(firstRow::class)
+        val statement = client.writableDatabase.compileStatement(insertSql(firstRow))
+        rows.forEach { row ->
+            statement.clearBindings()
+            table.columns
+                    .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
+                    .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
+            statement.executeInsert()
+        }
     }
+
 
     override fun <T : Any> createTable(table: Table<T>) {
         val createTableSql = createTableSql(table)
