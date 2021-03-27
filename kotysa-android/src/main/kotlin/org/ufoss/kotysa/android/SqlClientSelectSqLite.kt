@@ -22,6 +22,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 SelectWithDsl(client, Properties(tables), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+        override fun <T : Any> selectDistinct(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
     internal class FirstSelect<T : Any> internal constructor(
@@ -41,6 +43,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
         override fun <U : Any> andCount(column: Column<*, U>): SqlClientSelect.SecondSelect<T, Long> =
                 SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
+        override fun <U : Any> andDistinct(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class SecondSelect<T, U> internal constructor(
@@ -60,6 +66,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class ThirdSelect<T, U, V> internal constructor(
@@ -79,6 +89,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
         override fun <W : Any> andCount(column: Column<*, W>): SqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+        override fun <W : Any> andDistinct(column: Column<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class Select internal constructor(
@@ -93,6 +107,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.Select = this.apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): SqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
     }
 
     internal class SelectWithDsl<T : Any> internal constructor(

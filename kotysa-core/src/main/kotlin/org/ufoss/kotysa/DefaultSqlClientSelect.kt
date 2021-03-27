@@ -59,8 +59,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add((table as AbstractTable<U>).toField(properties))
         }
 
-        public fun <U : Any> addSelectColumn(column: Column<*, U>) {
-            properties.selectedFields.add(column.toField(properties))
+        public fun <U : Any> addSelectColumn(column: Column<*, U>, classifier: FieldClassifier = FieldClassifier.NONE) {
+            properties.selectedFields.add(column.toField(properties, classifier))
         }
 
         public fun <U : Any> addCountColumn(column: Column<*, U>? = null) {

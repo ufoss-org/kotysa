@@ -28,6 +28,8 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 SelectWithDsl(client, Properties(tables), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+        override fun <T : Any> selectDistinct(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
     internal class FirstSelect<T : Any> internal constructor(
@@ -47,6 +49,10 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
         override fun <U : Any> andCount(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T, Long> =
                 SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
+        override fun <U : Any> andDistinct(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class SecondSelect<T, U> internal constructor(
@@ -66,6 +72,10 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class ThirdSelect<T, U, V> internal constructor(
@@ -85,6 +95,10 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
         override fun <W : Any> andCount(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+        override fun <W : Any> andDistinct(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class Select internal constructor(
@@ -99,6 +113,9 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
     }
 
     internal class SelectWithDsl<T : Any> internal constructor(

@@ -27,6 +27,8 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 SelectWithDsl(client, Properties(tables), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): ReactorSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+        override fun <T : Any> selectDistinct(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
     internal class FirstSelect<T : Any> internal constructor(
@@ -42,12 +44,14 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
         override fun <U : Any> and(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T?, U?> =
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
-
         override fun <U : Any> and(table: Table<U>): ReactorSqlClientSelect.SecondSelect<T, U> =
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
-
         override fun <U : Any> andCount(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T, Long> =
                 SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
+        override fun <U : Any> andDistinct(column: Column<*, U>): ReactorSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class SecondSelect<T, U> internal constructor(
@@ -63,12 +67,14 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
         override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, V?> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
-
         override fun <V : Any> and(table: Table<V>): ReactorSqlClientSelect.ThirdSelect<T, U, V> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
-
         override fun <V : Any> andCount(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class ThirdSelect<T, U, V> internal constructor(
@@ -84,12 +90,14 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
 
         override fun <W : Any> and(column: Column<*, W>): ReactorSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
-
         override fun <W : Any> and(table: Table<W>): ReactorSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
-
         override fun <W : Any> andCount(column: Column<*, W>): ReactorSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+        override fun <W : Any> andDistinct(column: Column<*, W>): ReactorSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
     internal class Select internal constructor(
@@ -104,6 +112,9 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
         override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): ReactorSqlClientSelect.Select = this.apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): ReactorSqlClientSelect.Select = this.apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): ReactorSqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
     }
 
     internal class SelectWithDsl<T : Any> internal constructor(
