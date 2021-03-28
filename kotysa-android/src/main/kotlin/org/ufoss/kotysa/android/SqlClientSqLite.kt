@@ -64,6 +64,8 @@ internal class SqlClientSqLite(
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectDistinct(column)
 }
 
 /**

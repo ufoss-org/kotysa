@@ -41,6 +41,8 @@ private class SqlClientR2dbc(
             SqlClientSelectR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
             SqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectDistinct(column)
 }
 
 /**

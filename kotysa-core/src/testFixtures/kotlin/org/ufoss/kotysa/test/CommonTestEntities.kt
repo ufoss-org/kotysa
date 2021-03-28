@@ -25,6 +25,7 @@ data class RoleEntity(
 val roleUser = RoleEntity(1, "user")
 val roleAdmin = RoleEntity(2, "admin")
 val roleGod = RoleEntity(3, "god")
+val roleGodBis = RoleEntity(4, "god")
 
 
 data class UserEntity(

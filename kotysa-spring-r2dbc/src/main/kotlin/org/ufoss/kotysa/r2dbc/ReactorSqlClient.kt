@@ -31,6 +31,7 @@ public interface ReactorSqlClient {
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T>
     public fun selectCount(): ReactorSqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long>
+    public infix fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.From<T, T> =
             select(table).from(table)

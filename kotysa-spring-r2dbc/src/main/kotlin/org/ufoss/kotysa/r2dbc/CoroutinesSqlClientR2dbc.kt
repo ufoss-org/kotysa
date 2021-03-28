@@ -43,6 +43,8 @@ private class CoroutinesSqlClientR2Dbc(
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectDistinct(column)
 }
 
 /**

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.H2_ROLE
 import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 
 class SpringJdbcSelectOrH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectOr>() {
@@ -19,9 +19,9 @@ class SpringJdbcSelectOrH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJd
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
+        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(roleAdmin, roleGod)
+                .containsExactlyInAnyOrder(roleUser, roleAdmin)
     }
 }
 

@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.H2_ROLE
-import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 
 class SpringJdbcSelectAndH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectAnd>() {
@@ -17,10 +17,10 @@ class SpringJdbcSelectAndH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJ
     override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectAnd>()
 
     @Test
-    fun `Verify selectRolesByLabels finds h2God`() {
-        assertThat(repository.selectRolesByLabels("d", "g"))
+    fun `Verify selectRolesByLabels finds h2User`() {
+        assertThat(repository.selectRolesByLabels("u", "r"))
                 .hasSize(1)
-                .containsExactly(roleGod)
+                .containsExactly(roleUser)
     }
 }
 

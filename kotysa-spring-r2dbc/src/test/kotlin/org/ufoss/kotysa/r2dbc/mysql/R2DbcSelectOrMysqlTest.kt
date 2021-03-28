@@ -11,7 +11,7 @@ import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.MYSQL_ROLE
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 
 class R2DbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectOr>() {
@@ -24,9 +24,9 @@ class R2DbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectO
 
     @Test
     fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
-        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label).toIterable())
+        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toIterable())
                 .hasSize(2)
-                .containsExactlyInAnyOrder(roleAdmin, roleGod)
+                .containsExactlyInAnyOrder(roleUser, roleAdmin)
     }
 }
 

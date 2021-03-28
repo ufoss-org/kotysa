@@ -27,6 +27,7 @@ public interface SqlClient {
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
     public fun selectCount(): SqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long>
+    public infix fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
             select(table).from(table)

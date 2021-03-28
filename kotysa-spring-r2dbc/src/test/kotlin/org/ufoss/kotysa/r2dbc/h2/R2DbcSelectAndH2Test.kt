@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_ROLE
-import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 
 class R2DbcSelectAndH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectAnd>() {
@@ -21,10 +21,10 @@ class R2DbcSelectAndH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectAnd>() {
     }
 
     @Test
-    fun `Verify selectRolesByLabels finds h2God`() {
-        assertThat(repository.selectRolesByLabels("d", "g").toIterable())
+    fun `Verify selectRolesByLabels finds h2User`() {
+        assertThat(repository.selectRolesByLabels("u", "r").toIterable())
                 .hasSize(1)
-                .containsExactly(roleGod)
+                .containsExactly(roleUser)
     }
 }
 

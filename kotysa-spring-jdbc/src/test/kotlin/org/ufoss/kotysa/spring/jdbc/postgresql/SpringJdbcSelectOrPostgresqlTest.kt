@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.POSTGRESQL_ROLE
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 
 class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectOr>() {
@@ -24,9 +24,9 @@ class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRe
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
+        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(roleAdmin, roleGod)
+                .containsExactlyInAnyOrder(roleUser, roleAdmin)
     }
 }
 

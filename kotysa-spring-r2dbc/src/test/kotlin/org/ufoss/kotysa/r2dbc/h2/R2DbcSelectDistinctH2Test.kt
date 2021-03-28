@@ -10,33 +10,33 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_ROLE
 import org.ufoss.kotysa.test.roleAdmin
+import org.ufoss.kotysa.test.roleGod
 import org.ufoss.kotysa.test.roleUser
 
 
-class R2DbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectOr>() {
+class R2DbcSelectDistinctH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectDistinct>() {
 
     @BeforeAll
     fun beforeAll() {
-        context = startContext<UserRepositoryH2SelectOr>()
+        context = startContext<UserRepositoryH2SelectDistinct>()
         repository = getContextRepository()
     }
 
     @Test
-    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
+    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
+        assertThat(repository.selectDistinctRoleLabels().toIterable())
+                .hasSize(3)
+                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
     }
 }
 
 
-class UserRepositoryH2SelectOr(
+class UserRepositoryH2SelectDistinct(
         sqlClient: ReactorSqlClient,
 ) : AbstractUserRepositoryH2(sqlClient) {
 
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom H2_ROLE
-                    where H2_ROLE.label eq label1
-                    or H2_ROLE.label eq label2
+    fun selectDistinctRoleLabels() =
+            (sqlClient selectDistinct H2_ROLE.label
+                    from H2_ROLE
                     ).fetchAll()
 }
