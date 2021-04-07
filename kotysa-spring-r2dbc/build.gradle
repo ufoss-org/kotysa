@@ -16,7 +16,7 @@ dependencies {
     testImplementation testFixtures(project(':kotysa-core'))
 
     testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
-    testImplementation 'org.springframework.data:spring-data-r2dbc'
+    testImplementation 'org.springframework:spring-r2dbc'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'io.r2dbc:r2dbc-h2'
     testImplementation 'io.r2dbc:r2dbc-postgresql'
