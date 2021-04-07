@@ -82,9 +82,14 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <W : Any> andDistinct(column: Column<*, W>): Select
     }
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, LimitOffset<T>
+    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
+            LimitOffset<T>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, LimitOffset<T>
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, GroupBy<T>, LimitOffset<T>
+
+    public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>, Return<T>
+
+    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, LimitOffset<T>
 
     public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 

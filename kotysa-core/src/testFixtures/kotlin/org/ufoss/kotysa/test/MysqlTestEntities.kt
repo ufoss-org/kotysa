@@ -17,32 +17,32 @@ import java.time.temporal.ChronoUnit
 
 object MYSQL_ROLE : MysqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
-        .primaryKey()
+            .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
 object MYSQL_USER : MysqlTable<UserEntity>("users") {
     val id = integer(UserEntity::id, "PK_users")
-        .primaryKey()
+            .primaryKey()
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-        .foreignKey(MYSQL_ROLE.id, "FK_users_roles")
+            .foreignKey(MYSQL_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
 object MYSQL_USER_ROLE : MysqlTable<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-        .foreignKey(MYSQL_USER.id)
+            .foreignKey(MYSQL_USER.id)
     val roleId = integer(UserRoleEntity::roleId)
-        .foreignKey(MYSQL_ROLE.id)
+            .foreignKey(MYSQL_ROLE.id)
     val pk = primaryKey(userId, roleId)
 }
 
 object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
-        .primaryKey()
+            .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
@@ -57,7 +57,7 @@ object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") 
 
 object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
-        .primaryKey()
+            .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
@@ -71,63 +71,63 @@ object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_
 
 object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
-        .primaryKey()
+            .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
     val localDate = date(
-        AllTypesNullableDefaultValueEntity::localDate,
-        defaultValue = LocalDate.of(2019, 11, 4)
+            AllTypesNullableDefaultValueEntity::localDate,
+            defaultValue = LocalDate.of(2019, 11, 4)
     )
     val kotlinxLocalDate = date(
-        AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
-        defaultValue = LocalDate(2019, 11, 6)
+            AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+            defaultValue = LocalDate(2019, 11, 6)
     )
     val localTim = time(
-        AllTypesNullableDefaultValueEntity::localTime,
-        defaultValue = LocalTime.of(11, 25, 55, 123456789)
+            AllTypesNullableDefaultValueEntity::localTime,
+            defaultValue = LocalTime.of(11, 25, 55, 123456789)
     )
     val localDateTime1 = dateTime(
-        AllTypesNullableDefaultValueEntity::localDateTime1,
-        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+            AllTypesNullableDefaultValueEntity::localDateTime1,
+            defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
     )
     val localDateTime2 = dateTime(
-        AllTypesNullableDefaultValueEntity::localDateTime2,
-        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+            AllTypesNullableDefaultValueEntity::localDateTime2,
+            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
     )
     val kotlinxLocalDateTime1 = dateTime(
-        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
-        defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
+            AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+            defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
     )
     val kotlinxLocalDateTime2 = dateTime(
-        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
-        defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
+            AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+            defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
 }
 
 object MYSQL_LOCAL_DATE : MysqlTable<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
-        .primaryKey()
+            .primaryKey()
     val localDateNotNull = date(LocalDateEntity::localDateNotNull)
     val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
 object MYSQL_KOTLINX_LOCAL_DATE : MysqlTable<KotlinxLocalDateEntity>() {
     val id = integer(KotlinxLocalDateEntity::id)
-        .primaryKey()
+            .primaryKey()
     val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
 object MYSQL_LOCAL_DATE_TIME : MysqlTable<LocalDateTimeEntity>() {
     val id = integer(LocalDateTimeEntity::id)
-        .primaryKey()
+            .primaryKey()
     val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
 object MYSQL_KOTLINX_LOCAL_DATE_TIME : MysqlTable<KotlinxLocalDateTimeEntity>() {
     val id = integer(KotlinxLocalDateTimeEntity::id)
-        .primaryKey()
+            .primaryKey()
     val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
@@ -141,14 +141,14 @@ object MYSQL_KOTLINX_LOCAL_DATE_TIME : MysqlTable<KotlinxLocalDateTimeEntity>() 
 
 object MYSQL_LOCAL_TIME : MysqlTable<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
-        .primaryKey()
+            .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
 object MYSQL_INT : MysqlTable<IntEntity>() {
     val id = autoIncrementInteger(IntEntity::id)
-        .primaryKey()
+            .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
@@ -170,20 +170,20 @@ private fun LocalDateTime.roundToSecond(): LocalDateTime {
 }
 
 data class MysqlAllTypesNotNull(
-    override val id: Int,
-    override val string: String,
-    override val boolean: Boolean,
-    override val localDate: LocalDate,
-    override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-    override val localTime: LocalTime,
-    override val localDateTime1: LocalDateTime,
-    override val localDateTime2: LocalDateTime,
-    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
-    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
-    override val int: Int
+        override val id: Int,
+        override val string: String,
+        override val boolean: Boolean,
+        override val localDate: LocalDate,
+        override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+        override val localTime: LocalTime,
+        override val localDateTime1: LocalDateTime,
+        override val localDateTime2: LocalDateTime,
+        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+        override val int: Int
 ) : AllTypesNotNullEntity(
-    id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
+        id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -199,10 +199,10 @@ data class MysqlAllTypesNotNull(
         if (localDateTime1.roundToSecond() != other.localDateTime1.roundToSecond()) return false
         if (localDateTime2.roundToSecond() != other.localDateTime2.roundToSecond()) return false
         if (kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
-            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
+                != other.kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
         ) return false
         if (kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
-            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
+                != other.kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
         ) return false
         if (int != other.int) return false
         if (id != other.id) return false
@@ -226,22 +226,22 @@ data class MysqlAllTypesNotNull(
 }
 
 val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
-    LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1
+        1, "",
+        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
+        LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1
 )
 
 object MYSQL_INHERITED : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
-        .primaryKey()
+            .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
 object MYSQL_JAVA_USER : MysqlTable<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
-        .primaryKey()
+            .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
     override val lastname = varchar(JavaUser::getLastname, "lname")
     override val isAdmin = boolean(JavaUser::isAdmin)
@@ -250,8 +250,14 @@ object MYSQL_JAVA_USER : MysqlTable<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-val mysqlTables =
-    tables().mysql(
+object MYSQL_CUSTOMER : MysqlTable<CustomerEntity>() {
+    val id = integer(CustomerEntity::id)
+            .primaryKey()
+    val name = varchar(CustomerEntity::name)
+    val country = varchar(CustomerEntity::country)
+}
+
+val mysqlTables = tables().mysql(
         MYSQL_ROLE,
         MYSQL_USER,
         MYSQL_USER_ROLE,
@@ -267,4 +273,5 @@ val mysqlTables =
         MYSQL_INT,
         MYSQL_INHERITED,
         MYSQL_JAVA_USER,
-    )
+        MYSQL_CUSTOMER,
+)

@@ -31,7 +31,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
-    internal class FirstSelect<T : Any> internal constructor(
+    private class FirstSelect<T : Any>(
             private val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Select<T>(), SqlClientSelect.FirstSelect<T> {
@@ -54,7 +54,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 }
     }
 
-    internal class SecondSelect<T, U> internal constructor(
+    private class SecondSelect<T, U>(
             private val client: NamedParameterJdbcOperations,
             override val properties: Properties<Pair<T, U>>,
     ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), SqlClientSelect.SecondSelect<T, U> {
@@ -77,7 +77,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 }
     }
 
-    internal class ThirdSelect<T, U, V> internal constructor(
+    private class ThirdSelect<T, U, V>(
             private val client: NamedParameterJdbcOperations,
             override val properties: Properties<Triple<T, U, V>>,
     ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), SqlClientSelect.ThirdSelect<T, U, V> {
@@ -100,7 +100,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 }
     }
 
-    internal class Select internal constructor(
+    private class Select(
             client: NamedParameterJdbcOperations,
             override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
@@ -117,7 +117,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         }
     }
 
-    internal class SelectWithDsl<T : Any> internal constructor(
+    private class SelectWithDsl<T : Any>(
             client: NamedParameterJdbcOperations,
             properties: Properties<T>,
             dsl: (ValueProvider) -> T,
@@ -128,27 +128,49 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 addFromTable(table, from as From<T, U>)
     }
 
-    internal class From<T : Any, U : Any> internal constructor(
+    private class From<T : Any, U : Any>(
             override val client: NamedParameterJdbcOperations,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>>(properties),
-            SqlClientSelect.From<T, U>, LimitOffset<T> {
-        override val where = Where(client, properties)
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
+            SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>>(properties), SqlClientSelect.From<T, U>,
+            SqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val from = this
-        override val limitOffset = this
+        override val where: SqlClientSelect.Where<T> by lazy { Where(client, properties) }
+        override val limitOffset: SqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: SqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    internal class Where<T : Any> constructor(
+    private class Where<T : Any>(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>>(),
-            SqlClientSelect.Where<T>, LimitOffset<T> {
+    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>,
+            SqlClientSelect.GroupBy<T>, SqlClientSelect.GroupByPart2<T>>(),
+            SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val where = this
-        override val limitOffset = this
+        override val limitOffset: SqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: SqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>,
-            SqlClientSelect.LimitOffset<T>, Return<T>
+    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, SqlClientSelect.GroupByPart2<T>>,
+            SqlClientSelect.GroupBy<T>, Return<T>
+
+    private class GroupByPart2<T : Any>(
+            override val client: NamedParameterJdbcOperations,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSelect.GroupByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, SqlClientSelect.GroupByPart2<T>,
+            SqlClientSelect.LimitOffset<T>, Return<T> {
+        override val limitOffset: SqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 = this
+    }
+
+    private class LimitOffset<T : Any>(
+            override val client: NamedParameterJdbcOperations,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, SqlClientSelect.LimitOffset<T>,
+            Return<T> {
+        override val limitOffset = this
+    }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: NamedParameterJdbcOperations

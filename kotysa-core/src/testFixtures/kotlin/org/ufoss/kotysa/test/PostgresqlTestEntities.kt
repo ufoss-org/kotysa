@@ -8,10 +8,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
+import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.postgresql.date
 import org.ufoss.kotysa.postgresql.timestamp
 import org.ufoss.kotysa.tables
+import org.ufoss.kotysa.test.MYSQL_CUSTOMER.primaryKey
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -320,6 +322,13 @@ object POSTGRESQL_JAVA_USER : PostgresqlTable<JavaUser>("java_users"), JAVA_USER
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
+object POSTGRESQL_CUSTOMER : PostgresqlTable<CustomerEntity>() {
+    val id = integer(CustomerEntity::id)
+            .primaryKey()
+    val name = varchar(CustomerEntity::name)
+    val country = varchar(CustomerEntity::country)
+}
+
 val postgresqlTables = tables().postgresql(
         POSTGRESQL_ROLE,
         POSTGRESQL_USER,
@@ -337,4 +346,5 @@ val postgresqlTables = tables().postgresql(
         POSTGRESQL_UUID,
         POSTGRESQL_INHERITED,
         POSTGRESQL_JAVA_USER,
+        POSTGRESQL_CUSTOMER,
 )

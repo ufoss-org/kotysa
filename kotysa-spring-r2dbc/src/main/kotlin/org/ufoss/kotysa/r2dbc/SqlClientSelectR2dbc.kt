@@ -31,7 +31,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
-    internal class FirstSelect<T : Any> internal constructor(
+    private class FirstSelect<T : Any>(
             private val client: DatabaseClient,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Select<T>(), ReactorSqlClientSelect.FirstSelect<T> {
@@ -54,7 +54,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 }
     }
 
-    internal class SecondSelect<T, U> internal constructor(
+    private class SecondSelect<T, U>(
             private val client: DatabaseClient,
             override val properties: Properties<Pair<T, U>>,
     ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), ReactorSqlClientSelect.SecondSelect<T, U> {
@@ -77,7 +77,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 }
     }
 
-    internal class ThirdSelect<T, U, V> internal constructor(
+    private class ThirdSelect<T, U, V>(
             private val client: DatabaseClient,
             override val properties: Properties<Triple<T, U, V>>,
     ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), ReactorSqlClientSelect.ThirdSelect<T, U, V> {
@@ -100,7 +100,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 }
     }
 
-    internal class Select internal constructor(
+    private class Select(
             client: DatabaseClient,
             override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), ReactorSqlClientSelect.Select {
@@ -117,7 +117,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
         }
     }
 
-    internal class SelectWithDsl<T : Any> internal constructor(
+    private class SelectWithDsl<T : Any>(
             client: DatabaseClient,
             properties: Properties<T>,
             dsl: (ValueProvider) -> T,
@@ -128,27 +128,49 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
                 addFromTable(table, from as From<T, U>)
     }
 
-    internal class From<T : Any, U : Any> internal constructor(
+    private class From<T : Any, U : Any>(
             override val client: DatabaseClient,
             properties: Properties<T>,
     ) : DefaultSqlClientSelect.FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>,
-            ReactorSqlClientSelect.LimitOffset<T>>(properties), ReactorSqlClientSelect.From<T, U>, LimitOffset<T> {
-        override val where = Where(client, properties)
+            ReactorSqlClientSelect.LimitOffset<T>, ReactorSqlClientSelect.GroupByPart2<T>>(properties),
+            ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val from = this
-        override val limitOffset = this
+        override val where: ReactorSqlClientSelect.Where<T> by lazy { Where(client, properties) }
+        override val limitOffset: ReactorSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: ReactorSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    internal class Where<T : Any> constructor(
+    private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Where<T, ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>>(),
-            ReactorSqlClientSelect.Where<T>, LimitOffset<T> {
+    ) : DefaultSqlClientSelect.Where<T, ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>,
+            ReactorSqlClientSelect.GroupBy<T>, ReactorSqlClientSelect.GroupByPart2<T>>(),
+            ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val where = this
-        override val limitOffset = this
+        override val limitOffset: ReactorSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: ReactorSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>,
-            ReactorSqlClientSelect.LimitOffset<T>, Return<T>
+    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, ReactorSqlClientSelect.GroupByPart2<T>>,
+            ReactorSqlClientSelect.GroupBy<T>, Return<T>
+
+    private class GroupByPart2<T : Any>(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupByPart2<T, ReactorSqlClientSelect.GroupByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>, ReactorSqlClientSelect.GroupByPart2<T>,
+            ReactorSqlClientSelect.LimitOffset<T>, Return<T> {
+        override val limitOffset: ReactorSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 = this
+    }
+
+    private class LimitOffset<T : Any>(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>, ReactorSqlClientSelect.LimitOffset<T>,
+            Return<T> {
+        override val limitOffset = this
+    }
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
 

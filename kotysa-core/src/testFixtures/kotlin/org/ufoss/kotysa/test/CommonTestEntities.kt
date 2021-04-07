@@ -340,6 +340,16 @@ data class UuidEntity(
 val uuidWithNullable = UuidEntity(UUID.randomUUID(), UUID.randomUUID())
 val uuidWithoutNullable = UuidEntity(UUID.randomUUID())
 
+data class CustomerEntity(
+        val id: Int,
+        val name: String,
+        val country: String,
+)
+
+val customerFrance = CustomerEntity(1, "Jean", "France")
+val customerUSA1 = CustomerEntity(2, "John", "USA")
+val customerUSA2 = CustomerEntity(3, "Big Boss", "USA")
+
 
 data class UserDto(
         val name: String,
