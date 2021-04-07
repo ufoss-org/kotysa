@@ -17,6 +17,10 @@ public interface Field<T> {
     public val builder: (RowImpl) -> T
 }
 
+public enum class FieldClassifier {
+    NONE, DISTINCT
+}
+
 public interface FieldNotNull<T : Any> : Field<T>
 
 public interface FieldNullable<T : Any> : Field<T?>
@@ -32,11 +36,16 @@ internal class CountField<T : Any, U : Any> internal constructor(
     }
 }
 
-internal class ColumnField<T : Any, U : Any>(
+internal class ColumnField<T : Any, U : Any> internal constructor(
         override val properties: DefaultSqlClientCommon.Properties,
         column: Column<T, U>,
+        classifier: FieldClassifier,
 ) : FieldNullable<U> {
-    override val fieldNames: List<String> = listOf(column.getFieldName(properties.tables.allColumns))
+    override val fieldNames: List<String> = when(classifier) {
+        FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns))
+        FieldClassifier.DISTINCT -> listOf("DISTINCT ${column.getFieldName(properties.tables.allColumns)}")
+    }
+
     override val builder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
 }
 
@@ -162,8 +171,9 @@ internal class FieldDsl<T : Any>(
 // Extension functions
 
 internal fun <T : Any, U : Any> Column<T, U>.toField(
-        properties: DefaultSqlClientCommon.Properties
-): ColumnField<T, U> = ColumnField(properties, this)
+        properties: DefaultSqlClientCommon.Properties,
+        classifier: FieldClassifier,
+): ColumnField<T, U> = ColumnField(properties, this, classifier)
 
 internal fun <T : Any> AbstractTable<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
         TableField(properties, this)

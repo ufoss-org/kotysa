@@ -31,6 +31,7 @@ public interface ReactorSqlClient {
     public infix fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T>
     public fun selectCount(): ReactorSqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long>
+    public infix fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.From<T, T> =
             select(table).from(table)
@@ -49,6 +50,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
         override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
+        override fun <T : Any> selectDistinct(column: Column<*, T>): FirstSelect<T>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable {
@@ -59,25 +61,38 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> and(column: Column<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
         public override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
+        override fun <U : Any> andDistinct(column: Column<*, U>): SecondSelect<T?, U?>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
         override fun <V : Any> and(column: Column<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
         override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
+        override fun <V : Any> andDistinct(column: Column<*, V>): ThirdSelect<T, U, V?>
     }
 
     public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
         override fun <W : Any> and(column: Column<*, W>): Select
         override fun <W : Any> and(table: Table<W>): Select
         override fun <W : Any> andCount(column: Column<*, W>): Select
+        override fun <W : Any> andDistinct(column: Column<*, W>): Select
     }
 
-    public interface Select : Fromable<List<Any?>>, Andable
+    public interface Select : Fromable<List<Any?>>, Andable {
+        override fun <W : Any> and(column: Column<*, W>): Select
+        override fun <W : Any> and(table: Table<W>): Select
+        override fun <W : Any> andCount(column: Column<*, W>): Select
+        override fun <W : Any> andDistinct(column: Column<*, W>): Select
+    }
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, LimitOffset<T>
+    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
+            LimitOffset<T>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, LimitOffset<T>
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, GroupBy<T>, LimitOffset<T>
+
+    public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>, Return<T>
+
+    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, LimitOffset<T>
 
     public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 

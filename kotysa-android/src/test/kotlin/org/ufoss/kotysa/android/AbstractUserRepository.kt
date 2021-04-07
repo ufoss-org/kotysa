@@ -39,7 +39,7 @@ abstract class AbstractUserRepository(
     private fun insertRoles() {
         val operator = sqLiteOpenHelper.writableDatabase.transactionalOp()
         operator.execute {
-            sqlClient.insert(roleUser, roleAdmin, roleGod)
+            sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
         }
     }
 

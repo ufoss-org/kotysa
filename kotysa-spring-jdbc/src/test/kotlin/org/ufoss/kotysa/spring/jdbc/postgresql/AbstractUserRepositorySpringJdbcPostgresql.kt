@@ -33,7 +33,7 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
     }
 
     private fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod)
+        sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
     }
 
     private fun insertUsers() {

@@ -136,6 +136,13 @@ object SQLITE_INT : SqLiteTable<IntEntity>("ints") {
     val intNullable = integer(IntEntity::intNullable)
 }
 
+object SQLITE_CUSTOMER : SqLiteTable<CustomerEntity>("customer") {
+    val id = integer(CustomerEntity::id)
+            .primaryKey()
+    val name = text(CustomerEntity::name)
+    val country = text(CustomerEntity::country)
+}
+
 val sqLiteTables = tables().sqlite(
         SQLITE_ROLE,
         SQLITE_USER,
@@ -150,4 +157,5 @@ val sqLiteTables = tables().sqlite(
         SQLITE_OFFSET_DATE_TIME,
         SQLITE_LOCAL_TIME,
         SQLITE_INT,
+        SQLITE_CUSTOMER,
 )

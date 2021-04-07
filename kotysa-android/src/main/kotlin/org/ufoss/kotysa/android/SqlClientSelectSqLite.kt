@@ -22,9 +22,11 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 SelectWithDsl(client, Properties(tables), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+        override fun <T : Any> selectDistinct(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
-    internal class FirstSelect<T : Any> internal constructor(
+    private class FirstSelect<T : Any>(
             private val client: SQLiteDatabase,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Select<T>(), SqlClientSelect.FirstSelect<T> {
@@ -41,9 +43,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
         override fun <U : Any> andCount(column: Column<*, U>): SqlClientSelect.SecondSelect<T, Long> =
                 SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
+        override fun <U : Any> andDistinct(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
-    internal class SecondSelect<T, U> internal constructor(
+    private class SecondSelect<T, U>(
             private val client: SQLiteDatabase,
             override val properties: Properties<Pair<T, U>>,
     ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), SqlClientSelect.SecondSelect<T, U> {
@@ -60,9 +66,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
-    internal class ThirdSelect<T, U, V> internal constructor(
+    private class ThirdSelect<T, U, V>(
             private val client: SQLiteDatabase,
             override val properties: Properties<Triple<T, U, V>>,
     ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), SqlClientSelect.ThirdSelect<T, U, V> {
@@ -79,9 +89,13 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
         override fun <W : Any> andCount(column: Column<*, W>): SqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+        override fun <W : Any> andDistinct(column: Column<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
-    internal class Select internal constructor(
+    private class Select(
             client: SQLiteDatabase,
             override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
@@ -93,9 +107,12 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.Select = this.apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): SqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
     }
 
-    internal class SelectWithDsl<T : Any> internal constructor(
+    private class SelectWithDsl<T : Any>(
             client: SQLiteDatabase,
             properties: Properties<T>,
             dsl: (ValueProvider) -> T,
@@ -106,27 +123,49 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 addFromTable(table, from as From<T, U>)
     }
 
-    internal class From<T : Any, U : Any> internal constructor(
+    private class From<T : Any, U : Any>(
             override val client: SQLiteDatabase,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>>(properties),
-            SqlClientSelect.From<T, U>, LimitOffset<T> {
-        override val where = Where(client, properties)
+    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
+            SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>>(properties),
+            SqlClientSelect.From<T, U>, SqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val from = this
-        override val limitOffset = this
+        override val where: SqlClientSelect.Where<T> by lazy { Where(client, properties) }
+        override val limitOffset: SqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: SqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    internal class Where<T : Any> internal constructor(
+    private class Where<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>>(),
-            SqlClientSelect.Where<T>, LimitOffset<T> {
+    ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>,
+            SqlClientSelect.GroupBy<T>, SqlClientSelect.GroupByPart2<T>>(), SqlClientSelect.Where<T>,
+            SqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val where = this
-        override val limitOffset = this
+        override val limitOffset: SqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: SqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>,
-            SqlClientSelect.LimitOffset<T>, Return<T>
+    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, SqlClientSelect.GroupByPart2<T>>,
+            SqlClientSelect.GroupBy<T>, Return<T>
+
+    private class GroupByPart2<T : Any>(
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSelect.GroupByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, SqlClientSelect.GroupByPart2<T>,
+            SqlClientSelect.LimitOffset<T>, Return<T> {
+        override val limitOffset: SqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 = this
+    }
+
+    private class LimitOffset<T : Any>(
+            override val client: SQLiteDatabase,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, SqlClientSelect.LimitOffset<T>,
+            Return<T> {
+        override val limitOffset = this
+    }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
         val client: SQLiteDatabase

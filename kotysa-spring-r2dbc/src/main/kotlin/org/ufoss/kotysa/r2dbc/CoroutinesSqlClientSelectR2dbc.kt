@@ -28,9 +28,11 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 SelectWithDsl(client, Properties(tables), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+        override fun <T : Any> selectDistinct(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
     }
 
-    internal class FirstSelect<T : Any> internal constructor(
+    private class FirstSelect<T : Any>(
             private val client: DatabaseClient,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Select<T>(), CoroutinesSqlClientSelect.FirstSelect<T> {
@@ -47,9 +49,13 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
         override fun <U : Any> andCount(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T, Long> =
                 SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
+        override fun <U : Any> andDistinct(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
-    internal class SecondSelect<T, U> internal constructor(
+    private class SecondSelect<T, U>(
             private val client: DatabaseClient,
             override val properties: Properties<Pair<T, U>>,
     ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), CoroutinesSqlClientSelect.SecondSelect<T, U> {
@@ -66,9 +72,13 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
-    internal class ThirdSelect<T, U, V> internal constructor(
+    private class ThirdSelect<T, U, V>(
             private val client: DatabaseClient,
             override val properties: Properties<Triple<T, U, V>>,
     ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), CoroutinesSqlClientSelect.ThirdSelect<T, U, V> {
@@ -85,9 +95,13 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
         override fun <W : Any> andCount(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+        override fun <W : Any> andDistinct(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.DISTINCT)
+                }
     }
 
-    internal class Select internal constructor(
+    private class Select(
             client: DatabaseClient,
             override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), CoroutinesSqlClientSelect.Select {
@@ -99,9 +113,12 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectTable(table) }
         override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addCountColumn(column) }
+        override fun <V : Any> andDistinct(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
     }
 
-    internal class SelectWithDsl<T : Any> internal constructor(
+    private class SelectWithDsl<T : Any>(
             client: DatabaseClient,
             properties: Properties<T>,
             dsl: (ValueProvider) -> T,
@@ -112,28 +129,50 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 addFromTable(table, from as From<T, U>)
     }
 
-    internal class From<T : Any, U : Any> internal constructor(
+    private class From<T : Any, U : Any>(
             override val client: DatabaseClient,
             properties: Properties<T>,
     ) : DefaultSqlClientSelect.FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>,
-            CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>>(properties),
-            CoroutinesSqlClientSelect.From<T, U>, LimitOffset<T> {
-        override val where = Where(client, properties)
+            CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
+            CoroutinesSqlClientSelect.GroupByPart2<T>>(properties), CoroutinesSqlClientSelect.From<T, U>,
+            CoroutinesSqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val from = this
-        override val limitOffset = this
+        override val where: CoroutinesSqlClientSelect.Where<T> by lazy { Where(client, properties) }
+        override val limitOffset: CoroutinesSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: CoroutinesSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    internal class Where<T : Any> constructor(
+    private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>>(),
-            CoroutinesSqlClientSelect.Where<T>, LimitOffset<T> {
+    ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
+            CoroutinesSqlClientSelect.GroupBy<T>, CoroutinesSqlClientSelect.GroupByPart2<T>>(),
+            CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>, GroupBy<T> {
         override val where = this
-        override val limitOffset = this
+        override val limitOffset: CoroutinesSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2: CoroutinesSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
     }
 
-    private interface LimitOffset<T : Any> : DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>,
-            CoroutinesSqlClientSelect.LimitOffset<T>, Return<T>
+    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
+            CoroutinesSqlClientSelect.GroupBy<T>, Return<T>
+
+    private class GroupByPart2<T : Any>(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupByPart2<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, CoroutinesSqlClientSelect.GroupByPart2<T>,
+            CoroutinesSqlClientSelect.LimitOffset<T>, Return<T> {
+        override val limitOffset: CoroutinesSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 = this
+    }
+
+    private class LimitOffset<T : Any>(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, CoroutinesSqlClientSelect.LimitOffset<T>,
+            Return<T> {
+        override val limitOffset = this
+    }
 
     private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, CoroutinesSqlClientSelect.Return<T> {
 

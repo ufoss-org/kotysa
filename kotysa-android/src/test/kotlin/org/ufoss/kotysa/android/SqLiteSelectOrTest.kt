@@ -10,7 +10,7 @@ import org.junit.Test
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.SQLITE_ROLE
 import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
 
@@ -18,9 +18,9 @@ class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleAdmin.label, roleGod.label))
+        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(roleAdmin, roleGod)
+                .containsExactlyInAnyOrder(roleUser, roleAdmin)
     }
 }
 

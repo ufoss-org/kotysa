@@ -33,7 +33,7 @@ abstract class AbstractUserRepositoryH2(
                     .then(sqlClient createTable H2_USER_ROLE)
 
     private fun insertRoles() =
-            sqlClient.insert(roleUser, roleAdmin, roleGod)
+            sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
 
     private fun insertUsers() =
             sqlClient.insert(userJdoe, userBboss)

@@ -23,8 +23,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         public lateinit var select: (RowImpl) -> T?
 
-        public var limit: Int? = null
-        public var offset: Int? = null
+        internal val groupBy = mutableListOf<Column<*, *>>()
+
+        internal var limit: Int? = null
+        internal var offset: Int? = null
     }
 
     protected interface WithProperties<T : Any> : DefaultSqlClientCommon.WithProperties {
@@ -36,7 +38,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *>): V = with(properties) {
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *>): V = with(properties) {
             select = when (selectedFields.size) {
                 1 -> selectedFields[0].builder as (RowImpl) -> T?
                 2 -> {
@@ -59,8 +61,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add((table as AbstractTable<U>).toField(properties))
         }
 
-        public fun <U : Any> addSelectColumn(column: Column<*, U>) {
-            properties.selectedFields.add(column.toField(properties))
+        public fun <U : Any> addSelectColumn(column: Column<*, U>, classifier: FieldClassifier = FieldClassifier.NONE) {
+            properties.selectedFields.add(column.toField(properties, classifier))
         }
 
         public fun <U : Any> addCountColumn(column: Column<*, U>? = null) {
@@ -78,16 +80,17 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.select = field.builder
         }
 
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *>): V =
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *>): V =
             from.addFromTable(table)
     }
 
-    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>, X : SqlClientQuery.LimitOffset<X>> protected constructor(
+    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
+            X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>> protected constructor(
             final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>> protected constructor()
-        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>, W : SqlClientQuery.GroupBy<X>, X : SqlClientQuery.GroupByPart2<X>> protected constructor()
+        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, X>
 
     protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
         : SqlClientQuery.LimitOffset<U>, Return<T> {
@@ -104,11 +107,31 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
+    protected interface GroupBy<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupBy<U>, Return<T> {
+        public val groupByPart2: U
+
+        override fun groupBy(column: Column<*, *>): U {
+            properties.groupBy.add(column)
+            return groupByPart2
+        }
+    }
+
+    protected interface GroupByPart2<T : Any, U : SqlClientQuery.GroupByPart2<U>>
+        : SqlClientQuery.GroupByPart2<U>, Return<T> {
+        public val groupByPart2: U
+
+        override fun and(column: Column<*, *>): U {
+            properties.groupBy.add(column)
+            return groupByPart2
+        }
+    }
+
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(): String = with(properties) {
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
             val froms = froms()
             val wheres = wheres()
+            val groupBy = groupBy()
             val limit = if (limit != null) {
                 "LIMIT $limit"
             } else {
@@ -119,9 +142,18 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             } else {
                 ""
             }
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $limit $offset" }
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $limit $offset" }
 
-            "$selects $froms $wheres $limit $offset"
+            "$selects $froms $wheres $groupBy $limit $offset"
+        }
+
+        private fun groupBy(): String = with(properties) {
+            if (groupBy.isEmpty()) {
+                return ""
+            }
+            return groupBy.joinToString(prefix = "GROUP BY ") { column ->
+                column.getFieldName(availableColumns)
+            }
         }
     }
 }
