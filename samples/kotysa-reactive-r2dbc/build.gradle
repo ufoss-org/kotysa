@@ -1,22 +1,23 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.32'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'org.springframework.boot' version '2.4.1'
+    id 'org.springframework.boot' version '2.4.4'
 }
 
 repositories {
     jcenter()
     maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://dl.bintray.com/ufoss/ufoss' }
 }
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-webflux')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
-    implementation('org.springframework.data:spring-data-r2dbc')
+    implementation('org.springframework:spring-r2dbc')
     implementation('io.r2dbc:r2dbc-h2')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.1')
-    implementation('org.springframework.fu:spring-fu-kofu:0.4.3')
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.2')
+    implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
