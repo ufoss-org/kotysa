@@ -1,5 +1,5 @@
 [![License: Unlicense](https://img.shields.io/github/license/ufoss-org/kotysa)](http://unlicense.org/)
-[![Download](https://api.bintray.com/packages/ufoss/ufoss/kotysa/images/download.svg) ](https://bintray.com/ufoss/ufoss/kotysa/_latestVersion)
+[![Maven Central](https://img.shields.io/maven-central/v/org.ufoss.kotysa/kotysa)](https://search.maven.org/artifact/org.ufoss.kotysa/kotysa)
 [![Kotlin](https://img.shields.io/badge/kotlin-1.4.32-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 # Kotysa
@@ -85,5 +85,5 @@ git clone git@github.com:ufoss-org/kotysa.git
 2. Build project
 
 ```bash
-./gradlew clean buildNeeded
+./gradlew clean build
 ```
