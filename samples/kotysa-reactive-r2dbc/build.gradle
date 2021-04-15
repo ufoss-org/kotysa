@@ -7,7 +7,6 @@ plugins {
 repositories {
     jcenter()
     maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://dl.bintray.com/ufoss/ufoss' }
 }
 
 dependencies {
@@ -16,7 +15,7 @@ dependencies {
     implementation('org.springframework:spring-r2dbc')
     implementation('io.r2dbc:r2dbc-h2')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.2')
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.3')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
