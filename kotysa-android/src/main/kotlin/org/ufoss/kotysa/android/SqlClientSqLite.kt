@@ -66,6 +66,14 @@ internal class SqlClientSqLite(
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectDistinct(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMin(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMax(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectAvg(column)
+    override fun <T : Any, U : Any> selectSum(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
 }
 
 /**

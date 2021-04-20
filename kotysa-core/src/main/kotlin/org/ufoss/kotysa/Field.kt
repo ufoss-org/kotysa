@@ -18,7 +18,7 @@ public interface Field<T> {
 }
 
 public enum class FieldClassifier {
-    NONE, DISTINCT
+    NONE, DISTINCT, MAX, MIN, AVG, SUM
 }
 
 public interface FieldNotNull<T : Any> : Field<T>
@@ -44,6 +44,10 @@ internal class ColumnField<T : Any, U : Any> internal constructor(
     override val fieldNames: List<String> = when(classifier) {
         FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns))
         FieldClassifier.DISTINCT -> listOf("DISTINCT ${column.getFieldName(properties.tables.allColumns)}")
+        FieldClassifier.MAX -> listOf("MAX(${column.getFieldName(properties.tables.allColumns)})")
+        FieldClassifier.MIN -> listOf("MIN(${column.getFieldName(properties.tables.allColumns)})")
+        FieldClassifier.AVG -> listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
+        FieldClassifier.SUM -> listOf("SUM(${column.getFieldName(properties.tables.allColumns)})")
     }
 
     override val builder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }

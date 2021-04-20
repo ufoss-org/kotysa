@@ -282,6 +282,7 @@ object H2_CUSTOMER : H2Table<CustomerEntity>() {
             .primaryKey()
     val name = varchar(CustomerEntity::name)
     val country = varchar(CustomerEntity::country)
+    val age = integer(CustomerEntity::age)
 }
 
 val h2Tables = tables().h2(

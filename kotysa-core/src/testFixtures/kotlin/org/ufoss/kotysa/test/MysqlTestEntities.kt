@@ -255,6 +255,7 @@ object MYSQL_CUSTOMER : MysqlTable<CustomerEntity>() {
             .primaryKey()
     val name = varchar(CustomerEntity::name)
     val country = varchar(CustomerEntity::country)
+    val age = integer(CustomerEntity::age)
 }
 
 val mysqlTables = tables().mysql(
