@@ -22,6 +22,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
              * targeted table to update
              */
             public val table: KotysaTable<T>,
+            override val dbAccessType: DbAccessType,
     ) : DefaultSqlClientCommon.Properties {
         public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
@@ -36,13 +37,14 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
     }
 
     public abstract class FirstDeleteOrUpdate<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> protected constructor(
+            private val dbAccessType: DbAccessType,
     ) : FromWhereable<T, U, V, W>(), From<T, U> {
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
 
         override val properties: Properties<T> by lazy {
             val kotysaTable = tables.getTable(table)
-            val properties = Properties(tables, kotysaTable)
+            val properties = Properties(tables, kotysaTable, dbAccessType)
             // init availableColumns with table columns
             addFromTable(properties, kotysaTable)
             properties
@@ -53,8 +55,10 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
     ) : FromWhereable<T, U, V, W>(), From<T, U>
 
 
-    public abstract class Update<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>, X : SqlClientQuery.Update<T, X>> protected constructor(
-    ) : FirstDeleteOrUpdate<T, U, V, W>(), SqlClientQuery.Update<T, X> {
+    public abstract class Update<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>,
+            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType)
+        : FirstDeleteOrUpdate<T, U, V, W>(dbAccessType), SqlClientQuery.Update<T, X> {
+
         protected abstract val update: X
 
         private val updateOpStringColumnNotNull: UpdateOpColumn<T, X, String> by lazy {

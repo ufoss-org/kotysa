@@ -13,6 +13,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
     public class Properties<T : Any>(
             override val tables: Tables,
+            override val dbAccessType: DbAccessType,
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
@@ -67,6 +68,14 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         public fun <U : Any> addCountColumn(column: Column<*, U>? = null) {
             properties.selectedFields.add(CountField(properties, column))
+        }
+
+        public fun <U : Any> addAvgColumn(column: Column<*, U>) {
+            properties.selectedFields.add(AvgField(properties, column))
+        }
+
+        public fun <U : Any> addLongSumColumn(column: Column<*, U>) {
+            properties.selectedFields.add(LongSumField(properties, column))
         }
     }
 

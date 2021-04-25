@@ -327,6 +327,7 @@ object POSTGRESQL_CUSTOMER : PostgresqlTable<CustomerEntity>() {
             .primaryKey()
     val name = varchar(CustomerEntity::name)
     val country = varchar(CustomerEntity::country)
+    val age = integer(CustomerEntity::age)
 }
 
 val postgresqlTables = tables().postgresql(

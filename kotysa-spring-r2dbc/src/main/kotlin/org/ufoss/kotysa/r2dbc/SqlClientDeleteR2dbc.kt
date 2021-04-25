@@ -15,7 +15,8 @@ internal class SqlClientDeleteR2dbc private constructor() : AbstractSqlClientDel
             override val client: DatabaseClient,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T, ReactorSqlClientDeleteOrUpdate.Where<T>>(),
+    ) : FirstDeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+            ReactorSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC),
             ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         override val where = Where(client, properties)
         override val from: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {

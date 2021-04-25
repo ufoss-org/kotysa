@@ -14,8 +14,9 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
             override val client: NamedParameterJdbcOperations,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T, SqlClientDeleteOrUpdate.Where<T>>(),
-            SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+            SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC), SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
+            Return<T> {
         override val where = Where(client, properties)
         override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)

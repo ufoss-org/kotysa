@@ -14,14 +14,15 @@ dependencies {
     testImplementation testFixtures(project(':kotysa-core'))
 
     testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
-    testImplementation 'org.testcontainers:postgresql'
-    testImplementation 'org.testcontainers:mysql'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.testcontainers:testcontainers'
 
     testRuntimeOnly "com.h2database:h2"
     testRuntimeOnly "mysql:mysql-connector-java"
     testRuntimeOnly 'org.postgresql:postgresql'
+    testRuntimeOnly 'org.testcontainers:postgresql'
+    testRuntimeOnly 'org.testcontainers:mysql'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 

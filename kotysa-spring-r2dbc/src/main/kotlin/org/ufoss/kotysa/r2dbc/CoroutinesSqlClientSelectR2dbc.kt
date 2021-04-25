@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.*
+import java.math.BigDecimal
 
 
 @Suppress("UNCHECKED_CAST")
@@ -20,16 +21,26 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
             private val client: DatabaseClient,
             private val tables: Tables,
     ) : CoroutinesSqlClientSelect.Selectable {
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.R2DBC)
+
         override fun <T : Any> select(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
         override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+                FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
         override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-                SelectWithDsl(client, Properties(tables), dsl)
+                SelectWithDsl(client, properties(), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.FirstSelect<Long> =
-                FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+                FirstSelect<Long>(client, properties()).apply { addCountColumn(column) }
         override fun <T : Any> selectDistinct(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MIN) }
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MAX) }
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
+                FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
+        override fun selectSum(column: IntColumn<*>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+                FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
     }
 
     private class FirstSelect<T : Any>(
@@ -53,6 +64,18 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
+        override fun <U : Any> andMin(column: MinMaxColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MIN)
+                }
+        override fun <U : Any> andMax(column: MinMaxColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MAX)
+                }
+        override fun <U : Any> andAvg(column: NumericColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, BigDecimal> =
+                SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.SecondSelect<T?, Long> =
+                SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class SecondSelect<T, U>(
@@ -76,6 +99,18 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
+        override fun <V : Any> andMin(column: MinMaxColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MIN)
+                }
+        override fun <V : Any> andMax(column: MinMaxColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MAX)
+                }
+        override fun <V : Any> andAvg(column: NumericColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, BigDecimal> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class ThirdSelect<T, U, V>(
@@ -99,6 +134,18 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
                 Select(client, properties as Properties<List<Any?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
+        override fun <W : Any> andMin(column: MinMaxColumn<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MIN)
+                }
+        override fun <W : Any> andMax(column: MinMaxColumn<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MAX)
+                }
+        override fun <W : Any> andAvg(column: NumericColumn<*, W>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
     }
 
     private class Select(
@@ -116,6 +163,16 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
         override fun <V : Any> andDistinct(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply {
             addSelectColumn(column, FieldClassifier.DISTINCT)
         }
+        override fun <T : Any> andMin(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.MIN)
+        }
+        override fun <T : Any> andMax(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.MAX)
+        }
+        override fun <T : Any> andAvg(column: NumericColumn<*, T>): CoroutinesSqlClientSelect.Select = this.apply {
+            addAvgColumn(column)
+        }
+        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.Select = this.apply { addLongSumColumn(column) }
     }
 
     private class SelectWithDsl<T : Any>(

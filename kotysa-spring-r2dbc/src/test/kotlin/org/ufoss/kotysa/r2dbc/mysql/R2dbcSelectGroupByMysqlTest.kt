@@ -27,26 +27,7 @@ class R2dbcSelectGroupByMysqlTest : AbstractR2dbcMysqlTest<GroupByRepositoryMysq
     }
 }
 
-class GroupByRepositoryMysqlSelect(private val sqlClient: ReactorSqlClient) : Repository {
-
-    override fun init() {
-        createTables()
-                .then(insertCustomers())
-                .block()
-    }
-
-    override fun delete() {
-        deleteAll()
-                .block()
-    }
-
-    private fun createTables() =
-            sqlClient createTable MYSQL_CUSTOMER
-
-    private fun insertCustomers() =
-            sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_CUSTOMER
+class GroupByRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMysql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country
