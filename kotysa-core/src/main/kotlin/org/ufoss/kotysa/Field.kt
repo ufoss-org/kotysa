@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa
 
+import java.math.BigDecimal
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KMutableProperty1
@@ -18,7 +19,7 @@ public interface Field<T> {
 }
 
 public enum class FieldClassifier {
-    NONE, DISTINCT, MAX, MIN, AVG, SUM
+    NONE, DISTINCT, MAX, MIN
 }
 
 public interface FieldNotNull<T : Any> : Field<T>
@@ -31,9 +32,7 @@ internal class CountField<T : Any, U : Any> internal constructor(
 ) : FieldNotNull<Long> {
     override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
 
-    override val builder: (RowImpl) -> Long = { row ->
-        row.getAndIncrement(Long::class.javaObjectType)!!
-    }
+    override val builder: (RowImpl) -> Long = { row -> row.getAndIncrement(Long::class.javaObjectType)!! }
 }
 
 internal class ColumnField<T : Any, U : Any> internal constructor(
@@ -41,16 +40,44 @@ internal class ColumnField<T : Any, U : Any> internal constructor(
         column: Column<T, U>,
         classifier: FieldClassifier,
 ) : FieldNullable<U> {
-    override val fieldNames: List<String> = when(classifier) {
+    override val fieldNames: List<String> = when (classifier) {
         FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns))
         FieldClassifier.DISTINCT -> listOf("DISTINCT ${column.getFieldName(properties.tables.allColumns)}")
         FieldClassifier.MAX -> listOf("MAX(${column.getFieldName(properties.tables.allColumns)})")
         FieldClassifier.MIN -> listOf("MIN(${column.getFieldName(properties.tables.allColumns)})")
-        FieldClassifier.AVG -> listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
-        FieldClassifier.SUM -> listOf("SUM(${column.getFieldName(properties.tables.allColumns)})")
     }
 
     override val builder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
+}
+
+internal class AvgField<T : Any, U : Any> internal constructor(
+        override val properties: DefaultSqlClientCommon.Properties,
+        column: Column<T, U>,
+) : FieldNotNull<BigDecimal> {
+    override val fieldNames: List<String> = listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
+
+    override val builder: (RowImpl) -> BigDecimal = { row ->
+        when {
+            properties.tables.dbType == DbType.H2 && properties.dbAccessType == DbAccessType.R2DBC ->
+                row.getAndIncrement(Int::class.javaObjectType)!!.toBigDecimal()
+            else -> row.getAndIncrement(BigDecimal::class.javaObjectType)!!
+        }
+    }
+}
+
+internal class LongSumField<T : Any, U : Any> internal constructor(
+        override val properties: DefaultSqlClientCommon.Properties,
+        column: Column<T, U>,
+) : FieldNotNull<Long> {
+    override val fieldNames: List<String> = listOf("SUM(${column.getFieldName(properties.tables.allColumns)})")
+
+    override val builder: (RowImpl) -> Long = { row ->
+        when {
+            properties.tables.dbType == DbType.MYSQL && properties.dbAccessType == DbAccessType.R2DBC ->
+                row.getAndIncrement(BigDecimal::class.javaObjectType)!!.toLong()
+            else -> row.getAndIncrement(Long::class.javaObjectType)!!
+        }
+    }
 }
 
 /**

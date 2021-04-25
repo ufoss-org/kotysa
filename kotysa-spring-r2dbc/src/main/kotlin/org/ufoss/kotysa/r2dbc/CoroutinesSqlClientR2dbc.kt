@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.ufoss.kotysa.*
+import java.math.BigDecimal
 
 /**
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbcCoroutines
@@ -45,6 +46,14 @@ private class CoroutinesSqlClientR2Dbc(
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
             CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectDistinct(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectMin(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectMax(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
+            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectAvg(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectSum(column)
 }
 
 /**

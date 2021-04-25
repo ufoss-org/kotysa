@@ -2,18 +2,17 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.android
+package org.ufoss.kotysa.spring.jdbc.h2
 
-import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.junit.jupiter.api.Test
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
-import java.math.MathContext
 
-class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySelect>() {
+class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractSpringJdbcH2Test<MinMaxAvgSumRepositoryH2Select>() {
+    override val context = startContext<MinMaxAvgSumRepositoryH2Select>()
 
-    override fun getRepository(sqLiteTables: Tables) = MinMaxAvgSumRepositorySelect(dbHelper, sqLiteTables)
+    override val repository = getContextRepository<MinMaxAvgSumRepositoryH2Select>()
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
@@ -40,28 +39,25 @@ class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySe
     }
 }
 
-class MinMaxAvgSumRepositorySelect(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
-) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
+class MinMaxAvgSumRepositoryH2Select(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcH2(client) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMin H2_CUSTOMER.age
+                    from H2_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMax H2_CUSTOMER.age
+                    from H2_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectAvg H2_CUSTOMER.age
+                    from H2_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectSum H2_CUSTOMER.age
+                    from H2_CUSTOMER
                     ).fetchOne()
 }

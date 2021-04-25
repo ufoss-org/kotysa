@@ -26,26 +26,7 @@ class SpringJdbcSelectGroupByH2Test : AbstractR2dbcH2Test<GroupByRepositoryH2Sel
     }
 }
 
-class GroupByRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repository {
-
-    override fun init() {
-        createTables()
-                .then(insertCustomers())
-                .block()
-    }
-
-    override fun delete() {
-        deleteAll()
-                .block()
-    }
-
-    private fun createTables() =
-            sqlClient createTable H2_CUSTOMER
-
-    private fun insertCustomers() =
-            sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-
-    private fun deleteAll() = sqlClient deleteAllFrom H2_CUSTOMER
+class GroupByRepositoryH2Select(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryH2(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount H2_CUSTOMER.id and H2_CUSTOMER.country

@@ -7,6 +7,7 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.*
+import java.math.BigDecimal
 
 /**
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
@@ -70,9 +71,9 @@ internal class SqlClientSqLite(
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMin(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMax(column)
-    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectAvg(column)
-    override fun <T : Any, U : Any> selectSum(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+    override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
 }
 

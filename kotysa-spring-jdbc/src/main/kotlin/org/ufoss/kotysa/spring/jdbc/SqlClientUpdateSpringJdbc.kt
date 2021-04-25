@@ -6,10 +6,7 @@ package org.ufoss.kotysa.spring.jdbc
 
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
-import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
-import org.ufoss.kotysa.SqlClientDeleteOrUpdate
-import org.ufoss.kotysa.Table
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.*
 
 
 internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
@@ -19,7 +16,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
             override val tables: Tables,
             override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(),
+            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.JDBC),
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this

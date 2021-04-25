@@ -2,18 +2,22 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.android
+package org.ufoss.kotysa.spring.jdbc.mysql
 
-import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
-import java.math.MathContext
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySelect>() {
+class SpringJdbcSelectMinMaxAvgSumMysqlTest : AbstractSpringJdbcMysqlTest<MinMaxAvgSumRepositoryMysqlSelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = MinMaxAvgSumRepositorySelect(dbHelper, sqLiteTables)
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<MinMaxAvgSumRepositoryMysqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
@@ -40,28 +44,25 @@ class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySe
     }
 }
 
-class MinMaxAvgSumRepositorySelect(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
-) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
+class MinMaxAvgSumRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMin MYSQL_CUSTOMER.age
+                    from MYSQL_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMax MYSQL_CUSTOMER.age
+                    from MYSQL_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectAvg MYSQL_CUSTOMER.age
+                    from MYSQL_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectSum MYSQL_CUSTOMER.age
+                    from MYSQL_CUSTOMER
                     ).fetchOne()
 }

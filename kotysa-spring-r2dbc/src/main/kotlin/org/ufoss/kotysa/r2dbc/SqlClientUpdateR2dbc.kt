@@ -16,7 +16,7 @@ internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpd
             override val tables: Tables,
             override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            ReactorSqlClientDeleteOrUpdate.Where<T>, ReactorSqlClientDeleteOrUpdate.Update<T>>(),
+            ReactorSqlClientDeleteOrUpdate.Where<T>, ReactorSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC),
             ReactorSqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this

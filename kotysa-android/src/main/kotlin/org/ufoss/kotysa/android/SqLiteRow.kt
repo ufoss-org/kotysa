@@ -6,6 +6,7 @@ package org.ufoss.kotysa.android
 
 import android.database.Cursor
 import org.ufoss.kotysa.Row
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -36,6 +37,7 @@ internal class SqLiteRow internal constructor(private val sqLiteCursor: Cursor) 
                             sqLiteCursor.getString(index)
                     )
                     LocalTime::class.java.isAssignableFrom(clazz) -> LocalTime.parse(sqLiteCursor.getString(index))
+                    BigDecimal::class.java.isAssignableFrom(clazz) -> sqLiteCursor.getDouble(index).toBigDecimal()
                     else -> when (clazz.name) {
                         "kotlinx.datetime.LocalDate" -> kotlinx.datetime.LocalDate.parse(
                                 sqLiteCursor.getString(index)

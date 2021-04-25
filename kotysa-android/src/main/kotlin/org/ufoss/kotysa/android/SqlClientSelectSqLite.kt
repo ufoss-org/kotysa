@@ -6,6 +6,7 @@ package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
+import java.math.BigDecimal
 
 @Suppress("UNCHECKED_CAST")
 internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSelect() {
@@ -14,24 +15,26 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             private val client: SQLiteDatabase,
             private val tables: Tables,
     ) : SqlClientSelect.Selectable {
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.ANDROID)
+
         override fun <T : Any> select(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
         override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+                FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
         override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-                SelectWithDsl(client, Properties(tables), dsl)
+                SelectWithDsl(client, properties(), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSelect.FirstSelect<Long> =
-                FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+                FirstSelect<Long>(client, properties()).apply { addCountColumn(column) }
         override fun <T : Any> selectDistinct(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.MIN) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MIN) }
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.MAX) }
-        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.AVG) }
-        override fun <T : Any> selectSum(column: NumericColumn<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.SUM) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MAX) }
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSelect.FirstSelect<BigDecimal> =
+                FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
+        override fun selectSum(column: IntColumn<*>): SqlClientSelect.FirstSelect<Long> =
+                FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
     }
 
     private class FirstSelect<T : Any>(
@@ -63,14 +66,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
                     addSelectColumn(column, FieldClassifier.MAX)
                 }
-        override fun <U : Any> andAvg(column: NumericColumn<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
-                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
-                    addSelectColumn(column, FieldClassifier.AVG)
-                }
-        override fun <U : Any> andSum(column: NumericColumn<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
-                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
-                    addSelectColumn(column, FieldClassifier.SUM)
-                }
+        override fun <U : Any> andAvg(column: NumericColumn<*, U>): SqlClientSelect.SecondSelect<T?, BigDecimal> =
+                SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.SecondSelect<T?, Long> =
+                SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class SecondSelect<T, U>(
@@ -102,14 +101,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
                     addSelectColumn(column, FieldClassifier.MAX)
                 }
-        override fun <V : Any> andAvg(column: NumericColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
-                    addSelectColumn(column, FieldClassifier.AVG)
-                }
-        override fun <V : Any> andSum(column: NumericColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
-                    addSelectColumn(column, FieldClassifier.SUM)
-                }
+        override fun <V : Any> andAvg(column: NumericColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, BigDecimal> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.ThirdSelect<T, U, Long> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class ThirdSelect<T, U, V>(
@@ -142,13 +137,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                     addSelectColumn(column, FieldClassifier.MAX)
                 }
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply {
-                    addSelectColumn(column, FieldClassifier.AVG)
-                }
-        override fun <W : Any> andSum(column: NumericColumn<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply {
-                    addSelectColumn(column, FieldClassifier.SUM)
-                }
+                Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
     }
 
     private class Select(
@@ -173,11 +164,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             addSelectColumn(column, FieldClassifier.MAX)
         }
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): SqlClientSelect.Select = this.apply {
-            addSelectColumn(column, FieldClassifier.AVG)
+            addAvgColumn(column)
         }
-        override fun <T : Any> andSum(column: NumericColumn<*, T>): SqlClientSelect.Select = this.apply {
-            addSelectColumn(column, FieldClassifier.SUM)
-        }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
     }
 
     private class SelectWithDsl<T : Any>(

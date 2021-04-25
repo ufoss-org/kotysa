@@ -21,7 +21,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> selectMin(column: MinMaxColumn<*, T>): Andable
         public infix fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Andable
         public infix fun <T : Any> selectAvg(column: NumericColumn<*, T>): Andable
-        public infix fun <T : Any> selectSum(column: NumericColumn<*, T>): Andable
+        public infix fun selectSum(column: IntColumn<*>): Andable
     }
 
     public interface Fromable {
@@ -36,7 +36,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> andMin(column: MinMaxColumn<*, T>): Andable
         public infix fun <T : Any> andMax(column: MinMaxColumn<*, T>): Andable
         public infix fun <T : Any> andAvg(column: NumericColumn<*, T>): Andable
-        public infix fun <T : Any> andSum(column: NumericColumn<*, T>): Andable
+        public infix fun andSum(column: IntColumn<*>): Andable
     }
 
     public interface From<T : Any, U : From<T, U>> {

@@ -2,18 +2,22 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.android
+package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
-import java.math.MathContext
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySelect>() {
+class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractSpringJdbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = MinMaxAvgSumRepositorySelect(dbHelper, sqLiteTables)
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<MinMaxAvgSumRepositoryPostgresqlSelect>(resource)
+        repository = getContextRepository()
+    }
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
@@ -40,28 +44,26 @@ class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySe
     }
 }
 
-class MinMaxAvgSumRepositorySelect(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
-) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
+class MinMaxAvgSumRepositoryPostgresqlSelect(client: JdbcOperations) :
+        AbstractCustomerRepositorySpringJdbcPostgresql(client) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMin POSTGRESQL_CUSTOMER.age
+                    from POSTGRESQL_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMax POSTGRESQL_CUSTOMER.age
+                    from POSTGRESQL_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectAvg POSTGRESQL_CUSTOMER.age
+                    from POSTGRESQL_CUSTOMER
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectSum POSTGRESQL_CUSTOMER.age
+                    from POSTGRESQL_CUSTOMER
                     ).fetchOne()
 }

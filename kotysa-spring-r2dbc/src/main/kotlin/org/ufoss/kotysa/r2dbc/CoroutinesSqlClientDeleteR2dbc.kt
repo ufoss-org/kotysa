@@ -15,7 +15,8 @@ internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSq
             override val client: DatabaseClient,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T, CoroutinesSqlClientDeleteOrUpdate.Where<T>>(),
+    ) : FirstDeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+            CoroutinesSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC),
             CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         override val where = Where(client, properties)
         override val from: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
