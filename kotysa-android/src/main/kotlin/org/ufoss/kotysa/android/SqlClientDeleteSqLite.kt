@@ -5,10 +5,7 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteDatabase
-import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
-import org.ufoss.kotysa.SqlClientDeleteOrUpdate
-import org.ufoss.kotysa.Table
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.*
 
 internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
@@ -16,8 +13,9 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             override val client: SQLiteDatabase,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T, SqlClientDeleteOrUpdate.Where<T>>(),
-            SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+            SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.ANDROID), SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
+            Return<T> {
         override val where = Where(client, properties)
         override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)

@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
 import reactor.core.publisher.Mono
+import java.math.BigDecimal
 
 /**
  * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/reference/html/#reference)
@@ -20,7 +21,7 @@ private class SqlClientR2dbc(
             executeInsert(row).then()
 
     override fun <T : Any> insert(vararg rows: T) =
-            rows.fold(Mono.empty<Void>(), { mono, row -> mono.then(insert(row)) })
+            rows.fold(Mono.empty<Void>()) { mono, row -> mono.then(insert(row)) }
 
     override fun <T : Any> createTable(table: Table<T>) =
             executeCreateTable(table).then()
@@ -43,6 +44,14 @@ private class SqlClientR2dbc(
             SqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
             SqlClientSelectR2dbc.Selectable(client, tables).selectDistinct(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectMin(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectMax(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): ReactorSqlClientSelect.FirstSelect<BigDecimal> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectAvg(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long> =
+            SqlClientSelectR2dbc.Selectable(client, tables).selectSum(column)
 }
 
 /**

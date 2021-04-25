@@ -18,6 +18,10 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable
         public infix fun <T : Any> selectCount(column: Column<*, T>?): Andable
         public infix fun <T : Any> selectDistinct(column: Column<*, T>): Andable
+        public infix fun <T : Any> selectMin(column: MinMaxColumn<*, T>): Andable
+        public infix fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Andable
+        public infix fun <T : Any> selectAvg(column: NumericColumn<*, T>): Andable
+        public infix fun selectSum(column: IntColumn<*>): Andable
     }
 
     public interface Fromable {
@@ -25,10 +29,14 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface Andable {
-        public infix fun <U : Any> and(table: Table<U>): Andable
-        public infix fun <U : Any> and(column: Column<*, U>): Andable
+        public infix fun <T : Any> and(table: Table<T>): Andable
+        public infix fun <T : Any> and(column: Column<*, T>): Andable
         public infix fun <T : Any> andCount(column: Column<*, T>): Andable
         public infix fun <T : Any> andDistinct(column: Column<*, T>): Andable
+        public infix fun <T : Any> andMin(column: MinMaxColumn<*, T>): Andable
+        public infix fun <T : Any> andMax(column: MinMaxColumn<*, T>): Andable
+        public infix fun <T : Any> andAvg(column: NumericColumn<*, T>): Andable
+        public infix fun andSum(column: IntColumn<*>): Andable
     }
 
     public interface From<T : Any, U : From<T, U>> {

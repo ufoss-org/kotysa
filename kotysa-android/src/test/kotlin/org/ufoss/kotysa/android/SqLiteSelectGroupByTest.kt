@@ -22,28 +22,10 @@ class SqLiteSelectGroupByTest : AbstractSqLiteTest<GroupByRepositorySelect>() {
     }
 }
 
-class GroupByRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
-
-    private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
-
-    override fun init() {
-        createTables()
-        insertCustomers()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable SQLITE_CUSTOMER
-    }
-
-    private fun insertCustomers() {
-        sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_CUSTOMER
+class GroupByRepositorySelect(
+        sqLiteOpenHelper: SQLiteOpenHelper,
+        tables: Tables,
+) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount SQLITE_CUSTOMER.id and SQLITE_CUSTOMER.country

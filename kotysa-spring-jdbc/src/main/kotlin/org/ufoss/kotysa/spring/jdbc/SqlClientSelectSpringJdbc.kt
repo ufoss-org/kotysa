@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.jdbc.toRow
+import java.math.BigDecimal
 import java.util.stream.Stream
 
 
@@ -19,16 +20,26 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             private val client: NamedParameterJdbcOperations,
             private val tables: Tables,
     ) : SqlClientSelect.Selectable {
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.JDBC)
+
         override fun <T : Any> select(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
         override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectTable(table) }
+                FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
         override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-                SelectWithDsl(client, Properties(tables), dsl)
+                SelectWithDsl(client, properties(), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSelect.FirstSelect<Long> =
-                FirstSelect<Long>(client, Properties(tables)).apply { addCountColumn(column) }
+                FirstSelect<Long>(client, properties()).apply { addCountColumn(column) }
         override fun <T : Any> selectDistinct(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, Properties(tables)).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): SqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MIN) }
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): SqlClientSelect.FirstSelect<T> =
+                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MAX) }
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSelect.FirstSelect<BigDecimal> =
+                FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
+        override fun selectSum(column: IntColumn<*>): SqlClientSelect.FirstSelect<Long> =
+                FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
     }
 
     private class FirstSelect<T : Any>(
@@ -52,6 +63,18 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
+        override fun <U : Any> andMin(column: MinMaxColumn<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MIN)
+                }
+        override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
+                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MAX)
+                }
+        override fun <U : Any> andAvg(column: NumericColumn<*, U>): SqlClientSelect.SecondSelect<T?, BigDecimal> =
+                SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.SecondSelect<T?, Long> =
+                SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class SecondSelect<T, U>(
@@ -75,6 +98,18 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
+        override fun <V : Any> andMin(column: MinMaxColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MIN)
+                }
+        override fun <V : Any> andMax(column: MinMaxColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MAX)
+                }
+        override fun <V : Any> andAvg(column: NumericColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, BigDecimal> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.ThirdSelect<T, U, Long> =
+                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class ThirdSelect<T, U, V>(
@@ -98,6 +133,18 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 Select(client, properties as Properties<List<Any?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
+        override fun <W : Any> andMin(column: MinMaxColumn<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MIN)
+                }
+        override fun <W : Any> andMax(column: MinMaxColumn<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply {
+                    addSelectColumn(column, FieldClassifier.MAX)
+                }
+        override fun <W : Any> andAvg(column: NumericColumn<*, W>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.Select =
+                Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
     }
 
     private class Select(
@@ -115,6 +162,16 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         override fun <V : Any> andDistinct(column: Column<*, V>): SqlClientSelect.Select = this.apply {
             addSelectColumn(column, FieldClassifier.DISTINCT)
         }
+        override fun <T : Any> andMin(column: MinMaxColumn<*, T>): SqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.MIN)
+        }
+        override fun <T : Any> andMax(column: MinMaxColumn<*, T>): SqlClientSelect.Select = this.apply {
+            addSelectColumn(column, FieldClassifier.MAX)
+        }
+        override fun <T : Any> andAvg(column: NumericColumn<*, T>): SqlClientSelect.Select = this.apply {
+            addAvgColumn(column)
+        }
+        override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
     }
 
     private class SelectWithDsl<T : Any>(

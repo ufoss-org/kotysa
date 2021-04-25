@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
@@ -28,28 +27,8 @@ class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcPostgresqlTest<GroupByRe
     }
 }
 
-class GroupByRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
-
-    private val sqlClient = client.sqlClient(postgresqlTables)
-
-    override fun init() {
-        createTables()
-        insertCustomers()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable POSTGRESQL_CUSTOMER
-    }
-
-    private fun insertCustomers() {
-        sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_CUSTOMER
+class GroupByRepositoryPostgresqlSelect(client: JdbcOperations) :
+        AbstractCustomerRepositorySpringJdbcPostgresql(client) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount POSTGRESQL_CUSTOMER.id and POSTGRESQL_CUSTOMER.country

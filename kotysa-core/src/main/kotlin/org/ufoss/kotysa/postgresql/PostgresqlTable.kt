@@ -19,7 +19,9 @@ import java.util.*
  *
  * **Extend this class with an object**
  *
- * supported types follow : [Postgres Data types](https://www.postgresql.org/docs/11/datatype.html)
+ * supported types follow : [Postgresql data types](https://www.postgresql.org/docs/11/datatype.html)
+ * More here : [Postgresql data types mapped Java classes]
+ * (https://www.postgresql.org/message-id/AANLkTikkkxN+-UUiGVTzj8jdfS4PdpB8_tDONMFHNqHk@mail.gmail.com)
  * @param T Entity type associated with this table
  */
 public abstract class PostgresqlTable<T : Any> protected constructor(tableName: String? = null) :

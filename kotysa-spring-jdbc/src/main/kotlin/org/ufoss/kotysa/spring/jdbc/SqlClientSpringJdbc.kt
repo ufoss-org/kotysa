@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.ufoss.kotysa.*
+import java.math.BigDecimal
 
 /**
  * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
@@ -68,6 +69,14 @@ internal class SqlClientSpringJdbc(
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
             SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectDistinct(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMin(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMax(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
+            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectAvg(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
+            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectSum(column)
 }
 
 /**

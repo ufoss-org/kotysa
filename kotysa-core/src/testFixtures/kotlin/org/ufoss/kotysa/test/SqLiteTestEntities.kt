@@ -141,6 +141,7 @@ object SQLITE_CUSTOMER : SqLiteTable<CustomerEntity>("customer") {
             .primaryKey()
     val name = text(CustomerEntity::name)
     val country = text(CustomerEntity::country)
+    val age = integer(CustomerEntity::age)
 }
 
 val sqLiteTables = tables().sqlite(

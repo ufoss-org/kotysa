@@ -7,7 +7,6 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcH2Test<GroupByRepositoryH2Select>() {
@@ -23,28 +22,7 @@ class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcH2Test<GroupByRepository
     }
 }
 
-class GroupByRepositoryH2Select(client: JdbcOperations) : Repository {
-
-    private val sqlClient = client.sqlClient(h2Tables)
-
-    override fun init() {
-        createTables()
-        insertCustomers()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable H2_CUSTOMER
-    }
-
-    private fun insertCustomers() {
-        sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom H2_CUSTOMER
+class GroupByRepositoryH2Select(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcH2(client) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount H2_CUSTOMER.id and H2_CUSTOMER.country

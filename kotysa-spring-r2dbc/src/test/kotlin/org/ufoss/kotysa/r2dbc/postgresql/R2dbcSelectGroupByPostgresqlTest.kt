@@ -27,26 +27,7 @@ class R2dbcSelectGroupByPostgresqlTest : AbstractR2dbcPostgresqlTest<GroupByRepo
     }
 }
 
-class GroupByRepositoryPostgresqlSelect(private val sqlClient: ReactorSqlClient) : Repository {
-
-    override fun init() {
-        createTables()
-                .then(insertCustomers())
-                .block()
-    }
-
-    override fun delete() {
-        deleteAll()
-                .block()
-    }
-
-    private fun createTables() =
-            sqlClient createTable POSTGRESQL_CUSTOMER
-
-    private fun insertCustomers() =
-            sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_CUSTOMER
+class GroupByRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryPostgresql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount POSTGRESQL_CUSTOMER.id and POSTGRESQL_CUSTOMER.country

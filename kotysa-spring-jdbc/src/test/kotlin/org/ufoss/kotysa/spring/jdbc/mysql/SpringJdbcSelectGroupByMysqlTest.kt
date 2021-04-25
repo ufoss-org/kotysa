@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
@@ -28,28 +27,7 @@ class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcMysqlTest<GroupByReposit
     }
 }
 
-class GroupByRepositoryMysqlSelect(client: JdbcOperations) : Repository {
-
-    private val sqlClient = client.sqlClient(mysqlTables)
-
-    override fun init() {
-        createTables()
-        insertCustomers()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable MYSQL_CUSTOMER
-    }
-
-    private fun insertCustomers() {
-        sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_CUSTOMER
+class GroupByRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country

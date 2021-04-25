@@ -14,6 +14,7 @@ import java.util.*
 public open class DefaultSqlClientCommon protected constructor() : SqlClientQuery() {
 
     public interface Properties {
+        public val dbAccessType: DbAccessType
         public val tables: Tables
         public val fromClauses: MutableList<FromClause<*>>
         public val whereClauses: MutableList<WhereClauseWithType<*>>

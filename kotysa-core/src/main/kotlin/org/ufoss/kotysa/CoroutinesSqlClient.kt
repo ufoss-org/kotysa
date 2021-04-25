@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import kotlinx.coroutines.flow.Flow
+import java.math.BigDecimal
 
 /**
  * Coroutines Sql Client
@@ -28,6 +29,10 @@ public interface CoroutinesSqlClient {
     public fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long>
     public infix fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>
+    public infix fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal>
+    public infix fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.From<T, T> =
             select(table).from(table)
@@ -48,6 +53,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
         override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
         override fun <T : Any> selectDistinct(column: Column<*, T>): FirstSelect<T>
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): FirstSelect<T>
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): FirstSelect<T>
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
+        override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable {
@@ -59,6 +68,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
         override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
         override fun <U : Any> andDistinct(column: Column<*, U>): SecondSelect<T?, U?>
+        override fun <U : Any> andMin(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
+        override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
+        override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
+        override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
@@ -66,6 +79,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
         override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
         override fun <V : Any> andDistinct(column: Column<*, V>): ThirdSelect<T, U, V?>
+        override fun <V : Any> andMin(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
+        override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
+        override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
+        override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
     }
 
     public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
@@ -73,6 +90,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <W : Any> and(table: Table<W>): Select
         override fun <W : Any> andCount(column: Column<*, W>): Select
         override fun <W : Any> andDistinct(column: Column<*, W>): Select
+        override fun <W : Any> andMin(column: MinMaxColumn<*, W>): Select
+        override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
+        override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
+        override fun andSum(column: IntColumn<*>): Select
     }
 
     public interface Select : Fromable<List<Any?>>, Andable {
@@ -80,6 +101,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <W : Any> and(table: Table<W>): Select
         override fun <W : Any> andCount(column: Column<*, W>): Select
         override fun <W : Any> andDistinct(column: Column<*, W>): Select
+        override fun <T : Any> andMin(column: MinMaxColumn<*, T>): Select
+        override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
+        override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
+        override fun andSum(column: IntColumn<*>): Select
     }
 
     public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
