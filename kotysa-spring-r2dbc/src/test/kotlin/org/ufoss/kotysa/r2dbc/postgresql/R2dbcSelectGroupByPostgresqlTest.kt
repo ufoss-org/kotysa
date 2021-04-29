@@ -20,7 +20,7 @@ class R2dbcSelectGroupByPostgresqlTest : AbstractR2dbcPostgresqlTest<GroupByRepo
     }
 
     @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
+    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
         assertThat(repository.selectCountCustomerGroupByCountry().toIterable())
                 .hasSize(2)
                 .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
