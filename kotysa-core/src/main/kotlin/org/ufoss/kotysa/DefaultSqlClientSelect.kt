@@ -25,6 +25,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public lateinit var select: (RowImpl) -> T?
 
         internal val groupBy = mutableListOf<Column<*, *>>()
+        internal val orderBy = mutableListOf<Pair<Column<*, *>, Order>>()
 
         internal var limit: Int? = null
         internal var offset: Int? = null
@@ -39,7 +40,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *>): V = with(properties) {
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *, *>): V = with(properties) {
             select = when (selectedFields.size) {
                 1 -> selectedFields[0].builder as (RowImpl) -> T?
                 2 -> {
@@ -89,20 +90,23 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.select = field.builder
         }
 
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *>): V =
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *, *>): V =
             from.addFromTable(table)
     }
 
     public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
-            X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>> protected constructor(
+            X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>, Z : SqlClientQuery.OrderByPart2<Z>>
+    protected constructor(
             final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>, OrderBy<T, Z>
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>, W : SqlClientQuery.GroupBy<X>, X : SqlClientQuery.GroupByPart2<X>> protected constructor()
-        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, X>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
+            W : SqlClientQuery.GroupBy<X>, X : SqlClientQuery.GroupByPart2<X>, Y : SqlClientQuery.OrderByPart2<Y>>
+    protected constructor()
+        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, X>, OrderBy<T, Y>
 
     protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
-        : SqlClientQuery.LimitOffset<U>, Return<T> {
+        : SqlClientQuery.LimitOffset<U>, WithProperties<T> {
         public val limitOffset: U
 
         override fun limit(limit: Int): U {
@@ -116,7 +120,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface GroupBy<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupBy<U>, Return<T> {
+    protected interface GroupBy<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupBy<U>,
+            WithProperties<T> {
         public val groupByPart2: U
 
         override fun groupBy(column: Column<*, *>): U {
@@ -125,13 +130,43 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface GroupByPart2<T : Any, U : SqlClientQuery.GroupByPart2<U>>
-        : SqlClientQuery.GroupByPart2<U>, Return<T> {
+    protected interface GroupByPart2<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupByPart2<U>,
+            WithProperties<T> {
         public val groupByPart2: U
 
         override fun and(column: Column<*, *>): U {
             properties.groupBy.add(column)
             return groupByPart2
+        }
+    }
+
+    protected interface OrderBy<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderBy<U>,
+            WithProperties<T> {
+        public val orderByPart2: U
+
+        override fun orderByAsc(column: Column<*, *>): U {
+            properties.orderBy.add(Pair(column, Order.ASC))
+            return orderByPart2
+        }
+
+        override fun orderByDesc(column: Column<*, *>): U {
+            properties.orderBy.add(Pair(column, Order.DESC))
+            return orderByPart2
+        }
+    }
+
+    protected interface OrderByPart2<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderByPart2<U>,
+            WithProperties<T> {
+        public val orderByPart2: U
+
+        override fun andAsc(column: Column<*, *>): U {
+            properties.orderBy.add(Pair(column, Order.ASC))
+            return orderByPart2
+        }
+
+        override fun andDesc(column: Column<*, *>): U {
+            properties.orderBy.add(Pair(column, Order.DESC))
+            return orderByPart2
         }
     }
 
@@ -141,6 +176,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             val froms = froms()
             val wheres = wheres()
             val groupBy = groupBy()
+            val orderBy = orderBy()
             val limit = if (limit != null) {
                 "LIMIT $limit"
             } else {
@@ -151,9 +187,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             } else {
                 ""
             }
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $limit $offset" }
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limit $offset" }
 
-            "$selects $froms $wheres $groupBy $limit $offset"
+            "$selects $froms $wheres $groupBy $orderBy $limit $offset"
         }
 
         private fun groupBy(): String = with(properties) {
@@ -162,6 +198,15 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             }
             return groupBy.joinToString(prefix = "GROUP BY ") { column ->
                 column.getFieldName(availableColumns)
+            }
+        }
+
+        private fun orderBy(): String = with(properties) {
+            if (orderBy.isEmpty()) {
+                return ""
+            }
+            return orderBy.joinToString(prefix = "ORDER BY ") { pair ->
+                "${pair.first.getFieldName(availableColumns)} ${pair.second}"
             }
         }
     }

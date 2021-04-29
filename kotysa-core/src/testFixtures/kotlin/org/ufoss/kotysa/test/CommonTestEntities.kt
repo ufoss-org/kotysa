@@ -348,8 +348,8 @@ data class CustomerEntity(
 )
 
 val customerFrance = CustomerEntity(1, "Jean", "France", 19)
-val customerUSA1 = CustomerEntity(2, "John", "USA", 20)
-val customerUSA2 = CustomerEntity(3, "Big Boss", "USA", 21)
+val customerUSA1 = CustomerEntity(2, "John", "USA", 21)
+val customerUSA2 = CustomerEntity(3, "Big Boss", "USA", 20)
 
 
 data class UserDto(

@@ -217,4 +217,14 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(column: Column<*, *>): T
         // todo HAVING https://www.dofactory.com/sql/having
     }
+
+    public interface OrderBy<T : OrderByPart2<T>> {
+        public infix fun orderByAsc(column: Column<*, *>): T
+        public infix fun orderByDesc(column: Column<*, *>): T
+    }
+
+    public interface OrderByPart2<T : OrderByPart2<T>> {
+        public infix fun andAsc(column: Column<*, *>): T
+        public infix fun andDesc(column: Column<*, *>): T
+    }
 }
