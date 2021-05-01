@@ -20,6 +20,13 @@ class SqLiteSelectOrderByTest : AbstractSqLiteTest<OrderByRepositorySelect>() {
                 .hasSize(3)
                 .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
+
+    @Test
+    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
+        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
+                .hasSize(3)
+                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+    }
 }
 
 class OrderByRepositorySelect(
@@ -30,5 +37,10 @@ class OrderByRepositorySelect(
     fun selectCustomerOrderByAgeAsc() =
             (sqlClient selectFrom SQLITE_CUSTOMER
                     orderByAsc SQLITE_CUSTOMER.age
+                    ).fetchAll()
+
+    fun selectCustomerOrderByAgeAndIdAsc() =
+            (sqlClient selectFrom SQLITE_CUSTOMER
+                    orderByAsc SQLITE_CUSTOMER.age andAsc SQLITE_CUSTOMER.id
                     ).fetchAll()
 }
