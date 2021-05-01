@@ -101,9 +101,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>, OrderBy<T, Z>
 
     public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
-            W : SqlClientQuery.GroupBy<X>, X : SqlClientQuery.GroupByPart2<X>, Y : SqlClientQuery.OrderByPart2<Y>>
+            W : SqlClientQuery.GroupByPart2<W>, X : SqlClientQuery.OrderByPart2<X>>
     protected constructor()
-        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, X>, OrderBy<T, Y>
+        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, W>, OrderBy<T, X>
 
     protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
         : SqlClientQuery.LimitOffset<U>, WithProperties<T> {

@@ -198,8 +198,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             override val client: SQLiteDatabase,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>,
-            SqlClientSelect.GroupBy<T>, SqlClientSelect.GroupByPart2<T>, SqlClientSelect.OrderByPart2<T>>(),
-            SqlClientSelect.Where<T>, GroupBy<T>, OrderBy<T>, SqlClientSelect.LimitOffset<T> {
+            SqlClientSelect.GroupByPart2<T>, SqlClientSelect.OrderByPart2<T>>(), SqlClientSelect.Where<T>, GroupBy<T>,
+            OrderBy<T>, SqlClientSelect.LimitOffset<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
