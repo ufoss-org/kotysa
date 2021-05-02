@@ -10,15 +10,15 @@ def ossrhPassword = project.hasProperty("ossrhPassword") ? project.property("oss
 configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
-    apply plugin: 'org.jetbrains.dokka'
 
     // Regular java modules need 'java-library' plugin for proper publication
     apply plugin: 'java-library'
+    apply plugin: 'org.jetbrains.dokka'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
     repositories {
-        jcenter()
+        mavenCentral()
         maven { url 'https://repo.spring.io/milestone' }
         maven { url 'https://kotlin.bintray.com/kotlinx' }
     }
