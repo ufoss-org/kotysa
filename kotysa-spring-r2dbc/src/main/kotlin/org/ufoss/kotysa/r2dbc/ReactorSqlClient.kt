@@ -111,13 +111,18 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
     }
 
     public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
-            LimitOffset<T>
+            OrderBy<T>, LimitOffset<T>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, GroupBy<T>, LimitOffset<T>
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>
 
     public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>, Return<T>
 
-    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, LimitOffset<T>
+    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, OrderBy<T>, LimitOffset<T>
+
+    public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderByPart2<T>>
+
+    public interface OrderByPart2<T : Any> : SqlClientQuery.OrderByPart2<OrderByPart2<T>>, GroupBy<T>, LimitOffset<T>,
+            Return<T>
 
     public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 

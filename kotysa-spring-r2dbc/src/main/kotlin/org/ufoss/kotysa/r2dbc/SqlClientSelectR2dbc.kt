@@ -189,23 +189,26 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
             override val client: DatabaseClient,
             properties: Properties<T>,
     ) : DefaultSqlClientSelect.FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>,
-            ReactorSqlClientSelect.LimitOffset<T>, ReactorSqlClientSelect.GroupByPart2<T>>(properties),
-            ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.LimitOffset<T>, GroupBy<T> {
+            ReactorSqlClientSelect.LimitOffset<T>, ReactorSqlClientSelect.GroupByPart2<T>,
+            ReactorSqlClientSelect.OrderByPart2<T>>(properties), ReactorSqlClientSelect.From<T, U>,
+            GroupBy<T>, OrderBy<T>, ReactorSqlClientSelect.LimitOffset<T> {
         override val from = this
-        override val where: ReactorSqlClientSelect.Where<T> by lazy { Where(client, properties) }
-        override val limitOffset: ReactorSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
-        override val groupByPart2: ReactorSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
+        override val where by lazy { Where(client, properties) }
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
     }
 
     private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Where<T, ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>,
-            ReactorSqlClientSelect.GroupBy<T>, ReactorSqlClientSelect.GroupByPart2<T>>(),
-            ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>, GroupBy<T> {
+            ReactorSqlClientSelect.GroupByPart2<T>, ReactorSqlClientSelect.OrderByPart2<T>>(),
+            ReactorSqlClientSelect.Where<T>, GroupBy<T>, OrderBy<T>, ReactorSqlClientSelect.LimitOffset<T> {
         override val where = this
-        override val limitOffset: ReactorSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
-        override val groupByPart2: ReactorSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
     }
 
     private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, ReactorSqlClientSelect.GroupByPart2<T>>,
@@ -215,10 +218,27 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.GroupByPart2<T, ReactorSqlClientSelect.GroupByPart2<T>>,
-            DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>, ReactorSqlClientSelect.GroupByPart2<T>,
-            ReactorSqlClientSelect.LimitOffset<T>, Return<T> {
-        override val limitOffset: ReactorSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+            ReactorSqlClientSelect.GroupByPart2<T>,
+            DefaultSqlClientSelect.OrderBy<T, ReactorSqlClientSelect.OrderByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
         override val groupByPart2 = this
+    }
+
+    private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, ReactorSqlClientSelect.OrderByPart2<T>>,
+            ReactorSqlClientSelect.OrderBy<T>, Return<T>
+
+    private class OrderByPart2<T : Any>(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.OrderByPart2<T, ReactorSqlClientSelect.OrderByPart2<T>>,
+            ReactorSqlClientSelect.OrderByPart2<T>,
+            DefaultSqlClientSelect.GroupBy<T, ReactorSqlClientSelect.GroupByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, ReactorSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val orderByPart2 = this
     }
 
     private class LimitOffset<T : Any>(
