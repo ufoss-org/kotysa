@@ -5,7 +5,7 @@ plugins {
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
     maven { url 'https://repo.spring.io/milestone' }
 }
 
@@ -15,7 +15,7 @@ dependencies {
     implementation('org.springframework:spring-r2dbc')
     implementation('io.r2dbc:r2dbc-h2')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.3')
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.4')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -42,6 +42,6 @@ test {
 }
 
 wrapper {
-    gradleVersion = '6.8.3'
+    gradleVersion = '7.0'
     distributionType = Wrapper.DistributionType.ALL
 }
