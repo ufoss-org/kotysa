@@ -191,23 +191,26 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
             properties: Properties<T>,
     ) : DefaultSqlClientSelect.FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>,
             CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
-            CoroutinesSqlClientSelect.GroupByPart2<T>>(properties), CoroutinesSqlClientSelect.From<T, U>,
-            CoroutinesSqlClientSelect.LimitOffset<T>, GroupBy<T> {
+            CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(properties),
+            CoroutinesSqlClientSelect.From<T, U>, GroupBy<T>, OrderBy<T>,
+            CoroutinesSqlClientSelect.LimitOffset<T> {
         override val from = this
-        override val where: CoroutinesSqlClientSelect.Where<T> by lazy { Where(client, properties) }
-        override val limitOffset: CoroutinesSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
-        override val groupByPart2: CoroutinesSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
+        override val where by lazy { Where(client, properties) }
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
     }
 
     private class Where<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
-            CoroutinesSqlClientSelect.GroupBy<T>, CoroutinesSqlClientSelect.GroupByPart2<T>>(),
-            CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>, GroupBy<T> {
+            CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(),
+            CoroutinesSqlClientSelect.Where<T>, GroupBy<T>, OrderBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
         override val where = this
-        override val limitOffset: CoroutinesSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
-        override val groupByPart2: CoroutinesSqlClientSelect.GroupByPart2<T> by lazy { GroupByPart2(client, properties) }
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
     }
 
     private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
@@ -217,10 +220,27 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
             override val client: DatabaseClient,
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.GroupByPart2<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
-            DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, CoroutinesSqlClientSelect.GroupByPart2<T>,
-            CoroutinesSqlClientSelect.LimitOffset<T>, Return<T> {
-        override val limitOffset: CoroutinesSqlClientSelect.LimitOffset<T> by lazy { LimitOffset(client, properties) }
+            CoroutinesSqlClientSelect.GroupByPart2<T>,
+            DefaultSqlClientSelect.OrderBy<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
         override val groupByPart2 = this
+    }
+
+    private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
+            CoroutinesSqlClientSelect.OrderBy<T>, Return<T>
+
+    private class OrderByPart2<T : Any>(
+            override val client: DatabaseClient,
+            override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.OrderByPart2<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
+            CoroutinesSqlClientSelect.OrderByPart2<T>,
+            DefaultSqlClientSelect.GroupBy<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
+            DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val orderByPart2 = this
     }
 
     private class LimitOffset<T : Any>(
