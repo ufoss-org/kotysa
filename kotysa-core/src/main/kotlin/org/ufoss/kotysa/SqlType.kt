@@ -14,7 +14,9 @@ public enum class SqlType(internal val fullType: String) {
 
     // numbers
     INTEGER("INTEGER"),
+    BIGINT("BIGINT"),
     SERIAL("SERIAL"),
+    BIGSERIAL("BIGSERIAL"),
 
     // date
     TIMESTAMP("TIMESTAMP"),
