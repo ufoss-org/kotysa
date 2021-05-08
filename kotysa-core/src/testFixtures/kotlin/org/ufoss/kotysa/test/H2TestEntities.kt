@@ -53,18 +53,19 @@ data class H2AllTypesNotNullEntity(
         override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         override val int: Int,
+        override val long: Long,
         val offsetDateTime: OffsetDateTime,
         val uuid: UUID,
 ) : AllTypesNotNullEntity(
         id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
 )
 
 val h2AllTypesNotNull = H2AllTypesNotNullEntity(
         1, "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
         LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, OffsetDateTime.of(
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
 ), UUID.randomUUID()
@@ -83,6 +84,7 @@ object H2_ALL_TYPES_NOT_NULL : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNotNullEntity::int)
+    val long = bigInt(AllTypesNotNullEntity::long)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNotNullEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNotNullEntity::uuid)
 }
@@ -98,16 +100,17 @@ data class H2AllTypesNullableEntity(
         override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
         override val int: Int?,
+        override val long: Long?,
         val offsetDateTime: OffsetDateTime?,
         val uuid: UUID?,
 ) : AllTypesNullableEntity(
         id, string, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
 )
 
 val h2AllTypesNullable = H2AllTypesNullableEntity(
-        1, null, null, null, null,
-        null, null, null, null, null, null, null
+        1, null, null, null, null, null, null,
+        null, null, null, null, null, null
 )
 
 object H2_ALL_TYPES_NULLABLE : H2Table<H2AllTypesNullableEntity>("all_types_nullable") {
@@ -122,6 +125,7 @@ object H2_ALL_TYPES_NULLABLE : H2Table<H2AllTypesNullableEntity>("all_types_null
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNullableEntity::int)
+    val long = bigInt(AllTypesNullableEntity::long)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNullableEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNullableEntity::uuid)
 }
@@ -137,11 +141,12 @@ data class H2AllTypesNullableDefaultValueEntity(
         override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
         override val int: Int? = null,
+        override val long: Long? = null,
         val offsetDateTime: OffsetDateTime? = null,
         val uuid: UUID? = null,
 ) : AllTypesNullableDefaultValueEntity(
         id, string, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
 )
 
 val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
@@ -179,6 +184,7 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<H2AllTypesNullableDefaultVa
             defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
     )
     val int = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
+    val long = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
     val offsetDateTime = timestampWithTimeZone(
             H2AllTypesNullableDefaultValueEntity::offsetDateTime,
             defaultValue = OffsetDateTime.of(

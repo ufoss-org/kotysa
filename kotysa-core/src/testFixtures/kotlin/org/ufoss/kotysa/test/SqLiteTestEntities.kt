@@ -49,6 +49,7 @@ object SQLITE_ALL_TYPES_NOT_NULL : SqLiteTable<AllTypesNotNullEntity>("all_types
     val kotlinxLocalDateTime1 = text(AllTypesNotNullEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = text(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNotNullEntity::int)
+    val long = integer(AllTypesNotNullEntity::long)
 }
 
 object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>("all_types_nullable") {
@@ -63,6 +64,7 @@ object SQLITE_ALL_TYPES_NULLABLE : SqLiteTable<AllTypesNullableEntity>("all_type
     val kotlinxLocalDateTime1 = text(AllTypesNullableEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = text(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNullableEntity::int)
+    val long = integer(AllTypesNullableEntity::long)
 }
 
 object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE :
@@ -85,6 +87,7 @@ object SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE :
     val kotlinxLocalDateTime2 = text(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
             defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0))
     val int = integer(AllTypesNullableDefaultValueEntity::int, "sqlite_integer", 42)
+    val long = integer(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
 }
 
 object SQLITE_LOCAL_DATE : SqLiteTable<LocalDateEntity>("local_date") {
@@ -136,6 +139,13 @@ object SQLITE_INT : SqLiteTable<IntEntity>("ints") {
     val intNullable = integer(IntEntity::intNullable)
 }
 
+object SQLITE_LONG : SqLiteTable<LongEntity>("longs") {
+    val id = autoIncrementInteger(LongEntity::id)
+            .primaryKey()
+    val longNotNull = integer(LongEntity::longNotNull)
+    val longNullable = integer(LongEntity::longNullable)
+}
+
 object SQLITE_CUSTOMER : SqLiteTable<CustomerEntity>("customer") {
     val id = integer(CustomerEntity::id)
             .primaryKey()
@@ -158,5 +168,6 @@ val sqLiteTables = tables().sqlite(
         SQLITE_OFFSET_DATE_TIME,
         SQLITE_LOCAL_TIME,
         SQLITE_INT,
+        SQLITE_LONG,
         SQLITE_CUSTOMER,
 )

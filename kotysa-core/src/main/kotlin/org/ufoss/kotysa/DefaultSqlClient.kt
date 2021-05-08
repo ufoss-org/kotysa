@@ -114,6 +114,7 @@ internal fun Any?.dbValue(): String = when (this) {
     is Boolean -> "$this"
     is UUID -> "$this"
     is Int -> "$this"
+    is Long -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     /*DateTimeFormatterBuilder()
@@ -143,5 +144,6 @@ internal fun Any?.dbValue(): String = when (this) {
 
 private fun Any?.defaultValue(): String = when (this) {
     is Int -> "$this"
+    is Long -> "$this"
     else -> "'${this.dbValue()}'"
 }

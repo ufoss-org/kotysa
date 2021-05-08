@@ -44,8 +44,7 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
         getter: (T) -> String,
         columnName: String? = null,
         size: Int? = null
-    ): StringDbVarcharColumnNotNull<T> =
-        StringDbVarcharColumnNotNull(getter, columnName, size).also { addColumn(it) }
+    ): StringDbVarcharColumnNotNull<T> = StringDbVarcharColumnNotNull(getter, columnName, size).also { addColumn(it) }
 
     protected fun varchar(
         getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null,
@@ -53,18 +52,30 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
     ): StringDbVarcharColumnNullable<T> =
         StringDbVarcharColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
-        IntDbIntegerColumnNotNull(getter, columnName, false).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
+        IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
     protected fun integer(
         getter: (T) -> Int?,
         columnName: String? = null,
         defaultValue: Int? = null
-    ): IntDbIntegerColumnNullable<T> =
-        IntDbIntegerColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    ): IntDbIntColumnNullable<T> = IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
+            LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
+
+    protected fun bigInt(
+            getter: (T) -> Long?,
+            columnName: String? = null,
+            defaultValue: Long? = null
+    ): LongDbBigIntColumnNullable<T> =
+            LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun serial(getter: (T) -> Int?, columnName: String? = null): IntDbSerialColumnNotNull<T> =
         IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    // protected fun bigSerial(getter: (T) -> Long?, columnName: String? = null): IntDbSerialColumnNotNull<T> =
+    //         IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
         BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }

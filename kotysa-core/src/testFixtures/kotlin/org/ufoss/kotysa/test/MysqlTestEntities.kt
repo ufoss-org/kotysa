@@ -67,6 +67,7 @@ object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNullableEntity::int)
+    val long = bigInt(AllTypesNullableEntity::long)
 }
 
 object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueEntity>() {
@@ -102,6 +103,7 @@ object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefau
             defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
+    val long = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
 }
 
 object MYSQL_LOCAL_DATE : MysqlTable<LocalDateEntity>() {
@@ -180,10 +182,11 @@ data class MysqlAllTypesNotNull(
         override val localDateTime2: LocalDateTime,
         override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
-        override val int: Int
+        override val int: Int,
+        override val long: Long,
 ) : AllTypesNotNullEntity(
         id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -205,6 +208,7 @@ data class MysqlAllTypesNotNull(
                 != other.kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
         ) return false
         if (int != other.int) return false
+        if (long != other.long) return false
         if (id != other.id) return false
 
         return true
@@ -212,15 +216,16 @@ data class MysqlAllTypesNotNull(
 
     override fun hashCode(): Int {
         var result = string.hashCode()
-        result = 31 * result + (localDate.hashCode())
-        result = 31 * result + (kotlinxLocalDate.hashCode())
-        result = 31 * result + (localTime.hashCode())
-        result = 31 * result + (localDateTime1.hashCode())
-        result = 31 * result + (localDateTime2.hashCode())
-        result = 31 * result + (kotlinxLocalDateTime1.hashCode())
-        result = 31 * result + (kotlinxLocalDateTime2.hashCode())
-        result = 31 * result + (int)
-        result = 31 * result + (id)
+        result = 31 * result + localDate.hashCode()
+        result = 31 * result + kotlinxLocalDate.hashCode()
+        result = 31 * result + localTime.hashCode()
+        result = 31 * result + localDateTime1.hashCode()
+        result = 31 * result + localDateTime2.hashCode()
+        result = 31 * result + kotlinxLocalDateTime1.hashCode()
+        result = 31 * result + kotlinxLocalDateTime2.hashCode()
+        result = 31 * result + int
+        result = 31 * result + long.hashCode()
+        result = 31 * result + id
         return result
     }
 }
@@ -229,7 +234,7 @@ val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
         1, "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
         LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L
 )
 
 object MYSQL_INHERITED : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
