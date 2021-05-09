@@ -7,8 +7,8 @@ package org.ufoss.kotysa.r2dbc.transaction
 import org.springframework.transaction.ReactiveTransaction
 import org.ufoss.kotysa.transaction.Transaction
 
-
-public inline class ReactorTransaction(private val reactiveTransaction: ReactiveTransaction) : Transaction {
+@JvmInline
+public value class ReactorTransaction(private val reactiveTransaction: ReactiveTransaction) : Transaction {
 
     override fun isNewTransaction(): Boolean = reactiveTransaction.isNewTransaction
 
