@@ -8,7 +8,8 @@ import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.transaction.TransactionalOp
 
-public inline class AndroidTransactionalOp(private val client: SQLiteDatabase) : TransactionalOp {
+@JvmInline
+public value class AndroidTransactionalOp(private val client: SQLiteDatabase) : TransactionalOp {
 
     public override fun <T> execute(block: (Transaction) -> T): T? = client.run {
         val transaction = AndroidTransaction()
