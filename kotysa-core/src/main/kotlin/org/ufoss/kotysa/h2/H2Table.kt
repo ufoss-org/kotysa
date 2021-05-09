@@ -50,18 +50,30 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
     ): StringDbVarcharColumnNullable<T> =
         StringDbVarcharColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
-        IntDbIntegerColumnNotNull(getter, columnName, false).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
+        IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
     protected fun integer(
         getter: (T) -> Int?,
         columnName: String? = null,
         defaultValue: Int? = null
-    ): IntDbIntegerColumnNullable<T> =
-        IntDbIntegerColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    ): IntDbIntColumnNullable<T> = IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
-        IntDbIntegerColumnNotNull(getter, columnName, true).also { addColumn(it) }
+    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
+        IntDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
+
+    protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
+            LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
+
+    protected fun bigInt(
+            getter: (T) -> Long?,
+            columnName: String? = null,
+            defaultValue: Long? = null
+    ): LongDbBigIntColumnNullable<T> =
+            LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun autoIncrementBigInt(getter: (T) -> Long?, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
+            LongDbBigIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
     protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
         BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }

@@ -51,7 +51,8 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                                 LocalDateTime.of(2019, 11, 4, 0, 0),
                                 kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                                 kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                                42
+                                42,
+                                84L,
                         )
                 )
     }
@@ -64,12 +65,13 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
+        val newLong = 2L
         val operator = client.transactionalOp()
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                    "new", false, newLocalDate, newKotlinxLocalDate,
-                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt
+                    "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime,
+                    newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong
             )
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
@@ -77,7 +79,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                             AllTypesNotNullEntity(
                                     allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
                                     newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                    newKotlinxLocalDateTime, newInt
+                                    newKotlinxLocalDateTime, newInt, newLong
                             )
                     )
         }
@@ -119,8 +121,8 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
 
     fun updateAllTypesNotNull(
             newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-            newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-            newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int
+            newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+            newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long
     ) =
             (sqlClient update SQLITE_ALL_TYPES_NOT_NULL
                     set SQLITE_ALL_TYPES_NOT_NULL.string eq newString
@@ -133,6 +135,7 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
                     set SQLITE_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
                     set SQLITE_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                     set SQLITE_ALL_TYPES_NOT_NULL.int eq newInt
+                    set SQLITE_ALL_TYPES_NOT_NULL.long eq newLong
                     where SQLITE_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
                     ).execute()
 }

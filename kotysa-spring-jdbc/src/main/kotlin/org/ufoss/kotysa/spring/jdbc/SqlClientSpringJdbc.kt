@@ -34,7 +34,9 @@ internal class SqlClientSpringJdbc(
                 // do nothing for null values with default or Serial type
                 .filterNot { column ->
                     column.entityGetter(row) == null
-                            && (column.defaultValue != null || SqlType.SERIAL == column.sqlType)
+                            && (column.defaultValue != null
+                            || SqlType.SERIAL == column.sqlType
+                            || SqlType.BIGSERIAL == column.sqlType)
                 }
                 .map { column -> tables.getDbValue(column.entityGetter(row)) }
                 .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue)  }

@@ -69,6 +69,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun set(booleanColumnNotNull: BooleanColumnNotNull<T>): UpdateOpColumn<T, U, Boolean>
         public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpColumn<T, U, Int>
         public infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpColumn<T, U, Int?>
+        public infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpColumn<T, U, Long>
+        public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, U, Long?>
         public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID>
         public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?>
     }
@@ -95,6 +97,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun where(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U>
         public infix fun where(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U>
         public infix fun where(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U>
+        public infix fun where(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U>
+        public infix fun where(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U>
         public infix fun where(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
         public infix fun where(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
     }
@@ -156,6 +160,19 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereOpIntColumnNullable<T : Any, U : Where<T, U>> :
             WhereOpIntColumn<T, U>, WhereOpColumnNullable<T, U, Int>
 
+    public interface WhereOpLongColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, Long> {
+        public infix fun inf(value: Long): U
+        public infix fun sup(value: Long): U
+        public infix fun infOrEq(value: Long): U
+        public infix fun supOrEq(value: Long): U
+    }
+
+    public interface WhereOpLongColumnNotNull<T : Any, U : Where<T, U>> :
+            WhereOpLongColumn<T, U>, WhereOpColumnNotNull<T, U, Long>
+
+    public interface WhereOpLongColumnNullable<T : Any, U : Where<T, U>> :
+            WhereOpLongColumn<T, U>, WhereOpColumnNullable<T, U, Long>
+
     public interface WhereOpUuidColumnNotNull<T : Any, U : Where<T, U>> :
             WhereOpColumnNotNull<T, U, UUID>, WhereInOpColumn<T, U, UUID>
 
@@ -180,6 +197,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U>
         public infix fun and(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U>
         public infix fun and(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U>
+        public infix fun and(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U>
+        public infix fun and(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U>
         public infix fun and(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
         public infix fun and(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
 

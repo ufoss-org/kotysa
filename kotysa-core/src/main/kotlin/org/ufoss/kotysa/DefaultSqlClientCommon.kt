@@ -201,6 +201,18 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                     type = WhereClauseType.WHERE
                 }
 
+        override fun where(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U> =
+                whereOpLongColumnNotNull.apply {
+                    this.column = longColumnNotNull
+                    type = WhereClauseType.WHERE
+                }
+
+        override fun where(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U> =
+                whereOpLongColumnNullable.apply {
+                    this.column = longColumnNullable
+                    type = WhereClauseType.WHERE
+                }
+
         override fun where(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U> =
                 whereOpUuidColumnNotNull.apply {
                     this.column = uuidColumnNotNull
@@ -317,6 +329,26 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             override val properties: Properties,
     ) : AbstractWhereOpColumn<T, U, Int>(), WhereOpIntColumn<T, U>,
             WhereOpColumnNullable<T, U, Int>, SqlClientQuery.WhereOpIntColumnNullable<T, U>
+
+    public interface WhereOpLongColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
+            WhereInOpColumn<T, U, Long>, SqlClientQuery.WhereOpLongColumn<T, U> {
+        override infix fun inf(value: Long): U = where.apply { addClause(column, Operation.INF, value, type) }
+        override infix fun sup(value: Long): U = where.apply { addClause(column, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Long): U = where.apply { addClause(column, Operation.INF_OR_EQ, value, type) }
+        override infix fun supOrEq(value: Long): U = where.apply { addClause(column, Operation.SUP_OR_EQ, value, type) }
+    }
+
+    public class WhereOpLongColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+            override val where: U,
+            override val properties: Properties,
+    ) : AbstractWhereOpColumn<T, U, Long>(), WhereOpLongColumn<T, U>,
+            WhereOpColumnNotNull<T, U, Long>, SqlClientQuery.WhereOpLongColumnNotNull<T, U>
+
+    public class WhereOpLongColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+            override val where: U,
+            override val properties: Properties,
+    ) : AbstractWhereOpColumn<T, U, Long>(), WhereOpLongColumn<T, U>,
+            WhereOpColumnNullable<T, U, Long>, SqlClientQuery.WhereOpLongColumnNullable<T, U>
 
     public class WhereOpUuidColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
             override val where: U,
@@ -442,6 +474,18 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun and(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U> =
                 whereOpIntColumnNullable.apply {
                     this.column = intColumnNullable
+                    type = WhereClauseType.AND
+                }
+
+        override fun and(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U> =
+                whereOpLongColumnNotNull.apply {
+                    this.column = longColumnNotNull
+                    type = WhereClauseType.AND
+                }
+
+        override fun and(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U> =
+                whereOpLongColumnNullable.apply {
+                    this.column = longColumnNullable
                     type = WhereClauseType.AND
                 }
 
@@ -743,6 +787,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
         internal val whereOpIntColumnNullable: WhereOpIntColumnNullable<T, U> by lazy {
             WhereOpIntColumnNullable(where, properties)
+        }
+        internal val whereOpLongColumnNotNull: WhereOpLongColumnNotNull<T, U> by lazy {
+            WhereOpLongColumnNotNull(where, properties)
+        }
+        internal val whereOpLongColumnNullable: WhereOpLongColumnNullable<T, U> by lazy {
+            WhereOpLongColumnNullable(where, properties)
         }
         internal val whereOpUuidColumnNotNull: WhereOpUuidColumnNotNull<T, U> by lazy {
             WhereOpUuidColumnNotNull(where, properties)

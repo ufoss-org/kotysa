@@ -59,6 +59,7 @@ open class AllTypesNotNullEntity(
         open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         open val int: Int,
+        open val long: Long,
 ) {
     // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
@@ -78,6 +79,7 @@ open class AllTypesNotNullEntity(
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
+        if (long != other.long) return false
 
         return true
     }
@@ -94,6 +96,7 @@ open class AllTypesNotNullEntity(
         result = 31 * result + kotlinxLocalDateTime1.hashCode()
         result = 31 * result + kotlinxLocalDateTime2.hashCode()
         result = 31 * result + int
+        result = 31 * result + long.hashCode()
         return result
     }
 }
@@ -101,7 +104,7 @@ open class AllTypesNotNullEntity(
 val allTypesNotNull = AllTypesNotNullEntity(1, "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
         LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1)
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE)
 
 
 open class AllTypesNullableEntity(
@@ -115,6 +118,7 @@ open class AllTypesNullableEntity(
         open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
         open val int: Int?,
+        open val long: Long?,
 ) {
     // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
@@ -133,6 +137,7 @@ open class AllTypesNullableEntity(
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
+        if (long != other.long) return false
 
         return true
     }
@@ -148,12 +153,14 @@ open class AllTypesNullableEntity(
         result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
+        result = 31 * result + (long?.hashCode() ?: 0)
         return result
     }
 }
 
 val allTypesNullable = AllTypesNullableEntity(1, null, null, null,
-        null, null, null, null, null, null)
+        null, null, null, null, null,
+        null, null)
 
 
 open class AllTypesNullableDefaultValueEntity(
@@ -167,6 +174,7 @@ open class AllTypesNullableDefaultValueEntity(
         open val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
         open val int: Int? = null,
+        open val long: Long? = null,
 ) {
     // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
@@ -185,6 +193,7 @@ open class AllTypesNullableDefaultValueEntity(
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
+        if (long != other.long) return false
 
         return true
     }
@@ -200,6 +209,7 @@ open class AllTypesNullableDefaultValueEntity(
         result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
+        result = 31 * result + (long?.hashCode() ?: 0)
         return result
     }
 }
@@ -330,6 +340,17 @@ data class IntEntity(
 
 val intWithNullable = IntEntity(10, 6)
 val intWithoutNullable = IntEntity(12)
+
+
+data class LongEntity(
+        val longNotNull: Long,
+        val longNullable: Long? = null,
+        val id: Long? = null
+)
+
+val longWithNullable = LongEntity(10L, 6L)
+val longWithoutNullable = LongEntity(12L)
+
 
 data class UuidEntity(
         val uuidNotNull: UUID,

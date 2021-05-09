@@ -71,6 +71,10 @@ public interface IntColumn<out T : Any> : Column<T, Int>, MinMaxColumn<T, Int>, 
 public interface IntColumnNotNull<out T : Any> : IntColumn<T>, ColumnNotNull<T, Int>
 public interface IntColumnNullable<out T : Any> : IntColumn<T>, ColumnNullable<T, Int>
 
+public interface LongColumn<out T : Any> : Column<T, Long>, MinMaxColumn<T, Long>, NumericColumn<T, Long>
+public interface LongColumnNotNull<out T : Any> : LongColumn<T>, ColumnNotNull<T, Long>
+public interface LongColumnNullable<out T : Any> : LongColumn<T>, ColumnNullable<T, Long>
+
 public interface UuidColumn<out T : Any> : Column<T, UUID>
 public interface UuidColumnNotNull<out T : Any> : UuidColumn<T>, ColumnNotNull<T, UUID>
 public interface UuidColumnNullable<out T : Any> : UuidColumn<T>, ColumnNullable<T, UUID>

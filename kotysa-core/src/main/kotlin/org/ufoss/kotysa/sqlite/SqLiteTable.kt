@@ -82,19 +82,32 @@ public abstract class SqLiteTable<T : Any> protected constructor(tableName: Stri
     ): LocalTimeDbTextColumnNullable<T> =
         LocalTimeDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
-        IntDbIntegerColumnNotNull(getter, columnName, false).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
+        IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
     protected fun integer(
         getter: (T) -> Int?,
         columnName: String? = null,
         defaultValue: Int? = null
-    ): IntDbIntegerColumnNullable<T> =
-        IntDbIntegerColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    ): IntDbIntColumnNullable<T> =
+        IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntegerColumnNotNull<T> =
-        IntDbIntegerColumnNotNull(getter, columnName, true).also { addColumn(it) }
+    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
+        IntDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
-    protected fun integer(getter: (T) -> Boolean, columnName: String? = null): BooleanDbIntegerColumnNotNull<T> =
-        BooleanDbIntegerColumnNotNull(getter, columnName).also { addColumn(it) }
+    protected fun integer(getter: (T) -> Long, columnName: String? = null): LongDbIntColumnNotNull<T> =
+            LongDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
+
+    protected fun integer(
+            getter: (T) -> Long?,
+            columnName: String? = null,
+            defaultValue: Long? = null
+    ): LongDbIntColumnNullable<T> =
+            LongDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun autoIncrementInteger(getter: (T) -> Long?, columnName: String? = null): LongDbIntColumnNotNull<T> =
+            LongDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
+
+    protected fun integer(getter: (T) -> Boolean, columnName: String? = null): BooleanDbIntColumnNotNull<T> =
+        BooleanDbIntColumnNotNull(getter, columnName).also { addColumn(it) }
 }

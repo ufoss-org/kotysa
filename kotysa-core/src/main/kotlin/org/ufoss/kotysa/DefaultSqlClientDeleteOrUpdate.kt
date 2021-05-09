@@ -112,6 +112,12 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         private val updateOpIntColumnNullable: UpdateOpColumn<T, X, Int?> by lazy {
             UpdateOpColumn(update, properties)
         }
+        private val updateOpBigIntColumnNotNull: UpdateOpColumn<T, X, Long> by lazy {
+            UpdateOpColumn(update, properties)
+        }
+        private val updateOpBigIntColumnNullable: UpdateOpColumn<T, X, Long?> by lazy {
+            UpdateOpColumn(update, properties)
+        }
         private val updateOpUuidColumnNotNull: UpdateOpColumn<T, X, UUID> by lazy {
             UpdateOpColumn(update, properties)
         }
@@ -169,6 +175,12 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
         override infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpColumn<T, X, Int?> =
                 updateOpIntColumnNullable.apply { this.column = intColumnNullable }
+
+        override infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpColumn<T, X, Long> =
+                updateOpBigIntColumnNotNull.apply { this.column = bigIntColumnNotNull }
+
+        override infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, X, Long?> =
+                updateOpBigIntColumnNullable.apply { this.column = bigIntColumnNullable }
 
         override infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, X, UUID> =
                 updateOpUuidColumnNotNull.apply { this.column = uuidColumnNotNull }
