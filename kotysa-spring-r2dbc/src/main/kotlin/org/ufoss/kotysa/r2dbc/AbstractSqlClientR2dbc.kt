@@ -27,7 +27,9 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                     val value = column.entityGetter(row)
                     if (value == null) {
                         // do nothing for null values with default or Serial type
-                        if (column.defaultValue != null || SqlType.SERIAL == column.sqlType) {
+                        if (column.defaultValue != null
+                                || SqlType.SERIAL == column.sqlType
+                                || SqlType.BIGSERIAL == column.sqlType) {
                             execSpec
                         } else {
                             execSpec.bindNull("k${index++}",

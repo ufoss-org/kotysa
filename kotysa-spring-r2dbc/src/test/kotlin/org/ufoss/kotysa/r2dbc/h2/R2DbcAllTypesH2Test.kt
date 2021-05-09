@@ -51,6 +51,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42,
+                        84L,
                         OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
                                 ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
                         UUID.fromString(defaultUuid),
@@ -74,17 +75,18 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
         val newInt = 2
+        val newLong = 2L
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime, newUuid)
+                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newOffsetDateTime,
+                    newUuid)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAllAllTypesNotNull())
         }.test()
                 .expectNext(H2AllTypesNotNullEntity(h2AllTypesNotNull.id, "new", false, newLocalDate,
-                        newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
-                        newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newOffsetDateTime,
-                        newUuid))
+                        newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                        newKotlinxLocalDateTime, newInt, newLong, newOffsetDateTime, newUuid))
                 .verifyComplete()
     }
 }
@@ -129,8 +131,8 @@ class AllTypesRepositoryH2(
 
     fun updateAllTypesNotNull(
             newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-            newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-            newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
+            newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+            newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long,
             newOffsetDateTime: OffsetDateTime, newUuid: UUID
     ) =
             (sqlClient update H2_ALL_TYPES_NOT_NULL
@@ -144,6 +146,7 @@ class AllTypesRepositoryH2(
                     set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
                     set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                     set H2_ALL_TYPES_NOT_NULL.int eq newInt
+                    set H2_ALL_TYPES_NOT_NULL.long eq newLong
                     set H2_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
                     set H2_ALL_TYPES_NOT_NULL.uuid eq newUuid
                     where H2_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
