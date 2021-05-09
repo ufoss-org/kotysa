@@ -309,6 +309,13 @@ object POSTGRESQL_INT : PostgresqlTable<IntEntity>() {
     val intNullable = integer(IntEntity::intNullable)
 }
 
+object POSTGRESQL_LONG : PostgresqlTable<LongEntity>() {
+    val id = bigSerial(LongEntity::id)
+            .primaryKey()
+    val longNotNull = bigInt(LongEntity::longNotNull)
+    val longNullable = bigInt(LongEntity::longNullable)
+}
+
 object POSTGRESQL_UUID : PostgresqlTable<UuidEntity>() {
     val id = uuid(UuidEntity::id)
             .primaryKey()
@@ -356,6 +363,7 @@ val postgresqlTables = tables().postgresql(
         POSTGRESQL_OFFSET_DATE_TIME,
         POSTGRESQL_LOCAL_TIME,
         POSTGRESQL_INT,
+        POSTGRESQL_LONG,
         POSTGRESQL_UUID,
         POSTGRESQL_INHERITED,
         POSTGRESQL_JAVA_USER,

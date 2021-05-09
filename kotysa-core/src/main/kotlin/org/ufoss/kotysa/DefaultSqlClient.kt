@@ -81,19 +81,17 @@ public interface DefaultSqlClient {
         return insertSqlQuery
     }
 
-    public fun <T : Any> insertSqlDebug(row: T) {
-        logger.debug { "Exec SQL (${tables.dbType.name}) : ${insertSqlQuery(row)}" }
-    }
-
     public fun <T : Any> insertSqlQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         var index = 0
         val values = kotysaTable.columns
-                // filter out null values with default value or Serial type
+                // filter out null values with default value or Serial types
                 .filterNot { column ->
                     column.entityGetter(row) == null
-                            && (column.defaultValue != null || SqlType.SERIAL == column.sqlType)
+                            && (column.defaultValue != null
+                            || SqlType.SERIAL == column.sqlType
+                            || SqlType.BIGSERIAL == column.sqlType)
                 }
                 .joinToString { column ->
                     columnNames.add(column.name)

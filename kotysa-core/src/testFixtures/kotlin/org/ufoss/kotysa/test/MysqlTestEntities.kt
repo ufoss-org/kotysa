@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.test
 
 import kotlinx.datetime.*
+import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.mysql.date
 import org.ufoss.kotysa.mysql.dateTime
@@ -53,6 +54,7 @@ object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") 
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNotNullEntity::int)
+    val longe = bigInt(AllTypesNotNullEntity::long)
 }
 
 object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_nullable") {
@@ -67,7 +69,7 @@ object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNullableEntity::int)
-    val long = bigInt(AllTypesNullableEntity::long)
+    val longe = bigInt(AllTypesNullableEntity::long)
 }
 
 object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueEntity>() {
@@ -103,7 +105,7 @@ object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefau
             defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
-    val long = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
 }
 
 object MYSQL_LOCAL_DATE : MysqlTable<LocalDateEntity>() {
@@ -153,6 +155,13 @@ object MYSQL_INT : MysqlTable<IntEntity>() {
             .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
+}
+
+object MYSQL_LONG : MysqlTable<LongEntity>() {
+    val id = autoIncrementBigInt(LongEntity::id)
+            .primaryKey()
+    val longNotNull = bigInt(LongEntity::longNotNull)
+    val longNullable = bigInt(LongEntity::longNullable)
 }
 
 private fun LocalTime.roundToSecond(): LocalTime {
@@ -277,6 +286,7 @@ val mysqlTables = tables().mysql(
 //                 MYSQL_OFFSET_DATE_TIME,
         MYSQL_LOCAL_TIME,
         MYSQL_INT,
+        MYSQL_LONG,
         MYSQL_INHERITED,
         MYSQL_JAVA_USER,
         MYSQL_CUSTOMER,

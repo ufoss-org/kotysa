@@ -12,6 +12,7 @@ import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.h2.date
 import org.ufoss.kotysa.h2.dateTime
 import org.ufoss.kotysa.h2.timestamp
+import org.ufoss.kotysa.sqlite.SqLiteTable
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.util.*
@@ -258,6 +259,13 @@ object H2_INT : H2Table<IntEntity>() {
     val intNullable = integer(IntEntity::intNullable)
 }
 
+object H2_LONG : H2Table<LongEntity>() {
+    val id = autoIncrementBigInt(LongEntity::id)
+            .primaryKey()
+    val longNotNull = bigInt(LongEntity::longNotNull)
+    val longNullable = bigInt(LongEntity::longNullable)
+}
+
 object H2_UUID : H2Table<UuidEntity>() {
     val id = uuid(UuidEntity::id)
             .primaryKey()
@@ -307,6 +315,7 @@ val h2Tables = tables().h2(
         H2_OFFSET_DATE_TIME,
         H2_LOCAL_TIME,
         H2_INT,
+        H2_LONG,
         H2_UUID,
         H2_INHERITED,
         H2_JAVA_USER,

@@ -72,10 +72,10 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
             LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun serial(getter: (T) -> Int?, columnName: String? = null): IntDbSerialColumnNotNull<T> =
-        IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
+            IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    // protected fun bigSerial(getter: (T) -> Long?, columnName: String? = null): IntDbSerialColumnNotNull<T> =
-    //         IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
+    protected fun bigSerial(getter: (T) -> Long?, columnName: String? = null): LongDbBigSerialColumnNotNull<T> =
+            LongDbBigSerialColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
         BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }

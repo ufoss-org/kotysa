@@ -2,15 +2,19 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.android
+package org.ufoss.kotysa.spring.jdbc.h2
 
-import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.junit.jupiter.api.Test
+import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
-class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
+
+class SpringJdbcSelectLongH2Test : AbstractSpringJdbcH2Test<LongRepositoryH2Select>() {
+    override val context = startContext<LongRepositoryH2Select>()
+
+    override val repository = getContextRepository<LongRepositoryH2Select>()
 
     private val longWithNullable = LongEntity(
             org.ufoss.kotysa.test.longWithNullable.longNotNull,
@@ -23,8 +27,6 @@ class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
             org.ufoss.kotysa.test.longWithoutNullable.longNullable,
             2
     )
-
-    override fun getRepository(sqLiteTables: Tables) = LongRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByLongNotNull finds sqLiteIntegerWithNullable`() {
@@ -184,9 +186,10 @@ class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
     }
 }
 
-class LongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
 
-    private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
+class LongRepositoryH2Select(client: JdbcOperations) : Repository {
+
+    private val sqlClient = client.sqlClient(h2Tables)
 
     override fun init() {
         createTables()
@@ -198,77 +201,77 @@ class LongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) :
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_LONG
+        sqlClient createTable H2_LONG
     }
 
     private fun insertLongs() {
         sqlClient.insert(longWithNullable, longWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_LONG
+    private fun deleteAll() = sqlClient deleteAllFrom H2_LONG
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull eq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull eq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull notEq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull notEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull `in` values
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull inf long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull inf long
                     ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull infOrEq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull sup long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull sup long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull supOrEq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNotNull supOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable eq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNullable eq long
                     ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable notEq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNullable notEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable inf long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNullable inf long
                     ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable infOrEq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNullable infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable sup long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNullable sup long
                     ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable supOrEq long
+            (sqlClient selectFrom H2_LONG
+                    where H2_LONG.longNullable supOrEq long
                     ).fetchAll()
 }

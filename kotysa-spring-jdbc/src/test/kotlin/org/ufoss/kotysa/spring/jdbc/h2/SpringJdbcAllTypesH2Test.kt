@@ -50,6 +50,7 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42,
+                        84L,
                         OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
                                 ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
                         UUID.fromString(defaultUuid),

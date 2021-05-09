@@ -49,7 +49,8 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
                         LocalDateTime.of(2019, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                        42
+                        42,
+                        84L
                 ))
     }
 
@@ -68,16 +69,17 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
+        val newLong = 2L
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt)
+                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong)
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
                     .containsExactlyInAnyOrder(
                             MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false,
                                     newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
-                                    newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt))
+                                    newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong))
         }
     }
 }
@@ -117,7 +119,7 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
                               newKotlinxLocalDate: kotlinx.datetime.LocalDate,
                               newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
-                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int) =
+                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long) =
             (sqlClient update MYSQL_ALL_TYPES_NOT_NULL
                     set MYSQL_ALL_TYPES_NOT_NULL.string eq newString
                     set MYSQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
@@ -129,6 +131,7 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
                     set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
                     set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                     set MYSQL_ALL_TYPES_NOT_NULL.inte eq newInt
+                    set MYSQL_ALL_TYPES_NOT_NULL.longe eq newLong
                     where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
                     ).execute()
 }
