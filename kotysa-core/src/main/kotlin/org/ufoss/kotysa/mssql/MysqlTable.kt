@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.mysql
+package org.ufoss.kotysa.mssql
 
 import org.ufoss.kotysa.AbstractTable
 import org.ufoss.kotysa.DbColumn
@@ -13,14 +13,14 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Represents a MySQL Table
+ * Represents a Microsoft SQL Server Table
  *
  * **Extend this class with an object**
  *
- * supported types follow : [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
+ * supported types follow : [Microsoft SQL Server Data types](https://docs.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql?view=sql-server-ver15)
  * @param T Entity type associated with this table
  */
-public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
+public abstract class MssqlTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
 
     /*protected fun <V : Any> foreignKey(
             referencedTable: MysqlTable<V>,
@@ -48,7 +48,7 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
     protected fun integer(getter: (T) -> Int?, columnName: String? = null, defaultValue: Int? = null): IntDbIntColumnNullable<T> =
             IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
+    /* protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
             IntDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
     protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
@@ -75,15 +75,10 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
     protected fun dateTime(getter: (T) -> LocalDateTime?, columnName: String? = null, defaultValue: LocalDateTime? = null, precision: Int? = null): LocalDateTimeDbDateTimeColumnNullable<T> =
             LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
-//     protected fun timestamp(getter: (T) -> OffsetDateTime, columnName: String? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNotNull<T> =
-//             OffsetDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }
-//
-//     protected fun timestamp(getter: (T) -> OffsetDateTime?, columnName: String? = null, defaultValue: OffsetDateTime? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNullable<T> =
-//             OffsetDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
-
     protected fun time(getter: (T) -> LocalTime, columnName: String? = null, precision: Int? = null): LocalTimeDbTimeColumnNotNull<T> =
             LocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
 
     protected fun time(getter: (T) -> LocalTime?, columnName: String? = null, defaultValue: LocalTime? = null, precision: Int? = null): LocalTimeDbTimeColumnNullable<T> =
             LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+            */
 }
