@@ -16,7 +16,7 @@ dependencies {
     implementation('io.r2dbc:r2dbc-h2')
     implementation('org.jetbrains.kotlinx:kotlinx-coroutines-reactor')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.4')
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:0.2.5')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
