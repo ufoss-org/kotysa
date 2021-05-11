@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.jdbc.mysql
+package org.ufoss.kotysa.spring.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
@@ -11,11 +11,11 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-class SpringJdbcSelectOrderByMysqlTest : AbstractSpringJdbcMysqlTest<OrderByRepositoryMysqlSelect>() {
+class SpringJdbcSelectOrderByMssqlTest : AbstractSpringJdbcMssqlTest<OrderByRepositoryMssqlSelect>() {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<OrderByRepositoryMysqlSelect>(resource)
+        context = startContext<OrderByRepositoryMssqlSelect>(resource)
         repository = getContextRepository()
     }
 
@@ -34,15 +34,15 @@ class SpringJdbcSelectOrderByMysqlTest : AbstractSpringJdbcMysqlTest<OrderByRepo
     }
 }
 
-class OrderByRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
+class OrderByRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.age
+            (sqlClient selectFrom MSSQL_CUSTOMER
+                    orderByAsc MSSQL_CUSTOMER.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.age andAsc MYSQL_CUSTOMER.id
+            (sqlClient selectFrom MSSQL_CUSTOMER
+                    orderByAsc MSSQL_CUSTOMER.age andAsc MSSQL_CUSTOMER.id
                     ).fetchAll()
 }

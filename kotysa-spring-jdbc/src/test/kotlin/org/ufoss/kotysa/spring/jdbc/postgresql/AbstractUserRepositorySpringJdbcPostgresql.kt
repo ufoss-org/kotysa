@@ -27,9 +27,9 @@ abstract class AbstractUserRepositorySpringJdbcPostgresql(client: JdbcOperations
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_ROLE
-        sqlClient createTable POSTGRESQL_USER
-        sqlClient createTable POSTGRESQL_USER_ROLE
+        sqlClient createTableIfNotExists POSTGRESQL_ROLE
+        sqlClient createTableIfNotExists POSTGRESQL_USER
+        sqlClient createTableIfNotExists POSTGRESQL_USER_ROLE
     }
 
     private fun insertRoles() {

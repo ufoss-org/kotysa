@@ -23,7 +23,7 @@ abstract class AbstractCustomerRepositorySpringJdbcH2(client: JdbcOperations) : 
     }
 
     private fun createTables() {
-        sqlClient createTable H2_CUSTOMER
+        sqlClient createTableIfNotExists H2_CUSTOMER
     }
 
     private fun insertCustomers() {

@@ -8,37 +8,35 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
-import org.ufoss.kotysa.postgresql.PostgresqlTable
-import org.ufoss.kotysa.postgresql.date
-import org.ufoss.kotysa.postgresql.timestamp
+import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 
 
-object POSTGRESQL_ROLE : PostgresqlTable<RoleEntity>("roles") {
+object MSSQL_ROLE : MssqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
             .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
-object POSTGRESQL_USER : PostgresqlTable<UserEntity>("users") {
+/*object MSSQL_USER : MssqlTable<UserEntity>("users") {
     val id = integer(UserEntity::id)
             .primaryKey("PK_users")
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(POSTGRESQL_ROLE.id, "FK_users_roles")
+            .foreignKey(MSSQL_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
-object POSTGRESQL_USER_ROLE : PostgresqlTable<UserRoleEntity>("userRoles") {
+object MSSQL_USER_ROLE : MssqlTable<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-            .foreignKey(POSTGRESQL_USER.id)
+            .foreignKey(MSSQL_USER.id)
     val roleId = integer(UserRoleEntity::roleId)
-            .foreignKey(POSTGRESQL_ROLE.id)
+            .foreignKey(MSSQL_ROLE.id)
     val pk = primaryKey(userId, roleId)
 }
 
@@ -108,7 +106,7 @@ val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(1, "",
         OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)), UUID.randomUUID())
 
-object POSTGRESQL_ALL_TYPES_NOT_NULL : PostgresqlTable<PostgresqlAllTypesNotNullEntity>("all_types") {
+object MSSQL_ALL_TYPES_NOT_NULL : MssqlTable<PostgresqlAllTypesNotNullEntity>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
@@ -147,7 +145,7 @@ val postgresqlAllTypesNullable = PostgresqlAllTypesNullableEntity(1, null, null,
         null, null, null, null, null,
         null, null, null, null)
 
-object POSTGRESQL_ALL_TYPES_NULLABLE : PostgresqlTable<PostgresqlAllTypesNullableEntity>("all_types_nullable") {
+object MSSQL_ALL_TYPES_NULLABLE : MssqlTable<PostgresqlAllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
@@ -232,7 +230,7 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
 
 val postgresqlAllTypesNullableDefaultValue = PostgresqlAllTypesNullableDefaultValueEntity(1)
 
-object POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : PostgresqlTable<PostgresqlAllTypesNullableDefaultValueEntity>() {
+object MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MssqlTable<PostgresqlAllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -258,77 +256,77 @@ object POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : PostgresqlTable<PostgresqlA
     val uuid = uuid(PostgresqlAllTypesNullableDefaultValueEntity::uuid, defaultValue = UUID.fromString(defaultUuid))
 }
 
-object POSTGRESQL_LOCAL_DATE : PostgresqlTable<LocalDateEntity>() {
+object MSSQL_LOCAL_DATE : MssqlTable<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = date(LocalDateEntity::localDateNotNull)
     val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object POSTGRESQL_KOTLINX_LOCAL_DATE : PostgresqlTable<KotlinxLocalDateEntity>() {
+object MSSQL_KOTLINX_LOCAL_DATE : MssqlTable<KotlinxLocalDateEntity>() {
     val id = integer(KotlinxLocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object POSTGRESQL_LOCAL_DATE_TIME : PostgresqlTable<LocalDateTimeAsTimestampEntity>() {
+object MSSQL_LOCAL_DATE_TIME : MssqlTable<LocalDateTimeAsTimestampEntity>() {
     val id = integer(LocalDateTimeAsTimestampEntity::id)
             .primaryKey()
     val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
     val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object POSTGRESQL_KOTLINX_LOCAL_DATE_TIME : PostgresqlTable<KotlinxLocalDateTimeAsTimestampEntity>() {
+object MSSQL_KOTLINX_LOCAL_DATE_TIME : MssqlTable<KotlinxLocalDateTimeAsTimestampEntity>() {
     val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
             .primaryKey()
     val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
     val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object POSTGRESQL_OFFSET_DATE_TIME : PostgresqlTable<OffsetDateTimeEntity>() {
+object MSSQL_OFFSET_DATE_TIME : MssqlTable<OffsetDateTimeEntity>() {
     val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
     val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
     val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
-object POSTGRESQL_LOCAL_TIME : PostgresqlTable<LocalTimeEntity>() {
+object MSSQL_LOCAL_TIME : MssqlTable<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
             .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
-
-object POSTGRESQL_INT : PostgresqlTable<IntEntity>() {
-    val id = serial(IntEntity::id)
+*/
+object MSSQL_INT : MssqlTable<IntEntity>() {
+    val id = autoIncrementInteger(IntEntity::id)
             .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
-
-object POSTGRESQL_LONG : PostgresqlTable<LongEntity>() {
+/*
+object MSSQL_LONG : MssqlTable<LongEntity>() {
     val id = bigSerial(LongEntity::id)
             .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
 }
 
-object POSTGRESQL_UUID : PostgresqlTable<UuidEntity>() {
+object MSSQL_UUID : MssqlTable<UuidEntity>() {
     val id = uuid(UuidEntity::id)
             .primaryKey()
     val uuidNotNull = uuid(UuidEntity::uuidNotNull)
     val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
-object POSTGRESQL_INHERITED : PostgresqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object MSSQL_INHERITED : MssqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
             .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
-object POSTGRESQL_JAVA_USER : PostgresqlTable<JavaUser>("java_users"), JAVA_USER {
+object MSSQL_JAVA_USER : MssqlTable<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
             .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -338,8 +336,8 @@ object POSTGRESQL_JAVA_USER : PostgresqlTable<JavaUser>("java_users"), JAVA_USER
     override val alias2 = varchar(JavaUser::getAlias2)
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
-
-object POSTGRESQL_CUSTOMER : PostgresqlTable<CustomerEntity>() {
+*/
+object MSSQL_CUSTOMER : MssqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
             .primaryKey()
     val name = varchar(CustomerEntity::name)
@@ -347,23 +345,23 @@ object POSTGRESQL_CUSTOMER : PostgresqlTable<CustomerEntity>() {
     val age = integer(CustomerEntity::age)
 }
 
-val postgresqlTables = tables().postgresql(
-        POSTGRESQL_ROLE,
-        POSTGRESQL_USER,
-        POSTGRESQL_USER_ROLE,
-        POSTGRESQL_ALL_TYPES_NOT_NULL,
-        POSTGRESQL_ALL_TYPES_NULLABLE,
-        POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
-        POSTGRESQL_LOCAL_DATE,
-        POSTGRESQL_KOTLINX_LOCAL_DATE,
-        POSTGRESQL_LOCAL_DATE_TIME,
-        POSTGRESQL_KOTLINX_LOCAL_DATE_TIME,
-        POSTGRESQL_OFFSET_DATE_TIME,
-        POSTGRESQL_LOCAL_TIME,
-        POSTGRESQL_INT,
-        POSTGRESQL_LONG,
-        POSTGRESQL_UUID,
-        POSTGRESQL_INHERITED,
-        POSTGRESQL_JAVA_USER,
-        POSTGRESQL_CUSTOMER,
+val mssqlTables = tables().mssql(
+        MSSQL_ROLE,
+        /*MSSQL_USER,
+        MSSQL_USER_ROLE,
+        MSSQL_ALL_TYPES_NOT_NULL,
+        MSSQL_ALL_TYPES_NULLABLE,
+        MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
+        MSSQL_LOCAL_DATE,
+        MSSQL_KOTLINX_LOCAL_DATE,
+        MSSQL_LOCAL_DATE_TIME,
+        MSSQL_KOTLINX_LOCAL_DATE_TIME,
+        MSSQL_OFFSET_DATE_TIME,
+        MSSQL_LOCAL_TIME,*/
+        MSSQL_INT,
+        /*MSSQL_LONG,
+        MSSQL_UUID,
+        MSSQL_INHERITED,
+        MSSQL_JAVA_USER,*/
+        MSSQL_CUSTOMER,
 )

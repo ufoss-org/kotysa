@@ -27,9 +27,9 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
     }
 
     private fun createTables() {
-        sqlClient createTable H2_ROLE
-        sqlClient createTable H2_USER
-        sqlClient createTable H2_USER_ROLE
+        sqlClient createTableIfNotExists H2_ROLE
+        sqlClient createTableIfNotExists H2_USER
+        sqlClient createTableIfNotExists H2_USER_ROLE
     }
 
     private fun insertRoles() {

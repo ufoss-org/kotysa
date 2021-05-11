@@ -35,6 +35,7 @@ internal class SqlClientSpringJdbc(
                 .filterNot { column ->
                     column.entityGetter(row) == null
                             && (column.defaultValue != null
+                            || column.isAutoIncrement
                             || SqlType.SERIAL == column.sqlType
                             || SqlType.BIGSERIAL == column.sqlType)
                 }
@@ -49,8 +50,13 @@ internal class SqlClientSpringJdbc(
     }
 
     override fun <T : Any> createTable(table: Table<T>) {
-        val createTableSql = createTableSql(table)
-        return client.execute(createTableSql)
+        val createTableSql = createTableSql(table, false)
+        client.execute(createTableSql)
+    }
+
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) {
+        val createTableSql = createTableSql(table, true)
+        client.execute(createTableSql)
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =

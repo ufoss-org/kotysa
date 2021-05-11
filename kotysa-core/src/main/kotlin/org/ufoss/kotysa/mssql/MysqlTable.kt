@@ -48,10 +48,10 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
     protected fun integer(getter: (T) -> Int?, columnName: String? = null, defaultValue: Int? = null): IntDbIntColumnNullable<T> =
             IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    /* protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
+    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
             IntDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
-    protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
+    /* protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
             LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
     protected fun bigInt(getter: (T) -> Long?, columnName: String? = null, defaultValue: Long? = null): LongDbBigIntColumnNullable<T> =

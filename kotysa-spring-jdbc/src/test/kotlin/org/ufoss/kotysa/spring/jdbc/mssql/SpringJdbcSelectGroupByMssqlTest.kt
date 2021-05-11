@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.jdbc.mysql
+package org.ufoss.kotysa.spring.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
@@ -11,11 +11,11 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-class SpringJdbcSelectGroupByMysqlTest : AbstractSpringJdbcMysqlTest<GroupByRepositoryMysqlSelect>() {
+class SpringJdbcSelectGroupByMssqlTest : AbstractSpringJdbcMssqlTest<GroupByRepositoryMssqlSelect>() {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<GroupByRepositoryMysqlSelect>(resource)
+        context = startContext<GroupByRepositoryMssqlSelect>(resource)
         repository = getContextRepository()
     }
 
@@ -27,11 +27,11 @@ class SpringJdbcSelectGroupByMysqlTest : AbstractSpringJdbcMysqlTest<GroupByRepo
     }
 }
 
-class GroupByRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
+class GroupByRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country
-                    from MYSQL_CUSTOMER
-                    groupBy MYSQL_CUSTOMER.country
+            (sqlClient selectCount MSSQL_CUSTOMER.id and MSSQL_CUSTOMER.country
+                    from MSSQL_CUSTOMER
+                    groupBy MSSQL_CUSTOMER.country
                     ).fetchAll()
 }

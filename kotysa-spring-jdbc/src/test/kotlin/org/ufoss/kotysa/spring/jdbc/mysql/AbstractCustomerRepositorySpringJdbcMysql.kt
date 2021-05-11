@@ -23,7 +23,7 @@ abstract class AbstractCustomerRepositorySpringJdbcMysql(client: JdbcOperations)
     }
 
     private fun createTables() {
-        sqlClient createTable MYSQL_CUSTOMER
+        sqlClient createTableIfNotExists MYSQL_CUSTOMER
     }
 
     private fun insertCustomers() {
