@@ -50,12 +50,15 @@ internal class SqlClientSpringJdbc(
     }
 
     override fun <T : Any> createTable(table: Table<T>) {
-        val createTableSql = createTableSql(table, false)
-        client.execute(createTableSql)
+        createTable(table, false)
     }
 
     override fun <T : Any> createTableIfNotExists(table: Table<T>) {
-        val createTableSql = createTableSql(table, true)
+        createTable(table, true)
+    }
+
+    private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
+        val createTableSql = createTableSql(table, ifNotExists)
         client.execute(createTableSql)
     }
 

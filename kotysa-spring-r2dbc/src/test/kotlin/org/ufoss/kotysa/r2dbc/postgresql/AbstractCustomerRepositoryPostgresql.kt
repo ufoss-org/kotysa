@@ -20,7 +20,7 @@ abstract class AbstractCustomerRepositoryPostgresql(protected val sqlClient: Rea
         deleteAll().block()
     }
 
-    private fun createTables() = sqlClient createTable POSTGRESQL_CUSTOMER
+    private fun createTables() = sqlClient createTableIfNotExists POSTGRESQL_CUSTOMER
 
     private fun insertCustomers() = sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
 

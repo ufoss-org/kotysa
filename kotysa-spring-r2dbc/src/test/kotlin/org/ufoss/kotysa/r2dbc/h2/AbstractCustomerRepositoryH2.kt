@@ -22,7 +22,7 @@ abstract class AbstractCustomerRepositoryH2(
         deleteAll().block()
     }
 
-    private fun createTables() = sqlClient createTable H2_CUSTOMER
+    private fun createTables() = sqlClient createTableIfNotExists H2_CUSTOMER
 
     private fun insertCustomers() = sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
 

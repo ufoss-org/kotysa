@@ -188,18 +188,16 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                     offset = 0
                 }
             }
-            val offset = offset()
-            val limit = limit()
-
-            // reset index
-            index = 0
 
             // order is not the same depending on DbType
             val limitOffset = if (DbType.MSSQL == tables.dbType) {
-                "$offset $limit"
+                "${offset()} ${limit()}"
             } else {
-                "$limit $offset"
+                "${limit()} ${offset()}"
             }
+
+            // reset index
+            index = 0
 
             logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limitOffset" }
             "$selects $froms $wheres $groupBy $orderBy $limitOffset"

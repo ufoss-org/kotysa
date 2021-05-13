@@ -21,6 +21,7 @@ public interface ReactorSqlClient {
     public fun <T : Any> insert(vararg rows: T): Mono<Void>
 
     public infix fun <T : Any> createTable(table: Table<T>): Mono<Void>
+    public infix fun <T : Any> createTableIfNotExists(table: Table<T>): Mono<Void>
 
     public infix fun <T : Any> deleteFrom(table: Table<T>): ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
     public infix fun <T : Any> deleteAllFrom(table: Table<T>): Mono<Int> = deleteFrom(table).execute()

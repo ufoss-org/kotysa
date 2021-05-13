@@ -28,9 +28,9 @@ abstract class AbstractUserRepositoryH2(
     }
 
     private fun createTables() =
-            (sqlClient createTable H2_ROLE)
-                    .then(sqlClient createTable H2_USER)
-                    .then(sqlClient createTable H2_USER_ROLE)
+            (sqlClient createTableIfNotExists H2_ROLE)
+                    .then(sqlClient createTableIfNotExists H2_USER)
+                    .then(sqlClient createTableIfNotExists H2_USER_ROLE)
 
     private fun insertRoles() =
             sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)

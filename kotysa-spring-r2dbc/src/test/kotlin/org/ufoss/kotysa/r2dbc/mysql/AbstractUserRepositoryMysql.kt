@@ -26,9 +26,9 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
     }
 
     private fun createTables() =
-            (sqlClient createTable MYSQL_ROLE)
-                    .then(sqlClient createTable MYSQL_USER)
-                    .then(sqlClient createTable MYSQL_USER_ROLE)
+            (sqlClient createTableIfNotExists MYSQL_ROLE)
+                    .then(sqlClient createTableIfNotExists MYSQL_USER)
+                    .then(sqlClient createTableIfNotExists MYSQL_USER_ROLE)
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
 

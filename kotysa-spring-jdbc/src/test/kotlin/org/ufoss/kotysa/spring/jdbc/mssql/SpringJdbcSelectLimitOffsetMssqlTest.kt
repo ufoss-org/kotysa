@@ -43,8 +43,8 @@ class SpringJdbcSelectLimitOffsetMssqlTest : AbstractSpringJdbcMssqlTest<LimitOf
     @Test
     fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1`() {
         assertThat(repository.selectAllOrderByIdLimitOffset())
-                .hasSize(1)
-                .containsExactly(customerUSA1)
+                .hasSize(2)
+                .containsExactly(customerUSA1, customerUSA2)
     }
 }
 
@@ -70,6 +70,6 @@ class LimitOffsetByRepositoryMssqlSelect(client: JdbcOperations) : AbstractCusto
     fun selectAllOrderByIdLimitOffset() =
             (sqlClient selectFrom MSSQL_CUSTOMER
                     orderByAsc MSSQL_CUSTOMER.id
-                    limit 1 offset 1
+                    limit 2 offset 1
                     ).fetchAll()
 }

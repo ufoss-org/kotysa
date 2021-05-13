@@ -325,16 +325,32 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             val parameters = MapSqlParameterSource()
             // 1) add all values from where part
             bindWhereParams(parameters)
-            // 2) add offset
-            if (offset != null) {
-                parameters.addValue("k${index++}", offset)
-            }
-            // 3) add limit
-            if (limit != null) {
-                parameters.addValue("k${index++}", limit)
+            // 2) add limit and offset (order is different depending on DbType)
+            if (DbType.MSSQL == tables.dbType) {
+                offsetParam(parameters)
+                limitParam(parameters)
+            } else {
+                limitParam(parameters)
+                offsetParam(parameters)
             }
 
             parameters
+        }
+
+        private fun offsetParam(parameters: MapSqlParameterSource) {
+            with(properties) {
+                if (offset != null) {
+                    parameters.addValue("k${index++}", offset)
+                }
+            }
+        }
+
+        private fun limitParam(parameters: MapSqlParameterSource) {
+            with(properties) {
+                if (limit != null) {
+                    parameters.addValue("k${index++}", limit)
+                }
+            }
         }
     }
 }
