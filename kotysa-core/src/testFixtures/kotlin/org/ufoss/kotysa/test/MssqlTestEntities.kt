@@ -4,15 +4,8 @@
 
 package org.ufoss.kotysa.test
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.tables
-import java.time.*
-import java.time.temporal.ChronoUnit
-import java.util.*
 
 
 object MSSQL_ROLE : MssqlTable<RoleEntity>("roles") {
@@ -21,12 +14,12 @@ object MSSQL_ROLE : MssqlTable<RoleEntity>("roles") {
     val label = varchar(RoleEntity::label)
 }
 
-/*object MSSQL_USER : MssqlTable<UserEntity>("users") {
+object MSSQL_USER : MssqlTable<UserEntity>("users") {
     val id = integer(UserEntity::id)
             .primaryKey("PK_users")
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
-    val isAdmin = boolean(UserEntity::isAdmin)
+    val isAdmin = bit(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
             .foreignKey(MSSQL_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
@@ -40,7 +33,7 @@ object MSSQL_USER_ROLE : MssqlTable<UserRoleEntity>("userRoles") {
     val pk = primaryKey(userId, roleId)
 }
 
-data class PostgresqlAllTypesNotNullEntity(
+/*data class PostgresqlAllTypesNotNullEntity(
         override val id: Int,
         override val string: String,
         override val boolean: Boolean,
@@ -299,19 +292,19 @@ object MSSQL_LOCAL_TIME : MssqlTable<LocalTimeEntity>() {
 }
 */
 object MSSQL_INT : MssqlTable<IntEntity>() {
-    val id = autoIncrementInteger(IntEntity::id)
+    val id = identityInteger(IntEntity::id)
             .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
-/*
+
 object MSSQL_LONG : MssqlTable<LongEntity>() {
-    val id = bigSerial(LongEntity::id)
+    val id = identityBigInt(LongEntity::id)
             .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
 }
-
+/*
 object MSSQL_UUID : MssqlTable<UuidEntity>() {
     val id = uuid(UuidEntity::id)
             .primaryKey()
@@ -347,9 +340,9 @@ object MSSQL_CUSTOMER : MssqlTable<CustomerEntity>() {
 
 val mssqlTables = tables().mssql(
         MSSQL_ROLE,
-        /*MSSQL_USER,
+        MSSQL_USER,
         MSSQL_USER_ROLE,
-        MSSQL_ALL_TYPES_NOT_NULL,
+        /*MSSQL_ALL_TYPES_NOT_NULL,
         MSSQL_ALL_TYPES_NULLABLE,
         MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
         MSSQL_LOCAL_DATE,
@@ -359,8 +352,8 @@ val mssqlTables = tables().mssql(
         MSSQL_OFFSET_DATE_TIME,
         MSSQL_LOCAL_TIME,*/
         MSSQL_INT,
-        /*MSSQL_LONG,
-        MSSQL_UUID,
+        MSSQL_LONG,
+        /*MSSQL_UUID,
         MSSQL_INHERITED,
         MSSQL_JAVA_USER,*/
         MSSQL_CUSTOMER,

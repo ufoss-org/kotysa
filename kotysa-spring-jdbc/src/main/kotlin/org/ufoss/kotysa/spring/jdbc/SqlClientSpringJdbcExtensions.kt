@@ -9,10 +9,8 @@ import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.dbValues
 
 internal fun DefaultSqlClientCommon.Properties.bindWhereParams(
-        parameters: MapSqlParameterSource,
-        offset: Int = 0
+        parameters: MapSqlParameterSource
 ) {
-    var index = offset
     with(this) {
         whereClauses
                 .dbValues(tables)

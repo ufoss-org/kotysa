@@ -30,6 +30,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
+        override var index: Int = 0
     }
 
     public interface WithProperties<T : Any> {
@@ -215,7 +216,6 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
         public fun updateTableSql(): String = with(properties) {
             val updateSql = "UPDATE ${table.name}"
-            var index = 0
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
                 if (DbType.SQLITE == tables.dbType) {
                     "${column.getKotysaColumn(properties.availableColumns).name} = ?"
@@ -223,7 +223,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                     "${column.getKotysaColumn(properties.availableColumns).name} = :k${index++}"
                 }
             }
-            val joinsAndWheres = joinsWithExistsAndWheres(offset = index)
+            val joinsAndWheres = joinsWithExistsAndWheres()
             logger.debug { "Exec SQL (${tables.dbType.name}) : $updateSql $setSql $joinsAndWheres" }
 
             "$updateSql $setSql $joinsAndWheres"
@@ -233,10 +233,10 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
          * Handle joins as EXISTS + nested SELECT
          * Then other WHERE clauses
          */
-        public fun joinsWithExistsAndWheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
+        public fun joinsWithExistsAndWheres(withWhere: Boolean = true): String = with(properties) {
             val joins = joinsWithExists()
 
-            var wheres = wheres(false, offset)
+            var wheres = wheres(false)
 
             if (joins.isEmpty() && wheres.isEmpty()) {
                 ""
