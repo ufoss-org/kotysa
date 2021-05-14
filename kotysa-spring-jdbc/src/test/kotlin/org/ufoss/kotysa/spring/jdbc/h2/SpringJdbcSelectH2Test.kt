@@ -150,12 +150,6 @@ class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbc
                 .hasSize(1)
                 .containsExactly(roleAdmin.label)
     }
-
-    @Test
-    fun `Verify selectAllLimitOffset returns 1 user`() {
-        assertThat(repository.selectAllLimitOffset())
-                .hasSize(1)
-    }
 }
 
 
@@ -246,9 +240,4 @@ class UserRepositorySpringJdbcH2Select(client: JdbcOperations) : AbstractUserRep
                     from H2_USER_ROLE innerJoin H2_ROLE on H2_USER_ROLE.roleId eq H2_ROLE.id
                     where H2_USER_ROLE.userId eq userId)
                     .fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom H2_USER
-                    limit 1 offset 1
-                    ).fetchAll()
 }

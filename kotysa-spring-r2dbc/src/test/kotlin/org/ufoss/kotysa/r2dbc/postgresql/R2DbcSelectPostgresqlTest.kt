@@ -149,12 +149,6 @@ class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPost
                 .hasSize(1)
                 .containsExactly(roleAdmin.label)
     }
-
-    @Test
-    fun `Verify selectAllLimitOffset returns 1 user`() {
-        assertThat(repository.selectAllLimitOffset().toIterable())
-                .hasSize(1)
-    }
 }
 
 
@@ -241,9 +235,4 @@ class UserRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractUser
                     from POSTGRESQL_USER_ROLE innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER_ROLE.roleId eq POSTGRESQL_ROLE.id
                     where POSTGRESQL_USER_ROLE.userId eq userId)
                     .fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    limit 1 offset 1
-                    ).fetchAll()
 }

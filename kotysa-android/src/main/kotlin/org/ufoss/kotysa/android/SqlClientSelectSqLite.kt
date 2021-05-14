@@ -295,6 +295,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         }
 
         private fun fetch(): Cursor = with(properties) {
+            val sql = selectSql()
             val selectionArgs = buildWhereArgs()
             if (limit != null) {
                 selectionArgs.add(stringValue(limit))
@@ -303,7 +304,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
                 selectionArgs.add(stringValue(offset))
             }
 
-            return client.rawQuery(selectSql(), selectionArgs.toTypedArray())
+            return client.rawQuery(sql, selectionArgs.toTypedArray())
         }
     }
 }

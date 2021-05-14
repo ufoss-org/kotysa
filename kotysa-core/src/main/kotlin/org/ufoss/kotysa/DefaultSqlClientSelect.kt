@@ -28,8 +28,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         internal val groupBy = mutableListOf<Column<*, *>>()
         internal val orderBy = mutableListOf<Pair<Column<*, *>, Order>>()
 
-        public var limit: Int? = null
-        public var offset: Int? = null
+        public var limit: Long? = null
+        public var offset: Long? = null
     }
 
     protected interface WithProperties<T : Any> : DefaultSqlClientCommon.WithProperties {
@@ -110,12 +110,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         : SqlClientQuery.LimitOffset<U>, WithProperties<T> {
         public val limitOffset: U
 
-        override fun limit(limit: Int): U {
+        override fun limit(limit: Long): U {
             properties.limit = limit
             return limitOffset
         }
 
-        override fun offset(offset: Int): U {
+        override fun offset(offset: Long): U {
             properties.offset = offset
             return limitOffset
         }
@@ -186,6 +186,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 // in Mssql offset is mandatory with limit
                 if (limit != null && offset == null) {
                     offset = 0
+                }
+            } else if (offset != null && limit == null) {
+                // in SqLite and MySQL limit is mandatory with offset
+                if (DbType.SQLITE == tables.dbType) {
+                    limit = -1
+                } else if (DbType.MYSQL == tables.dbType) {
+                    limit = Long.MAX_VALUE
                 }
             }
 
