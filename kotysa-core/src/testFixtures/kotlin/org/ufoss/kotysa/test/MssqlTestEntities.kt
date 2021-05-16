@@ -5,6 +5,8 @@
 package org.ufoss.kotysa.test
 
 import org.ufoss.kotysa.mssql.MssqlTable
+import org.ufoss.kotysa.mssql.date
+import org.ufoss.kotysa.mssql.dateTime
 import org.ufoss.kotysa.tables
 
 
@@ -248,7 +250,7 @@ object MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MssqlTable<PostgresqlAllTypesNul
                     ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)))
     val uuid = uuid(PostgresqlAllTypesNullableDefaultValueEntity::uuid, defaultValue = UUID.fromString(defaultUuid))
 }
-
+*/
 object MSSQL_LOCAL_DATE : MssqlTable<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
             .primaryKey()
@@ -263,34 +265,20 @@ object MSSQL_KOTLINX_LOCAL_DATE : MssqlTable<KotlinxLocalDateEntity>() {
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object MSSQL_LOCAL_DATE_TIME : MssqlTable<LocalDateTimeAsTimestampEntity>() {
-    val id = integer(LocalDateTimeAsTimestampEntity::id)
+object MSSQL_LOCAL_DATE_TIME : MssqlTable<LocalDateTimeEntity>() {
+    val id = integer(LocalDateTimeEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
-    val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
+    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MSSQL_KOTLINX_LOCAL_DATE_TIME : MssqlTable<KotlinxLocalDateTimeAsTimestampEntity>() {
-    val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
+object MSSQL_KOTLINX_LOCAL_DATE_TIME : MssqlTable<KotlinxLocalDateTimeEntity>() {
+    val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
-    val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
-    val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
+    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MSSQL_OFFSET_DATE_TIME : MssqlTable<OffsetDateTimeEntity>() {
-    val id = integer(OffsetDateTimeEntity::id)
-            .primaryKey()
-    val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
-    val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
-}
-
-object MSSQL_LOCAL_TIME : MssqlTable<LocalTimeEntity>() {
-    val id = integer(LocalTimeEntity::id)
-            .primaryKey()
-    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
-}
-*/
 object MSSQL_INT : MssqlTable<IntEntity>() {
     val id = identityInteger(IntEntity::id)
             .primaryKey()
@@ -303,13 +291,6 @@ object MSSQL_LONG : MssqlTable<LongEntity>() {
             .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
-}
-/*
-object MSSQL_UUID : MssqlTable<UuidEntity>() {
-    val id = uuid(UuidEntity::id)
-            .primaryKey()
-    val uuidNotNull = uuid(UuidEntity::uuidNotNull)
-    val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
 object MSSQL_INHERITED : MssqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
@@ -324,12 +305,12 @@ object MSSQL_JAVA_USER : MssqlTable<JavaUser>("java_users"), JAVA_USER {
             .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
     override val lastname = varchar(JavaUser::getLastname, "lname")
-    override val isAdmin = boolean(JavaUser::isAdmin)
+    override val isAdmin = bit(JavaUser::isAdmin)
     override val alias1 = varchar(JavaUser::getAlias1)
     override val alias2 = varchar(JavaUser::getAlias2)
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
-*/
+
 object MSSQL_CUSTOMER : MssqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
             .primaryKey()
@@ -344,17 +325,14 @@ val mssqlTables = tables().mssql(
         MSSQL_USER_ROLE,
         /*MSSQL_ALL_TYPES_NOT_NULL,
         MSSQL_ALL_TYPES_NULLABLE,
-        MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
+        MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,*/
         MSSQL_LOCAL_DATE,
         MSSQL_KOTLINX_LOCAL_DATE,
         MSSQL_LOCAL_DATE_TIME,
         MSSQL_KOTLINX_LOCAL_DATE_TIME,
-        MSSQL_OFFSET_DATE_TIME,
-        MSSQL_LOCAL_TIME,*/
         MSSQL_INT,
         MSSQL_LONG,
-        /*MSSQL_UUID,
         MSSQL_INHERITED,
-        MSSQL_JAVA_USER,*/
+        MSSQL_JAVA_USER,
         MSSQL_CUSTOMER,
 )

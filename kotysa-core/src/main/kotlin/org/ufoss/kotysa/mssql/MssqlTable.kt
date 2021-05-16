@@ -63,7 +63,7 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
     protected fun bit(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBitColumnNotNull<T> =
             BooleanDbBitColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    /* protected fun date(getter: (T) -> LocalDate, columnName: String? = null): LocalDateDbDateColumnNotNull<T> =
+    protected fun date(getter: (T) -> LocalDate, columnName: String? = null): LocalDateDbDateColumnNotNull<T> =
             LocalDateDbDateColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun date(getter: (T) -> LocalDate?, columnName: String? = null, defaultValue: LocalDate? = null): LocalDateDbDateColumnNullable<T> =
@@ -80,5 +80,4 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
 
     protected fun time(getter: (T) -> LocalTime?, columnName: String? = null, defaultValue: LocalTime? = null, precision: Int? = null): LocalTimeDbTimeColumnNullable<T> =
             LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
-            */
 }
