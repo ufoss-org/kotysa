@@ -29,7 +29,7 @@ class UserRepository(private val client: SqlClient) {
     fun save(user: User) = client insert user
 
     fun init() {
-        client createTable USER
+        client createTableIfNotExists USER
         deleteAll()
         save(User("John", "Doe", false, role_user_uuid, id = 123))
         save(User("Big", "Boss", true, role_admin_uuid, "TheBoss"))
@@ -42,7 +42,7 @@ class RoleRepository(private val client: SqlClient) {
     fun save(role: Role) = client insert role
 
     fun init() {
-        client createTable ROLE
+        client createTableIfNotExists ROLE
         deleteAll()
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))

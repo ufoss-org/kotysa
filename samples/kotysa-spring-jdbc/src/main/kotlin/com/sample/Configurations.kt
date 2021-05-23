@@ -13,6 +13,7 @@ private val h2Tables = tables().h2(ROLE, USER)
 
 val dataConfig = configuration {
     beans {
+        // create Kotysa SqlClient
         bean { ref<JdbcOperations>().sqlClient(h2Tables) }
         bean<RoleRepository>()
         bean<UserRepository>()
