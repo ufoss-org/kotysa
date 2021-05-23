@@ -45,8 +45,8 @@ abstract class AbstractSpringJdbcMssqlTest<T : Repository> : SpringJdbcRepositor
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
 
     @AfterAll
-    fun afterAll() = context.run {
+    fun afterAll() {
         repository.delete()
-        close()
+        context.close()
     }
 }

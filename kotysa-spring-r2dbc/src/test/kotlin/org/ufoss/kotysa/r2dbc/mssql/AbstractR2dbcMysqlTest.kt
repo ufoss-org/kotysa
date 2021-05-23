@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc.mysql
+package org.ufoss.kotysa.r2dbc.mssql
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.extension.ExtendWith
@@ -17,29 +17,27 @@ import org.ufoss.kotysa.r2dbc.R2dbcRepositoryTest
 import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
-import org.ufoss.kotysa.test.hooks.MySqlContainerResource
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.hooks.*
+import org.ufoss.kotysa.test.mssqlTables
 
-@ExtendWith(MySqlContainerExecutionHook::class)
-@ResourceLock(MySqlContainerResource.ID)
-abstract class AbstractR2dbcMysqlTest<T : Repository> : R2dbcRepositoryTest<T> {
+@ExtendWith(MsSqlContainerExecutionHook::class)
+@ResourceLock(MsSqlContainerResource.ID)
+abstract class AbstractR2dbcMssqlTest<T : Repository> : R2dbcRepositoryTest<T> {
 
     protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
             application {
                 beans {
                     bean<U>()
-                    bean { ref<DatabaseClient>().sqlClient(mysqlTables) }
-                    bean { ref<DatabaseClient>().coSqlClient(mysqlTables) }
+                    bean { ref<DatabaseClient>().sqlClient(mssqlTables) }
+                    bean { ref<DatabaseClient>().coSqlClient(mssqlTables) }
                 }
                 listener<ApplicationReadyEvent> {
                     ref<U>().init()
                 }
                 r2dbc {
-                    url = "r2dbc:mysql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
-                    username = "mysql"
-                    password = "test"
+                    url = "r2dbc:sqlserver://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}"
+                    username = "SA"
+                    password = "A_Str0ng_Required_Password"
                     transactional = true
                 }
             }.run()
