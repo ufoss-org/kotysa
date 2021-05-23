@@ -17,6 +17,7 @@ public interface CoroutinesSqlClient {
     public suspend fun <T : Any> insert(vararg rows: T)
 
     public suspend infix fun <T : Any> createTable(table: Table<T>)
+    public suspend infix fun <T : Any> createTableIfNotExists(table: Table<T>)
 
     public infix fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
     public suspend infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()

@@ -1,8 +1,8 @@
-package org.ufoss.kotysa.mysql
-
 /*
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
+
+package org.ufoss.kotysa.mysql
 
 import org.ufoss.kotysa.AbstractTable
 import org.ufoss.kotysa.DbColumn

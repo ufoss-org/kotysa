@@ -26,7 +26,7 @@ abstract class AbstractCustomerRepository(
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_CUSTOMER
+        sqlClient createTableIfNotExists SQLITE_CUSTOMER
     }
 
     private fun insertCustomers() {

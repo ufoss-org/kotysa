@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kotysa.h2.H2Table
+import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.sqlite.SqLiteTable
@@ -35,6 +36,12 @@ public object DbTypeChoice {
     public fun postgresql(vararg tables: PostgresqlTable<*>): Tables = fillTables(DbType.POSTGRESQL, *tables)
 
     /**
+     * Configure Functional Table Mapping support for Microsoft SQL Server
+     * @sample org.ufoss.kotysa.sample.mssqlTables
+     */
+    public fun mssql(vararg tables: MssqlTable<*>): Tables = fillTables(DbType.MSSQL, *tables)
+
+    /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
      */
@@ -53,6 +60,7 @@ public object DbTypeChoice {
                             DbType.MYSQL -> MysqlTable::class == type.classifier
                             DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
                             DbType.H2 -> H2Table::class == type.classifier
+                            DbType.MSSQL -> MssqlTable::class == type.classifier
                         }
                     }
             ) { "Table $table should be a subclass of the platform $dbType Table" }
@@ -97,37 +105,6 @@ public object DbTypeChoice {
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
     }
-
-    /*
-    /**
-     * Configure Functional Table Mapping support for SqLite
-     * @sample org.ufoss.kotysa.sample.sqLiteTables
-     * @see SqLiteTablesDsl
-     */
-    public fun sqlite(dsl: SqLiteTablesDsl.() -> Unit): Tables {
-        val tablesDsl = SqLiteTablesDsl(dsl, DbType.SQLITE)
-        return tablesDsl.initialize(tablesDsl)
-    }
-
-    /**
-     * Configure Functional Table Mapping support for PostgreSQL
-     * @sample org.ufoss.kotysa.sample.postgresqlTables
-     * @see PostgresqlTablesDsl
-     */
-    public fun postgresql(dsl: PostgresqlTablesDsl.() -> Unit): Tables {
-        val tablesDsl = PostgresqlTablesDsl(dsl, DbType.POSTGRESQL)
-        return tablesDsl.initialize(tablesDsl)
-    }
-
-    /**
-     * Configure Functional Table Mapping support for MySQL
-     * @sample org.ufoss.kotysa.sample.mysqlTables
-     * @see MysqlTablesDsl
-     */
-    public fun mysql(dsl: MysqlTablesDsl.() -> Unit): Tables {
-        val tablesDsl = MysqlTablesDsl(dsl, DbType.MYSQL)
-        return tablesDsl.initialize(tablesDsl)
-    }*/
 }
 
 /**

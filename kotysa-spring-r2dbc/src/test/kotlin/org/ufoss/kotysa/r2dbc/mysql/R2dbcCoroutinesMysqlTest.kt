@@ -127,8 +127,8 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MYSQL_ROLE
-        sqlClient createTable MYSQL_USER
+        sqlClient createTableIfNotExists MYSQL_ROLE
+        sqlClient createTableIfNotExists MYSQL_USER
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)

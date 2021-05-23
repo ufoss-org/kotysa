@@ -17,7 +17,8 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
 
     val client: DatabaseClient
 
-    fun <T : Any> executeCreateTable(table: Table<T>): DatabaseClient.GenericExecuteSpec = client.sql(createTableSql(table))
+    fun <T : Any> executeCreateTable(table: Table<T>, ifNotExists: Boolean): DatabaseClient.GenericExecuteSpec =
+            client.sql(createTableSql(table, ifNotExists))
 
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec {
         val table = tables.getTable(row::class)
@@ -28,6 +29,7 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                     if (value == null) {
                         // do nothing for null values with default or Serial type
                         if (column.defaultValue != null
+                                || column.isAutoIncrement
                                 || SqlType.SERIAL == column.sqlType
                                 || SqlType.BIGSERIAL == column.sqlType) {
                             execSpec

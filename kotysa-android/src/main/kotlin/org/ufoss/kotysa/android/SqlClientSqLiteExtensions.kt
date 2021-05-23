@@ -56,15 +56,10 @@ internal fun DefaultSqlClientCommon.Return.bindWhereArgs(statement: SQLiteStatem
             .forEach { whereValue -> statement.bind(index++, whereValue) }
 }
 
-internal fun DefaultSqlClientCommon.Return.buildWhereArgs(): Array<String>? = with(properties) {
-    return if (whereClauses.isNotEmpty()) {
+internal fun DefaultSqlClientCommon.Return.buildWhereArgs(): MutableList<String> =
         whereValues()
                 .map { whereValue -> stringValue(whereValue) }
-                .toTypedArray()
-    } else {
-        null
-    }
-}
+                .toMutableList()
 
 internal fun Cursor.toRow() = RowImpl(SqLiteRow(this))
 

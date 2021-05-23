@@ -224,8 +224,8 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface LimitOffset<T : LimitOffset<T>> {
-        public infix fun limit(limit: Int): T
-        public infix fun offset(offset: Int): T
+        public infix fun limit(limit: Long): T
+        public infix fun offset(offset: Long): T
     }
 
     public interface GroupBy<T : GroupByPart2<T>> {

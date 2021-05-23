@@ -12,7 +12,6 @@ import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.h2.date
 import org.ufoss.kotysa.h2.dateTime
 import org.ufoss.kotysa.h2.timestamp
-import org.ufoss.kotysa.sqlite.SqLiteTable
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.util.*
@@ -57,9 +56,9 @@ data class H2AllTypesNotNullEntity(
         override val long: Long,
         val offsetDateTime: OffsetDateTime,
         val uuid: UUID,
-) : AllTypesNotNullEntity(
-        id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
+) : AllTypesNotNullWithTimeEntity(
+        id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+        kotlinxLocalDateTime2, int, long, localTime
 )
 
 val h2AllTypesNotNull = H2AllTypesNotNullEntity(
@@ -79,7 +78,7 @@ object H2_ALL_TYPES_NOT_NULL : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNotNullEntity::localTime, precision = 9)
+    val localTim = time(AllTypesNotNullWithTimeEntity::localTime, precision = 9)
     val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -104,9 +103,9 @@ data class H2AllTypesNullableEntity(
         override val long: Long?,
         val offsetDateTime: OffsetDateTime?,
         val uuid: UUID?,
-) : AllTypesNullableEntity(
-        id, string, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
+) : AllTypesNullableWithTimeEntity(
+        id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
 )
 
 val h2AllTypesNullable = H2AllTypesNullableEntity(
@@ -120,7 +119,7 @@ object H2_ALL_TYPES_NULLABLE : H2Table<H2AllTypesNullableEntity>("all_types_null
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNullableEntity::localTime) // todo test fractionalSecondsPart later
+    val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -145,9 +144,9 @@ data class H2AllTypesNullableDefaultValueEntity(
         override val long: Long? = null,
         val offsetDateTime: OffsetDateTime? = null,
         val uuid: UUID? = null,
-) : AllTypesNullableDefaultValueEntity(
-        id, string, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
+) : AllTypesNullableDefaultValueWithTimeEntity(
+        id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
+        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
 )
 
 val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
@@ -165,7 +164,7 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<H2AllTypesNullableDefaultVa
             defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
     )
     val localTim = time(
-            AllTypesNullableDefaultValueEntity::localTime, precision = 9,
+            AllTypesNullableDefaultValueWithTimeEntity::localTime, precision = 9,
             defaultValue = LocalTime.of(11, 25, 55, 123456789)
     )
     val localDateTime1 = dateTime(

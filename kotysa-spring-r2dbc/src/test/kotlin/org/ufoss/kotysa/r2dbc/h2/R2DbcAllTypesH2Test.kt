@@ -149,6 +149,6 @@ class AllTypesRepositoryH2(
                     set H2_ALL_TYPES_NOT_NULL.long eq newLong
                     set H2_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
                     set H2_ALL_TYPES_NOT_NULL.uuid eq newUuid
-                    where H2_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    where H2_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

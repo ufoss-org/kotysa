@@ -37,7 +37,8 @@ internal class SqlClientSqLite(
         rows.forEach { row ->
             statement.clearBindings()
             table.columns
-                    .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
+                    .filterNot { column -> column.entityGetter(row) == null &&
+                            (column.defaultValue != null || column.isAutoIncrement) }
                     .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
             statement.executeInsert()
         }
@@ -45,7 +46,15 @@ internal class SqlClientSqLite(
 
 
     override fun <T : Any> createTable(table: Table<T>) {
-        val createTableSql = createTableSql(table)
+        createTable(table, false)
+    }
+
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) {
+        createTable(table, true)
+    }
+
+    private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
+        val createTableSql = createTableSql(table, ifNotExists)
         client.writableDatabase.compileStatement(createTableSql).execute()
     }
 

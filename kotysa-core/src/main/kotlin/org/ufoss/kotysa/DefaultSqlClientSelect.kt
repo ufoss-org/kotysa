@@ -20,6 +20,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
 
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
+        override var index: Int = 0
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
 
         public lateinit var select: (RowImpl) -> T?
@@ -27,8 +28,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         internal val groupBy = mutableListOf<Column<*, *>>()
         internal val orderBy = mutableListOf<Pair<Column<*, *>, Order>>()
 
-        internal var limit: Int? = null
-        internal var offset: Int? = null
+        public var limit: Long? = null
+        public var offset: Long? = null
     }
 
     protected interface WithProperties<T : Any> : DefaultSqlClientCommon.WithProperties {
@@ -83,7 +84,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     public abstract class SelectWithDsl<T : Any> protected constructor(
             final override val properties: Properties<T>,
             dsl: (ValueProvider) -> T,
-    ) : Fromable , WithProperties<T> {
+    ) : Fromable, WithProperties<T> {
         init {
             val field = FieldDsl(properties, dsl)
             properties.selectedFields.add(field)
@@ -91,7 +92,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
 
         protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *, *>): V =
-            from.addFromTable(table)
+                from.addFromTable(table)
     }
 
     public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
@@ -109,12 +110,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         : SqlClientQuery.LimitOffset<U>, WithProperties<T> {
         public val limitOffset: U
 
-        override fun limit(limit: Int): U {
+        override fun limit(limit: Long): U {
             properties.limit = limit
             return limitOffset
         }
 
-        override fun offset(offset: Int): U {
+        override fun offset(offset: Long): U {
             properties.offset = offset
             return limitOffset
         }
@@ -177,19 +178,36 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             val wheres = wheres()
             val groupBy = groupBy()
             val orderBy = orderBy()
-            val limit = if (limit != null) {
-                "LIMIT $limit"
-            } else {
-                ""
+            if (DbType.MSSQL == tables.dbType) {
+                // Mssql offset or limit must have order by
+                if (limit != null || offset != null) {
+                    require(orderBy.isNotBlank()) { "Mssql offset or limit must have order by" }
+                }
+                // in Mssql offset is mandatory with limit
+                if (limit != null && offset == null) {
+                    offset = 0
+                }
+            } else if (offset != null && limit == null) {
+                // in SqLite and MySQL limit is mandatory with offset
+                if (DbType.SQLITE == tables.dbType) {
+                    limit = -1
+                } else if (DbType.MYSQL == tables.dbType) {
+                    limit = Long.MAX_VALUE
+                }
             }
-            val offset = if (offset != null) {
-                "OFFSET $offset"
-            } else {
-                ""
-            }
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limit $offset" }
 
-            "$selects $froms $wheres $groupBy $orderBy $limit $offset"
+            // order is not the same depending on DbType
+            val limitOffset = if (DbType.MSSQL == tables.dbType) {
+                "${offset()} ${limit()}"
+            } else {
+                "${limit()} ${offset()}"
+            }
+
+            // reset index
+            index = 0
+
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limitOffset" }
+            "$selects $froms $wheres $groupBy $orderBy $limitOffset"
         }
 
         private fun groupBy(): String = with(properties) {
@@ -207,6 +225,30 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             }
             return orderBy.joinToString(prefix = "ORDER BY ") { pair ->
                 "${pair.first.getFieldName(availableColumns)} ${pair.second}"
+            }
+        }
+
+        private fun offset(): String = with(properties) {
+            if (offset != null) {
+                when (tables.dbType) {
+                    DbType.SQLITE -> "OFFSET ?"
+                    DbType.MSSQL -> "OFFSET :k${index++} ROWS"
+                    else -> "OFFSET :k${index++}"
+                }
+            } else {
+                ""
+            }
+        }
+
+        private fun limit(): String = with(properties) {
+            if (limit != null) {
+                when (tables.dbType) {
+                    DbType.SQLITE -> "LIMIT ?"
+                    DbType.MSSQL -> "FETCH NEXT :k${index++} ROWS ONLY"
+                    else -> "LIMIT :k${index++}"
+                }
+            } else {
+                ""
             }
         }
     }

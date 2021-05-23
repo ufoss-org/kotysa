@@ -27,6 +27,7 @@ dependencies {
     testFixturesImplementation "org.assertj:assertj-core:$assertj_version"
     testFixturesImplementation 'org.testcontainers:postgresql'
     testFixturesImplementation 'org.testcontainers:mysql'
+    testFixturesImplementation 'org.testcontainers:mssqlserver'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"

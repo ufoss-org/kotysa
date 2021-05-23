@@ -23,7 +23,7 @@ abstract class AbstractCustomerRepositorySpringJdbcPostgresql(client: JdbcOperat
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_CUSTOMER
+        sqlClient createTableIfNotExists POSTGRESQL_CUSTOMER
     }
 
     private fun insertCustomers() {

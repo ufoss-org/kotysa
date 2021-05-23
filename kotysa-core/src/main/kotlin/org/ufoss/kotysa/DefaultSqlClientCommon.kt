@@ -21,6 +21,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         public val availableTables: MutableMap<Table<*>, KotysaTable<*>>
         public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
+        public var index: Int
     }
 
     public interface WithProperties {
@@ -640,7 +641,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             }
         }
 
-        public fun wheres(withWhere: Boolean = true, offset: Int = 0): String = with(properties) {
+        public fun wheres(withWhere: Boolean = true): String = with(properties) {
             if (whereClauses.isEmpty()) {
                 return ""
             }
@@ -648,7 +649,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             if (withWhere) {
                 where.append("WHERE ")
             }
-            var index = offset
             whereClauses.forEach { typedWhereClause ->
                 where.append(
                         when (typedWhereClause.type) {

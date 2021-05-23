@@ -149,12 +149,6 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
                 .hasSize(1)
                 .containsExactly(roleAdmin.label)
     }
-
-    @Test
-    fun `Verify selectAllLimitOffset returns 1 user`() {
-        assertThat(repository.selectAllLimitOffset().toIterable())
-                .hasSize(1)
-    }
 }
 
 
@@ -241,9 +235,4 @@ class UserRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
                     from MYSQL_USER_ROLE innerJoin MYSQL_ROLE on MYSQL_USER_ROLE.roleId eq MYSQL_ROLE.id
                     where MYSQL_USER_ROLE.userId eq userId)
                     .fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom MYSQL_USER
-                    limit 1 offset 1
-                    ).fetchAll()
 }

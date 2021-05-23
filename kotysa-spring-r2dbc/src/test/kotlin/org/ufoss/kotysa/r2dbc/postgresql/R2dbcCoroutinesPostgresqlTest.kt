@@ -127,8 +127,8 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient createTable POSTGRESQL_ROLE
-        sqlClient createTable POSTGRESQL_USER
+        sqlClient createTableIfNotExists POSTGRESQL_ROLE
+        sqlClient createTableIfNotExists POSTGRESQL_USER
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)

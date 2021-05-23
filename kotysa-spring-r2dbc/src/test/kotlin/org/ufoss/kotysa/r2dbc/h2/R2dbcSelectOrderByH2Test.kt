@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
-class SpringJdbcSelectOrderByH2Test : AbstractR2dbcH2Test<OrderByRepositoryH2Select>() {
+class R2dbcSelectOrderByH2Test : AbstractR2dbcH2Test<OrderByRepositoryH2Select>() {
 
     @BeforeAll
     fun beforeAll() {

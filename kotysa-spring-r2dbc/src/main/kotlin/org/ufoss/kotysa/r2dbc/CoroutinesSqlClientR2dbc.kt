@@ -25,7 +25,11 @@ private class CoroutinesSqlClientR2Dbc(
     }
 
     override suspend fun <T : Any> createTable(table: Table<T>) {
-        executeCreateTable(table).await()
+        executeCreateTable(table, false).await()
+    }
+
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) {
+        executeCreateTable(table, true).await()
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =

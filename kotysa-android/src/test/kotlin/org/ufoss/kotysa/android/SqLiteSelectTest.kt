@@ -149,12 +149,6 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
                 .hasSize(1)
                 .containsExactly(roleAdmin.label)
     }
-
-    @Test
-    fun `Verify selectAllLimitOffset returns 1 user`() {
-        assertThat(repository.selectAllLimitOffset())
-                .hasSize(1)
-    }
 }
 
 class UserRepositorySelect(
@@ -247,9 +241,4 @@ class UserRepositorySelect(
                     from SQLITE_USER_ROLE innerJoin SQLITE_ROLE on SQLITE_USER_ROLE.roleId eq SQLITE_ROLE.id
                     where SQLITE_USER_ROLE.userId eq userId)
                     .fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom SQLITE_USER
-                    limit 1 offset 1
-                    ).fetchAll()
 }

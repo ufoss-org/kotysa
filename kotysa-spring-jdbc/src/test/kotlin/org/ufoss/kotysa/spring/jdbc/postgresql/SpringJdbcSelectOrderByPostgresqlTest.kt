@@ -11,7 +11,7 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-class SpringJdbcSelectOrderByH2Test : AbstractSpringJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>() {
+class SpringJdbcSelectOrderByPostgresqlTest : AbstractSpringJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>() {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
