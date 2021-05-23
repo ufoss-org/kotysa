@@ -45,7 +45,10 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
 
         override fun execute() = with(properties) {
             val parameters = MapSqlParameterSource()
+            // 1) add all values from where part
             bindWhereParams(parameters)
+            // 2) reset index
+            index = 0
 
             client.update(deleteFromTableSql(), parameters)
         }

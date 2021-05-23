@@ -26,14 +26,14 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
         assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
-                .containsExactly(allTypesNotNull)
+                .containsExactly(allTypesNotNullWithTime)
     }
 
     @Test
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() {
         assertThat(repository.selectAllAllTypesNullable())
                 .hasSize(1)
-                .containsExactly(allTypesNullable)
+                .containsExactly(allTypesNullableWithTime)
     }
 
     @Test
@@ -41,18 +41,18 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue())
                 .hasSize(1)
                 .containsExactly(
-                        AllTypesNullableDefaultValueEntity(
-                                allTypesNullableDefaultValue.id,
+                        AllTypesNullableDefaultValueWithTimeEntity(
+                                allTypesNullableDefaultValueWithTime.id,
                                 "default",
                                 LocalDate.of(2019, 11, 4),
                                 kotlinx.datetime.LocalDate(2019, 11, 6),
-                                LocalTime.of(11, 25, 55),
                                 LocalDateTime.of(2018, 11, 4, 0, 0),
                                 LocalDateTime.of(2019, 11, 4, 0, 0),
                                 kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                                 kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                                 42,
                                 84L,
+                                LocalTime.of(11, 25, 55),
                         )
                 )
     }
@@ -76,10 +76,10 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
                     .containsExactlyInAnyOrder(
-                            AllTypesNotNullEntity(
-                                    allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
-                                    newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                    newKotlinxLocalDateTime, newInt, newLong
+                            AllTypesNotNullWithTimeEntity(
+                                    allTypesNotNullWithTime.id, "new", false, newLocalDate,
+                                    newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                                    newKotlinxLocalDateTime, newInt, newLong, newLocalTime
                             )
                     )
         }
@@ -108,9 +108,9 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(allTypesNotNull)
-        sqlClient.insert(allTypesNullable)
-        sqlClient.insert(allTypesNullableDefaultValue)
+        sqlClient.insert(allTypesNotNullWithTime)
+        sqlClient.insert(allTypesNullableWithTime)
+        sqlClient.insert(allTypesNullableDefaultValueWithTime)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom SQLITE_ALL_TYPES_NOT_NULL
@@ -136,6 +136,6 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
                     set SQLITE_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                     set SQLITE_ALL_TYPES_NOT_NULL.int eq newInt
                     set SQLITE_ALL_TYPES_NOT_NULL.long eq newLong
-                    where SQLITE_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    where SQLITE_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

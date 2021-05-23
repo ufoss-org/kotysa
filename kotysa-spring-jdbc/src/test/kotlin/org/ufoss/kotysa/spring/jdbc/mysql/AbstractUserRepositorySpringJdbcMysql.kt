@@ -27,9 +27,9 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
     }
 
     private fun createTables() {
-        sqlClient createTable MYSQL_ROLE
-        sqlClient createTable MYSQL_USER
-        sqlClient createTable MYSQL_USER_ROLE
+        sqlClient createTableIfNotExists MYSQL_ROLE
+        sqlClient createTableIfNotExists MYSQL_USER
+        sqlClient createTableIfNotExists MYSQL_USER_ROLE
     }
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)

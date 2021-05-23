@@ -13,6 +13,7 @@ public enum class SqlType(internal val fullType: String) {
     TEXT("TEXT"),
 
     // numbers
+    BIT("BIT"),
     INT("INTEGER"),
     BIGINT("BIGINT"),
     SERIAL("SERIAL"),

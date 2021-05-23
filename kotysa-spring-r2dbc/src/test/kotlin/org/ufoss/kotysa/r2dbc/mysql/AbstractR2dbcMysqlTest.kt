@@ -21,7 +21,6 @@ import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
-import org.ufoss.kotysa.test.postgresqlTables
 
 @ExtendWith(MySqlContainerExecutionHook::class)
 @ResourceLock(MySqlContainerResource.ID)

@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.android
 
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
@@ -293,6 +294,17 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             results
         }
 
-        private fun fetch() = client.rawQuery(selectSql(), buildWhereArgs())
+        private fun fetch(): Cursor = with(properties) {
+            val sql = selectSql()
+            val selectionArgs = buildWhereArgs()
+            if (limit != null) {
+                selectionArgs.add(stringValue(limit))
+            }
+            if (offset != null) {
+                selectionArgs.add(stringValue(offset))
+            }
+
+            return client.rawQuery(sql, selectionArgs.toTypedArray())
+        }
     }
 }

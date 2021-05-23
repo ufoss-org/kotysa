@@ -27,10 +27,14 @@ dependencies {
     testRuntimeOnly 'io.r2dbc:r2dbc-h2'
     testRuntimeOnly 'io.r2dbc:r2dbc-postgresql'
     testRuntimeOnly 'dev.miku:r2dbc-mysql'
+    testRuntimeOnly 'io.r2dbc:r2dbc-mssql'
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
     // needed to start mysql testcontainer
-    testRuntimeOnly "mysql:mysql-connector-java"
+    testRuntimeOnly 'mysql:mysql-connector-java'
+    testRuntimeOnly 'org.testcontainers:mssqlserver'
+    // needed to start mssql testcontainer
+    testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 

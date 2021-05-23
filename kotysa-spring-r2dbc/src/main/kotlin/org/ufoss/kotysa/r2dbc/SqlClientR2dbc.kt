@@ -24,7 +24,10 @@ private class SqlClientR2dbc(
             rows.fold(Mono.empty<Void>()) { mono, row -> mono.then(insert(row)) }
 
     override fun <T : Any> createTable(table: Table<T>) =
-            executeCreateTable(table).then()
+            executeCreateTable(table, false).then()
+
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) =
+            executeCreateTable(table, true).then()
 
     override fun <T : Any> deleteFrom(table: Table<T>): ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
             SqlClientDeleteR2dbc.FirstDelete(client, tables, table)

@@ -39,18 +39,18 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue())
                 .hasSize(1)
-                .containsExactly(AllTypesNullableDefaultValueEntity(
-                        allTypesNullableDefaultValue.id,
+                .containsExactly(AllTypesNullableDefaultValueWithTimeEntity(
+                        allTypesNullableDefaultValueWithTime.id,
                         "default",
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
-                        LocalTime.of(11, 25, 55),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         LocalDateTime.of(2019, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42,
-                        84L
+                        84L,
+                        LocalTime.of(11, 25, 55),
                 ))
     }
 
@@ -58,7 +58,7 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() {
         assertThat(repository.selectAllAllTypesNullable())
                 .hasSize(1)
-                .containsExactly(allTypesNullable)
+                .containsExactly(allTypesNullableWithTime)
     }
 
     @Test
@@ -77,9 +77,9 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
                     .containsExactlyInAnyOrder(
-                            MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false,
-                                    newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
-                                    newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong))
+                            MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false, newLocalDate,
+                                    newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                                    newKotlinxLocalDateTime, newInt, newLong, newLocalTime))
         }
     }
 }
@@ -107,7 +107,7 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(mysqlAllTypesNotNull, allTypesNullable, allTypesNullableDefaultValue)
+        sqlClient.insert(mysqlAllTypesNotNull, allTypesNullableWithTime, allTypesNullableDefaultValueWithTime)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NOT_NULL
@@ -132,6 +132,6 @@ class AllTypesRepositoryMysql(client: JdbcOperations) : Repository {
                     set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                     set MYSQL_ALL_TYPES_NOT_NULL.inte eq newInt
                     set MYSQL_ALL_TYPES_NOT_NULL.longe eq newLong
-                    where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

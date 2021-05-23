@@ -18,7 +18,7 @@ private val logger = Logger.of<DefaultSqlClient>()
 public interface DefaultSqlClient {
     public val tables: Tables
 
-    public fun createTableSql(table: Table<*>): String {
+    public fun createTableSql(table: Table<*>, ifNotExists: Boolean): String {
         val kotysaTable = tables.getTable(table)
 
         val columns = kotysaTable.columns.joinToString { column ->
@@ -31,7 +31,11 @@ public interface DefaultSqlClient {
                 // SQLITE : The AUTOINCREMENT keyword imposes extra CPU, memory, disk space, and disk I/O overhead and should be avoided if not strictly needed.
                 // It is usually not needed -> https://sqlite.org/autoinc.html
                 // if this needs to be added later, sqlite syntax MUST be "column INTEGER PRIMARY KEY AUTOINCREMENT"
-                " AUTO_INCREMENT"
+                if (DbType.MSSQL == tables.dbType) {
+                    " IDENTITY"
+                } else {
+                    " AUTO_INCREMENT"
+                }
             } else {
                 ""
             }
@@ -70,7 +74,23 @@ public interface DefaultSqlClient {
                     }
                 }
 
-        val createTableSql = "CREATE TABLE IF NOT EXISTS ${kotysaTable.name} ($columns, $primaryKey$foreignKeys)"
+        var suffix = ""
+        val prefix = if (ifNotExists) {
+            if (DbType.MSSQL == tables.dbType) {
+                suffix = """
+                END"""
+
+                """IF NOT EXISTS(SELECT name FROM sys.sysobjects WHERE Name = N'${kotysaTable.name}' AND xtype = N'U')
+                BEGIN
+                CREATE TABLE"""
+            } else {
+                "CREATE TABLE IF NOT EXISTS"
+            }
+        } else {
+            "CREATE TABLE"
+        }
+
+        val createTableSql = "$prefix ${kotysaTable.name} ($columns, $primaryKey$foreignKeys)$suffix"
         logger.debug { "Exec SQL (${tables.dbType.name}) : $createTableSql" }
         return createTableSql
     }
@@ -81,7 +101,7 @@ public interface DefaultSqlClient {
         return insertSqlQuery
     }
 
-    public fun <T : Any> insertSqlQuery(row: T): String {
+    private fun <T : Any> insertSqlQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         var index = 0
@@ -90,6 +110,7 @@ public interface DefaultSqlClient {
                 .filterNot { column ->
                     column.entityGetter(row) == null
                             && (column.defaultValue != null
+                            || column.isAutoIncrement
                             || SqlType.SERIAL == column.sqlType
                             || SqlType.BIGSERIAL == column.sqlType)
                 }

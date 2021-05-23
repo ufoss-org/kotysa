@@ -123,8 +123,8 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2_ROLE
-        sqlClient createTable H2_USER
+        sqlClient createTableIfNotExists H2_ROLE
+        sqlClient createTableIfNotExists H2_USER
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)

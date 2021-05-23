@@ -31,9 +31,9 @@ abstract class AbstractUserRepository(
     }
 
     private fun createTable() {
-        sqlClient createTable SQLITE_ROLE
-        sqlClient createTable SQLITE_USER
-        sqlClient createTable SQLITE_USER_ROLE
+        sqlClient createTableIfNotExists SQLITE_ROLE
+        sqlClient createTableIfNotExists SQLITE_USER
+        sqlClient createTableIfNotExists SQLITE_USER_ROLE
     }
 
     private fun insertRoles() {

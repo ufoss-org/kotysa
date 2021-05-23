@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.test
 
 import kotlinx.datetime.*
-import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.mysql.date
 import org.ufoss.kotysa.mysql.dateTime
@@ -48,7 +47,7 @@ object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") 
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNotNullEntity::localTime) // todo test fractionalSecondsPart later
+    val localTim = time(AllTypesNotNullWithTimeEntity::localTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = dateTime(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -57,13 +56,13 @@ object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") 
     val longe = bigInt(AllTypesNotNullEntity::long)
 }
 
-object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_nullable") {
+object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNullableEntity::localTime) // todo test fractionalSecondsPart later
+    val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = dateTime(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -72,7 +71,7 @@ object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableEntity>("all_types_
     val longe = bigInt(AllTypesNullableEntity::long)
 }
 
-object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueEntity>() {
+object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueWithTimeEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -85,7 +84,7 @@ object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefau
             defaultValue = LocalDate(2019, 11, 6)
     )
     val localTim = time(
-            AllTypesNullableDefaultValueEntity::localTime,
+            AllTypesNullableDefaultValueWithTimeEntity::localTime,
             defaultValue = LocalTime.of(11, 25, 55, 123456789)
     )
     val localDateTime1 = dateTime(
@@ -186,16 +185,16 @@ data class MysqlAllTypesNotNull(
         override val boolean: Boolean,
         override val localDate: LocalDate,
         override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-        override val localTime: LocalTime,
         override val localDateTime1: LocalDateTime,
         override val localDateTime2: LocalDateTime,
         override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         override val int: Int,
         override val long: Long,
-) : AllTypesNotNullEntity(
-        id, string, boolean, localDate, kotlinxLocalDate, localTime, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
+        override val localTime: LocalTime,
+) : AllTypesNotNullWithTimeEntity(
+        id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+        kotlinxLocalDateTime2, int, long, localTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -241,9 +240,9 @@ data class MysqlAllTypesNotNull(
 
 val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
         1, "",
-        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
-        LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L
+        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
+        Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
+        1L, LocalTime.now()
 )
 
 object MYSQL_INHERITED : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {

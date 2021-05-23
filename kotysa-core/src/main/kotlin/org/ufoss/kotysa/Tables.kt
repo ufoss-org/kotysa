@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit
 public class Tables internal constructor(
         public val allTables: Map<Table<*>, KotysaTable<*>>,
         internal val allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
-        internal val dbType: DbType,
+        public val dbType: DbType,
 ) {
     public fun <T> getDbValue(value: T): Any? =
             if (value != null) {

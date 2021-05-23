@@ -20,7 +20,7 @@ abstract class AbstractCustomerRepositoryMysql(protected val sqlClient: ReactorS
         deleteAll().block()
     }
 
-    private fun createTables() = sqlClient createTable MYSQL_CUSTOMER
+    private fun createTables() = sqlClient createTableIfNotExists MYSQL_CUSTOMER
 
     private fun insertCustomers() = sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
 

@@ -142,6 +142,6 @@ class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
                     set POSTGRESQL_ALL_TYPES_NOT_NULL.long eq newLong
                     set POSTGRESQL_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
                     set POSTGRESQL_ALL_TYPES_NOT_NULL.uuid eq newUuid
-                    where POSTGRESQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNull.id
+                    where POSTGRESQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

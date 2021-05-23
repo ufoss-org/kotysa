@@ -18,11 +18,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.testcontainers:testcontainers'
 
-    testRuntimeOnly "com.h2database:h2"
-    testRuntimeOnly "mysql:mysql-connector-java"
+    testRuntimeOnly 'com.h2database:h2'
+    testRuntimeOnly 'mysql:mysql-connector-java'
+    testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     testRuntimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
+    testRuntimeOnly 'org.testcontainers:mssqlserver'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
