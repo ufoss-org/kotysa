@@ -13,7 +13,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework:spring-jdbc')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:1.0.0')
+    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:1.0.1')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     runtimeOnly('com.h2database:h2')
@@ -27,15 +27,13 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
-        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
-        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
     }
 }
 

@@ -16,7 +16,7 @@ dependencies {
     implementation('io.r2dbc:r2dbc-h2')
     implementation('org.jetbrains.kotlinx:kotlinx-coroutines-reactor')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:1.0.0')
+    implementation('org.ufoss.kotysa:kotysa-spring-r2dbc:1.0.1')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -26,15 +26,13 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
-        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
-        jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
     }
 }
 
