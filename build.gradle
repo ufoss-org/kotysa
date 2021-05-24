@@ -42,8 +42,8 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
 
     compileKotlin {
         kotlinOptions {
-            freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict']
-            jvmTarget = '1.8'
+            freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-Xexplicit-api=strict']
+            allWarningsAsErrors = true
         }
     }
 
@@ -53,8 +53,8 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
 
     compileTestKotlin {
         kotlinOptions {
-            freeCompilerArgs = ['-Xjvm-default=enable']
-            jvmTarget = '1.8'
+            freeCompilerArgs = ['-Xjvm-default=all-compatibility']
+            allWarningsAsErrors = true
         }
     }
 

@@ -19,6 +19,7 @@ public class Tables internal constructor(
 ) {
     public fun <T> getDbValue(value: T): Any? =
             if (value != null) {
+                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
                 when (value!!::class.qualifiedName) {
                     "kotlinx.datetime.LocalDate" -> (value as kotlinx.datetime.LocalDate).toJavaLocalDate()
                     "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()

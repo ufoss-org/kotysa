@@ -101,7 +101,8 @@ public interface DefaultSqlClient {
         return insertSqlQuery
     }
 
-    private fun <T : Any> insertSqlQuery(row: T): String {
+    // fixme 24/05/21 : does not work if set to private (fails in demo-kotlin project)
+    public fun <T : Any> insertSqlQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         var index = 0
