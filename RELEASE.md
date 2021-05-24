@@ -3,8 +3,7 @@
 * verify you are using SSH with GIT
 * use openJDK 1.8 as project JDK
 * do **publish** task
-* login to https://s01.oss.sonatype.org/ (ufoss account)
-* Go to staging repos : https://s01.oss.sonatype.org/#stagingRepositories
+* Go to staging repos : https://s01.oss.sonatype.org/#stagingRepositories (ufoss account)
   * do **close** , refresh
   * then **release**
   * refresh again after several seconds, repo has gone -> it's released on maven central
