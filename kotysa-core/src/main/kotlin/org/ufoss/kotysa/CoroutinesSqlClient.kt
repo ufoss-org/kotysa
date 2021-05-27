@@ -128,7 +128,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
 
     public interface Return<T : Any> {
         /**
-         * This Query return one result
+         * This query return one result
          *
          * @throws NoResultException if no results
          * @throws NonUniqueResultException if more than one result
@@ -136,26 +136,26 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         public suspend fun fetchOne(): T?
 
         /**
-         * This Query return one result, or null if no results
+         * This query return one result, or null if no results
          *
          * @throws NonUniqueResultException if more than one result
          */
         public suspend fun fetchOneOrNull(): T?
 
         /**
-         * This Query return the first result
+         * This query return the first result
          *
          * @throws NoResultException if no results
          */
         public suspend fun fetchFirst(): T?
 
         /**
-         * This Query return the first result, or null if no results
+         * This query return the first result, or null if no results
          */
         public suspend fun fetchFirstOrNull(): T?
 
         /**
-         * This Query can return several results as [Flow], can be empty if no results
+         * This query returns several results as [Flow], can be empty if no results
          */
         public fun fetchAll(): Flow<T>
     }

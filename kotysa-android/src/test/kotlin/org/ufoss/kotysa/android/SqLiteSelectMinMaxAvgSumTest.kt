@@ -9,7 +9,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.test.*
-import java.math.MathContext
 
 class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySelect>() {
 

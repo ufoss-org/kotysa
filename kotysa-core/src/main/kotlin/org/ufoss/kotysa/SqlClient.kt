@@ -127,7 +127,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
     public interface Return<T : Any> {
         /**
-         * This query return one result
+         * This query returns one result
          *
          * @throws NoResultException if no results
          * @throws NonUniqueResultException if more than one result
@@ -135,31 +135,31 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         public fun fetchOne(): T?
 
         /**
-         * This query return one result, or null if no results
+         * This query returns one result, or null if no results
          *
          * @throws NonUniqueResultException if more than one result
          */
         public fun fetchOneOrNull(): T?
 
         /**
-         * This query return the first result
+         * This query returns the first result
          *
          * @throws NoResultException if no results
          */
         public fun fetchFirst(): T?
 
         /**
-         * This query return the first result, or null if no results
+         * This query returns the first result, or null if no results
          */
         public fun fetchFirstOrNull(): T?
 
         /**
-         * This query can return several results as [List], can be empty if no results
+         * This query returns several results as [List], can be empty if no results
          */
         public fun fetchAll(): List<T>
 
         /**
-         * This query can return several results as [Stream] (for lazy result iteration), can be empty if no results
+         * This query returns several results as [Stream], can be empty if no results
          */
         public fun fetchAllStream(): Stream<T> = fetchAll().stream()
     }

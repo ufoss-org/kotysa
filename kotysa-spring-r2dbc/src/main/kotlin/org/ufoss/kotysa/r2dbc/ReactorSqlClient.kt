@@ -129,19 +129,19 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
 
     public interface Return<T : Any> {
         /**
-         * This Query return one result as [Mono], or an empty [Mono] if no result
+         * This query returns one result as [Mono], or an empty [Mono] if no result
          *
          * @throws NonUniqueResultException if more than one result
          */
         public fun fetchOne(): Mono<T>
 
         /**
-         * This Query return one result as [Mono], or an empty [Mono] if no result
+         * This query returns the first result as [Mono], or an empty [Mono] if no result
          */
         public fun fetchFirst(): Mono<T>
 
         /**
-         * This Query can return several results as [Flux], or an empty [Flux] if no result
+         * This query returns several results as [Flux], or an empty [Flux] if no result
          */
         public fun fetchAll(): Flux<T>
     }
