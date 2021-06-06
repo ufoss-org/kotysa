@@ -28,6 +28,7 @@ dependencies {
     testFixturesImplementation 'org.testcontainers:postgresql'
     testFixturesImplementation 'org.testcontainers:mysql'
     testFixturesImplementation 'org.testcontainers:mssqlserver'
+    testFixturesImplementation 'org.testcontainers:mariadb'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"

@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.mssql
+package org.ufoss.kotysa.mariadb
 
 import org.ufoss.kotysa.AbstractTable
 import org.ufoss.kotysa.DbColumn
@@ -13,17 +13,17 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 /**
- * Represents a Microsoft SQL Server Table
+ * Represents a MariaDB Table
  *
  * **Extend this class with an object**
  *
- * supported types follow : [Microsoft SQL Server Data types](https://docs.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql?view=sql-server-ver15)
+ * supported types follow : [MariaDB Data types](https://mariadb.com/kb/en/data-types/)
  * @param T Entity type associated with this table
  */
-public abstract class MssqlTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
+public abstract class MariadbTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
 
     /*protected fun <V : Any> foreignKey(
-            referencedTable: MssqlTable<V>,
+            referencedTable: MariadbTable<V>,
             vararg columns: DbColumn<T, *>,
             fkName: String? = null
     ) {
@@ -48,7 +48,7 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
     protected fun integer(getter: (T) -> Int?, columnName: String? = null, defaultValue: Int? = null): IntDbIntColumnNullable<T> =
             IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun identityInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
+    protected fun autoIncrementInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
             IntDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
     protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
@@ -57,11 +57,11 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
     protected fun bigInt(getter: (T) -> Long?, columnName: String? = null, defaultValue: Long? = null): LongDbBigIntColumnNullable<T> =
             LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun identityBigInt(getter: (T) -> Long?, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
+    protected fun autoIncrementBigInt(getter: (T) -> Long?, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
             LongDbBigIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
-    protected fun bit(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBitColumnNotNull<T> =
-            BooleanDbBitColumnNotNull(getter, columnName).also { addColumn(it) }
+    protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
+            BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun date(getter: (T) -> LocalDate, columnName: String? = null): LocalDateDbDateColumnNotNull<T> =
             LocalDateDbDateColumnNotNull(getter, columnName).also { addColumn(it) }
@@ -74,6 +74,12 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
 
     protected fun dateTime(getter: (T) -> LocalDateTime?, columnName: String? = null, defaultValue: LocalDateTime? = null, precision: Int? = null): LocalDateTimeDbDateTimeColumnNullable<T> =
             LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+
+//     protected fun timestamp(getter: (T) -> OffsetDateTime, columnName: String? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNotNull<T> =
+//             OffsetDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+//
+//     protected fun timestamp(getter: (T) -> OffsetDateTime?, columnName: String? = null, defaultValue: OffsetDateTime? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNullable<T> =
+//             OffsetDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
     protected fun time(getter: (T) -> LocalTime, columnName: String? = null, precision: Int? = null): LocalTimeDbTimeColumnNotNull<T> =
             LocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
