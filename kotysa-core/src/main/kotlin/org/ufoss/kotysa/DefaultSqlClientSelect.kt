@@ -191,7 +191,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 // in SqLite and MySQL limit is mandatory with offset
                 if (DbType.SQLITE == tables.dbType) {
                     limit = -1
-                } else if (DbType.MYSQL == tables.dbType) {
+                } else if (DbType.MYSQL == tables.dbType || DbType.MARIADB == tables.dbType) {
                     limit = Long.MAX_VALUE
                 }
             }

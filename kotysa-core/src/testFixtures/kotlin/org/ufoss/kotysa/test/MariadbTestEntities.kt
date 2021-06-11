@@ -40,7 +40,7 @@ object MARIADB_USER_ROLE : MariadbTable<UserRoleEntity>("userRoles") {
     val pk = primaryKey(userId, roleId)
 }
 
-object MARIADB_ALL_TYPES_NOT_NULL : MariadbTable<MysqlAllTypesNotNull>("all_types") {
+object MARIADB_ALL_TYPES_NOT_NULL : MariadbTable<MariadbAllTypesNotNull>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
@@ -163,21 +163,6 @@ object MARIADB_LONG : MariadbTable<LongEntity>() {
     val longNullable = bigInt(LongEntity::longNullable)
 }
 
-private fun LocalTime.roundToSecond(): LocalTime {
-    var time = this
-    if (nano >= 500_000_000) {
-        time = plusSeconds(1)
-    }
-    return time.truncatedTo(ChronoUnit.SECONDS)
-}
-
-private fun LocalDateTime.roundToSecond(): LocalDateTime {
-    var localDateTime = this
-    if (nano >= 500_000_000) {
-        localDateTime = plusSeconds(1)
-    }
-    return localDateTime.truncatedTo(ChronoUnit.SECONDS)
-}
 
 data class MariadbAllTypesNotNull(
         override val id: Int,
@@ -201,19 +186,23 @@ data class MariadbAllTypesNotNull(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as MysqlAllTypesNotNull
+        other as MariadbAllTypesNotNull
 
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTime.roundToSecond() != other.localTime.roundToSecond()) return false
-        if (localDateTime1.roundToSecond() != other.localDateTime1.roundToSecond()) return false
-        if (localDateTime2.roundToSecond() != other.localDateTime2.roundToSecond()) return false
-        if (kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
-                != other.kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
+        if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (localDateTime1.truncatedTo(ChronoUnit.SECONDS)
+            != other.localDateTime1.truncatedTo(ChronoUnit.SECONDS)
         ) return false
-        if (kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
-                != other.kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
+        if (localDateTime2.truncatedTo(ChronoUnit.SECONDS)
+            != other.localDateTime2.truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
         ) return false
         if (int != other.int) return false
         if (long != other.long) return false
