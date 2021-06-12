@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.jdbc.mysql
+package org.ufoss.kotysa.spring.jdbc.mariadb
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Tag
@@ -16,15 +16,13 @@ import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.ufoss.kotysa.spring.jdbc.SpringJdbcRepositoryTest
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
-import org.ufoss.kotysa.test.hooks.MySqlContainerResource
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.hooks.*
 
 
-@ExtendWith(MySqlContainerExecutionHook::class)
-@ResourceLock(MySqlContainerResource.ID)
+@ExtendWith(MariadbContainerExecutionHook::class)
+@ResourceLock(MariadbContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
-abstract class AbstractSpringJdbcMysqlTest<T : Repository> : SpringJdbcRepositoryTest<T> {
+abstract class AbstractSpringJdbcMariadbTest<T : Repository> : SpringJdbcRepositoryTest<T> {
 
     protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
             application {
@@ -35,8 +33,8 @@ abstract class AbstractSpringJdbcMysqlTest<T : Repository> : SpringJdbcRepositor
                     ref<U>().init()
                 }
                 jdbc(DataSourceType.Hikari) {
-                    url = "jdbc:mysql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db?disableMariaDbDriver"
-                    username = "mysql"
+                    url = "jdbc:mariadb://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                    username = "mariadb"
                     password = "test"
                 }
             }.run()

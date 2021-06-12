@@ -21,6 +21,7 @@ dependencies {
     testRuntimeOnly 'com.h2database:h2'
     testRuntimeOnly 'mysql:mysql-connector-java'
     testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     testRuntimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'

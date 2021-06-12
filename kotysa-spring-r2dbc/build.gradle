@@ -28,6 +28,7 @@ dependencies {
     testRuntimeOnly 'io.r2dbc:r2dbc-postgresql'
     testRuntimeOnly 'dev.miku:r2dbc-mysql'
     testRuntimeOnly 'io.r2dbc:r2dbc-mssql'
+    testRuntimeOnly 'org.mariadb:r2dbc-mariadb'
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
     // needed to start mysql testcontainer
@@ -35,6 +36,8 @@ dependencies {
     testRuntimeOnly 'org.testcontainers:mssqlserver'
     // needed to start mssql testcontainer
     testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    // needed to start mariadb testcontainer
+    testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 
