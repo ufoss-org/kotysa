@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kotysa.h2.H2Table
+import org.ufoss.kotysa.mariadb.MariadbTable
 import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.postgresql.PostgresqlTable
@@ -42,6 +43,12 @@ public object DbTypeChoice {
     public fun mssql(vararg tables: MssqlTable<*>): Tables = fillTables(DbType.MSSQL, *tables)
 
     /**
+     * Configure Functional Table Mapping support for MariaDB
+     * @sample org.ufoss.kotysa.sample.mariadbTables
+     */
+    public fun mariadb(vararg tables: MariadbTable<*>): Tables = fillTables(DbType.MARIADB, *tables)
+
+    /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
      */
@@ -61,6 +68,7 @@ public object DbTypeChoice {
                             DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
                             DbType.H2 -> H2Table::class == type.classifier
                             DbType.MSSQL -> MssqlTable::class == type.classifier
+                            DbType.MARIADB -> MariadbTable::class == type.classifier
                         }
                     }
             ) { "Table $table should be a subclass of the platform $dbType Table" }
