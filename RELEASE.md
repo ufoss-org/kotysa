@@ -8,9 +8,3 @@
   * then **release**
   * refresh again after several seconds, repo has gone -> it's released on maven central
 * do **release** task (for minor release, press Enter for suggested versions : release version = current, new version = current + 1)
-
-## Merge
-* git rebase master develop
-* git checkout master
-* git merge develop
-* git push
