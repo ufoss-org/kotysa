@@ -271,6 +271,13 @@ object MYSQL_CUSTOMER : MysqlTable<CustomerEntity>() {
     val age = integer(CustomerEntity::age)
 }
 
+object MYSQL_LONG_TEXT : MysqlTable<StringAsLongTextEntity>() {
+    val id = integer(StringAsLongTextEntity::id)
+        .primaryKey()
+    val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
+    val stringNullable = longText(StringAsLongTextEntity::stringNullable)
+}
+
 val mysqlTables = tables().mysql(
         MYSQL_ROLE,
         MYSQL_USER,
@@ -289,4 +296,5 @@ val mysqlTables = tables().mysql(
         MYSQL_INHERITED,
         MYSQL_JAVA_USER,
         MYSQL_CUSTOMER,
+        MYSQL_LONG_TEXT,
 )

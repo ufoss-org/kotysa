@@ -644,3 +644,12 @@ interface JAVA_USER : Table<JavaUser> {
     val alias2: StringColumnNullable<JavaUser>
     val alias3: StringColumnNullable<JavaUser>
 }
+
+data class StringAsLongTextEntity(
+    val id: Int,
+    val stringNotNull: String,
+    val stringNullable: String? = null
+)
+
+val stringAsLongTextNotNull = StringAsLongTextEntity(1, "abc", "def")
+val stringAsLongTextNullable = StringAsLongTextEntity(2, "ghi")
