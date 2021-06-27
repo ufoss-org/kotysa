@@ -11,6 +11,7 @@ public enum class SqlType(internal val fullType: String) {
     // text
     VARCHAR("VARCHAR"),
     TEXT("TEXT"),
+    LONGTEXT("LONGTEXT"),
 
     // numbers
     BIT("BIT"),

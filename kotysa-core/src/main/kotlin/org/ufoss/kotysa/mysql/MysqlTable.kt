@@ -42,6 +42,13 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
                           size: Int = 255): StringDbVarcharColumnNullable<T> =
             StringDbVarcharColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
 
+    protected fun longText(getter: (T) -> String, columnName: String? = null): StringDbLongTextColumnNotNull<T> =
+        StringDbLongTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun longText(
+        getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
+    ): StringDbLongTextColumnNullable<T> = StringDbLongTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
     protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
             IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
