@@ -42,6 +42,34 @@ public abstract class MariadbTable<T : Any> protected constructor(tableName: Str
                           size: Int = 255): StringDbVarcharColumnNullable<T> =
             StringDbVarcharColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
 
+    protected fun tinyText(getter: (T) -> String, columnName: String? = null): StringDbTinyTextColumnNotNull<T> =
+        StringDbTinyTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun tinyText(
+        getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
+    ): StringDbTinyTextColumnNullable<T> = StringDbTinyTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun text(getter: (T) -> String, columnName: String? = null): StringDbTextColumnNotNull<T> =
+        StringDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun text(
+        getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
+    ): StringDbTextColumnNullable<T> = StringDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun mediumText(getter: (T) -> String, columnName: String? = null): StringDbMediumTextColumnNotNull<T> =
+        StringDbMediumTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun mediumText(
+        getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
+    ): StringDbMediumTextColumnNullable<T> = StringDbMediumTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun longText(getter: (T) -> String, columnName: String? = null): StringDbLongTextColumnNotNull<T> =
+        StringDbLongTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun longText(
+        getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
+    ): StringDbLongTextColumnNullable<T> = StringDbLongTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
     protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
             IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 

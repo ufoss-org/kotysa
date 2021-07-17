@@ -19,46 +19,48 @@ import java.util.*
 
 object POSTGRESQL_ROLE : PostgresqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
-            .primaryKey()
+        .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
 object POSTGRESQL_USER : PostgresqlTable<UserEntity>("users") {
     val id = integer(UserEntity::id)
-            .primaryKey("PK_users")
+        .primaryKey("PK_users")
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(POSTGRESQL_ROLE.id, "FK_users_roles")
+        .foreignKey(POSTGRESQL_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
 object POSTGRESQL_USER_ROLE : PostgresqlTable<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-            .foreignKey(POSTGRESQL_USER.id)
+        .foreignKey(POSTGRESQL_USER.id)
     val roleId = integer(UserRoleEntity::roleId)
-            .foreignKey(POSTGRESQL_ROLE.id)
+        .foreignKey(POSTGRESQL_ROLE.id)
     val pk = primaryKey(userId, roleId)
 }
 
 data class PostgresqlAllTypesNotNullEntity(
-        override val id: Int,
-        override val string: String,
-        override val boolean: Boolean,
-        override val localDate: LocalDate,
-        override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-        override val localTime: LocalTime,
-        override val localDateTime1: LocalDateTime,
-        override val localDateTime2: LocalDateTime,
-        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
-        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
-        override val int: Int,
-        override val long: Long,
-        val offsetDateTime: OffsetDateTime,
-        val uuid: UUID,
-) : AllTypesNotNullWithTimeEntity(id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime) {
+    override val id: Int,
+    override val string: String,
+    override val boolean: Boolean,
+    override val localDate: LocalDate,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+    override val localTime: LocalTime,
+    override val localDateTime1: LocalDateTime,
+    override val localDateTime2: LocalDateTime,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+    override val int: Int,
+    override val long: Long,
+    val offsetDateTime: OffsetDateTime,
+    val uuid: UUID,
+) : AllTypesNotNullWithTimeEntity(
+    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -101,16 +103,20 @@ data class PostgresqlAllTypesNotNullEntity(
     }
 }
 
-val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(1, "",
-        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
-        LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE,
-        OffsetDateTime.of(2018, 11, 4, 0, 0, 0, 0,
-                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)), UUID.randomUUID())
+val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(
+    1, "",
+    true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
+    LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE,
+    OffsetDateTime.of(
+        2018, 11, 4, 0, 0, 0, 0,
+        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+    ), UUID.randomUUID()
+)
 
 object POSTGRESQL_ALL_TYPES_NOT_NULL : PostgresqlTable<PostgresqlAllTypesNotNullEntity>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
-            .primaryKey()
+        .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
@@ -127,29 +133,33 @@ object POSTGRESQL_ALL_TYPES_NOT_NULL : PostgresqlTable<PostgresqlAllTypesNotNull
 }
 
 data class PostgresqlAllTypesNullableEntity(
-        override val id: Int,
-        override val string: String?,
-        override val localDate: LocalDate?,
-        override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
-        override val localTime: LocalTime?,
-        override val localDateTime1: LocalDateTime?,
-        override val localDateTime2: LocalDateTime?,
-        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
-        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
-        override val int: Int?,
-        override val long: Long?,
-        val offsetDateTime: OffsetDateTime?,
-        val uuid: UUID?,
-) : AllTypesNullableWithTimeEntity(id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime)
+    override val id: Int,
+    override val string: String?,
+    override val localDate: LocalDate?,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
+    override val localTime: LocalTime?,
+    override val localDateTime1: LocalDateTime?,
+    override val localDateTime2: LocalDateTime?,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
+    override val int: Int?,
+    override val long: Long?,
+    val offsetDateTime: OffsetDateTime?,
+    val uuid: UUID?,
+) : AllTypesNullableWithTimeEntity(
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
+)
 
-val postgresqlAllTypesNullable = PostgresqlAllTypesNullableEntity(1, null, null, null,
-        null, null, null, null, null,
-        null, null, null, null)
+val postgresqlAllTypesNullable = PostgresqlAllTypesNullableEntity(
+    1, null, null, null,
+    null, null, null, null, null,
+    null, null, null, null
+)
 
 object POSTGRESQL_ALL_TYPES_NULLABLE : PostgresqlTable<PostgresqlAllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
-            .primaryKey()
+        .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
@@ -165,21 +175,23 @@ object POSTGRESQL_ALL_TYPES_NULLABLE : PostgresqlTable<PostgresqlAllTypesNullabl
 }
 
 data class PostgresqlAllTypesNullableDefaultValueEntity(
-        override val id: Int,
-        override val string: String? = null,
-        override val localDate: LocalDate? = null,
-        override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
-        override val localTime: LocalTime? = null,
-        override val localDateTime1: LocalDateTime? = null,
-        override val localDateTime2: LocalDateTime? = null,
-        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
-        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
-        override val int: Int? = null,
-        override val long: Long? = null,
-        val offsetDateTime: OffsetDateTime? = null,
-        val uuid: UUID? = null,
-) : AllTypesNullableDefaultValueWithTimeEntity(id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-        kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime) {
+    override val id: Int,
+    override val string: String? = null,
+    override val localDate: LocalDate? = null,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
+    override val localTime: LocalTime? = null,
+    override val localDateTime1: LocalDateTime? = null,
+    override val localDateTime2: LocalDateTime? = null,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
+    override val int: Int? = null,
+    override val long: Long? = null,
+    val offsetDateTime: OffsetDateTime? = null,
+    val uuid: UUID? = null,
+) : AllTypesNullableDefaultValueWithTimeEntity(
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
+) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -234,103 +246,121 @@ val postgresqlAllTypesNullableDefaultValue = PostgresqlAllTypesNullableDefaultVa
 
 object POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : PostgresqlTable<PostgresqlAllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
-            .primaryKey()
+        .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
-    val localDate = date(AllTypesNullableDefaultValueEntity::localDate,
-            defaultValue = LocalDate.of(2019, 11, 4))
-    val kotlinxLocalDate = date(AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
-            defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6))
-    val localTim = time(AllTypesNullableDefaultValueWithTimeEntity::localTime,
-            defaultValue = LocalTime.of(11, 25, 55, 123456789))
-    val localDateTime1 = timestamp(AllTypesNullableDefaultValueEntity::localDateTime1,
-            defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0))
-    val localDateTime2 = timestamp(AllTypesNullableDefaultValueEntity::localDateTime2,
-            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0))
-    val kotlinxLocalDateTime1 = timestamp(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
-            defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0))
-    val kotlinxLocalDateTime2 = timestamp(AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
-            defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0))
+    val localDate = date(
+        AllTypesNullableDefaultValueEntity::localDate,
+        defaultValue = LocalDate.of(2019, 11, 4)
+    )
+    val kotlinxLocalDate = date(
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+        defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+    )
+    val localTim = time(
+        AllTypesNullableDefaultValueWithTimeEntity::localTime,
+        defaultValue = LocalTime.of(11, 25, 55, 123456789)
+    )
+    val localDateTime1 = timestamp(
+        AllTypesNullableDefaultValueEntity::localDateTime1,
+        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+    )
+    val localDateTime2 = timestamp(
+        AllTypesNullableDefaultValueEntity::localDateTime2,
+        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime1 = timestamp(
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+        defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime2 = timestamp(
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+        defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
+    )
     val int = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val long = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
-    val offsetDateTime = timestampWithTimeZone(PostgresqlAllTypesNullableDefaultValueEntity::offsetDateTime,
-            defaultValue = OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)))
+    val offsetDateTime = timestampWithTimeZone(
+        PostgresqlAllTypesNullableDefaultValueEntity::offsetDateTime,
+        defaultValue = OffsetDateTime.of(
+            2019, 11, 4, 0, 0, 0, 0,
+            ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+        )
+    )
     val uuid = uuid(PostgresqlAllTypesNullableDefaultValueEntity::uuid, defaultValue = UUID.fromString(defaultUuid))
 }
 
 object POSTGRESQL_LOCAL_DATE : PostgresqlTable<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateNotNull = date(LocalDateEntity::localDateNotNull)
     val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
 object POSTGRESQL_KOTLINX_LOCAL_DATE : PostgresqlTable<KotlinxLocalDateEntity>() {
     val id = integer(KotlinxLocalDateEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
 object POSTGRESQL_LOCAL_DATE_TIME : PostgresqlTable<LocalDateTimeAsTimestampEntity>() {
     val id = integer(LocalDateTimeAsTimestampEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
     val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
 object POSTGRESQL_KOTLINX_LOCAL_DATE_TIME : PostgresqlTable<KotlinxLocalDateTimeAsTimestampEntity>() {
     val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
     val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
 object POSTGRESQL_OFFSET_DATE_TIME : PostgresqlTable<OffsetDateTimeEntity>() {
     val id = integer(OffsetDateTimeEntity::id)
-            .primaryKey()
+        .primaryKey()
     val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
     val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
 object POSTGRESQL_LOCAL_TIME : PostgresqlTable<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
 object POSTGRESQL_INT : PostgresqlTable<IntEntity>() {
     val id = serial(IntEntity::id)
-            .primaryKey()
+        .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
 
 object POSTGRESQL_LONG : PostgresqlTable<LongEntity>() {
     val id = bigSerial(LongEntity::id)
-            .primaryKey()
+        .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
 }
 
 object POSTGRESQL_UUID : PostgresqlTable<UuidEntity>() {
     val id = uuid(UuidEntity::id)
-            .primaryKey()
+        .primaryKey()
     val uuidNotNull = uuid(UuidEntity::uuidNotNull)
     val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
 object POSTGRESQL_INHERITED : PostgresqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
-            .primaryKey()
+        .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
 object POSTGRESQL_JAVA_USER : PostgresqlTable<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
-            .primaryKey()
+        .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
     override val lastname = varchar(JavaUser::getLastname, "lname")
     override val isAdmin = boolean(JavaUser::isAdmin)
@@ -341,29 +371,37 @@ object POSTGRESQL_JAVA_USER : PostgresqlTable<JavaUser>("java_users"), JAVA_USER
 
 object POSTGRESQL_CUSTOMER : PostgresqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
-            .primaryKey()
+        .primaryKey()
     val name = varchar(CustomerEntity::name)
     val country = varchar(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }
 
+object POSTGRESQL_TEXT : PostgresqlTable<StringAsTextEntity>() {
+    val id = integer(StringAsTextEntity::id)
+        .primaryKey()
+    val stringNotNull = text(StringAsTextEntity::stringNotNull)
+    val stringNullable = text(StringAsTextEntity::stringNullable)
+}
+
 val postgresqlTables = tables().postgresql(
-        POSTGRESQL_ROLE,
-        POSTGRESQL_USER,
-        POSTGRESQL_USER_ROLE,
-        POSTGRESQL_ALL_TYPES_NOT_NULL,
-        POSTGRESQL_ALL_TYPES_NULLABLE,
-        POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
-        POSTGRESQL_LOCAL_DATE,
-        POSTGRESQL_KOTLINX_LOCAL_DATE,
-        POSTGRESQL_LOCAL_DATE_TIME,
-        POSTGRESQL_KOTLINX_LOCAL_DATE_TIME,
-        POSTGRESQL_OFFSET_DATE_TIME,
-        POSTGRESQL_LOCAL_TIME,
-        POSTGRESQL_INT,
-        POSTGRESQL_LONG,
-        POSTGRESQL_UUID,
-        POSTGRESQL_INHERITED,
-        POSTGRESQL_JAVA_USER,
-        POSTGRESQL_CUSTOMER,
+    POSTGRESQL_ROLE,
+    POSTGRESQL_USER,
+    POSTGRESQL_USER_ROLE,
+    POSTGRESQL_ALL_TYPES_NOT_NULL,
+    POSTGRESQL_ALL_TYPES_NULLABLE,
+    POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
+    POSTGRESQL_LOCAL_DATE,
+    POSTGRESQL_KOTLINX_LOCAL_DATE,
+    POSTGRESQL_LOCAL_DATE_TIME,
+    POSTGRESQL_KOTLINX_LOCAL_DATE_TIME,
+    POSTGRESQL_OFFSET_DATE_TIME,
+    POSTGRESQL_LOCAL_TIME,
+    POSTGRESQL_INT,
+    POSTGRESQL_LONG,
+    POSTGRESQL_UUID,
+    POSTGRESQL_INHERITED,
+    POSTGRESQL_JAVA_USER,
+    POSTGRESQL_CUSTOMER,
+    POSTGRESQL_TEXT,
 )

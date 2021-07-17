@@ -52,6 +52,13 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
     ): StringDbVarcharColumnNullable<T> =
         StringDbVarcharColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
 
+    protected fun text(getter: (T) -> String, columnName: String? = null): StringDbTextColumnNotNull<T> =
+        StringDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun text(
+        getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
+    ): StringDbTextColumnNullable<T> = StringDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
     protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
         IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
