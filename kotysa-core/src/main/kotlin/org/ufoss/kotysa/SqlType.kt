@@ -10,7 +10,9 @@ package org.ufoss.kotysa
 public enum class SqlType(internal val fullType: String) {
     // text
     VARCHAR("VARCHAR"),
+    TINYTEXT("TINYTEXT"),
     TEXT("TEXT"),
+    MEDIUMTEXT("MEDIUMTEXT"),
     LONGTEXT("LONGTEXT"),
 
     // numbers

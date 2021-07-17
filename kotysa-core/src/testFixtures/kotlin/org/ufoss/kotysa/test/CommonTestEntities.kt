@@ -645,6 +645,33 @@ interface JAVA_USER : Table<JavaUser> {
     val alias3: StringColumnNullable<JavaUser>
 }
 
+data class StringAsTinyTextEntity(
+    val id: Int,
+    val stringNotNull: String,
+    val stringNullable: String? = null
+)
+
+val stringAsTinyTextNotNull = StringAsTinyTextEntity(1, "abc", "def")
+val stringAsTinyTextNullable = StringAsTinyTextEntity(2, "ghi")
+
+data class StringAsTextEntity(
+    val id: Int,
+    val stringNotNull: String,
+    val stringNullable: String? = null
+)
+
+val stringAsTextNotNull = StringAsTextEntity(1, "abc", "def")
+val stringAsTextNullable = StringAsTextEntity(2, "ghi")
+
+data class StringAsMediumTextEntity(
+    val id: Int,
+    val stringNotNull: String,
+    val stringNullable: String? = null
+)
+
+val stringAsMediumTextNotNull = StringAsMediumTextEntity(1, "abc", "def")
+val stringAsMediumTextNullable = StringAsMediumTextEntity(2, "ghi")
+
 data class StringAsLongTextEntity(
     val id: Int,
     val stringNotNull: String,

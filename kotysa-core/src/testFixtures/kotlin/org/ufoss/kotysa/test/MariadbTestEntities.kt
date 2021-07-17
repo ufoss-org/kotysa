@@ -17,32 +17,32 @@ import java.time.temporal.ChronoUnit
 
 object MARIADB_ROLE : MariadbTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
-            .primaryKey()
+        .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
 object MARIADB_USER : MariadbTable<UserEntity>("users") {
     val id = integer(UserEntity::id, "PK_users")
-            .primaryKey()
+        .primaryKey()
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(MARIADB_ROLE.id, "FK_users_roles")
+        .foreignKey(MARIADB_ROLE.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
 object MARIADB_USER_ROLE : MariadbTable<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-            .foreignKey(MARIADB_USER.id)
+        .foreignKey(MARIADB_USER.id)
     val roleId = integer(UserRoleEntity::roleId)
-            .foreignKey(MARIADB_ROLE.id)
+        .foreignKey(MARIADB_ROLE.id)
     val pk = primaryKey(userId, roleId)
 }
 
 object MARIADB_ALL_TYPES_NOT_NULL : MariadbTable<MariadbAllTypesNotNull>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
-            .primaryKey()
+        .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
     val boolean = boolean(AllTypesNotNullEntity::boolean)
     val localDate = date(AllTypesNotNullEntity::localDate)
@@ -58,7 +58,7 @@ object MARIADB_ALL_TYPES_NOT_NULL : MariadbTable<MariadbAllTypesNotNull>("all_ty
 
 object MARIADB_ALL_TYPES_NULLABLE : MariadbTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
-            .primaryKey()
+        .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
@@ -73,35 +73,35 @@ object MARIADB_ALL_TYPES_NULLABLE : MariadbTable<AllTypesNullableWithTimeEntity>
 
 object MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MariadbTable<AllTypesNullableDefaultValueWithTimeEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
-            .primaryKey()
+        .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
     val localDate = date(
-            AllTypesNullableDefaultValueEntity::localDate,
-            defaultValue = LocalDate.of(2019, 11, 4)
+        AllTypesNullableDefaultValueEntity::localDate,
+        defaultValue = LocalDate.of(2019, 11, 4)
     )
     val kotlinxLocalDate = date(
-            AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
-            defaultValue = LocalDate(2019, 11, 6)
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+        defaultValue = LocalDate(2019, 11, 6)
     )
     val localTim = time(
-            AllTypesNullableDefaultValueWithTimeEntity::localTime,
-            defaultValue = LocalTime.of(11, 25, 55, 123456789)
+        AllTypesNullableDefaultValueWithTimeEntity::localTime,
+        defaultValue = LocalTime.of(11, 25, 55, 123456789)
     )
     val localDateTime1 = dateTime(
-            AllTypesNullableDefaultValueEntity::localDateTime1,
-            defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+        AllTypesNullableDefaultValueEntity::localDateTime1,
+        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
     )
     val localDateTime2 = dateTime(
-            AllTypesNullableDefaultValueEntity::localDateTime2,
-            defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+        AllTypesNullableDefaultValueEntity::localDateTime2,
+        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
     )
     val kotlinxLocalDateTime1 = dateTime(
-            AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
-            defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+        defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
     )
     val kotlinxLocalDateTime2 = dateTime(
-            AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
-            defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+        defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
@@ -109,28 +109,28 @@ object MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MariadbTable<AllTypesNullableD
 
 object MARIADB_LOCAL_DATE : MariadbTable<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateNotNull = date(LocalDateEntity::localDateNotNull)
     val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
 object MARIADB_KOTLINX_LOCAL_DATE : MariadbTable<KotlinxLocalDateEntity>() {
     val id = integer(KotlinxLocalDateEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
 object MARIADB_LOCAL_DATE_TIME : MariadbTable<LocalDateTimeEntity>() {
     val id = integer(LocalDateTimeEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
 object MARIADB_KOTLINX_LOCAL_DATE_TIME : MariadbTable<KotlinxLocalDateTimeEntity>() {
     val id = integer(KotlinxLocalDateTimeEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
@@ -144,42 +144,42 @@ object MARIADB_KOTLINX_LOCAL_DATE_TIME : MariadbTable<KotlinxLocalDateTimeEntity
 
 object MARIADB_LOCAL_TIME : MariadbTable<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
-            .primaryKey()
+        .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
 object MARIADB_INT : MariadbTable<IntEntity>() {
     val id = autoIncrementInteger(IntEntity::id)
-            .primaryKey()
+        .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
 
 object MARIADB_LONG : MariadbTable<LongEntity>() {
     val id = autoIncrementBigInt(LongEntity::id)
-            .primaryKey()
+        .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
 }
 
 
 data class MariadbAllTypesNotNull(
-        override val id: Int,
-        override val string: String,
-        override val boolean: Boolean,
-        override val localDate: LocalDate,
-        override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
-        override val localDateTime1: LocalDateTime,
-        override val localDateTime2: LocalDateTime,
-        override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
-        override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
-        override val int: Int,
-        override val long: Long,
-        override val localTime: LocalTime,
+    override val id: Int,
+    override val string: String,
+    override val boolean: Boolean,
+    override val localDate: LocalDate,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+    override val localDateTime1: LocalDateTime,
+    override val localDateTime2: LocalDateTime,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+    override val int: Int,
+    override val long: Long,
+    override val localTime: LocalTime,
 ) : AllTypesNotNullWithTimeEntity(
-        id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-        kotlinxLocalDateTime2, int, long, localTime
+    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, localTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -228,22 +228,22 @@ data class MariadbAllTypesNotNull(
 }
 
 val mariadbAllTypesNotNull = MariadbAllTypesNotNull(
-        1, "",
-        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
-        Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
-        1L, LocalTime.now()
+    1, "",
+    true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
+    1L, LocalTime.now()
 )
 
 object MARIADB_INHERITED : MariadbTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
-            .primaryKey()
+        .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
 object MARIADB_JAVA_USER : MariadbTable<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
-            .primaryKey()
+        .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
     override val lastname = varchar(JavaUser::getLastname, "lname")
     override val isAdmin = boolean(JavaUser::isAdmin)
@@ -254,28 +254,60 @@ object MARIADB_JAVA_USER : MariadbTable<JavaUser>("java_users"), JAVA_USER {
 
 object MARIADB_CUSTOMER : MariadbTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
-            .primaryKey()
+        .primaryKey()
     val name = varchar(CustomerEntity::name)
     val country = varchar(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }
 
+object MARIADB_TINY_TEXT : MariadbTable<StringAsTinyTextEntity>() {
+    val id = integer(StringAsTinyTextEntity::id)
+        .primaryKey()
+    val stringNotNull = tinyText(StringAsTinyTextEntity::stringNotNull)
+    val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
+}
+
+object MARIADB_TEXT : MariadbTable<StringAsTextEntity>() {
+    val id = integer(StringAsTextEntity::id)
+        .primaryKey()
+    val stringNotNull = text(StringAsTextEntity::stringNotNull)
+    val stringNullable = text(StringAsTextEntity::stringNullable)
+}
+
+object MARIADB_MEDIUM_TEXT : MariadbTable<StringAsMediumTextEntity>() {
+    val id = integer(StringAsMediumTextEntity::id)
+        .primaryKey()
+    val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
+    val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
+}
+
+object MARIADB_LONG_TEXT : MariadbTable<StringAsLongTextEntity>() {
+    val id = integer(StringAsLongTextEntity::id)
+        .primaryKey()
+    val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
+    val stringNullable = longText(StringAsLongTextEntity::stringNullable)
+}
+
 val mariadbTables = tables().mariadb(
-        MARIADB_ROLE,
-        MARIADB_USER,
-        MARIADB_USER_ROLE,
-        MARIADB_ALL_TYPES_NOT_NULL,
-        MARIADB_ALL_TYPES_NULLABLE,
-        MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
-        MARIADB_LOCAL_DATE,
-        MARIADB_KOTLINX_LOCAL_DATE,
-        MARIADB_LOCAL_DATE_TIME,
-        MARIADB_KOTLINX_LOCAL_DATE_TIME,
+    MARIADB_ROLE,
+    MARIADB_USER,
+    MARIADB_USER_ROLE,
+    MARIADB_ALL_TYPES_NOT_NULL,
+    MARIADB_ALL_TYPES_NULLABLE,
+    MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
+    MARIADB_LOCAL_DATE,
+    MARIADB_KOTLINX_LOCAL_DATE,
+    MARIADB_LOCAL_DATE_TIME,
+    MARIADB_KOTLINX_LOCAL_DATE_TIME,
 //                 MARIADB_OFFSET_DATE_TIME,
-        MARIADB_LOCAL_TIME,
-        MARIADB_INT,
-        MARIADB_LONG,
-        MARIADB_INHERITED,
-        MARIADB_JAVA_USER,
-        MARIADB_CUSTOMER,
+    MARIADB_LOCAL_TIME,
+    MARIADB_INT,
+    MARIADB_LONG,
+    MARIADB_INHERITED,
+    MARIADB_JAVA_USER,
+    MARIADB_CUSTOMER,
+    MARIADB_TINY_TEXT,
+    MARIADB_TEXT,
+    MARIADB_MEDIUM_TEXT,
+    MARIADB_LONG_TEXT,
 )
