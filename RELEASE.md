@@ -7,4 +7,5 @@
   * do **close** , refresh
   * then **release**
   * refresh again after several seconds, repo has gone -> it's released on maven central
+* update sample projects with this just released kotysa version, commit them
 * do **release** task (for minor release, press Enter for suggested versions : release version = current, new version = current + 1)
