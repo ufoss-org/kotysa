@@ -4,43 +4,33 @@
 
 package org.ufoss.kotysa.jdbc
 
-import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
+import java.sql.Connection
 
 /**
- * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
+ * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
  */
-internal class SqlClientSpringJdbc(
-        private val client: JdbcOperations,
-        override val tables: Tables
+internal class SqlClientJdbc(
+    private val connection: Connection,
+    override val tables: Tables
 ) : SqlClient, DefaultSqlClient {
-
-    /**
-     * Computed property : only created once on first call
-     */
-    private val namedParameterJdbcOperations: NamedParameterJdbcOperations by lazy {
-        NamedParameterJdbcTemplate(client)
-    }
 
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
 
         val parameters = MapSqlParameterSource()
         table.columns
-                // do nothing for null values with default or Serial type
-                .filterNot { column ->
-                    column.entityGetter(row) == null
-                            && (column.defaultValue != null
-                            || column.isAutoIncrement
-                            || SqlType.SERIAL == column.sqlType
-                            || SqlType.BIGSERIAL == column.sqlType)
-                }
-                .map { column -> tables.getDbValue(column.entityGetter(row)) }
-                .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue)  }
+            // do nothing for null values with default or Serial type
+            .filterNot { column ->
+                column.entityGetter(row) == null
+                        && (column.defaultValue != null
+                        || column.isAutoIncrement
+                        || SqlType.SERIAL == column.sqlType
+                        || SqlType.BIGSERIAL == column.sqlType)
+            }
+            .map { column -> tables.getDbValue(column.entityGetter(row)) }
+            .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue) }
 
         namedParameterJdbcOperations.update(insertSql(row), parameters)
     }
@@ -59,40 +49,60 @@ internal class SqlClientSpringJdbc(
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
         val createTableSql = createTableSql(table, ifNotExists)
-        client.execute(createTableSql)
+        connection.prepareStatement(createTableSql).execute()
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-            SqlClientDeleteSpringJdbc.FirstDelete(namedParameterJdbcOperations, tables, table)
+        SqlClientDeleteJdbc.FirstDelete(connection, tables, table)
 
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSpringJdbc.FirstUpdate(namedParameterJdbcOperations, tables, table)
+        TODO()
+    //SqlClientUpdateSpringJdbc.FirstUpdate(namedParameterJdbcOperations, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(table)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(dsl)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(dsl)
     override fun selectCount(): SqlClientSelect.Fromable<Long> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount<Any>(null)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount(column)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectDistinct(column)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectDistinct(column)
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMin(column)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMin(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMax(column)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMax(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectAvg(column)
+        TODO()
+
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectAvg(column)
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectSum(column)
+        TODO()
+    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectSum(column)
 }
 
 /**
- * Create a [SqlClient] from a Spring [JdbcOperations] with [Tables] mapping
+ * Create a [SqlClient] from a JDBC [Connection] with [Tables] mapping
  *
- * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
+ * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
  */
-public fun JdbcOperations.sqlClient(tables: Tables): SqlClient = SqlClientSpringJdbc(this, tables)
+public fun Connection.sqlClient(tables: Tables): SqlClient = SqlClientJdbc(this, tables)
