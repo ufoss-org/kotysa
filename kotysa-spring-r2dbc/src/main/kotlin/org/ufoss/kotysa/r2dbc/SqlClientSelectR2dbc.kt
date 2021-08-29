@@ -20,7 +20,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
             private val client: DatabaseClient,
             private val tables: Tables,
     ) : ReactorSqlClientSelect.Selectable {
-        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.R2DBC)
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.R2DBC, Module.SPRING_R2DBC)
 
         override fun <T : Any> select(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }

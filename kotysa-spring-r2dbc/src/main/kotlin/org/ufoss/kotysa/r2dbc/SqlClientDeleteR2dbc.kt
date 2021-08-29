@@ -12,12 +12,13 @@ import reactor.core.publisher.Mono
 internal class SqlClientDeleteR2dbc private constructor() : AbstractSqlClientDeleteR2dbc() {
 
     internal class FirstDelete<T : Any> internal constructor(
-            override val client: DatabaseClient,
-            override val tables: Tables,
-            override val table: Table<T>,
+        override val client: DatabaseClient,
+        override val tables: Tables,
+        override val table: Table<T>,
     ) : FirstDeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            ReactorSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC),
-            ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+            ReactorSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
+        ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+        
         override val where = Where(client, properties)
         override val from: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)

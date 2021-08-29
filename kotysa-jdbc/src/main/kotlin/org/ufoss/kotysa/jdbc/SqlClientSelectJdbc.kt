@@ -2,186 +2,183 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.jdbc
+package org.ufoss.kotysa.jdbc
 
-import org.springframework.dao.IncorrectResultSizeDataAccessException
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
-import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.jdbc.toRow
 import java.math.BigDecimal
-import java.util.stream.Stream
+import java.sql.Connection
+import java.sql.PreparedStatement
+import java.sql.ResultSet
 
 
 @Suppress("UNCHECKED_CAST")
-internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClientSelect() {
+internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelect() {
 
     internal class Selectable internal constructor(
-            private val client: NamedParameterJdbcOperations,
-            private val tables: Tables,
+        private val connection: Connection,
+        private val tables: Tables,
     ) : SqlClientSelect.Selectable {
-        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.JDBC, Module.SPRING_JDBC)
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.JDBC, Module.JDBC)
 
         override fun <T : Any> select(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
+                FirstSelect<T>(connection, properties()).apply { addSelectColumn(column) }
 
         override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
+                FirstSelect<T>(connection, properties()).apply { addSelectTable(table) }
 
         override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-                SelectWithDsl(client, properties(), dsl)
+                SelectWithDsl(connection, properties(), dsl)
 
         override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSelect.FirstSelect<Long> =
-                FirstSelect<Long>(client, properties()).apply { addCountColumn(column) }
+                FirstSelect<Long>(connection, properties()).apply { addCountColumn(column) }
 
         override fun <T : Any> selectDistinct(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
+                FirstSelect<T>(connection, properties()).apply { addSelectColumn(column, FieldClassifier.DISTINCT) }
 
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MIN) }
+                FirstSelect<T>(connection, properties()).apply { addSelectColumn(column, FieldClassifier.MIN) }
 
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): SqlClientSelect.FirstSelect<T> =
-                FirstSelect<T>(client, properties()).apply { addSelectColumn(column, FieldClassifier.MAX) }
+                FirstSelect<T>(connection, properties()).apply { addSelectColumn(column, FieldClassifier.MAX) }
 
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSelect.FirstSelect<BigDecimal> =
-                FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
+                FirstSelect<BigDecimal>(connection, properties()).apply { addAvgColumn(column) }
 
         override fun selectSum(column: IntColumn<*>): SqlClientSelect.FirstSelect<Long> =
-                FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
+                FirstSelect<Long>(connection, properties()).apply { addLongSumColumn(column) }
     }
 
     private class FirstSelect<T : Any>(
-            private val client: NamedParameterJdbcOperations,
-            override val properties: Properties<T>,
+        private val connection: Connection,
+        override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Select<T>(), SqlClientSelect.FirstSelect<T> {
         private val from: From<T, *> by lazy {
-            From<T, Any>(client, properties)
+            From<T, Any>(connection, properties)
         }
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
                 addFromTable(table, from as From<T, U>)
 
         override fun <U : Any> and(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
-                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
+                SecondSelect(connection, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
 
         override fun <U : Any> and(table: Table<U>): SqlClientSelect.SecondSelect<T, U> =
-                SecondSelect(client, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
+                SecondSelect(connection, properties as Properties<Pair<T, U>>).apply { addSelectTable(table) }
 
         override fun <U : Any> andCount(column: Column<*, U>): SqlClientSelect.SecondSelect<T, Long> =
-                SecondSelect(client, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
+                SecondSelect(connection, properties as Properties<Pair<T, Long>>).apply { addCountColumn(column) }
 
         override fun <U : Any> andDistinct(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
-                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                SecondSelect(connection, properties as Properties<Pair<T?, U?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
 
         override fun <U : Any> andMin(column: MinMaxColumn<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
-                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                SecondSelect(connection, properties as Properties<Pair<T?, U?>>).apply {
                     addSelectColumn(column, FieldClassifier.MIN)
                 }
 
         override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
-                SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                SecondSelect(connection, properties as Properties<Pair<T?, U?>>).apply {
                     addSelectColumn(column, FieldClassifier.MAX)
                 }
 
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SqlClientSelect.SecondSelect<T?, BigDecimal> =
-                SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
+                SecondSelect(connection, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.SecondSelect<T?, Long> =
-                SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
+                SecondSelect(connection, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class SecondSelect<T, U>(
-            private val client: NamedParameterJdbcOperations,
-            override val properties: Properties<Pair<T, U>>,
+        private val connection: Connection,
+        override val properties: Properties<Pair<T, U>>,
     ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), SqlClientSelect.SecondSelect<T, U> {
         private val from: From<Pair<T, U>, *> by lazy {
-            From<Pair<T, U>, Any>(client, properties)
+            From<Pair<T, U>, Any>(connection, properties)
         }
 
         override fun <V : Any> from(table: Table<V>): SqlClientSelect.From<Pair<T, U>, V> =
                 addFromTable(table, from as From<Pair<T, U>, V>)
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
+                ThirdSelect(connection, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
 
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.ThirdSelect<T, U, V> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
+                ThirdSelect(connection, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
 
         override fun <V : Any> andCount(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, Long> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+                ThirdSelect(connection, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
 
         override fun <V : Any> andDistinct(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                ThirdSelect(connection, properties as Properties<Triple<T, U, V?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
 
         override fun <V : Any> andMin(column: MinMaxColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                ThirdSelect(connection, properties as Properties<Triple<T, U, V?>>).apply {
                     addSelectColumn(column, FieldClassifier.MIN)
                 }
 
         override fun <V : Any> andMax(column: MinMaxColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                ThirdSelect(connection, properties as Properties<Triple<T, U, V?>>).apply {
                     addSelectColumn(column, FieldClassifier.MAX)
                 }
 
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, BigDecimal> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
+                ThirdSelect(connection, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.ThirdSelect<T, U, Long> =
-                ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
+                ThirdSelect(connection, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
     }
 
     private class ThirdSelect<T, U, V>(
-            private val client: NamedParameterJdbcOperations,
-            override val properties: Properties<Triple<T, U, V>>,
+        private val connection: Connection,
+        override val properties: Properties<Triple<T, U, V>>,
     ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), SqlClientSelect.ThirdSelect<T, U, V> {
         private val from: From<Triple<T, U, V>, *> by lazy {
-            From<Triple<T, U, V>, Any>(client, properties)
+            From<Triple<T, U, V>, Any>(connection, properties)
         }
 
         override fun <W : Any> from(table: Table<W>): SqlClientSelect.From<Triple<T, U, V>, W> =
                 addFromTable(table, from as From<Triple<T, U, V>, W>)
 
         override fun <W : Any> and(column: Column<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
+                Select(connection, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
 
         override fun <W : Any> and(table: Table<W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
+                Select(connection, properties as Properties<List<Any?>>).apply { addSelectTable(table) }
 
         override fun <W : Any> andCount(column: Column<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
+                Select(connection, properties as Properties<List<Any?>>).apply { addCountColumn(column) }
 
         override fun <W : Any> andDistinct(column: Column<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply {
+                Select(connection, properties as Properties<List<Any?>>).apply {
                     addSelectColumn(column, FieldClassifier.DISTINCT)
                 }
 
         override fun <W : Any> andMin(column: MinMaxColumn<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply {
+                Select(connection, properties as Properties<List<Any?>>).apply {
                     addSelectColumn(column, FieldClassifier.MIN)
                 }
 
         override fun <W : Any> andMax(column: MinMaxColumn<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply {
+                Select(connection, properties as Properties<List<Any?>>).apply {
                     addSelectColumn(column, FieldClassifier.MAX)
                 }
 
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
+                Select(connection, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.Select =
-                Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
+                Select(connection, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
     }
 
     private class Select(
-            client: NamedParameterJdbcOperations,
-            override val properties: Properties<List<Any?>>,
+        connection: Connection,
+        override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
-        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
+        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(connection, properties)
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<List<Any?>, U> =
                 addFromTable(table, from as From<List<Any?>, U>)
@@ -209,53 +206,53 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     }
 
     private class SelectWithDsl<T : Any>(
-            client: NamedParameterJdbcOperations,
-            properties: Properties<T>,
-            dsl: (ValueProvider) -> T,
+        connection: Connection,
+        properties: Properties<T>,
+        dsl: (ValueProvider) -> T,
     ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), SqlClientSelect.Fromable<T> {
-        private val from: From<T, *> = From<T, Any>(client, properties)
+        private val from: From<T, *> = From<T, Any>(connection, properties)
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
                 addFromTable(table, from as From<T, U>)
     }
 
     private class From<T : Any, U : Any>(
-            override val client: NamedParameterJdbcOperations,
-            properties: Properties<T>,
+        override val connection: Connection,
+        properties: Properties<T>,
     ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
             SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>,
             SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.From<T, U>, GroupBy<T>, OrderBy<T>,
             SqlClientSelect.LimitOffset<T> {
         override val from = this
-        override val where by lazy { Where(client, properties) }
-        override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override val where by lazy { Where(connection, properties) }
+        override val limitOffset by lazy { LimitOffset(connection, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(connection, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(connection, properties) }
     }
 
     private class Where<T : Any>(
-            override val client: NamedParameterJdbcOperations,
-            override val properties: Properties<T>
+        override val connection: Connection,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>,
             SqlClientSelect.GroupByPart2<T>, SqlClientSelect.OrderByPart2<T>>(), SqlClientSelect.Where<T>,
             GroupBy<T>, OrderBy<T>, SqlClientSelect.LimitOffset<T> {
         override val where = this
-        override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override val limitOffset by lazy { LimitOffset(connection, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(connection, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(connection, properties) }
     }
 
     private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, SqlClientSelect.GroupByPart2<T>>,
             SqlClientSelect.GroupBy<T>, Return<T>
 
     private class GroupByPart2<T : Any>(
-            override val client: NamedParameterJdbcOperations,
-            override val properties: Properties<T>
+        override val connection: Connection,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSelect.GroupByPart2<T>>, SqlClientSelect.GroupByPart2<T>,
             DefaultSqlClientSelect.OrderBy<T, SqlClientSelect.OrderByPart2<T>>,
             DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, Return<T> {
-        override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override val limitOffset by lazy { LimitOffset(connection, properties) }
+        override val orderByPart2 by lazy { OrderByPart2(connection, properties) }
         override val groupByPart2 = this
     }
 
@@ -263,40 +260,40 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             SqlClientSelect.OrderBy<T>, Return<T>
 
     private class OrderByPart2<T : Any>(
-            override val client: NamedParameterJdbcOperations,
-            override val properties: Properties<T>
+        override val connection: Connection,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.OrderByPart2<T, SqlClientSelect.OrderByPart2<T>>, SqlClientSelect.OrderByPart2<T>,
             DefaultSqlClientSelect.GroupBy<T, SqlClientSelect.GroupByPart2<T>>,
             DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, Return<T> {
-        override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val limitOffset by lazy { LimitOffset(connection, properties) }
+        override val groupByPart2 by lazy { GroupByPart2(connection, properties) }
         override val orderByPart2 = this
     }
 
     private class LimitOffset<T : Any>(
-            override val client: NamedParameterJdbcOperations,
-            override val properties: Properties<T>
+        override val connection: Connection,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, SqlClientSelect.LimitOffset<T>,
             Return<T> {
         override val limitOffset = this
     }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSelect.Return<T> {
-        val client: NamedParameterJdbcOperations
+        val connection: Connection
 
         override fun fetchOne() = fetchOneOrNull() ?: throw NoResultException()
 
-        override fun fetchOneOrNull(): T? =
-                try {
-                    client.queryForObject(selectSql(), buildParameters()) { rs, _ ->
-                        properties.select(rs.toRow())
-                    }
-                } catch (e: IncorrectResultSizeDataAccessException) {
-                    if (e.actualSize > 0) {
-                        throw NonUniqueResultException()
-                    }
-                    null
-                }
+        override fun fetchOneOrNull(): T? {
+            val rs = executeQuery()
+            if (!rs.next()) {
+                return null
+            }
+            val result = properties.select(rs.toRow())
+            if (rs.next()) {
+                throw NonUniqueResultException()
+            }
+            return result
+        }
 
         override fun fetchFirst(): T? = with(fetchAll()) {
             if (isEmpty()) {
@@ -311,44 +308,50 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
                 fetchAllNullable()
                         .filterNotNull()
 
-        override fun fetchAllStream(): Stream<T> =
-                client.queryForStream(selectSql(), buildParameters()) { rs, _ ->
-                    properties.select(rs.toRow())
-                }
-
-        private fun fetchAllNullable(): List<T?> =
-                client.query(selectSql(), buildParameters()) { rs, _ ->
-                    properties.select(rs.toRow())
-                }
-
-        private fun buildParameters(): SqlParameterSource = with(properties) {
-            val parameters = MapSqlParameterSource()
-            // 1) add all values from where part
-            bindWhereParams(parameters)
-            // 2) add limit and offset (order is different depending on DbType)
-            if (DbType.MSSQL == tables.dbType) {
-                offsetParam(parameters)
-                limitParam(parameters)
-            } else {
-                limitParam(parameters)
-                offsetParam(parameters)
+        private fun fetchAllNullable(): List<T?> {
+            val rs = executeQuery()
+            val row = rs.toRow()
+            val results = arrayListOf<T?>()
+            while (rs.next()) {
+                results.add(properties.select(row))
+                row.resetIndex()
             }
-
-            parameters
+            return results
+        }
+        
+        private fun executeQuery(): ResultSet {
+            val statement = connection.prepareStatement(selectSql())
+            buildParameters(statement)
+            return statement.executeQuery()
         }
 
-        private fun offsetParam(parameters: MapSqlParameterSource) {
+        private fun buildParameters(statement: PreparedStatement) {
+                with(properties) {
+                    // 1) add all values from where part
+                    jdbcBindWhereParams(statement)
+                    // 2) add limit and offset (order is different depending on DbType)
+                    if (DbType.MSSQL == tables.dbType) {
+                        offsetParam(statement)
+                        limitParam(statement)
+                    } else {
+                        limitParam(statement)
+                        offsetParam(statement)
+                    }
+                }
+        }
+
+        private fun offsetParam(statement: PreparedStatement) {
             with(properties) {
                 if (offset != null) {
-                    parameters.addValue("k${index++}", offset)
+                    statement.setObject(index++, offset)
                 }
             }
         }
 
-        private fun limitParam(parameters: MapSqlParameterSource) {
+        private fun limitParam(statement: PreparedStatement) {
             with(properties) {
                 if (limit != null) {
-                    parameters.addValue("k${index++}", limit)
+                    statement.setObject(index++, limit)
                 }
             }
         }
