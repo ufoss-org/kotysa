@@ -17,6 +17,8 @@ private class CoroutinesSqlClientR2Dbc(
         override val tables: Tables,
 ) : CoroutinesSqlClient, AbstractSqlClientR2dbc {
 
+    override val module = Module.SPRING_R2DBC
+
     override suspend fun <T : Any> insert(row: T) =
             executeInsert(row).await()
 
