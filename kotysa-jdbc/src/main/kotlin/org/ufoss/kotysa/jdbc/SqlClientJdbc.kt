@@ -16,10 +16,12 @@ internal class SqlClientJdbc(
     override val tables: Tables
 ) : SqlClient, DefaultSqlClient {
 
+    override val module = Module.JDBC
+
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
 
-        val parameters = MapSqlParameterSource()
+        val statement = connection.prepareStatement(insertSql(row))
         table.columns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
@@ -30,9 +32,9 @@ internal class SqlClientJdbc(
                         || SqlType.BIGSERIAL == column.sqlType)
             }
             .map { column -> tables.getDbValue(column.entityGetter(row)) }
-            .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue) }
+            .forEachIndexed { index, dbValue -> statement.setObject(index + 1, dbValue) }
 
-        namedParameterJdbcOperations.update(insertSql(row), parameters)
+        statement.execute()
     }
 
     override fun <T : Any> insert(vararg rows: T) {
@@ -49,7 +51,8 @@ internal class SqlClientJdbc(
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
         val createTableSql = createTableSql(table, ifNotExists)
-        connection.prepareStatement(createTableSql).execute()
+        connection.prepareStatement(createTableSql)
+            .execute()
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
@@ -57,47 +60,37 @@ internal class SqlClientJdbc(
 
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
         TODO()
-    //SqlClientUpdateSpringJdbc.FirstUpdate(namedParameterJdbcOperations, tables, table)
+    //SqlClientUpdateSpringJdbc.FirstUpdate(connection, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).select(column)
+    
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(table)
+        SqlClientSelectJdbc.Selectable(connection, tables).select(table)
+    
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(dsl)
+        SqlClientSelectJdbc.Selectable(connection, tables).select(dsl)
+    
     override fun selectCount(): SqlClientSelect.Fromable<Long> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount<Any>(null)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectCount<Any>(null)
+    
     override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCount(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectCount(column)
+    
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectDistinct(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectDistinct(column)
+    
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMin(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectMin(column)
+    
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMax(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectMax(column)
+    
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
-        TODO()
-
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectAvg(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectAvg(column)
+    
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
-        TODO()
-    //SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectSum(column)
+        SqlClientSelectJdbc.Selectable(connection, tables).selectSum(column)
 }
 
 /**

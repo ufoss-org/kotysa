@@ -10,12 +10,12 @@ import java.sql.Connection
 internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class FirstDelete<T : Any> internal constructor(
-            override val connection: Connection,
-            override val tables: Tables,
-            override val table: Table<T>,
+        override val connection: Connection,
+        override val tables: Tables,
+        override val table: Table<T>,
     ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC), SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
-            Return<T> {
+            SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC, Module.JDBC),
+        SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         override val where = Where(connection, properties)
         override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(connection, properties)

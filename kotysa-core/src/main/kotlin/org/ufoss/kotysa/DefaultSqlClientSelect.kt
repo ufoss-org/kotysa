@@ -12,8 +12,9 @@ private val logger = Logger.of<DefaultSqlClientSelect>()
 public open class DefaultSqlClientSelect protected constructor() : DefaultSqlClientCommon() {
 
     public class Properties<T : Any>(
-            override val tables: Tables,
-            override val dbAccessType: DbAccessType,
+        override val tables: Tables,
+        override val dbAccessType: DbAccessType,
+        override val module: Module,
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
@@ -230,10 +231,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         private fun offset(): String = with(properties) {
             if (offset != null) {
+                val variable = when(module) {
+                    Module.SQLITE, Module.JDBC -> "?"
+                    else -> ":k${index++}"
+                }
                 when (tables.dbType) {
-                    DbType.SQLITE -> "OFFSET ?"
-                    DbType.MSSQL -> "OFFSET :k${index++} ROWS"
-                    else -> "OFFSET :k${index++}"
+                    DbType.MSSQL -> "OFFSET $variable ROWS"
+                    else -> "OFFSET $variable"
                 }
             } else {
                 ""

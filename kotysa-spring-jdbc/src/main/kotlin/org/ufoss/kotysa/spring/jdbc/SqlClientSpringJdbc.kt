@@ -19,6 +19,8 @@ internal class SqlClientSpringJdbc(
         override val tables: Tables
 ) : SqlClient, DefaultSqlClient {
 
+    override val module = Module.SPRING_JDBC
+    
     /**
      * Computed property : only created once on first call
      */

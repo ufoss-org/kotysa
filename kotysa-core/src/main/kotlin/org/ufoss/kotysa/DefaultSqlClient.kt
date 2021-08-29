@@ -17,6 +17,7 @@ private val logger = Logger.of<DefaultSqlClient>()
 
 public interface DefaultSqlClient {
     public val tables: Tables
+    public val module: Module
 
     public fun createTableSql(table: Table<*>, ifNotExists: Boolean): String {
         val kotysaTable = tables.getTable(table)
@@ -117,10 +118,9 @@ public interface DefaultSqlClient {
                 }
                 .joinToString { column ->
                     columnNames.add(column.name)
-                    if (DbType.SQLITE == tables.dbType) {
-                        "?"
-                    } else {
-                        ":k${index++}"
+                    when(module) {
+                        Module.SQLITE, Module.JDBC -> "?"
+                        else -> ":k${index++}"
                     }
                 }
 

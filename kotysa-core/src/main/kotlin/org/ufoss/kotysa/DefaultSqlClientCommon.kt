@@ -16,6 +16,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     public interface Properties {
         public val dbAccessType: DbAccessType
         public val tables: Tables
+        public val module: Module
         public val fromClauses: MutableList<FromClause<*>>
         public val whereClauses: MutableList<WhereClauseWithType<*>>
 
@@ -661,76 +662,49 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 typedWhereClause.whereClause.apply {
                     val fieldName = column.getFieldName(availableColumns)
                     where.append(
-                            when (operation) {
-                                Operation.EQ ->
-                                    if (value == null) {
-                                        "$fieldName IS NULL"
-                                    } else {
-                                        if (DbType.SQLITE == tables.dbType) {
-                                            "$fieldName = ?"
-                                        } else {
-                                            "$fieldName = :k${index++}"
-                                        }
-                                    }
-                                Operation.NOT_EQ ->
-                                    if (value == null) {
-                                        "$fieldName IS NOT NULL"
-                                    } else {
-                                        if (DbType.SQLITE == tables.dbType) {
-                                            "$fieldName <> ?"
-                                        } else {
-                                            "$fieldName <> :k${index++}"
-                                        }
-                                    }
-                                Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "$fieldName LIKE ?"
-                                    } else {
-                                        "$fieldName LIKE :k${index++}"
-                                    }
-                                Operation.INF ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "$fieldName < ?"
-                                    } else {
-                                        "$fieldName < :k${index++}"
-                                    }
-                                Operation.INF_OR_EQ ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "$fieldName <= ?"
-                                    } else {
-                                        "$fieldName <= :k${index++}"
-                                    }
-                                Operation.SUP ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "$fieldName > ?"
-                                    } else {
-                                        "$fieldName > :k${index++}"
-                                    }
-                                Operation.SUP_OR_EQ ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "$fieldName >= ?"
-                                    } else {
-                                        "$fieldName >= :k${index++}"
-                                    }
-                                /*Operation.IS ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        "$fieldName IS ?"
-                                    } else {
-                                        "$fieldName IS :k${index++}"
-                                    }*/
-                                Operation.IN ->
-                                    if (DbType.SQLITE == tables.dbType) {
-                                        // must put as much '?' as
+                        when (operation) {
+                            Operation.EQ ->
+                                if (value == null) {
+                                    "$fieldName IS NULL"
+                                } else {
+                                    "$fieldName = ${variable()}"
+                                }
+                            Operation.NOT_EQ ->
+                                if (value == null) {
+                                    "$fieldName IS NOT NULL"
+                                } else {
+                                    "$fieldName <> ${variable()}"
+                                }
+                            Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
+                                "$fieldName LIKE ${variable()}"
+                            Operation.INF -> "$fieldName < ${variable()}"
+                            Operation.INF_OR_EQ -> "$fieldName <= ${variable()}"
+                            Operation.SUP -> "$fieldName > ${variable()}"
+                            Operation.SUP_OR_EQ -> "$fieldName >= ${variable()}"
+                            /*Operation.IS ->
+                                if (DbType.SQLITE == tables.dbType) {
+                                    "$fieldName IS ?"
+                                } else {
+                                    "$fieldName IS :k${index++}"
+                                }*/
+                            Operation.IN ->
+                                when (module) {
+                                    Module.SQLITE, Module.JDBC ->
+                                        // must put as much '?' as collection size
                                         "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
-                                    } else {
-                                        "$fieldName IN (:k${index++})"
-                                    }
-                            }
+                                    else -> "$fieldName IN (:k${index++})"
+                                }
+                        }
                     )
                 }
                 where.append(")")
             }
             return where.toString()
+        }
+        
+        private fun variable() = when(properties.module) {
+            Module.SQLITE, Module.JDBC -> "?"
+            else -> ":k${properties.index++}"
         }
     }
 

@@ -16,7 +16,8 @@ internal class CoroutinesSqlClientUpdateR2dbc private constructor() : AbstractSq
             override val tables: Tables,
             override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            CoroutinesSqlClientDeleteOrUpdate.Where<T>, CoroutinesSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC),
+            CoroutinesSqlClientDeleteOrUpdate.Where<T>,
+            CoroutinesSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
             CoroutinesSqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this

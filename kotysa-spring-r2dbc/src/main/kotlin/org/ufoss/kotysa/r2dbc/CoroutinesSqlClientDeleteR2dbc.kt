@@ -12,12 +12,13 @@ import org.ufoss.kotysa.*
 internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSqlClientDeleteR2dbc() {
 
     internal class FirstDelete<T : Any> internal constructor(
-            override val client: DatabaseClient,
-            override val tables: Tables,
-            override val table: Table<T>,
+        override val client: DatabaseClient,
+        override val tables: Tables,
+        override val table: Table<T>,
     ) : FirstDeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            CoroutinesSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC),
-            CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+            CoroutinesSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
+        CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+        
         override val where = Where(client, properties)
         override val from: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)

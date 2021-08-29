@@ -16,7 +16,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             private val client: SQLiteDatabase,
             private val tables: Tables,
     ) : SqlClientSelect.Selectable {
-        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.ANDROID)
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.ANDROID, Module.SQLITE)
 
         override fun <T : Any> select(column: Column<*, T>): SqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
