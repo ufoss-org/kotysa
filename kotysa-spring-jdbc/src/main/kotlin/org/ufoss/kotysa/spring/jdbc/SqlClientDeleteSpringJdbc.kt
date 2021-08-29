@@ -11,12 +11,14 @@ import org.ufoss.kotysa.*
 internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class FirstDelete<T : Any> internal constructor(
-            override val client: NamedParameterJdbcOperations,
-            override val tables: Tables,
-            override val table: Table<T>,
+        override val client: NamedParameterJdbcOperations,
+        override val tables: Tables,
+        override val table: Table<T>,
     ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC), SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
-            Return<T> {
+            SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC, Module.SPRING_JDBC),
+        SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
+        Return<T> {
+        
         override val where = Where(client, properties)
         override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)

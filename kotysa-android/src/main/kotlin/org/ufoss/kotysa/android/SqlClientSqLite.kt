@@ -17,10 +17,13 @@ internal class SqlClientSqLite(
         override val tables: Tables
 ) : SqlClient, DefaultSqlClient {
 
+    override val module = Module.SQLITE
+
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
         val statement = client.writableDatabase.compileStatement(insertSql(row))
         table.columns
+                // do nothing for null values with default
                 .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
                 .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
 

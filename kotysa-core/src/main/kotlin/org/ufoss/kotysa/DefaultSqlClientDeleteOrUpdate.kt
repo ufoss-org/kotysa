@@ -17,12 +17,13 @@ private val logger = Logger.of<DefaultSqlClientDeleteOrUpdate>()
 public open class DefaultSqlClientDeleteOrUpdate protected constructor() : DefaultSqlClientCommon() {
 
     public class Properties<T : Any> internal constructor(
-            override val tables: Tables,
-            /**
-             * targeted table to update
-             */
-            public val table: KotysaTable<T>,
-            override val dbAccessType: DbAccessType,
+        override val tables: Tables,
+        /**
+         * targeted table to update
+         */
+        public val table: KotysaTable<T>,
+        override val dbAccessType: DbAccessType,
+        override val module: Module,
     ) : DefaultSqlClientCommon.Properties {
         public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
@@ -39,13 +40,14 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
     public abstract class FirstDeleteOrUpdate<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> protected constructor(
             private val dbAccessType: DbAccessType,
+            private val module: Module,
     ) : FromWhereable<T, U, V, W>(), From<T, U> {
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
 
         override val properties: Properties<T> by lazy {
             val kotysaTable = tables.getTable(table)
-            val properties = Properties(tables, kotysaTable, dbAccessType)
+            val properties = Properties(tables, kotysaTable, dbAccessType, module)
             // init availableColumns with table columns
             addFromTable(properties, kotysaTable)
             properties
@@ -57,8 +59,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
 
 
     public abstract class Update<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>,
-            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType)
-        : FirstDeleteOrUpdate<T, U, V, W>(dbAccessType), SqlClientQuery.Update<T, X> {
+            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType, module: Module,)
+        : FirstDeleteOrUpdate<T, U, V, W>(dbAccessType, module), SqlClientQuery.Update<T, X> {
 
         protected abstract val update: X
 

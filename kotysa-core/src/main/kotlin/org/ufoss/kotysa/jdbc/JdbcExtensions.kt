@@ -73,9 +73,18 @@ public fun DefaultSqlClientCommon.Properties.jdbcBindWhereParams(
 ) {
     with(this) {
         whereClauses
-            .forEach { typedWhereClause ->
-                statement.setObject(index++, tables.getDbValue(typedWhereClause.whereClause.value))
-            /*statement.set(index++, tables.getDbValue(typedWhereClause.whereClause.value),
-                typedWhereClause.whereClause.column.getKotysaColumn(availableColumns)) */}
+            .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+            .flatMap { whereValue ->
+                if (whereValue is Collection<*>) {
+                    whereValue
+                } else {
+                    setOf(whereValue)
+                }
+            }
+            .forEach { whereValue ->
+                statement.setObject(++index, tables.getDbValue(whereValue))
+                /*statement.set(++index, tables.getDbValue(typedWhereClause.whereClause.value),
+                    typedWhereClause.whereClause.column.getKotysaColumn(availableColumns)) */
+            }
     }
 }

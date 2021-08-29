@@ -17,6 +17,9 @@ private class SqlClientR2dbc(
         override val client: DatabaseClient,
         override val tables: Tables
 ) : ReactorSqlClient, AbstractSqlClientR2dbc {
+
+    override val module = Module.SPRING_R2DBC
+    
     override fun <T : Any> insert(row: T) =
             executeInsert(row).then()
 
