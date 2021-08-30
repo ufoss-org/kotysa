@@ -9,12 +9,12 @@ import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.transaction.TransactionalOp
 
 @JvmInline
-public value class JdbcTransactionalOp(private val template: TransactionOperations) : TransactionalOp {
+public value class SpringJdbcTransactionalOp(private val template: TransactionOperations) : TransactionalOp {
     override fun <T> execute(block: (Transaction) -> T): T? =
-            template.execute { transactionStatus -> block.invoke(JdbcTransaction(transactionStatus)) }
+            template.execute { transactionStatus -> block.invoke(SpringJdbcTransaction(transactionStatus)) }
 }
 
 /**
  * Create a [TransactionalOp] from a [TransactionOperations]
  */
-public fun TransactionOperations.transactionalOp(): TransactionalOp = JdbcTransactionalOp(this)
+public fun TransactionOperations.transactionalOp(): TransactionalOp = SpringJdbcTransactionalOp(this)

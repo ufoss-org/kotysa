@@ -6,17 +6,18 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import java.sql.Connection
 import java.sql.DriverManager
 
 abstract class AbstractJdbcH2Test<T : Repository> {
-    private lateinit var connection: Connection
+    private val connection = DriverManager.getConnection("jdbc:h2:mem:test")
     protected lateinit var repository: T
+    protected val operator = connection.transactionalOp()
 
     @BeforeAll
     fun beforeAll() {
-        connection = DriverManager.getConnection("jdbc:h2:mem:test")
         repository = instanciateRepository(connection)
         repository.init()
     }
@@ -26,5 +27,6 @@ abstract class AbstractJdbcH2Test<T : Repository> {
     @AfterAll
     fun afterAll() {
         repository.delete()
+        connection.close()
     }
 }
