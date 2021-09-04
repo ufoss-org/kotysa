@@ -13,7 +13,7 @@ import java.util.*
 
 
 class JdbcSelectUuidH2Test : AbstractJdbcH2Test<UuidRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = UuidRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = UuidRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {

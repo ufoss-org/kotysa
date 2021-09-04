@@ -10,7 +10,7 @@ import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
 class JdbcSelectOrderByH2Test : AbstractJdbcH2Test<OrderByRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = OrderByRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = OrderByRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {

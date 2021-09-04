@@ -14,7 +14,7 @@ import java.time.ZoneOffset
 
 
 class JdbcSelectOffsetDateTimeH2Test : AbstractJdbcH2Test<OffsetDateTimeRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = OffsetDateTimeRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = OffsetDateTimeRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {

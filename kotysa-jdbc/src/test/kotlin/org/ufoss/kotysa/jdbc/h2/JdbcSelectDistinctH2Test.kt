@@ -11,7 +11,7 @@ import java.sql.Connection
 
 
 class JdbcSelectDistinctH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectDistinct>() {
-    override fun instanciateRepository(connection: Connection) = UserRepositoryJdbcH2SelectDistinct(connection)
+    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2SelectDistinct(connection)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {

@@ -13,7 +13,7 @@ import java.sql.Connection
 
 
 class JdbcSelectKotlinxLocalDateTimeAsTimestampH2Test : AbstractJdbcH2Test<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) =
+    override fun instantiateRepository(connection: Connection) =
         KotlinxLocalDateTimeAsTimestampRepositoryH2Select(connection)
 
     @Test
