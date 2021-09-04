@@ -59,8 +59,7 @@ internal class SqlClientJdbc(
         SqlClientDeleteJdbc.FirstDelete(connection, tables, table)
 
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-        TODO()
-    //SqlClientUpdateSpringJdbc.FirstUpdate(connection, tables, table)
+        SqlClientUpdateJdbc.FirstUpdate(connection, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
         SqlClientSelectJdbc.Selectable(connection, tables).select(column)

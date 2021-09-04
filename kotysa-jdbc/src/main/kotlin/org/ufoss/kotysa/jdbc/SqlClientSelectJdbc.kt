@@ -343,7 +343,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         private fun offsetParam(statement: PreparedStatement) {
             with(properties) {
                 if (offset != null) {
-                    statement.setObject(index++, offset)
+                    statement.setObject(++index, offset)
                 }
             }
         }
@@ -351,7 +351,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         private fun limitParam(statement: PreparedStatement) {
             with(properties) {
                 if (limit != null) {
-                    statement.setObject(index++, limit)
+                    statement.setObject(++index, limit)
                 }
             }
         }
