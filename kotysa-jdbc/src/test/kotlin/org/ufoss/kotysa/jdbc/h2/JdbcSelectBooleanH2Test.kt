@@ -13,7 +13,7 @@ import java.sql.Connection
 
 
 class JdbcSelectBooleanH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectBoolean>() {
-    override fun instanciateRepository(connection: Connection) = UserRepositoryJdbcH2SelectBoolean(connection)
+    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2SelectBoolean(connection)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {

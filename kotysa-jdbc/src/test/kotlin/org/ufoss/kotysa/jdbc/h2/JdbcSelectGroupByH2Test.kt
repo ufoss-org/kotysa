@@ -10,7 +10,7 @@ import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
 class JdbcSelectGroupByH2Test : AbstractJdbcH2Test<GroupByRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = GroupByRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = GroupByRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {

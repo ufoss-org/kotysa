@@ -15,7 +15,7 @@ import java.sql.Connection
 
 
 class JdbcSelectStringH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectString>() {
-    override fun instanciateRepository(connection: Connection) = UserRepositoryJdbcH2SelectString(connection)
+    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2SelectString(connection)
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

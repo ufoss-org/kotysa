@@ -13,7 +13,7 @@ import java.sql.Connection
 
 
 class JdbcSelectKotlinxLocalDateTimeH2Test : AbstractJdbcH2Test<KotlinxLocalDateTimeRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = KotlinxLocalDateTimeRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = KotlinxLocalDateTimeRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds kotlinxLocalDateTimeWithNullable`() {

@@ -18,7 +18,7 @@ import java.util.*
 
 
 class JdbcAllTypesH2Test : AbstractJdbcH2Test<AllTypesRepositoryH2>() {
-    override fun instanciateRepository(connection: Connection) = AllTypesRepositoryH2(connection)
+    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryH2(connection)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

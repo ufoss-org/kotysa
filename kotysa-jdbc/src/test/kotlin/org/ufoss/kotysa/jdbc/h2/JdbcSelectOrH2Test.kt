@@ -13,7 +13,7 @@ import java.sql.Connection
 
 
 class JdbcSelectOrH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectOr>() {
-    override fun instanciateRepository(connection: Connection) = UserRepositoryJdbcH2SelectOr(connection)
+    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2SelectOr(connection)
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {

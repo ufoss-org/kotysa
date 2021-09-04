@@ -10,7 +10,7 @@ import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
 class JdbcSelectMinMaxAvgSumH2Test : AbstractJdbcH2Test<MinMaxAvgSumRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = MinMaxAvgSumRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = MinMaxAvgSumRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
