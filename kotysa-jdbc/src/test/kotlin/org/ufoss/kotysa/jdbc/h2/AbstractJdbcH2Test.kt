@@ -12,9 +12,9 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 abstract class AbstractJdbcH2Test<T : Repository> {
-    private val connection = DriverManager.getConnection("jdbc:h2:mem:test")
-    protected lateinit var repository: T
-    protected val operator = connection.transactionalOp()
+    private val connection = DriverManager.getConnection("jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
+    lateinit var repository: T
+    val operator = connection.transactionalOp()
 
     @BeforeAll
     fun beforeAll() {

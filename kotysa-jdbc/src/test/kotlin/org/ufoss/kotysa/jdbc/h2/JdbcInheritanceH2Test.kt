@@ -11,7 +11,7 @@ import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
 
-class SpringJdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
+class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
     override fun instanciateRepository(connection: Connection) = InheritanceH2Repository(connection)
 
     @Test
