@@ -246,10 +246,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         private fun limit(): String = with(properties) {
             if (limit != null) {
+                val variable = when(module) {
+                    Module.SQLITE, Module.JDBC -> "?"
+                    else -> ":k${index++}"
+                }
                 when (tables.dbType) {
-                    DbType.SQLITE -> "LIMIT ?"
-                    DbType.MSSQL -> "FETCH NEXT :k${index++} ROWS ONLY"
-                    else -> "LIMIT :k${index++}"
+                    DbType.MSSQL -> "FETCH NEXT $variable ROWS ONLY"
+                    else -> "LIMIT $variable"
                 }
             } else {
                 ""
