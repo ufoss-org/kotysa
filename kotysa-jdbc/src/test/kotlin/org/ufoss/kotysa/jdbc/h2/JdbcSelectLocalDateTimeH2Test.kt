@@ -13,7 +13,7 @@ import java.time.LocalDateTime
 
 
 class JdbcSelectLocalDateTimeH2Test : AbstractJdbcH2Test<LocalDateTimeRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = LocalDateTimeRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = LocalDateTimeRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds localDateTimeWithNullable`() {

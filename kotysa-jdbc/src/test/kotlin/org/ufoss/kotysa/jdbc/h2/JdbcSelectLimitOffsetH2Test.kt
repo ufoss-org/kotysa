@@ -10,7 +10,7 @@ import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
 class JdbcSelectLimitOffsetH2Test : AbstractJdbcH2Test<LimitOffsetRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = LimitOffsetRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = LimitOffsetRepositoryH2Select(connection)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {

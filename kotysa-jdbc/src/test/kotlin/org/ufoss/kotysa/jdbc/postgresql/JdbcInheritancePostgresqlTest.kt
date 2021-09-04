@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.jdbc.h2
+package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -11,8 +11,14 @@ import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
 
-class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
-    override fun instantiateRepository(connection: Connection) = InheritanceH2Repository(connection)
+class JdbcInheritancePostgresqlTest : AbstractJdbcPostgresqlTest<InheritancePostgresqlRepository>() {
+    override fun instantiateRepository(connection: Connection) = InheritancePostgresqlRepository(connection)
+
+    @Test
+    fun `Verify extension function selectById finds inherited`() {
+        assertThat(repository.selectById(POSTGRESQL_INHERITED, "id"))
+                .isEqualTo(inherited)
+    }
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
@@ -21,14 +27,8 @@ class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
     }
 
     @Test
-    fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(H2_INHERITED, "id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(H2_INHERITED, "name"))
+        assertThat(repository.selectFirstByName(POSTGRESQL_INHERITED, "name"))
                 .isEqualTo(inherited)
     }
 
@@ -36,7 +36,7 @@ class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
     fun `Verify deleteById deletes inherited`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById(H2_INHERITED, "id"))
+            assertThat(repository.deleteById(POSTGRESQL_INHERITED, "id"))
                     .isEqualTo(1)
             assertThat(repository.selectAll())
                     .isEmpty()
@@ -45,9 +45,9 @@ class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
 }
 
 
-class InheritanceH2Repository(connection: Connection) : Repository {
+class InheritancePostgresqlRepository(connection: Connection) : Repository {
 
-    private val sqlClient = connection.sqlClient(h2Tables)
+    val sqlClient = connection.sqlClient(postgresqlTables)
 
     override fun init() {
         createTable()
@@ -59,20 +59,20 @@ class InheritanceH2Repository(connection: Connection) : Repository {
     }
 
     private fun createTable() {
-        sqlClient createTable H2_INHERITED
+        sqlClient createTable POSTGRESQL_INHERITED
     }
 
     fun insert() {
         sqlClient insert inherited
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_INHERITED
 
-    fun selectAll() = sqlClient selectAllFrom H2_INHERITED
+    fun selectAll() = sqlClient selectAllFrom POSTGRESQL_INHERITED
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom H2_INHERITED
-                    where H2_INHERITED.id eq id
+            (sqlClient selectFrom POSTGRESQL_INHERITED
+                    where POSTGRESQL_INHERITED.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

@@ -12,7 +12,7 @@ import java.sql.Connection
 
 
 class JdbcSelectIntH2Test : AbstractJdbcH2Test<IntRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = IntRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = IntRepositoryH2Select(connection)
 
     private val intWithNullable = IntEntity(
             org.ufoss.kotysa.test.intWithNullable.intNotNull,

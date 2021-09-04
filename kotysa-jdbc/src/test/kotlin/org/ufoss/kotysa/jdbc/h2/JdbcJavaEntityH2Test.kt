@@ -14,7 +14,7 @@ import java.sql.Connection
 
 class JdbcJavaEntityH2Test :
         AbstractJdbcH2Test<JavaUserH2Repository>(), JavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
-    override fun instanciateRepository(connection: Connection) = JavaUserH2Repository(connection)
+    override fun instantiateRepository(connection: Connection) = JavaUserH2Repository(connection)
 }
 
 

@@ -11,7 +11,7 @@ import java.sql.Connection
 
 
 class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDelete>() {
-    override fun instanciateRepository(connection: Connection) = UserRepositoryJdbcH2UpdateDelete(connection)
+    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2UpdateDelete(connection)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

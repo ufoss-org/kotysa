@@ -12,7 +12,7 @@ import java.sql.Connection
 
 
 class JdbcSelectLongH2Test : AbstractJdbcH2Test<LongRepositoryH2Select>() {
-    override fun instanciateRepository(connection: Connection) = LongRepositoryH2Select(connection)
+    override fun instantiateRepository(connection: Connection) = LongRepositoryH2Select(connection)
 
     private val longWithNullable = LongEntity(
             org.ufoss.kotysa.test.longWithNullable.longNotNull,
