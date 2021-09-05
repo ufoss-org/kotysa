@@ -13,8 +13,8 @@ dependencies {
     testImplementation 'org.testcontainers:testcontainers'
 
     testRuntimeOnly "com.h2database:h2:$h2_version"
-    /*testRuntimeOnly "mysql:mysql-connector-java"
-    testRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc"
+    testRuntimeOnly "mysql:mysql-connector-java:$mysql_version"
+    /*testRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc"
     testRuntimeOnly "org.mariadb.jdbc:mariadb-java-client"*/
     testRuntimeOnly "org.postgresql:postgresql:$postgresql_version"
     testRuntimeOnly 'org.testcontainers:postgresql'
