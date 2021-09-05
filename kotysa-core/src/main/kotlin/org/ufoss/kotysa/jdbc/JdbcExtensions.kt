@@ -17,7 +17,8 @@ import kotlin.reflect.KClass
 
 public fun ResultSet.toRow(): RowImpl = RowImpl(JdbcRow(this))
 
-internal fun PreparedStatement.set(index: Int, value: Any?, column: KotysaColumn<Any, out Any>) {
+// todo remove if unused
+/*internal fun PreparedStatement.set(index: Int, value: Any?, column: KotysaColumn<Any, out Any>) {
     if (value != null) {
         when (value) {
             is Boolean -> setBoolean(index, value)
@@ -66,7 +67,7 @@ internal fun KClass<*>.toSQLType() =
                 "${this.java.canonicalName} is not supported by Kotysa jdbc"
             )
         }
-    }
+    }*/
 
 public fun DefaultSqlClientCommon.Properties.jdbcBindWhereParams(
     statement: PreparedStatement
