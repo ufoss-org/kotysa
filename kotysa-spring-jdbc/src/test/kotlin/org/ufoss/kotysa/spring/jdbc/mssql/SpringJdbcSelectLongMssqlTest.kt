@@ -18,7 +18,10 @@ class SpringJdbcSelectLongMssqlTest : AbstractSpringJdbcMssqlTest<LongRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LongRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LongRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     private val longWithNullable = LongEntity(

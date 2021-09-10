@@ -10,12 +10,8 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
@@ -25,8 +21,6 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
     override val context = startContext<AllTypesRepositoryH2>()
 
     override val repository = getContextRepository<AllTypesRepositoryH2>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

@@ -10,17 +10,20 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.MSSQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityMssqlTest :
-        AbstractSpringJdbcMssqlTest<JavaUserMssqlRepository>(), JavaEntityTest<MSSQL_JAVA_USER, JavaUserMssqlRepository> {
+        AbstractSpringJdbcMssqlTest<JavaUserMssqlRepository>(), JdbcJavaEntityTest<MSSQL_JAVA_USER, JavaUserMssqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserMssqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserMssqlRepository by lazy {
+        getContextRepository()
     }
 }
 

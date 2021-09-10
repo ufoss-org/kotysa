@@ -19,7 +19,10 @@ class SpringJdbcSelectBooleanMssqlTest : AbstractSpringJdbcMssqlTest<UserReposit
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMssqlSelectBoolean>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMssqlSelectBoolean by lazy {
+        getContextRepository()
     }
 
     @Test

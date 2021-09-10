@@ -7,13 +7,13 @@ package org.ufoss.kotysa.jdbc.mysql
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.test.MYSQL_JAVA_USER
 import org.ufoss.kotysa.test.mysqlTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 import java.sql.Connection
 
 
 class JdbcJavaEntityMysqlTest :
-        AbstractJdbcMysqlTest<JavaUserMysqlRepository>(), JavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository> {
+        AbstractJdbcMysqlTest<JavaUserMysqlRepository>(), JdbcJavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository> {
     override fun instantiateRepository(connection: Connection) = JavaUserMysqlRepository(connection)
 }
 

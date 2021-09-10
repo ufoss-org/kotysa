@@ -20,7 +20,10 @@ class SpringJdbcSelectOffsetDateTimePostgresqlTest : AbstractSpringJdbcPostgresq
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OffsetDateTimeRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

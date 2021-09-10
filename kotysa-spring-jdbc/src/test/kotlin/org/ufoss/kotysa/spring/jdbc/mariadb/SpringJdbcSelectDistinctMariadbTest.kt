@@ -17,7 +17,10 @@ class SpringJdbcSelectDistinctMariadbTest : AbstractSpringJdbcMariadbTest<UserRe
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMariadbSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMariadbSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

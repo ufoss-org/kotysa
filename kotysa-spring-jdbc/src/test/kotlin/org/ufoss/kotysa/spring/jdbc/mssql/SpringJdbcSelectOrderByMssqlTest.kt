@@ -16,7 +16,10 @@ class SpringJdbcSelectOrderByMssqlTest : AbstractSpringJdbcMssqlTest<OrderByRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OrderByRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OrderByRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

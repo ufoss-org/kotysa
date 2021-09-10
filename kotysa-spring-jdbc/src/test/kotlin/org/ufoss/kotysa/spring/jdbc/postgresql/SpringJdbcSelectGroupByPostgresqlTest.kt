@@ -16,7 +16,10 @@ class SpringJdbcSelectGroupByPostgresqlTest : AbstractSpringJdbcPostgresqlTest<G
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<GroupByRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: GroupByRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

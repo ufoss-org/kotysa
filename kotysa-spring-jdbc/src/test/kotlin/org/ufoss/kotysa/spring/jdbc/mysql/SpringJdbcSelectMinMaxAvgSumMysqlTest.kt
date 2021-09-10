@@ -16,7 +16,10 @@ class SpringJdbcSelectMinMaxAvgSumMysqlTest : AbstractSpringJdbcMysqlTest<MinMax
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<MinMaxAvgSumRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: MinMaxAvgSumRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

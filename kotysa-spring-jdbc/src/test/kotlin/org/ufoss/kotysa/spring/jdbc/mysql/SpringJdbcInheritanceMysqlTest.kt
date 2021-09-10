@@ -18,7 +18,10 @@ class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMy
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<InheritanceMysqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: InheritanceMysqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

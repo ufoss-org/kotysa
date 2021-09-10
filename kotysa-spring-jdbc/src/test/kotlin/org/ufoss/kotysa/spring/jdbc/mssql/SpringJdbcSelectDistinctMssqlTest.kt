@@ -17,7 +17,10 @@ class SpringJdbcSelectDistinctMssqlTest : AbstractSpringJdbcMssqlTest<UserReposi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMssqlSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMssqlSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

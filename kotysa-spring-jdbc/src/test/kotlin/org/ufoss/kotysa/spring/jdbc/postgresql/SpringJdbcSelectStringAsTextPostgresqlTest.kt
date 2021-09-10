@@ -20,7 +20,10 @@ class SpringJdbcSelectStringAsTextPostgresqlTest : AbstractSpringJdbcPostgresqlT
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<StringAsTextRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: StringAsTextRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

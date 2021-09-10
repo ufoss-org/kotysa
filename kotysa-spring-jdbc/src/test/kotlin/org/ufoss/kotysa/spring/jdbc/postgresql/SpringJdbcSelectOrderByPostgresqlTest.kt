@@ -16,7 +16,10 @@ class SpringJdbcSelectOrderByPostgresqlTest : AbstractSpringJdbcPostgresqlTest<O
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OrderByRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OrderByRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -20,7 +20,10 @@ class SpringJdbcSelectStringAsMediumTextMariadbTest : AbstractSpringJdbcMariadbT
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<StringAsMediumTextRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: StringAsMediumTextRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

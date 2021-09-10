@@ -18,7 +18,10 @@ class SpringJdbcSelectDistinctPostgresqlTest :
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcPostgresqlSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcPostgresqlSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

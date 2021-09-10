@@ -17,7 +17,10 @@ class SpringJdbcUpdateDeleteMssqlTest : AbstractSpringJdbcMssqlTest<UserReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMssqlUpdateDelete>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMssqlUpdateDelete by lazy {
+        getContextRepository()
     }
 
     @Test

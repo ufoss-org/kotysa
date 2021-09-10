@@ -19,7 +19,10 @@ class SpringJdbcSelectKotlinxLocalDateTimeMssqlTest : AbstractSpringJdbcMssqlTes
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<KotlinxLocalDateTimeRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: KotlinxLocalDateTimeRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

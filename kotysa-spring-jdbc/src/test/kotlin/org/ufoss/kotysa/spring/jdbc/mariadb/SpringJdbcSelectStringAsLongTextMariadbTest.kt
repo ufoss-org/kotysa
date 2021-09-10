@@ -20,7 +20,10 @@ class SpringJdbcSelectStringAsLongTextMariadbTest : AbstractSpringJdbcMariadbTes
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<StringAsLongTextRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: StringAsLongTextRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -20,7 +20,10 @@ class SpringJdbcSelectMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpri
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

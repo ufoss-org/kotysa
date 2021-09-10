@@ -16,7 +16,10 @@ class SpringJdbcSelectGroupByMariadbTest : AbstractSpringJdbcMariadbTest<GroupBy
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<GroupByRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: GroupByRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -17,7 +17,10 @@ class SpringJdbcSelectBooleanPostgresqlTest : AbstractSpringJdbcPostgresqlTest<U
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcPostgresqlSelectBoolean>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcPostgresqlSelectBoolean by lazy {
+        getContextRepository()
     }
 
     @Test

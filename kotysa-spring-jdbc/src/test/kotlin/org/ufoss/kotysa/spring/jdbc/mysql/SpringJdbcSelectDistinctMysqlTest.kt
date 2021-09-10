@@ -17,7 +17,10 @@ class SpringJdbcSelectDistinctMysqlTest : AbstractSpringJdbcMysqlTest<UserReposi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMysqlSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMysqlSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

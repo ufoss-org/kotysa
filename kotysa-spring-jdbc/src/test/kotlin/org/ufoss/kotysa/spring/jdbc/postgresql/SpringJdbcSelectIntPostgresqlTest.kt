@@ -18,7 +18,10 @@ class SpringJdbcSelectIntPostgresqlTest : AbstractSpringJdbcPostgresqlTest<IntRe
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<IntRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: IntRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     private val intWithNullable = IntEntity(

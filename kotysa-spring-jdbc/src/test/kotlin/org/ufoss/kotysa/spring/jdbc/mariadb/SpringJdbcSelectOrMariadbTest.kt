@@ -19,7 +19,10 @@ class SpringJdbcSelectOrMariadbTest : AbstractSpringJdbcMariadbTest<UserReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMariadbSelectOr>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMariadbSelectOr by lazy {
+        getContextRepository()
     }
 
     @Test

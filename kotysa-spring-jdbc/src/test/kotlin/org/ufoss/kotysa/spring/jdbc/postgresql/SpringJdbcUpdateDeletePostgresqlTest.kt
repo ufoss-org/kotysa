@@ -17,7 +17,10 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcPostgresqlUpdateDelete>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcPostgresqlUpdateDelete by lazy {
+        getContextRepository()
     }
 
     @Test

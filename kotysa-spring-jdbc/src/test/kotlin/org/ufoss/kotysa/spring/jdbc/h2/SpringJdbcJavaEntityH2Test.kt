@@ -4,24 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
-import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.H2_JAVA_USER
 import org.ufoss.kotysa.test.h2Tables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityH2Test :
-        AbstractSpringJdbcH2Test<JavaUserH2Repository>(), JavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
+        AbstractSpringJdbcH2Test<JavaUserH2Repository>(), JdbcJavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
     override var context = startContext<JavaUserH2Repository>()
     override var repository = getContextRepository<JavaUserH2Repository>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    override val operator = TransactionTemplate(transactionManager).transactionalOp()
 }
 
 

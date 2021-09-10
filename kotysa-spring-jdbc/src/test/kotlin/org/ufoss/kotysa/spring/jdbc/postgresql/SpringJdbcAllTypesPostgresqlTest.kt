@@ -24,7 +24,10 @@ class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTyp
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<AllTypesRepositoryPostgresql>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: AllTypesRepositoryPostgresql by lazy {
+        getContextRepository()
     }
 
     @Test
