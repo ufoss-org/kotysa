@@ -17,7 +17,10 @@ class SpringJdbcUpdateDeleteMariadbTest : AbstractSpringJdbcMariadbTest<UserRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMariadbUpdateDelete>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMariadbUpdateDelete by lazy {
+        getContextRepository()
     }
 
     @Test

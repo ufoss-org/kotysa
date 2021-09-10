@@ -14,15 +14,21 @@ import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
-import org.ufoss.kotysa.spring.jdbc.SpringJdbcRepositoryTest
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.support.TransactionTemplate
+import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
+import org.ufoss.kotysa.test.repositories.JdbcrepositoryTest
+import org.ufoss.kotysa.transaction.TransactionalOp
 
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
-abstract class AbstractSpringJdbcMariadbTest<T : Repository> : SpringJdbcRepositoryTest<T> {
+abstract class AbstractSpringJdbcMariadbTest<T : Repository> : JdbcrepositoryTest<T> {
+
+    protected lateinit var context: ConfigurableApplicationContext
 
     protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
             application {
@@ -39,10 +45,12 @@ abstract class AbstractSpringJdbcMariadbTest<T : Repository> : SpringJdbcReposit
                 }
             }.run()
 
-    override lateinit var context: ConfigurableApplicationContext
-    override lateinit var repository: T
-
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
+
+    override val operator: TransactionalOp by lazy {
+        val transactionManager = context.getBean<PlatformTransactionManager>()
+        TransactionTemplate(transactionManager).transactionalOp()
+    }
 
     @AfterAll
     fun afterAll() = context.run {

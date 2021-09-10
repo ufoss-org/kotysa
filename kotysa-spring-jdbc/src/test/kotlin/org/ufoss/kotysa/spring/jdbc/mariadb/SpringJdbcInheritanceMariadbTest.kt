@@ -18,7 +18,10 @@ class SpringJdbcInheritanceMariadbTest : AbstractSpringJdbcMariadbTest<Inheritan
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<InheritanceMariadbRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: InheritanceMariadbRepository by lazy {
+        getContextRepository()
     }
 
     @Test

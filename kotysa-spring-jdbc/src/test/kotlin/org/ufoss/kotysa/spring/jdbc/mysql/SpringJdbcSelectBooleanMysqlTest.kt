@@ -19,7 +19,10 @@ class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserReposit
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMysqlSelectBoolean>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMysqlSelectBoolean by lazy {
+        getContextRepository()
     }
 
     @Test

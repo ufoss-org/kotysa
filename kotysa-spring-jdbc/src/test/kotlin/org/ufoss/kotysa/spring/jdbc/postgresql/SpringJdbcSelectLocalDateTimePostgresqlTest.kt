@@ -19,7 +19,10 @@ class SpringJdbcSelectLocalDateTimePostgresqlTest : AbstractSpringJdbcPostgresql
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LocalDateTimeRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LocalDateTimeRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

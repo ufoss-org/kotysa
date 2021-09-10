@@ -10,17 +10,20 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.MARIADB_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mariadbTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityMariadbTest :
-        AbstractSpringJdbcMariadbTest<JavaUserMariadbRepository>(), JavaEntityTest<MARIADB_JAVA_USER, JavaUserMariadbRepository> {
+        AbstractSpringJdbcMariadbTest<JavaUserMariadbRepository>(), JdbcJavaEntityTest<MARIADB_JAVA_USER, JavaUserMariadbRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserMariadbRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserMariadbRepository by lazy {
+        getContextRepository()
     }
 }
 

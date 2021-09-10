@@ -16,7 +16,10 @@ class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractSpringJdbcPostgresqlTest<MinM
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<MinMaxAvgSumRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: MinMaxAvgSumRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

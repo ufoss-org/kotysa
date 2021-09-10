@@ -21,7 +21,10 @@ class SpringJdbcSelectStringMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcMysqlSelectString>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcMysqlSelectString by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -16,7 +16,10 @@ class SpringJdbcSelectMinMaxAvgSumMariadbTest : AbstractSpringJdbcMariadbTest<Mi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<MinMaxAvgSumRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: MinMaxAvgSumRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

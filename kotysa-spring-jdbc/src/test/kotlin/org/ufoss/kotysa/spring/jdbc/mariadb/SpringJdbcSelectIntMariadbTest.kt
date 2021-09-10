@@ -18,7 +18,10 @@ class SpringJdbcSelectIntMariadbTest : AbstractSpringJdbcMariadbTest<IntReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<IntRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: IntRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     private val intWithNullable = IntEntity(

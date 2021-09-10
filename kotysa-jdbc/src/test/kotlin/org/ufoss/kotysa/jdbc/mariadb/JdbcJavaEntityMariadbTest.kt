@@ -7,13 +7,13 @@ package org.ufoss.kotysa.jdbc.mariadb
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.test.MARIADB_JAVA_USER
 import org.ufoss.kotysa.test.mariadbTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 import java.sql.Connection
 
 
 class JdbcJavaEntityMariadbTest :
-        AbstractJdbcMariadbTest<JavaUserMariadbRepository>(), JavaEntityTest<MARIADB_JAVA_USER, JavaUserMariadbRepository> {
+        AbstractJdbcMariadbTest<JavaUserMariadbRepository>(), JdbcJavaEntityTest<MARIADB_JAVA_USER, JavaUserMariadbRepository> {
     override fun instantiateRepository(connection: Connection) = JavaUserMariadbRepository(connection)
 }
 

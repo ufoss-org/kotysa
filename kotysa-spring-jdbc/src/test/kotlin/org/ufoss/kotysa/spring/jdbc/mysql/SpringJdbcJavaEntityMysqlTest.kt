@@ -10,17 +10,20 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.MYSQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityMysqlTest :
-        AbstractSpringJdbcMysqlTest<JavaUserMysqlRepository>(), JavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository> {
+        AbstractSpringJdbcMysqlTest<JavaUserMysqlRepository>(), JdbcJavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserMysqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserMysqlRepository by lazy {
+        getContextRepository()
     }
 }
 

@@ -21,7 +21,10 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositorySpringJdbcPostgresqlSelectString>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositorySpringJdbcPostgresqlSelectString by lazy {
+        getContextRepository()
     }
 
     @Test

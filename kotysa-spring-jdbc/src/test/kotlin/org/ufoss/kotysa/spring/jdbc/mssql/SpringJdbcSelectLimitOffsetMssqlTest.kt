@@ -16,7 +16,10 @@ class SpringJdbcSelectLimitOffsetMssqlTest : AbstractSpringJdbcMssqlTest<LimitOf
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LimitOffsetByRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LimitOffsetByRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

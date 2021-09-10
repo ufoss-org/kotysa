@@ -18,7 +18,10 @@ class SpringJdbcSelectIntMssqlTest : AbstractSpringJdbcMssqlTest<IntRepositoryMs
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<IntRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: IntRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     private val intWithNullable = IntEntity(

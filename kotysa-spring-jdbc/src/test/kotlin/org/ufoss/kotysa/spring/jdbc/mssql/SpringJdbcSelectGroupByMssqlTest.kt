@@ -16,7 +16,10 @@ class SpringJdbcSelectGroupByMssqlTest : AbstractSpringJdbcMssqlTest<GroupByRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<GroupByRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: GroupByRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -24,7 +24,10 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<AllTypesRepositoryMssql>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: AllTypesRepositoryMssql by lazy {
+        getContextRepository()
     }
 
     @Test

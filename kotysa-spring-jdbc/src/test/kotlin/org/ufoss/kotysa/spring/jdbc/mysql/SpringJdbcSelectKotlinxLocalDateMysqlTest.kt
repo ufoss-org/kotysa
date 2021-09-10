@@ -19,7 +19,10 @@ class SpringJdbcSelectKotlinxLocalDateMysqlTest : AbstractSpringJdbcMysqlTest<Ko
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<KotlinxLocalDateRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: KotlinxLocalDateRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -16,7 +16,10 @@ class SpringJdbcSelectOrderByMysqlTest : AbstractSpringJdbcMysqlTest<OrderByRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OrderByRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OrderByRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

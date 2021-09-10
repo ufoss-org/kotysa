@@ -25,7 +25,10 @@ class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<AllTypesRepositoryMysql>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: AllTypesRepositoryMysql by lazy {
+        getContextRepository()
     }
 
     @Test

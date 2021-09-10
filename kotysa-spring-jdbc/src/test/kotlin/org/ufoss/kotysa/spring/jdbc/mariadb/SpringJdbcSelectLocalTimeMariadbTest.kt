@@ -19,7 +19,10 @@ class SpringJdbcSelectLocalTimeMariadbTest : AbstractSpringJdbcMariadbTest<Local
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LocalTimeRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LocalTimeRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

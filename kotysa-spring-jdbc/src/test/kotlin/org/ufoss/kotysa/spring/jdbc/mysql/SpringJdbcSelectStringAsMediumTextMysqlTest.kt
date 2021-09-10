@@ -20,7 +20,10 @@ class SpringJdbcSelectStringAsMediumTextMysqlTest : AbstractSpringJdbcMysqlTest<
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<StringAsMediumTextRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: StringAsMediumTextRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

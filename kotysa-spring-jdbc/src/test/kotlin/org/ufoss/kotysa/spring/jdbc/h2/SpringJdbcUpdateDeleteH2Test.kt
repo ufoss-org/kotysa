@@ -6,11 +6,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
 import org.springframework.jdbc.core.JdbcOperations
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.support.TransactionTemplate
-import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 
 
@@ -18,8 +14,6 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
     override val context = startContext<UserRepositorySpringJdbcH2UpdateDelete>()
 
     override val repository = getContextRepository<UserRepositorySpringJdbcH2UpdateDelete>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

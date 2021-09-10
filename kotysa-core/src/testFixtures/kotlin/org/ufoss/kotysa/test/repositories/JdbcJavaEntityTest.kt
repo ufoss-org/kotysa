@@ -13,9 +13,7 @@ import org.ufoss.kotysa.test.javaJdoe
 import org.ufoss.kotysa.transaction.TransactionalOp
 
 // TODO move all common tests following this model
-interface JavaEntityTest<T : JAVA_USER, U : JavaUserRepository<T>> {
-    val repository: U
-    val operator: TransactionalOp
+interface JdbcJavaEntityTest<T : JAVA_USER, U : JavaUserRepository<T>> : JdbcrepositoryTest<U> {
 
     @Test
     fun `Verify selectAll returns all users`() {

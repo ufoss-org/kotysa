@@ -18,7 +18,10 @@ class SpringJdbcSelectLongMysqlTest : AbstractSpringJdbcMysqlTest<LongRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LongRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LongRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     private val longWithNullable = LongEntity(

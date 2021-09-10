@@ -10,17 +10,20 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.POSTGRESQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
 class SpringJdbcJavaEntityPostgresqlTest : AbstractSpringJdbcPostgresqlTest<JavaUserPostgresqlRepository>(),
-        JavaEntityTest<POSTGRESQL_JAVA_USER, JavaUserPostgresqlRepository> {
+        JdbcJavaEntityTest<POSTGRESQL_JAVA_USER, JavaUserPostgresqlRepository> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserPostgresqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserPostgresqlRepository by lazy {
+        getContextRepository()
     }
 }
 

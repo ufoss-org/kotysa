@@ -16,7 +16,10 @@ class SpringJdbcSelectLimitOffsetMariadbTest: AbstractSpringJdbcMariadbTest<Limi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LimitOffsetRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LimitOffsetRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

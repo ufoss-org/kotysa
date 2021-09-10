@@ -18,7 +18,10 @@ class SpringJdbcInheritancePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Inh
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<InheritancePostgresqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: InheritancePostgresqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test
