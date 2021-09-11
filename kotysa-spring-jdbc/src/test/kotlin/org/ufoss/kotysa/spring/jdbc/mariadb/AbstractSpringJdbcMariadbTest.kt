@@ -19,14 +19,14 @@ import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
-import org.ufoss.kotysa.test.repositories.JdbcrepositoryTest
+import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
 import org.ufoss.kotysa.transaction.TransactionalOp
 
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
-abstract class AbstractSpringJdbcMariadbTest<T : Repository> : JdbcrepositoryTest<T> {
+abstract class AbstractSpringJdbcMariadbTest<T : Repository> : JdbcRepositoryTest<T> {
 
     protected lateinit var context: ConfigurableApplicationContext
 

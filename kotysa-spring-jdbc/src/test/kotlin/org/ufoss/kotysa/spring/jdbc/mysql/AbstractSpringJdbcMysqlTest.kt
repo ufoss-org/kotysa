@@ -21,14 +21,14 @@ import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.repositories.JdbcrepositoryTest
+import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
 import org.ufoss.kotysa.transaction.TransactionalOp
 
 
 @ExtendWith(MySqlContainerExecutionHook::class)
 @ResourceLock(MySqlContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
-abstract class AbstractSpringJdbcMysqlTest<T : Repository> : JdbcrepositoryTest<T> {
+abstract class AbstractSpringJdbcMysqlTest<T : Repository> : JdbcRepositoryTest<T> {
 
     protected lateinit var context: ConfigurableApplicationContext
 

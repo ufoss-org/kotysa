@@ -19,13 +19,13 @@ import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
-import org.ufoss.kotysa.test.repositories.JdbcrepositoryTest
+import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
 import org.ufoss.kotysa.transaction.TransactionalOp
 
 @ExtendWith(MsSqlContainerExecutionHook::class)
 @ResourceLock(MsSqlContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
-abstract class AbstractSpringJdbcMssqlTest<T : Repository> : JdbcrepositoryTest<T> {
+abstract class AbstractSpringJdbcMssqlTest<T : Repository> : JdbcRepositoryTest<T> {
 
     protected lateinit var context: ConfigurableApplicationContext
 

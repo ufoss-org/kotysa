@@ -15,11 +15,11 @@ import org.springframework.fu.kofu.jdbc.jdbc
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
-import org.ufoss.kotysa.test.repositories.JdbcrepositoryTest
+import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
 import org.ufoss.kotysa.transaction.TransactionalOp
 
 
-abstract class AbstractSpringJdbcH2Test<T : Repository> : JdbcrepositoryTest<T> {
+abstract class AbstractSpringJdbcH2Test<T : Repository> : JdbcRepositoryTest<T> {
 
     protected abstract val context: ConfigurableApplicationContext
 
