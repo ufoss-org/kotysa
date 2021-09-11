@@ -18,7 +18,10 @@ class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryPostgresqlUpdateDelete>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryPostgresqlUpdateDelete by lazy {
+        getContextRepository()
     }
 
     @Test

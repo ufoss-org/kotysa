@@ -18,7 +18,10 @@ class R2DbcSelectIntPostgresqlTest : AbstractR2dbcPostgresqlTest<IntRepositoryPo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<IntRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: IntRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     private val intWithNullable = IntEntity(

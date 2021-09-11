@@ -13,7 +13,6 @@ import org.ufoss.kotysa.test.roleUser
 
 class SpringJdbcSelectAndH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectAnd>() {
     override val context = startContext<UserRepositorySpringJdbcH2SelectAnd>()
-
     override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectAnd>()
 
     @Test

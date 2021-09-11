@@ -18,7 +18,10 @@ class R2DbcSelectStringAsTinyTextMysqlTest : AbstractR2dbcMysqlTest<UserReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMysqlSelectStringAsTinyText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMysqlSelectStringAsTinyText by lazy {
+        getContextRepository()
     }
 
     @Test

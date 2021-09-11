@@ -14,7 +14,6 @@ import java.time.LocalTime
 
 class SpringJdbcSelectLocalTimeH2Test : AbstractSpringJdbcH2Test<LocalTimeRepositoryH2Select>() {
     override val context = startContext<LocalTimeRepositoryH2Select>()
-
     override val repository = getContextRepository<LocalTimeRepositoryH2Select>()
 
     @Test

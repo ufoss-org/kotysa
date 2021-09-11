@@ -19,7 +19,10 @@ class R2DbcSelectKotlinxLocalDateTimeMssqlTest : AbstractR2dbcMssqlTest<KotlinxL
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<KotlinxLocalDateTimeRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: KotlinxLocalDateTimeRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

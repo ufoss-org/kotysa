@@ -19,7 +19,10 @@ class R2DbcSelectUuidPostgresqlTest : AbstractR2dbcPostgresqlTest<UuidRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UuidRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UuidRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

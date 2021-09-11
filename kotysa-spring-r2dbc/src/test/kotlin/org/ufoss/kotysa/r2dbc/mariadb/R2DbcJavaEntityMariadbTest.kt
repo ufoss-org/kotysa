@@ -20,7 +20,10 @@ class R2DbcJavaEntityMysqlTest :
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserMariadbRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserMariadbRepository by lazy {
+        getContextRepository()
     }
 }
 

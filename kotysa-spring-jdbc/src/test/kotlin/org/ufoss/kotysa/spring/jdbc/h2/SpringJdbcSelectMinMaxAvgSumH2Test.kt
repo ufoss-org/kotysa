@@ -11,7 +11,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractSpringJdbcH2Test<MinMaxAvgSumRepositoryH2Select>() {
     override val context = startContext<MinMaxAvgSumRepositoryH2Select>()
-
     override val repository = getContextRepository<MinMaxAvgSumRepositoryH2Select>()
 
     @Test

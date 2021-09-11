@@ -15,7 +15,6 @@ import java.time.ZoneOffset
 
 class SpringJdbcSelectOffsetDateTimeH2Test : AbstractSpringJdbcH2Test<OffsetDateTimeRepositoryH2Select>() {
     override val context = startContext<OffsetDateTimeRepositoryH2Select>()
-
     override val repository = getContextRepository<OffsetDateTimeRepositoryH2Select>()
 
     @Test

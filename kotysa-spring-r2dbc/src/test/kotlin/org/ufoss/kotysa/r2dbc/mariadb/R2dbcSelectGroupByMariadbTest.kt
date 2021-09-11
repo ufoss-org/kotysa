@@ -16,7 +16,10 @@ class R2dbcSelectGroupByMariadbTest : AbstractR2dbcMariadbTest<GroupByRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<GroupByRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: GroupByRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

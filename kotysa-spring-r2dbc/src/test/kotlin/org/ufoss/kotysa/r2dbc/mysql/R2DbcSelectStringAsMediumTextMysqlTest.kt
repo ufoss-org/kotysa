@@ -18,7 +18,10 @@ class R2DbcSelectStringAsMediumTextMysqlTest : AbstractR2dbcMysqlTest<UserReposi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMysqlSelectStringAsMediumText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMysqlSelectStringAsMediumText by lazy {
+        getContextRepository()
     }
 
     @Test

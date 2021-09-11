@@ -17,10 +17,7 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Repository>() {
     override val context = startContext<InheritanceH2Repository>()
-
     override val repository = getContextRepository<InheritanceH2Repository>()
-    private val transactionManager = context.getBean<PlatformTransactionManager>()
-    private val operator = TransactionTemplate(transactionManager).transactionalOp()
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {

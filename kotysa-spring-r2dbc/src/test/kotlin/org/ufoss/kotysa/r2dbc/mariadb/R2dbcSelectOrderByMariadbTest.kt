@@ -16,7 +16,10 @@ class R2dbcSelectOrderByMariadbTest : AbstractR2dbcMariadbTest<OrderByRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OrderByRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OrderByRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

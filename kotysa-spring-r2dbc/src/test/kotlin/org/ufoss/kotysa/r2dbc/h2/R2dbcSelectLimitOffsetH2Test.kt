@@ -5,18 +5,13 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectLimitOffsetH2Test : AbstractR2dbcH2Test<LimitOffsetRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<LimitOffsetRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<LimitOffsetRepositoryH2Select>()
+    override val repository = getContextRepository<LimitOffsetRepositoryH2Select>()
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {

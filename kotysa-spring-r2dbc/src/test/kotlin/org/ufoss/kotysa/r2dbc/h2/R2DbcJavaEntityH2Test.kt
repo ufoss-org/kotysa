@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.R2dbcJavaEntityTest
 import org.ufoss.kotysa.r2dbc.R2dbcJavaUserRepository
@@ -15,12 +14,8 @@ import org.ufoss.kotysa.test.h2Tables
 
 class R2DbcJavaEntityH2Test :
         AbstractR2dbcH2Test<JavaUserH2Repository>(), R2dbcJavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<JavaUserH2Repository>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<JavaUserH2Repository>()
+    override val repository = getContextRepository<JavaUserH2Repository>()
 }
 
 

@@ -18,7 +18,10 @@ class R2DbcSelectStringAsTextPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRe
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryPostgresqlSelectStringAsText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryPostgresqlSelectStringAsText by lazy {
+        getContextRepository()
     }
 
     @Test

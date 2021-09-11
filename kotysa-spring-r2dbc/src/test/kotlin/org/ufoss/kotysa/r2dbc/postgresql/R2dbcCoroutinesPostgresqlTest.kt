@@ -23,7 +23,10 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<CoroutinesUserPostgresqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: CoroutinesUserPostgresqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

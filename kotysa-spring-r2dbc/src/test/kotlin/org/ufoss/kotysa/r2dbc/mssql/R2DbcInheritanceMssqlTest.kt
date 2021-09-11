@@ -19,7 +19,10 @@ class R2DbcInheritanceMssqlTest : AbstractR2dbcMssqlTest<InheritanceMssqlReposit
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<InheritanceMssqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: InheritanceMssqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

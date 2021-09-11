@@ -25,7 +25,10 @@ class R2DbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<AllTypesRepositoryMariadb>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: AllTypesRepositoryMariadb by lazy {
+        getContextRepository()
     }
 
     @Test

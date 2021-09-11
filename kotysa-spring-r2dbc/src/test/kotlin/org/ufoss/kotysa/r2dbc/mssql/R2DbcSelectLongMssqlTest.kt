@@ -18,7 +18,10 @@ class R2DbcSelectLongMssqlTest : AbstractR2dbcMssqlTest<LongRepositoryMssqlSelec
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LongRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LongRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     private val longWithNullable = LongEntity(

@@ -18,7 +18,10 @@ class R2DbcUpdateDeleteMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlUpd
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMssqlUpdateDelete>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMssqlUpdateDelete by lazy {
+        getContextRepository()
     }
 
     @Test

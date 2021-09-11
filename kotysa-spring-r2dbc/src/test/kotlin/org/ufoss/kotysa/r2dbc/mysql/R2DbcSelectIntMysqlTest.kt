@@ -18,7 +18,10 @@ class R2DbcSelectIntMysqlTest : AbstractR2dbcMysqlTest<IntRepositoryMysqlSelect>
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<IntRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: IntRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     private val intWithNullable = IntEntity(

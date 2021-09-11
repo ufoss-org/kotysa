@@ -14,7 +14,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectKotlinxLocalDateH2Test : AbstractSpringJdbcH2Test<KotlinxLocalDateRepositoryH2Select>() {
     override val context = startContext<KotlinxLocalDateRepositoryH2Select>()
-
     override val repository = getContextRepository<KotlinxLocalDateRepositoryH2Select>()
 
     @Test

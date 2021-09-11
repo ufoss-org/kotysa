@@ -20,7 +20,10 @@ class R2DbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMa
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMariadbSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMariadbSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

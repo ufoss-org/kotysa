@@ -17,7 +17,10 @@ class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposit
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryPostgresqlSelectBoolean>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryPostgresqlSelectBoolean by lazy {
+        getContextRepository()
     }
 
     @Test

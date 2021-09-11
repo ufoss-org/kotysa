@@ -12,7 +12,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2UpdateDelete>() {
     override val context = startContext<UserRepositorySpringJdbcH2UpdateDelete>()
-
     override val repository = getContextRepository<UserRepositorySpringJdbcH2UpdateDelete>()
 
     @Test

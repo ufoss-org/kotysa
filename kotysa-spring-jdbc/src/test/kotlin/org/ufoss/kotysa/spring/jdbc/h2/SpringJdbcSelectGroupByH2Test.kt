@@ -11,7 +11,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcH2Test<GroupByRepositoryH2Select>() {
     override val context = startContext<GroupByRepositoryH2Select>()
-
     override val repository = getContextRepository<GroupByRepositoryH2Select>()
 
     @Test

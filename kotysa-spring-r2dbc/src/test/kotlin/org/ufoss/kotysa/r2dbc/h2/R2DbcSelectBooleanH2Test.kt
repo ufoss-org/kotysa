@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_USER
@@ -14,12 +13,8 @@ import org.ufoss.kotysa.test.userJdoe
 
 
 class R2DbcSelectBooleanH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectBoolean>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<UserRepositoryH2SelectBoolean>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<UserRepositoryH2SelectBoolean>()
+    override val repository = getContextRepository<UserRepositoryH2SelectBoolean>()
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {

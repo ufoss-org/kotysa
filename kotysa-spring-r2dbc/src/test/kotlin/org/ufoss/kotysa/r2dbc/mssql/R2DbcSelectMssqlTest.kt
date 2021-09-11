@@ -20,7 +20,10 @@ class R2DbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlSelect>()
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

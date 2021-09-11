@@ -23,7 +23,10 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<CoroutinesUserMysqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: CoroutinesUserMysqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

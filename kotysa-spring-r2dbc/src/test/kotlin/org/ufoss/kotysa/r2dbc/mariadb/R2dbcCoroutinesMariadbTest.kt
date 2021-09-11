@@ -23,7 +23,10 @@ class R2dbcCoroutinesMariadbTest : AbstractR2dbcMariadbTest<CoroutinesUserMariad
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<CoroutinesUserMariadbRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: CoroutinesUserMariadbRepository by lazy {
+        getContextRepository()
     }
 
     @Test

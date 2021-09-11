@@ -25,7 +25,10 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<AllTypesRepositoryPostgresql>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: AllTypesRepositoryPostgresql by lazy {
+        getContextRepository()
     }
 
     @Test

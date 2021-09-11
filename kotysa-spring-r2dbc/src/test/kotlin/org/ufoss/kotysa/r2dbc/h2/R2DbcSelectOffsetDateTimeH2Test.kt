@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_OFFSET_DATE_TIME
@@ -17,12 +16,8 @@ import java.time.ZoneOffset
 
 
 class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcH2Test<OffsetDateTimeRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<OffsetDateTimeRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<OffsetDateTimeRepositoryH2Select>()
+    override val repository = getContextRepository<OffsetDateTimeRepositoryH2Select>()
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {

@@ -20,7 +20,10 @@ class R2DbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryPostgresqlSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryPostgresqlSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

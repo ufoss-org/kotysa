@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.NoResultException
@@ -17,12 +16,8 @@ import org.ufoss.kotysa.test.*
 
 
 class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<CoroutinesUserH2Repository>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<CoroutinesUserH2Repository>()
+    override val repository = getContextRepository<CoroutinesUserH2Repository>()
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {

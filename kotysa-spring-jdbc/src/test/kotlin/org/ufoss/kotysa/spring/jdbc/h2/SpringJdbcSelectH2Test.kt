@@ -15,7 +15,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2Select>() {
     override val context = startContext<UserRepositorySpringJdbcH2Select>()
-
     override val repository = getContextRepository<UserRepositorySpringJdbcH2Select>()
 
     @Test

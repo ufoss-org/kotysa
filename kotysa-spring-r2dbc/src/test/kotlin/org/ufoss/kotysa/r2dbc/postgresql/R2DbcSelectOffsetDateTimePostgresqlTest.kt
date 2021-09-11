@@ -20,7 +20,10 @@ class R2DbcSelectOffsetDateTimeH2Test : AbstractR2dbcPostgresqlTest<OffsetDateTi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OffsetDateTimeRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OffsetDateTimeRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

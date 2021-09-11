@@ -20,7 +20,10 @@ class R2DbcJavaEntityMssqlTest :
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserMssqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserMssqlRepository by lazy {
+        getContextRepository()
     }
 }
 

@@ -18,7 +18,10 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMariadbUpdateDelete>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMariadbUpdateDelete by lazy {
+        getContextRepository()
     }
 
     @Test

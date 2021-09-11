@@ -6,7 +6,6 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
@@ -15,12 +14,8 @@ import reactor.kotlin.test.test
 
 
 class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<UserRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<UserRepositoryH2Select>()
+    override val repository = getContextRepository<UserRepositoryH2Select>()
 
     @Test
     fun `Verify selectAllUsers returns all users`() {

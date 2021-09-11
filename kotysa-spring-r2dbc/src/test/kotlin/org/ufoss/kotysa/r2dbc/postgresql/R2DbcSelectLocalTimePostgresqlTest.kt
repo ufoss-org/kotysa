@@ -19,7 +19,10 @@ class R2DbcSelectLocalTimePostgresqlTest : AbstractR2dbcPostgresqlTest<LocalTime
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LocalTimeRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LocalTimeRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

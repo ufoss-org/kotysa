@@ -18,7 +18,10 @@ class R2DbcSelectLongPostgresqlTest : AbstractR2dbcPostgresqlTest<LongRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LongRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LongRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     private val longWithNullable = LongEntity(

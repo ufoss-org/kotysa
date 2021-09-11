@@ -25,7 +25,10 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<AllTypesRepositoryMssql>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: AllTypesRepositoryMssql by lazy {
+        getContextRepository()
     }
 
     @Test

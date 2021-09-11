@@ -14,7 +14,6 @@ import java.util.*
 
 class SpringJdbcSelectUuidH2Test : AbstractSpringJdbcH2Test<UuidRepositoryH2Select>() {
     override val context = startContext<UuidRepositoryH2Select>()
-
     override val repository = getContextRepository<UuidRepositoryH2Select>()
 
     @Test

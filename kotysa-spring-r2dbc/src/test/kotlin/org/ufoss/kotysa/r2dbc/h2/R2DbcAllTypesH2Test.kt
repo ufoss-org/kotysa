@@ -9,7 +9,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
@@ -22,12 +21,8 @@ import java.util.*
 
 
 class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<AllTypesRepositoryH2>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<AllTypesRepositoryH2>()
+    override val repository = getContextRepository<AllTypesRepositoryH2>()
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

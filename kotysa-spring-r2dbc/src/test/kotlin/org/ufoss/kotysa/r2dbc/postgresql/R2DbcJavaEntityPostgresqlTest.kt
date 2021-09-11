@@ -20,7 +20,10 @@ class R2DbcJavaEntityPostgresqlTest : AbstractR2dbcPostgresqlTest<JavaUserPostgr
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<JavaUserPostgresqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: JavaUserPostgresqlRepository by lazy {
+        getContextRepository()
     }
 }
 

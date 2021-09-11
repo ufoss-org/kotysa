@@ -26,7 +26,6 @@ import org.ufoss.kotysa.transaction.TransactionalOp
 @ResourceLock(MsSqlContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
 abstract class AbstractSpringJdbcMssqlTest<T : Repository> : JdbcRepositoryTest<T> {
-
     protected lateinit var context: ConfigurableApplicationContext
 
     protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =

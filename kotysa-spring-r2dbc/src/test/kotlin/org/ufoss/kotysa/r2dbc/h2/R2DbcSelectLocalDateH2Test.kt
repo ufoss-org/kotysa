@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_LOCAL_DATE
@@ -16,12 +15,8 @@ import java.time.LocalDate
 
 
 class R2DbcSelectLocalDateH2Test : AbstractR2dbcH2Test<LocalDateRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<LocalDateRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<LocalDateRepositoryH2Select>()
+    override val repository = getContextRepository<LocalDateRepositoryH2Select>()
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds localDateWithNullable`() {

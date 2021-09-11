@@ -16,7 +16,10 @@ class R2dbcSelectGroupByMysqlTest : AbstractR2dbcMysqlTest<GroupByRepositoryMysq
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<GroupByRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: GroupByRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

@@ -19,7 +19,10 @@ class R2DbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMar
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMariadbSelectBoolean>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMariadbSelectBoolean by lazy {
+        getContextRepository()
     }
 
     @Test
