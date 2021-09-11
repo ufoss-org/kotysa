@@ -20,7 +20,10 @@ class R2DbcSelectDistinctMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlS
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMysqlSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMysqlSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

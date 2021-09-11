@@ -19,7 +19,10 @@ class R2DbcSelectLocalDateMysqlTest : AbstractR2dbcMysqlTest<LocalDateRepository
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LocalDateRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LocalDateRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

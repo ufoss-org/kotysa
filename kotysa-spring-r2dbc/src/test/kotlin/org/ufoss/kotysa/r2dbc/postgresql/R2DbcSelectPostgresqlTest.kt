@@ -20,7 +20,10 @@ class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPost
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

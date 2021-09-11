@@ -19,7 +19,10 @@ class R2DbcSelectLocalDateTimeMariadbTest : AbstractR2dbcMariadbTest<LocalDateTi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LocalDateTimeRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LocalDateTimeRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

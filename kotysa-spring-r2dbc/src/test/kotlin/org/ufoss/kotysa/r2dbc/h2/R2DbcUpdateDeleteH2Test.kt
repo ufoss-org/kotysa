@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
@@ -13,12 +12,8 @@ import reactor.kotlin.test.test
 
 
 class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<UserRepositoryH2UpdateDelete>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<UserRepositoryH2UpdateDelete>()
+    override val repository = getContextRepository<UserRepositoryH2UpdateDelete>()
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

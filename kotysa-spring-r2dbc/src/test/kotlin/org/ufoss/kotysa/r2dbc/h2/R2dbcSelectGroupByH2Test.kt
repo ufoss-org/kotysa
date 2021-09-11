@@ -5,18 +5,13 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectGroupByH2Test : AbstractR2dbcH2Test<GroupByRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<GroupByRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<GroupByRepositoryH2Select>()
+    override val repository = getContextRepository<GroupByRepositoryH2Select>()
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {

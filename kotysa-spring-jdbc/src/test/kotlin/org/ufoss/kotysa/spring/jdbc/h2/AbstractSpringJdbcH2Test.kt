@@ -20,7 +20,6 @@ import org.ufoss.kotysa.transaction.TransactionalOp
 
 
 abstract class AbstractSpringJdbcH2Test<T : Repository> : JdbcRepositoryTest<T> {
-
     protected abstract val context: ConfigurableApplicationContext
 
     protected inline fun <reified U : Repository> startContext() =

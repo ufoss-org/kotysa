@@ -19,7 +19,10 @@ class R2DbcSelectKotlinxLocalDateMariadbTest : AbstractR2dbcMariadbTest<KotlinxL
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<KotlinxLocalDateRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: KotlinxLocalDateRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     @Test

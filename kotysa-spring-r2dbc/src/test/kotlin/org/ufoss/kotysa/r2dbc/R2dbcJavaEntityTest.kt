@@ -6,7 +6,6 @@ package org.ufoss.kotysa.r2dbc
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.test.JAVA_USER
 import org.ufoss.kotysa.test.UserDto
 import org.ufoss.kotysa.test.javaBboss
@@ -14,9 +13,7 @@ import org.ufoss.kotysa.test.javaJdoe
 import reactor.kotlin.test.test
 
 // TODO move all tests following this model
-interface R2dbcJavaEntityTest<T : JAVA_USER, U : R2dbcJavaUserRepository<T>> {
-    val repository: U
-    val operator: ReactorTransactionalOp
+interface R2dbcJavaEntityTest<T : JAVA_USER, U : R2dbcJavaUserRepository<T>> : R2dbcRepositoryTest<U> {
 
     @Test
     fun `Verify selectAll returns all users`() {

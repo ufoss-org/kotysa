@@ -20,7 +20,10 @@ class R2dbcSelectLimitOffsetMssqlTest : AbstractR2dbcMssqlTest<LimitOffsetReposi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LimitOffsetRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LimitOffsetRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

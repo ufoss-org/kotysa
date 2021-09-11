@@ -5,18 +5,13 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractR2dbcH2Test<MinMaxAvgSumRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<MinMaxAvgSumRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<MinMaxAvgSumRepositoryH2Select>()
+    override val repository = getContextRepository<MinMaxAvgSumRepositoryH2Select>()
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {

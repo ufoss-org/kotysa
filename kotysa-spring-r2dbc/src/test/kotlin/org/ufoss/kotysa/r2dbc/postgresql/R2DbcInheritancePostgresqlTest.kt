@@ -19,7 +19,10 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<InheritancePostgresqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: InheritancePostgresqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

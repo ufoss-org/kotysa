@@ -20,7 +20,10 @@ class R2DbcSelectDistinctMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlS
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMssqlSelectDistinct>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMssqlSelectDistinct by lazy {
+        getContextRepository()
     }
 
     @Test

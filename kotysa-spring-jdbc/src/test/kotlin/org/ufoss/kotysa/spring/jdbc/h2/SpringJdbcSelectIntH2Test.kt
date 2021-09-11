@@ -13,7 +13,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select>() {
     override val context = startContext<IntRepositoryH2Select>()
-
     override val repository = getContextRepository<IntRepositoryH2Select>()
 
     private val intWithNullable = IntEntity(

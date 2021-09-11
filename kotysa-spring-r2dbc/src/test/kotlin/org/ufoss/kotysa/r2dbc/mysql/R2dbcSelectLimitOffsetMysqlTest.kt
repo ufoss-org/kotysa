@@ -16,7 +16,10 @@ class R2dbcSelectLimitOffsetMysqlTest : AbstractR2dbcMysqlTest<LimitOffsetReposi
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LimitOffsetRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LimitOffsetRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

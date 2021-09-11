@@ -13,7 +13,6 @@ import org.ufoss.kotysa.test.*
 
 class SpringJdbcSelectLongH2Test : AbstractSpringJdbcH2Test<LongRepositoryH2Select>() {
     override val context = startContext<LongRepositoryH2Select>()
-
     override val repository = getContextRepository<LongRepositoryH2Select>()
 
     private val longWithNullable = LongEntity(

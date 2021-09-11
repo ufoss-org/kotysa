@@ -19,7 +19,10 @@ class R2DbcSelectOrPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryPostgresqlSelectOr>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryPostgresqlSelectOr by lazy {
+        getContextRepository()
     }
 
     @Test

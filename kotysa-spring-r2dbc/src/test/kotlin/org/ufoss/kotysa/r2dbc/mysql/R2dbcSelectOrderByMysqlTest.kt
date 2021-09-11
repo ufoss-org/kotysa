@@ -16,7 +16,10 @@ class R2dbcSelectOrderByMysqlTest : AbstractR2dbcMysqlTest<OrderByRepositoryMysq
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<OrderByRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: OrderByRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

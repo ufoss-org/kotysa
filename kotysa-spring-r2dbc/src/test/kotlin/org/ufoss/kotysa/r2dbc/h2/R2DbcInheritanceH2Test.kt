@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
@@ -14,12 +13,8 @@ import reactor.kotlin.test.test
 
 
 class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<InheritanceH2Repository>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<InheritanceH2Repository>()
+    override val repository = getContextRepository<InheritanceH2Repository>()
 
     @Test
     fun `Verify extension function selectInheritedById finds inherited`() {

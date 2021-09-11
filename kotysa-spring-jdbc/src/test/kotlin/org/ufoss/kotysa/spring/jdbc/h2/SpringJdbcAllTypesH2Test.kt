@@ -19,7 +19,6 @@ import java.util.*
 
 class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>() {
     override val context = startContext<AllTypesRepositoryH2>()
-
     override val repository = getContextRepository<AllTypesRepositoryH2>()
 
     @Test

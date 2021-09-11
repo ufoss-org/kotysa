@@ -20,7 +20,10 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMysqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMysqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

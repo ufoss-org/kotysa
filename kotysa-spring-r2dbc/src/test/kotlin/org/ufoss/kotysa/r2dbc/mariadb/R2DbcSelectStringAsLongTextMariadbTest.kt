@@ -18,7 +18,10 @@ class R2DbcSelectStringAsLongTextMariadbTest : AbstractR2dbcMariadbTest<UserRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMariadbSelectStringAsLongText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMariadbSelectStringAsLongText by lazy {
+        getContextRepository()
     }
 
     @Test

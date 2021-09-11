@@ -16,7 +16,10 @@ class R2dbcSelectLimitOffsetPostgresqlTest : AbstractR2dbcPostgresqlTest<LimitOf
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LimitOffsetRepositoryPostgresqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LimitOffsetRepositoryPostgresqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

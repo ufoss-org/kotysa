@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_ROLE
@@ -13,12 +12,8 @@ import org.ufoss.kotysa.test.roleUser
 
 
 class R2DbcSelectAndH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectAnd>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<UserRepositoryH2SelectAnd>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<UserRepositoryH2SelectAnd>()
+    override val repository = getContextRepository<UserRepositoryH2SelectAnd>()
 
     @Test
     fun `Verify selectRolesByLabels finds h2User`() {

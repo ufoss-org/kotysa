@@ -19,7 +19,10 @@ class R2DbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<InheritanceMysqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: InheritanceMysqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

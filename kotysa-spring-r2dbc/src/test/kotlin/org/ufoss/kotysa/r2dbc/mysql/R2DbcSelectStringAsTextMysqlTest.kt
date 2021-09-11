@@ -18,7 +18,10 @@ class R2DbcSelectStringAsTextMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMy
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMysqlSelectStringAsText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMysqlSelectStringAsText by lazy {
+        getContextRepository()
     }
 
     @Test

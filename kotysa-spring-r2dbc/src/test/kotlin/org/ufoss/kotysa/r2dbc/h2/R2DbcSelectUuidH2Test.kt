@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
@@ -13,12 +12,8 @@ import java.util.*
 
 
 class R2DbcSelectUuidH2Test : AbstractR2dbcH2Test<UuidRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<UuidRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<UuidRepositoryH2Select>()
+    override val repository = getContextRepository<UuidRepositoryH2Select>()
 
     @Test
     fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {

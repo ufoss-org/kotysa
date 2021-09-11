@@ -18,7 +18,10 @@ class R2DbcSelectLongMariadbTest : AbstractR2dbcMariadbTest<LongRepositoryMariad
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<LongRepositoryMariadbSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: LongRepositoryMariadbSelect by lazy {
+        getContextRepository()
     }
 
     private val longWithNullable = LongEntity(

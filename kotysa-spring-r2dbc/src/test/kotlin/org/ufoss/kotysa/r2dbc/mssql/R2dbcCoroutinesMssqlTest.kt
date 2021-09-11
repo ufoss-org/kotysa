@@ -23,7 +23,10 @@ class R2dbcCoroutinesMssqlTest : AbstractR2dbcMssqlTest<CoroutinesUserMssqlRepos
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<CoroutinesUserMssqlRepository>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: CoroutinesUserMssqlRepository by lazy {
+        getContextRepository()
     }
 
     @Test

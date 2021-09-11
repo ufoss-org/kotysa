@@ -18,7 +18,10 @@ class R2DbcSelectStringAsLongTextMysqlTest : AbstractR2dbcMysqlTest<UserReposito
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMysqlSelectStringAsLongText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMysqlSelectStringAsLongText by lazy {
+        getContextRepository()
     }
 
     @Test

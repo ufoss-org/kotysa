@@ -16,7 +16,10 @@ class R2dbcSelectMinMaxAvgSumMssqlTest : AbstractR2dbcMssqlTest<MinMaxAvgSumRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<MinMaxAvgSumRepositoryMssqlSelect>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: MinMaxAvgSumRepositoryMssqlSelect by lazy {
+        getContextRepository()
     }
 
     @Test

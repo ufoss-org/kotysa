@@ -18,7 +18,10 @@ class R2DbcSelectStringAsMediumTextMariadbTest : AbstractR2dbcMariadbTest<UserRe
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMariadbSelectStringAsMediumText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMariadbSelectStringAsMediumText by lazy {
+        getContextRepository()
     }
 
     @Test

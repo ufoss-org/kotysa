@@ -5,19 +5,14 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 
 class R2DbcSelectLongH2Test : AbstractR2dbcH2Test<LongRepositoryH2Select>() {
-
-    @BeforeAll
-    fun beforeAll() {
-        context = startContext<LongRepositoryH2Select>()
-        repository = getContextRepository()
-    }
+    override val context = startContext<LongRepositoryH2Select>()
+    override val repository = getContextRepository<LongRepositoryH2Select>()
 
     private val longWithNullable = LongEntity(
             org.ufoss.kotysa.test.longWithNullable.longNotNull,

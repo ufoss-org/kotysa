@@ -18,7 +18,10 @@ class R2DbcSelectStringAsTinyTextMariadbTest : AbstractR2dbcMariadbTest<UserRepo
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
         context = startContext<UserRepositoryMariadbSelectStringAsTinyText>(resource)
-        repository = getContextRepository()
+    }
+
+    override val repository: UserRepositoryMariadbSelectStringAsTinyText by lazy {
+        getContextRepository()
     }
 
     @Test
