@@ -7,7 +7,7 @@ package org.ufoss.kotysa.test.repositories
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.transaction.TransactionalOp
 
-interface JdbcrepositoryTest<T : Repository> {
+interface JdbcRepositoryTest<T : Repository> {
     val repository: T
     val operator: TransactionalOp
 }
