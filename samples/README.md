@@ -11,3 +11,7 @@ A sample project for a Spring Boot Coroutines WebFlux application with Kofu and 
 ## kotysa-spring-jdbc
 
 A sample project for a Spring Boot Servlet WebMVC application with Kofu and a JDBC backend accessed via Kotysa.
+
+## kotysa-ktor-jdbc
+
+A sample project for a Ktor Netty application with a JDBC backend accessed via Kotysa.
