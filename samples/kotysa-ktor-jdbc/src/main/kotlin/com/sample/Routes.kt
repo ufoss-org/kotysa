@@ -25,7 +25,7 @@ fun Application.routes() {
         }
 
         get("/api/users/{id}") {
-            call.respond(userRepository.findOne(call.parameters["login"]!!.toInt()))
+            call.respond(userRepository.findOne(call.parameters["id"]!!.toInt()))
         }
     }
 }
