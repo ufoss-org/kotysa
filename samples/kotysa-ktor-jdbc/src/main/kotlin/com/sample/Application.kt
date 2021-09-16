@@ -2,7 +2,6 @@ package com.sample
 
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import com.sample.plugins.*
 import io.ktor.application.*
 
 fun main() {

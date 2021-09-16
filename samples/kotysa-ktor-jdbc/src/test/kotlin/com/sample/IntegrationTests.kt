@@ -4,8 +4,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*
 import io.ktor.server.testing.*
-import org.kodein.di.instance
-import org.kodein.di.ktor.closestDI
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,15 +13,7 @@ class IntegrationTests {
     
     @Test
     fun `Request HTTP API endpoint for listing all users`() {
-        withTestApplication({
-            configureApp("test")
-            
-            // init DB
-            val roleRepository by closestDI().instance<RoleRepository>()
-            roleRepository.init()
-            val userRepository by closestDI().instance<UserRepository>()
-            userRepository.init()
-        }) {
+        withTestApplication({configureApp("test")}) {
             handleRequest(HttpMethod.Get, "/api/users").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
                 val list = response.parseBodyList<User>()
