@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.5.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.5.31'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'org.springframework.boot' version '2.4.4'
 }
@@ -13,7 +13,7 @@ dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework:spring-jdbc')
 
-    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:1.1.1')
+    implementation('org.ufoss.kotysa:kotysa-spring-jdbc:1.1.2')
     implementation('org.springframework.fu:spring-fu-kofu:0.4.4')
 
     runtimeOnly('com.h2database:h2')
@@ -42,6 +42,6 @@ test {
 }
 
 wrapper {
-    gradleVersion = '7.1.1'
+    gradleVersion = '7.2'
     distributionType = Wrapper.DistributionType.ALL
 }
