@@ -4,6 +4,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*
 import io.ktor.server.testing.*
+import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,7 +17,18 @@ class IntegrationTests {
         withTestApplication({configureApp("test")}) {
             handleRequest(HttpMethod.Get, "/api/users").apply {
                 assertEquals(HttpStatusCode.OK, response.status())
-                val list = response.parseBodyList<User>()
+                assertThat(response.parseBodyList<User>())
+                    .hasSize(2)
+            }
+        }
+    }
+
+    @Test
+    fun `Request HTTP API endpoint for getting one specified user`() {
+        withTestApplication({configureApp("test")}) {
+            handleRequest(HttpMethod.Get, "/api/users/123").apply {
+                assertEquals(HttpStatusCode.OK, response.status())
+                response.parseBody<User>()
             }
         }
     }
