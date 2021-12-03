@@ -23,6 +23,7 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec {
         val table = tables.getTable(row::class)
         var index = 0
+
         return table.columns
                 .fold(client.sql(insertSql(row))) { execSpec, column ->
                     val value = column.entityGetter(row)

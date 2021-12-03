@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc
 
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
+import org.springframework.r2dbc.core.awaitOne
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 
@@ -20,7 +21,7 @@ private class CoroutinesSqlClientR2Dbc(
     override val module = Module.SPRING_R2DBC
 
     override suspend fun <T : Any> insert(row: T) =
-            executeInsert(row).await()
+            executeInsert(row).fetch().awaitOne() // todo
 
     override suspend fun <T : Any> insert(vararg rows: T) {
         rows.forEach { row -> insert(row) }

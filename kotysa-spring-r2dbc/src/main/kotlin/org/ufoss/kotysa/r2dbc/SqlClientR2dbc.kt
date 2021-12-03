@@ -20,8 +20,8 @@ private class SqlClientR2dbc(
 
     override val module = Module.SPRING_R2DBC
     
-    override fun <T : Any> insert(row: T) =
-            executeInsert(row).then()
+    override infix fun <T : Any> insert(row: T): Mono<Void> =
+            executeInsert(row).fetch().then()
 
     override fun <T : Any> insert(vararg rows: T) =
             rows.fold(Mono.empty<Void>()) { mono, row -> mono.then(insert(row)) }
