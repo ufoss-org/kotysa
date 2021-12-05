@@ -33,7 +33,7 @@ public class IntDbIntColumnNullable<T : Any> internal constructor(
 ) : DbIntColumn<T, Int>(), IntColumnNullable<T> {
     override val isNullable = defaultValue == null
     // No auto-increment
-    override val isAutoIncrement = false
+    override val isAutoIncrement: Boolean = false
 }
 
 public class BooleanDbIntColumnNotNull<T : Any> internal constructor(
@@ -41,7 +41,7 @@ public class BooleanDbIntColumnNotNull<T : Any> internal constructor(
         override val columnName: String?,
 ) : DbIntColumnNotNull<T, Boolean>(), BooleanColumnNotNull<T> {
     // No auto-increment
-    override val isAutoIncrement = false
+    override val isAutoIncrement: Boolean = false
 }
 
 public class LongDbIntColumnNotNull<T : Any> internal constructor(
@@ -57,5 +57,5 @@ public class LongDbIntColumnNullable<T : Any> internal constructor(
 ) : DbIntColumn<T, Long>(), LongColumnNullable<T> {
     override val isNullable = defaultValue == null
     // No auto-increment
-    override val isAutoIncrement = false
+    override val isAutoIncrement: Boolean = false
 }

@@ -12,7 +12,7 @@ abstract class AbstractCustomerRepositoryMssql(protected val sqlClient: ReactorS
 
     override fun init() {
         createTables()
-                .then(insertCustomers())
+                .then(insertCustomers().then())
                 .block()
     }
 

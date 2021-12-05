@@ -171,7 +171,7 @@ class UserRepositoryMariadbSelectStringAsLongText(dbClient: DatabaseClient) : Re
 
     override fun init() {
         createTables()
-            .then(insertTexts())
+            .then(insertTexts().then())
             .block()
     }
 

@@ -201,7 +201,7 @@ class LongRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertLongs())
+                .then(insertLongs().then())
                 .block()
     }
 

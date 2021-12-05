@@ -184,7 +184,7 @@ class KotlinxLocalDateTimeRepositoryH2Select(private val sqlClient: ReactorSqlCl
 
     override fun init() {
         createTables()
-                .then(insertLocalDateTimes())
+                .then(insertLocalDateTimes().then())
                 .block()
     }
 

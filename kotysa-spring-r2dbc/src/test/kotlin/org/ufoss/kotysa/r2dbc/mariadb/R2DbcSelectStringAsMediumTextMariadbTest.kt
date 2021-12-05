@@ -171,7 +171,7 @@ class UserRepositoryMariadbSelectStringAsMediumText(dbClient: DatabaseClient) : 
 
     override fun init() {
         createTables()
-            .then(insertMediumTexts())
+            .then(insertMediumTexts().then())
             .block()
     }
 

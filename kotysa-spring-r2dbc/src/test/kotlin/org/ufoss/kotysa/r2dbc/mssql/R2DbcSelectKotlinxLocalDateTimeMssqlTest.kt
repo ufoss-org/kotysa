@@ -192,7 +192,7 @@ class KotlinxLocalDateTimeRepositoryMssqlSelect(dbClient: DatabaseClient) : Repo
 
     override fun init() {
         createTables()
-                .then(insertLocalDateTimes())
+                .then(insertLocalDateTimes().then())
                 .block()
     }
 

@@ -33,5 +33,5 @@ public class LongDbBigIntColumnNullable<T : Any> internal constructor(
 ) : DbBigIntColumn<T, Long>(), LongColumnNullable<T> {
     override val isNullable = defaultValue == null
     // No auto-increment
-    override val isAutoIncrement = false
+    override val isAutoIncrement: Boolean = false
 }

@@ -171,7 +171,7 @@ class UserRepositoryMysqlSelectStringAsTinyText(dbClient: DatabaseClient) : Repo
 
     override fun init() {
         createTables()
-            .then(insertTinyTexts())
+            .then(insertTinyTexts().then())
             .block()
     }
 

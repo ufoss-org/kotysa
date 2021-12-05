@@ -12,8 +12,7 @@ import kotlin.reflect.KParameter
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.full.primaryConstructor
 
-public interface Field<T> {
-    public val properties: DefaultSqlClientCommon.Properties
+public sealed interface Field<T> {
     public val fieldNames: List<String>
     public val builder: (RowImpl) -> T
 }
@@ -27,18 +26,19 @@ public interface FieldNotNull<T : Any> : Field<T>
 public interface FieldNullable<T : Any> : Field<T?>
 
 internal class CountField<T : Any, U : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        column: Column<T, U>?,
+    properties: DefaultSqlClientCommon.Properties,
+    column: Column<T, U>?,
 ) : FieldNotNull<Long> {
-    override val fieldNames: List<String> = listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
+    override val fieldNames: List<String> =
+        listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
 
     override val builder: (RowImpl) -> Long = { row -> row.getAndIncrement(Long::class.javaObjectType)!! }
 }
 
 internal class ColumnField<T : Any, U : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        column: Column<T, U>,
-        classifier: FieldClassifier,
+    properties: DefaultSqlClientCommon.Properties,
+    column: Column<T, U>,
+    classifier: FieldClassifier,
 ) : FieldNullable<U> {
     override val fieldNames: List<String> = when (classifier) {
         FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns))
@@ -51,8 +51,8 @@ internal class ColumnField<T : Any, U : Any> internal constructor(
 }
 
 internal class AvgField<T : Any, U : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        column: Column<T, U>,
+    properties: DefaultSqlClientCommon.Properties,
+    column: Column<T, U>,
 ) : FieldNotNull<BigDecimal> {
     override val fieldNames: List<String> = listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
 
@@ -66,8 +66,8 @@ internal class AvgField<T : Any, U : Any> internal constructor(
 }
 
 internal class LongSumField<T : Any, U : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        column: Column<T, U>,
+    properties: DefaultSqlClientCommon.Properties,
+    column: Column<T, U>,
 ) : FieldNotNull<Long> {
     override val fieldNames: List<String> = listOf("SUM(${column.getFieldName(properties.tables.allColumns)})")
 
@@ -84,16 +84,17 @@ internal class LongSumField<T : Any, U : Any> internal constructor(
  * Selected field
  */
 internal class TableField<T : Any> internal constructor(
-        override val properties: DefaultSqlClientCommon.Properties,
-        internal val table: AbstractTable<T>,
+    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+    availableTables: Map<Table<*>, KotysaTable<*>>,
+    internal val table: AbstractTable<T>,
 ) : Field<T> {
 
     override val fieldNames: List<String> =
-            table.columns.map { column -> column.getFieldName(properties.tables.allColumns) }
+        table.columns.map { column -> column.getFieldName(availableColumns) }
 
     @Suppress("UNCHECKED_CAST")
     override val builder: (RowImpl) -> T = { row ->
-        val kotysaTable = table.getKotysaTable(properties.availableTables)
+        val kotysaTable = table.getKotysaTable(availableTables)
         val associatedColumns = mutableListOf<KotysaColumn<*, *>>()
         val constructor = getTableConstructor(kotysaTable.tableClass)
         val instance = with(constructor!!) {
@@ -115,7 +116,8 @@ internal class TableField<T : Any> internal constructor(
                     matchFound
                 }
                 if (column != null) {
-                    args[param] = row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType)
+                    args[param] =
+                        row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType)
                 } else {
                     require(param.isOptional) {
                         "Cannot instantiate Table \"${kotysaTable.tableClass.qualifiedName}\"," +
@@ -130,38 +132,48 @@ internal class TableField<T : Any> internal constructor(
         // Then try to invoke var or setter for each unassociated getter
         if (associatedColumns.size < table.columns.size) {
             kotysaTable.columns
-                    .filter { column -> !associatedColumns.contains(column) }
-                    .forEach { column ->
-                        val getter = column.entityGetter
-                        if (getter is KMutableProperty1<T, Any?>) {
-                            getter.set(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType))
-                            associatedColumns.add(column)
-                        } else {
-                            val callable = getter.toCallable()
-                            if (callable is KFunction<Any?>
-                                    && (callable.name.startsWith("get")
-                                            || callable.name.startsWith("is"))
-                                    && callable.name.length > 3) {
-                                // try to find setter
-                                val setter = if (callable.name.startsWith("get")) {
-                                    kotysaTable.tableClass.memberFunctions.firstOrNull { function ->
-                                        function.name == callable.name.replaceFirst("g", "s")
-                                                && function.parameters.size == 2
-                                    }
-                                } else {
-                                    // then "is" for Boolean
-                                    kotysaTable.tableClass.memberFunctions.firstOrNull { function ->
-                                        function.name == callable.name.replaceFirst("is", "set")
-                                                && function.parameters.size == 2
-                                    }
+                .filter { column -> !associatedColumns.contains(column) }
+                .forEach { column ->
+                    val getter = column.entityGetter
+                    if (getter is KMutableProperty1<T, Any?>) {
+                        getter.set(
+                            instance,
+                            row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType)
+                        )
+                        associatedColumns.add(column)
+                    } else {
+                        val callable = getter.toCallable()
+                        if (callable is KFunction<Any?>
+                            && (callable.name.startsWith("get")
+                                    || callable.name.startsWith("is"))
+                            && callable.name.length > 3
+                        ) {
+                            // try to find setter
+                            val setter = if (callable.name.startsWith("get")) {
+                                kotysaTable.tableClass.memberFunctions.firstOrNull { function ->
+                                    function.name == callable.name.replaceFirst("g", "s")
+                                            && function.parameters.size == 2
                                 }
-                                if (setter != null) {
-                                    setter.call(instance, row.getWithOffset(kotysaTable.columns.indexOf(column), column.columnClass.javaObjectType))
-                                    associatedColumns.add(column)
+                            } else {
+                                // then "is" for Boolean
+                                kotysaTable.tableClass.memberFunctions.firstOrNull { function ->
+                                    function.name == callable.name.replaceFirst("is", "set")
+                                            && function.parameters.size == 2
                                 }
+                            }
+                            if (setter != null) {
+                                setter.call(
+                                    instance,
+                                    row.getWithOffset(
+                                        kotysaTable.columns.indexOf(column),
+                                        column.columnClass.javaObjectType
+                                    )
+                                )
+                                associatedColumns.add(column)
                             }
                         }
                     }
+                }
         }
         // increment row index by the number of selected columns in this table
         row.incrementWithDelayedIndex()
@@ -186,8 +198,8 @@ internal class TableField<T : Any> internal constructor(
 }
 
 internal class FieldDsl<T : Any>(
-        override val properties: DefaultSqlClientSelect.Properties<T>,
-        private val dsl: (ValueProvider) -> T
+    properties: DefaultSqlClientSelect.Properties<T>,
+    private val dsl: (ValueProvider) -> T
 ) : FieldNotNull<T> {
     private val selectDsl = SelectDsl(properties)
 
@@ -202,12 +214,15 @@ internal class FieldDsl<T : Any>(
 // Extension functions
 
 internal fun <T : Any, U : Any> Column<T, U>.toField(
-        properties: DefaultSqlClientCommon.Properties,
-        classifier: FieldClassifier,
+    properties: DefaultSqlClientCommon.Properties,
+    classifier: FieldClassifier,
 ): ColumnField<T, U> = ColumnField(properties, this, classifier)
 
-internal fun <T : Any> AbstractTable<T>.toField(properties: DefaultSqlClientCommon.Properties): TableField<T> =
-        TableField(properties, this)
+public fun <T : Any> AbstractTable<T>.toField(
+    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+    availableTables: Map<Table<*>, KotysaTable<*>>,
+): Field<T> =
+    TableField(availableColumns, availableTables, this)
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
     val kotysaColumn = getKotysaColumn(availableColumns)
@@ -216,11 +231,11 @@ internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, Kotys
 }
 
 internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
-        getKotysaTable(availableTables).getFieldName()
+    getKotysaTable(availableTables).getFieldName()
 
 private fun KotysaTable<*>.getFieldName() =
-        if (this is AliasedTable<*>) {
-            alias
-        } else {
-            name
-        }
+    if (this is AliasedTable<*>) {
+        alias
+    } else {
+        name
+    }

@@ -82,7 +82,7 @@ class UuidRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertUuids())
+                .then(insertUuids().then())
                 .block()
     }
 

@@ -4,9 +4,12 @@
 
 package org.ufoss.kotysa.r2dbc
 
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
-import org.springframework.r2dbc.core.awaitOne
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 
@@ -21,11 +24,11 @@ private class CoroutinesSqlClientR2Dbc(
     override val module = Module.SPRING_R2DBC
 
     override suspend fun <T : Any> insert(row: T) =
-            executeInsert(row).fetch().awaitOne() // todo
+        executeInsert(row).awaitSingleOrNull() ?: throw EmptyResultDataAccessException(1)
 
-    override suspend fun <T : Any> insert(vararg rows: T) {
-        rows.forEach { row -> insert(row) }
-    }
+    override fun <T : Any> insert(vararg rows: T) =
+        rows.asFlow()
+            .map { row -> insert(row) }
 
     override suspend fun <T : Any> createTable(table: Table<T>) {
         executeCreateTable(table, false).await()

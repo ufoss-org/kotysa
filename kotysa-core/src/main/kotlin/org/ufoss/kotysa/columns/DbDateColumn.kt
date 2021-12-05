@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 public sealed class DbDateColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
-    final override val isAutoIncrement = false
+    final override val isAutoIncrement: Boolean = false
     // No size
     final override val size = null
 

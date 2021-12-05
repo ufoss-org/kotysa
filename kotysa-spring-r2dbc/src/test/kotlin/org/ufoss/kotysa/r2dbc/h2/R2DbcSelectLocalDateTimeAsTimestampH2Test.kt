@@ -180,7 +180,7 @@ class LocalDateTimeAsTimestampRepositoryH2Select(private val sqlClient: ReactorS
 
     override fun init() {
         createTables()
-                .then(insertLocalDateTimes())
+                .then(insertLocalDateTimes().then())
                 .block()
     }
 

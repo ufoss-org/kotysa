@@ -96,7 +96,7 @@ class AllTypesRepositoryH2(
 
     override fun init() {
         createTables()
-                .then(insertAllTypes())
+                .then(insertAllTypes().then())
                 // another option would be to plug in SingleConnectionFactory somehow
                 // because in memory (serverless) h2 databases don't seem to be shared between connections
                 .transactional(operator)

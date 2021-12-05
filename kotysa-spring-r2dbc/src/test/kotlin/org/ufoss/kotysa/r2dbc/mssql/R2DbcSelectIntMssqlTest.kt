@@ -201,7 +201,7 @@ class IntRepositoryMssqlSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertInts())
+                .then(insertInts().then())
                 .block()
     }
 

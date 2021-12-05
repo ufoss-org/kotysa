@@ -224,7 +224,7 @@ class OffsetDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repos
 
     override fun init() {
         createTables()
-                .then(insertOffsetDateTimes())
+                .then(insertOffsetDateTimes().then())
                 .block()
     }
 

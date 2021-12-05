@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -120,8 +121,8 @@ class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
-        insertRoles()
-        insertUsers()
+        insertRoles().collect()
+        insertUsers().collect()
     }
 
     override fun delete() = runBlocking<Unit> {
@@ -134,9 +135,9 @@ class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
         sqlClient createTableIfNotExists MARIADB_USER
     }
 
-    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
-    private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
+    private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
     private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MARIADB_ROLE
 

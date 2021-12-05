@@ -189,7 +189,7 @@ class IntRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repositor
 
     override fun init() {
         createTables()
-                .then(insertInts())
+                .then(insertInts().then())
                 .block()
     }
 

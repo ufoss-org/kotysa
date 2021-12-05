@@ -100,7 +100,7 @@ class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertAllTypes())
+                .then(insertAllTypes().then())
                 .block()
     }
 

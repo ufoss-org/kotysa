@@ -171,7 +171,7 @@ class UserRepositoryMysqlSelectStringAsText(dbClient: DatabaseClient) : Reposito
 
     override fun init() {
         createTables()
-            .then(insertTexts())
+            .then(insertTexts().then())
             .block()
     }
 

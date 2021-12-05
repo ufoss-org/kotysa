@@ -57,23 +57,23 @@ public interface DefaultSqlClient {
         primaryKey += "PRIMARY KEY (${pk.columns.joinToString { it.name }})"
 
         val foreignKeys =
-                if (kotysaTable.foreignKeys.isEmpty()) {
-                    ""
-                } else {
-                    kotysaTable.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
-                        var foreignKeyStatement = if (foreignKey.name != null) {
-                            "CONSTRAINT ${foreignKey.name} "
-                        } else {
-                            ""
-                        }
-                        val referencedTable = tables.allColumns[foreignKey.references.values.first()]?.table
-                                ?: error("Referenced table of column ${foreignKey.references.values.first()} is not mapped")
-                        foreignKeyStatement += "FOREIGN KEY (${foreignKey.references.keys.joinToString { it.name }})" +
-                                " REFERENCES ${referencedTable.name}" +
-                                " (${foreignKey.references.values.joinToString { it.name }})"
-                        foreignKeyStatement
+            if (kotysaTable.foreignKeys.isEmpty()) {
+                ""
+            } else {
+                kotysaTable.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
+                    var foreignKeyStatement = if (foreignKey.name != null) {
+                        "CONSTRAINT ${foreignKey.name} "
+                    } else {
+                        ""
                     }
+                    val referencedTable = tables.allColumns[foreignKey.references.values.first()]?.table
+                        ?: error("Referenced table of column ${foreignKey.references.values.first()} is not mapped")
+                    foreignKeyStatement += "FOREIGN KEY (${foreignKey.references.keys.joinToString { it.name }})" +
+                            " REFERENCES ${referencedTable.name}" +
+                            " (${foreignKey.references.values.joinToString { it.name }})"
+                    foreignKeyStatement
                 }
+            }
 
         var suffix = ""
         val prefix = if (ifNotExists) {
@@ -108,23 +108,67 @@ public interface DefaultSqlClient {
         val columnNames = mutableSetOf<String>()
         var index = 0
         val values = kotysaTable.columns
-                // filter out null values with default value or Serial types
-                .filterNot { column ->
-                    column.entityGetter(row) == null
-                            && (column.defaultValue != null
-                            || column.isAutoIncrement
-                            || SqlType.SERIAL == column.sqlType
-                            || SqlType.BIGSERIAL == column.sqlType)
+            // filter out null values with default value or Serial types
+            .filterNot { column ->
+                column.entityGetter(row) == null
+                        && (column.defaultValue != null
+                        || column.isAutoIncrement
+                        || SqlType.SERIAL == column.sqlType
+                        || SqlType.BIGSERIAL == column.sqlType)
+            }
+            .joinToString { column ->
+                columnNames.add(column.name)
+                when (module) {
+                    Module.SQLITE, Module.JDBC -> "?"
+                    else -> ":k${index++}"
                 }
-                .joinToString { column ->
-                    columnNames.add(column.name)
-                    when(module) {
-                        Module.SQLITE, Module.JDBC -> "?"
-                        else -> ":k${index++}"
-                    }
-                }
+            }
 
-        return "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
+        val allTableColumnNames = kotysaTable.columns
+            .joinToString { column ->
+                if (tables.dbType == DbType.MSSQL) {
+                    "INSERTED." + column.name
+                } else {
+                    column.name
+                }
+            }
+
+        return when (tables.dbType) {
+            DbType.H2 -> "SELECT $allTableColumnNames FROM FINAL TABLE (INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values))"
+            DbType.MSSQL -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) OUTPUT $allTableColumnNames VALUES ($values)"
+            DbType.MYSQL -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
+            else -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values) RETURNING $allTableColumnNames"
+        }
+    }
+
+    public fun <T : Any> lastInsertedSql(row: T): String {
+        val lastInsertedQuery = lastInsertedQuery(row)
+        logger.debug { "Exec SQL (${tables.dbType.name}) : $lastInsertedQuery" }
+        return lastInsertedQuery
+    }
+
+    public fun <T : Any> lastInsertedQuery(row: T): String {
+        val kotysaTable = tables.getTable(row::class)
+        val pkColumns = kotysaTable.primaryKey.columns
+
+        val allTableColumnNames = kotysaTable.columns
+            .joinToString { column -> column.name }
+
+        val wheres =
+            if (pkColumns.size == 1 && pkColumns[0].isAutoIncrement) {
+                "${pkColumns[0].name} = (SELECT LAST_INSERT_ID())"
+            } else {
+                var index = 0
+                pkColumns
+                    .joinToString(" AND ") { column ->
+                        when (module) {
+                            Module.SQLITE, Module.JDBC -> "${column.name} = ?"
+                            else -> "${column.name} = :k${index++}"
+                        }
+                    }
+            }
+
+        return "SELECT $allTableColumnNames FROM ${kotysaTable.name} WHERE $wheres"
     }
 }
 

@@ -64,7 +64,7 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
     fun simplifiedExample() {
         (sqlClient createTable ROLE) // CREATE TABLE IF NOT EXISTS
                 .then(sqlClient deleteAllFrom ROLE)
-                .then(sqlClient.insert(roleUser, roleAdmin))
+                .thenMany(sqlClient.insert(roleUser, roleAdmin))
 
         val count = sqlClient selectCountAllFrom USER
 

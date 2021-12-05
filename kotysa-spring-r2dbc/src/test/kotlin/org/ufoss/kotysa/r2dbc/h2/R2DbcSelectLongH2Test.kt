@@ -189,7 +189,7 @@ class LongRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
 
     override fun init() {
         createTables()
-                .then(insertLongs())
+                .then(insertLongs().then())
                 .block()
     }
 

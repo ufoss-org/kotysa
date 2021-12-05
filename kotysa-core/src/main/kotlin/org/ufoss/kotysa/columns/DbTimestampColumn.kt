@@ -10,7 +10,7 @@ import java.time.OffsetDateTime
 
 public sealed class DbTimestampColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
-    final override val isAutoIncrement = false
+    final override val isAutoIncrement: Boolean = false
 
     final override val sqlType = SqlType.TIMESTAMP
 }

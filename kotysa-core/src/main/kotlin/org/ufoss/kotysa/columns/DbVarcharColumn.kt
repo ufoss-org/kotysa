@@ -11,7 +11,7 @@ import org.ufoss.kotysa.StringColumnNullable
 
 public sealed class DbVarcharColumn<T : Any, U : Any> : DbColumn<T, U>() {
     // No auto-increment
-    final override val isAutoIncrement = false
+    final override val isAutoIncrement: Boolean = false
 
     final override val sqlType = SqlType.VARCHAR
 }
