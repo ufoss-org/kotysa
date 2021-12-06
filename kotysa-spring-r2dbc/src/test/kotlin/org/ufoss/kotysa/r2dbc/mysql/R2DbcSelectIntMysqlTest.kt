@@ -6,16 +6,14 @@ package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.ReactorTransactionalOp
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-
+@Order(1)
 class R2DbcSelectIntMysqlTest : AbstractR2dbcMysqlTest<IntRepositoryMysqlSelect>() {
 
     @BeforeAll
@@ -198,17 +196,13 @@ class R2DbcSelectIntMysqlTest : AbstractR2dbcMysqlTest<IntRepositoryMysqlSelect>
 }
 
 
-class IntRepositoryMysqlSelect(dbClient: DatabaseClient, private val op: TransactionalOperator) : Repository {
+class IntRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
 
     private val sqlClient = dbClient.sqlClient(mysqlTables)
 
-    private val operator: ReactorTransactionalOp by lazy {
-        op.transactionalOp()
-    }
-
     override fun init() {
         createTables()
-            .then(insertInts().then())
+            .thenEmpty(insertInts())
             .block()
     }
 
@@ -217,11 +211,9 @@ class IntRepositoryMysqlSelect(dbClient: DatabaseClient, private val op: Transac
             .block()
     }
 
-    private fun createTables() = sqlClient createTable MYSQL_INT
+    private fun createTables() = sqlClient createTableIfNotExists MYSQL_INT
 
-    private fun insertInts() = operator.execute {
-        sqlClient.insertAndReturn<IntEntity>(intWithNullable, intWithoutNullable)
-    }
+    private fun insertInts() = sqlClient.insert(intWithNullable, intWithoutNullable)
 
     private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INT
 

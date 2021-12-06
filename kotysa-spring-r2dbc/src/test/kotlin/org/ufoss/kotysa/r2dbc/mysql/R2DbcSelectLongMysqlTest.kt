@@ -6,13 +6,14 @@ package org.ufoss.kotysa.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-
+@Order(2)
 class R2DbcSelectLongMysqlTest : AbstractR2dbcMysqlTest<LongRepositoryMysqlSelect>() {
 
     @BeforeAll
@@ -201,7 +202,7 @@ class LongRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertLongs().then())
+                .thenEmpty(insertLongs())
                 .block()
     }
 
@@ -210,10 +211,9 @@ class LongRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable MYSQL_LONG
+    private fun createTables() = sqlClient createTableIfNotExists MYSQL_LONG
 
-    private fun insertLongs() =
-            sqlClient.insert(longWithNullable, longWithoutNullable)
+    private fun insertLongs() = sqlClient.insert(longWithNullable, longWithoutNullable)
 
     private fun deleteAll() = sqlClient deleteAllFrom MYSQL_LONG
 
