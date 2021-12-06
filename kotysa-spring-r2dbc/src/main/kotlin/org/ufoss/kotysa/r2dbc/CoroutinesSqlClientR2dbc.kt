@@ -24,11 +24,18 @@ private class CoroutinesSqlClientR2Dbc(
     override val module = Module.SPRING_R2DBC
 
     override suspend fun <T : Any> insert(row: T) =
-        executeInsert(row).awaitSingleOrNull() ?: throw EmptyResultDataAccessException(1)
+        executeInsert(row).await()
 
-    override fun <T : Any> insert(vararg rows: T) =
+    override suspend fun <T : Any> insert(vararg rows: T) {
+        rows.forEach { row -> insert(row) }
+    }
+
+    override suspend fun <T : Any> insertAndReturn(row: T) =
+        executeInsertAndReturn(row).awaitSingleOrNull() ?: throw EmptyResultDataAccessException(1)
+
+    override fun <T : Any> insertAndReturn(vararg rows: T) =
         rows.asFlow()
-            .map { row -> insert(row) }
+            .map { row -> insertAndReturn(row) }
 
     override suspend fun <T : Any> createTable(table: Table<T>) {
         executeCreateTable(table, false).await()

@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -109,8 +108,8 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
 
     override fun init() = runBlocking {
         createTables()
-        insertRoles().collect()
-        insertUsers().collect()
+        insertRoles()
+        insertUsers()
     }
 
     override fun delete() = runBlocking<Unit> {
@@ -123,9 +122,9 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
         sqlClient createTableIfNotExists H2_USER
     }
 
-    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
+    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
-    private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
+    private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
     private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom H2_ROLE
 

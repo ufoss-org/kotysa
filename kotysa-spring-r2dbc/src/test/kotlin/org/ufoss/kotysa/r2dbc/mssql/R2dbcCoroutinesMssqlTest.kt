@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.mssql
 
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
@@ -115,8 +114,8 @@ class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
-        insertRoles().collect()
-        insertUsers().collect()
+        insertRoles()
+        insertUsers()
     }
 
     override fun delete() = runBlocking<Unit> {
@@ -129,9 +128,9 @@ class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
         sqlClient createTableIfNotExists MSSQL_USER
     }
 
-    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
+    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
-    private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
+    private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
     private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MSSQL_ROLE
 

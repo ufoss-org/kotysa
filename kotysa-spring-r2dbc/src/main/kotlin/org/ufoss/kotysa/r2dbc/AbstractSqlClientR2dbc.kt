@@ -21,9 +21,12 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
     fun <T : Any> executeCreateTable(table: Table<T>, ifNotExists: Boolean): DatabaseClient.GenericExecuteSpec =
         client.sql(createTableSql(table, ifNotExists))
 
-    fun <T : Any> executeInsert(row: T): Mono<T> {
+    fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec =
+        insertExecuteSpec(row, tables.getTable(row::class), insertSql(row))
+
+    fun <T : Any> executeInsertAndReturn(row: T): Mono<T> {
         val table = tables.getTable(row::class)
-        val executeSpec = insertExecuteSpec(row, table)
+        val executeSpec = insertExecuteSpec(row, table, insertSql(row, true))
 
         return if (tables.dbType == DbType.MYSQL) {
             // Fox SQL : insert, then fetch created tuple            
@@ -31,6 +34,7 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                 .then()
                 .then(fetchLastInserted(row))
         } else {
+            // other DB types have RETURNING style features
             executeSpec
                 .map { r ->
                     (table.table as AbstractTable<T>).toField(
@@ -39,6 +43,36 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                     ).builder.invoke(r.toRow())
                 }.one()
         }
+    }
+
+    private fun <T : Any> insertExecuteSpec(
+        row: T,
+        table: KotysaTable<T>,
+        sql: String,
+    ): DatabaseClient.GenericExecuteSpec {
+        var index = 0
+
+        return table.columns
+            .fold(client.sql(sql)) { execSpec, column ->
+                val value = column.entityGetter(row)
+                if (value == null) {
+                    // do nothing for null values with default or Serial type
+                    if (column.defaultValue != null
+                        || column.isAutoIncrement
+                        || SqlType.SERIAL == column.sqlType
+                        || SqlType.BIGSERIAL == column.sqlType
+                    ) {
+                        execSpec
+                    } else {
+                        execSpec.bindNull(
+                            "k${index++}",
+                            (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
+                        )
+                    }
+                } else {
+                    execSpec.bind("k${index++}", tables.getDbValue(value)!!)
+                }
+            }
     }
 
     private fun <T : Any> fetchLastInserted(row: T): Mono<T> {
@@ -65,32 +99,6 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
                     tables.allTables
                 ).builder.invoke(r.toRow())
             }.one()
-    }
-
-    private fun <T : Any> insertExecuteSpec(row: T, table: KotysaTable<T>): DatabaseClient.GenericExecuteSpec {
-        var index = 0
-
-        return table.columns
-            .fold(client.sql(insertSql(row))) { execSpec, column ->
-                val value = column.entityGetter(row)
-                if (value == null) {
-                    // do nothing for null values with default or Serial type
-                    if (column.defaultValue != null
-                        || column.isAutoIncrement
-                        || SqlType.SERIAL == column.sqlType
-                        || SqlType.BIGSERIAL == column.sqlType
-                    ) {
-                        execSpec
-                    } else {
-                        execSpec.bindNull(
-                            "k${index++}",
-                            (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
-                        )
-                    }
-                } else {
-                    execSpec.bind("k${index++}", tables.getDbValue(value)!!)
-                }
-            }
     }
 }
 

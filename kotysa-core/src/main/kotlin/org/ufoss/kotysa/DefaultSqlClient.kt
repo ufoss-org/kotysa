@@ -96,14 +96,14 @@ public interface DefaultSqlClient {
         return createTableSql
     }
 
-    public fun <T : Any> insertSql(row: T): String {
-        val insertSqlQuery = insertSqlQuery(row)
+    public fun <T : Any> insertSql(row: T, withReturn: Boolean = false): String {
+        val insertSqlQuery = insertSqlQuery(row, withReturn)
         logger.debug { "Exec SQL (${tables.dbType.name}) : $insertSqlQuery" }
         return insertSqlQuery
     }
 
     // fixme 24/05/21 : does not work if set to private (fails in demo-kotlin project)
-    public fun <T : Any> insertSqlQuery(row: T): String {
+    public fun <T : Any> insertSqlQuery(row: T, withReturn: Boolean): String {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         var index = 0
@@ -124,6 +124,11 @@ public interface DefaultSqlClient {
                 }
             }
 
+        if (!withReturn || tables.dbType == DbType.MYSQL) {
+            // If no return requested, or MySQL that does not provide native RETURNING style feature
+            return "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
+        }
+
         val allTableColumnNames = kotysaTable.columns
             .joinToString { column ->
                 if (tables.dbType == DbType.MSSQL) {
@@ -136,7 +141,6 @@ public interface DefaultSqlClient {
         return when (tables.dbType) {
             DbType.H2 -> "SELECT $allTableColumnNames FROM FINAL TABLE (INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values))"
             DbType.MSSQL -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) OUTPUT $allTableColumnNames VALUES ($values)"
-            DbType.MYSQL -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
             else -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values) RETURNING $allTableColumnNames"
         }
     }

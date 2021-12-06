@@ -20,12 +20,18 @@ private class SqlClientR2dbc(
 ) : ReactorSqlClient, AbstractSqlClientR2dbc {
 
     override val module = Module.SPRING_R2DBC
-    
-    override infix fun <T : Any> insert(row: T): Mono<T> = executeInsert(row)
+
+    override fun <T : Any> insert(row: T) =
+        executeInsert(row).then()
 
     override fun <T : Any> insert(vararg rows: T) =
+        rows.fold(Mono.empty<Void>()) { mono, row -> mono.then(insert(row)) }
+    
+    override infix fun <T : Any> insertAndReturn(row: T): Mono<T> = executeInsertAndReturn(row)
+
+    override fun <T : Any> insertAndReturn(vararg rows: T) =
             rows.toFlux()
-                .concatMap { row -> insert(row) }
+                .concatMap { row -> insertAndReturn(row) }
 
     override fun <T : Any> createTable(table: Table<T>) =
             executeCreateTable(table, false).then()

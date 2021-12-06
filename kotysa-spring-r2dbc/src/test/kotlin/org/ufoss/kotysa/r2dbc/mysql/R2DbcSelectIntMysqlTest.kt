@@ -220,7 +220,7 @@ class IntRepositoryMysqlSelect(dbClient: DatabaseClient, private val op: Transac
     private fun createTables() = sqlClient createTable MYSQL_INT
 
     private fun insertInts() = operator.execute {
-        sqlClient.insert<IntEntity>(intWithNullable, intWithoutNullable)
+        sqlClient.insertAndReturn<IntEntity>(intWithNullable, intWithoutNullable)
     }
 
     private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INT

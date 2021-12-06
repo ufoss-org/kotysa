@@ -6,7 +6,6 @@ package org.ufoss.kotysa.r2dbc.h2
 
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.H2_KOTLINX_LOCAL_DATE_TIME
