@@ -113,7 +113,7 @@ class AllTypesRepositoryH2(
     private fun createTables() =
             (sqlClient createTable H2_ALL_TYPES_NOT_NULL)
                     .then(sqlClient createTable H2_ALL_TYPES_NULLABLE)
-                    .then(sqlClient createTable H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+                    .then(sqlClient createTableIfNotExists H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
     private fun insertAllTypes() =
             sqlClient.insert(h2AllTypesNotNull, h2AllTypesNullable, h2AllTypesNullableDefaultValue)
