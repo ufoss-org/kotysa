@@ -55,7 +55,7 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                         42,
                         84L,
                         OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
-                                ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
                         UUID.fromString(defaultUuid),
                 ))
     }
@@ -114,7 +114,7 @@ class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
     private fun createTables() =
             (sqlClient createTable POSTGRESQL_ALL_TYPES_NOT_NULL)
                     .then(sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE)
-                    .then(sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+                    .then(sqlClient createTableIfNotExists POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
     private fun insertAllTypes() =
             sqlClient.insert(postgresqlAllTypesNotNull, postgresqlAllTypesNullable, postgresqlAllTypesNullableDefaultValue)
