@@ -41,6 +41,14 @@ internal class SqlClientJdbc(
         rows.forEach { row -> insert(row) }
     }
 
+    override fun <T : Any> insertAndReturn(row: T): T {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> {
+        TODO("Not yet implemented")
+    }
+
     override fun <T : Any> createTable(table: Table<T>) {
         createTable(table, false)
     }

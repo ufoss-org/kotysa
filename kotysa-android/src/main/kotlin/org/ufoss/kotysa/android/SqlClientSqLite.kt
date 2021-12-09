@@ -13,8 +13,8 @@ import java.math.BigDecimal
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
  */
 internal class SqlClientSqLite(
-        private val client: SQLiteOpenHelper,
-        override val tables: Tables
+    private val client: SQLiteOpenHelper,
+    override val tables: Tables
 ) : SqlClient, DefaultSqlClient {
 
     override val module = Module.SQLITE
@@ -23,9 +23,12 @@ internal class SqlClientSqLite(
         val table = tables.getTable(row::class)
         val statement = client.writableDatabase.compileStatement(insertSql(row))
         table.columns
-                // do nothing for null values with default
-                .filterNot { column -> column.entityGetter(row) == null && column.defaultValue != null }
-                .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
+            // do nothing for null values with default
+            .filterNot { column ->
+                column.entityGetter(row) == null &&
+                        (column.defaultValue != null || column.isAutoIncrement)
+            }
+            .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
 
         statement.executeInsert()
     }
@@ -40,11 +43,21 @@ internal class SqlClientSqLite(
         rows.forEach { row ->
             statement.clearBindings()
             table.columns
-                    .filterNot { column -> column.entityGetter(row) == null &&
-                            (column.defaultValue != null || column.isAutoIncrement) }
-                    .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
+                .filterNot { column ->
+                    column.entityGetter(row) == null &&
+                            (column.defaultValue != null || column.isAutoIncrement)
+                }
+                .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
             statement.executeInsert()
         }
+    }
+
+    override fun <T : Any> insertAndReturn(row: T): T {
+        TODO("Not yet implemented")
+    }
+
+    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> {
+        TODO("Not yet implemented")
     }
 
 
@@ -62,31 +75,40 @@ internal class SqlClientSqLite(
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-            SqlClientDeleteSqLite.FirstDelete(client.writableDatabase, tables, table)
+        SqlClientDeleteSqLite.FirstDelete(client.writableDatabase, tables, table)
 
     override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-            SqlClientUpdateSqLite.FirstUpdate(client.writableDatabase, tables, table)
+        SqlClientUpdateSqLite.FirstUpdate(client.writableDatabase, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(column)
+
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
+
     override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+
     override fun selectCount(): SqlClientSelect.Fromable<Long> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount<Any>(null)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount<Any>(null)
+
     override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount(column)
+
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectDistinct(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectDistinct(column)
+
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMin(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMin(column)
+
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMax(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectMax(column)
+
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectAvg(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectAvg(column)
+
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
 }
 
 /**
