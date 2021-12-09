@@ -84,7 +84,7 @@ class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTyp
                     newUuid)
             assertThat(repository.selectAllAllTypesNotNull())
                     .hasSize(1)
-                    .containsExactlyInAnyOrder(
+                    .containsExactly(
                             PostgresqlAllTypesNotNullEntity(postgresqlAllTypesNotNull.id, "new", false,
                                     newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
                                     newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong,
@@ -112,7 +112,7 @@ class AllTypesRepositoryPostgresql(client: JdbcOperations) : Repository {
     private fun createTables() {
         sqlClient createTable POSTGRESQL_ALL_TYPES_NOT_NULL
         sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE
-        sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {
