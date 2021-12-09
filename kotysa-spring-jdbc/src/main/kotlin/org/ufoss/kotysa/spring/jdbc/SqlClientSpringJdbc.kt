@@ -8,7 +8,9 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.jdbc.toRow
 import java.math.BigDecimal
 
 /**
@@ -30,25 +32,78 @@ internal class SqlClientSpringJdbc(
 
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
+        val paramSource = paramSource(row, table)
 
-        val parameters = MapSqlParameterSource()
-        table.columns
-                // do nothing for null values with default or Serial type
-                .filterNot { column ->
-                    column.entityGetter(row) == null
-                            && (column.defaultValue != null
-                            || column.isAutoIncrement
-                            || SqlType.SERIAL == column.sqlType
-                            || SqlType.BIGSERIAL == column.sqlType)
-                }
-                .map { column -> tables.getDbValue(column.entityGetter(row)) }
-                .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue)  }
-
-        namedParameterJdbcOperations.update(insertSql(row), parameters)
+        namedParameterJdbcOperations.update(insertSql(row), paramSource)
     }
 
     override fun <T : Any> insert(vararg rows: T) {
         rows.forEach { row -> insert(row) }
+    }
+
+    override fun <T : Any> insertAndReturn(row: T): T {
+        val table = tables.getTable(row::class)
+        val paramSource = paramSource(row, table)
+        return if (tables.dbType == DbType.MYSQL) {
+            // For MySQL : insert, then fetch created tuple
+            namedParameterJdbcOperations.update(insertSql(row), paramSource)
+            fetchLastInserted(row, table)
+        } else {
+            // other DB types have RETURNING style features
+            namedParameterJdbcOperations.queryForObject(
+                insertSql(row, true),
+                paramSource,
+            )
+            { rs, _ ->
+                (table.table as AbstractTable<T>).toField(
+                    tables.allColumns,
+                    tables.allTables
+                ).builder.invoke(rs.toRow())
+            }!!
+        }
+    }
+
+    override fun <T : Any> insertAndReturn(vararg rows: T) = rows.map { row -> insertAndReturn(row) }
+
+    private fun <T : Any> paramSource(row: T, table: KotysaTable<T>): SqlParameterSource {
+        val parameters = MapSqlParameterSource()
+        table.columns
+            // do nothing for null values with default or Serial type
+            .filterNot { column ->
+                column.entityGetter(row) == null
+                        && (column.defaultValue != null
+                        || column.isAutoIncrement
+                        || SqlType.SERIAL == column.sqlType
+                        || SqlType.BIGSERIAL == column.sqlType)
+            }
+            .map { column -> tables.getDbValue(column.entityGetter(row)) }
+            .forEachIndexed { index, dbValue -> parameters.addValue("k$index", dbValue)  }
+        return parameters
+    }
+
+    private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
+
+        val parameters = MapSqlParameterSource()
+        val executeSpec = if (pkColumns.size == 1 && pkColumns[0].isAutoIncrement) {
+            client.sql(lastInsertedSql(row))
+        } else {
+            // bind all PK values
+            pkColumns
+                .foldIndexed(client.sql(lastInsertedSql(row))) { index, execSpec, column ->
+                    val value = column.entityGetter(row)
+                    execSpec.bind("k${index}", tables.getDbValue(value)!!)
+                }
+        }
+
+        return executeSpec
+            .map { r ->
+                (table.table as AbstractTable<T>).toField(
+                    tables.allColumns,
+                    tables.allTables
+                ).builder.invoke(r.toRow())
+            }.one()
     }
 
     override fun <T : Any> createTable(table: Table<T>) {

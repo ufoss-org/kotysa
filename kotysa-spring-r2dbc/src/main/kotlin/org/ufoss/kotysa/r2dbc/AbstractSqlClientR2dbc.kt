@@ -29,10 +29,10 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
         val executeSpec = insertExecuteSpec(row, table, insertSql(row, true))
 
         return if (tables.dbType == DbType.MYSQL) {
-            // Fox SQL : insert, then fetch created tuple            
+            // For MySQL : insert, then fetch created tuple
             executeSpec
                 .then()
-                .then(fetchLastInserted(row))
+                .then(fetchLastInserted(row, table))
         } else {
             // other DB types have RETURNING style features
             executeSpec
@@ -75,11 +75,9 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
             }
     }
 
-    private fun <T : Any> fetchLastInserted(row: T): Mono<T> {
-        val kotysaTable = tables.getTable(row::class)
-
+    private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): Mono<T> {
         @Suppress("UNCHECKED_CAST")
-        val pkColumns = kotysaTable.primaryKey.columns as List<DbColumn<T, *>>
+        val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
 
         val executeSpec = if (pkColumns.size == 1 && pkColumns[0].isAutoIncrement) {
             client.sql(lastInsertedSql(row))
@@ -94,7 +92,7 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
 
         return executeSpec
             .map { r ->
-                (kotysaTable.table as AbstractTable<T>).toField(
+                (table.table as AbstractTable<T>).toField(
                     tables.allColumns,
                     tables.allTables
                 ).builder.invoke(r.toRow())
