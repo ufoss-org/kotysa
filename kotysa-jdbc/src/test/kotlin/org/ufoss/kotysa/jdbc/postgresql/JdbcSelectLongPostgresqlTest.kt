@@ -5,12 +5,13 @@
 package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import java.sql.Connection
 
-
+@Order(2)
 class JdbcSelectLongPostgresqlTest : AbstractJdbcPostgresqlTest<LongRepositoryPostgresqlSelect>() {
     override fun instantiateRepository(connection: Connection) = LongRepositoryPostgresqlSelect(connection)
 

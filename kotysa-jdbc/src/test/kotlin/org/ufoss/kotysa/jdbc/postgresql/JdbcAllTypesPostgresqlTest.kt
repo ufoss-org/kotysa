@@ -102,7 +102,7 @@ class AllTypesRepositoryPostgresql(connection: Connection) : Repository {
     private fun createTables() {
         sqlClient createTable POSTGRESQL_ALL_TYPES_NOT_NULL
         sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE
-        sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {
