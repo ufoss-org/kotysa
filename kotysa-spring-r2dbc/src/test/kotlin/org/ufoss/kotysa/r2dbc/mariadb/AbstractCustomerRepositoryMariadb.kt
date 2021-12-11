@@ -12,7 +12,7 @@ abstract class AbstractCustomerRepositoryMariadb(protected val sqlClient: Reacto
 
     override fun init() {
         createTables()
-                .then(insertCustomers())
+                .then(insertCustomers().then())
                 .block()
     }
 

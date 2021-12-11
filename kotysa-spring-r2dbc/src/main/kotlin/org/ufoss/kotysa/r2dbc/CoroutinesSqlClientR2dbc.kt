@@ -4,6 +4,10 @@
 
 package org.ufoss.kotysa.r2dbc
 
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.ufoss.kotysa.*
@@ -20,11 +24,18 @@ private class CoroutinesSqlClientR2Dbc(
     override val module = Module.SPRING_R2DBC
 
     override suspend fun <T : Any> insert(row: T) =
-            executeInsert(row).await()
+        executeInsert(row).await()
 
     override suspend fun <T : Any> insert(vararg rows: T) {
         rows.forEach { row -> insert(row) }
     }
+
+    override suspend fun <T : Any> insertAndReturn(row: T) =
+        executeInsertAndReturn(row).awaitSingleOrNull() ?: throw EmptyResultDataAccessException(1)
+
+    override fun <T : Any> insertAndReturn(vararg rows: T) =
+        rows.asFlow()
+            .map { row -> insertAndReturn(row) }
 
     override suspend fun <T : Any> createTable(table: Table<T>) {
         executeCreateTable(table, false).await()

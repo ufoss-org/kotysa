@@ -192,7 +192,7 @@ class LocalDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Reposi
 
     override fun init() {
         createTables()
-                .then(insertLocalDateTimes())
+                .then(insertLocalDateTimes().then())
                 .block()
     }
 

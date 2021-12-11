@@ -94,7 +94,7 @@ class AllTypesRepositoryMariadb(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertAllTypes())
+                .then(insertAllTypes().then())
                 .block()
     }
 
@@ -108,7 +108,7 @@ class AllTypesRepositoryMariadb(dbClient: DatabaseClient) : Repository {
     private fun createTables() =
             (sqlClient createTable MARIADB_ALL_TYPES_NOT_NULL)
                     .then(sqlClient createTable MARIADB_ALL_TYPES_NULLABLE)
-                    .then(sqlClient createTable MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+                    .then(sqlClient createTableIfNotExists MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
     private fun insertAllTypes() =
             sqlClient.insert(mariadbAllTypesNotNull, allTypesNullableWithTime, allTypesNullableDefaultValueWithTime)

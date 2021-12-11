@@ -5,11 +5,12 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
-
+@Order(1)
 class R2DbcSelectIntH2Test : AbstractR2dbcH2Test<IntRepositoryH2Select>() {
     override val context = startContext<IntRepositoryH2Select>()
     override val repository = getContextRepository<IntRepositoryH2Select>()
@@ -189,7 +190,7 @@ class IntRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repositor
 
     override fun init() {
         createTables()
-                .then(insertInts())
+                .then(insertInts().then())
                 .block()
     }
 
@@ -199,7 +200,7 @@ class IntRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repositor
     }
 
     private fun createTables() =
-        sqlClient createTable H2_INT
+        sqlClient createTableIfNotExists H2_INT
 
     private fun insertInts() =
         sqlClient.insert(intWithNullable, intWithoutNullable)

@@ -13,8 +13,10 @@ import java.util.stream.Stream
 public interface SqlClient {
 
     public infix fun <T : Any> insert(row: T)
-
     public fun <T : Any> insert(vararg rows: T)
+
+    public infix fun <T : Any> insertAndReturn(row: T): T
+    public fun <T : Any> insertAndReturn(vararg rows: T): List<T>
 
     public infix fun <T : Any> createTable(table: Table<T>)
     public infix fun <T : Any> createTableIfNotExists(table: Table<T>)

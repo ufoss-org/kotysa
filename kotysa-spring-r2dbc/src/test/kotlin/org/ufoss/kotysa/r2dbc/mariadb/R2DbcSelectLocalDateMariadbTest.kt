@@ -192,7 +192,7 @@ class LocalDateRepositoryMariadbSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertLocalDates())
+                .then(insertLocalDates().then())
                 .block()
     }
 

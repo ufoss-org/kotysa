@@ -171,7 +171,7 @@ class UserRepositoryMariadbSelectStringAsText(dbClient: DatabaseClient) : Reposi
 
     override fun init() {
         createTables()
-            .then(insertTexts())
+            .then(insertTexts().then())
             .block()
     }
 

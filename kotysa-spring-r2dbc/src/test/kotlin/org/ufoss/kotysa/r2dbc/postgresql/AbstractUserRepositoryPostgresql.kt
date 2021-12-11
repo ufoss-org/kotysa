@@ -12,8 +12,8 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: Reactor
 
     override fun init() {
         createTables()
-                .then(insertRoles())
-                .then(insertUsers())
+                .then(insertRoles().then())
+                .then(insertUsers().then())
                 .then(insertUserRoles())
                 .block()
     }

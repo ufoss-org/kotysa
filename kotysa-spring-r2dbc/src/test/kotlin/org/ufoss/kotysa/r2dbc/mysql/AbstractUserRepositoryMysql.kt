@@ -12,8 +12,8 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: ReactorSqlCl
 
     override fun init() {
         createTables()
-                .then(insertRoles())
-                .then(insertUsers())
+                .then(insertRoles().then())
+                .then(insertUsers().then())
                 .then(insertUserRoles())
                 .block()
     }

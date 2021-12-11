@@ -93,7 +93,7 @@ class AllTypesRepositoryMssql(connection: Connection) : Repository {
     private fun createTables() {
         sqlClient createTable MSSQL_ALL_TYPES_NOT_NULL
         sqlClient createTable MSSQL_ALL_TYPES_NULLABLE
-        sqlClient createTable MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {

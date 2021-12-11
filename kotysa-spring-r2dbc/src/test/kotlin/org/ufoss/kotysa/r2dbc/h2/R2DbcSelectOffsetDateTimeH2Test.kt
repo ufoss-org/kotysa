@@ -236,7 +236,7 @@ class OffsetDateTimeRepositoryH2Select(private val sqlClient: ReactorSqlClient) 
 
     override fun init() {
         createTables()
-                .then(insertOffsetDateTimes())
+                .then(insertOffsetDateTimes().then())
                 .block()
     }
 

@@ -13,7 +13,7 @@ abstract class R2dbcJavaUserRepository<T : JAVA_USER>(
 
     override fun init() {
         createTable()
-                .then(insert())
+                .then(insert().then())
                 .block()
     }
 

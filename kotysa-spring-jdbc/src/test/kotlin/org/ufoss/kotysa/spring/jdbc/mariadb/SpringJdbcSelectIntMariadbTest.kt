@@ -6,13 +6,14 @@ package org.ufoss.kotysa.spring.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-
+@Order(1)
 class SpringJdbcSelectIntMariadbTest : AbstractSpringJdbcMariadbTest<IntRepositoryMariadbSelect>() {
 
     @BeforeAll

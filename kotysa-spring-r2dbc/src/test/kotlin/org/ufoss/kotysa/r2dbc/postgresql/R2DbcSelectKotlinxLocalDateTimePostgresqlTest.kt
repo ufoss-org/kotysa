@@ -192,7 +192,7 @@ class KotlinxLocalDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) :
 
     override fun init() {
         createTables()
-                .then(insertLocalDateTimes())
+                .then(insertLocalDateTimes().then())
                 .block()
     }
 

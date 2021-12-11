@@ -27,5 +27,5 @@ public class BooleanDbBitColumnNotNull<T : Any> internal constructor(
         override val columnName: String?,
 ) : DbBitColumnNotNull<T, Boolean>(), BooleanColumnNotNull<T> {
     // No auto-increment
-    override val isAutoIncrement = false
+    override val isAutoIncrement: Boolean = false
 }

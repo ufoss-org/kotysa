@@ -192,7 +192,7 @@ class LocalDateTimeRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository 
 
     override fun init() {
         createTables()
-                .then(insertLocalDateTimes())
+                .then(insertLocalDateTimes().then())
                 .block()
     }
 

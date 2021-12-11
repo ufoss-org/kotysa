@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
 import java.math.BigDecimal
 
 /**
@@ -19,12 +20,18 @@ private class SqlClientR2dbc(
 ) : ReactorSqlClient, AbstractSqlClientR2dbc {
 
     override val module = Module.SPRING_R2DBC
-    
+
     override fun <T : Any> insert(row: T) =
-            executeInsert(row).then()
+        executeInsert(row).then()
 
     override fun <T : Any> insert(vararg rows: T) =
-            rows.fold(Mono.empty<Void>()) { mono, row -> mono.then(insert(row)) }
+        rows.fold(Mono.empty<Void>()) { mono, row -> mono.then(insert(row)) }
+    
+    override infix fun <T : Any> insertAndReturn(row: T): Mono<T> = executeInsertAndReturn(row)
+
+    override fun <T : Any> insertAndReturn(vararg rows: T) =
+            rows.toFlux()
+                .concatMap { row -> insertAndReturn(row) }
 
     override fun <T : Any> createTable(table: Table<T>) =
             executeCreateTable(table, false).then()

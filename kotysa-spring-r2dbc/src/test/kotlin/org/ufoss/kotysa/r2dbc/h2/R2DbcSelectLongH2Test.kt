@@ -5,11 +5,12 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
-
+@Order(2)
 class R2DbcSelectLongH2Test : AbstractR2dbcH2Test<LongRepositoryH2Select>() {
     override val context = startContext<LongRepositoryH2Select>()
     override val repository = getContextRepository<LongRepositoryH2Select>()
@@ -189,7 +190,7 @@ class LongRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
 
     override fun init() {
         createTables()
-                .then(insertLongs())
+                .then(insertLongs().then())
                 .block()
     }
 
@@ -198,7 +199,7 @@ class LongRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable H2_LONG
+    private fun createTables() = sqlClient createTableIfNotExists H2_LONG
 
     private fun insertLongs() =
         sqlClient.insert(longWithNullable, longWithoutNullable)

@@ -192,7 +192,7 @@ class KotlinxLocalDateRepositoryMariadbSelect(dbClient: DatabaseClient) : Reposi
 
     override fun init() {
         createTables()
-                .then(insertLocalDates())
+                .then(insertLocalDates().then())
                 .block()
     }
 

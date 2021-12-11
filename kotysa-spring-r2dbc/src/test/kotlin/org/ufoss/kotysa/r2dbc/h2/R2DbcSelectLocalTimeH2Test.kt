@@ -183,7 +183,7 @@ class LocalTimeRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Rep
 
     override fun init() {
         createTables()
-                .then(insertLocalTimes())
+                .then(insertLocalTimes().then())
                 .block()
     }
 

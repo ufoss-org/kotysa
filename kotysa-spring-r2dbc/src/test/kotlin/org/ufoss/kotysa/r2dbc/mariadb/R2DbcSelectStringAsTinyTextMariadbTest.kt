@@ -171,7 +171,7 @@ class UserRepositoryMariadbSelectStringAsTinyText(dbClient: DatabaseClient) : Re
 
     override fun init() {
         createTables()
-            .then(insertTinyTexts())
+            .then(insertTinyTexts().then())
             .block()
     }
 

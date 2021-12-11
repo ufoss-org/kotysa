@@ -7,6 +7,7 @@ package org.ufoss.kotysa.jdbc
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 import java.sql.Connection
+import java.sql.PreparedStatement
 
 /**
  * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
@@ -22,6 +23,39 @@ internal class SqlClientJdbc(
         val table = tables.getTable(row::class)
 
         val statement = connection.prepareStatement(insertSql(row))
+        setStatementParams(row, table, statement)
+
+        statement.execute()
+    }
+
+    override fun <T : Any> insert(vararg rows: T) {
+        rows.forEach { row -> insert(row) }
+    }
+
+    override fun <T : Any> insertAndReturn(row: T): T {
+        val table = tables.getTable(row::class)
+        return if (tables.dbType == DbType.MYSQL) {
+            // For MySQL : insert, then fetch created tuple
+            val statement = connection.prepareStatement(insertSql(row))
+            setStatementParams(row, table, statement)
+            statement.execute()
+            fetchLastInserted(row, table)
+        } else {
+            // other DB types have RETURNING style features
+            val statement = connection.prepareStatement(insertSql(row, true))
+            setStatementParams(row, table, statement)
+            val rs = statement.executeQuery()
+            rs.next()
+            (table.table as AbstractTable<T>).toField(
+                tables.allColumns,
+                tables.allTables,
+            ).builder.invoke(rs.toRow())
+        }
+    }
+
+    override fun <T : Any> insertAndReturn(vararg rows: T) = rows.map { row -> insertAndReturn(row) }
+
+    private fun <T : Any> setStatementParams(row: T, table: KotysaTable<T>, statement: PreparedStatement) {
         table.columns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
@@ -33,12 +67,26 @@ internal class SqlClientJdbc(
             }
             .map { column -> tables.getDbValue(column.entityGetter(row)) }
             .forEachIndexed { index, dbValue -> statement.setObject(index + 1, dbValue) }
-
-        statement.execute()
     }
 
-    override fun <T : Any> insert(vararg rows: T) {
-        rows.forEach { row -> insert(row) }
+    private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
+        @Suppress("UNCHECKED_CAST")
+        val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
+        val statement = connection.prepareStatement(lastInsertedSql(row))
+
+        if (pkColumns.size != 1 || !pkColumns[0].isAutoIncrement) {
+            // bind all PK values
+            pkColumns
+                .map { column -> tables.getDbValue(column.entityGetter(row)) }
+                .forEachIndexed { index, dbValue -> statement.setObject(index + 1, dbValue) }
+        }
+
+        val rs = statement.executeQuery()
+        rs.next()
+        return (table.table as AbstractTable<T>).toField(
+            tables.allColumns,
+            tables.allTables,
+        ).builder.invoke(rs.toRow())
     }
 
     override fun <T : Any> createTable(table: Table<T>) {

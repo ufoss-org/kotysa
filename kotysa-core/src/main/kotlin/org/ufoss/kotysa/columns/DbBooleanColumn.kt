@@ -13,7 +13,7 @@ public sealed class DbBooleanColumnNotNull<T : Any, U : Any> : DbColumn<T, U>() 
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null
     // No auto-increment
-    final override val isAutoIncrement = false
+    final override val isAutoIncrement: Boolean = false
     // No size
     final override val size = null
 

@@ -6,13 +6,14 @@ package org.ufoss.kotysa.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-
+@Order(2)
 class R2DbcSelectLongPostgresqlTest : AbstractR2dbcPostgresqlTest<LongRepositoryPostgresqlSelect>() {
 
     @BeforeAll
@@ -201,7 +202,7 @@ class LongRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertLongs())
+                .then(insertLongs().then())
                 .block()
     }
 

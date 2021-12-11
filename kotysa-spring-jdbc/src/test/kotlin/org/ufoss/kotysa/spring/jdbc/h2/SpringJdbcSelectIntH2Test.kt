@@ -5,12 +5,13 @@
 package org.ufoss.kotysa.spring.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 
-
+@Order(1)
 class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<IntRepositoryH2Select>() {
     override val context = startContext<IntRepositoryH2Select>()
     override val repository = getContextRepository<IntRepositoryH2Select>()

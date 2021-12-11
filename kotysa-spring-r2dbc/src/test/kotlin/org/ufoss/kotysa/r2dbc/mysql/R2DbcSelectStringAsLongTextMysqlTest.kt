@@ -171,7 +171,7 @@ class UserRepositoryMysqlSelectStringAsLongText(dbClient: DatabaseClient) : Repo
 
     override fun init() {
         createTables()
-            .then(insertLongTexts())
+            .then(insertLongTexts().then())
             .block()
     }
 

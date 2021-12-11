@@ -103,7 +103,7 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
     private fun createTables() {
         sqlClient createTable H2_ALL_TYPES_NOT_NULL
         sqlClient createTable H2_ALL_TYPES_NULLABLE
-        sqlClient createTable H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists  H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {

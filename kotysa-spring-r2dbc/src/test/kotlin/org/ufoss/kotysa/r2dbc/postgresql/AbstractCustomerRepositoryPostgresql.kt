@@ -12,7 +12,7 @@ abstract class AbstractCustomerRepositoryPostgresql(protected val sqlClient: Rea
 
     override fun init() {
         createTables()
-                .then(insertCustomers())
+                .then(insertCustomers().then())
                 .block()
     }
 

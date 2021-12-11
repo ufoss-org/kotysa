@@ -171,7 +171,7 @@ class UserRepositoryPostgresqlSelectStringAsText(dbClient: DatabaseClient) : Rep
 
     override fun init() {
         createTables()
-            .then(insertTexts())
+            .then(insertTexts().then())
             .block()
     }
 

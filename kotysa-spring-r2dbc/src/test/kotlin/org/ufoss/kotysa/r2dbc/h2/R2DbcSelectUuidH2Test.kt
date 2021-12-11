@@ -70,7 +70,7 @@ class UuidRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
 
     override fun init() {
         createTables()
-                .then(insertUuids())
+                .then(insertUuids().then())
                 .block()
     }
 

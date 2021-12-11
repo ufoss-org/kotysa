@@ -11,6 +11,7 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
+    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testImplementation testFixtures(project(':kotysa-core'))

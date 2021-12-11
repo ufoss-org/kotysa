@@ -14,7 +14,7 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
     public abstract val entityGetter: (T) -> U?
     internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
-    internal abstract val isAutoIncrement: Boolean
+    public abstract val isAutoIncrement: Boolean
     internal abstract val size: Int?
     internal abstract val isNullable: Boolean
     internal abstract val defaultValue: U?

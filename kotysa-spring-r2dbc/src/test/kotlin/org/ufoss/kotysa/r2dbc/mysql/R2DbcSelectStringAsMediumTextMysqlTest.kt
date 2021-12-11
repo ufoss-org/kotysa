@@ -171,7 +171,7 @@ class UserRepositoryMysqlSelectStringAsMediumText(dbClient: DatabaseClient) : Re
 
     override fun init() {
         createTables()
-            .then(insertMediumTexts())
+            .then(insertMediumTexts().then())
             .block()
     }
 

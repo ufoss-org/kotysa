@@ -14,7 +14,7 @@ abstract class AbstractCustomerRepositoryH2(
 
     override fun init() {
         createTables()
-                .then(insertCustomers())
+                .then(insertCustomers().then())
                 .block()
     }
 

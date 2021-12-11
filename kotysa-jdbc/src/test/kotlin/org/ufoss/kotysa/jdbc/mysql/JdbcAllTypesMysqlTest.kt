@@ -96,7 +96,7 @@ class AllTypesRepositoryMysql(connection: Connection) : Repository {
     private fun createTables() {
         sqlClient createTable MYSQL_ALL_TYPES_NOT_NULL
         sqlClient createTable MYSQL_ALL_TYPES_NULLABLE
-        sqlClient createTable MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {

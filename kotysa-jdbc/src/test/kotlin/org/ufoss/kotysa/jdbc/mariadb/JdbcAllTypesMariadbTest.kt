@@ -96,7 +96,7 @@ class AllTypesRepositoryMariadb(connection: Connection) : Repository {
     private fun createTables() {
         sqlClient createTable MARIADB_ALL_TYPES_NOT_NULL
         sqlClient createTable MARIADB_ALL_TYPES_NULLABLE
-        sqlClient createTable MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {

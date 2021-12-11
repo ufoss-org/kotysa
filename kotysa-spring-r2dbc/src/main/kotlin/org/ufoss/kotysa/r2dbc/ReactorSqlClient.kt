@@ -17,8 +17,10 @@ import java.math.BigDecimal
 public interface ReactorSqlClient {
 
     public infix fun <T : Any> insert(row: T): Mono<Void>
-
     public fun <T : Any> insert(vararg rows: T): Mono<Void>
+
+    public infix fun <T : Any> insertAndReturn(row: T): Mono<T>
+    public fun <T : Any> insertAndReturn(vararg rows: T): Flux<T>
 
     public infix fun <T : Any> createTable(table: Table<T>): Mono<Void>
     public infix fun <T : Any> createTableIfNotExists(table: Table<T>): Mono<Void>
