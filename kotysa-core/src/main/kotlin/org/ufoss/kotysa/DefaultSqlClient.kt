@@ -160,7 +160,12 @@ public interface DefaultSqlClient {
 
         val wheres =
             if (pkColumns.size == 1 && pkColumns[0].isAutoIncrement) {
-                "${pkColumns[0].name} = (SELECT LAST_INSERT_ID())"
+                val selected = if (tables.dbType == DbType.MYSQL) {
+                    "(SELECT LAST_INSERT_ID())"
+                } else {
+                    "?"
+                }
+                "${pkColumns[0].name} = $selected"
             } else {
                 var index = 0
                 pkColumns

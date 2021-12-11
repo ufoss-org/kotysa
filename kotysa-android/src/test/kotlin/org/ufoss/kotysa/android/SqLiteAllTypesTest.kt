@@ -104,7 +104,7 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
     private fun createTables() {
         sqlClient createTable SQLITE_ALL_TYPES_NOT_NULL
         sqlClient createTable SQLITE_ALL_TYPES_NULLABLE
-        sqlClient createTable SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE
     }
 
     private fun insertAllTypes() {

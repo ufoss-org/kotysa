@@ -6,6 +6,7 @@ package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.database.sqlite.SQLiteStatement
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 
@@ -22,15 +23,9 @@ internal class SqlClientSqLite(
     override fun <T : Any> insert(row: T) {
         val table = tables.getTable(row::class)
         val statement = client.writableDatabase.compileStatement(insertSql(row))
-        table.columns
-            // do nothing for null values with default
-            .filterNot { column ->
-                column.entityGetter(row) == null &&
-                        (column.defaultValue != null || column.isAutoIncrement)
-            }
-            .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
+        setInsertStatementParams(row, table, statement)
 
-        statement.executeInsert()
+        statement.execute()
     }
 
     /**
@@ -42,24 +37,37 @@ internal class SqlClientSqLite(
         val statement = client.writableDatabase.compileStatement(insertSql(firstRow))
         rows.forEach { row ->
             statement.clearBindings()
-            table.columns
-                .filterNot { column ->
-                    column.entityGetter(row) == null &&
-                            (column.defaultValue != null || column.isAutoIncrement)
-                }
-                .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
-            statement.executeInsert()
+            setInsertStatementParams(row, table, statement)
+            statement.execute()
         }
     }
 
     override fun <T : Any> insertAndReturn(row: T): T {
-        TODO("Not yet implemented")
+        val table = tables.getTable(row::class)
+        val statement = client.writableDatabase.compileStatement(insertSql(row))
+        setInsertStatementParams(row, table, statement)
+
+        // For SqLite : insert, then fetch created tuple
+        val lastId = statement.executeInsert()
+        val cursor = client.readableDatabase.rawQuery(lastInsertedSql(row), arrayOf("$lastId"))
+        cursor.moveToFirst()
+        return (table.table as AbstractTable<T>).toField(
+            tables.allColumns,
+            tables.allTables,
+        ).builder.invoke(cursor.toRow())
     }
 
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> {
-        TODO("Not yet implemented")
-    }
+    override fun <T : Any> insertAndReturn(vararg rows: T) = rows.map { row -> insertAndReturn(row) }
 
+    private fun <T : Any> setInsertStatementParams(row: T, table: KotysaTable<T>, statement: SQLiteStatement) {
+        table.columns
+            // do nothing for null values with default
+            .filterNot { column ->
+                column.entityGetter(row) == null &&
+                        (column.defaultValue != null || column.isAutoIncrement)
+            }
+            .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }
+    }
 
     override fun <T : Any> createTable(table: Table<T>) {
         createTable(table, false)
