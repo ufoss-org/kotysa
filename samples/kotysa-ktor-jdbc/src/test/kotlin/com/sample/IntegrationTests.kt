@@ -37,7 +37,7 @@ class IntegrationTests {
         mapper.readValue(content, T::class.java)
 
     private inline fun <reified T> TestApplicationResponse.parseBodyList(): List<T> {
-        val type = mapper.getTypeFactory().constructCollectionType(List::class.java, T::class.java)
+        val type = mapper.typeFactory.constructCollectionType(List::class.java, T::class.java)
         return mapper.readValue(content, type);
     }
 }

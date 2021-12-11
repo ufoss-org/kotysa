@@ -37,7 +37,7 @@ object ROLE : H2Table<Role>() {
     val label = varchar(Role::label)
 }
 
-object USER : H2Table<User>() {
+object USER : H2Table<User>("users") {
     val id = autoIncrementInteger(User::id)
             .primaryKey()
     val firstname = varchar(User::firstname)
