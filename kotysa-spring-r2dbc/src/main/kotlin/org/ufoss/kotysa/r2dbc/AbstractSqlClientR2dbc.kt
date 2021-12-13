@@ -75,7 +75,8 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
             }
     }
 
-    private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): Mono<T> {
+    // fixme 13/12/21 : does not work if set to private
+    public fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): Mono<T> {
         @Suppress("UNCHECKED_CAST")
         val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
 
