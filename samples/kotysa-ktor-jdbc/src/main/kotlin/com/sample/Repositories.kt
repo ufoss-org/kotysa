@@ -1,12 +1,16 @@
 package com.sample
 
 import org.ufoss.kotysa.SqlClient
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
 import java.util.*
 
 private val role_user_uuid = UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f")
 private val role_admin_uuid = UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691a4e")
 
-class UserRepository(private val client: SqlClient) {
+class UserRepository(
+    private val client: SqlClient,
+    private val operator: JdbcTransactionalOp,
+) {
 
     fun count() = client selectCountAllFrom USER
 
@@ -26,7 +30,9 @@ class UserRepository(private val client: SqlClient) {
 
     fun deleteAll() = client deleteAllFrom USER
 
-    fun save(user: User) = client insert user
+    fun save(user: User) = operator.execute {
+        client insert user
+    }
 
     fun init() {
         client createTableIfNotExists USER
@@ -46,6 +52,6 @@ class RoleRepository(private val client: SqlClient) {
         deleteAll()
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))
-         save(Role("god"))
+        save(Role("god"))
     }
 }

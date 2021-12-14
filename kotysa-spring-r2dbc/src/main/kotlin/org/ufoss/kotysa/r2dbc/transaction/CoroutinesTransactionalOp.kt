@@ -14,8 +14,7 @@ import org.springframework.transaction.reactive.transactional
  * @see executeAndAwait
  * @see transactional
  */
-@JvmInline
-public value class CoroutinesTransactionalOp(internal val operator: TransactionalOperator) {
+public class CoroutinesTransactionalOp(internal val operator: TransactionalOperator) {
     public suspend fun <T : Any> execute(block: suspend (ReactorTransaction) -> T?): T? =
             operator.executeAndAwait { reactiveTransaction -> block.invoke(ReactorTransaction(reactiveTransaction)) }
 }

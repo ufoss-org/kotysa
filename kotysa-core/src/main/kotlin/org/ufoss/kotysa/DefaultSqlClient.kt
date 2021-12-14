@@ -123,10 +123,18 @@ public interface DefaultSqlClient {
                     else -> ":k${index++}"
                 }
             }
+        var prefix = ""
+        var suffix = ""
+        // on MSSQL identity cannot be set a value, must activate IDENTITY_INSERT
+        if (tables.dbType == DbType.MSSQL
+                && kotysaTable.columns.any { column -> column.isAutoIncrement && column.entityGetter(row) != null }) {
+            prefix = "SET IDENTITY_INSERT ${kotysaTable.name} ON\n"
+            suffix = "\nSET IDENTITY_INSERT ${kotysaTable.name} OFF"
+        }
 
         if (!withReturn || tables.dbType == DbType.MYSQL) {
             // If no return requested, or MySQL that does not provide native RETURNING style feature
-            return "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)"
+            return "${prefix}INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values)$suffix"
         }
 
         val allTableColumnNames = kotysaTable.columns
@@ -140,7 +148,7 @@ public interface DefaultSqlClient {
 
         return when (tables.dbType) {
             DbType.H2 -> "SELECT $allTableColumnNames FROM FINAL TABLE (INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values))"
-            DbType.MSSQL -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) OUTPUT $allTableColumnNames VALUES ($values)"
+            DbType.MSSQL -> "${prefix}INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) OUTPUT $allTableColumnNames VALUES ($values)$suffix"
             else -> "INSERT INTO ${kotysaTable.name} (${columnNames.joinToString()}) VALUES ($values) RETURNING $allTableColumnNames"
         }
     }
@@ -153,13 +161,17 @@ public interface DefaultSqlClient {
 
     public fun <T : Any> lastInsertedQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
-        val pkColumns = kotysaTable.primaryKey.columns
+        @Suppress("UNCHECKED_CAST")
+        val pkColumns = kotysaTable.primaryKey.columns as List<DbColumn<T, *>>
 
         val allTableColumnNames = kotysaTable.columns
             .joinToString { column -> column.name }
 
-        val wheres =
-            if (pkColumns.size == 1 && pkColumns[0].isAutoIncrement) {
+        val wheres = if (
+                pkColumns.size == 1 &&
+                pkColumns[0].isAutoIncrement &&
+                pkColumns[0].entityGetter(row) == null
+            ) {
                 val selected = if (tables.dbType == DbType.MYSQL) {
                     "(SELECT LAST_INSERT_ID())"
                 } else {

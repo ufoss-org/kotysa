@@ -74,15 +74,29 @@ class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
     }
 
     @Test
-    fun `Verify insertAndReturnInt works correctly`() {
+    fun `Verify insertAndReturnInt auto-generated works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            repository.insertAndReturnInt()
+            repository.insertAndReturnInt(intWithNullable)
         }.test()
             .expectNextMatches { inserted ->
                 assertThat(inserted!!.intNotNull).isEqualTo(intWithNullable.intNotNull)
                 assertThat(inserted.intNullable).isEqualTo(intWithNullable.intNullable)
                 assertThat(inserted.id).isGreaterThan(0)
+                true
+            }.verifyComplete()
+    }
+
+    @Test
+    fun `Verify insertAndReturnInt not auto-generated works correctly`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnInt(IntEntity(1, 2, 666))
+        }.test()
+            .expectNextMatches { inserted ->
+                assertThat(inserted!!.intNotNull).isEqualTo(1)
+                assertThat(inserted.intNullable).isEqualTo(2)
+                assertThat(inserted.id).isEqualTo(666)
                 true
             }.verifyComplete()
     }
@@ -133,7 +147,7 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
 
     fun selectAllCustomers() = sqlClient selectAllFrom MSSQL_CUSTOMER
 
-    fun insertAndReturnInt() = sqlClient insertAndReturn intWithNullable
+    fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 

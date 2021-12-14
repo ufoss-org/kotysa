@@ -74,7 +74,11 @@ internal class SqlClientJdbc(
         val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
         val statement = connection.prepareStatement(lastInsertedSql(row))
 
-        if (pkColumns.size != 1 || !pkColumns[0].isAutoIncrement) {
+        if (
+            pkColumns.size != 1 ||
+            !pkColumns[0].isAutoIncrement ||
+            pkColumns[0].entityGetter(row) != null
+        ) {
             // bind all PK values
             pkColumns
                 .map { column -> tables.getDbValue(column.entityGetter(row)) }
