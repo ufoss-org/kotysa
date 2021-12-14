@@ -6,7 +6,6 @@ plugins {
 mainClassName = "com.sample.ApplicationKt"
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
