@@ -52,4 +52,4 @@ public value class JdbcTransactionalOp(private val connection: Connection) : Tra
 /**
  * Create a [TransactionalOp] from a [Connection]
  */
-public fun Connection.transactionalOp(): TransactionalOp = JdbcTransactionalOp(this)
+public fun Connection.transactionalOp(): JdbcTransactionalOp = JdbcTransactionalOp(this)

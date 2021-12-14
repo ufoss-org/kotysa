@@ -12,8 +12,7 @@ import reactor.core.publisher.Mono
 /**
  * @see org.springframework.transaction.reactive.TransactionalOperator
  */
-@JvmInline
-public value class ReactorTransactionalOp(internal val operator: TransactionalOperator) {
+public class ReactorTransactionalOp(internal val operator: TransactionalOperator) {
     public fun <T : Any> execute(block: (ReactorTransaction) -> Publisher<T?>): Flux<T?> =
         operator.execute { reactiveTransaction -> block.invoke(ReactorTransaction(reactiveTransaction)) }
 }

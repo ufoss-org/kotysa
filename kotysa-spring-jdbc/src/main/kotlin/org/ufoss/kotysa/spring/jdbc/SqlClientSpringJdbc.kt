@@ -85,7 +85,11 @@ internal class SqlClientSpringJdbc(
         val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
 
         val parameters = MapSqlParameterSource()
-        if (pkColumns.size != 1 || !pkColumns[0].isAutoIncrement) {
+        if (
+            pkColumns.size != 1 ||
+            !pkColumns[0].isAutoIncrement ||
+            pkColumns[0].entityGetter(row) != null
+        ) {
             // bind all PK values
             pkColumns
                 .map { column -> tables.getDbValue(column.entityGetter(row)) }

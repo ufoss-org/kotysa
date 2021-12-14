@@ -81,7 +81,11 @@ internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
         @Suppress("UNCHECKED_CAST")
         val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
 
-        val executeSpec = if (pkColumns.size == 1 && pkColumns[0].isAutoIncrement) {
+        val executeSpec = if (
+            pkColumns.size == 1 &&
+            pkColumns[0].isAutoIncrement &&
+            pkColumns[0].entityGetter(row) == null
+        ) {
             client.sql(lastInsertedSql(row))
         } else {
             // bind all PK values

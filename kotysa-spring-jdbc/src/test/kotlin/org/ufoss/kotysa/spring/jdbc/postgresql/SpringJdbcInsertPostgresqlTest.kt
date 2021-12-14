@@ -75,13 +75,24 @@ class SpringJdbcInsertPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Reposito
     }
 
     @Test
-    fun `Verify insertAndReturnInt works correctly`() {
+    fun `Verify insertAndReturnInt auto-generated works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
-            val inserted = repository.insertAndReturnInt()
+            val inserted = repository.insertAndReturnInt(intWithNullable)
             assertThat(inserted.intNotNull).isEqualTo(intWithNullable.intNotNull)
             assertThat(inserted.intNullable).isEqualTo(intWithNullable.intNullable)
             assertThat(inserted.id).isGreaterThan(0)
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnInt not auto-generated works correctly`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            val inserted = repository.insertAndReturnInt(IntEntity(1, 2, 666))
+            assertThat(inserted.intNotNull).isEqualTo(1)
+            assertThat(inserted.intNullable).isEqualTo(2)
+            assertThat(inserted.id).isEqualTo(666)
         }
     }
 
@@ -127,7 +138,7 @@ class RepositoryPostgresqlInsert(dbClient: JdbcOperations) : Repository {
 
     fun selectAllCustomers() = sqlClient selectAllFrom POSTGRESQL_CUSTOMER
 
-    fun insertAndReturnInt() = sqlClient insertAndReturn intWithNullable
+    fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 

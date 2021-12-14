@@ -7,8 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.transaction
 import org.springframework.transaction.TransactionStatus
 import org.ufoss.kotysa.transaction.Transaction
 
-@JvmInline
-public value class SpringJdbcTransaction(private val transactionStatus: TransactionStatus) : Transaction {
+public class SpringJdbcTransaction(private val transactionStatus: TransactionStatus) : Transaction {
 
     override fun isNewTransaction(): Boolean = transactionStatus.isNewTransaction
 
