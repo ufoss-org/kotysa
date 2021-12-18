@@ -1,42 +1,25 @@
 package com.sample
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.getBean
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.fu.kofu.application
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 
+@SpringBootTest
 class UserRepositoryTests {
 
-    private val dataApp = application {
-        enable(dataConfig)
-    }
-
-    private lateinit var context: ConfigurableApplicationContext
+    @Autowired
     private lateinit var repository: UserRepository
-
-    @BeforeAll
-    fun beforeAll() {
-        context = dataApp.run(profiles = "test")
-        repository = context.getBean()
-    }
 
     @Test
     fun count() {
         assertThat(repository.count().block())
-                .isEqualTo(2)
+            .isEqualTo(2)
     }
 
     @Test
     fun selectWithJoin() {
         assertThat(repository.selectWithJoin().log().toIterable())
-                .hasSize(2)
-    }
-
-    @AfterAll
-    fun afterAll() {
-        context.close()
+            .hasSize(2)
     }
 }
