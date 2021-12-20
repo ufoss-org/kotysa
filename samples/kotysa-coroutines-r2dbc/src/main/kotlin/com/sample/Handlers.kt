@@ -1,8 +1,10 @@
 package com.sample
 
 import org.springframework.http.MediaType
+import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*
 
+@Component
 @Suppress("UNUSED_PARAMETER")
 class UserHandler(private val repository: UserRepository) {
 

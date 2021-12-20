@@ -1,23 +1,24 @@
 package com.sample
 
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.context.ConfigurableApplicationContext
+import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
 import org.springframework.test.web.reactive.server.expectBodyList
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class IntegrationTests {
 
-    private val client = WebTestClient.bindToServer().baseUrl("http://localhost:8181").build()
-
-    private lateinit var context: ConfigurableApplicationContext
+    private lateinit var client: WebTestClient
 
     @BeforeAll
-    fun beforeAll() {
-        context = app.run(profiles = "dev")
+    fun before(@LocalServerPort port: Int) {
+        client = WebTestClient.bindToServer()
+            .baseUrl("http://localhost:$port")
+            .build()
     }
 
     @Test
@@ -35,10 +36,5 @@ class IntegrationTests {
                 .expectStatus().is2xxSuccessful
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
                 .expectBody<User>()
-    }
-
-    @AfterAll
-    fun afterAll() {
-        context.close()
     }
 }

@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.transaction.reactive.TransactionalOperator
-import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
+import org.ufoss.kotysa.r2dbc.coSqlClient
+import org.ufoss.kotysa.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.tables
 
 private val h2Tables = tables().h2(ROLE, USER)
@@ -26,8 +26,8 @@ class DataConfig : AbstractR2dbcConfiguration() {
         )
 
     @Bean
-    fun sqlClient(dbClient: DatabaseClient) = dbClient.sqlClient(h2Tables)
+    fun sqlClient(dbClient: DatabaseClient) = dbClient.coSqlClient(h2Tables)
 
     @Bean
-    fun operator(op: TransactionalOperator) = op.transactionalOp()
+    fun operator(op: TransactionalOperator) = op.coTransactionalOp()
 }
