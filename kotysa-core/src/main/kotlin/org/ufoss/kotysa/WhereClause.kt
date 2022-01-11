@@ -4,20 +4,30 @@
 
 package org.ufoss.kotysa
 
-
-public class WhereClause<T : Any> internal constructor(
-        internal val column: Column<T, *>,
-        internal val operation: Operation,
-        public val value: Any?
-)
-
 public enum class Operation {
-    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IN//, IS
+    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IN
 }
 
+public sealed class WhereClause<T : Any> {
+    internal abstract val column: Column<T, *>
+    internal abstract val operation: Operation
+}
+
+public class WhereClauseValue<T : Any> internal constructor(
+    override val column: Column<T, *>,
+    override val operation: Operation,
+    public val value: Any?,
+) : WhereClause<T>()
+
+public class WhereClauseColumn<T : Any> internal constructor(
+    override val column: Column<T, *>,
+    override val operation: Operation,
+    internal val otherColumn: Column<*, *>,
+) : WhereClause<T>()
+
 public class WhereClauseWithType<T : Any> internal constructor(
-        public val whereClause: WhereClause<T>,
-        internal val type: WhereClauseType
+    public val whereClause: WhereClause<T>,
+    internal val type: WhereClauseType
 )
 
 public enum class WhereClauseType {
