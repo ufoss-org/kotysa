@@ -20,23 +20,20 @@ class MsSqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
                 .getOrComputeIfAbsent("msSqlContainer") {
-                    val msSqlContainer = KMsSqlContainer()
+                    val msSqlContainer = MSSQLServerContainer("mcr.microsoft.com/mssql/server:2017-CU12")
                     msSqlContainer
                             .acceptLicense() // required
                             .withPassword("A_Str0ng_Required_Password")
                     msSqlContainer.start()
-                    println("KMsSqlContainer started")
+                    println("MsSqlContainer started")
 
                     MsSqlContainerResource(msSqlContainer)
                 }
     }
 }
 
-internal class KMsSqlContainer : MSSQLServerContainer<KMsSqlContainer>(
-        "mcr.microsoft.com/mssql/server:2017-CU12")
-
 class MsSqlContainerResource internal constructor(
-        private val dbContainer: KMsSqlContainer
+        private val dbContainer: MSSQLServerContainer<*>
 ) : TestContainersCloseableResource {
     companion object {
         const val ID = "MsSqlContainerResource"
@@ -44,7 +41,7 @@ class MsSqlContainerResource internal constructor(
 
     override fun close() {
         dbContainer.stop()
-        println("KMsSqlContainer stopped")
+        println("MsSqlContainer stopped")
     }
 
     override fun getExposedPorts(): MutableList<Int> = dbContainer.exposedPorts

@@ -19,22 +19,20 @@ class MariadbContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
                 .getOrComputeIfAbsent("mariadbContainer") {
-                    val mariadbContainer = KMariadbContainer()
+                    val mariadbContainer = MariaDBContainer("mariadb:10.6.1")
                             .withDatabaseName("db")
                             .withUsername("mariadb")
                             .withPassword("test")
                     mariadbContainer.start()
-                    println("KMariadbContainer started")
+                    println("MariadbContainer started")
 
                     MariadbContainerResource(mariadbContainer)
                 }
     }
 }
 
-internal class KMariadbContainer : MariaDBContainer<KMariadbContainer>("mariadb:10.6.1")
-
 class MariadbContainerResource internal constructor(
-        private val dbContainer: KMariadbContainer
+        private val dbContainer: MariaDBContainer<*>
 ) : TestContainersCloseableResource {
     companion object {
         const val ID = "MariadbContainerResource"
@@ -42,7 +40,7 @@ class MariadbContainerResource internal constructor(
 
     override fun close() {
         dbContainer.stop()
-        println("KMariadbContainer stopped")
+        println("MariadbContainer stopped")
     }
 
     override fun getExposedPorts(): MutableList<Int> = dbContainer.exposedPorts
