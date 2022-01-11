@@ -19,22 +19,20 @@ class MySqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
                 .getOrComputeIfAbsent("mySqlContainer") {
-                    val mysqlContainer = KMySQLContainer()
+                    val mysqlContainer = MySQLContainer("mysql:8.0.23")
                             .withDatabaseName("db")
                             .withUsername("mysql")
                             .withPassword("test")
                     mysqlContainer.start()
-                    println("KMySQLContainer started")
+                    println("MySQLContainer started")
 
                     MySqlContainerResource(mysqlContainer)
                 }
     }
 }
 
-internal class KMySQLContainer : MySQLContainer<KMySQLContainer>("mysql:8.0.23")
-
 class MySqlContainerResource internal constructor(
-        private val dbContainer: KMySQLContainer
+        private val dbContainer: MySQLContainer<*>
 ) : TestContainersCloseableResource {
     companion object {
         const val ID = "MySqlContainerResource"
@@ -42,7 +40,7 @@ class MySqlContainerResource internal constructor(
 
     override fun close() {
         dbContainer.stop()
-        println("KMySQLContainer stopped")
+        println("MySQLContainer stopped")
     }
 
     override fun getExposedPorts(): MutableList<Int> = dbContainer.exposedPorts

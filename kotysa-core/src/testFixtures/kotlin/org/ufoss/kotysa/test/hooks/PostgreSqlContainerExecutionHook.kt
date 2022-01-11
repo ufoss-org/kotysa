@@ -19,23 +19,21 @@ class PostgreSqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
                 .getOrComputeIfAbsent("postgreSqlContainer") {
-                    val postgreSqlContainer = KPostgreSqlContainer()
+                    val postgreSqlContainer = PostgreSQLContainer("postgres:13.2-alpine")
                     postgreSqlContainer
                             .withDatabaseName("db")
                             .withUsername("postgres")
                             .withPassword("test")
                     postgreSqlContainer.start()
-                    println("KPostgreSqlContainer started")
+                    println("PostgreSqlContainer started")
 
                     PostgreSqlContainerResource(postgreSqlContainer)
                 }
     }
 }
 
-internal class KPostgreSqlContainer : PostgreSQLContainer<KPostgreSqlContainer>("postgres:13.2-alpine")
-
 class PostgreSqlContainerResource internal constructor(
-        private val dbContainer: KPostgreSqlContainer
+        private val dbContainer: PostgreSQLContainer<*>
 ) : TestContainersCloseableResource {
     companion object {
         const val ID = "PostgreSqlContainerResource"
@@ -43,7 +41,7 @@ class PostgreSqlContainerResource internal constructor(
 
     override fun close() {
         dbContainer.stop()
-        println("KPostgreSqlContainer stopped")
+        println("PostgreSqlContainer stopped")
     }
 
     override fun getExposedPorts(): MutableList<Int> = dbContainer.exposedPorts
