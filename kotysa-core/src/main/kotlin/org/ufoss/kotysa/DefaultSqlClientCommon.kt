@@ -268,7 +268,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             override val where: U,
             override val properties: Properties,
     ) : AbstractWhereOpColumn<T, U, String>(), WhereOpStringColumn<T, U>,
-            WhereOpColumnNotNull<T, U, String>, SqlClientQuery.WhereOpStringColumnNotNull<T, U>
+            WhereOpColumnNotNull<T, U, String>, SqlClientQuery.WhereOpStringColumnNotNull<T, U> {
+        override fun eq(otherStringColumnNotNull: StringColumnNotNull<*>): U =
+            where.apply { addClause(column, Operation.CONTAINS, "%$value%", type) }
+    }
 
     public class WhereOpStringColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
             override val where: U,
@@ -368,7 +371,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun addClause(column: Column<T, *>, operation: Operation, value: Any?, whereClauseType: WhereClauseType) {
             properties.whereClauses.add(
                     WhereClauseWithType(
-                            WhereClause(column, operation, value),
+                            WhereClauseValue(column, operation, value),
                             whereClauseType,
                     )
             )
@@ -664,10 +667,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                     where.append(
                         when (operation) {
                             Operation.EQ ->
-                                if (value == null) {
-                                    "$fieldName IS NULL"
-                                } else {
-                                    "$fieldName = ${variable()}"
+                                when (this) {
+                                    is WhereClauseValue<*> ->
+                                        if (value == null) {
+                                            "$fieldName IS NULL"
+                                        } else {
+                                            "$fieldName = ${variable()}"
+                                        }
+                                    is WhereClauseColumn -> "$fieldName = ${otherColumn.getFieldName(availableColumns)}"
                                 }
                             Operation.NOT_EQ ->
                                 if (value == null) {

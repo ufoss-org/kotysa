@@ -125,7 +125,9 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface WhereOpStringColumnNotNull<T : Any, U : Where<T, U>> :
-            WhereOpStringColumn<T, U>, WhereOpColumnNotNull<T, U, String>
+        WhereOpStringColumn<T, U>, WhereOpColumnNotNull<T, U, String> {
+        public infix fun eq(otherStringColumnNotNull: StringColumnNotNull<*>): U
+    }
 
     public interface WhereOpStringColumnNullable<T : Any, U : Where<T, U>> :
             WhereOpStringColumn<T, U>, WhereOpColumnNullable<T, U, String>
