@@ -38,14 +38,14 @@ public interface CoroutinesSqlClient {
     public infix fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.From<T, T> =
-            select(table).from(table)
+        select(table).from(table)
+
     public infix fun <T : Any> selectCountFrom(table: Table<T>): CoroutinesSqlClientSelect.From<Long, T> =
-            selectCount().from(table)
+        selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flow<T> = selectFrom(table).fetchAll()
     public suspend infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
-
 
 
 public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() {
@@ -111,20 +111,22 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
     }
 
     public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
-            OrderBy<T>, LimitOffset<T>, Return<T>
+        OrderBy<T>, LimitOffset<T>, Return<T> {
+        public infix fun <V : Any> and(table: Table<V>): From<T, V>
+    }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
-            Return<T>
+        Return<T>
 
     public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>
 
     public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, OrderBy<T>, LimitOffset<T>,
-            Return<T>
+        Return<T>
 
     public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderByPart2<T>>
 
     public interface OrderByPart2<T : Any> : SqlClientQuery.OrderByPart2<OrderByPart2<T>>, GroupBy<T>, LimitOffset<T>,
-            Return<T>
+        Return<T>
 
     public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 

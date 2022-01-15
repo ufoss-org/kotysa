@@ -29,47 +29,57 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
     @Test
     fun `Verify selectAllUsers returns all users`() {
         assertThat(repository.selectAllUsers().toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(userJdoe, userBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify countAllUsersAndAliases returns all users' count`() {
         assertThat(repository.countAllUsersAndAliases().block())
-                .isEqualTo(Pair(2L, 1L))
+            .isEqualTo(Pair(2L, 1L))
     }
 
     @Test
     fun `Verify selectOneNonUnique throws NonUniqueResultException`() {
         assertThatThrownBy { repository.selectOneNonUnique().block() }
-                .isInstanceOf(NonUniqueResultException::class.java)
+            .isInstanceOf(NonUniqueResultException::class.java)
     }
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() {
         assertThat(repository.selectAllMappedToDto().toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss")
-                )
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserDto("John Doe", null),
+                UserDto("Big Boss", "TheBoss")
+            )
     }
 
     @Test
     fun `Verify selectWithJoin works correctly`() {
         assertThat(repository.selectWithJoin().toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                        UserWithRoleDto(userBboss.lastname, roleAdmin.label)
-                )
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
+    }
+
+    @Test
+    fun `Verify selectWithEqJoin works correctly`() {
+        assertThat(repository.selectWithEqJoin().toIterable())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
     }
 
     @Test
     fun `Verify selectAllIn returns TheBoss`() {
         assertThat(repository.selectAllIn(setOf("TheBoss", "TheStar", "TheBest")).toIterable())
-                .hasSize(1)
-                .containsExactly(userBboss)
+            .hasSize(1)
+            .containsExactly(userBboss)
     }
 
     @Test
@@ -78,79 +88,79 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
         coll.addFirst("TheStar")
         coll.addLast("TheBest")
         assertThat(repository.selectAllIn(coll).toIterable())
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectOneById returns TheBoss`() {
         assertThat(repository.selectOneById(userBboss.id).block())
-                .isEqualTo(userBboss)
+            .isEqualTo(userBboss)
     }
 
     @Test
     fun `Verify selectOneById finds no result for -1`() {
         repository.selectOneById(-1)
-                .test()
-                .verifyComplete()
+            .test()
+            .verifyComplete()
     }
 
     @Test
     fun `Verify selectFirstnameById returns TheBoss firstname`() {
         assertThat(repository.selectFirstnameById(userBboss.id).block())
-                .isEqualTo(userBboss.firstname)
+            .isEqualTo(userBboss.firstname)
     }
 
     @Test
     fun `Verify selectAliasById returns null as J Doe alias`() {
         assertThat(repository.selectAliasById(userJdoe.id).block())
-                .isNull()
+            .isNull()
     }
 
     @Test
     fun `Verify selectFirstnameAndAliasById returns J Doe firstname and alias`() {
         assertThat(repository.selectFirstnameAndAliasById(userJdoe.id).block())
-                .isEqualTo(Pair(userJdoe.firstname, null))
+            .isEqualTo(Pair(userJdoe.firstname, null))
     }
 
     @Test
     fun `Verify selectAllFirstnameAndAlias returns all users firstname and alias`() {
         assertThat(repository.selectAllFirstnameAndAlias().toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        Pair(userJdoe.firstname, null),
-                        Pair(userBboss.firstname, userBboss.alias),
-                )
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                Pair(userJdoe.firstname, null),
+                Pair(userBboss.firstname, userBboss.alias),
+            )
     }
 
     @Test
     fun `Verify selectFirstnameAndLastnameAndAliasById returns J Doe firstname, lastname and alias`() {
         assertThat(repository.selectFirstnameAndLastnameAndAliasById(userJdoe.id).block())
-                .isEqualTo(Triple(userJdoe.firstname, userJdoe.lastname, null))
+            .isEqualTo(Triple(userJdoe.firstname, userJdoe.lastname, null))
     }
 
     @Test
     fun `Verify selectFirstnameAndLastnameAndAliasAndIsAdminById returns J Doe firstname, lastname, alias and isAdmin`() {
         assertThat(repository.selectFirstnameAndLastnameAndAliasAndIsAdminById(userJdoe.id).block())
-                .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
+            .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
     }
 
     @Test
     fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
         assertThat(repository.selectRoleLabelFromUserId(userBboss.id).block())
-                .isEqualTo(roleAdmin.label)
+            .isEqualTo(roleAdmin.label)
     }
 
     @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers().block()!!)
-                .isEqualTo(2L)
+            .isEqualTo(2L)
     }
 
     @Test
     fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
         assertThat(repository.selectRoleLabelsFromUserId(userBboss.id).toIterable())
-                .hasSize(1)
-                .containsExactly(roleAdmin.label)
+            .hasSize(1)
+            .containsExactly(roleAdmin.label)
     }
 }
 
@@ -158,84 +168,90 @@ class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>()
 class UserRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
 
     fun selectOneNonUnique() =
-            (sqlClient selectFrom MYSQL_USER
-                    ).fetchOne()
+        (sqlClient selectFrom MYSQL_USER
+                ).fetchOne()
 
     fun selectAllMappedToDto() =
-            (sqlClient select {
-                UserDto("${it[MYSQL_USER.firstname]} ${it[MYSQL_USER.lastname]}", it[MYSQL_USER.alias])
-            }
-                    from MYSQL_USER
-                    ).fetchAll()
+        (sqlClient select {
+            UserDto("${it[MYSQL_USER.firstname]} ${it[MYSQL_USER.lastname]}", it[MYSQL_USER.alias])
+        }
+                from MYSQL_USER
+                ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname]!!, it[MYSQL_ROLE.label]!!) }
-                    from MYSQL_USER innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
-                    ).fetchAll()
+        (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname]!!, it[MYSQL_ROLE.label]!!) }
+                from MYSQL_USER innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
+                ).fetchAll()
+
+    fun selectWithEqJoin() =
+        (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname]!!, it[MYSQL_ROLE.label]!!) }
+                from MYSQL_USER and MYSQL_ROLE
+                where MYSQL_USER.roleId eq MYSQL_ROLE.id
+                ).fetchAll()
 
     fun selectAllIn(aliases: Collection<String>) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.alias `in` aliases
-                    ).fetchAll()
+        (sqlClient selectFrom MYSQL_USER
+                where MYSQL_USER.alias `in` aliases
+                ).fetchAll()
 
     fun selectOneById(id: Int) =
-            (sqlClient select MYSQL_USER
-                    from MYSQL_USER
-                    where MYSQL_USER.id eq id
-                    ).fetchOne()
+        (sqlClient select MYSQL_USER
+                from MYSQL_USER
+                where MYSQL_USER.id eq id
+                ).fetchOne()
 
     fun selectFirstnameById(id: Int) =
-            (sqlClient select MYSQL_USER.firstname
-                    from MYSQL_USER
-                    where MYSQL_USER.id eq id
-                    ).fetchOne()
+        (sqlClient select MYSQL_USER.firstname
+                from MYSQL_USER
+                where MYSQL_USER.id eq id
+                ).fetchOne()
 
     fun selectAliasById(id: Int) =
-            (sqlClient select MYSQL_USER.alias
-                    from MYSQL_USER
-                    where MYSQL_USER.id eq id
-                    ).fetchOne()
+        (sqlClient select MYSQL_USER.alias
+                from MYSQL_USER
+                where MYSQL_USER.id eq id
+                ).fetchOne()
 
     fun selectFirstnameAndAliasById(id: Int) =
-            (sqlClient select MYSQL_USER.firstname and MYSQL_USER.alias
-                    from MYSQL_USER
-                    where MYSQL_USER.id eq id
-                    ).fetchOne()
+        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.alias
+                from MYSQL_USER
+                where MYSQL_USER.id eq id
+                ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-            (sqlClient select MYSQL_USER.firstname and MYSQL_USER.alias
-                    from MYSQL_USER
-                    ).fetchAll()
+        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.alias
+                from MYSQL_USER
+                ).fetchAll()
 
     fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-            (sqlClient select MYSQL_USER.firstname and MYSQL_USER.lastname and MYSQL_USER.alias
-                    from MYSQL_USER
-                    where MYSQL_USER.id eq id
-                    ).fetchOne()
+        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.lastname and MYSQL_USER.alias
+                from MYSQL_USER
+                where MYSQL_USER.id eq id
+                ).fetchOne()
 
     fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-            (sqlClient select MYSQL_USER.firstname and MYSQL_USER.lastname and MYSQL_USER.alias and MYSQL_USER.isAdmin
-                    from MYSQL_USER
-                    where MYSQL_USER.id eq id
-                    ).fetchOne()
+        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.lastname and MYSQL_USER.alias and MYSQL_USER.isAdmin
+                from MYSQL_USER
+                where MYSQL_USER.id eq id
+                ).fetchOne()
 
     fun countAllUsersAndAliases() =
-            (sqlClient selectCount MYSQL_USER.id
-                    andCount MYSQL_USER.alias
-                    from MYSQL_USER
-                    ).fetchOne()
+        (sqlClient selectCount MYSQL_USER.id
+                andCount MYSQL_USER.alias
+                from MYSQL_USER
+                ).fetchOne()
 
     fun selectRoleLabelFromUserId(userId: Int) =
-            (sqlClient select MYSQL_ROLE.label
-                    from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
-                    where MYSQL_USER.id eq userId)
-                    .fetchOne()
+        (sqlClient select MYSQL_ROLE.label
+                from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
+                where MYSQL_USER.id eq userId)
+            .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom MYSQL_USER
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-            (sqlClient select MYSQL_ROLE.label
-                    from MYSQL_USER_ROLE innerJoin MYSQL_ROLE on MYSQL_USER_ROLE.roleId eq MYSQL_ROLE.id
-                    where MYSQL_USER_ROLE.userId eq userId)
-                    .fetchAll()
+        (sqlClient select MYSQL_ROLE.label
+                from MYSQL_USER_ROLE innerJoin MYSQL_ROLE on MYSQL_USER_ROLE.roleId eq MYSQL_ROLE.id
+                where MYSQL_USER_ROLE.userId eq userId)
+            .fetchAll()
 }

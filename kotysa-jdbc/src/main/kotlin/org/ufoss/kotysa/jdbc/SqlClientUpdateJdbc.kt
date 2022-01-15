@@ -27,7 +27,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
     internal class Update<T : Any> internal constructor(
         override val connection: Connection,
         override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
             SqlClientDeleteOrUpdate.Where<Any>>(),
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")

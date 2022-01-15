@@ -100,7 +100,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>, Z : SqlClientQuery.OrderByPart2<Z>>
     protected constructor(
             final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>, OrderBy<T, Z>
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>, OrderBy<T, Z> {
+        protected fun <X : Any, Y : From<X, Y>> addFromTable(table: Table<X>, from: FromWhereable<T, X, Y, *, *, *, *>): Y =
+            from.addFromTable(table)
+    }
 
     public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>, X : SqlClientQuery.OrderByPart2<X>>

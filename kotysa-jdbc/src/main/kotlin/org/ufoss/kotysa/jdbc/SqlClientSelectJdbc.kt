@@ -219,7 +219,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
     private class From<T : Any, U : Any>(
         override val connection: Connection,
         properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
+    ) : FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
             SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>,
             SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.From<T, U>, GroupBy<T>, OrderBy<T>,
             SqlClientSelect.LimitOffset<T> {
@@ -228,6 +228,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override val limitOffset by lazy { LimitOffset(connection, properties) }
         override val groupByPart2 by lazy { GroupByPart2(connection, properties) }
         override val orderByPart2 by lazy { OrderByPart2(connection, properties) }
+        override fun <V : Any> and(table: Table<V>): SqlClientSelect.From<T, V> =
+            addFromTable(table, from as From<T, V>)
     }
 
     private class Where<T : Any>(

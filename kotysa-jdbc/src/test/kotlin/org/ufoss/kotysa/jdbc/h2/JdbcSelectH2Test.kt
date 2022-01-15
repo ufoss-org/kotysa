@@ -56,6 +56,16 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>() {
     }
 
     @Test
+    fun `Verify selectWithEqJoin works correctly`() {
+        assertThat(repository.selectWithEqJoin())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
+    }
+
+    @Test
     fun `Verify selectAllStream returns all users`() {
         assertThat(repository.selectAllStream())
                 .hasSize(2)
@@ -168,6 +178,12 @@ class UserRepositoryJdbcH2Select(connection: Connection) : AbstractUserRepositor
             (sqlClient select { UserWithRoleDto(it[H2_USER.lastname]!!, it[H2_ROLE.label]!!) }
                     from H2_USER innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
                     ).fetchAll()
+
+    fun selectWithEqJoin() =
+        (sqlClient select { UserWithRoleDto(it[H2_USER.lastname]!!, it[H2_ROLE.label]!!) }
+                from H2_USER and H2_ROLE
+                where H2_USER.roleId eq H2_ROLE.id
+                ).fetchAll()
 
     fun selectAllStream() =
             (sqlClient selectFrom H2_USER
