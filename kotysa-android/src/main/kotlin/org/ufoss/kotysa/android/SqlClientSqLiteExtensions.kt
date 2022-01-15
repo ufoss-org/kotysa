@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteStatement
 import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.RowImpl
+import org.ufoss.kotysa.WhereClauseValue
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -65,7 +66,13 @@ internal fun Cursor.toRow() = RowImpl(SqLiteRow(this))
 
 private fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(properties) {
     whereClauses
-            .mapNotNull { typedWhereClause -> typedWhereClause.whereClause.value }
+            .mapNotNull { typedWhereClause ->
+                if (typedWhereClause.whereClause is WhereClauseValue<*>) {
+                    (typedWhereClause.whereClause as WhereClauseValue<*>).value
+                } else {
+                    null
+                }
+            }
             .flatMap { whereValue ->
                 if (whereValue is Collection<*>) {
                     whereValue

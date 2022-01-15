@@ -110,7 +110,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
     }
 
     public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
-            OrderBy<T>, LimitOffset<T>, Return<T>
+        OrderBy<T>, LimitOffset<T>, Return<T> {
+        public infix fun <V : Any> and(table: Table<V>): From<T, V>
+    }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
             Return<T>

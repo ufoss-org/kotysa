@@ -222,7 +222,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     private class From<T : Any, U : Any>(
             override val client: NamedParameterJdbcOperations,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
+    ) : FromWhereable<T, U, SqlClientSelect.From<T, U>, SqlClientSelect.Where<T>,
             SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>,
             SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.From<T, U>, GroupBy<T>, OrderBy<T>,
             SqlClientSelect.LimitOffset<T> {
@@ -231,6 +231,8 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override fun <V : Any> and(table: Table<V>): SqlClientSelect.From<T, V> =
+            addFromTable(table, from as From<T, V>)
     }
 
     private class Where<T : Any>(

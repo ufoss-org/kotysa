@@ -122,31 +122,41 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun contains(value: String): U
         public infix fun startsWith(value: String): U
         public infix fun endsWith(value: String): U
+        public infix fun eq(otherStringColumn: StringColumn<*>): U
+        public infix fun notEq(otherStringColumn: StringColumn<*>): U
+        public infix fun contains(otherStringColumn: StringColumn<*>): U
+        public infix fun startsWith(otherStringColumn: StringColumn<*>): U
+        public infix fun endsWith(otherStringColumn: StringColumn<*>): U
     }
 
     public interface WhereOpStringColumnNotNull<T : Any, U : Where<T, U>> :
-        WhereOpStringColumn<T, U>, WhereOpColumnNotNull<T, U, String> {
-        public infix fun eq(otherStringColumnNotNull: StringColumnNotNull<*>): U
-    }
+        WhereOpStringColumn<T, U>, WhereOpColumnNotNull<T, U, String>
 
     public interface WhereOpStringColumnNullable<T : Any, U : Where<T, U>> :
-            WhereOpStringColumn<T, U>, WhereOpColumnNullable<T, U, String>
+        WhereOpStringColumn<T, U>, WhereOpColumnNullable<T, U, String>
 
     public interface WhereOpDateColumn<T : Any, U : Where<T, U>, V : Any> : WhereInOpColumn<T, U, V> {
         public infix fun before(value: V): U
         public infix fun after(value: V): U
         public infix fun beforeOrEq(value: V): U
         public infix fun afterOrEq(value: V): U
+        public infix fun eq(otherDateColumn: Column<*, V>): U
+        public infix fun notEq(otherDateColumn: Column<*, V>): U
+        public infix fun before(otherDateColumn: Column<*, V>): U
+        public infix fun after(otherDateColumn: Column<*, V>): U
+        public infix fun beforeOrEq(otherDateColumn: Column<*, V>): U
+        public infix fun afterOrEq(otherDateColumn: Column<*, V>): U
     }
 
     public interface WhereOpDateColumnNotNull<T : Any, U : Where<T, U>, V : Any> :
-            WhereOpDateColumn<T, U, V>, WhereOpColumnNotNull<T, U, V>
+        WhereOpDateColumn<T, U, V>, WhereOpColumnNotNull<T, U, V>
 
     public interface WhereOpDateColumnNullable<T : Any, U : Where<T, U>, V : Any> :
-            WhereOpDateColumn<T, U, V>, WhereOpColumnNullable<T, U, V>
+        WhereOpDateColumn<T, U, V>, WhereOpColumnNullable<T, U, V>
 
     public interface WhereOpBooleanColumnNotNull<T : Any, U : Where<T, U>> {
         public infix fun eq(value: Boolean): U
+        public infix fun eq(otherBooleanColumn: BooleanColumnNotNull<*>): U
     }
 
     public interface WhereOpIntColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, Int> {
@@ -154,32 +164,49 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun sup(value: Int): U
         public infix fun infOrEq(value: Int): U
         public infix fun supOrEq(value: Int): U
+        public infix fun eq(otherIntColumn: IntColumn<*>): U
+        public infix fun notEq(otherIntColumn: IntColumn<*>): U
+        public infix fun inf(otherIntColumn: IntColumn<*>): U
+        public infix fun sup(otherIntColumn: IntColumn<*>): U
+        public infix fun infOrEq(otherIntColumn: IntColumn<*>): U
+        public infix fun supOrEq(otherIntColumn: IntColumn<*>): U
     }
 
     public interface WhereOpIntColumnNotNull<T : Any, U : Where<T, U>> :
-            WhereOpIntColumn<T, U>, WhereOpColumnNotNull<T, U, Int>
+        WhereOpIntColumn<T, U>, WhereOpColumnNotNull<T, U, Int>
 
     public interface WhereOpIntColumnNullable<T : Any, U : Where<T, U>> :
-            WhereOpIntColumn<T, U>, WhereOpColumnNullable<T, U, Int>
+        WhereOpIntColumn<T, U>, WhereOpColumnNullable<T, U, Int>
 
     public interface WhereOpLongColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, Long> {
         public infix fun inf(value: Long): U
         public infix fun sup(value: Long): U
         public infix fun infOrEq(value: Long): U
         public infix fun supOrEq(value: Long): U
+        public infix fun eq(otherLongColumn: LongColumn<*>): U
+        public infix fun notEq(otherLongColumn: LongColumn<*>): U
+        public infix fun inf(otherLongColumn: LongColumn<*>): U
+        public infix fun sup(otherLongColumn: LongColumn<*>): U
+        public infix fun infOrEq(otherLongColumn: LongColumn<*>): U
+        public infix fun supOrEq(otherLongColumn: LongColumn<*>): U
     }
 
     public interface WhereOpLongColumnNotNull<T : Any, U : Where<T, U>> :
-            WhereOpLongColumn<T, U>, WhereOpColumnNotNull<T, U, Long>
+        WhereOpLongColumn<T, U>, WhereOpColumnNotNull<T, U, Long>
 
     public interface WhereOpLongColumnNullable<T : Any, U : Where<T, U>> :
-            WhereOpLongColumn<T, U>, WhereOpColumnNullable<T, U, Long>
+        WhereOpLongColumn<T, U>, WhereOpColumnNullable<T, U, Long>
+
+    public interface WhereOpUuidColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, UUID> {
+        public infix fun eq(otherUuidColumn: UuidColumn<*>): U
+        public infix fun notEq(otherUuidColumn: UuidColumn<*>): U
+    }
 
     public interface WhereOpUuidColumnNotNull<T : Any, U : Where<T, U>> :
-            WhereOpColumnNotNull<T, U, UUID>, WhereInOpColumn<T, U, UUID>
+        WhereOpUuidColumn<T, U>, WhereOpColumnNotNull<T, U, UUID>
 
     public interface WhereOpUuidColumnNullable<T : Any, U : Where<T, U>> :
-            WhereOpColumnNullable<T, U, UUID>, WhereInOpColumn<T, U, UUID>
+        WhereOpUuidColumn<T, U>, WhereOpColumnNullable<T, U, UUID>
 
     public interface Where<T : Any, U : Where<T, U>> {
         public infix fun and(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U>

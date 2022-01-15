@@ -188,7 +188,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
     private class From<T : Any, U : Any>(
             override val client: DatabaseClient,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>,
+    ) : FromWhereable<T, U, ReactorSqlClientSelect.From<T, U>, ReactorSqlClientSelect.Where<T>,
             ReactorSqlClientSelect.LimitOffset<T>, ReactorSqlClientSelect.GroupByPart2<T>,
             ReactorSqlClientSelect.OrderByPart2<T>>(properties), ReactorSqlClientSelect.From<T, U>,
             GroupBy<T>, OrderBy<T>, ReactorSqlClientSelect.LimitOffset<T> {
@@ -197,6 +197,8 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override fun <V : Any> and(table: Table<V>): ReactorSqlClientSelect.From<T, V> =
+            addFromTable(table, from as From<T, V>)
     }
 
     private class Where<T : Any>(

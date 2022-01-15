@@ -189,7 +189,7 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
     private class From<T : Any, U : Any>(
             override val client: DatabaseClient,
             properties: Properties<T>,
-    ) : DefaultSqlClientSelect.FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>,
+    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>,
             CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
             CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(properties),
             CoroutinesSqlClientSelect.From<T, U>, GroupBy<T>, OrderBy<T>,
@@ -199,6 +199,8 @@ internal class CoroutinesSqlClientSelectR2dbc private constructor() : AbstractSq
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.From<T, V> =
+            addFromTable(table, from as From<T, V>)
     }
 
     private class Where<T : Any>(

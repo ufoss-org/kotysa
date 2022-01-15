@@ -57,6 +57,16 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     }
 
     @Test
+    fun `Verify selectWithEqJoin works correctly`() {
+        assertThat(repository.selectWithEqJoin())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
+    }
+
+    @Test
     fun `Verify selectAllStream returns all users`() {
         assertThat(repository.selectAllStream())
                 .hasSize(2)
@@ -171,6 +181,12 @@ class UserRepositorySelect(
             (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname]!!, it[SQLITE_ROLE.label]!!) }
                     from SQLITE_USER innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
                     ).fetchAll()
+
+    fun selectWithEqJoin() =
+        (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname]!!, it[SQLITE_ROLE.label]!!) }
+                from SQLITE_USER and SQLITE_ROLE
+                where SQLITE_USER.roleId eq SQLITE_ROLE.id
+                ).fetchAll()
 
     fun selectAllStream() =
             (sqlClient selectFrom SQLITE_USER
