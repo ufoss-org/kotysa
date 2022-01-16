@@ -15,16 +15,15 @@ class UserRepository(private val client: SqlClient) {
     fun findAll() = client selectAllFrom USER
 
     fun findOne(id: Int) =
-            (client selectFrom USER
-                    where USER.id eq id
-                    ).fetchOne()!!
+        (client selectFrom USER
+                where USER.id eq id
+                ).fetchOne()!!
 
     fun selectWithJoin() =
-            (client.select {
-                UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
-            }
-                    from USER innerJoin ROLE on USER.roleId eq ROLE.id
-                    ).fetchAll()
+        (client.select {
+            UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
+        } from USER innerJoin ROLE on USER.roleId eq ROLE.id
+                ).fetchAll()
 
     fun deleteAll() = client deleteAllFrom USER
 
@@ -49,6 +48,6 @@ class RoleRepository(private val client: SqlClient) {
         deleteAll()
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))
-         save(Role("god"))
+        save(Role("god"))
     }
 }

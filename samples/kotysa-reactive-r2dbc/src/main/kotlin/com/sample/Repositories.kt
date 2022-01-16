@@ -15,16 +15,15 @@ class UserRepository(private val client: ReactorSqlClient) {
     fun findAll() = client selectAllFrom USER
 
     fun findOne(id: Int) =
-            (client selectFrom USER
-                    where USER.id eq id
-                    ).fetchOne()
+        (client selectFrom USER
+                where USER.id eq id
+                ).fetchOne()
 
     fun selectWithJoin() =
-            (client.select {
-                UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
-            }
-                    from USER innerJoin ROLE on USER.roleId eq ROLE.id
-                    ).fetchAll()
+        (client.select {
+            UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
+        } from USER innerJoin ROLE on USER.roleId eq ROLE.id
+                ).fetchAll()
 
     fun deleteAll() = client deleteAllFrom USER
 
@@ -32,10 +31,10 @@ class UserRepository(private val client: ReactorSqlClient) {
 
     fun init() {
         (client createTableIfNotExists USER)
-                .then(deleteAll())
-                .then(save(User("John", "Doe", false, role_user_uuid, id = 123)))
-                .then(save(User("Big", "Boss", true, role_admin_uuid, "TheBoss")))
-                .block()
+            .then(deleteAll())
+            .then(save(User("John", "Doe", false, role_user_uuid, id = 123)))
+            .then(save(User("Big", "Boss", true, role_admin_uuid, "TheBoss")))
+            .block()
     }
 }
 
@@ -47,10 +46,10 @@ class RoleRepository(private val client: ReactorSqlClient) {
 
     fun init() {
         (client createTableIfNotExists ROLE)
-                .then(deleteAll())
-                .then(save(Role("user", role_user_uuid)))
-                .then(save(Role("admin", role_admin_uuid)))
-                .then(save(Role("god")))
-                .block()
+            .then(deleteAll())
+            .then(save(Role("user", role_user_uuid)))
+            .then(save(Role("admin", role_admin_uuid)))
+            .then(save(Role("god")))
+            .block()
     }
 }

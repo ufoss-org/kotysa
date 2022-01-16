@@ -15,16 +15,15 @@ class UserRepository(private val client: CoroutinesSqlClient) {
     fun findAll() = client selectAllFrom USER
 
     suspend fun findOne(id: Int) =
-            (client selectFrom USER
-                    where USER.id eq id
-                    ).fetchOne()!!
+        (client selectFrom USER
+                where USER.id eq id
+                ).fetchOne()!!
 
     fun selectWithJoin() =
-            (client.select {
-                UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
-            }
-                    from USER innerJoin ROLE on USER.roleId eq ROLE.id
-                    ).fetchAll()
+        (client.select {
+            UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
+        } from USER innerJoin ROLE on USER.roleId eq ROLE.id
+                ).fetchAll()
 
     suspend fun deleteAll() = client deleteAllFrom USER
 
