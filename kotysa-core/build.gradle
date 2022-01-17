@@ -19,6 +19,7 @@ dependencies {
 
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    compileOnly "io.r2dbc:r2dbc-spi:$r2dbc_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
     testFixturesImplementation "org.springframework:spring-core"

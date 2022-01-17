@@ -11,7 +11,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-internal class R2dbcRow(private val r2bcRow: io.r2dbc.spi.Row) : Row {
+public class R2dbcRow(private val r2bcRow: io.r2dbc.spi.Row) : Row {
     override fun <T : Any> get(index: Int, clazz: Class<T>): T? =
             when (clazz.name) {
                 "kotlinx.datetime.LocalDate" ->
