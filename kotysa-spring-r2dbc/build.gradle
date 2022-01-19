@@ -7,6 +7,7 @@ dependencies {
 
     api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
 
+    implementation "io.r2dbc:r2dbc-spi:$r2dbc_version" // must force last version
     implementation "org.springframework:spring-r2dbc:$spring_core_version"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 

@@ -9,7 +9,12 @@ import java.math.BigDecimal
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.awaitSingle
+import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.reflect.KClass
 
 /**
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
@@ -40,21 +45,25 @@ internal class SqlClientR2dbc(
             // For MySQL : insert, then fetch created tuple
             val statement = connection.createStatement(insertSql(row))
             setStatementParams(row, table, statement)
-            statement.execute()
+            statement.execute().awaitSingle()
             fetchLastInserted(row, table)
         } else {
             // other DB types have RETURNING style features
             val statement = connection.createStatement(insertSql(row, true))
             setStatementParams(row, table, statement)
-            val result = statement.execute().awaitSingle()
-            (table.table as AbstractTable<T>).toField(
-                tables.allColumns,
-                tables.allTables,
-            ).builder.invoke(rs.toRow())
+            statement.execute().awaitSingle()
+                .map { r ->
+                    (table.table as AbstractTable<T>).toField(
+                        tables.allColumns,
+                        tables.allTables,
+                    ).builder.invoke(r.toRow())
+                }.awaitSingle()
         }
     }
 
-    override fun <T : Any> insertAndReturn(vararg rows: T): Flow<T> = rows.map { row -> insertAndReturn(row) }
+    override fun <T : Any> insertAndReturn(vararg rows: T): Flow<T> =
+        rows.asFlow()
+            .map { row -> insertAndReturn(row) }
 
     private fun <T : Any> setStatementParams(row: T, table: KotysaTable<T>, statement: Statement) {
         table.columns
@@ -66,11 +75,20 @@ internal class SqlClientR2dbc(
                         || SqlType.SERIAL == column.sqlType
                         || SqlType.BIGSERIAL == column.sqlType)
             }
-            .map { column -> tables.getDbValue(column.entityGetter(row)) }
-            .forEachIndexed { index, dbValue -> statement.setObject(index + 1, dbValue) }
+            .forEachIndexed { index, column ->
+                val value = column.entityGetter(row)
+                if (value == null) {
+                    statement.bindNull(
+                        "k${index}",
+                        (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
+                    )
+                } else {
+                    statement.bind("k${index}", tables.getDbValue(value)!!)
+                }
+            }
     }
 
-    private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
+    private suspend fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
         @Suppress("UNCHECKED_CAST")
         val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
         val statement = connection.createStatement(lastInsertedSql(row))
@@ -83,15 +101,16 @@ internal class SqlClientR2dbc(
             // bind all PK values
             pkColumns
                 .map { column -> tables.getDbValue(column.entityGetter(row)) }
-                .forEachIndexed { index, dbValue -> statement.setObject(index + 1, dbValue) }
+                .forEachIndexed { index, dbValue -> statement.bind("k${index}", dbValue!!) }
         }
 
-        val rs = statement.executeQuery()
-        rs.next()
-        return (table.table as AbstractTable<T>).toField(
-            tables.allColumns,
-            tables.allTables,
-        ).builder.invoke(rs.toRow())
+        return statement.execute().awaitSingle()
+            .map { r ->
+                (table.table as AbstractTable<T>).toField(
+                    tables.allColumns,
+                    tables.allTables
+                ).builder.invoke(r.toRow())
+            }.awaitSingle()
     }
 
     override suspend fun <T : Any> createTable(table: Table<T>) {
@@ -102,10 +121,10 @@ internal class SqlClientR2dbc(
         createTable(table, true)
     }
 
-    private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
+    private suspend fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
         val createTableSql = createTableSql(table, ifNotExists)
         connection.createStatement(createTableSql)
-            .execute()
+            .execute().awaitSingle()
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
@@ -144,6 +163,13 @@ internal class SqlClientR2dbc(
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
         SqlClientSelectJdbc.Selectable(connection, tables).selectSum(column)
 }
+
+internal fun KClass<*>.toDbClass() =
+    when (this.qualifiedName) {
+        "kotlinx.datetime.LocalDate" -> LocalDate::class
+        "kotlinx.datetime.LocalDateTime" -> LocalDateTime::class
+        else -> this
+    }
 
 /**
  * Create a [SqlClient] from a R2DBC [Connection] with [Tables] mapping
