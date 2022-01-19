@@ -52,7 +52,7 @@ internal class SqlClientR2dbc(
             val statement = connection.createStatement(insertSql(row, true))
             setStatementParams(row, table, statement)
             statement.execute().awaitSingle()
-                .map { r ->
+                .map { r, _ ->
                     (table.table as AbstractTable<T>).toField(
                         tables.allColumns,
                         tables.allTables,
@@ -105,7 +105,7 @@ internal class SqlClientR2dbc(
         }
 
         return statement.execute().awaitSingle()
-            .map { r ->
+            .map { r, _ ->
                 (table.table as AbstractTable<T>).toField(
                     tables.allColumns,
                     tables.allTables
