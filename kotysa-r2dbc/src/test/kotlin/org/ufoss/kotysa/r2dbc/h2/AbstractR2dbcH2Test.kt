@@ -10,6 +10,7 @@ import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactories
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.runBlocking
 import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
@@ -38,6 +39,6 @@ abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T>
     @AfterAll
     fun afterAll() = runBlocking<Unit> {
         repository.delete()
-        connection.close().awaitSingle()
+        connection.close().awaitFirstOrNull()
     }
 }

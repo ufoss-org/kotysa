@@ -221,6 +221,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
                 val variable = when (module) {
                     Module.SQLITE, Module.JDBC -> "?"
+                    Module.R2DBC -> "$${++index}"
                     else -> ":k${index++}"
                 }
                 "${column.getKotysaColumn(properties.availableColumns).name} = $variable"

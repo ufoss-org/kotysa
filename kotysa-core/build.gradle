@@ -41,7 +41,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict', '-Xopt-in=kotlin.experimental.ExperimentalTypeInference']
+        freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict']
         jvmTarget = '1.8'
     }
 }

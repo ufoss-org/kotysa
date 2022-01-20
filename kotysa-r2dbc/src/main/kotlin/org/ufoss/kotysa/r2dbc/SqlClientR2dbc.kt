@@ -128,40 +128,40 @@ internal class SqlClientR2dbc(
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-        TODO() //SqlClientDeleteJdbc.FirstDelete(connection, tables, table)
+        SqlClientDeleteR2dbc.FirstDelete(connection, tables, table)
 
     override fun <T : Any> update(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T> =
-        TODO() //SqlClientUpdateJdbc.FirstUpdate(connection, tables, table)
+        SqlClientUpdateR2dbc.FirstUpdate(connection, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).select(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).select(column)
 
     override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).select(table)
+        SqlClientSelectR2dbc.Selectable(connection, tables).select(table)
 
     override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).select(dsl)
+        SqlClientSelectR2dbc.Selectable(connection, tables).select(dsl)
 
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectCount<Any>(null)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectCount<Any>(null)
 
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectCount(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectCount(column)
 
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectDistinct(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectDistinct(column)
 
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectMin(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectMin(column)
 
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectMax(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectMax(column)
 
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectAvg(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectAvg(column)
 
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectSum(column)
+        SqlClientSelectR2dbc.Selectable(connection, tables).selectSum(column)
 }
 
 internal fun KClass<*>.toDbClass() =

@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.r2dbc.transaction
 
 import io.r2dbc.spi.Connection
+import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 import org.ufoss.kotysa.transaction.Transaction
@@ -15,7 +16,7 @@ public value class R2dbcTransactionalOp(private val connection: Connection) : Co
 
     public override suspend fun <T> execute(block: suspend (Transaction) -> T): T? = connection.run {
         val transaction = R2dbcTransaction(this)
-        setAutoCommit(false).awaitSingle() // default true
+        setAutoCommit(false).awaitFirstOrNull() // default true
         
         val result = try {
             block.invoke(transaction)
@@ -35,17 +36,17 @@ public value class R2dbcTransactionalOp(private val connection: Connection) : Co
         if (transaction.isRollbackOnly()) {
             rollback(connection, transaction)
         } else {
-            commitTransaction().awaitSingle()
+            commitTransaction().awaitFirstOrNull()
             transaction.setCompleted()
         }
 
-        setAutoCommit(true).awaitSingle() // back to default true
+        setAutoCommit(true).awaitFirstOrNull() // back to default true
         
         result
     }
     
     private suspend fun rollback(connection: Connection, transaction: R2dbcTransaction) {
-        connection.rollbackTransaction().awaitSingle()
+        connection.rollbackTransaction().awaitFirstOrNull()
         transaction.setCompleted()
     }
 }

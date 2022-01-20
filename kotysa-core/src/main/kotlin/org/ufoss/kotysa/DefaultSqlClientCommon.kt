@@ -836,6 +836,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         private fun variable() = when (properties.module) {
             Module.SQLITE, Module.JDBC -> "?"
+            Module.R2DBC -> "$${++properties.index}"
             else -> ":k${properties.index++}"
         }
     }
