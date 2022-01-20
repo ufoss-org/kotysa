@@ -120,6 +120,7 @@ public interface DefaultSqlClient {
                 columnNames.add(column.name)
                 when (module) {
                     Module.SQLITE, Module.JDBC -> "?"
+                    Module.R2DBC -> "$${1 + index++}"
                     else -> ":k${index++}"
                 }
             }

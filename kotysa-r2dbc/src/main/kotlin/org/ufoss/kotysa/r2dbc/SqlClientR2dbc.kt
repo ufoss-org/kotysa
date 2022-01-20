@@ -4,14 +4,14 @@
 
 package org.ufoss.kotysa.r2dbc
 
-import org.ufoss.kotysa.*
-import java.math.BigDecimal
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.awaitSingle
+import org.ufoss.kotysa.*
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
@@ -79,11 +79,11 @@ internal class SqlClientR2dbc(
                 val value = column.entityGetter(row)
                 if (value == null) {
                     statement.bindNull(
-                        "k${index}",
+                        index,
                         (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
                     )
                 } else {
-                    statement.bind("k${index}", tables.getDbValue(value)!!)
+                    statement.bind(index, tables.getDbValue(value)!!)
                 }
             }
     }
@@ -101,7 +101,7 @@ internal class SqlClientR2dbc(
             // bind all PK values
             pkColumns
                 .map { column -> tables.getDbValue(column.entityGetter(row)) }
-                .forEachIndexed { index, dbValue -> statement.bind("k${index}", dbValue!!) }
+                .forEachIndexed { index, dbValue -> statement.bind(index, dbValue!!) }
         }
 
         return statement.execute().awaitSingle()
@@ -128,40 +128,40 @@ internal class SqlClientR2dbc(
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-        SqlClientDeleteJdbc.FirstDelete(connection, tables, table)
+        TODO() //SqlClientDeleteJdbc.FirstDelete(connection, tables, table)
 
     override fun <T : Any> update(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T> =
-        SqlClientUpdateJdbc.FirstUpdate(connection, tables, table)
+        TODO() //SqlClientUpdateJdbc.FirstUpdate(connection, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        SqlClientSelectJdbc.Selectable(connection, tables).select(column)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).select(column)
+
     override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-        SqlClientSelectJdbc.Selectable(connection, tables).select(table)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).select(table)
+
     override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-        SqlClientSelectJdbc.Selectable(connection, tables).select(dsl)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).select(dsl)
+
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectCount<Any>(null)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectCount<Any>(null)
+
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectCount(column)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectCount(column)
+
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectDistinct(column)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectDistinct(column)
+
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectMin(column)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectMin(column)
+
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectMax(column)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectMax(column)
+
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectAvg(column)
-    
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectAvg(column)
+
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-        SqlClientSelectJdbc.Selectable(connection, tables).selectSum(column)
+        TODO() //SqlClientSelectJdbc.Selectable(connection, tables).selectSum(column)
 }
 
 internal fun KClass<*>.toDbClass() =

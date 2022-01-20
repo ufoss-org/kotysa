@@ -16,11 +16,11 @@ import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.spring.r2dbc.R2dbcRepositoryTest
 import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.spring.r2dbc.transaction.CoroutinesTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.h2Tables
+import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 
 
 abstract class AbstractR2dbcH2Test<T : Repository> : R2dbcRepositoryTest<T> {

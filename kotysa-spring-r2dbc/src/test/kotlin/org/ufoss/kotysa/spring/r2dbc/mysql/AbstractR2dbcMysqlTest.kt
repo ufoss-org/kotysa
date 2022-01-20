@@ -17,7 +17,6 @@ import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.spring.r2dbc.R2dbcRepositoryTest
 import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.spring.r2dbc.transaction.CoroutinesTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
@@ -26,6 +25,7 @@ import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 
 @ExtendWith(MySqlContainerExecutionHook::class)
 @ResourceLock(MySqlContainerResource.ID)
