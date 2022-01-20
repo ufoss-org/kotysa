@@ -11,13 +11,13 @@ import reactor.kotlin.core.publisher.toFlux
 import java.math.BigDecimal
 
 /**
- * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/reference/html/#reference)
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
+ * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.4.x/reference/html/#reference)
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbc
  */
-private class SqlClientR2dbc(
+private class SqlClientSpringR2dbc(
         override val client: DatabaseClient,
         override val tables: Tables
-) : ReactorSqlClient, AbstractSqlClientR2dbc {
+) : ReactorSqlClient, AbstractSqlClientSpringR2dbc {
 
     override val module = Module.SPRING_R2DBC
 
@@ -40,36 +40,36 @@ private class SqlClientR2dbc(
             executeCreateTable(table, true).then()
 
     override fun <T : Any> deleteFrom(table: Table<T>): ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-        SqlClientDeleteR2dbc.FirstDelete(client, tables, table)
+        SqlClientDeleteSpringR2dbc.FirstDelete(client, tables, table)
 
     override fun <T : Any> update(table: Table<T>): ReactorSqlClientDeleteOrUpdate.Update<T> =
-        SqlClientUpdateR2dbc.FirstUpdate(client, tables, table)
+        SqlClientUpdateSpringR2dbc.FirstUpdate(client, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectR2dbc.Selectable(client, tables).select(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(column)
     override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
-            SqlClientSelectR2dbc.Selectable(client, tables).select(table)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
-            SqlClientSelectR2dbc.Selectable(client, tables).select(dsl)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(dsl)
     override fun selectCount(): ReactorSqlClientSelect.Fromable<Long> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectCount<Any>(null)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectDistinct(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectDistinct(column)
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectMin(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectMin(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectMax(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectMax(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): ReactorSqlClientSelect.FirstSelect<BigDecimal> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectAvg(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAvg(column)
     override fun <T : Any> selectSum(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectR2dbc.Selectable(client, tables).selectSum(column)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectSum(column)
 }
 
 /**
  * Create a [ReactorSqlClient] from a R2DBC [DatabaseClient] with [Tables] mapping
  *
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbc
  */
-public fun DatabaseClient.sqlClient(tables: Tables): ReactorSqlClient = SqlClientR2dbc(this, tables)
+public fun DatabaseClient.sqlClient(tables: Tables): ReactorSqlClient = SqlClientSpringR2dbc(this, tables)

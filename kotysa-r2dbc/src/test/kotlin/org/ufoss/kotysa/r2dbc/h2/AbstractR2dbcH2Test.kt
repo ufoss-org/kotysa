@@ -13,10 +13,11 @@ import io.r2dbc.spi.ConnectionFactories
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.runBlocking
+import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionalOp
 import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
-import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 
-abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T> {
+abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T, R2dbcTransaction> {
     private lateinit var connection: Connection
 
     @BeforeAll
@@ -28,7 +29,7 @@ abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T>
 
     protected abstract fun instantiateRepository(connection: Connection): T
 
-    override val operator: CoroutinesTransactionalOp by lazy {
+    override val operator: R2dbcTransactionalOp by lazy {
         connection.transactionalOp()
     }
 

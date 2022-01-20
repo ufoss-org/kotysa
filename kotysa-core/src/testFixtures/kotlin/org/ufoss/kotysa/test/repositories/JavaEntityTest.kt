@@ -10,9 +10,10 @@ import org.ufoss.kotysa.test.JAVA_USER
 import org.ufoss.kotysa.test.UserDto
 import org.ufoss.kotysa.test.javaBboss
 import org.ufoss.kotysa.test.javaJdoe
+import org.ufoss.kotysa.transaction.Transaction
 
 // TODO move all common tests following this model
-interface JdbcJavaEntityTest<T : JAVA_USER, U : JavaUserRepository<T>> : JdbcRepositoryTest<U> {
+interface JavaEntityTest<T : JAVA_USER, U : JavaUserRepository<T>, V : Transaction> : RepositoryTest<U, V> {
 
     @Test
     fun `Verify selectAll returns all users`() {

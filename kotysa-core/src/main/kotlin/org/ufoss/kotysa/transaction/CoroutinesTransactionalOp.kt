@@ -4,6 +4,6 @@
 
 package org.ufoss.kotysa.transaction
 
-public interface CoroutinesTransactionalOp {
-    public suspend fun <T> execute(block: suspend (Transaction) -> T): T?
+public interface CoroutinesTransactionalOp<T : Transaction> {
+    public suspend fun <U> execute(block: suspend (T) -> U): U?
 }

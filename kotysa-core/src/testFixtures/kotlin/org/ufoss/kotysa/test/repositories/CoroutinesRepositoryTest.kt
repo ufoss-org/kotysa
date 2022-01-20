@@ -6,8 +6,9 @@ package org.ufoss.kotysa.test.repositories
 
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
+import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesRepositoryTest<T : Repository> {
+interface CoroutinesRepositoryTest<T : Repository, U : Transaction> {
     val repository: T
-    val operator: CoroutinesTransactionalOp
+    val operator: CoroutinesTransactionalOp<U>
 }

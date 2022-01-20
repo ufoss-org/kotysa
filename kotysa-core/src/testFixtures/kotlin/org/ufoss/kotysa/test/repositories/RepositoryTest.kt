@@ -5,9 +5,10 @@
 package org.ufoss.kotysa.test.repositories
 
 import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.transaction.TransactionalOp
 
-interface JdbcRepositoryTest<T : Repository> {
+interface RepositoryTest<T : Repository, U : Transaction> {
     val repository: T
-    val operator: TransactionalOp
+    val operator: TransactionalOp<U>
 }

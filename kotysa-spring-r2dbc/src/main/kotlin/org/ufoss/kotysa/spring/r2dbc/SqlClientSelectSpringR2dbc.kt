@@ -14,7 +14,7 @@ import java.math.BigDecimal
 
 
 @Suppress("UNCHECKED_CAST")
-internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSelectR2dbc() {
+internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlClientSelectSpringR2dbc() {
 
     internal class Selectable internal constructor(
             private val client: DatabaseClient,
@@ -252,7 +252,7 @@ internal class SqlClientSelectR2dbc private constructor() : AbstractSqlClientSel
         override val limitOffset = this
     }
 
-    private interface Return<T : Any> : AbstractSqlClientSelectR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
+    private interface Return<T : Any> : AbstractSqlClientSelectSpringR2dbc.Return<T>, ReactorSqlClientSelect.Return<T> {
 
         override fun fetchOne(): Mono<T> =
                 fetch().one()

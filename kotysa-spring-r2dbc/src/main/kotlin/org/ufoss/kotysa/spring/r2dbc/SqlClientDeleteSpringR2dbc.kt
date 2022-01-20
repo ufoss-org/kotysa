@@ -9,31 +9,29 @@ import org.ufoss.kotysa.*
 import reactor.core.publisher.Mono
 
 
-internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpdateR2dbc() {
+internal class SqlClientDeleteSpringR2dbc private constructor() : AbstractSqlClientDeleteSpringR2dbc() {
 
-    internal class FirstUpdate<T : Any> internal constructor(
+    internal class FirstDelete<T : Any> internal constructor(
         override val client: DatabaseClient,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
-            ReactorSqlClientDeleteOrUpdate.Where<T>,
-            ReactorSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
-        ReactorSqlClientDeleteOrUpdate.Update<T>, Return<T> {
-        override val where = Where(client, properties) // fixme try with a lazy
-        override val update = this
+    ) : FirstDeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+            ReactorSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
+        ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
+        
+        override val where = Where(client, properties)
         override val from: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
-            Update(client, properties)
+            Delete(client, properties)
         }
     }
 
-    internal class Update<T : Any> internal constructor(
+    internal class Delete<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
-            ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any, ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
         ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
-        override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
+        override val where = Where(client, properties as Properties<Any>)
         override val from = this
     }
 
@@ -45,7 +43,7 @@ internal class SqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpd
         override val where = this
     }
 
-    private interface Return<T : Any> : AbstractSqlClientUpdateR2dbc.Return<T>, ReactorSqlClientDeleteOrUpdate.Return {
+    private interface Return<T : Any> : AbstractSqlClientDeleteSpringR2dbc.Return<T>, ReactorSqlClientDeleteOrUpdate.Return {
 
         override fun execute(): Mono<Int> = fetch().rowsUpdated()
     }

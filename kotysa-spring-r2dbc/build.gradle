@@ -60,7 +60,7 @@ tasks.dokkaHtmlPartial.configure {
     dokkaSourceSets {
         configureEach {
             externalDocumentationLink {
-                url = URL("https://docs.spring.io/spring-data/r2dbc/docs/1.3.x/api/")
+                url = URL("https://docs.spring.io/spring-data/r2dbc/docs/1.4.x/api/")
             }
         }
     }

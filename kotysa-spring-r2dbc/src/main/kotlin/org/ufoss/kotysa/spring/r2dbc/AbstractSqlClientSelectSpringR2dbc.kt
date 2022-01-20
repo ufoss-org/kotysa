@@ -13,7 +13,7 @@ import org.ufoss.kotysa.r2dbc.toRow
 import java.util.*
 
 
-internal abstract class AbstractSqlClientSelectR2dbc protected constructor() : DefaultSqlClientSelect() {
+internal abstract class AbstractSqlClientSelectSpringR2dbc protected constructor() : DefaultSqlClientSelect() {
 
     protected interface Return<T : Any> : DefaultSqlClientSelect.Return<T> {
 

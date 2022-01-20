@@ -13,7 +13,7 @@ import org.ufoss.kotysa.toCallable
 import kotlin.reflect.KClass
 
 
-internal abstract class AbstractSqlClientUpdateR2dbc protected constructor() : DefaultSqlClientDeleteOrUpdate() {
+internal abstract class AbstractSqlClientUpdateSpringR2dbc protected constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     protected interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T> {
         val client: DatabaseClient

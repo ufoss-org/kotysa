@@ -6,15 +6,13 @@ package org.ufoss.kotysa.r2dbc.transaction
 
 import io.r2dbc.spi.Connection
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
-import org.ufoss.kotysa.transaction.Transaction
 import java.lang.reflect.UndeclaredThrowableException
 
 @JvmInline
-public value class R2dbcTransactionalOp(private val connection: Connection) : CoroutinesTransactionalOp {
+public value class R2dbcTransactionalOp(private val connection: Connection) : CoroutinesTransactionalOp<R2dbcTransaction> {
 
-    public override suspend fun <T> execute(block: suspend (Transaction) -> T): T? = connection.run {
+    public override suspend fun <T> execute(block: suspend (R2dbcTransaction) -> T): T? = connection.run {
         val transaction = R2dbcTransaction(this)
         setAutoCommit(false).awaitFirstOrNull() // default true
         
@@ -52,6 +50,6 @@ public value class R2dbcTransactionalOp(private val connection: Connection) : Co
 }
 
 /**
- * Create a [CoroutinesTransactionalOp] from a [Connection]
+ * Create a [R2dbcTransactionalOp] from a [Connection]
  */
-public fun Connection.transactionalOp(): CoroutinesTransactionalOp = R2dbcTransactionalOp(this)
+public fun Connection.transactionalOp(): R2dbcTransactionalOp = R2dbcTransactionalOp(this)

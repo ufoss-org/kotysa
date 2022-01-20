@@ -12,18 +12,18 @@ import reactor.core.publisher.Mono
 /**
  * @see org.springframework.transaction.reactive.TransactionalOperator
  */
-public class ReactorTransactionalOp(internal val operator: TransactionalOperator) {
+public class SpringR2dbcReactorTransactionalOp(internal val operator: TransactionalOperator) {
     public fun <T : Any> execute(block: (ReactorTransaction) -> Publisher<T?>): Flux<T?> =
         operator.execute { reactiveTransaction -> block.invoke(ReactorTransaction(reactiveTransaction)) }
 }
 
 /**
- * Create a [ReactorTransactionalOp] from a Reactive [TransactionalOperator]
+ * Create a [SpringR2dbcReactorTransactionalOp] from a Reactive [TransactionalOperator]
  */
-public fun TransactionalOperator.transactionalOp(): ReactorTransactionalOp = ReactorTransactionalOp(this)
+public fun TransactionalOperator.transactionalOp(): SpringR2dbcReactorTransactionalOp = SpringR2dbcReactorTransactionalOp(this)
 
-public fun <T : Any> Mono<T>.transactional(operator: ReactorTransactionalOp): Mono<T> =
+public fun <T : Any> Mono<T>.transactional(operator: SpringR2dbcReactorTransactionalOp): Mono<T> =
         operator.operator.transactional(this)
 
-public fun <T : Any> Flux<T>.transactional(operator: ReactorTransactionalOp): Flux<T> =
+public fun <T : Any> Flux<T>.transactional(operator: SpringR2dbcReactorTransactionalOp): Flux<T> =
         operator.operator.transactional(this)

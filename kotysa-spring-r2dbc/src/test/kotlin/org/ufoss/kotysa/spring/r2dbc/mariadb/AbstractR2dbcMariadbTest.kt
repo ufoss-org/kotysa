@@ -17,13 +17,13 @@ import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.spring.r2dbc.R2dbcRepositoryTest
 import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransactionalOp
+import org.ufoss.kotysa.spring.r2dbc.transaction.SpringR2dbcReactorTransactionalOp
+import org.ufoss.kotysa.spring.r2dbc.transaction.SpringR2dbcCoroutinesTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.mariadbTables
-import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
@@ -50,11 +50,11 @@ abstract class AbstractR2dbcMariadbTest<T : Repository> : R2dbcRepositoryTest<T>
 
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
 
-    override val operator: ReactorTransactionalOp by lazy {
+    override val operator: SpringR2dbcReactorTransactionalOp by lazy {
         context.getBean<TransactionalOperator>().transactionalOp()
     }
 
-    override val coOperator: CoroutinesTransactionalOp by lazy {
+    override val coOperator: SpringR2dbcCoroutinesTransactionalOp by lazy {
         context.getBean<TransactionalOperator>().coTransactionalOp()
     }
 

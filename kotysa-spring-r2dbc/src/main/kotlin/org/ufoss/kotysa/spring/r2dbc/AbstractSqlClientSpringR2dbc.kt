@@ -13,9 +13,9 @@ import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 /**
- * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.0.x/reference/html/#reference)
+ * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.4.x/reference/html/#reference)
  */
-internal interface AbstractSqlClientR2dbc : DefaultSqlClient {
+internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
 
     val client: DatabaseClient
 

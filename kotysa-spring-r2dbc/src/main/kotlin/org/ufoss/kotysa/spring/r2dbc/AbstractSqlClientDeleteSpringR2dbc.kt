@@ -10,7 +10,7 @@ import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
 import org.ufoss.kotysa.dbValues
 
 
-internal abstract class AbstractSqlClientDeleteR2dbc protected constructor() : DefaultSqlClientDeleteOrUpdate() {
+internal abstract class AbstractSqlClientDeleteSpringR2dbc protected constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     protected interface Return<T : Any> : DefaultSqlClientDeleteOrUpdate.Return<T> {
         val client: DatabaseClient

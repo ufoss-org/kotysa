@@ -7,15 +7,17 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.POSTGRESQL_JAVA_USER
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlTables
-import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
+import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 
-class SpringJdbcJavaEntityPostgresqlTest : AbstractSpringJdbcPostgresqlTest<JavaUserPostgresqlRepository>(),
-        JdbcJavaEntityTest<POSTGRESQL_JAVA_USER, JavaUserPostgresqlRepository> {
+class SpringJdbcJavaEntityPostgresqlTest :
+    AbstractSpringJdbcPostgresqlTest<JavaUserPostgresqlRepository>(),
+    JavaEntityTest<POSTGRESQL_JAVA_USER, JavaUserPostgresqlRepository, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -28,5 +30,5 @@ class SpringJdbcJavaEntityPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Java
 }
 
 
-class JavaUserPostgresqlRepository(client: JdbcOperations)
-    : JavaUserRepository<POSTGRESQL_JAVA_USER>(client.sqlClient(postgresqlTables), POSTGRESQL_JAVA_USER)
+class JavaUserPostgresqlRepository(client: JdbcOperations) :
+    JavaUserRepository<POSTGRESQL_JAVA_USER>(client.sqlClient(postgresqlTables), POSTGRESQL_JAVA_USER)

@@ -9,7 +9,7 @@ import org.springframework.r2dbc.core.awaitRowsUpdated
 import org.ufoss.kotysa.*
 
 
-internal class CoroutinesSqlClientUpdateR2dbc private constructor() : AbstractSqlClientUpdateR2dbc() {
+internal class CoroutinesSqlClientUpdateSpringR2Dbc private constructor() : AbstractSqlClientUpdateSpringR2dbc() {
 
     internal class FirstUpdate<T : Any> internal constructor(
             override val client: DatabaseClient,
@@ -45,7 +45,7 @@ internal class CoroutinesSqlClientUpdateR2dbc private constructor() : AbstractSq
         override val where = this
     }
 
-    private interface Return<T : Any> : AbstractSqlClientUpdateR2dbc.Return<T>, CoroutinesSqlClientDeleteOrUpdate.Return {
+    private interface Return<T : Any> : AbstractSqlClientUpdateSpringR2dbc.Return<T>, CoroutinesSqlClientDeleteOrUpdate.Return {
 
         override suspend fun execute(): Int = fetch().awaitRowsUpdated()
     }

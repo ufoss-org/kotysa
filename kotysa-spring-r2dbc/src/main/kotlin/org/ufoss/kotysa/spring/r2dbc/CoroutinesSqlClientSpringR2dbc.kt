@@ -14,12 +14,12 @@ import org.ufoss.kotysa.*
 import java.math.BigDecimal
 
 /**
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbcCoroutines
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbcCoroutines
  */
-private class CoroutinesSqlClientR2Dbc(
+private class CoroutinesSqlClientSpringR2Dbc(
         override val client: DatabaseClient,
         override val tables: Tables,
-) : CoroutinesSqlClient, AbstractSqlClientR2dbc {
+) : CoroutinesSqlClient, AbstractSqlClientSpringR2dbc {
 
     override val module = Module.SPRING_R2DBC
 
@@ -46,36 +46,36 @@ private class CoroutinesSqlClientR2Dbc(
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-        CoroutinesSqlClientDeleteR2dbc.FirstDelete(client, tables, table)
+        CoroutinesSqlClientDeleteSpringR2Dbc.FirstDelete(client, tables, table)
 
     override fun <T : Any> update(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T> =
-        CoroutinesSqlClientUpdateR2dbc.FirstUpdate(client, tables, table)
+        CoroutinesSqlClientUpdateSpringR2Dbc.FirstUpdate(client, tables, table)
 
     override fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).select(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(column)
     override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).select(table)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).select(dsl)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(dsl)
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount<Any>(null)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectCount(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount(column)
     override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectDistinct(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectDistinct(column)
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectMin(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectMin(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectMax(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectMax(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectAvg(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAvg(column)
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-            CoroutinesSqlClientSelectR2dbc.Selectable(client, tables).selectSum(column)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectSum(column)
 }
 
 /**
  * Create a [CoroutinesSqlClient] from a R2DBC [DatabaseClient] with [Tables] mapping
  *
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbcCoroutines
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbcCoroutines
  */
-public fun DatabaseClient.coSqlClient(tables: Tables): CoroutinesSqlClient = CoroutinesSqlClientR2Dbc(this, tables)
+public fun DatabaseClient.coSqlClient(tables: Tables): CoroutinesSqlClient = CoroutinesSqlClientSpringR2Dbc(this, tables)

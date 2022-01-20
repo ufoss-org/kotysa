@@ -9,7 +9,7 @@ import org.springframework.r2dbc.core.awaitRowsUpdated
 import org.ufoss.kotysa.*
 
 
-internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSqlClientDeleteR2dbc() {
+internal class CoroutinesSqlClientDeleteSpringR2Dbc private constructor() : AbstractSqlClientDeleteSpringR2dbc() {
 
     internal class FirstDelete<T : Any> internal constructor(
         override val client: DatabaseClient,
@@ -43,7 +43,7 @@ internal class CoroutinesSqlClientDeleteR2dbc private constructor() : AbstractSq
         override val where = this
     }
 
-    private interface Return<T : Any> : AbstractSqlClientDeleteR2dbc.Return<T>, CoroutinesSqlClientDeleteOrUpdate.Return {
+    private interface Return<T : Any> : AbstractSqlClientDeleteSpringR2dbc.Return<T>, CoroutinesSqlClientDeleteOrUpdate.Return {
 
         override suspend fun execute(): Int = fetch().awaitRowsUpdated()
     }
