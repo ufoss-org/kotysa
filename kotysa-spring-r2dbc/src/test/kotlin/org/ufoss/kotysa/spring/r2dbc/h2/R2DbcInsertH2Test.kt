@@ -32,6 +32,18 @@ class R2DbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
     }
 
     @Test
+    fun `Verify insertCustomers works correctly`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertCustomers()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllCustomers())
+        }.test()
+            .expectNext(customerJapan1, customerJapan2)
+            .verifyComplete()
+    }
+
+    @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
@@ -137,6 +149,8 @@ class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
             .then(sqlClient createTableIfNotExists H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
     fun insertCustomer() = sqlClient insert customerFrance
+
+    fun insertCustomers() = sqlClient.insert(customerJapan1, customerJapan2)
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 

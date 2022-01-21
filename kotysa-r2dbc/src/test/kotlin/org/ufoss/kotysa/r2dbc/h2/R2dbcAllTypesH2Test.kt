@@ -110,7 +110,9 @@ class AllTypesRepositoryH2(connection: Connection) : Repository {
     }
 
     private suspend fun insertAllTypes() {
-        sqlClient.insert(h2AllTypesNotNull, h2AllTypesNullable, h2AllTypesNullableDefaultValue)
+        sqlClient insert h2AllTypesNotNull
+        sqlClient insert h2AllTypesNullable
+        sqlClient insert h2AllTypesNullableDefaultValue
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom H2_ALL_TYPES_NOT_NULL

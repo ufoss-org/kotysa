@@ -9,6 +9,7 @@ import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.reactive.awaitLast
 import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
@@ -36,7 +37,19 @@ internal class SqlClientR2dbc(
     }
 
     override suspend fun <T : Any> insert(vararg rows: T) {
-        rows.forEach { row -> insert(row) }
+        require(rows.isNotEmpty()) { "rows must contain at least one element" }
+        val table = tables.getTable(rows[0]::class)
+
+        val statement = connection.createStatement(insertSql(rows[0]))
+        rows.forEachIndexed { index, row ->
+            setStatementParams(row, table, statement)
+            // batch statement
+            if (index < rows.size - 1) {
+                statement.add()
+            }
+        }
+
+        statement.execute().awaitLast()
     }
 
     override suspend fun <T : Any> insertAndReturn(row: T): T {

@@ -39,6 +39,16 @@ class SpringJdbcInsertMysqlTest : AbstractSpringJdbcMysqlTest<RepositoryMysqlIns
     }
 
     @Test
+    fun `Verify insertCustomers works correctly`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertCustomers()
+            assertThat(repository.selectAllCustomers())
+                .containsExactly(customerJapan1, customerJapan2)
+        }
+    }
+
+    @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
@@ -130,6 +140,8 @@ class RepositoryMysqlInsert(dbClient: JdbcOperations) : Repository {
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
+
+    fun insertCustomers() = sqlClient.insert(customerJapan1, customerJapan2)
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 

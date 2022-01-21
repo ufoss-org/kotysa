@@ -33,6 +33,16 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
     }
 
     @Test
+    fun `Verify insertCustomers works correctly`() = runTest {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertCustomers()
+            assertThat(repository.selectAllCustomers().toList())
+                .containsExactly(customerJapan1, customerJapan2)
+        }
+    }
+
+    @Test
     fun `Verify insertAndReturnCustomers works correctly`() = runTest {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
@@ -129,6 +139,8 @@ class RepositoryH2Insert(connection: Connection) : Repository {
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
+
+    suspend fun insertCustomers() = sqlClient.insert(customerJapan1, customerJapan2)
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 

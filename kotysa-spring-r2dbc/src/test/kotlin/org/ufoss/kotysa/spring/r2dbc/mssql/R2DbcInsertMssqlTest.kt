@@ -41,6 +41,18 @@ class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
     }
 
     @Test
+    fun `Verify insertCustomers works correctly`() {
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertCustomers()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllCustomers())
+        }.test()
+            .expectNext(customerJapan1, customerJapan2)
+            .verifyComplete()
+    }
+
+    @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
         operator.execute { transaction ->
             transaction.setRollbackOnly()
@@ -142,6 +154,8 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
             .then(sqlClient createTableIfNotExists MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
 
     fun insertCustomer() = sqlClient insert customerFrance
+
+    fun insertCustomers() = sqlClient.insert(customerJapan1, customerJapan2)
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
