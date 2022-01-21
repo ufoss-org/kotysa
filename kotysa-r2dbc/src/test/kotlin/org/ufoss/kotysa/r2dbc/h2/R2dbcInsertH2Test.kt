@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import io.r2dbc.spi.Connection
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -18,7 +17,6 @@ import java.time.*
 import java.util.*
 
 @Order(3)
-@OptIn(ExperimentalCoroutinesApi::class)
 class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
     override fun instantiateRepository(connection: Connection) = RepositoryH2Insert(connection)
 

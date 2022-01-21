@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import io.r2dbc.spi.Connection
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -20,7 +19,6 @@ import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     override fun instantiateRepository(connection: Connection) = AllTypesRepositoryH2(connection)
 

@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import io.r2dbc.spi.Connection
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -14,7 +13,6 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class R2dbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
     override fun instantiateRepository(connection: Connection) = InheritanceH2Repository(connection)
 

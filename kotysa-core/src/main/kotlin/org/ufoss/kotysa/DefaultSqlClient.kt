@@ -185,6 +185,7 @@ public interface DefaultSqlClient {
                     .joinToString(" AND ") { column ->
                         when (module) {
                             Module.SQLITE, Module.JDBC -> "${column.name} = ?"
+                            Module.R2DBC -> "${column.name} = $${++index}"
                             else -> "${column.name} = :k${index++}"
                         }
                     }

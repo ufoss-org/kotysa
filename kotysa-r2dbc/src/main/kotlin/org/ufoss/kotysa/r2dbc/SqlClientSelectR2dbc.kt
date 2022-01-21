@@ -309,7 +309,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 }
             } catch (_: NoSuchElementException) {
                 throw NoResultException()
-            } catch (_: IllegalStateException) {
+            } catch (_: IllegalArgumentException) {
                 throw NonUniqueResultException()
             }
 
@@ -323,7 +323,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 }
             } catch (_: NoSuchElementException) {
                 null
-            } catch (_: IllegalStateException) {
+            } catch (_: IllegalArgumentException) {
                 throw NonUniqueResultException()
             }
 
@@ -368,11 +368,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         private fun buildParameters(statement: Statement) {
             with(properties) {
                 // 1) add all values from where part
-                whereClauses
-                    .dbValues(tables)
-                    .forEach { value ->
-                        statement.bind(index++, value)
-                    }
+                r2dbcBindWhereParams(statement)
 
                 // 2) add limit and offset (order is different depending on DbType)
                 if (DbType.MSSQL == tables.dbType) {

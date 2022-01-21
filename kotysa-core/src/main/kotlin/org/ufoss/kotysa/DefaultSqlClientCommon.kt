@@ -816,6 +816,9 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                             Module.SQLITE, Module.JDBC ->
                                                 // must put as much '?' as collection size
                                                 "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+                                            Module.R2DBC ->
+                                                // must put as much '$X' as collection size
+                                                "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
                                             else -> "$fieldName IN (:k${index++})"
                                         }
                                     is WhereClauseColumn -> TODO()
