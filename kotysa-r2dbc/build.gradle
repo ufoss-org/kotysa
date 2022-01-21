@@ -14,6 +14,7 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.testcontainers:testcontainers'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
 
     testRuntimeOnly "io.r2dbc:r2dbc-h2:$r2dbc_h2_version"
     /*testRuntimeOnly "mysql:mysql-connector-java:$mysql_version"
@@ -35,7 +36,7 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable', '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi', '-Xopt-in=kotlin.RequiresOptIn']
         jvmTarget = '1.8'
     }
 }

@@ -5,8 +5,10 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import io.r2dbc.spi.Connection
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -18,19 +20,19 @@ import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     override fun instantiateRepository(connection: Connection) = AllTypesRepositoryH2(connection)
 
     @Test
-    fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() = runBlocking<Unit> {
+    fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() = runTest {
         assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactly(h2AllTypesNotNull)
     }
 
     @Test
-    fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() = runBlocking<Unit> {
+    fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() = runTest {
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toList())
                 .hasSize(1)
                 .containsExactly(H2AllTypesNullableDefaultValueEntity(
@@ -52,14 +54,14 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     }
 
     @Test
-    fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() = runBlocking<Unit> {
+    fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() = runTest {
         assertThat(repository.selectAllAllTypesNullable().toList())
                 .hasSize(1)
                 .containsExactly(h2AllTypesNullable)
     }
 
     @Test
-    fun `Verify updateAll works`() = runBlocking<Unit> {
+    fun `Verify updateAll works`() = runTest {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
