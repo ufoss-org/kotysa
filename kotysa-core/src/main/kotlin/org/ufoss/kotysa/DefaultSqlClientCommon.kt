@@ -836,12 +836,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             }
             return where.toString()
         }
-
-        private fun variable() = when {
-            properties.module == Module.SQLITE || properties.module == Module.JDBC -> "?"
-            properties.module == Module.R2DBC && properties.tables.dbType == DbType.H2 -> "$${++properties.index}"
-            else -> ":k${properties.index++}"
-        }
     }
 
     public abstract class WithWhere<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithProperties {
@@ -911,4 +905,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             WhereOpUuidColumnNullable(where, properties)
         }
     }
+}
+
+internal fun DefaultSqlClientCommon.Properties.variable() = when {
+    module == Module.SQLITE || module == Module.JDBC
+            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++this.index}"
+    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
+    else -> ":k${this.index++}"
 }

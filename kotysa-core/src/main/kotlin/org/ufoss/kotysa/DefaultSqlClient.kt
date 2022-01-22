@@ -119,8 +119,10 @@ public interface DefaultSqlClient {
             .joinToString { column ->
                 columnNames.add(column.name)
                 when {
-                    module == Module.SQLITE || module == Module.JDBC -> "?"
-                    module == Module.R2DBC && tables.dbType == DbType.H2 -> "$${++index}"
+                    module == Module.SQLITE || module == Module.JDBC
+                            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+                    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
+                    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
                     else -> ":k${index++}"
                 }
             }

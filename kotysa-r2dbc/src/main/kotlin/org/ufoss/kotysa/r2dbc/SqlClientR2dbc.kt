@@ -33,7 +33,7 @@ internal class SqlClientR2dbc(
         val statement = connection.createStatement(insertSql(row))
         setStatementParams(row, table, statement)
 
-        statement.execute().awaitSingle()
+        statement.execute().awaitSingle().rowsUpdated.awaitSingle()
     }
 
     override suspend fun <T : Any> insert(vararg rows: T) {
@@ -49,7 +49,7 @@ internal class SqlClientR2dbc(
             }
         }
 
-        statement.execute().awaitLast()
+        statement.execute().awaitLast().rowsUpdated.awaitSingle()
     }
 
     override suspend fun <T : Any> insertAndReturn(row: T): T {
@@ -137,7 +137,7 @@ internal class SqlClientR2dbc(
     private suspend fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
         val createTableSql = createTableSql(table, ifNotExists)
         connection.createStatement(createTableSql)
-            .execute().awaitSingle()
+            .execute().awaitLast()
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =

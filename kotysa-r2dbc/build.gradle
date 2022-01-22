@@ -18,6 +18,9 @@ dependencies {
 
     testRuntimeOnly "io.r2dbc:r2dbc-h2:$r2dbc_h2_version"
     testRuntimeOnly "org.mariadb:r2dbc-mariadb:$r2dbc_mariadb_version"
+    testRuntimeOnly "dev.miku:r2dbc-mysql:$r2dbc_mysql_version"
+    testRuntimeOnly "io.r2dbc:r2dbc-mssql:$r2dbc_mssql_version"
+    testRuntimeOnly "io.r2dbc:r2dbc-postgresql:$r2dbc_postgresql_version"
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
     // needed to start mysql testcontainer
