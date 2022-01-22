@@ -219,9 +219,9 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public fun updateTableSql(): String = with(properties) {
             val updateSql = "UPDATE ${table.name}"
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
-                val variable = when (module) {
-                    Module.SQLITE, Module.JDBC -> "?"
-                    Module.R2DBC -> "$${++index}"
+                val variable = when {
+                    module == Module.SQLITE || module == Module.JDBC -> "?"
+                    module == Module.R2DBC && tables.dbType == DbType.H2 -> "$${++index}"
                     else -> ":k${index++}"
                 }
                 "${column.getKotysaColumn(properties.availableColumns).name} = $variable"

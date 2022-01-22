@@ -17,13 +17,16 @@ dependencies {
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
 
     testRuntimeOnly "io.r2dbc:r2dbc-h2:$r2dbc_h2_version"
-    /*testRuntimeOnly "mysql:mysql-connector-java:$mysql_version"
-    testRuntimeOnly "com.microsoft.sqlserver:mssql-jdbc:$mssql_version"
-    testRuntimeOnly "org.mariadb.jdbc:mariadb-java-client:$mariadb_version"
-    testRuntimeOnly "org.postgresql:postgresql:$postgresql_version"*/
+    testRuntimeOnly "org.mariadb:r2dbc-mariadb:$r2dbc_mariadb_version"
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
+    // needed to start mysql testcontainer
+    testRuntimeOnly 'mysql:mysql-connector-java'
     testRuntimeOnly 'org.testcontainers:mssqlserver'
+    // needed to start mssql testcontainer
+    testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    // needed to start mariadb testcontainer
+    testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 }
 

@@ -118,9 +118,9 @@ public interface DefaultSqlClient {
             }
             .joinToString { column ->
                 columnNames.add(column.name)
-                when (module) {
-                    Module.SQLITE, Module.JDBC -> "?"
-                    Module.R2DBC -> "$${++index}"
+                when {
+                    module == Module.SQLITE || module == Module.JDBC -> "?"
+                    module == Module.R2DBC && tables.dbType == DbType.H2 -> "$${++index}"
                     else -> ":k${index++}"
                 }
             }

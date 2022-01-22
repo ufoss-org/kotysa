@@ -22,8 +22,7 @@ abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T,
 
     @BeforeAll
     fun beforeAll() = runBlocking {
-        val factory = ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
-        connection = factory.create().awaitSingle()
+        connection = ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1").create().awaitSingle()
         repository.init()
     }
 

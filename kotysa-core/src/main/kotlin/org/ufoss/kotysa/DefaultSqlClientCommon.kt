@@ -837,9 +837,9 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             return where.toString()
         }
 
-        private fun variable() = when (properties.module) {
-            Module.SQLITE, Module.JDBC -> "?"
-            Module.R2DBC -> "$${++properties.index}"
+        private fun variable() = when {
+            properties.module == Module.SQLITE || properties.module == Module.JDBC -> "?"
+            properties.module == Module.R2DBC && properties.tables.dbType == DbType.H2 -> "$${++properties.index}"
             else -> ":k${properties.index++}"
         }
     }
