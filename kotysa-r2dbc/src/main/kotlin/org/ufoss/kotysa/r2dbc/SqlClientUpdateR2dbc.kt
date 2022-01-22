@@ -72,11 +72,7 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
                 }
 
             // 2) add all values from where part
-            whereClauses
-                .dbValues(tables)
-                .forEach { value ->
-                    statement.bind(index++, value)
-                }
+            r2dbcBindWhereParams(statement)
 
             // reset index
             index = 0

@@ -49,11 +49,7 @@ internal class SqlClientDeleteR2dbc private constructor() : DefaultSqlClientDele
             index = 0
 
             // 1) add all values from where part
-            whereClauses
-                .dbValues(tables)
-                .forEach { value ->
-                    statement.bind(index++, value)
-                }
+            r2dbcBindWhereParams(statement)
 
             // reset index
             index = 0

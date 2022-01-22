@@ -236,6 +236,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             if (offset != null) {
                 val variable = when(module) {
                     Module.SQLITE, Module.JDBC -> "?"
+                    Module.R2DBC -> "$${++index}"
                     else -> ":k${index++}"
                 }
                 when (tables.dbType) {
@@ -251,6 +252,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             if (limit != null) {
                 val variable = when(module) {
                     Module.SQLITE, Module.JDBC -> "?"
+                    Module.R2DBC -> "$${++index}"
                     else -> ":k${index++}"
                 }
                 when (tables.dbType) {
