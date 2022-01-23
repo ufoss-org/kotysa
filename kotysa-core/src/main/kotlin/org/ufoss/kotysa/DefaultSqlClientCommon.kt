@@ -813,12 +813,17 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 when (this) {
                                     is WhereClauseValue<*> ->
                                         when (module) {
+                                            // SQLITE, JDBC and R2DBC : must put as much params as collection size
                                             Module.SQLITE, Module.JDBC ->
-                                                // must put as much '?' as collection size
                                                 "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
                                             Module.R2DBC ->
-                                                // must put as much '$X' as collection size
-                                                "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
+                                                when (tables.dbType) {
+                                                    DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+                                                    DbType.H2, DbType.POSTGRESQL ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
+                                                    else ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
+                                                }
                                             else -> "$fieldName IN (:k${index++})"
                                         }
                                     is WhereClauseColumn -> TODO()
