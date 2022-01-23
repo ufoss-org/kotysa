@@ -185,11 +185,14 @@ public interface DefaultSqlClient {
                 var index = 0
                 pkColumns
                     .joinToString(" AND ") { column ->
-                        when (module) {
-                            Module.SQLITE, Module.JDBC -> "${column.name} = ?"
-                            Module.R2DBC -> "${column.name} = $${++index}"
-                            else -> "${column.name} = :k${index++}"
+                        val variable = when {
+                            module == Module.SQLITE || module == Module.JDBC
+                                    || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+                            module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
+                            module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
+                            else -> ":k${index++}"
                         }
+                        "${column.name} = $variable"
                     }
             }
 
