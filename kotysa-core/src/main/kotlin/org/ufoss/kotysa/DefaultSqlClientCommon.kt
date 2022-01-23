@@ -821,6 +821,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                     DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
                                                     DbType.H2, DbType.POSTGRESQL ->
                                                         "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
+                                                    DbType.MSSQL ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "@p${++index}" }})"
                                                     else ->
                                                         "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
                                                 }

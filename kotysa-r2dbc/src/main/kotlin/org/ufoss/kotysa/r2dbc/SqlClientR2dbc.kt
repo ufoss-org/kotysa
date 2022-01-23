@@ -6,11 +6,8 @@ package org.ufoss.kotysa.r2dbc
 
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.Statement
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.reactive.awaitLast
-import kotlinx.coroutines.reactive.awaitSingle
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.reactive.*
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -64,13 +61,16 @@ internal class SqlClientR2dbc(
             // other DB types have RETURNING style features
             val statement = connection.createStatement(insertSql(row, true))
             setStatementParams(row, table, statement)
-            statement.execute().awaitSingle()
-                .map { r, _ ->
-                    (table.table as AbstractTable<T>).toField(
-                        tables.allColumns,
-                        tables.allTables,
-                    ).builder.invoke(r.toRow())
-                }.awaitSingle()
+            statement.execute().asFlow()
+                .mapNotNull {
+                    it.map { r, _ ->
+                        (table.table as AbstractTable<T>).toField(
+                            tables.allColumns,
+                            tables.allTables,
+                        ).builder.invoke(r.toRow())
+                    }.awaitFirstOrNull()
+                }
+                .first()
         }
     }
 
