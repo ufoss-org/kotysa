@@ -46,7 +46,9 @@ internal class SqlClientR2dbc(
             }
         }
 
-        statement.execute().awaitLast().rowsUpdated.awaitSingle()
+        statement.execute().asFlow()
+            .map { r -> r.rowsUpdated.awaitFirst() }
+            .last()
     }
 
     override suspend fun <T : Any> insertAndReturn(row: T): T {
@@ -62,12 +64,12 @@ internal class SqlClientR2dbc(
             val statement = connection.createStatement(insertSql(row, true))
             setStatementParams(row, table, statement)
             statement.execute().asFlow()
-                .mapNotNull {
-                    it.map { r, _ ->
+                .mapNotNull { r ->
+                    r.map { row, _ ->
                         (table.table as AbstractTable<T>).toField(
                             tables.allColumns,
                             tables.allTables,
-                        ).builder.invoke(r.toRow())
+                        ).builder.invoke(row.toRow())
                     }.awaitFirstOrNull()
                 }
                 .first()
