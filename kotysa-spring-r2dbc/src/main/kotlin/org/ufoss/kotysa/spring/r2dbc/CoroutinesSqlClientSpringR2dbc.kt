@@ -14,7 +14,7 @@ import org.ufoss.kotysa.*
 import java.math.BigDecimal
 
 /**
- * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbcCoroutines
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbcCoroutines
  */
 private class CoroutinesSqlClientSpringR2Dbc(
         override val client: DatabaseClient,
@@ -76,6 +76,6 @@ private class CoroutinesSqlClientSpringR2Dbc(
 /**
  * Create a [CoroutinesSqlClient] from a R2DBC [DatabaseClient] with [Tables] mapping
  *
- * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbcCoroutines
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbcCoroutines
  */
 public fun DatabaseClient.coSqlClient(tables: Tables): CoroutinesSqlClient = CoroutinesSqlClientSpringR2Dbc(this, tables)

@@ -187,7 +187,7 @@ internal fun KClass<*>.toDbClass() =
     }
 
 /**
- * Create a [SqlClient] from a R2DBC [Connection] with [Tables] mapping
+ * Create a [CoroutinesSqlClient] from a R2DBC [Connection] with [Tables] mapping
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */

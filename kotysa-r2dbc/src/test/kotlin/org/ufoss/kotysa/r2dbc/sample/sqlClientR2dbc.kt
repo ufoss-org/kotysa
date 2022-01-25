@@ -2,17 +2,17 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.r2dbc.sample
+package org.ufoss.kotysa.r2dbc.sample
 
-import org.springframework.r2dbc.core.DatabaseClient
+import io.r2dbc.spi.Connection
 import org.ufoss.kotysa.h2.H2Table
-import org.ufoss.kotysa.spring.r2dbc.coSqlClient
+import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
 import java.util.*
 
 
 @Suppress("UNUSED_VARIABLE")
-class UserRepositoryR2dbcCoroutines(dbClient: DatabaseClient) {
+class UserRepositoryR2dbc(connection: Connection) {
 
     data class Role(
             val label: String,
@@ -58,7 +58,7 @@ class UserRepositoryR2dbcCoroutines(dbClient: DatabaseClient) {
             val role: String
     )
 
-    private val sqlClient = dbClient.coSqlClient(tables)
+    private val sqlClient = connection.sqlClient(tables)
 
     suspend fun simplifiedExample() = sqlClient.apply {
         sqlClient createTable ROLE

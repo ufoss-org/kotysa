@@ -6,13 +6,13 @@ package org.ufoss.kotysa.spring.r2dbc.sample
 
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.h2.H2Table
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.tables
 import java.util.*
 
 
 @Suppress("UNUSED_VARIABLE")
-class UserRepositoryR2dbc(dbClient: DatabaseClient) {
+class UserRepositorySpringR2dbcCoroutines(dbClient: DatabaseClient) {
 
     data class Role(
             val label: String,
@@ -29,20 +29,20 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
     )
 
     object ROLE : H2Table<Role>("roles") {
-        val id = ROLE.uuid(Role::id)
+        val id = uuid(Role::id)
                 .primaryKey()
-        val label = ROLE.varchar(Role::label)
+        val label = varchar(Role::label)
     }
 
     object USER : H2Table<User>("users") {
-        val id = USER.uuid(User::id)
+        val id = uuid(User::id)
                 .primaryKey("PK_users")
-        val firstname = USER.varchar(User::firstname, "fname")
-        val lastname = USER.varchar(User::lastname, "lname")
-        val isAdmin = USER.boolean(User::isAdmin)
-        val roleId = USER.uuid(User::roleId)
+        val firstname = varchar(User::firstname, "fname")
+        val lastname = varchar(User::lastname, "lname")
+        val isAdmin = boolean(User::isAdmin)
+        val roleId = uuid(User::roleId)
                 .foreignKey(ROLE.id, "FK_users_roles")
-        val alias = USER.varchar(User::alias)
+        val alias = varchar(User::alias)
     }
 
     private val tables = tables().h2(ROLE, USER)
@@ -58,13 +58,16 @@ class UserRepositoryR2dbc(dbClient: DatabaseClient) {
             val role: String
     )
 
-    private val sqlClient = dbClient.sqlClient(tables)
+    private val sqlClient = dbClient.coSqlClient(tables)
 
-    @Suppress("ReactiveStreamsUnusedPublisher")
-    fun simplifiedExample() {
-        (sqlClient createTable ROLE) // CREATE TABLE IF NOT EXISTS
-                .then(sqlClient deleteAllFrom ROLE)
-                .thenMany(sqlClient.insert(roleUser, roleAdmin))
+    suspend fun simplifiedExample() = sqlClient.apply {
+        sqlClient createTable ROLE
+        sqlClient deleteAllFrom ROLE
+        sqlClient.insert(roleUser, roleAdmin)
+
+        sqlClient createTable USER
+        sqlClient deleteAllFrom USER
+        sqlClient.insert(userJdoe, userBboss)
 
         val count = sqlClient selectCountAllFrom USER
 

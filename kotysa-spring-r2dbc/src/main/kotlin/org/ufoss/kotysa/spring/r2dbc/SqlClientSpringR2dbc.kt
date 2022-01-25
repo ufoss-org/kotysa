@@ -12,7 +12,7 @@ import java.math.BigDecimal
 
 /**
  * see [spring-data-r2dbc doc](https://docs.spring.io/spring-data/r2dbc/docs/1.4.x/reference/html/#reference)
- * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbc
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbc
  */
 private class SqlClientSpringR2dbc(
         override val client: DatabaseClient,
@@ -70,6 +70,6 @@ private class SqlClientSpringR2dbc(
 /**
  * Create a [ReactorSqlClient] from a R2DBC [DatabaseClient] with [Tables] mapping
  *
- * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositoryR2dbc
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbc
  */
 public fun DatabaseClient.sqlClient(tables: Tables): ReactorSqlClient = SqlClientSpringR2dbc(this, tables)

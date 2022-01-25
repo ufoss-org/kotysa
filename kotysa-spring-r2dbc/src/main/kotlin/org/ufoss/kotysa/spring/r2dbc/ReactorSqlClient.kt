@@ -12,7 +12,7 @@ import java.math.BigDecimal
 /**
  * Reactive (using Reactor Mono and Flux) Sql Client, to be used with R2DBC
  *
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbc
  */
 public interface ReactorSqlClient {
 
