@@ -11,26 +11,26 @@ import kotlin.test.assertEquals
 
 class IntegrationTests {
     private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
-    
+
     @Test
-    fun `Request HTTP API endpoint for listing all users`() {
-        withTestApplication({configureApp("test")}) {
-            handleRequest(HttpMethod.Get, "/api/users").apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                assertThat(response.parseBodyList<User>())
-                    .hasSize(2)
-            }
+    fun `Request HTTP API endpoint for listing all users`() = kotysaApiTest {
+        handleRequest(HttpMethod.Get, "/api/users").apply {
+            assertEquals(HttpStatusCode.OK, response.status())
+            assertThat(response.parseBodyList<User>())
+                .hasSize(2)
         }
     }
 
     @Test
-    fun `Request HTTP API endpoint for getting one specified user`() {
-        withTestApplication({configureApp("test")}) {
-            handleRequest(HttpMethod.Get, "/api/users/123").apply {
-                assertEquals(HttpStatusCode.OK, response.status())
-                response.parseBody<User>()
-            }
+    fun `Request HTTP API endpoint for getting one specified user`() = kotysaApiTest {
+        handleRequest(HttpMethod.Get, "/api/users/123").apply {
+            assertEquals(HttpStatusCode.OK, response.status())
+            response.parseBody<User>()
         }
+    }
+
+    private fun kotysaApiTest(test: TestApplicationEngine.() -> Unit) {
+        withTestApplication({ configureApp("test") }, test)
     }
 
     private inline fun <reified T> TestApplicationResponse.parseBody(): T =
