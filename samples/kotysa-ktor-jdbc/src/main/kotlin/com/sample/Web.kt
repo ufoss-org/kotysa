@@ -1,20 +1,16 @@
 package com.sample
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.sample.UserRepository
 import io.ktor.application.*
 import io.ktor.features.*
-import io.ktor.jackson.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.serialization.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun Application.routes() {
+fun Application.web() {
     install(ContentNegotiation) {
-        jackson {
-            registerModule(JavaTimeModule())  // support java.time.* types
-        }
+        json()
     }
 
     routing {

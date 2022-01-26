@@ -1,16 +1,16 @@
 package com.sample
 
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.ktor.http.*
+import io.ktor.serialization.*
 import io.ktor.server.testing.*
+import kotlinx.serialization.decodeFromString
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
 class IntegrationTests {
-    private val mapper = jacksonObjectMapper().registerModule(JavaTimeModule())
+    private val json = DefaultJson
 
     @Test
     fun `Request HTTP API endpoint for listing all users`() = kotysaApiTest {
@@ -30,14 +30,12 @@ class IntegrationTests {
     }
 
     private fun kotysaApiTest(test: TestApplicationEngine.() -> Unit) {
-        withTestApplication({ configureApp("test") }, test)
+        withTestApplication({ configureApp() }, test)
     }
 
     private inline fun <reified T> TestApplicationResponse.parseBody(): T =
-        mapper.readValue(content, T::class.java)
+        json.decodeFromString(content!!)
 
-    private inline fun <reified T> TestApplicationResponse.parseBodyList(): List<T> {
-        val type = mapper.typeFactory.constructCollectionType(List::class.java, T::class.java)
-        return mapper.readValue(content, type);
-    }
+    private inline fun <reified T> TestApplicationResponse.parseBodyList(): List<T> =
+        json.decodeFromString(content!!)
 }

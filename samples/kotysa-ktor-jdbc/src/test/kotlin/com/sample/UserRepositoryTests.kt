@@ -25,7 +25,7 @@ class UserRepositoryTests {
 
     private fun kotysaTest(test: Application.() -> Unit) {
         withTestApplication({
-            configureApp("test")
+            configureApp()
             test()
         }, {})
     }

@@ -1,7 +1,12 @@
 package com.sample
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
 import org.ufoss.kotysa.h2.H2Table
-import java.time.LocalDateTime
+import org.ufoss.kotysa.h2.dateTime
 import java.util.*
 
 data class Role(
@@ -9,14 +14,16 @@ data class Role(
         val id: UUID = UUID.randomUUID()
 )
 
+@Serializable
 data class User(
-        val firstname: String,
-        val lastname: String,
-        val isAdmin: Boolean,
-        val roleId: UUID,
-        val alias: String? = null,
-        val creationTime: LocalDateTime = LocalDateTime.now(),
-        val id: Int? = null
+    val firstname: String,
+    val lastname: String,
+    val isAdmin: Boolean,
+    @Serializable(with = UuidSerializer::class)
+    val roleId: UUID,
+    val alias: String? = null,
+    val creationTime: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    val id: Int? = null
 )
 
 /**

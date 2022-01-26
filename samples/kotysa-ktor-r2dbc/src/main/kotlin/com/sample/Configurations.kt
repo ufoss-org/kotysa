@@ -2,8 +2,8 @@ package com.sample
 
 import io.ktor.application.*
 import io.ktor.serialization.*
-import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactories
+import io.r2dbc.spi.ConnectionFactory
 import kotlinx.coroutines.reactive.awaitSingle
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -30,14 +30,20 @@ fun Application.configuration() {
 private val h2Tables = tables().h2(ROLE, USER)
 
 private val dataModule = DI.Module(name = "data") {
-    bind<Connection>() with singleton {
-        runBlocking {
-            ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1").create().awaitSingle()
-        }
+    bind<ConnectionFactory>() with singleton {
+        ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
     }
     // create Kotysa SqlClient and TransactionalOp
-    bind<CoroutinesSqlClient>() with provider { instance<Connection>().sqlClient(h2Tables) }
-    bind<R2dbcTransactionalOp>() with provider { instance<Connection>().transactionalOp() }
+    bind<CoroutinesSqlClient>() with provider {
+        runBlocking {
+            instance<ConnectionFactory>().create().awaitSingle().sqlClient(h2Tables)
+        }
+    }
+    bind<R2dbcTransactionalOp>() with provider {
+        runBlocking {
+            instance<ConnectionFactory>().create().awaitSingle().transactionalOp()
+        }
+    }
     bind<RoleRepository>() with provider { RoleRepository(instance()) }
     bind<UserRepository>() with provider { UserRepository(instance(), instance()) }
     bind<Json>() with singleton { DefaultJson }
