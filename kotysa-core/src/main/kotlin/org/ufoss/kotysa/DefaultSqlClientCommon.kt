@@ -813,9 +813,19 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 when (this) {
                                     is WhereClauseValue<*> ->
                                         when (module) {
+                                            // SQLITE, JDBC and R2DBC : must put as much params as collection size
                                             Module.SQLITE, Module.JDBC ->
-                                                // must put as much '?' as collection size
                                                 "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+                                            Module.R2DBC ->
+                                                when (tables.dbType) {
+                                                    DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+                                                    DbType.H2, DbType.POSTGRESQL ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
+                                                    DbType.MSSQL ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "@p${++index}" }})"
+                                                    else ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
+                                                }
                                             else -> "$fieldName IN (:k${index++})"
                                         }
                                     is WhereClauseColumn -> TODO()
@@ -832,11 +842,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 where.append(")")
             }
             return where.toString()
-        }
-
-        private fun variable() = when (properties.module) {
-            Module.SQLITE, Module.JDBC -> "?"
-            else -> ":k${properties.index++}"
         }
     }
 
@@ -907,4 +912,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             WhereOpUuidColumnNullable(where, properties)
         }
     }
+}
+
+internal fun DefaultSqlClientCommon.Properties.variable() = when {
+    module == Module.SQLITE || module == Module.JDBC
+            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++this.index}"
+    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
+    else -> ":k${this.index++}"
 }

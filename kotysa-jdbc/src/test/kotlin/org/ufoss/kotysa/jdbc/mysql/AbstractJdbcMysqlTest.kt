@@ -9,13 +9,14 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
 import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
-import org.ufoss.kotysa.transaction.TransactionalOp
+import org.ufoss.kotysa.test.repositories.RepositoryTest
 import java.sql.Connection
 import java.sql.DriverManager
 
@@ -23,7 +24,7 @@ import java.sql.DriverManager
 @ExtendWith(MySqlContainerExecutionHook::class)
 @ResourceLock(MySqlContainerResource.ID)
 @Tag("jdbc-testcontainers")
-abstract class AbstractJdbcMysqlTest<T : Repository> : JdbcRepositoryTest<T> {
+abstract class AbstractJdbcMysqlTest<T : Repository> : RepositoryTest<T, JdbcTransaction> {
     private lateinit var connection: Connection
 
     @BeforeAll
@@ -38,7 +39,7 @@ abstract class AbstractJdbcMysqlTest<T : Repository> : JdbcRepositoryTest<T> {
 
     protected abstract fun instantiateRepository(connection: Connection): T
 
-    override val operator: TransactionalOp by lazy {
+    override val operator: JdbcTransactionalOp by lazy {
         connection.transactionalOp()
     }
 

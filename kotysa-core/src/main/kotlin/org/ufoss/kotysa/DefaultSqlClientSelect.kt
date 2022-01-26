@@ -234,13 +234,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         private fun offset(): String = with(properties) {
             if (offset != null) {
-                val variable = when(module) {
-                    Module.SQLITE, Module.JDBC -> "?"
-                    else -> ":k${index++}"
-                }
                 when (tables.dbType) {
-                    DbType.MSSQL -> "OFFSET $variable ROWS"
-                    else -> "OFFSET $variable"
+                    DbType.MSSQL -> "OFFSET ${variable()} ROWS"
+                    else -> "OFFSET ${variable()}"
                 }
             } else {
                 ""
@@ -249,13 +245,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         private fun limit(): String = with(properties) {
             if (limit != null) {
-                val variable = when(module) {
-                    Module.SQLITE, Module.JDBC -> "?"
-                    else -> ":k${index++}"
-                }
                 when (tables.dbType) {
-                    DbType.MSSQL -> "FETCH NEXT $variable ROWS ONLY"
-                    else -> "LIMIT $variable"
+                    DbType.MSSQL -> "FETCH NEXT ${variable()} ROWS ONLY"
+                    else -> "LIMIT ${variable()}"
                 }
             } else {
                 ""

@@ -5,15 +5,16 @@
 package org.ufoss.kotysa.jdbc.h2
 
 import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.H2_JAVA_USER
 import org.ufoss.kotysa.test.h2Tables
-import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
+import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 import java.sql.Connection
 
 
 class JdbcJavaEntityH2Test :
-        AbstractJdbcH2Test<JavaUserH2Repository>(), JdbcJavaEntityTest<H2_JAVA_USER, JavaUserH2Repository> {
+        AbstractJdbcH2Test<JavaUserH2Repository>(), JavaEntityTest<H2_JAVA_USER, JavaUserH2Repository, JdbcTransaction> {
     override fun instantiateRepository(connection: Connection) = JavaUserH2Repository(connection)
 }
 

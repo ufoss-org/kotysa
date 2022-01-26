@@ -6,14 +6,15 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
 import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
-import org.ufoss.kotysa.transaction.TransactionalOp
+import org.ufoss.kotysa.test.repositories.RepositoryTest
 import java.sql.Connection
 import java.sql.DriverManager
 
-abstract class AbstractJdbcH2Test<T : Repository> : JdbcRepositoryTest<T> {
+abstract class AbstractJdbcH2Test<T : Repository> : RepositoryTest<T, JdbcTransaction> {
     private lateinit var connection: Connection
 
     @BeforeAll
@@ -24,7 +25,7 @@ abstract class AbstractJdbcH2Test<T : Repository> : JdbcRepositoryTest<T> {
 
     protected abstract fun instantiateRepository(connection: Connection): T
 
-    override val operator: TransactionalOp by lazy {
+    override val operator: JdbcTransactionalOp by lazy {
         connection.transactionalOp()
     }
 

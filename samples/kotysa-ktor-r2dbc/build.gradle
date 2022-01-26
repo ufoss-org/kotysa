@@ -1,0 +1,51 @@
+plugins {
+    id 'application'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+}
+
+mainClassName = "com.sample.ApplicationKt"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation "io.ktor:ktor-server-core:$ktor_version"
+    implementation "io.ktor:ktor-server-netty:$ktor_version"
+    implementation "io.ktor:ktor-serialization:$ktor_version"
+    implementation "ch.qos.logback:logback-classic:$logback_version"
+    implementation "org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version" // kodein for ktor
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    implementation "org.ufoss.kotysa:kotysa-r2dbc:$kotysa_version"
+
+    runtimeOnly "io.r2dbc:r2dbc-h2:$h2_version" // R2DBC driver for H2
+    
+    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi', '-Xopt-in=kotlin.RequiresOptIn']
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
+                            '-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi']
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+wrapper {
+    gradleVersion = '7.3.3'
+    distributionType = Wrapper.DistributionType.ALL
+}

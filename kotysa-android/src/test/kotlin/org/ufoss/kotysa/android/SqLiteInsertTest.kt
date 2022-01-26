@@ -28,6 +28,17 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     }
 
     @Test
+    fun `Verify insertCustomers works correctly`() {
+        val operator = client.transactionalOp()
+        operator.execute { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertCustomers()
+            assertThat(repository.selectAllCustomers())
+                .containsExactly(customerJapan1, customerJapan2)
+        }
+    }
+
+    @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
         val operator = client.transactionalOp()
         operator.execute { transaction ->
@@ -123,6 +134,8 @@ class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
+
+    fun insertCustomers() = sqlClient.insert(customerJapan1, customerJapan2)
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 

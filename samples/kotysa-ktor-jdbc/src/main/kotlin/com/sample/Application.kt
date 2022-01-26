@@ -10,8 +10,7 @@ fun main() {
     }.start(wait = true)
 }
 
-fun Application.configureApp(profiles: String = "") {
-    val profilesList = profiles.split(",")
-    configuration(profilesList)
-    routes()
+fun Application.configureApp() {
+    configuration()
+    web()
 }

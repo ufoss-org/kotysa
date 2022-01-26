@@ -4,6 +4,6 @@
 
 package org.ufoss.kotysa.transaction
 
-public interface TransactionalOp {
-    public fun <T> execute(block: (Transaction) -> T): T?
+public interface TransactionalOp<T : Transaction> {
+    public fun <U> execute(block: (T) -> U): U?
 }
