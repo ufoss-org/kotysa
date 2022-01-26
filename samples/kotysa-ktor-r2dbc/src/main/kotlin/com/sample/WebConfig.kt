@@ -17,7 +17,7 @@ import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 import java.io.OutputStream
 
-fun Application.web() {
+fun Application.webConfig() {
     install(ContentNegotiation) {
         json()
     }

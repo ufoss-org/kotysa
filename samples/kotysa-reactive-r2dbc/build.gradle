@@ -7,15 +7,17 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-webflux')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
     implementation('org.springframework.data:spring-data-r2dbc')
-    implementation('io.r2dbc:r2dbc-h2')
 
     implementation("org.ufoss.kotysa:kotysa-spring-r2dbc:${kotysaVersion}")
+
+    runtimeOnly('io.r2dbc:r2dbc-h2')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

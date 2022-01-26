@@ -7,13 +7,11 @@ package org.ufoss.kotysa.r2dbc
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.Result
 import io.r2dbc.spi.Statement
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 import java.util.*
-
 
 @Suppress("UNCHECKED_CAST")
 internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSelect() {
@@ -350,7 +348,6 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 .filter { opt -> opt.isPresent }
                 .map { opt -> opt.get() }
 
-        @OptIn(FlowPreview::class)
         private fun fetchAllNullable(): Flow<Optional<T>> =
             executeQuery()
                 .flatMapConcat { r ->

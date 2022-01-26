@@ -11,6 +11,6 @@ fun main() {
 }
 
 fun Application.configureApp() {
-    configuration()
-    web()
+    dataConfig()
+    webConfig()
 }

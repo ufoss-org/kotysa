@@ -7,20 +7,23 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-webflux')
     implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
     implementation('org.springframework.data:spring-data-r2dbc')
-    implementation('io.r2dbc:r2dbc-h2')
     implementation('org.jetbrains.kotlinx:kotlinx-coroutines-reactor')
 
     implementation("org.ufoss.kotysa:kotysa-spring-r2dbc:${kotysaVersion}")
 
+    runtimeOnly('io.r2dbc:r2dbc-h2')
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
 }
 
 compileKotlin {
@@ -31,7 +34,8 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all', '-Xopt-in=kotlin.RequiresOptIn',
+                            '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi']
     }
 }
 

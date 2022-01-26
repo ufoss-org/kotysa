@@ -16,7 +16,7 @@ import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionalOp
 import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 
-fun Application.configuration() {
+fun Application.dataConfig() {
     di {
         import(dataModule)
     }

@@ -19,7 +19,7 @@ class UserRepositoryTests {
 
     @Test
     fun selectWithJoin() {
-        assertThat(repository.selectWithJoin().log().toIterable())
+        assertThat(repository.selectWithJoin().toIterable())
             .hasSize(2)
     }
 }

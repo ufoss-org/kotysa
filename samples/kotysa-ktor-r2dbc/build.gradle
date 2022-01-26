@@ -25,6 +25,7 @@ dependencies {
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
 }
 
 compileKotlin {
@@ -35,7 +36,8 @@ compileKotlin {
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi', '-Xopt-in=kotlin.RequiresOptIn']
+        freeCompilerArgs = ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
+                            '-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi']
     }
 }
 
