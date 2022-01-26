@@ -5,18 +5,21 @@
 package org.ufoss.kotysa.jdbc.mssql
 
 import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.MSSQL_JAVA_USER
 import org.ufoss.kotysa.test.mssqlTables
-import org.ufoss.kotysa.test.repositories.JdbcJavaEntityTest
+import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 import java.sql.Connection
 
 
 class JdbcJavaEntityMssqlTest :
-        AbstractJdbcMssqlTest<JavaUserMssqlRepository>(), JdbcJavaEntityTest<MSSQL_JAVA_USER, JavaUserMssqlRepository> {
+    AbstractJdbcMssqlTest<JavaUserMssqlRepository>(),
+    JavaEntityTest<MSSQL_JAVA_USER, JavaUserMssqlRepository, JdbcTransaction> {
+
     override fun instantiateRepository(connection: Connection) = JavaUserMssqlRepository(connection)
 }
 
 
-class JavaUserMssqlRepository(connection: Connection)
-    : JavaUserRepository<MSSQL_JAVA_USER>(connection.sqlClient(mssqlTables), MSSQL_JAVA_USER)
+class JavaUserMssqlRepository(connection: Connection) :
+    JavaUserRepository<MSSQL_JAVA_USER>(connection.sqlClient(mssqlTables), MSSQL_JAVA_USER)

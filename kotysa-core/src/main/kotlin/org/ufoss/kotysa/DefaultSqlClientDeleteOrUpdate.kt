@@ -219,11 +219,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public fun updateTableSql(): String = with(properties) {
             val updateSql = "UPDATE ${table.name}"
             val setSql = setValues.keys.joinToString(prefix = "SET ") { column ->
-                val variable = when (module) {
-                    Module.SQLITE, Module.JDBC -> "?"
-                    else -> ":k${index++}"
-                }
-                "${column.getKotysaColumn(properties.availableColumns).name} = $variable"
+                "${column.getKotysaColumn(properties.availableColumns).name} = ${variable()}"
             }
             val joinsAndWheres = joinsWithExistsAndWheres()
             logger.debug { "Exec SQL (${tables.dbType.name}) : $updateSql $setSql $joinsAndWheres" }

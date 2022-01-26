@@ -16,16 +16,17 @@ import org.springframework.fu.kofu.jdbc.DataSourceType
 import org.springframework.fu.kofu.jdbc.jdbc
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransactionalOp
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
-import org.ufoss.kotysa.test.repositories.JdbcRepositoryTest
-import org.ufoss.kotysa.transaction.TransactionalOp
+import org.ufoss.kotysa.test.repositories.RepositoryTest
 
 @ExtendWith(PostgreSqlContainerExecutionHook::class)
 @ResourceLock(PostgreSqlContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
-abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : JdbcRepositoryTest<T> {
+abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : RepositoryTest<T, SpringJdbcTransaction> {
     protected lateinit var context: ConfigurableApplicationContext
 
     protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
@@ -45,7 +46,7 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : JdbcRepository
 
     protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
 
-    override val operator: TransactionalOp by lazy {
+    override val operator: SpringJdbcTransactionalOp by lazy {
         val transactionManager = context.getBean<PlatformTransactionManager>()
         TransactionTemplate(transactionManager).transactionalOp()
     }

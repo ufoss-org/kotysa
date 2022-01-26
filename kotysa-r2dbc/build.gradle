@@ -1,0 +1,50 @@
+dependencies {
+    api project(':kotysa-core')
+
+    // import BOMs
+    testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
+
+    api "io.r2dbc:r2dbc-spi:$r2dbc_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlinx_coroutines_version"
+
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+
+    testImplementation testFixtures(project(':kotysa-core'))
+
+    testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.testcontainers:testcontainers'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
+
+    testRuntimeOnly "io.r2dbc:r2dbc-h2:$r2dbc_h2_version"
+    testRuntimeOnly "org.mariadb:r2dbc-mariadb:$r2dbc_mariadb_version"
+    testRuntimeOnly "dev.miku:r2dbc-mysql:$r2dbc_mysql_version"
+    testRuntimeOnly "io.r2dbc:r2dbc-mssql:$r2dbc_mssql_version"
+    testRuntimeOnly "io.r2dbc:r2dbc-postgresql:$r2dbc_postgresql_version"
+    testRuntimeOnly 'org.testcontainers:postgresql'
+    testRuntimeOnly 'org.testcontainers:mysql'
+    // needed to start mysql testcontainer
+    testRuntimeOnly 'mysql:mysql-connector-java'
+    testRuntimeOnly 'org.testcontainers:mssqlserver'
+    // needed to start mssql testcontainer
+    testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
+    // needed to start mariadb testcontainer
+    testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable', '-Xexplicit-api=strict',
+                            '-Xopt-in=kotlinx.coroutines.FlowPreview', '-Xopt-in=kotlin.RequiresOptIn']
+        jvmTarget = '1.8'
+    }
+}
+
+compileTestKotlin {
+    kotlinOptions {
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable',
+                            '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi', '-Xopt-in=kotlin.RequiresOptIn']
+        jvmTarget = '1.8'
+    }
+}

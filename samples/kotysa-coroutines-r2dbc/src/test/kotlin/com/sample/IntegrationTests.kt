@@ -23,7 +23,7 @@ class IntegrationTests {
 
     @Test
     fun `Request HTTP API endpoint for listing all users`() {
-        client.get().uri("/api/user").exchange()
+        client.get().uri("/api/users").exchange()
                 .expectStatus().is2xxSuccessful
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
                 .expectBodyList<User>()
@@ -32,7 +32,7 @@ class IntegrationTests {
 
     @Test
     fun `Request HTTP API endpoint for getting one specified user`() {
-        client.get().uri("/api/user/123").exchange()
+        client.get().uri("/api/users/123").exchange()
                 .expectStatus().is2xxSuccessful
                 .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
                 .expectBody<User>()

@@ -1,7 +1,7 @@
 package com.sample
 
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runBlockingTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,13 +14,13 @@ class UserRepositoryTests {
     private lateinit var repository: UserRepository
 
     @Test
-    fun count() = runBlocking<Unit> {
+    fun count() = runBlockingTest {
         assertThat(repository.count())
                 .isEqualTo(2)
     }
 
     @Test
-    fun selectWithJoin() = runBlocking<Unit> {
+    fun selectWithJoin() = runBlockingTest {
         assertThat(repository.selectWithJoin().toList())
                 .hasSize(2)
     }

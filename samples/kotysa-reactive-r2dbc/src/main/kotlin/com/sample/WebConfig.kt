@@ -9,7 +9,7 @@ class WebConfig(private val userHandler: UserHandler) {
 
     @Bean
     fun appRouter() = router {
-        GET("/api/user", userHandler::listApi)
-        GET("/api/user/{id}", userHandler::userApi)
+        GET("/api/users", userHandler::listApi)
+        GET("/api/users/{id}", userHandler::userApi)
     }
 }

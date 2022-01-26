@@ -12,17 +12,15 @@ import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 import javax.sql.DataSource
 
-fun Application.configuration(profiles: List<String>) {
+fun Application.configuration() {
     di {
         import(dataModule)
     }
     // init DB
-    if (profiles.any { profile -> "dev" == profile || "test" == profile }) {
-        val roleRepository by closestDI().instance<RoleRepository>()
-        roleRepository.init()
-        val userRepository by closestDI().instance<UserRepository>()
-        userRepository.init()
-    }
+    val roleRepository by closestDI().instance<RoleRepository>()
+    roleRepository.init()
+    val userRepository by closestDI().instance<UserRepository>()
+    userRepository.init()
 }
 
 private val h2Tables = tables().h2(ROLE, USER)

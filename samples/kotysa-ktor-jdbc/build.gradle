@@ -1,23 +1,25 @@
 plugins {
     id 'application'
     id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
 mainClassName = "com.sample.ApplicationKt"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     implementation "io.ktor:ktor-server-core:$ktor_version"
-    implementation "io.ktor:ktor-jackson:$ktor_version"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
     implementation "io.ktor:ktor-server-netty:$ktor_version"
+    implementation "io.ktor:ktor-serialization:$ktor_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version" // kodein for ktor
+    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     implementation "org.ufoss.kotysa:kotysa-jdbc:$kotysa_version"
-    implementation "com.h2database:h2:$h2_version" // JDBC Connector for H2
+    implementation "com.h2database:h2:$h2_version" // JDBC driver for H2
     
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
