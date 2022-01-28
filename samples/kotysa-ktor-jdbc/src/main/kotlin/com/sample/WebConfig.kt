@@ -8,7 +8,7 @@ import io.ktor.serialization.*
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-fun Application.web() {
+fun Application.webConfig() {
     install(ContentNegotiation) {
         json()
     }

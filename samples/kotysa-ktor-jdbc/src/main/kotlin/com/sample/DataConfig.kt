@@ -12,7 +12,7 @@ import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 import javax.sql.DataSource
 
-fun Application.configuration() {
+fun Application.dataConfig() {
     di {
         import(dataModule)
     }
