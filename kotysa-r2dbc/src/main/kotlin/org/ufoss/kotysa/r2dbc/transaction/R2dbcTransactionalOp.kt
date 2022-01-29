@@ -10,42 +10,45 @@ import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 import java.lang.reflect.UndeclaredThrowableException
 
 @JvmInline
-public value class R2dbcTransactionalOp(private val connection: Connection) : CoroutinesTransactionalOp<R2dbcTransaction> {
+public value class R2dbcTransactionalOp(private val connection: Connection) :
+    CoroutinesTransactionalOp<R2dbcTransaction> {
 
     public override suspend fun <T> execute(block: suspend (R2dbcTransaction) -> T): T? = connection.run {
         val transaction = R2dbcTransaction(this)
         setAutoCommit(false).awaitFirstOrNull() // default true
-        
-        val result = try {
-            block.invoke(transaction)
-        } catch (ex: RuntimeException) {
-            // Transactional code threw application exception -> rollback
-            rollback(connection, transaction)
-            throw ex
-        } catch (ex: Error) {
-            rollback(connection, transaction)
-            throw ex
-        } catch (ex: Throwable) {
-            // Transactional code threw unexpected exception -> rollback
-            rollback(connection, transaction)
-            throw UndeclaredThrowableException(ex, "block threw undeclared checked exception")
-        }
-        
-        if (transaction.isRollbackOnly()) {
-            rollback(connection, transaction)
-        } else {
-            commitTransaction().awaitFirstOrNull()
-            transaction.setCompleted()
-        }
 
-        setAutoCommit(true).awaitFirstOrNull() // back to default true
-        
-        result
+        try {
+
+            val result = try {
+                block.invoke(transaction)
+            } catch (ex: RuntimeException) {
+                // Transactional code threw application exception -> rollback
+                rollback(connection)
+                throw ex
+            } catch (ex: Error) {
+                rollback(connection)
+                throw ex
+            } catch (ex: Throwable) {
+                // Transactional code threw unexpected exception -> rollback
+                rollback(connection)
+                throw UndeclaredThrowableException(ex, "block threw undeclared checked exception")
+            }
+
+            if (transaction.isRollbackOnly()) {
+                rollback(connection)
+            } else {
+                commitTransaction().awaitFirstOrNull()
+            }
+
+            result
+        } finally {
+            transaction.setCompleted()
+            setAutoCommit(true).awaitFirstOrNull() // back to default true
+        }
     }
-    
-    private suspend fun rollback(connection: Connection, transaction: R2dbcTransaction) {
+
+    private suspend fun rollback(connection: Connection) {
         connection.rollbackTransaction().awaitFirstOrNull()
-        transaction.setCompleted()
     }
 }
 
