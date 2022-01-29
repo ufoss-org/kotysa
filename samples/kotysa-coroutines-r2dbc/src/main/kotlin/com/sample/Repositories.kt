@@ -10,27 +10,27 @@ private val role_admin_uuid = UUID.fromString("67d4306e-d99d-4e54-8b1d-5b1e92691
 @Repository
 class UserRepository(private val client: CoroutinesSqlClient) {
 
-    suspend fun count() = client selectCountAllFrom USER
+    suspend fun count() = client selectCountAllFrom Users
 
-    fun findAll() = client selectAllFrom USER
+    fun findAll() = client selectAllFrom Users
 
     suspend fun findOne(id: Int) =
-        (client selectFrom USER
-                where USER.id eq id
+        (client selectFrom Users
+                where Users.id eq id
                 ).fetchOne()!!
 
     fun selectWithJoin() =
         (client.select {
-            UserDto("${it[USER.firstname]} ${it[USER.lastname]}", it[USER.alias], it[ROLE.label]!!)
-        } from USER innerJoin ROLE on USER.roleId eq ROLE.id
+            UserDto("${it[Users.firstname]} ${it[Users.lastname]}", it[Users.alias], it[Roles.label]!!)
+        } from Users innerJoin Roles on Users.roleId eq Roles.id
                 ).fetchAll()
 
-    suspend fun deleteAll() = client deleteAllFrom USER
+    suspend fun deleteAll() = client deleteAllFrom Users
 
     suspend fun save(user: User) = client insert user
 
     suspend fun init() {
-        client createTableIfNotExists USER
+        client createTableIfNotExists Users
         deleteAll()
         save(User("John", "Doe", false, role_user_uuid, id = 123))
         save(User("Big", "Boss", true, role_admin_uuid, "TheBoss"))
@@ -39,12 +39,12 @@ class UserRepository(private val client: CoroutinesSqlClient) {
 
 @Repository
 class RoleRepository(private val client: CoroutinesSqlClient) {
-    suspend fun deleteAll() = client deleteAllFrom ROLE
+    suspend fun deleteAll() = client deleteAllFrom Roles
 
     suspend fun save(role: Role) = client insert role
 
     suspend fun init() {
-        client createTableIfNotExists ROLE
+        client createTableIfNotExists Roles
         deleteAll()
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))
