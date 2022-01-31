@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MARIADB_ROLE
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
-import java.sql.Connection
-
 
 class JdbcSelectOrMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelectOr>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelectOr(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbSelectOr(sqlClient)
 
     @Test
     fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
@@ -24,7 +23,8 @@ class JdbcSelectOrMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariad
 }
 
 
-class UserRepositoryJdbcMariadbSelectOr(connection: Connection) : AbstractUserRepositoryJdbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelectOr(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
             (sqlClient selectFrom MARIADB_ROLE

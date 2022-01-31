@@ -7,16 +7,15 @@ package org.ufoss.kotysa.jdbc.mysql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Order(3)
 class JdbcInsertMysqlTest : AbstractJdbcMysqlTest<RepositoryMysqlInsert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryMysqlInsert(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryMysqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -110,9 +109,7 @@ class JdbcInsertMysqlTest : AbstractJdbcMysqlTest<RepositoryMysqlInsert>() {
 }
 
 
-class RepositoryMysqlInsert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mysqlTables)
+class RepositoryMysqlInsert(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectDistinctMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMssqlSelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlSelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {
@@ -22,7 +21,8 @@ class JdbcSelectDistinctMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssq
 }
 
 
-class UserRepositoryJdbcMssqlSelectDistinct(connection: Connection) : AbstractUserRepositoryJdbcMssql(connection) {
+class UserRepositoryJdbcMssqlSelectDistinct(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct MSSQL_ROLE.label

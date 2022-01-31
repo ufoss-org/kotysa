@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcUpdateDeleteMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlUpdateDelete>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMysqlUpdateDelete(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
@@ -133,7 +132,8 @@ class JdbcUpdateDeleteMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlU
 }
 
 
-class UserRepositoryJdbcMysqlUpdateDelete(connection: Connection) : AbstractUserRepositoryJdbcMysql(connection) {
+class UserRepositoryJdbcMysqlUpdateDelete(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMysql(sqlClient) {
 
     fun deleteUserById(id: Int) =
             (sqlClient deleteFrom MYSQL_USER

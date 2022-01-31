@@ -6,15 +6,14 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 
 class JdbcSelectOffsetDateTimeH2Test : AbstractJdbcH2Test<OffsetDateTimeRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = OffsetDateTimeRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OffsetDateTimeRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {
@@ -214,9 +213,7 @@ class JdbcSelectOffsetDateTimeH2Test : AbstractJdbcH2Test<OffsetDateTimeReposito
 }
 
 
-class OffsetDateTimeRepositoryH2Select(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class OffsetDateTimeRepositoryH2Select(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

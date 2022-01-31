@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectLimitOffsetMssqlTest : AbstractJdbcMssqlTest<LimitOffsetByRepositoryMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = LimitOffsetByRepositoryMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LimitOffsetByRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
@@ -41,7 +41,8 @@ class JdbcSelectLimitOffsetMssqlTest : AbstractJdbcMssqlTest<LimitOffsetByReposi
     }
 }
 
-class LimitOffsetByRepositoryMssqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMssql(connection) {
+class LimitOffsetByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMssql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
             (sqlClient selectFrom MSSQL_CUSTOMER

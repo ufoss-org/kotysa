@@ -6,14 +6,12 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalDate
 
-
 class JdbcSelectLocalDateMssqlTest : AbstractJdbcMssqlTest<LocalDateRepositoryMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = LocalDateRepositoryMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LocalDateRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds localDateWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectLocalDateMssqlTest : AbstractJdbcMssqlTest<LocalDateRepositoryMs
 }
 
 
-class LocalDateRepositoryMssqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mssqlTables)
+class LocalDateRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

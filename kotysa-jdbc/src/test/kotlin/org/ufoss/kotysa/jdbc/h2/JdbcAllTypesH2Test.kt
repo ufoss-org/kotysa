@@ -10,15 +10,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.*
 import java.util.*
 
-
 class JdbcAllTypesH2Test : AbstractJdbcH2Test<AllTypesRepositoryH2>() {
-    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryH2(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = AllTypesRepositoryH2(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -84,9 +82,7 @@ class JdbcAllTypesH2Test : AbstractJdbcH2Test<AllTypesRepositoryH2>() {
 }
 
 
-class AllTypesRepositoryH2(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class AllTypesRepositoryH2(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()
@@ -106,7 +102,9 @@ class AllTypesRepositoryH2(connection: Connection) : Repository {
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(h2AllTypesNotNull, h2AllTypesNullable, h2AllTypesNullableDefaultValue)
+        sqlClient.insert(h2AllTypesNotNull)
+        sqlClient.insert(h2AllTypesNullable)
+        sqlClient.insert(h2AllTypesNullableDefaultValue)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom H2_ALL_TYPES_NOT_NULL

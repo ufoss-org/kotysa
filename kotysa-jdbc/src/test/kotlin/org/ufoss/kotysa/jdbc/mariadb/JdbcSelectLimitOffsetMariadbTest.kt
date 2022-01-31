@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectLimitOffsetMariadbTest: AbstractJdbcMariadbTest<LimitOffsetRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = LimitOffsetRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LimitOffsetRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
@@ -40,7 +40,8 @@ class JdbcSelectLimitOffsetMariadbTest: AbstractJdbcMariadbTest<LimitOffsetRepos
     }
 }
 
-class LimitOffsetRepositoryMariadbSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMariadb(connection) {
+class LimitOffsetRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
             (sqlClient selectFrom MARIADB_CUSTOMER

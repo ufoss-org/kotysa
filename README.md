@@ -52,7 +52,7 @@ private val tables = tables().h2(ROLE, USER)
 
 ### step 3 -> Write SQL queries
 
-Use our type-safe SqlClient DSL, Kotysa generates SQL for you !
+Use our type-safe SqlClient DSL, Kotysa executes SQL query for you !
 
 ```kotlin
 val admins = (sqlClient selectFrom USER
@@ -61,7 +61,7 @@ val admins = (sqlClient selectFrom USER
         ).fetchAll() // returns all admin users
 ```
 
-**No annotations, no code generation, just regular Kotlin code ! No JPA, just pure SQL !**
+**No annotations, no code generation, no proxy, just regular Kotlin code ! No JPA, just pure SQL !**
 
 ## Getting started
 

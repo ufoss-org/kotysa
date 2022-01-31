@@ -4,14 +4,10 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
-
-abstract class AbstractUserRepositoryJdbcPostgresql(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(postgresqlTables)
+abstract class AbstractUserRepositoryJdbcPostgresql(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

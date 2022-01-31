@@ -6,14 +6,12 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalTime
 
-
 class JdbcSelectLocalTimeMariadbTest : AbstractJdbcMariadbTest<LocalTimeRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = LocalTimeRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LocalTimeRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalTimeNotNull finds localTimeWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectLocalTimeMariadbTest : AbstractJdbcMariadbTest<LocalTimeReposito
 }
 
 
-class LocalTimeRepositoryMariadbSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mariadbTables)
+class LocalTimeRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

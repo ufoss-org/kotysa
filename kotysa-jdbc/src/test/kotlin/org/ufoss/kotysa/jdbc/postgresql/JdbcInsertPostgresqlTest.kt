@@ -7,15 +7,14 @@ package org.ufoss.kotysa.jdbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.*
 import java.util.*
 
 @Order(3)
 class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresqlInsert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryPostgresqlInsert(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryPostgresqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -113,9 +112,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
     }
 }
 
-class RepositoryPostgresqlInsert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class RepositoryPostgresqlInsert(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

@@ -7,13 +7,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectKotlinxLocalDateMariadbTest : AbstractJdbcMariadbTest<KotlinxLocalDateRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = KotlinxLocalDateRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = KotlinxLocalDateRepositoryMariadbSelect(sqlClient)
     
     @Test
     fun `Verify selectAllByLocalDateNotNull finds kotlinxLocalDateWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectKotlinxLocalDateMariadbTest : AbstractJdbcMariadbTest<KotlinxLoc
 }
 
 
-class KotlinxLocalDateRepositoryMariadbSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mariadbTables)
+class KotlinxLocalDateRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

@@ -6,13 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcInheritanceMysqlTest : AbstractJdbcMysqlTest<InheritanceMysqlRepository>() {
-    override fun instantiateRepository(connection: Connection) = InheritanceMysqlRepository(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = InheritanceMysqlRepository(sqlClient)
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
@@ -45,9 +43,7 @@ class JdbcInheritanceMysqlTest : AbstractJdbcMysqlTest<InheritanceMysqlRepositor
 }
 
 
-class InheritanceMysqlRepository(connection: Connection) : Repository {
-
-    val sqlClient = connection.sqlClient(mysqlTables)
+class InheritanceMysqlRepository(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTable()

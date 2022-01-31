@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.POSTGRESQL_ROLE
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
-import java.sql.Connection
-
 
 class JdbcSelectOrPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectOr>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcPostgresqlSelectOr(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSelectOr(sqlClient)
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
@@ -24,7 +23,8 @@ class JdbcSelectOrPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbc
 }
 
 
-class UserRepositoryJdbcPostgresqlSelectOr(connection: Connection) : AbstractUserRepositoryJdbcPostgresql(connection) {
+class UserRepositoryJdbcPostgresqlSelectOr(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
             (sqlClient selectFrom POSTGRESQL_ROLE

@@ -9,12 +9,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -161,7 +160,8 @@ class JdbcSelectMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbS
 }
 
 
-class UserRepositoryJdbcMariadbSelect(connection: Connection) : AbstractUserRepositoryJdbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun selectOneNonUnique() =
         (sqlClient selectFrom MARIADB_USER

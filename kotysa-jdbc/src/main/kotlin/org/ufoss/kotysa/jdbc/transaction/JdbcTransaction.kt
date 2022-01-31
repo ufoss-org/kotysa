@@ -8,7 +8,7 @@ import org.ufoss.kotysa.transaction.Transaction
 import java.sql.Connection
 import java.sql.Savepoint
 
-public class JdbcTransaction(private val connection: Connection) : Transaction {
+public class JdbcTransaction(internal val connection: Connection) : Transaction {
 
     private var rollbackOnly = false
     private var completed = false

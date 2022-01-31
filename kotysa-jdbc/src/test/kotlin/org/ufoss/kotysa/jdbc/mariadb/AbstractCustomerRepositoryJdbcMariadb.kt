@@ -4,14 +4,10 @@
 
 package org.ufoss.kotysa.jdbc.mariadb
 
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
-
-abstract class AbstractCustomerRepositoryJdbcMariadb(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(mariadbTables)
+abstract class AbstractCustomerRepositoryJdbcMariadb(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

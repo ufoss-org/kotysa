@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectOrderByMssqlTest : AbstractJdbcMssqlTest<OrderByRepositoryMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = OrderByRepositoryMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
@@ -27,7 +27,8 @@ class JdbcSelectOrderByMssqlTest : AbstractJdbcMssqlTest<OrderByRepositoryMssqlS
     }
 }
 
-class OrderByRepositoryMssqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMssql(connection) {
+class OrderByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMssql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
             (sqlClient selectFrom MSSQL_CUSTOMER

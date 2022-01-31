@@ -6,13 +6,11 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcInheritanceMssqlTest : AbstractJdbcMssqlTest<InheritanceMssqlRepository>() {
-    override fun instantiateRepository(connection: Connection) = InheritanceMssqlRepository(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = InheritanceMssqlRepository(sqlClient)
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
@@ -45,9 +43,7 @@ class JdbcInheritanceMssqlTest : AbstractJdbcMssqlTest<InheritanceMssqlRepositor
 }
 
 
-class InheritanceMssqlRepository(connection: Connection) : Repository {
-
-    val sqlClient = connection.sqlClient(mssqlTables)
+class InheritanceMssqlRepository(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTable()

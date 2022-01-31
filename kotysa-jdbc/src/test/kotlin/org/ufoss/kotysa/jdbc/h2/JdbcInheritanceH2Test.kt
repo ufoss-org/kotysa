@@ -6,13 +6,11 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
-    override fun instantiateRepository(connection: Connection) = InheritanceH2Repository(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = InheritanceH2Repository(sqlClient)
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
@@ -45,9 +43,7 @@ class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
 }
 
 
-class InheritanceH2Repository(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class InheritanceH2Repository(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTable()

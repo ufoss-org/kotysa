@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectOrderByMysqlTest : AbstractJdbcMysqlTest<OrderByRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = OrderByRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
@@ -27,7 +27,8 @@ class JdbcSelectOrderByMysqlTest : AbstractJdbcMysqlTest<OrderByRepositoryMysqlS
     }
 }
 
-class OrderByRepositoryMysqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMysql(connection) {
+class OrderByRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
             (sqlClient selectFrom MYSQL_CUSTOMER

@@ -9,12 +9,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -161,7 +160,7 @@ class JdbcSelectMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelect>
 }
 
 
-class UserRepositoryJdbcMysqlSelect(connection: Connection) : AbstractUserRepositoryJdbcMysql(connection) {
+class UserRepositoryJdbcMysqlSelect(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMysql(sqlClient) {
 
     fun selectOneNonUnique() =
         (sqlClient selectFrom MYSQL_USER

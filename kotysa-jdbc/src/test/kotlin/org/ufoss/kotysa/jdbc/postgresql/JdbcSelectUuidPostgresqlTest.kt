@@ -6,14 +6,12 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.util.*
 
-
 class JdbcSelectUuidPostgresqlTest : AbstractJdbcPostgresqlTest<UuidRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = UuidRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UuidRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {
@@ -66,9 +64,7 @@ class JdbcSelectUuidPostgresqlTest : AbstractJdbcPostgresqlTest<UuidRepositoryPo
 }
 
 
-class UuidRepositoryPostgresqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class UuidRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

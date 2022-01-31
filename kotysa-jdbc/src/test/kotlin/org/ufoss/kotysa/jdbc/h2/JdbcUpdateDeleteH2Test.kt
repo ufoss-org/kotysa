@@ -6,12 +6,12 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 
 class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDelete>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2UpdateDelete(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcH2UpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
@@ -133,7 +133,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 }
 
 
-class UserRepositoryJdbcH2UpdateDelete(connection: Connection) : AbstractUserRepositoryJdbcH2(connection) {
+class UserRepositoryJdbcH2UpdateDelete(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
 
     fun deleteUserById(id: Int) =
             (sqlClient deleteFrom H2_USER

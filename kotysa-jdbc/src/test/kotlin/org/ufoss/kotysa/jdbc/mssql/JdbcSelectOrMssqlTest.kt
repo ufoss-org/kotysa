@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MSSQL_ROLE
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
-import java.sql.Connection
-
 
 class JdbcSelectOrMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMysqlSelectOr>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMysqlSelectOr(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectOr(sqlClient)
 
     @Test
     fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
@@ -24,7 +23,7 @@ class JdbcSelectOrMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMysqlSelec
 }
 
 
-class UserRepositoryJdbcMysqlSelectOr(connection: Connection) : AbstractUserRepositoryJdbcMssql(connection) {
+class UserRepositoryJdbcMysqlSelectOr(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
             (sqlClient selectFrom MSSQL_ROLE
