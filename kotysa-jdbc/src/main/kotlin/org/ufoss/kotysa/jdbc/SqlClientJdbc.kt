@@ -44,6 +44,7 @@ internal class SqlClientJdbc(
     }
 
     override fun <T : Any> insert(vararg rows: T) {
+        require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
 
         getJdbcConnection().execute { connection ->
