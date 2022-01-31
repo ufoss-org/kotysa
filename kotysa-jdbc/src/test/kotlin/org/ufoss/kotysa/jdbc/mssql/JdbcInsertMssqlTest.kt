@@ -18,12 +18,16 @@ class JdbcInsertMssqlTest : AbstractJdbcMssqlTest<RepositoryMssqlInsert>() {
 
     @Test
     fun `Verify insertCustomer works correctly`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
     }
 
     @Test

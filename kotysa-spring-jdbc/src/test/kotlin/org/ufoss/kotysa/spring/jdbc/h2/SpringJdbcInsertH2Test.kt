@@ -20,12 +20,16 @@ class SpringJdbcInsertH2Test : AbstractSpringJdbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertCustomer works correctly`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
     }
 
     @Test

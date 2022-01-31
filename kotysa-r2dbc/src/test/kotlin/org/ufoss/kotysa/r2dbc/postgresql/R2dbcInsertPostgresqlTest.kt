@@ -22,12 +22,16 @@ class R2dbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertCustomer works correctly`() = runTest {
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers().toList())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
     }
 
     @Test
