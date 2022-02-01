@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeAll
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
 import io.r2dbc.spi.ConnectionFactories
-import kotlinx.coroutines.runBlocking
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
@@ -19,7 +18,7 @@ abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T,
     private lateinit var sqlClient: R2dbcSqlClient
 
     @BeforeAll
-    fun beforeAll() = runBlocking {
+    fun beforeAll() {
         val connectionFactory = ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
         sqlClient = connectionFactory.sqlClient(h2Tables)
         repository.init()

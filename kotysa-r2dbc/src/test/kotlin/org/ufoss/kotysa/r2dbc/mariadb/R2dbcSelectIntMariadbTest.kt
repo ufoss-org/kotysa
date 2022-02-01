@@ -4,19 +4,18 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 @Order(1)
 class R2dbcSelectIntMariadbTest : AbstractR2dbcMariadbTest<IntRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = IntRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = IntRepositoryMariadbSelect(sqlClient)
 
     private val intWithNullable = IntEntity(
             org.ufoss.kotysa.test.intWithNullable.intNotNull,
@@ -189,9 +188,7 @@ class R2dbcSelectIntMariadbTest : AbstractR2dbcMariadbTest<IntRepositoryMariadbS
 }
 
 
-class IntRepositoryMariadbSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mariadbTables)
+class IntRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

@@ -7,7 +7,6 @@ package org.ufoss.kotysa.r2dbc
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.Statement
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.*
 import kotlinx.coroutines.withContext
@@ -102,13 +101,13 @@ internal class SqlClientR2dbc(
                 val r2dbcConnection = getR2dbcConnection(connectionFactory)
                 rows.asFlow()
                     .map { row -> executeInsertAndReturn(r2dbcConnection.connection, row, table) }
-                    .flowOn(coroutineContext + r2dbcConnection)
-            }.onCompletion {
-                currentCoroutineContext()[R2dbcConnection]!!.apply {
-                    if (!inTransaction) {
-                        connection.close().awaitFirstOrNull()
+                    .onCompletion {
+                        r2dbcConnection.apply {
+                            if (!inTransaction) {
+                                connection.close().awaitFirstOrNull()
+                            }
+                        }
                     }
-                }
             }
     }
 

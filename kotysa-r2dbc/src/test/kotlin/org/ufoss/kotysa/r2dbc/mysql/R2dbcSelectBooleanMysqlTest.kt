@@ -4,38 +4,39 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.MYSQL_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
 class R2dbcSelectBooleanMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMysqlSelectBoolean(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMysqlSelectBoolean(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() = runTest {
         assertThat(repository.selectAllByIsAdminEq(true).toList())
-                .hasSize(1)
-                .containsExactly(userBboss)
+            .hasSize(1)
+            .containsExactly(userBboss)
     }
 
     @Test
     fun `Verify selectAllByIsAdminEq false finds John`() = runTest {
         assertThat(repository.selectAllByIsAdminEq(false).toList())
-                .hasSize(1)
-                .containsExactly(userJdoe)
+            .hasSize(1)
+            .containsExactly(userJdoe)
     }
 }
 
 
-class UserRepositoryJdbcMysqlSelectBoolean(connection: Connection) : AbstractUserRepositoryR2dbcMysql(connection) {
+class UserRepositoryJdbcMysqlSelectBoolean(private val sqlClient: R2dbcSqlClient) :
+    AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.isAdmin eq value
-                    ).fetchAll()
+        (sqlClient selectFrom MYSQL_USER
+                where MYSQL_USER.isAdmin eq value
+                ).fetchAll()
 }

@@ -6,14 +6,12 @@ package org.ufoss.kotysa.r2dbc
 
 import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.Statement
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.ufoss.kotysa.*
 import java.math.BigDecimal
 import java.util.*
-import kotlin.coroutines.coroutineContext
 
 @Suppress("UNCHECKED_CAST")
 internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSelect() {
@@ -369,12 +367,6 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                     r.map { row, _ ->
                         Optional.ofNullable(properties.select(row.toRow()))
                     }.asFlow()
-                }.onCompletion {
-                    currentCoroutineContext()[R2dbcConnection]!!.apply {
-                        if (!inTransaction) {
-                            connection.close().awaitFirstOrNull()
-                        }
-                    }
                 }
 
         private fun executeQuery() =
@@ -385,7 +377,13 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                     buildParameters(statement)
                     statement.execute()
                         .asFlow()
-                        .flowOn(coroutineContext + r2dbcConnection) // must add r2dbcConnection
+                        .onCompletion {
+                            r2dbcConnection.apply {
+                                if (!inTransaction) {
+                                    connection.close().awaitFirstOrNull()
+                                }
+                            }
+                        }
                 }
 
         private fun buildParameters(statement: Statement) {

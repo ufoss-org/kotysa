@@ -4,17 +4,17 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.MARIADB_ROLE
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
 
 class R2dbcSelectOrMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectOr>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelectOr(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelectOr(sqlClient)
 
     @Test
     fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() = runTest {
@@ -25,7 +25,8 @@ class R2dbcSelectOrMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMari
 }
 
 
-class UserRepositoryJdbcMariadbSelectOr(connection: Connection) : AbstractUserRepositoryR2dbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelectOr(private val sqlClient: R2dbcSqlClient) :
+    AbstractUserRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
             (sqlClient selectFrom MARIADB_ROLE

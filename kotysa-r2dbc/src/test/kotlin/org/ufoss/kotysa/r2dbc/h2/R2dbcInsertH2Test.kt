@@ -4,21 +4,20 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
 
 @Order(3)
 class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryH2Insert(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryH2Insert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() = runTest {
@@ -121,9 +120,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 }
 
 
-class RepositoryH2Insert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class RepositoryH2Insert(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

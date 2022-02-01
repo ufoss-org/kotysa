@@ -4,15 +4,15 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryJdbcH2UpdateDelete>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2UpdateDelete(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcH2UpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() = runTest {
@@ -134,7 +134,8 @@ class R2dbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryJdbcH2UpdateDe
 }
 
 
-class UserRepositoryJdbcH2UpdateDelete(connection: Connection) : AbstractUserRepositoryR2dbcH2(connection) {
+class UserRepositoryJdbcH2UpdateDelete(private val sqlClient: R2dbcSqlClient) :
+    AbstractUserRepositoryR2dbcH2(sqlClient) {
 
     suspend fun deleteUserById(id: Int) =
             (sqlClient deleteFrom H2_USER
