@@ -2,22 +2,23 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc
+package org.ufoss.kotysa.core.jdbc
 
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.ufoss.kotysa.Row
+import java.sql.ResultSet
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
-public class R2dbcRow(private val r2bcRow: io.r2dbc.spi.Row) : Row {
+internal class JdbcRow(private val rs: ResultSet) : Row {
     override fun <T : Any> get(index: Int, clazz: Class<T>): T? =
             when (clazz.name) {
                 "kotlinx.datetime.LocalDate" ->
-                    r2bcRow.get(index, LocalDate::class.java)?.toKotlinLocalDate()
+                    rs.getObject(index + 1, LocalDate::class.java)?.toKotlinLocalDate()
                 "kotlinx.datetime.LocalDateTime" ->
-                    r2bcRow.get(index, LocalDateTime::class.java)?.toKotlinLocalDateTime()
-                else -> r2bcRow.get(index, clazz)
+                    rs.getObject(index + 1, LocalDateTime::class.java)?.toKotlinLocalDateTime()
+                else -> rs.getObject(index + 1, clazz)
             } as T?
 }

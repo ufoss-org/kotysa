@@ -2,10 +2,11 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc
+package org.ufoss.kotysa.core.r2dbc
 
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.Statement
+import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.RowImpl
 import org.ufoss.kotysa.WhereClauseValue
@@ -28,6 +29,13 @@ public fun DefaultSqlClientCommon.Properties.r2dbcBindWhereParams(statement: Sta
                     setOf(whereValue)
                 }
             }
-            .forEach { whereValue -> statement.bind(index++, tables.getDbValue(whereValue)!!) }
+            .forEach { whereValue ->
+                val dbValue = tables.getDbValue(whereValue)!!
+//                statement.bind(index++, value)
+                when (this.tables.dbType) {
+                    DbType.H2 -> statement.bind("$${++index}", dbValue)
+                    else -> statement.bind(index++, dbValue)
+                }
+            }
     }
 }

@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.core.jdbc.toRow
 import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.transaction.TransactionalOp
 import java.lang.reflect.UndeclaredThrowableException

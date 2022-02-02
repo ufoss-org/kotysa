@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.core.jdbc.jdbcBindWhereParams
 
 internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 

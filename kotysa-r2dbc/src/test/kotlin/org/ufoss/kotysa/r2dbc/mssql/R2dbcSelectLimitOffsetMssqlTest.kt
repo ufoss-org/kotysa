@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc.mssql
 
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
@@ -33,8 +34,12 @@ class R2dbcSelectLimitOffsetMssqlTest : AbstractR2dbcMssqlTest<LimitOffsetByRepo
     }
 
     @Test
-    fun `Verify selectAllLimitOffset throw exception`() = runTest {
-        assertThatThrownBy { repository.selectAllLimitOffset() }
+    fun `Verify selectAllLimitOffset throw exception`() {
+        assertThatThrownBy {
+            runTest {
+                repository.selectAllLimitOffset().collect()
+            }
+        }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("Mssql offset or limit must have order by")
     }

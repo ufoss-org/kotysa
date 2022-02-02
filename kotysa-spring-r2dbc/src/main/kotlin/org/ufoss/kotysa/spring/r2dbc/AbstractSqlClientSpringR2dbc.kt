@@ -6,7 +6,7 @@ package org.ufoss.kotysa.spring.r2dbc
 
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.r2dbc.toRow
+import org.ufoss.kotysa.core.r2dbc.toRow
 import reactor.core.publisher.Mono
 import java.time.LocalDate
 import java.time.LocalDateTime

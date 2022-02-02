@@ -9,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
 import org.testcontainers.containers.MSSQLServerContainer
-import org.testcontainers.containers.PostgreSQLContainer
 
 class MsSqlContainerExecutionHook : ParameterResolver {
 
@@ -20,7 +19,7 @@ class MsSqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
                 .getOrComputeIfAbsent("msSqlContainer") {
-                    val msSqlContainer = MSSQLServerContainer("mcr.microsoft.com/mssql/server:2017-CU12")
+                    val msSqlContainer = MSSQLServerContainer("mcr.microsoft.com/mssql/server:2019-CU15-ubuntu-20.04")
                     msSqlContainer
                             .acceptLicense() // required
                             .withPassword("A_Str0ng_Required_Password")

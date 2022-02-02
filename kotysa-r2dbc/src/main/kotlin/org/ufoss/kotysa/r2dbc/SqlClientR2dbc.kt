@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.*
 import kotlinx.coroutines.withContext
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.core.r2dbc.toRow
 import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
 import java.lang.reflect.UndeclaredThrowableException
@@ -129,7 +130,11 @@ internal class SqlClientR2dbc(
                         (column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
                     )
                 } else {
-                    statement.bind(index, tables.getDbValue(value)!!)
+                    val dbValue = tables.getDbValue(value)!!
+                    when (this.tables.dbType) {
+                        DbType.H2 -> statement.bind("$${index + 1}", dbValue)
+                        else -> statement.bind(index, dbValue)
+                    }
                 }
             }
     }

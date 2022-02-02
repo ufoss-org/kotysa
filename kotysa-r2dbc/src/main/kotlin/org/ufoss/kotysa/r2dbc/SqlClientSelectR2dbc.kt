@@ -7,9 +7,10 @@ package org.ufoss.kotysa.r2dbc
 import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.*
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.core.r2dbc.r2dbcBindWhereParams
+import org.ufoss.kotysa.core.r2dbc.toRow
 import java.math.BigDecimal
 import java.util.*
 
@@ -320,7 +321,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 }
             } catch (_: NoSuchElementException) {
                 throw NoResultException()
-            } catch (_: IllegalArgumentException) {
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
                 throw NonUniqueResultException()
             }
 
@@ -370,21 +372,20 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 }
 
         private fun executeQuery() =
-            flowOf(selectSql())
-                .flatMapConcat { selectSql ->
-                    val r2dbcConnection = getR2dbcConnection(connectionFactory)
-                    val statement = r2dbcConnection.connection.createStatement(selectSql)
+            flow {
+                val r2dbcConnection = getR2dbcConnection(connectionFactory)
+                try {
+                    val statement = r2dbcConnection.connection.createStatement(selectSql())
                     buildParameters(statement)
-                    statement.execute()
-                        .asFlow()
-                        .onCompletion {
-                            r2dbcConnection.apply {
-                                if (!inTransaction) {
-                                    connection.close().awaitFirstOrNull()
-                                }
-                            }
+                    emitAll(statement.execute().asFlow())
+                } finally {
+                    r2dbcConnection.apply {
+                        if (!inTransaction) {
+                            connection.close().awaitFirstOrNull()
                         }
+                    }
                 }
+            }
 
         private fun buildParameters(statement: Statement) {
             with(properties) {
