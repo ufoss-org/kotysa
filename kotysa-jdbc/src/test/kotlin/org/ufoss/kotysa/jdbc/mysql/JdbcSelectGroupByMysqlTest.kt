@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectGroupByMysqlTest : AbstractJdbcMysqlTest<GroupByRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = GroupByRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
@@ -20,7 +20,8 @@ class JdbcSelectGroupByMysqlTest : AbstractJdbcMysqlTest<GroupByRepositoryMysqlS
     }
 }
 
-class GroupByRepositoryMysqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMysql(connection) {
+class GroupByRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country

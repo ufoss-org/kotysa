@@ -6,14 +6,12 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalTime
 
-
 class JdbcSelectLocalTimeMysqlTest : AbstractJdbcMysqlTest<LocalTimeRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = LocalTimeRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LocalTimeRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalTimeNotNull finds localTimeWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectLocalTimeMysqlTest : AbstractJdbcMysqlTest<LocalTimeRepositoryMy
 }
 
 
-class LocalTimeRepositoryMysqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mysqlTables)
+class LocalTimeRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

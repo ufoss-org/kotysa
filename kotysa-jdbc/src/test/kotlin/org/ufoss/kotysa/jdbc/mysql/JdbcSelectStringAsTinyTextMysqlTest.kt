@@ -8,13 +8,11 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectStringAsTinyTextMysqlTest : AbstractJdbcMysqlTest<StringAsTinyTextRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = StringAsTinyTextRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = StringAsTinyTextRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectFirstOrNullByStringNotNull finds stringAsTinyTextNotNull`() {
@@ -163,9 +161,7 @@ class JdbcSelectStringAsTinyTextMysqlTest : AbstractJdbcMysqlTest<StringAsTinyTe
 }
 
 
-class StringAsTinyTextRepositoryMysqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mysqlTables)
+class StringAsTinyTextRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

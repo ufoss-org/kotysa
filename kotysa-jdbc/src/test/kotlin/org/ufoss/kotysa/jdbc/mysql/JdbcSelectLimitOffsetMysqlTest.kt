@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectLimitOffsetMysqlTest: AbstractJdbcMysqlTest<LimitOffsetRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = LimitOffsetRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LimitOffsetRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
@@ -40,7 +40,8 @@ class JdbcSelectLimitOffsetMysqlTest: AbstractJdbcMysqlTest<LimitOffsetRepositor
     }
 }
 
-class LimitOffsetRepositoryMysqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMysql(connection) {
+class LimitOffsetRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
             (sqlClient selectFrom MYSQL_CUSTOMER

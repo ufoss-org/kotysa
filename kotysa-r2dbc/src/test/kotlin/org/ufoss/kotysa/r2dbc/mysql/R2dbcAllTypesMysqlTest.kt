@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -14,7 +13,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,39 +21,41 @@ import java.time.LocalTime
 
 
 class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
-    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryMysql(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = AllTypesRepositoryMysql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() = runTest {
         assertThat(repository.selectAllAllTypesNotNull().toList())
-                .hasSize(1)
-                .containsExactly(mysqlAllTypesNotNull)
+            .hasSize(1)
+            .containsExactly(mysqlAllTypesNotNull)
     }
 
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() = runTest {
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toList())
-                .hasSize(1)
-                .containsExactly(AllTypesNullableDefaultValueWithTimeEntity(
-                        allTypesNullableDefaultValueWithTime.id,
-                        "default",
-                        LocalDate.of(2019, 11, 4),
-                        kotlinx.datetime.LocalDate(2019, 11, 6),
-                        LocalDateTime.of(2018, 11, 4, 0, 0),
-                        LocalDateTime.of(2019, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                        42,
-                        84L,
-                        LocalTime.of(11, 25, 55),
-                ))
+            .hasSize(1)
+            .containsExactly(
+                AllTypesNullableDefaultValueWithTimeEntity(
+                    allTypesNullableDefaultValueWithTime.id,
+                    "default",
+                    LocalDate.of(2019, 11, 4),
+                    kotlinx.datetime.LocalDate(2019, 11, 6),
+                    LocalDateTime.of(2018, 11, 4, 0, 0),
+                    LocalDateTime.of(2019, 11, 4, 0, 0),
+                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                    42,
+                    84L,
+                    LocalTime.of(11, 25, 55),
+                )
+            )
     }
 
     @Test
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() = runTest {
         assertThat(repository.selectAllAllTypesNullable().toList())
-                .hasSize(1)
-                .containsExactly(allTypesNullableWithTime)
+            .hasSize(1)
+            .containsExactly(allTypesNullableWithTime)
     }
 
     @Test
@@ -68,22 +69,25 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         val newLong = 2L
         operator.execute<Unit> { transaction ->
             transaction.setRollbackOnly()
-            repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong)
+            repository.updateAllTypesNotNull(
+                "new", false, newLocalDate, newKotlinxLocalDate,
+                newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong
+            )
             assertThat(repository.selectAllAllTypesNotNull().toList())
-                    .hasSize(1)
-                    .containsExactlyInAnyOrder(
-                            MysqlAllTypesNotNull(mysqlAllTypesNotNull.id, "new", false, newLocalDate,
-                                    newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                    newKotlinxLocalDateTime, newInt, newLong, newLocalTime))
+                .hasSize(1)
+                .containsExactlyInAnyOrder(
+                    MysqlAllTypesNotNull(
+                        mysqlAllTypesNotNull.id, "new", false, newLocalDate,
+                        newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                        newKotlinxLocalDateTime, newInt, newLong, newLocalTime
+                    )
+                )
         }
     }
 }
 
 
-class AllTypesRepositoryMysql(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mysqlTables)
+class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
@@ -114,22 +118,24 @@ class AllTypesRepositoryMysql(connection: Connection) : Repository {
 
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
 
-    suspend fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-                                      newKotlinxLocalDate: kotlinx.datetime.LocalDate,
-                                      newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
-                                      newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long) =
-            (sqlClient update MYSQL_ALL_TYPES_NOT_NULL
-                    set MYSQL_ALL_TYPES_NOT_NULL.string eq newString
-                    set MYSQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                    set MYSQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                    set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                    set MYSQL_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
-                    set MYSQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                    set MYSQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                    set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                    set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                    set MYSQL_ALL_TYPES_NOT_NULL.inte eq newInt
-                    set MYSQL_ALL_TYPES_NOT_NULL.longe eq newLong
-                    where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
-                    ).execute()
+    suspend fun updateAllTypesNotNull(
+        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long
+    ) =
+        (sqlClient update MYSQL_ALL_TYPES_NOT_NULL
+                set MYSQL_ALL_TYPES_NOT_NULL.string eq newString
+                set MYSQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
+                set MYSQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
+                set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
+                set MYSQL_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
+                set MYSQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
+                set MYSQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
+                set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                set MYSQL_ALL_TYPES_NOT_NULL.inte eq newInt
+                set MYSQL_ALL_TYPES_NOT_NULL.longe eq newLong
+                where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+                ).execute()
 }

@@ -4,21 +4,23 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.test.POSTGRESQL_OFFSET_DATE_TIME
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.offsetDateTimeWithNullable
+import org.ufoss.kotysa.test.offsetDateTimeWithoutNullable
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 
 class R2dbcSelectOffsetDateTimePostgresqlTest :
     AbstractR2dbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = OffsetDateTimeRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() = runTest {
@@ -275,9 +277,7 @@ class R2dbcSelectOffsetDateTimePostgresqlTest :
 }
 
 
-class OffsetDateTimeRepositoryPostgresqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class OffsetDateTimeRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

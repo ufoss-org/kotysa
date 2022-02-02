@@ -7,24 +7,27 @@ package org.ufoss.kotysa.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.*
 import java.util.*
 
 @Order(3)
 class JdbcInsertH2Test : AbstractJdbcH2Test<RepositoryH2Insert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryH2Insert(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryH2Insert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
     }
 
     @Test
@@ -114,9 +117,7 @@ class JdbcInsertH2Test : AbstractJdbcH2Test<RepositoryH2Insert>() {
 }
 
 
-class RepositoryH2Insert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class RepositoryH2Insert(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

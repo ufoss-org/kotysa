@@ -32,6 +32,7 @@ internal class SqlClientSqLite(
      * To speed these insert up, use inside a transaction
      */
     override fun <T : Any> insert(vararg rows: T) {
+        require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val firstRow = rows[0]
         val table = tables.getTable(firstRow::class)
         val statement = client.writableDatabase.compileStatement(insertSql(firstRow))

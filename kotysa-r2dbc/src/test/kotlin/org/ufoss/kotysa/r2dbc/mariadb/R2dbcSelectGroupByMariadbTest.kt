@@ -4,15 +4,15 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectGroupByMariadbTest : AbstractR2dbcMariadbTest<GroupByRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = GroupByRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = GroupByRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() = runTest {
@@ -22,7 +22,8 @@ class R2dbcSelectGroupByMariadbTest : AbstractR2dbcMariadbTest<GroupByRepository
     }
 }
 
-class GroupByRepositoryMariadbSelect(connection: Connection) : AbstractCustomerRepositoryR2dbcMariadb(connection) {
+class GroupByRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) :
+    AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount MARIADB_CUSTOMER.id and MARIADB_CUSTOMER.country

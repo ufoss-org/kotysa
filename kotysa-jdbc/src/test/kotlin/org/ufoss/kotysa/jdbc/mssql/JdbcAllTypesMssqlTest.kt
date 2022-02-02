@@ -10,15 +10,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 class JdbcAllTypesMssqlTest : AbstractJdbcMssqlTest<AllTypesRepositoryMssql>() {
-    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryMssql(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = AllTypesRepositoryMssql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -75,9 +73,7 @@ class JdbcAllTypesMssqlTest : AbstractJdbcMssqlTest<AllTypesRepositoryMssql>() {
 }
 
 
-class AllTypesRepositoryMssql(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mssqlTables)
+class AllTypesRepositoryMssql(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()
@@ -97,7 +93,9 @@ class AllTypesRepositoryMssql(connection: Connection) : Repository {
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(mssqlAllTypesNotNull, allTypesNullable, allTypesNullableDefaultValue)
+        sqlClient.insert(mssqlAllTypesNotNull)
+        sqlClient.insert(allTypesNullable)
+        sqlClient.insert(allTypesNullableDefaultValue)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MSSQL_ALL_TYPES_NOT_NULL

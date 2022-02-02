@@ -4,40 +4,44 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.test.MARIADB_CUSTOMER
+import org.ufoss.kotysa.test.customerFrance
+import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.test.customerUSA2
 
 class R2dbcSelectOrderByMariadbTest : AbstractR2dbcMariadbTest<OrderByRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = OrderByRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = OrderByRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() = runTest {
         assertThat(repository.selectCustomerOrderByAgeAsc().toList())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 
     @Test
     fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() = runTest {
         assertThat(repository.selectCustomerOrderByAgeAndIdAsc().toList())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 }
 
-class OrderByRepositoryMariadbSelect(connection: Connection) : AbstractCustomerRepositoryR2dbcMariadb(connection) {
+class OrderByRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) :
+    AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.age
-                    ).fetchAll()
+        (sqlClient selectFrom MARIADB_CUSTOMER
+                orderByAsc MARIADB_CUSTOMER.age
+                ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.age andAsc MARIADB_CUSTOMER.id
-                    ).fetchAll()
+        (sqlClient selectFrom MARIADB_CUSTOMER
+                orderByAsc MARIADB_CUSTOMER.age andAsc MARIADB_CUSTOMER.id
+                ).fetchAll()
 }

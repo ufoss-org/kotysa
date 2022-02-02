@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MSSQL_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
-import java.sql.Connection
-
 
 class JdbcSelectBooleanMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelectBoolean>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMssqlSelectBoolean(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlSelectBoolean(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
@@ -31,7 +30,7 @@ class JdbcSelectBooleanMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssql
 }
 
 
-class UserRepositoryJdbcMssqlSelectBoolean(connection: Connection) : AbstractUserRepositoryJdbcMssql(connection) {
+class UserRepositoryJdbcMssqlSelectBoolean(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
             (sqlClient selectFrom MSSQL_USER

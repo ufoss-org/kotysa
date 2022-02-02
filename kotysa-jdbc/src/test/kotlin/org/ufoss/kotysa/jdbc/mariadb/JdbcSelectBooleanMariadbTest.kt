@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MARIADB_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
-import java.sql.Connection
-
 
 class JdbcSelectBooleanMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelectBoolean>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelectBoolean(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbSelectBoolean(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
@@ -31,7 +30,8 @@ class JdbcSelectBooleanMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcM
 }
 
 
-class UserRepositoryJdbcMariadbSelectBoolean(connection: Connection) : AbstractUserRepositoryJdbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelectBoolean(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
             (sqlClient selectFrom MARIADB_USER

@@ -8,13 +8,11 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectStringAsLongTextMariadbTest : AbstractJdbcMariadbTest<StringAsLongTextRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = StringAsLongTextRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = StringAsLongTextRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectFirstOrNullByStringNotNull finds stringAsLongTextNotNull`() {
@@ -163,9 +161,7 @@ class JdbcSelectStringAsLongTextMariadbTest : AbstractJdbcMariadbTest<StringAsLo
 }
 
 
-class StringAsLongTextRepositoryMariadbSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mariadbTables)
+class StringAsLongTextRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

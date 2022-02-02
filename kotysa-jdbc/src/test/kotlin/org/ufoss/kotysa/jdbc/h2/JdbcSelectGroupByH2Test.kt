@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectGroupByH2Test : AbstractJdbcH2Test<GroupByRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = GroupByRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
@@ -20,7 +20,7 @@ class JdbcSelectGroupByH2Test : AbstractJdbcH2Test<GroupByRepositoryH2Select>() 
     }
 }
 
-class GroupByRepositoryH2Select(connection: Connection) : AbstractCustomerRepositoryJdbcH2(connection) {
+class GroupByRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount H2_CUSTOMER.id and H2_CUSTOMER.country

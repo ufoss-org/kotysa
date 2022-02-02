@@ -5,7 +5,6 @@
 package org.ufoss.kotysa.test
 
 import kotlinx.datetime.*
-import org.ufoss.kotysa.mariadb.MariadbTable
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.mysql.date
 import org.ufoss.kotysa.mysql.dateTime

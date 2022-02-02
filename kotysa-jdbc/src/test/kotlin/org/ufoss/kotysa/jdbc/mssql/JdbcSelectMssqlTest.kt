@@ -9,12 +9,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -161,7 +160,7 @@ class JdbcSelectMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelect>
 }
 
 
-class UserRepositoryJdbcMssqlSelect(connection: Connection) : AbstractUserRepositoryJdbcMssql(connection) {
+class UserRepositoryJdbcMssqlSelect(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectOneNonUnique() =
         (sqlClient selectFrom MSSQL_USER

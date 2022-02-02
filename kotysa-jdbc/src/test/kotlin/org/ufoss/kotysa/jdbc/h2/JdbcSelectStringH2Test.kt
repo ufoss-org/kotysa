@@ -8,14 +8,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.H2_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
-import java.sql.Connection
 
 
 class JdbcSelectStringH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectString>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2SelectString(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcH2SelectString(sqlClient)
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
@@ -164,7 +164,7 @@ class JdbcSelectStringH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectStri
 }
 
 
-class UserRepositoryJdbcH2SelectString(connection: Connection) : AbstractUserRepositoryJdbcH2(connection) {
+class UserRepositoryJdbcH2SelectString(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
             (sqlClient selectFrom H2_USER

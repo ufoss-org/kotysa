@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectOrderByH2Test : AbstractJdbcH2Test<OrderByRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = OrderByRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
@@ -27,7 +27,7 @@ class JdbcSelectOrderByH2Test : AbstractJdbcH2Test<OrderByRepositoryH2Select>() 
     }
 }
 
-class OrderByRepositoryH2Select(connection: Connection) : AbstractCustomerRepositoryJdbcH2(connection) {
+class OrderByRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
             (sqlClient selectFrom H2_CUSTOMER

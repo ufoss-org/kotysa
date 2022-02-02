@@ -4,14 +4,11 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class AbstractUserRepositoryR2dbcPostgresql(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(postgresqlTables)
+abstract class AbstractUserRepositoryR2dbcPostgresql(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
@@ -55,7 +52,7 @@ abstract class AbstractUserRepositoryR2dbcPostgresql(connection: Connection) : R
     fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname eq firstname
-                    ).fetchFirstOrNull()
+        (sqlClient selectFrom POSTGRESQL_USER
+                where POSTGRESQL_USER.firstname eq firstname
+                ).fetchFirstOrNull()
 }

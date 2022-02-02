@@ -7,12 +7,11 @@ package org.ufoss.kotysa.jdbc.sample
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.tables
-import java.sql.Connection
 import java.util.*
-
+import javax.sql.DataSource
 
 @Suppress("UNUSED_VARIABLE")
-class UserRepositoryJdbc(connection: Connection) {
+class UserRepositoryJdbc(dataSource: DataSource) {
 
     data class Role(
             val label: String,
@@ -58,7 +57,7 @@ class UserRepositoryJdbc(connection: Connection) {
             val role: String
     )
 
-    private val sqlClient = connection.sqlClient(tables)
+    private val sqlClient = dataSource.sqlClient(tables)
 
     fun simplifiedExample() {
         sqlClient createTable ROLE

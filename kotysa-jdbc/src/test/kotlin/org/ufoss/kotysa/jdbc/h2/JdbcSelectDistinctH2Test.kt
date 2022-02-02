@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectDistinctH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcH2SelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcH2SelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {
@@ -22,7 +21,7 @@ class JdbcSelectDistinctH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectDi
 }
 
 
-class UserRepositoryJdbcH2SelectDistinct(connection: Connection) : AbstractUserRepositoryJdbcH2(connection) {
+class UserRepositoryJdbcH2SelectDistinct(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct H2_ROLE.label

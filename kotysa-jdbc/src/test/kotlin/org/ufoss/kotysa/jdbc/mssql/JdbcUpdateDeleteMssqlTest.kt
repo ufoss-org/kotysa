@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcUpdateDeleteMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlUpdateDelete>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMssqlUpdateDelete(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
@@ -133,7 +132,7 @@ class JdbcUpdateDeleteMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlU
 }
 
 
-class UserRepositoryJdbcMssqlUpdateDelete(connection: Connection) : AbstractUserRepositoryJdbcMssql(connection) {
+class UserRepositoryJdbcMssqlUpdateDelete(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun deleteUserById(id: Int) =
             (sqlClient deleteFrom MSSQL_USER

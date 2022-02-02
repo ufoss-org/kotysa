@@ -7,13 +7,11 @@ package org.ufoss.kotysa.jdbc.mssql
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectKotlinxLocalDateTimeMssqlTest : AbstractJdbcMssqlTest<KotlinxLocalDateTimeRepositoryMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = KotlinxLocalDateTimeRepositoryMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = KotlinxLocalDateTimeRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds kotlinxLocalDateTimeWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectKotlinxLocalDateTimeMssqlTest : AbstractJdbcMssqlTest<KotlinxLoc
 }
 
 
-class KotlinxLocalDateTimeRepositoryMssqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mssqlTables)
+class KotlinxLocalDateTimeRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

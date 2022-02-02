@@ -4,14 +4,11 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class AbstractCustomerRepositoryR2dbcMariadb(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(mariadbTables)
+abstract class AbstractCustomerRepositoryR2dbcMariadb(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

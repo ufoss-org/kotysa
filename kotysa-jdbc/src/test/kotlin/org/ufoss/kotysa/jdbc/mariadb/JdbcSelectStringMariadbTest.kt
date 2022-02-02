@@ -8,14 +8,13 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MARIADB_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
-import java.sql.Connection
-
 
 class JdbcSelectStringMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelectString>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelectString(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbSelectString(sqlClient)
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
@@ -164,7 +163,8 @@ class JdbcSelectStringMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMa
 }
 
 
-class UserRepositoryJdbcMariadbSelectString(connection: Connection) : AbstractUserRepositoryJdbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelectString(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
             (sqlClient selectFrom MARIADB_USER

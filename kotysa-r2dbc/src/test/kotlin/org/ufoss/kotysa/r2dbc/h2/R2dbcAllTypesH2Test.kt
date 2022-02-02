@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -14,13 +13,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
 
 class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
-    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryH2(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = AllTypesRepositoryH2(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() = runTest {
@@ -86,9 +85,7 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
 }
 
 
-class AllTypesRepositoryH2(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class AllTypesRepositoryH2(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

@@ -4,14 +4,10 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
-
-abstract class AbstractCustomerRepositoryJdbcH2(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(h2Tables)
+abstract class AbstractCustomerRepositoryJdbcH2(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

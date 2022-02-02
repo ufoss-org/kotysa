@@ -7,13 +7,12 @@ package org.ufoss.kotysa.jdbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 @Order(2)
 class JdbcSelectLongPostgresqlTest : AbstractJdbcPostgresqlTest<LongRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = LongRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LongRepositoryPostgresqlSelect(sqlClient)
 
     private val longWithNullable = LongEntity(
             org.ufoss.kotysa.test.longWithNullable.longNotNull,
@@ -186,9 +185,7 @@ class JdbcSelectLongPostgresqlTest : AbstractJdbcPostgresqlTest<LongRepositoryPo
 }
 
 
-class LongRepositoryPostgresqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class LongRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

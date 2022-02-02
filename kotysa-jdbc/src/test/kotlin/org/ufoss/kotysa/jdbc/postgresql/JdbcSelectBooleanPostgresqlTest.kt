@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectBooleanPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectBoolean>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcPostgresqlSelectBoolean(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
@@ -29,8 +28,8 @@ class JdbcSelectBooleanPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositor
 }
 
 
-class UserRepositoryJdbcPostgresqlSelectBoolean(connection: Connection) :
-    AbstractUserRepositoryJdbcPostgresql(connection) {
+class UserRepositoryJdbcPostgresqlSelectBoolean(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
             (sqlClient selectFrom POSTGRESQL_USER

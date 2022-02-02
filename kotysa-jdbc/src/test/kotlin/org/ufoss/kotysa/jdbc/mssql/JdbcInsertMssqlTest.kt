@@ -7,24 +7,27 @@ package org.ufoss.kotysa.jdbc.mssql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Order(3)
 class JdbcInsertMssqlTest : AbstractJdbcMssqlTest<RepositoryMssqlInsert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryMssqlInsert(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryMssqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
     }
 
     @Test
@@ -108,9 +111,7 @@ class JdbcInsertMssqlTest : AbstractJdbcMssqlTest<RepositoryMssqlInsert>() {
 }
 
 
-class RepositoryMssqlInsert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mssqlTables)
+class RepositoryMssqlInsert(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

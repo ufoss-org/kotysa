@@ -4,49 +4,48 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
+import com.microsoft.sqlserver.jdbc.SQLServerDataSource
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
-import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
+import org.ufoss.kotysa.test.mssqlTables
 import org.ufoss.kotysa.test.repositories.RepositoryTest
-import java.sql.Connection
-import java.sql.DriverManager
 
 @ExtendWith(MsSqlContainerExecutionHook::class)
 @ResourceLock(MsSqlContainerResource.ID)
 @Tag("jdbc-testcontainers")
 abstract class AbstractJdbcMssqlTest<T : Repository> : RepositoryTest<T, JdbcTransaction> {
-    private lateinit var connection: Connection
+    private lateinit var sqlClient: JdbcSqlClient
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
-        connection = DriverManager.getConnection(
-            "jdbc:sqlserver://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}",
-            "SA",
-            "A_Str0ng_Required_Password",
-        )
+        val dataSource = SQLServerDataSource()
+        dataSource.url = "jdbc:sqlserver://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}"
+        dataSource.user = "SA"
+        dataSource.setPassword("A_Str0ng_Required_Password")
+        sqlClient = dataSource.sqlClient(mssqlTables)
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(connection: Connection): T
+    protected abstract fun instantiateRepository(sqlClient: JdbcSqlClient): T
 
-    override val operator: JdbcTransactionalOp by lazy {
-        connection.transactionalOp()
+    override val operator by lazy {
+        sqlClient
     }
 
     override val repository: T by lazy {
-        instantiateRepository(connection)
+        instantiateRepository(sqlClient)
     }
 
     @AfterAll
     fun afterAll() {
         repository.delete()
-        connection.close()
     }
 }

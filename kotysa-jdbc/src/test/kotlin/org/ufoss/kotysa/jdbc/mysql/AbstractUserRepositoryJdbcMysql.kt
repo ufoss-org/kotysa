@@ -4,14 +4,10 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
-
-abstract class AbstractUserRepositoryJdbcMysql(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(mysqlTables)
+abstract class AbstractUserRepositoryJdbcMysql(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

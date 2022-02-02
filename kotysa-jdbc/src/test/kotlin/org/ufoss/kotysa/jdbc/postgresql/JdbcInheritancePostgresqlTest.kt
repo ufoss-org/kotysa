@@ -6,13 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcInheritancePostgresqlTest : AbstractJdbcPostgresqlTest<InheritancePostgresqlRepository>() {
-    override fun instantiateRepository(connection: Connection) = InheritancePostgresqlRepository(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = InheritancePostgresqlRepository(sqlClient)
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
@@ -45,9 +43,7 @@ class JdbcInheritancePostgresqlTest : AbstractJdbcPostgresqlTest<InheritancePost
 }
 
 
-class InheritancePostgresqlRepository(connection: Connection) : Repository {
-
-    val sqlClient = connection.sqlClient(postgresqlTables)
+class InheritancePostgresqlRepository(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTable()

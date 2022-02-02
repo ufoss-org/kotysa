@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectMinMaxAvgSumMysqlTest : AbstractJdbcMysqlTest<MinMaxAvgSumRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = MinMaxAvgSumRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = MinMaxAvgSumRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
@@ -37,7 +37,8 @@ class JdbcSelectMinMaxAvgSumMysqlTest : AbstractJdbcMysqlTest<MinMaxAvgSumReposi
     }
 }
 
-class MinMaxAvgSumRepositoryMysqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMysql(connection) {
+class MinMaxAvgSumRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectCustomerMinAge() =
             (sqlClient selectMin MYSQL_CUSTOMER.age

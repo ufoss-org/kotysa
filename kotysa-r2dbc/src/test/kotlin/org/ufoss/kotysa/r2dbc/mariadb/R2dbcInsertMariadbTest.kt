@@ -4,14 +4,13 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -19,16 +18,20 @@ import java.time.LocalTime
 
 @Order(3)
 class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryMariadbInsert(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryMariadbInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() = runTest {
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers().toList())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
     }
 
     @Test
@@ -113,9 +116,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
 }
 
 
-class RepositoryMariadbInsert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mariadbTables)
+class RepositoryMariadbInsert(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

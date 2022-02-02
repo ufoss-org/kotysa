@@ -10,16 +10,14 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-
 class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariadb>() {
-    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryMariadb(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = AllTypesRepositoryMariadb(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -78,9 +76,7 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
 }
 
 
-class AllTypesRepositoryMariadb(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mariadbTables)
+class AllTypesRepositoryMariadb(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()
@@ -100,7 +96,9 @@ class AllTypesRepositoryMariadb(connection: Connection) : Repository {
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(mariadbAllTypesNotNull, allTypesNullableWithTime, allTypesNullableDefaultValueWithTime)
+        sqlClient.insert(mariadbAllTypesNotNull)
+        sqlClient.insert(allTypesNullableWithTime)
+        sqlClient.insert(allTypesNullableDefaultValueWithTime)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MARIADB_ALL_TYPES_NOT_NULL

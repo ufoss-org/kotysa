@@ -7,13 +7,12 @@ package org.ufoss.kotysa.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 @Order(2)
 class JdbcSelectLongH2Test : AbstractJdbcH2Test<LongRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = LongRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LongRepositoryH2Select(sqlClient)
 
     private val longWithNullable = LongEntity(
             org.ufoss.kotysa.test.longWithNullable.longNotNull,
@@ -186,9 +185,7 @@ class JdbcSelectLongH2Test : AbstractJdbcH2Test<LongRepositoryH2Select>() {
 }
 
 
-class LongRepositoryH2Select(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class LongRepositoryH2Select(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

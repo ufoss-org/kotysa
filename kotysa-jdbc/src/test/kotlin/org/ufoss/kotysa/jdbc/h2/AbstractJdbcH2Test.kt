@@ -4,38 +4,41 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
+import org.h2.jdbcx.JdbcDataSource
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
-import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.h2Tables
 import org.ufoss.kotysa.test.repositories.RepositoryTest
-import java.sql.Connection
-import java.sql.DriverManager
 
 abstract class AbstractJdbcH2Test<T : Repository> : RepositoryTest<T, JdbcTransaction> {
-    private lateinit var connection: Connection
+    private lateinit var sqlClient: JdbcSqlClient
 
     @BeforeAll
     fun beforeAll() {
-        connection = DriverManager.getConnection("jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
+        val dataSource = JdbcDataSource()
+        dataSource.setUrl("jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
+        dataSource.user = "sa"
+        dataSource.password = "sa"
+        sqlClient = dataSource.sqlClient(h2Tables)
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(connection: Connection): T
+    protected abstract fun instantiateRepository(sqlClient: JdbcSqlClient): T
 
-    override val operator: JdbcTransactionalOp by lazy {
-        connection.transactionalOp()
+    override val operator by lazy {
+        sqlClient
     }
 
     override val repository: T by lazy {
-        instantiateRepository(connection)
+        instantiateRepository(sqlClient)
     }
 
     @AfterAll
     fun afterAll() {
         repository.delete()
-        connection.close()
     }
 }

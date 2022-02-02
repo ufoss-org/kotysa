@@ -4,15 +4,14 @@
 
 package org.ufoss.kotysa.r2dbc.sample
 
-import io.r2dbc.spi.Connection
+import io.r2dbc.spi.ConnectionFactory
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
 import java.util.*
 
-
 @Suppress("UNUSED_VARIABLE")
-class UserRepositoryR2dbc(connection: Connection) {
+class UserRepositoryR2dbc(connectionFactory: ConnectionFactory) {
 
     data class Role(
             val label: String,
@@ -58,7 +57,7 @@ class UserRepositoryR2dbc(connection: Connection) {
             val role: String
     )
 
-    private val sqlClient = connection.sqlClient(tables)
+    private val sqlClient = connectionFactory.sqlClient(tables)
 
     suspend fun simplifiedExample() = sqlClient.apply {
         sqlClient createTable ROLE

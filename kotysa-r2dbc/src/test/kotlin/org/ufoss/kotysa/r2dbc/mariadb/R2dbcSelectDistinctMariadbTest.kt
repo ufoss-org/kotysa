@@ -4,15 +4,15 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() = runTest {
@@ -23,7 +23,8 @@ class R2dbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJd
 }
 
 
-class UserRepositoryJdbcMariadbSelectDistinct(connection: Connection) : AbstractUserRepositoryR2dbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelectDistinct(private val sqlClient: R2dbcSqlClient) :
+    AbstractUserRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct MARIADB_ROLE.label
