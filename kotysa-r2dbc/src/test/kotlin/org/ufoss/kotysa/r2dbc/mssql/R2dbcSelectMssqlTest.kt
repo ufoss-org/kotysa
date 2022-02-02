@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.r2dbc.mssql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -13,10 +12,11 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() = runTest {
@@ -36,7 +36,8 @@ class R2dbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelec
         assertThatThrownBy {
             runBlocking {
                 repository.selectOneNonUnique()
-            } }.isInstanceOf(NonUniqueResultException::class.java)
+            }
+        }.isInstanceOf(NonUniqueResultException::class.java)
     }
 
     @Test
@@ -96,7 +97,8 @@ class R2dbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelec
         assertThatThrownBy {
             runBlocking {
                 repository.selectOneById(-1)
-            } }.isInstanceOf(NoResultException::class.java)
+            }
+        }.isInstanceOf(NoResultException::class.java)
     }
 
     @Test
@@ -134,10 +136,11 @@ class R2dbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelec
     }
 
     @Test
-    fun `Verify selectFirstnameAndLastnameAndAliasAndIsAdminById returns J Doe firstname, lastname, alias and isAdmin`() = runTest {
-        assertThat(repository.selectFirstnameAndLastnameAndAliasAndIsAdminById(userJdoe.id))
-            .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
-    }
+    fun `Verify selectFirstnameAndLastnameAndAliasAndIsAdminById returns J Doe firstname, lastname, alias and isAdmin`() =
+        runTest {
+            assertThat(repository.selectFirstnameAndLastnameAndAliasAndIsAdminById(userJdoe.id))
+                .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
+        }
 
     @Test
     fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() = runTest {
@@ -160,7 +163,8 @@ class R2dbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelec
 }
 
 
-class UserRepositoryJdbcMssqlSelect(connection: Connection) : AbstractUserRepositoryR2dbcMssql(connection) {
+class UserRepositoryJdbcMssqlSelect(private val sqlClient: R2dbcSqlClient) :
+    AbstractUserRepositoryR2dbcMssql(sqlClient) {
 
     suspend fun selectOneNonUnique() =
         (sqlClient selectFrom MSSQL_USER

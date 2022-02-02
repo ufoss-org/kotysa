@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcUpdateDeleteMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbUpdateDelete>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbUpdateDelete(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
@@ -133,7 +132,8 @@ class JdbcUpdateDeleteMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMa
 }
 
 
-class UserRepositoryJdbcMariadbUpdateDelete(connection: Connection) : AbstractUserRepositoryJdbcMariadb(connection) {
+class UserRepositoryJdbcMariadbUpdateDelete(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun deleteUserById(id: Int) =
             (sqlClient deleteFrom MARIADB_USER

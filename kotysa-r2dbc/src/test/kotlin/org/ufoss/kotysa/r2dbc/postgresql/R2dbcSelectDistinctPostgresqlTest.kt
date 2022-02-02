@@ -4,30 +4,34 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.test.POSTGRESQL_ROLE
+import org.ufoss.kotysa.test.roleAdmin
+import org.ufoss.kotysa.test.roleGod
+import org.ufoss.kotysa.test.roleUser
 
 class R2dbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcPostgresqlSelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) =
+        UserRepositoryJdbcPostgresqlSelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() = runTest {
         assertThat(repository.selectDistinctRoleLabels().toList())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
+            .hasSize(3)
+            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
     }
 }
 
 
-class UserRepositoryJdbcPostgresqlSelectDistinct(connection: Connection) :
-    AbstractUserRepositoryR2dbcPostgresql(connection) {
+class UserRepositoryJdbcPostgresqlSelectDistinct(private val sqlClient: R2dbcSqlClient) :
+    AbstractUserRepositoryR2dbcPostgresql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct POSTGRESQL_ROLE.label
-                    from POSTGRESQL_ROLE
-                    ).fetchAll()
+        (sqlClient selectDistinct POSTGRESQL_ROLE.label
+                from POSTGRESQL_ROLE
+                ).fetchAll()
 }

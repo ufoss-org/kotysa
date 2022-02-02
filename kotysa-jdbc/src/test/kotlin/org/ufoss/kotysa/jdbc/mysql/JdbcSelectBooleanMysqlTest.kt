@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MYSQL_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
-import java.sql.Connection
-
 
 class JdbcSelectBooleanMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMysqlSelectBoolean(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectBoolean(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
@@ -31,7 +30,7 @@ class JdbcSelectBooleanMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysql
 }
 
 
-class UserRepositoryJdbcMysqlSelectBoolean(connection: Connection) : AbstractUserRepositoryJdbcMysql(connection) {
+class UserRepositoryJdbcMysqlSelectBoolean(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMysql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
             (sqlClient selectFrom MYSQL_USER

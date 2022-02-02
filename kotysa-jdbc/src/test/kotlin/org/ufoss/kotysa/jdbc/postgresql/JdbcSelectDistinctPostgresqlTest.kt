@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectDistinctPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcPostgresqlSelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {
@@ -22,8 +21,8 @@ class JdbcSelectDistinctPostgresqlTest : AbstractJdbcPostgresqlTest<UserReposito
 }
 
 
-class UserRepositoryJdbcPostgresqlSelectDistinct(connection: Connection) :
-    AbstractUserRepositoryJdbcPostgresql(connection) {
+class UserRepositoryJdbcPostgresqlSelectDistinct(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct POSTGRESQL_ROLE.label

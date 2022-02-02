@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectDistinctMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMysqlSelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {
@@ -22,7 +21,8 @@ class JdbcSelectDistinctMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysq
 }
 
 
-class UserRepositoryJdbcMysqlSelectDistinct(connection: Connection) : AbstractUserRepositoryJdbcMysql(connection) {
+class UserRepositoryJdbcMysqlSelectDistinct(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMysql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct MYSQL_ROLE.label

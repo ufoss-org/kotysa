@@ -7,8 +7,16 @@ package org.ufoss.kotysa.r2dbc.transaction
 import io.r2dbc.spi.Connection
 import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.transaction.Transaction
+import kotlin.coroutines.AbstractCoroutineContextElement
+import kotlin.coroutines.CoroutineContext
 
-public class R2dbcTransaction(private val connection: Connection) : Transaction {
+public class R2dbcTransaction(internal val connection: Connection) : Transaction,
+    AbstractCoroutineContextElement(R2dbcTransaction) {
+
+    /**
+     * Key for [R2dbcTransaction] instance in the coroutine context.
+     */
+    public companion object Key : CoroutineContext.Key<R2dbcTransaction>
 
     private var rollbackOnly = false
     private var completed = false

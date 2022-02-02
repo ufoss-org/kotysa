@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectGroupByPostgresqlTest : AbstractJdbcPostgresqlTest<GroupByRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = GroupByRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
@@ -20,7 +20,8 @@ class JdbcSelectGroupByPostgresqlTest : AbstractJdbcPostgresqlTest<GroupByReposi
     }
 }
 
-class GroupByRepositoryPostgresqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcPostgresql(connection) {
+class GroupByRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount POSTGRESQL_CUSTOMER.id and POSTGRESQL_CUSTOMER.country

@@ -10,15 +10,13 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.*
 import java.util.*
 
-
 class JdbcAllTypesPostgresqlTest : AbstractJdbcPostgresqlTest<AllTypesRepositoryPostgresql>() {
-    override fun instantiateRepository(connection: Connection) = AllTypesRepositoryPostgresql(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = AllTypesRepositoryPostgresql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -84,9 +82,7 @@ class JdbcAllTypesPostgresqlTest : AbstractJdbcPostgresqlTest<AllTypesRepository
 }
 
 
-class AllTypesRepositoryPostgresql(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class AllTypesRepositoryPostgresql(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()
@@ -106,7 +102,9 @@ class AllTypesRepositoryPostgresql(connection: Connection) : Repository {
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(postgresqlAllTypesNotNull, postgresqlAllTypesNullable, postgresqlAllTypesNullableDefaultValue)
+        sqlClient.insert(postgresqlAllTypesNotNull)
+        sqlClient.insert(postgresqlAllTypesNullable)
+        sqlClient.insert(postgresqlAllTypesNullableDefaultValue)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NOT_NULL

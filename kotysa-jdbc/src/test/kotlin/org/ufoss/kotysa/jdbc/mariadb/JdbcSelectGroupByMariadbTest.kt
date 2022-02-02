@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectGroupByMariadbTest : AbstractJdbcMariadbTest<GroupByRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = GroupByRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
@@ -20,7 +20,8 @@ class JdbcSelectGroupByMariadbTest : AbstractJdbcMariadbTest<GroupByRepositoryMa
     }
 }
 
-class GroupByRepositoryMariadbSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMariadb(connection) {
+class GroupByRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount MARIADB_CUSTOMER.id and MARIADB_CUSTOMER.country

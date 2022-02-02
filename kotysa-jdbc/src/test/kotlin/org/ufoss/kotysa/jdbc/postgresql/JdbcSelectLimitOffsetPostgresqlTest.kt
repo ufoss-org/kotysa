@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectLimitOffsetPostgresqlTest : AbstractJdbcPostgresqlTest<LimitOffsetRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = LimitOffsetRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LimitOffsetRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
@@ -40,8 +40,8 @@ class JdbcSelectLimitOffsetPostgresqlTest : AbstractJdbcPostgresqlTest<LimitOffs
     }
 }
 
-class LimitOffsetRepositoryPostgresqlSelect(connection: Connection) :
-    AbstractCustomerRepositoryJdbcPostgresql(connection) {
+class LimitOffsetRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
             (sqlClient selectFrom POSTGRESQL_CUSTOMER

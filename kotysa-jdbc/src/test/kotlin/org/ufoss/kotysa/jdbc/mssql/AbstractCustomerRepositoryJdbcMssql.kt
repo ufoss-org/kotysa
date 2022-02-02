@@ -4,14 +4,10 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
-
-abstract class AbstractCustomerRepositoryJdbcMssql(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(mssqlTables)
+abstract class AbstractCustomerRepositoryJdbcMssql(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

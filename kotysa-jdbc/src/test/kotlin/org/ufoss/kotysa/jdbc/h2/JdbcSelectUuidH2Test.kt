@@ -6,14 +6,13 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.util.*
 
 
 class JdbcSelectUuidH2Test : AbstractJdbcH2Test<UuidRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = UuidRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UuidRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {
@@ -66,9 +65,7 @@ class JdbcSelectUuidH2Test : AbstractJdbcH2Test<UuidRepositoryH2Select>() {
 }
 
 
-class UuidRepositoryH2Select(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class UuidRepositoryH2Select(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

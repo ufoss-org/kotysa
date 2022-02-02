@@ -27,6 +27,7 @@ private class CoroutinesSqlClientSpringR2Dbc(
         executeInsert(row).await()
 
     override suspend fun <T : Any> insert(vararg rows: T) {
+        require(rows.isNotEmpty()) { "rows must contain at least one element" }
         rows.forEach { row -> insert(row) }
     }
 

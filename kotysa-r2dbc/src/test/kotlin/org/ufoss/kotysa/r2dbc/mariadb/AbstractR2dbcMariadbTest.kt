@@ -4,33 +4,29 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactories
 import io.r2dbc.spi.ConnectionFactoryOptions
-import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitSingle
-import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
-import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionalOp
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
+import org.ufoss.kotysa.test.mariadbTables
 import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
-
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
 @Tag("r2dbc-testcontainers")
 abstract class AbstractR2dbcMariadbTest<T : Repository> : CoroutinesRepositoryTest<T, R2dbcTransaction> {
-    private lateinit var connection: Connection
+    private lateinit var sqlClient: R2dbcSqlClient
 
     @BeforeAll
-    fun beforeAll(containerResource: TestContainersCloseableResource) = runBlocking {
+    fun beforeAll(containerResource: TestContainersCloseableResource) {
         val options = ConnectionFactoryOptions.builder()
             .option(ConnectionFactoryOptions.DRIVER, "mariadb")
             .option(ConnectionFactoryOptions.HOST, containerResource.containerIpAddress)
@@ -39,23 +35,22 @@ abstract class AbstractR2dbcMariadbTest<T : Repository> : CoroutinesRepositoryTe
             .option(ConnectionFactoryOptions.USER, "mariadb")
             .option(ConnectionFactoryOptions.PASSWORD, "test")
             .build()
-        connection = ConnectionFactories.get(options).create().awaitSingle()
+        sqlClient = ConnectionFactories.get(options).sqlClient(mariadbTables)
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(connection: Connection): T
+    protected abstract fun instantiateRepository(sqlClient: R2dbcSqlClient): T
 
-    override val operator: R2dbcTransactionalOp by lazy {
-        connection.transactionalOp()
+    override val operator by lazy {
+        sqlClient
     }
 
     override val repository: T by lazy {
-        instantiateRepository(connection)
+        instantiateRepository(sqlClient)
     }
 
     @AfterAll
-    fun afterAll() = runBlocking<Unit> {
+    fun afterAll() {
         repository.delete()
-        connection.close().awaitFirstOrNull()
     }
 }

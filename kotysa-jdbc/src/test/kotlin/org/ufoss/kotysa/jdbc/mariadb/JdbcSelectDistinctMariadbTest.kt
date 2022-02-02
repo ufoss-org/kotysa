@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectDistinctMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelectDistinct>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMariadbSelectDistinct(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbSelectDistinct(sqlClient)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {
@@ -22,7 +21,8 @@ class JdbcSelectDistinctMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbc
 }
 
 
-class UserRepositoryJdbcMariadbSelectDistinct(connection: Connection) : AbstractUserRepositoryJdbcMariadb(connection) {
+class UserRepositoryJdbcMariadbSelectDistinct(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct MARIADB_ROLE.label

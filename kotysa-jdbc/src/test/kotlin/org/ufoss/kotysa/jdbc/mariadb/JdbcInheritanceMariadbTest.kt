@@ -6,13 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcInheritanceMariadbTest : AbstractJdbcMariadbTest<InheritanceMariadbRepository>() {
-    override fun instantiateRepository(connection: Connection) = InheritanceMariadbRepository(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = InheritanceMariadbRepository(sqlClient)
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
@@ -45,9 +43,7 @@ class JdbcInheritanceMariadbTest : AbstractJdbcMariadbTest<InheritanceMariadbRep
 }
 
 
-class InheritanceMariadbRepository(connection: Connection) : Repository {
-
-    val sqlClient = connection.sqlClient(mariadbTables)
+class InheritanceMariadbRepository(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTable()

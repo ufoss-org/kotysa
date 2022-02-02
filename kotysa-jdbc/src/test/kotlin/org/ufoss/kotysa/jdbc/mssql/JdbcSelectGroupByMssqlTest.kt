@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectGroupByMssqlTest : AbstractJdbcMssqlTest<GroupByRepositoryMssqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = GroupByRepositoryMssqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
@@ -20,7 +20,7 @@ class JdbcSelectGroupByMssqlTest : AbstractJdbcMssqlTest<GroupByRepositoryMssqlS
     }
 }
 
-class GroupByRepositoryMssqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMssql(connection) {
+class GroupByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcMssql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
             (sqlClient selectCount MSSQL_CUSTOMER.id and MSSQL_CUSTOMER.country

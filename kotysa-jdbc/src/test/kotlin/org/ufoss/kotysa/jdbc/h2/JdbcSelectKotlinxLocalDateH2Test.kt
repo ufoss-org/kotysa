@@ -7,13 +7,11 @@ package org.ufoss.kotysa.jdbc.h2
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectKotlinxLocalDateH2Test : AbstractJdbcH2Test<KotlinxLocalDateRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = KotlinxLocalDateRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = KotlinxLocalDateRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds kotlinxLocalDateWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectKotlinxLocalDateH2Test : AbstractJdbcH2Test<KotlinxLocalDateRepo
 }
 
 
-class KotlinxLocalDateRepositoryH2Select(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(h2Tables)
+class KotlinxLocalDateRepositoryH2Select(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

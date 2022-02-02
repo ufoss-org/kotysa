@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectOrderByPostgresqlTest : AbstractJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = OrderByRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
@@ -27,7 +27,8 @@ class JdbcSelectOrderByPostgresqlTest : AbstractJdbcPostgresqlTest<OrderByReposi
     }
 }
 
-class OrderByRepositoryPostgresqlSelect(connection: Connection) : AbstractCustomerRepositoryJdbcPostgresql(connection) {
+class OrderByRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
             (sqlClient selectFrom POSTGRESQL_CUSTOMER

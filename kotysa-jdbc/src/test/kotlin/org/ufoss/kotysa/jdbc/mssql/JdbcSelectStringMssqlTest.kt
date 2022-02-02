@@ -8,14 +8,13 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.MSSQL_USER
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
-import java.sql.Connection
-
 
 class JdbcSelectStringMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelectString>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcMssqlSelectString(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlSelectString(sqlClient)
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
@@ -164,7 +163,8 @@ class JdbcSelectStringMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlS
 }
 
 
-class UserRepositoryJdbcMssqlSelectString(connection: Connection) : AbstractUserRepositoryJdbcMssql(connection) {
+class UserRepositoryJdbcMssqlSelectString(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
             (sqlClient selectFrom MSSQL_USER

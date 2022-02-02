@@ -7,13 +7,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectKotlinxLocalDatePostgresqlTest : AbstractJdbcPostgresqlTest<KotlinxLocalDateRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = KotlinxLocalDateRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = KotlinxLocalDateRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds kotlinxLocalDateWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectKotlinxLocalDatePostgresqlTest : AbstractJdbcPostgresqlTest<Kotl
 }
 
 
-class KotlinxLocalDateRepositoryPostgresqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class KotlinxLocalDateRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

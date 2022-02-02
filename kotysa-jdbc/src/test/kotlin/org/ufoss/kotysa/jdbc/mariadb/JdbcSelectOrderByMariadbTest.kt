@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectOrderByMariadbTest : AbstractJdbcMariadbTest<OrderByRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = OrderByRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
@@ -27,7 +27,8 @@ class JdbcSelectOrderByMariadbTest : AbstractJdbcMariadbTest<OrderByRepositoryMa
     }
 }
 
-class OrderByRepositoryMariadbSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMariadb(connection) {
+class OrderByRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) :
+    AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
             (sqlClient selectFrom MARIADB_CUSTOMER

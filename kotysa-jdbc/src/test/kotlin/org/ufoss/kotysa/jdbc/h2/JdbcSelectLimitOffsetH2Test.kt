@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectLimitOffsetH2Test : AbstractJdbcH2Test<LimitOffsetRepositoryH2Select>() {
-    override fun instantiateRepository(connection: Connection) = LimitOffsetRepositoryH2Select(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = LimitOffsetRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
@@ -40,7 +40,7 @@ class JdbcSelectLimitOffsetH2Test : AbstractJdbcH2Test<LimitOffsetRepositoryH2Se
     }
 }
 
-class LimitOffsetRepositoryH2Select(connection: Connection) : AbstractCustomerRepositoryJdbcH2(connection) {
+class LimitOffsetRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
             (sqlClient selectFrom H2_CUSTOMER

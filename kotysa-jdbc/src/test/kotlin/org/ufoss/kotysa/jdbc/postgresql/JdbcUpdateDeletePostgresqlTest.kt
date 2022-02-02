@@ -6,12 +6,11 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcUpdateDeletePostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlUpdateDelete>() {
-    override fun instantiateRepository(connection: Connection) = UserRepositoryJdbcPostgresqlUpdateDelete(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
@@ -133,7 +132,8 @@ class JdbcUpdateDeletePostgresqlTest : AbstractJdbcPostgresqlTest<UserRepository
 }
 
 
-class UserRepositoryJdbcPostgresqlUpdateDelete(connection: Connection) : AbstractUserRepositoryJdbcPostgresql(connection) {
+class UserRepositoryJdbcPostgresqlUpdateDelete(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
 
     fun deleteUserById(id: Int) =
             (sqlClient deleteFrom POSTGRESQL_USER

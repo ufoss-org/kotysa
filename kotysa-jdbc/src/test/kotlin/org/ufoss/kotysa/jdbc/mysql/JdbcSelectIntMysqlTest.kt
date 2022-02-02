@@ -7,13 +7,12 @@ package org.ufoss.kotysa.jdbc.mysql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 @Order(1)
 class JdbcSelectIntMysqlTest : AbstractJdbcMysqlTest<IntRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = IntRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = IntRepositoryMysqlSelect(sqlClient)
 
     private val intWithNullable = IntEntity(
             org.ufoss.kotysa.test.intWithNullable.intNotNull,
@@ -186,9 +185,7 @@ class JdbcSelectIntMysqlTest : AbstractJdbcMysqlTest<IntRepositoryMysqlSelect>()
 }
 
 
-class IntRepositoryMysqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mysqlTables)
+class IntRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

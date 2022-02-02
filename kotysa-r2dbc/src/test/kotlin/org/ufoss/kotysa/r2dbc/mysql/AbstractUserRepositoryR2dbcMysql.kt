@@ -4,14 +4,11 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class AbstractUserRepositoryR2dbcMysql(connection: Connection) : Repository {
-
-    protected val sqlClient = connection.sqlClient(mysqlTables)
+abstract class AbstractUserRepositoryR2dbcMysql(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
@@ -51,7 +48,7 @@ abstract class AbstractUserRepositoryR2dbcMysql(connection: Connection) : Reposi
     fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.firstname eq firstname
-                    ).fetchFirstOrNull()
+        (sqlClient selectFrom MYSQL_USER
+                where MYSQL_USER.firstname eq firstname
+                ).fetchFirstOrNull()
 }

@@ -6,15 +6,13 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-
 class JdbcSelectOffsetDateTimePostgresqlTest : AbstractJdbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = OffsetDateTimeRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {
@@ -214,9 +212,7 @@ class JdbcSelectOffsetDateTimePostgresqlTest : AbstractJdbcPostgresqlTest<Offset
 }
 
 
-class OffsetDateTimeRepositoryPostgresqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class OffsetDateTimeRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

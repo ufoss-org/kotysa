@@ -8,13 +8,11 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectStringAsTextPostgresqlTest : AbstractJdbcPostgresqlTest<StringAsTextRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = StringAsTextRepositoryPostgresqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = StringAsTextRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectFirstOrNullByStringNotNull finds stringAsTextNotNull`() {
@@ -163,9 +161,7 @@ class JdbcSelectStringAsTextPostgresqlTest : AbstractJdbcPostgresqlTest<StringAs
 }
 
 
-class StringAsTextRepositoryPostgresqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(postgresqlTables)
+class StringAsTextRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

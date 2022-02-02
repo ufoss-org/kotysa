@@ -4,30 +4,33 @@
 
 package org.ufoss.kotysa.r2dbc.mssql
 
-import io.r2dbc.spi.Connection
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Order(3)
 class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
-    override fun instantiateRepository(connection: Connection) = RepositoryMssqlInsert(connection)
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryMssqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() = runTest {
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers().toList())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
     }
 
     @Test
@@ -111,9 +114,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 }
 
 
-class RepositoryMssqlInsert(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mssqlTables)
+class RepositoryMssqlInsert(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()

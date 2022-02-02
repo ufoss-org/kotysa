@@ -7,13 +7,11 @@ package org.ufoss.kotysa.jdbc.mysql
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.sqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
-
 
 class JdbcSelectKotlinxLocalDateTimeMysqlTest : AbstractJdbcMysqlTest<KotlinxLocalDateTimeRepositoryMysqlSelect>() {
-    override fun instantiateRepository(connection: Connection) = KotlinxLocalDateTimeRepositoryMysqlSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = KotlinxLocalDateTimeRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalDateTimeNotNull finds kotlinxLocalDateTimeWithNullable`() {
@@ -176,9 +174,7 @@ class JdbcSelectKotlinxLocalDateTimeMysqlTest : AbstractJdbcMysqlTest<KotlinxLoc
 }
 
 
-class KotlinxLocalDateTimeRepositoryMysqlSelect(connection: Connection) : Repository {
-
-    private val sqlClient = connection.sqlClient(mysqlTables)
+class KotlinxLocalDateTimeRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) : Repository {
 
     override fun init() {
         createTables()

@@ -6,11 +6,11 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.Connection
 
 class JdbcSelectMinMaxAvgSumMariadbTest : AbstractJdbcMariadbTest<MinMaxAvgSumRepositoryMariadbSelect>() {
-    override fun instantiateRepository(connection: Connection) = MinMaxAvgSumRepositoryMariadbSelect(connection)
+    override fun instantiateRepository(sqlClient: JdbcSqlClient) = MinMaxAvgSumRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
@@ -37,7 +37,7 @@ class JdbcSelectMinMaxAvgSumMariadbTest : AbstractJdbcMariadbTest<MinMaxAvgSumRe
     }
 }
 
-class MinMaxAvgSumRepositoryMariadbSelect(connection: Connection) : AbstractCustomerRepositoryJdbcMariadb(connection) {
+class MinMaxAvgSumRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
 
     fun selectCustomerMinAge() =
             (sqlClient selectMin MARIADB_CUSTOMER.age

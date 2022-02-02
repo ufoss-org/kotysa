@@ -9,45 +9,44 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.mariadb.jdbc.MariaDbDataSource
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
-import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
+import org.ufoss.kotysa.test.mariadbTables
 import org.ufoss.kotysa.test.repositories.RepositoryTest
-import java.sql.Connection
-import java.sql.DriverManager
-
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
 @Tag("jdbc-testcontainers")
 abstract class AbstractJdbcMariadbTest<T : Repository> : RepositoryTest<T, JdbcTransaction> {
-    private lateinit var connection: Connection
+    private lateinit var sqlClient: JdbcSqlClient
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
-        connection = DriverManager.getConnection(
-            "jdbc:mariadb://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db",
-            "mariadb",
-            "test",
+        val dataSource = MariaDbDataSource(
+            "jdbc:mariadb://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
         )
+        dataSource.user = "mariadb"
+        dataSource.setPassword("test")
+        sqlClient = dataSource.sqlClient(mariadbTables)
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(connection: Connection): T
+    protected abstract fun instantiateRepository(sqlClient: JdbcSqlClient): T
 
-    override val operator: JdbcTransactionalOp by lazy {
-        connection.transactionalOp()
+    override val operator by lazy {
+        sqlClient
     }
 
     override val repository: T by lazy {
-        instantiateRepository(connection)
+        instantiateRepository(sqlClient)
     }
 
     @AfterAll
     fun afterAll() {
         repository.delete()
-        connection.close()
     }
 }

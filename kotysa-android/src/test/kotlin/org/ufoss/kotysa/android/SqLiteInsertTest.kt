@@ -18,6 +18,8 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
 
     @Test
     fun `Verify insertCustomer works correctly`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
         val operator = client.transactionalOp()
         operator.execute { transaction ->
             transaction.setRollbackOnly()
@@ -25,6 +27,8 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
             assertThat(repository.selectAllCustomers())
                 .containsExactly(customerFrance)
         }
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
     }
 
     @Test
