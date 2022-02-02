@@ -9,7 +9,7 @@ import org.springframework.r2dbc.core.RowsFetchSpec
 import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.DefaultSqlClientSelect
 import org.ufoss.kotysa.dbValues
-import org.ufoss.kotysa.r2dbc.toRow
+import org.ufoss.kotysa.core.r2dbc.toRow
 import java.util.*
 
 

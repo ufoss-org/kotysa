@@ -59,7 +59,7 @@ internal class AvgField<T : Any, U : Any> internal constructor(
     override val builder: (RowImpl) -> BigDecimal = { row ->
         when {
             properties.tables.dbType == DbType.H2 && properties.dbAccessType == DbAccessType.R2DBC ->
-                row.getAndIncrement(Int::class.javaObjectType)!!.toBigDecimal()
+                row.getAndIncrement(Double::class.javaObjectType)!!.toBigDecimal()
             else -> row.getAndIncrement(BigDecimal::class.javaObjectType)!!
         }
     }

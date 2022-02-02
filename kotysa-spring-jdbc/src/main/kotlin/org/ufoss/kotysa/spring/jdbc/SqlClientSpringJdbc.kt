@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.jdbc.toRow
+import org.ufoss.kotysa.core.jdbc.toRow
 import java.math.BigDecimal
 
 /**

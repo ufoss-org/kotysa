@@ -5,6 +5,8 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.core.jdbc.jdbcBindWhereParams
+import org.ufoss.kotysa.core.jdbc.toRow
 import java.math.BigDecimal
 import java.sql.Connection
 import java.sql.PreparedStatement

@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.jdbc
+package org.ufoss.kotysa.core.jdbc
 
 import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.RowImpl

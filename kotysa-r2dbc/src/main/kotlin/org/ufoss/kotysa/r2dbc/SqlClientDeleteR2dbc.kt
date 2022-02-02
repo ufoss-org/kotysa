@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import io.r2dbc.spi.ConnectionFactory
 import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.core.r2dbc.r2dbcBindWhereParams
 
 internal class SqlClientDeleteR2dbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
