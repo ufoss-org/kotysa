@@ -58,8 +58,11 @@ internal class AvgField<T : Any, U : Any> internal constructor(
 
     override val builder: (RowImpl) -> BigDecimal = { row ->
         when {
-            properties.tables.dbType == DbType.H2 && properties.dbAccessType == DbAccessType.R2DBC ->
+            properties.tables.dbType == DbType.H2 && properties.module == Module.R2DBC ->
                 row.getAndIncrement(Double::class.javaObjectType)!!.toBigDecimal()
+            // fixme : remove test below when Spring uses r2dbc 0.9+
+            properties.tables.dbType == DbType.H2 && properties.module == Module.SPRING_R2DBC ->
+                row.getAndIncrement(Int::class.javaObjectType)!!.toBigDecimal()
             else -> row.getAndIncrement(BigDecimal::class.javaObjectType)!!
         }
     }

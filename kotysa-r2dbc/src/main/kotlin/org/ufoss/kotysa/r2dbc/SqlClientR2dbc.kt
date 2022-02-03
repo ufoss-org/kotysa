@@ -97,19 +97,22 @@ internal class SqlClientR2dbc(
         }
 
     override fun <T : Any> insertAndReturn(vararg rows: T): Flow<T> {
-        return flowOf(tables.getTable(rows[0]::class))
-            .flatMapConcat { table ->
-                val r2dbcConnection = getR2dbcConnection(connectionFactory)
-                rows.asFlow()
+        require(rows.isNotEmpty()) { "rows must contain at least one element" }
+        val table = tables.getTable(rows[0]::class)
+        return flow {
+            val r2dbcConnection = getR2dbcConnection(connectionFactory)
+            try {
+                emitAll(rows.asFlow()
                     .map { row -> executeInsertAndReturn(r2dbcConnection.connection, row, table) }
-                    .onCompletion {
-                        r2dbcConnection.apply {
-                            if (!inTransaction) {
-                                connection.close().awaitFirstOrNull()
-                            }
-                        }
+                )
+            } finally {
+                r2dbcConnection.apply {
+                    if (!inTransaction) {
+                        connection.close().awaitFirstOrNull()
                     }
+                }
             }
+        }
     }
 
     private fun <T : Any> setStatementParams(row: T, table: KotysaTable<T>, statement: Statement) {
