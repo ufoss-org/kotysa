@@ -10,7 +10,7 @@ import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.coTransactionalOp
 import org.ufoss.kotysa.tables
 
-private val h2Tables = tables().h2(ROLE, USER)
+private val h2Tables = tables().h2(Roles, Users)
 
 @Configuration
 class DataConfig : AbstractR2dbcConfiguration() {
