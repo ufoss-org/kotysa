@@ -35,7 +35,7 @@ class R2dbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
 
     @Test
     fun `Verify deleteById deletes inherited`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(H2_INHERITED, "id"))
                 .isEqualTo(1)

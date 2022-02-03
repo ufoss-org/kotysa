@@ -35,7 +35,7 @@ class R2dbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
 
     @Test
     fun `Verify deleteById deletes inherited`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(POSTGRESQL_INHERITED, "id"))
                 .isEqualTo(1)

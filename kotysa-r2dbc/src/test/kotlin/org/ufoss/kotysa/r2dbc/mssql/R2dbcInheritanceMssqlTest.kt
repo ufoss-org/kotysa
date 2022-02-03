@@ -35,7 +35,7 @@ class R2dbcInheritanceMssqlTest : AbstractR2dbcMssqlTest<InheritanceMssqlReposit
 
     @Test
     fun `Verify deleteById deletes inherited`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(MSSQL_INHERITED, "id"))
                 .isEqualTo(1)

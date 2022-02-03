@@ -87,7 +87,7 @@ interface R2dbcJavaEntityTest<T : JAVA_USER, U : R2dbcJavaUserRepository<T>> : R
 
     @Test
     fun `Verify deleteAll works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAll()
                     .doOnNext { n -> assertThat(n).isEqualTo(2) }

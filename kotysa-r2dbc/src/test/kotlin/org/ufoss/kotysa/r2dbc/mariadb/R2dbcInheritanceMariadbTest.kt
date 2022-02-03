@@ -35,7 +35,7 @@ class R2dbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbR
 
     @Test
     fun `Verify deleteById deletes inherited`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(MARIADB_INHERITED, "id"))
                 .isEqualTo(1)

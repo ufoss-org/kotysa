@@ -87,7 +87,7 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() = runBlocking<Unit> {
-        coOperator.execute { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
                     .isEqualTo(2)

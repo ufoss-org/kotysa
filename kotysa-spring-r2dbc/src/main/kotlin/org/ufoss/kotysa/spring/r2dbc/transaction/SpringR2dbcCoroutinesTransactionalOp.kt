@@ -15,15 +15,17 @@ import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
  * @see executeAndAwait
  * @see transactional
  */
-public class SpringR2dbcCoroutinesTransactionalOp(internal val operator: TransactionalOperator) : CoroutinesTransactionalOp<ReactorTransaction> {
-    public override suspend fun <T> execute(block: suspend (ReactorTransaction) -> T): T? =
-            operator.executeAndAwait { reactiveTransaction -> block.invoke(ReactorTransaction(reactiveTransaction)) }
+public class SpringR2dbcCoroutinesTransactionalOp(internal val operator: TransactionalOperator) :
+    CoroutinesTransactionalOp<ReactorTransaction> {
+    public override suspend fun <T> transactional(block: suspend (ReactorTransaction) -> T): T? =
+        operator.executeAndAwait { reactiveTransaction -> block.invoke(ReactorTransaction(reactiveTransaction)) }
 }
 
 /**
  * Create a [SpringR2dbcCoroutinesTransactionalOp] from a Reactive [TransactionalOperator]
  */
-public fun TransactionalOperator.coTransactionalOp(): SpringR2dbcCoroutinesTransactionalOp = SpringR2dbcCoroutinesTransactionalOp(this)
+public fun TransactionalOperator.coTransactionalOp(): SpringR2dbcCoroutinesTransactionalOp =
+    SpringR2dbcCoroutinesTransactionalOp(this)
 
 public fun <T : Any> Flow<T>.transactional(operator: SpringR2dbcCoroutinesTransactionalOp): Flow<T> =
-        this.transactional(operator.operator)
+    this.transactional(operator.operator)

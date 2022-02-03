@@ -67,7 +67,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         val newInt = 2
         val newLong = 2L
         val operator = client.transactionalOp()
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                     "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime,

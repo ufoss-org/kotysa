@@ -73,7 +73,7 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
         val newUuid = UUID.randomUUID()
         val newInt = 2
         val newLong = 2L
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate,

@@ -5,5 +5,5 @@
 package org.ufoss.kotysa.transaction
 
 public interface CoroutinesTransactionalOp<T : Transaction> {
-    public suspend fun <U> execute(block: suspend (T) -> U): U?
+    public suspend fun <U> transactional(block: suspend (T) -> U): U?
 }

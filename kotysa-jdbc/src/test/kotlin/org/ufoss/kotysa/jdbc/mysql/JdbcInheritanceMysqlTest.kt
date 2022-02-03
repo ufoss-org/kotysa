@@ -32,7 +32,7 @@ class JdbcInheritanceMysqlTest : AbstractJdbcMysqlTest<InheritanceMysqlRepositor
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(MYSQL_INHERITED, "id"))
                     .isEqualTo(1)

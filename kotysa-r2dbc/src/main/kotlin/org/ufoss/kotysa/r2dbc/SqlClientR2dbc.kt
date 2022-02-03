@@ -220,7 +220,7 @@ internal class SqlClientR2dbc(
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectSum(column)
 
-    override suspend fun <T> execute(block: suspend (R2dbcTransaction) -> T): T? {
+    override suspend fun <T> transactional(block: suspend (R2dbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val currentTransaction = coroutineContext[R2dbcTransaction]
         val isOrigin = currentTransaction == null

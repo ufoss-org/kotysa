@@ -32,7 +32,7 @@ class JdbcInheritancePostgresqlTest : AbstractJdbcPostgresqlTest<InheritancePost
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(POSTGRESQL_INHERITED, "id"))
                     .isEqualTo(1)

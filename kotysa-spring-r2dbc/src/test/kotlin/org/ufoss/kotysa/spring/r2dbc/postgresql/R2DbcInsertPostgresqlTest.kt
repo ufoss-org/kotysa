@@ -30,7 +30,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertCustomer works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
                 .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -42,7 +42,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertCustomers works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomers()
                 .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -54,7 +54,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertAndReturnCustomers()
         }.test()
@@ -64,7 +64,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertAndReturnAllTypesDefaultValues()
         }.test()
@@ -91,7 +91,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertAndReturnInt auto-generated works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertAndReturnInt(intWithNullable)
         }.test()
@@ -105,7 +105,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertAndReturnInt not auto-generated works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertAndReturnInt(IntEntity(1, 2, 666))
         }.test()
@@ -119,7 +119,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 
     @Test
     fun `Verify insertAndReturnLongs works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertAndReturnLongs()
         }.test()

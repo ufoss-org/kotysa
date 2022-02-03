@@ -16,7 +16,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUserRoles())
                 .isEqualTo(1)
@@ -29,7 +29,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify deleteUserById works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserById(userJdoe.id))
                 .isEqualTo(1)
@@ -41,7 +41,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify deleteUserIn works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
                 .isEqualTo(1)
@@ -60,7 +60,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify deleteUserWithJoin works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserWithJoin(roleUser.label))
                 .isEqualTo(1)
@@ -72,7 +72,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify updateLastname works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                 .isEqualTo(1)
@@ -84,7 +84,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify updateLastnameIn works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999)))
                 .isEqualTo(1)
@@ -105,7 +105,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify updateWithJoin works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", roleUser.label))
                 .isEqualTo(1)
@@ -117,7 +117,7 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
 
     @Test
     fun `Verify updateAlias works`() = runTest {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                 .isEqualTo(1)

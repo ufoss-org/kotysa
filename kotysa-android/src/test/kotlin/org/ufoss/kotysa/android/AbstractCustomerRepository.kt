@@ -6,11 +6,10 @@ package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.android.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractCustomerRepository(
-        private val sqLiteOpenHelper: SQLiteOpenHelper,
+        sqLiteOpenHelper: SQLiteOpenHelper,
         tables: Tables,
 ) : Repository {
 

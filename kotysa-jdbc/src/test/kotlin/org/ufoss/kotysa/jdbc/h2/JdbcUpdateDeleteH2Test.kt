@@ -15,7 +15,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUserRoles())
                     .isEqualTo(1)
@@ -28,7 +28,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify deleteUserById works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserById(userJdoe.id))
                     .isEqualTo(1)
@@ -40,7 +40,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserWithJoin(roleUser.label))
                     .isEqualTo(1)
@@ -52,7 +52,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify deleteUserIn works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
@@ -71,7 +71,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify updateLastname works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateLastname("Do"))
                     .isEqualTo(1)
@@ -83,7 +83,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify updateLastnameIn works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999)))
                     .isEqualTo(1)
@@ -104,7 +104,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify updateAlias works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateAlias("TheBigBoss"))
                     .isEqualTo(1)
@@ -121,7 +121,7 @@ class JdbcUpdateDeleteH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2UpdateDele
 
     @Test
     fun `Verify updateWithJoin works`() {
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.updateWithJoin("Do", roleUser.label))
                     .isEqualTo(1)
