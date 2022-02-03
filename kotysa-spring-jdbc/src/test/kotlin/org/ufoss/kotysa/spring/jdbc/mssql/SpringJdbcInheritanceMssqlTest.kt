@@ -44,7 +44,7 @@ class SpringJdbcInheritanceMssqlTest : AbstractSpringJdbcMssqlTest<InheritanceMs
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(MSSQL_INHERITED, "id"))
                     .isEqualTo(1)

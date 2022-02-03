@@ -44,7 +44,7 @@ class SpringJdbcInheritanceMariadbTest : AbstractSpringJdbcMariadbTest<Inheritan
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(MARIADB_INHERITED, "id"))
                     .isEqualTo(1)

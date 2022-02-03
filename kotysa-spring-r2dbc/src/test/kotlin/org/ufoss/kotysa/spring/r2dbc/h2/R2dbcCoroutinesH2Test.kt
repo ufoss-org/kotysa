@@ -77,7 +77,7 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
 
     @Test
     fun `Verify deleteAllFromUser works correctly`() = runBlocking<Unit> {
-        coOperator.execute { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
                     .isEqualTo(2)

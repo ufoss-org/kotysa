@@ -88,7 +88,7 @@ interface CoroutinesJavaEntityTest<T : JAVA_USER, U : CoroutinesJavaUserReposito
 
     @Test
     fun `Verify deleteAll works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAll())
                     .isEqualTo(2)

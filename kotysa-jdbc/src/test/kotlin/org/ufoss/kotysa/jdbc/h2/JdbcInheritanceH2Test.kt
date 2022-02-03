@@ -32,7 +32,7 @@ class JdbcInheritanceH2Test : AbstractJdbcH2Test<InheritanceH2Repository>() {
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(H2_INHERITED, "id"))
                     .isEqualTo(1)

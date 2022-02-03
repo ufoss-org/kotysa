@@ -5,23 +5,25 @@
 package org.ufoss.kotysa.android.transaction
 
 import android.database.sqlite.SQLiteDatabase
+import org.ufoss.kotysa.transaction.TransactionalOp
 
 @JvmInline
-public value class AndroidTransactionalOp(private val client: SQLiteDatabase) {
+public value class AndroidTransactionalOp(private val client: SQLiteDatabase) : TransactionalOp<AndroidTransaction> {
 
-    public fun <T> execute(block: (AndroidTransaction) -> T): T? = client.run {
-        val transaction = AndroidTransaction()
-        beginTransaction()
-        try {
-            block.invoke(transaction).also {
-                if (!transaction.isRollbackOnly()) {
-                    setTransactionSuccessful()
+    public override fun <T> transactional(block: (AndroidTransaction) -> T): T? =
+        client.run {
+            val transaction = AndroidTransaction()
+            beginTransaction()
+            try {
+                block.invoke(transaction).also {
+                    if (!transaction.isRollbackOnly()) {
+                        setTransactionSuccessful()
+                    }
                 }
+            } finally {
+                endTransaction()
             }
-        } finally {
-            endTransaction()
         }
-    }
 }
 
 /**

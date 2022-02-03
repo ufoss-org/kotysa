@@ -23,7 +23,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
     fun `Verify insertCustomer works correctly`() = runTest {
         assertThat(repository.selectAllCustomers().toList())
             .isEmpty()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers().toList())
@@ -35,7 +35,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertCustomers works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomers()
             assertThat(repository.selectAllCustomers().toList())
@@ -45,7 +45,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertAndReturnCustomers works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnCustomers().toList())
                 .containsExactly(customerUSA1, customerUSA2)
@@ -54,7 +54,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnAllTypesDefaultValues())
                 .isEqualTo(
@@ -82,7 +82,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertAndReturnInt auto-generated works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(intWithNullable)
             assertThat(inserted.intNotNull).isEqualTo(intWithNullable.intNotNull)
@@ -93,7 +93,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertAndReturnInt not auto-generated works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(IntEntity(1, 2, 666))
             assertThat(inserted.intNotNull).isEqualTo(1)
@@ -104,7 +104,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 
     @Test
     fun `Verify insertAndReturnLongs works correctly`() = runTest {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val longs = repository.insertAndReturnLongs().toList()
             var inserted = longs[0]

@@ -87,7 +87,7 @@ interface JavaEntityTest<T : JAVA_USER, U : JavaUserRepository<T>, V : Transacti
 
     @Test
     fun `Verify deleteAll works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAll())
                     .isEqualTo(2)

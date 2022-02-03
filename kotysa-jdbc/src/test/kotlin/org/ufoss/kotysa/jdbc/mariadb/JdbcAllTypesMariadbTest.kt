@@ -61,7 +61,7 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
-        operator.execute<Unit> { transaction ->
+        operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
                     newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong)

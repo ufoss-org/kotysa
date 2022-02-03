@@ -45,7 +45,7 @@ class R2DbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
 
     @Test
     fun `Verify deleteById deletes inherited`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteById(MYSQL_INHERITED, "id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }

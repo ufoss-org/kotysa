@@ -178,7 +178,7 @@ internal class SqlClientJdbc(
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectSum(column)
 
-    override fun <T> execute(block: (JdbcTransaction) -> T): T? {
+    override fun <T> transactional(block: (JdbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val isOrigin = currentTransaction == null
         val transaction = currentTransaction ?: JdbcTransaction(dataSource.connection).apply { threadLocal.set(this) }

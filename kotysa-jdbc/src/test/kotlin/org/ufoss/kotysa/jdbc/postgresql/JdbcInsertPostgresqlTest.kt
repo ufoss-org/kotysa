@@ -20,7 +20,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
     fun `Verify insertCustomer works correctly`() {
         assertThat(repository.selectAllCustomers())
             .isEmpty()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers())
@@ -32,7 +32,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
 
     @Test
     fun `Verify insertCustomers works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomers()
             assertThat(repository.selectAllCustomers())
@@ -42,7 +42,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
 
     @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnCustomers())
                 .containsExactly(customerUSA1, customerUSA2)
@@ -51,7 +51,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
 
     @Test
     fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnAllTypesDefaultValues())
                 .isEqualTo(
@@ -79,7 +79,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
 
     @Test
     fun `Verify insertAndReturnInt auto-generated works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(intWithNullable)
             assertThat(inserted.intNotNull).isEqualTo(intWithNullable.intNotNull)
@@ -90,7 +90,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
 
     @Test
     fun `Verify insertAndReturnInt not auto-generated works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(IntEntity(1, 2, 666))
             assertThat(inserted.intNotNull).isEqualTo(1)
@@ -101,7 +101,7 @@ class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresql
 
     @Test
     fun `Verify insertAndReturnLongs works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val longs = repository.insertAndReturnLongs()
             var inserted = longs[0]

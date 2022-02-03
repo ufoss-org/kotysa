@@ -17,7 +17,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAllFromUserRoles()
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -29,7 +29,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify deleteUserById works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserById(userJdoe.id)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -41,7 +41,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify deleteUserWithJoin works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserWithJoin(roleUser.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -53,7 +53,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify deleteUserIn works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserIn(listOf(userJdoe.id, 9999999))
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -73,7 +73,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateLastname works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -85,7 +85,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateWithJoin works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", roleUser.label)
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -97,7 +97,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateAlias works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateAlias("TheBigBoss")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
@@ -113,7 +113,7 @@ class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete
 
     @Test
     fun `Verify updateLastnameIn works`() {
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999))
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }

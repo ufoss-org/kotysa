@@ -21,7 +21,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
         assertThat(repository.selectAllCustomers())
             .isEmpty()
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers())
@@ -34,7 +34,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     @Test
     fun `Verify insertCustomers works correctly`() {
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomers()
             assertThat(repository.selectAllCustomers())
@@ -45,7 +45,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     @Test
     fun `Verify insertAndReturnCustomers works correctly`() {
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnCustomers())
                 .containsExactly(customerUSA1, customerUSA2)
@@ -55,7 +55,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     @Test
     fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnAllTypesDefaultValues())
                 .isEqualTo(
@@ -79,7 +79,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     @Test
     fun `Verify insertAndReturnInt auto-generated works correctly`() {
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(intWithNullable)
             assertThat(inserted.intNotNull).isEqualTo(intWithNullable.intNotNull)
@@ -91,7 +91,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     @Test
     fun `Verify insertAndReturnInt not auto-generated works correctly`() {
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(IntEntity(1, 2, 666))
             assertThat(inserted.intNotNull).isEqualTo(1)
@@ -103,7 +103,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     @Test
     fun `Verify insertAndReturnLongs works correctly`() {
         val operator = client.transactionalOp()
-        operator.execute { transaction ->
+        operator.transactional { transaction ->
             transaction.setRollbackOnly()
             val longs = repository.insertAndReturnLongs()
             var inserted = longs[0]

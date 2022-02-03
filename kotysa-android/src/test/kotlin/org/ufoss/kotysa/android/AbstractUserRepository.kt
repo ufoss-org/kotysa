@@ -27,7 +27,6 @@ abstract class AbstractUserRepository(
         deleteAllFromUserRoles()
         deleteAllFromUsers()
         deleteAllFromRoles()
-        sqLiteOpenHelper.close()
     }
 
     private fun createTable() {
@@ -38,7 +37,7 @@ abstract class AbstractUserRepository(
 
     private fun insertRoles() {
         val operator = sqLiteOpenHelper.writableDatabase.transactionalOp()
-        operator.execute {
+        operator.transactional {
             sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
         }
     }
