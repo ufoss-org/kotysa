@@ -7,7 +7,9 @@ package org.ufoss.kotysa.r2dbc
 import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.reactive.*
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.core.r2dbc.r2dbcBindWhereParams
 import org.ufoss.kotysa.core.r2dbc.toRow
@@ -321,8 +323,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 }
             } catch (_: NoSuchElementException) {
                 throw NoResultException()
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
+            } catch (_: IllegalArgumentException) {
                 throw NonUniqueResultException()
             }
 
@@ -363,21 +364,18 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 .filter { opt -> opt.isPresent }
                 .map { opt -> opt.get() }
 
-        private fun fetchAllNullable(): Flow<Optional<T>> =
-            executeQuery()
-                .flatMapConcat { r ->
-                    r.map { row, _ ->
-                        Optional.ofNullable(properties.select(row.toRow()))
-                    }.asFlow()
-                }
-
-        private fun executeQuery() =
+        private fun fetchAllNullable() =
             flow {
                 val r2dbcConnection = getR2dbcConnection(connectionFactory)
                 try {
                     val statement = r2dbcConnection.connection.createStatement(selectSql())
                     buildParameters(statement)
-                    emitAll(statement.execute().asFlow())
+                    val result = statement.execute().awaitSingle()
+                    emitAll(
+                        result.map { row, _ ->
+                            Optional.ofNullable(properties.select(row.toRow()))
+                        }.asFlow()
+                    )
                 } finally {
                     r2dbcConnection.apply {
                         if (!inTransaction) {
