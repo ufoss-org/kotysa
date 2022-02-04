@@ -39,8 +39,6 @@ fun Application.webConfig() {
 }
 
 // inspiration : https://github.com/Kotlin/kotlinx.serialization/blob/master/formats/json/jvmTest/src/kotlinx/serialization/features/JsonStreamFlowTest.kt
-// for SSE : https://github.com/ktorio/ktor-samples/blob/main/sse/src/SseApplication.kt
-// for x-json-stream : https://stackoverflow.com/a/66511663
 @OptIn(ExperimentalSerializationApi::class)
 private suspend inline fun <reified T> Flow<T>.writeToStream(os: OutputStream, json: Json) =
     withContext(Dispatchers.IO) {

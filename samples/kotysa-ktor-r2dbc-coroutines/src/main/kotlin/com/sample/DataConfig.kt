@@ -3,17 +3,12 @@ package com.sample
 import io.ktor.application.*
 import io.ktor.serialization.*
 import io.r2dbc.spi.ConnectionFactories
-import io.r2dbc.spi.ConnectionFactory
-import kotlinx.coroutines.reactive.awaitSingle
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
-import org.ufoss.kotysa.CoroutinesSqlClient
+import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionalOp
-import org.ufoss.kotysa.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 
 fun Application.dataConfig() {
@@ -27,24 +22,15 @@ fun Application.dataConfig() {
     userRepository.init()
 }
 
-private val h2Tables = tables().h2(ROLE, USER)
+private val h2Tables = tables().h2(Roles, Users)
 
 private val dataModule = DI.Module(name = "data") {
-    bind<ConnectionFactory>() with singleton {
-        ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1")
+    // create Kotysa SqlClient from r2dbc ConnectionFactory
+    bind<R2dbcSqlClient>() with singleton {
+        ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1").sqlClient(h2Tables)
     }
-    // create Kotysa SqlClient and TransactionalOp
-    bind<CoroutinesSqlClient>() with provider {
-        runBlocking {
-            instance<ConnectionFactory>().create().awaitSingle().sqlClient(h2Tables)
-        }
-    }
-    bind<R2dbcTransactionalOp>() with provider {
-        runBlocking {
-            instance<ConnectionFactory>().create().awaitSingle().transactionalOp()
-        }
-    }
-    bind<RoleRepository>() with provider { RoleRepository(instance()) }
-    bind<UserRepository>() with provider { UserRepository(instance(), instance()) }
     bind<Json>() with singleton { DefaultJson }
+    // Repositories
+    bind<RoleRepository>() with provider { RoleRepository(instance()) }
+    bind<UserRepository>() with provider { UserRepository(instance()) }
 }   

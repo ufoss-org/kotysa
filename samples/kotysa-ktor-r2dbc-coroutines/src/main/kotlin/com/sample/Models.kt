@@ -38,13 +38,13 @@ data class UserDto(
 
 // Mapping
 
-object ROLE : H2Table<Role>() {
+object Roles : H2Table<Role>() {
     val id = uuid(Role::id)
             .primaryKey()
     val label = varchar(Role::label)
 }
 
-object USER : H2Table<User>("users") {
+object Users : H2Table<User>("users") {
     val id = autoIncrementInteger(User::id)
             .primaryKey()
     val firstname = varchar(User::firstname)

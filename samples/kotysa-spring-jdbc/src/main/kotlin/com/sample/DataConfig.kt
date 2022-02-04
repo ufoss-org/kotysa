@@ -10,7 +10,7 @@ import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
 
 
-private val h2Tables = tables().h2(ROLE, USER)
+private val h2Tables = tables().h2(Roles, Users)
 
 @Configuration
 class DataConfig : AbstractJdbcConfiguration() {
