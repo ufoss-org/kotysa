@@ -8,4 +8,5 @@
   * then **release**
   * refresh again after several seconds, repo has gone -> it's released on maven central
 * update sample projects with this just released Kotysa version, commit them
+* Rebase current branch to main
 * do **release** task (for minor release, press Enter for suggested versions : release version = current, new version = current + 1)
