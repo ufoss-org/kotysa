@@ -167,90 +167,90 @@ class R2dbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryJdbcH2Select>() {
 class UserRepositoryJdbcH2Select(private val sqlClient: R2dbcSqlClient) : AbstractUserRepositoryR2dbcH2(sqlClient) {
 
     suspend fun selectOneNonUnique() =
-        (sqlClient selectFrom H2_USER
+        (sqlClient selectFrom H2Users
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
         (sqlClient select {
-            UserDto("${it[H2_USER.firstname]} ${it[H2_USER.lastname]}", it[H2_USER.alias])
+            UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.alias])
         }
-                from H2_USER
+                from H2Users
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2_USER.lastname]!!, it[H2_ROLE.label]!!) }
-                from H2_USER innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+                from H2Users innerJoin H2Roles on H2Users.roleId eq H2Roles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2_USER.lastname]!!, it[H2_ROLE.label]!!) }
-                from H2_USER and H2_ROLE
-                where H2_USER.roleId eq H2_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+                from H2Users and H2Roles
+                where H2Users.roleId eq H2Roles.id
                 ).fetchAll()
 
     fun selectAllIn(aliases: Collection<String>) =
-        (sqlClient selectFrom H2_USER
-                where H2_USER.alias `in` aliases
+        (sqlClient selectFrom H2Users
+                where H2Users.alias `in` aliases
                 ).fetchAll()
 
     suspend fun selectOneById(id: Int) =
-        (sqlClient select H2_USER
-                from H2_USER
-                where H2_USER.id eq id
+        (sqlClient select H2Users
+                from H2Users
+                where H2Users.id eq id
                 ).fetchOne()
 
     suspend fun selectFirstnameById(id: Int) =
-        (sqlClient select H2_USER.firstname
-                from H2_USER
-                where H2_USER.id eq id
+        (sqlClient select H2Users.firstname
+                from H2Users
+                where H2Users.id eq id
                 ).fetchOne()
 
     suspend fun selectAliasById(id: Int) =
-        (sqlClient select H2_USER.alias
-                from H2_USER
-                where H2_USER.id eq id
+        (sqlClient select H2Users.alias
+                from H2Users
+                where H2Users.id eq id
                 ).fetchOneOrNull()
 
     suspend fun selectFirstnameAndAliasById(id: Int) =
-        (sqlClient select H2_USER.firstname and H2_USER.alias
-                from H2_USER
-                where H2_USER.id eq id
+        (sqlClient select H2Users.firstname and H2Users.alias
+                from H2Users
+                where H2Users.id eq id
                 ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-        (sqlClient select H2_USER.firstname and H2_USER.alias
-                from H2_USER
+        (sqlClient select H2Users.firstname and H2Users.alias
+                from H2Users
                 ).fetchAll()
 
     suspend fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-        (sqlClient select H2_USER.firstname and H2_USER.lastname and H2_USER.alias
-                from H2_USER
-                where H2_USER.id eq id
+        (sqlClient select H2Users.firstname and H2Users.lastname and H2Users.alias
+                from H2Users
+                where H2Users.id eq id
                 ).fetchOne()
 
     suspend fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-        (sqlClient select H2_USER.firstname and H2_USER.lastname and H2_USER.alias and H2_USER.isAdmin
-                from H2_USER
-                where H2_USER.id eq id
+        (sqlClient select H2Users.firstname and H2Users.lastname and H2Users.alias and H2Users.isAdmin
+                from H2Users
+                where H2Users.id eq id
                 ).fetchOne()
 
     suspend fun countAllUsersAndAliases() =
-        (sqlClient selectCount H2_USER.id
-                andCount H2_USER.alias
-                from H2_USER
+        (sqlClient selectCount H2Users.id
+                andCount H2Users.alias
+                from H2Users
                 ).fetchOne()
 
     suspend fun selectRoleLabelFromUserId(userId: Int) =
-        (sqlClient select H2_ROLE.label
-                from H2_ROLE innerJoin H2_USER on H2_ROLE.id eq H2_USER.roleId
-                where H2_USER.id eq userId)
+        (sqlClient select H2Roles.label
+                from H2Roles innerJoin H2Users on H2Roles.id eq H2Users.roleId
+                where H2Users.id eq userId)
             .fetchOne()
 
-    suspend fun countAllUsers() = sqlClient selectCountAllFrom H2_USER
+    suspend fun countAllUsers() = sqlClient selectCountAllFrom H2Users
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-        (sqlClient select H2_ROLE.label
-                from H2_USER_ROLE innerJoin H2_ROLE on H2_USER_ROLE.roleId eq H2_ROLE.id
-                where H2_USER_ROLE.userId eq userId)
+        (sqlClient select H2Roles.label
+                from H2UserRoles innerJoin H2Roles on H2UserRoles.roleId eq H2Roles.id
+                where H2UserRoles.userId eq userId)
             .fetchAll()
 }

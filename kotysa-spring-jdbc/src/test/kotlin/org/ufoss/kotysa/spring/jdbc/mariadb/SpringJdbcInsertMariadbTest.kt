@@ -137,10 +137,10 @@ class RepositoryMariadbInsert(dbClient: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists MARIADB_INT
-        sqlClient createTableIfNotExists MARIADB_LONG
-        sqlClient createTableIfNotExists MARIADB_CUSTOMER
-        sqlClient createTableIfNotExists MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MariadbInts
+        sqlClient createTableIfNotExists MariadbLongs
+        sqlClient createTableIfNotExists MariadbCustomers
+        sqlClient createTableIfNotExists MariadbAllTypesNullableDefaultValueWithTimes
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
@@ -149,7 +149,7 @@ class RepositoryMariadbInsert(dbClient: JdbcOperations) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MARIADB_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MariadbCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

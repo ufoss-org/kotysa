@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_ROLE
+import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
@@ -38,7 +38,7 @@ class R2DbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposi
 class UserRepositoryPostgresqlSelectDistinct(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct POSTGRESQL_ROLE.label
-                    from POSTGRESQL_ROLE
+            (sqlClient selectDistinct PostgresqlRoles.label
+                    from PostgresqlRoles
                     ).fetchAll()
 }

@@ -81,15 +81,15 @@ class AllTypesRepositoryMssql(private val sqlClient: JdbcSqlClient) : Repository
     }
 
     override fun delete() {
-        sqlClient deleteAllFrom MSSQL_ALL_TYPES_NOT_NULL
-        sqlClient deleteAllFrom MSSQL_ALL_TYPES_NULLABLE
-        sqlClient deleteAllFrom MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient deleteAllFrom MssqlAllTypesNotNulls
+        sqlClient deleteAllFrom MssqlAllTypesNullables
+        sqlClient deleteAllFrom MssqlAllTypesNullableDefaultValues
     }
 
     private fun createTables() {
-        sqlClient createTable MSSQL_ALL_TYPES_NOT_NULL
-        sqlClient createTable MSSQL_ALL_TYPES_NULLABLE
-        sqlClient createTableIfNotExists MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTable MssqlAllTypesNotNulls
+        sqlClient createTable MssqlAllTypesNullables
+        sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues
     }
 
     private fun insertAllTypes() {
@@ -98,26 +98,26 @@ class AllTypesRepositoryMssql(private val sqlClient: JdbcSqlClient) : Repository
         sqlClient.insert(allTypesNullableDefaultValue)
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MSSQL_ALL_TYPES_NOT_NULL
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MssqlAllTypesNotNulls
 
-    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MSSQL_ALL_TYPES_NULLABLE
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MssqlAllTypesNullables
 
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MssqlAllTypesNullableDefaultValues
 
     fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
                               newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalDateTime: LocalDateTime,
                               newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long) =
-            (sqlClient update MSSQL_ALL_TYPES_NOT_NULL
-                    set MSSQL_ALL_TYPES_NOT_NULL.string eq newString
-                    set MSSQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                    set MSSQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                    set MSSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                    set MSSQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                    set MSSQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                    set MSSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                    set MSSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                    set MSSQL_ALL_TYPES_NOT_NULL.inte eq newInt
-                    set MSSQL_ALL_TYPES_NOT_NULL.longe eq newLong
-                    where MSSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+            (sqlClient update MssqlAllTypesNotNulls
+                    set MssqlAllTypesNotNulls.string eq newString
+                    set MssqlAllTypesNotNulls.boolean eq newBoolean
+                    set MssqlAllTypesNotNulls.localDate eq newLocalDate
+                    set MssqlAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                    set MssqlAllTypesNotNulls.localDateTime1 eq newLocalDateTime
+                    set MssqlAllTypesNotNulls.localDateTime2 eq newLocalDateTime
+                    set MssqlAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set MssqlAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set MssqlAllTypesNotNulls.inte eq newInt
+                    set MssqlAllTypesNotNulls.longe eq newLong
+                    where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

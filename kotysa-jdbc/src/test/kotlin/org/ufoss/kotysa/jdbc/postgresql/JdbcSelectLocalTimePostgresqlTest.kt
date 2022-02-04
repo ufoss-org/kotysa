@@ -186,77 +186,77 @@ class LocalTimeRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) 
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_LOCAL_TIME
+        sqlClient createTable PostgresqlLocalTimes
     }
 
     private fun insertLocalTimes() {
         sqlClient.insert(localTimeWithNullable, localTimeWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_LOCAL_TIME
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlLocalTimes
 
     fun selectAllByLocalTimeNotNull(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull eq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull eq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull notEq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull notEq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNotNullIn(values: Sequence<LocalTime>) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull `in` values
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull before localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull before localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull beforeOrEq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull beforeOrEq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull after localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull after localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNotNull afterOrEq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNotNull afterOrEq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNullable(localTime: LocalTime?) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNullable eq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNullable eq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNullable notEq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNullable notEq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNullable before localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNullable before localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNullable beforeOrEq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNullable beforeOrEq localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNullable after localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNullable after localTime
                     ).fetchAll()
 
     fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_TIME
-                    where POSTGRESQL_LOCAL_TIME.localTimeNullable afterOrEq localTime
+            (sqlClient selectFrom PostgresqlLocalTimes
+                    where PostgresqlLocalTimes.localTimeNullable afterOrEq localTime
                     ).fetchAll()
 }

@@ -40,22 +40,22 @@ class JdbcSelectMinMaxAvgSumMariadbTest : AbstractJdbcMariadbTest<MinMaxAvgSumRe
 class MinMaxAvgSumRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin MARIADB_CUSTOMER.age
-                    from MARIADB_CUSTOMER
+            (sqlClient selectMin MariadbCustomers.age
+                    from MariadbCustomers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax MARIADB_CUSTOMER.age
-                    from MARIADB_CUSTOMER
+            (sqlClient selectMax MariadbCustomers.age
+                    from MariadbCustomers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg MARIADB_CUSTOMER.age
-                    from MARIADB_CUSTOMER
+            (sqlClient selectAvg MariadbCustomers.age
+                    from MariadbCustomers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum MARIADB_CUSTOMER.age
-                    from MARIADB_CUSTOMER
+            (sqlClient selectSum MariadbCustomers.age
+                    from MariadbCustomers
                     ).fetchOne()
 }

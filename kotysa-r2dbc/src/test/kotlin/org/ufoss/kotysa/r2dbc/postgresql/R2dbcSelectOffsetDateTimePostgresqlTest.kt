@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_OFFSET_DATE_TIME
+import org.ufoss.kotysa.test.PostgresqlOffsetDateTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.offsetDateTimeWithNullable
 import org.ufoss.kotysa.test.offsetDateTimeWithoutNullable
@@ -289,77 +289,77 @@ class OffsetDateTimeRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlCl
     }
 
     private suspend fun createTables() {
-        sqlClient createTable POSTGRESQL_OFFSET_DATE_TIME
+        sqlClient createTable PostgresqlOffsetDateTimes
     }
 
     private suspend fun insertOffsetDateTimes() {
         sqlClient.insert(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_OFFSET_DATE_TIME
+    private suspend fun deleteAll() = sqlClient deleteAllFrom PostgresqlOffsetDateTimes
 
     fun selectAllByOffsetDateTimeNotNull(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull eq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull eq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull notEq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull notEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull `in` values
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull before offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull before offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull beforeOrEq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull beforeOrEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull after offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull after offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNotNull afterOrEq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNotNull afterOrEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullable(offsetDateTime: OffsetDateTime?) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable eq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNullable eq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable notEq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNullable notEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBefore(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable before offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNullable before offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable beforeOrEq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNullable beforeOrEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfter(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable after offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNullable after offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom POSTGRESQL_OFFSET_DATE_TIME
-                where POSTGRESQL_OFFSET_DATE_TIME.offsetDateTimeNullable afterOrEq offsetDateTime
+        (sqlClient selectFrom PostgresqlOffsetDateTimes
+                where PostgresqlOffsetDateTimes.offsetDateTimeNullable afterOrEq offsetDateTime
                 ).fetchAll()
 }

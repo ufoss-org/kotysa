@@ -23,12 +23,12 @@ abstract class AbstractCustomerRepositorySpringJdbcPostgresql(client: JdbcOperat
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_CUSTOMER
+        sqlClient createTableIfNotExists PostgresqlCustomers
     }
 
     private fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_CUSTOMER
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlCustomers
 }

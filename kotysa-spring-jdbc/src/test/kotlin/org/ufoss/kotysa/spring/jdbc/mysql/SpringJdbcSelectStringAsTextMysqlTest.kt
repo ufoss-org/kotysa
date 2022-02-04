@@ -187,72 +187,72 @@ class StringAsTextRepositoryMysqlSelect(client: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTable MYSQL_TEXT
+        sqlClient createTable MysqlText
     }
 
     private fun insertTexts() {
         sqlClient.insert(stringAsTextNotNull, stringAsTextNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_TEXT
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlText
 
     fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom MYSQL_TEXT
-                where MYSQL_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MysqlText
+                where MysqlText.stringNotNull eq value
                 ).fetchFirstOrNull()
 
     fun selectFirstByStringNotNull(value: String) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNotNull eq value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNotNull eq value
                     ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNotNull notEq value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNotNull notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNotNull `in` values
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MYSQL_TEXT
-                where MYSQL_TEXT.stringNotNull contains value
+        (sqlClient selectFrom MysqlText
+                where MysqlText.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MYSQL_TEXT
-                where MYSQL_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom MysqlText
+                where MysqlText.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MYSQL_TEXT
-                where MYSQL_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom MysqlText
+                where MysqlText.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNullable eq value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNullable eq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNullable notEq value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNullable notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNullable contains value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNullable contains value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNullable startsWith value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNullable startsWith value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-            (sqlClient selectFrom MYSQL_TEXT
-                    where MYSQL_TEXT.stringNullable endsWith value
+            (sqlClient selectFrom MysqlText
+                    where MysqlText.stringNullable endsWith value
                     ).fetchAll()
 }

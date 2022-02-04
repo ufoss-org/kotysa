@@ -33,8 +33,8 @@ class SpringJdbcSelectGroupByMysqlTest : AbstractSpringJdbcMysqlTest<GroupByRepo
 class GroupByRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country
-                    from MYSQL_CUSTOMER
-                    groupBy MYSQL_CUSTOMER.country
+            (sqlClient selectCount MysqlCustomers.id and MysqlCustomers.country
+                    from MysqlCustomers
+                    groupBy MysqlCustomers.country
                     ).fetchAll()
 }

@@ -122,10 +122,10 @@ class RepositoryMssqlInsert(private val sqlClient: JdbcSqlClient) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists MSSQL_INT
-        sqlClient createTableIfNotExists MSSQL_LONG
-        sqlClient createTableIfNotExists MSSQL_CUSTOMER
-        sqlClient createTableIfNotExists MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MssqlInts
+        sqlClient createTableIfNotExists MssqlLongs
+        sqlClient createTableIfNotExists MssqlCustomers
+        sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
@@ -134,7 +134,7 @@ class RepositoryMssqlInsert(private val sqlClient: JdbcSqlClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MSSQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MssqlCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

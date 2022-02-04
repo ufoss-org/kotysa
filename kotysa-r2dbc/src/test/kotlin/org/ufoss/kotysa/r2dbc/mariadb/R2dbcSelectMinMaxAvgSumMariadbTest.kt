@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MARIADB_CUSTOMER
+import org.ufoss.kotysa.test.MariadbCustomers
 
 class R2dbcSelectMinMaxAvgSumMariadbTest : AbstractR2dbcMariadbTest<MinMaxAvgSumRepositoryMariadbSelect>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = MinMaxAvgSumRepositoryMariadbSelect(sqlClient)
@@ -42,22 +42,22 @@ class MinMaxAvgSumRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient)
     AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
 
     suspend fun selectCustomerMinAge() =
-        (sqlClient selectMin MARIADB_CUSTOMER.age
-                from MARIADB_CUSTOMER
+        (sqlClient selectMin MariadbCustomers.age
+                from MariadbCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerMaxAge() =
-        (sqlClient selectMax MARIADB_CUSTOMER.age
-                from MARIADB_CUSTOMER
+        (sqlClient selectMax MariadbCustomers.age
+                from MariadbCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerAvgAge() =
-        (sqlClient selectAvg MARIADB_CUSTOMER.age
-                from MARIADB_CUSTOMER
+        (sqlClient selectAvg MariadbCustomers.age
+                from MariadbCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerSumAge() =
-        (sqlClient selectSum MARIADB_CUSTOMER.age
-                from MARIADB_CUSTOMER
+        (sqlClient selectSum MariadbCustomers.age
+                from MariadbCustomers
                 ).fetchOne()
 }

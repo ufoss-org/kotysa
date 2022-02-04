@@ -24,9 +24,9 @@ abstract class AbstractUserRepositoryR2dbcMysql(private val sqlClient: R2dbcSqlC
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MYSQL_ROLE
-        sqlClient createTableIfNotExists MYSQL_USER
-        sqlClient createTableIfNotExists MYSQL_USER_ROLE
+        sqlClient createTableIfNotExists MysqlRoles
+        sqlClient createTableIfNotExists MysqlUsers
+        sqlClient createTableIfNotExists MysqlUserRoles
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
@@ -37,18 +37,18 @@ abstract class AbstractUserRepositoryR2dbcMysql(private val sqlClient: R2dbcSqlC
         sqlClient insert userRoleBboss
     }
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MysqlRoles
 
-    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MysqlUsers
 
-    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MYSQL_USER_ROLE
+    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MysqlUserRoles
 
-    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom MYSQL_USER_ROLE
+    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom MysqlUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MysqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname eq firstname
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname eq firstname
                 ).fetchFirstOrNull()
 }

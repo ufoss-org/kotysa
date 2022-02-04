@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_LOCAL_TIME
+import org.ufoss.kotysa.test.H2LocalTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.localTimeWithNullable
 import org.ufoss.kotysa.test.localTimeWithoutNullable
@@ -194,77 +194,77 @@ class LocalTimeRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : Repos
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2_LOCAL_TIME
+        sqlClient createTable H2LocalTimes
     }
 
     private suspend fun insertLocalTimes() {
         sqlClient.insert(localTimeWithNullable, localTimeWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_LOCAL_TIME
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2LocalTimes
 
     fun selectAllByLocalTimeNotNull(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull eq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull eq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull notEq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull notEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullIn(values: Sequence<LocalTime>) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull `in` values
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull before localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull before localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull beforeOrEq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull beforeOrEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull after localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull after localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNotNull afterOrEq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNotNull afterOrEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullable(localTime: LocalTime?) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNullable eq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNullable eq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNullable notEq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNullable notEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNullable before localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNullable before localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNullable beforeOrEq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNullable beforeOrEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNullable after localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNullable after localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom H2_LOCAL_TIME
-                where H2_LOCAL_TIME.localTimeNullable afterOrEq localTime
+        (sqlClient selectFrom H2LocalTimes
+                where H2LocalTimes.localTimeNullable afterOrEq localTime
                 ).fetchAll()
 }

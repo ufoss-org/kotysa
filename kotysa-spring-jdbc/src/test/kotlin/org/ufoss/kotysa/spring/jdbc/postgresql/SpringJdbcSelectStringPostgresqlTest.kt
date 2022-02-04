@@ -10,7 +10,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.test.POSTGRESQL_USER
+import org.ufoss.kotysa.test.PostgresqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
@@ -177,57 +177,57 @@ class SpringJdbcSelectStringPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
 class UserRepositorySpringJdbcPostgresqlSelectString(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname eq firstname
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname eq firstname
                     ).fetchFirst()
 
     fun selectAllByFirstnameNotEq(firstname: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname notEq firstname
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname notEq firstname
                     ).fetchAll()
 
     fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname `in` firstnames
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname `in` firstnames
                     ).fetchAll()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.alias eq alias
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.alias eq alias
                     ).fetchAll()
 
     fun selectAllByAliasNotEq(alias: String?) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.alias notEq alias
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.alias notEq alias
                     ).fetchAll()
 
     fun selectAllByFirstnameContains(firstnameContains: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname contains firstnameContains
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname contains firstnameContains
                     ).fetchAll()
 
     fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname startsWith firstnameStartsWith
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname startsWith firstnameStartsWith
                     ).fetchAll()
 
     fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname endsWith firstnameEndsWith
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname endsWith firstnameEndsWith
                     ).fetchAll()
 
     fun selectAllByAliasContains(aliasContains: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.alias contains aliasContains
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.alias contains aliasContains
                     ).fetchAll()
 
     fun selectAllByAliasStartsWith(aliasStartsWith: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.alias startsWith aliasStartsWith
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.alias startsWith aliasStartsWith
                     ).fetchAll()
 
     fun selectAllByAliasEndsWith(aliasEndsWith: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.alias endsWith aliasEndsWith
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.alias endsWith aliasEndsWith
                     ).fetchAll()
 }

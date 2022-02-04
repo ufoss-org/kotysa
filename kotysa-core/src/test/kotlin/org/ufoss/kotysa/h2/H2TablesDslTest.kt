@@ -20,7 +20,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test all supported column types for not null properties`() {
-        val tables = DbTypeChoice.h2(H2_ALL_TYPES_NOT_NULL)
+        val tables = DbTypeChoice.h2(H2AllTypesNotNulls)
         assertThat(tables.allColumns.values)
                 .extracting("name", "sqlType", "nullable", "autoIncrement")
                 .containsExactlyInAnyOrder(
@@ -43,7 +43,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test all supported column types for nullable properties`() {
-        val tables = DbTypeChoice.h2(H2_ALL_TYPES_NULLABLE)
+        val tables = DbTypeChoice.h2(H2AllTypesNullables)
         assertThat(tables.allColumns.values)
                 .extracting("name", "sqlType", "nullable", "autoIncrement")
                 .containsExactlyInAnyOrder(
@@ -65,7 +65,7 @@ class H2TablesDslTest {
 
     @Test
     fun `Test all supported column types for nullable properties with default values`() {
-        val tables = DbTypeChoice.h2(H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+        val tables = DbTypeChoice.h2(H2AllTypesNullableDefaultValues)
         assertThat(tables.allColumns.values)
                 .extracting("name", "sqlType", "nullable", "defaultValue")
                 .containsExactly(
@@ -89,10 +89,10 @@ class H2TablesDslTest {
     @Test
     fun `Test primary and foreign key`() {
         val tables = tables().h2(
-                H2_ROLE,
-                H2_USER
+                H2Roles,
+                H2Users
         )
-        val roleTable = tables.allTables[H2_ROLE] ?: fail { "require mapped RoleEntity" }
+        val roleTable = tables.allTables[H2Roles] ?: fail { "require mapped RoleEntity" }
         assertThat(roleTable.columns)
                 .extracting("name", "sqlType", "nullable")
                 .containsExactly(
@@ -100,8 +100,8 @@ class H2TablesDslTest {
                         tuple("label", SqlType.VARCHAR, false))
         assertThat(roleTable.primaryKey.name).isNull()
         assertThat(roleTable.primaryKey.columns)
-                .containsExactly(H2_ROLE.id)
-        val userTable = tables.allTables[H2_USER] ?: fail { "require mapped UserEntity" }
+                .containsExactly(H2Roles.id)
+        val userTable = tables.allTables[H2Users] ?: fail { "require mapped UserEntity" }
         assertThat(userTable.columns)
                 .extracting("name", "sqlType", "nullable")
                 .containsExactlyInAnyOrder(
@@ -118,6 +118,6 @@ class H2TablesDslTest {
         assertThat(userTableFk.name).isEqualTo("FK_users_roles")
         assertThat(userTableFk.references.values)
                 .hasSize(1)
-                .containsExactly(H2_ROLE.id)
+                .containsExactly(H2Roles.id)
     }
 }

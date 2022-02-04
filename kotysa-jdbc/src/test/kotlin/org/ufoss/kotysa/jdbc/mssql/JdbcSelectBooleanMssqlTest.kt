@@ -7,7 +7,7 @@ package org.ufoss.kotysa.jdbc.mssql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.jdbc.JdbcSqlClient
-import org.ufoss.kotysa.test.MSSQL_USER
+import org.ufoss.kotysa.test.MssqlUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -33,7 +33,7 @@ class JdbcSelectBooleanMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssql
 class UserRepositoryJdbcMssqlSelectBoolean(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.isAdmin eq value
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.isAdmin eq value
                     ).fetchAll()
 }

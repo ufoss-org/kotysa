@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_USER
+import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -173,57 +173,57 @@ class UserRepositoryJdbcMysqlSelectString(private val sqlClient: R2dbcSqlClient)
     AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname eq firstname
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname eq firstname
                 ).fetchFirst()
 
     fun selectAllByFirstnameNotEq(firstname: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname notEq firstname
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname notEq firstname
                 ).fetchAll()
 
     fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname `in` firstnames
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname `in` firstnames
                 ).fetchAll()
 
     fun selectByAlias(alias: String?) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.alias eq alias
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias eq alias
                 ).fetchAll()
 
     fun selectAllByAliasNotEq(alias: String?) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.alias notEq alias
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias notEq alias
                 ).fetchAll()
 
     fun selectAllByFirstnameContains(firstnameContains: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname contains firstnameContains
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname contains firstnameContains
                 ).fetchAll()
 
     fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname startsWith firstnameStartsWith
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname startsWith firstnameStartsWith
                 ).fetchAll()
 
     fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.firstname endsWith firstnameEndsWith
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname endsWith firstnameEndsWith
                 ).fetchAll()
 
     fun selectAllByAliasContains(aliasContains: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.alias contains aliasContains
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias contains aliasContains
                 ).fetchAll()
 
     fun selectAllByAliasStartsWith(aliasStartsWith: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.alias startsWith aliasStartsWith
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias startsWith aliasStartsWith
                 ).fetchAll()
 
     fun selectAllByAliasEndsWith(aliasEndsWith: String) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.alias endsWith aliasEndsWith
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias endsWith aliasEndsWith
                 ).fetchAll()
 }

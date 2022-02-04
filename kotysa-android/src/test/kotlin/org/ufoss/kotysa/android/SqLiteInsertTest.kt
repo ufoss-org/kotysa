@@ -131,10 +131,10 @@ class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists SQLITE_INT
-        sqlClient createTableIfNotExists SQLITE_LONG
-        sqlClient createTableIfNotExists SQLITE_CUSTOMER
-        sqlClient createTableIfNotExists SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists SqliteInts
+        sqlClient createTableIfNotExists SqliteLongs
+        sqlClient createTableIfNotExists SqliteCustomers
+        sqlClient createTableIfNotExists SqliteAllTypesNullableDefaultValueWithTimes
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
@@ -143,7 +143,7 @@ class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom SQLITE_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom SqliteCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

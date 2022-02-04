@@ -20,12 +20,12 @@ abstract class AbstractCustomerRepositoryR2dbcMysql(private val sqlClient: R2dbc
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MYSQL_CUSTOMER
+        sqlClient createTableIfNotExists MysqlCustomers
     }
 
     private suspend fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MYSQL_CUSTOMER
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlCustomers
 }

@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.SQLITE_ROLE
+import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
 
@@ -30,8 +30,8 @@ class UserRepositorySelectOr(
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom SQLITE_ROLE
-                    where SQLITE_ROLE.label eq label1
-                    or SQLITE_ROLE.label eq label2
+            (sqlClient selectFrom SqliteRoles
+                    where SqliteRoles.label eq label1
+                    or SqliteRoles.label eq label2
                     ).fetchAll()
 }

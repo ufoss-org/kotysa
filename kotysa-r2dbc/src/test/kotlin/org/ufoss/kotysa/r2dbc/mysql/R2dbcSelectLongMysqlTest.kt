@@ -200,77 +200,77 @@ class LongRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClient) : Reposit
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MYSQL_LONG
+        sqlClient createTable MysqlLongs
     }
 
     private suspend fun insertLongs() {
         sqlClient.insert(longWithNullable, longWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MYSQL_LONG
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlLongs
 
     fun selectAllByLongNotNull(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull eq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull eq long
                 ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull notEq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull notEq long
                 ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull `in` values
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull inf long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull inf long
                 ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull infOrEq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull infOrEq long
                 ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull sup long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull sup long
                 ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNotNull supOrEq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNotNull supOrEq long
                 ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNullable eq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNullable eq long
                 ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNullable notEq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNullable notEq long
                 ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNullable inf long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNullable inf long
                 ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNullable infOrEq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNullable infOrEq long
                 ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNullable sup long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNullable sup long
                 ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-        (sqlClient selectFrom MYSQL_LONG
-                where MYSQL_LONG.longNullable supOrEq long
+        (sqlClient selectFrom MysqlLongs
+                where MysqlLongs.longNullable supOrEq long
                 ).fetchAll()
 }

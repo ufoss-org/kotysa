@@ -27,9 +27,9 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists MYSQL_ROLE
-        sqlClient createTableIfNotExists MYSQL_USER
-        sqlClient createTableIfNotExists MYSQL_USER_ROLE
+        sqlClient createTableIfNotExists MysqlRoles
+        sqlClient createTableIfNotExists MysqlUsers
+        sqlClient createTableIfNotExists MysqlUserRoles
     }
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
@@ -40,18 +40,18 @@ abstract class AbstractUserRepositorySpringJdbcMysql(client: JdbcOperations) : R
         sqlClient insert userRoleBboss
     }
 
-    private fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom MysqlRoles
 
-    private fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom MysqlUsers
 
-    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MYSQL_USER_ROLE
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MysqlUserRoles
 
-    fun countAllUserRoles() = sqlClient selectCountAllFrom MYSQL_USER_ROLE
+    fun countAllUserRoles() = sqlClient selectCountAllFrom MysqlUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MysqlUsers
 
     fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MysqlUsers
+                    where MysqlUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 }

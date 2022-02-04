@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_USER
+import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -36,7 +36,7 @@ class UserRepositoryJdbcMysqlSelectBoolean(private val sqlClient: R2dbcSqlClient
     AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.isAdmin eq value
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.isAdmin eq value
                 ).fetchAll()
 }

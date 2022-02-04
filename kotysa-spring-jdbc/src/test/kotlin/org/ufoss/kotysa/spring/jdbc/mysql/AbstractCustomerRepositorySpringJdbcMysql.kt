@@ -23,12 +23,12 @@ abstract class AbstractCustomerRepositorySpringJdbcMysql(client: JdbcOperations)
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists MYSQL_CUSTOMER
+        sqlClient createTableIfNotExists MysqlCustomers
     }
 
     private fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_CUSTOMER
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlCustomers
 }

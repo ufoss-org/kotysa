@@ -23,13 +23,13 @@ class R2dbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
 
     @Test
     fun `Verify extension function selectById finds inherited`() = runTest {
-        assertThat(repository.selectById(MYSQL_INHERITED, "id"))
+        assertThat(repository.selectById(MysqlInheriteds, "id"))
             .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() = runTest {
-        assertThat(repository.selectFirstByName(MYSQL_INHERITED, "name"))
+        assertThat(repository.selectFirstByName(MysqlInheriteds, "name"))
             .isEqualTo(inherited)
     }
 
@@ -37,7 +37,7 @@ class R2dbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
     fun `Verify deleteById deletes inherited`() = runTest {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById(MYSQL_INHERITED, "id"))
+            assertThat(repository.deleteById(MysqlInheriteds, "id"))
                 .isEqualTo(1)
             assertThat(repository.selectAll().toList())
                 .isEmpty()
@@ -58,20 +58,20 @@ class InheritanceMysqlRepository(private val sqlClient: R2dbcSqlClient) : Reposi
     }
 
     private suspend fun createTable() {
-        sqlClient createTable MYSQL_INHERITED
+        sqlClient createTable MysqlInheriteds
     }
 
     suspend fun insert() {
         sqlClient insert inherited
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MYSQL_INHERITED
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlInheriteds
 
-    fun selectAll() = sqlClient selectAllFrom MYSQL_INHERITED
+    fun selectAll() = sqlClient selectAllFrom MysqlInheriteds
 
     suspend fun selectInheritedById(id: String) =
-        (sqlClient selectFrom MYSQL_INHERITED
-                where MYSQL_INHERITED.id eq id
+        (sqlClient selectFrom MysqlInheriteds
+                where MysqlInheriteds.id eq id
                 ).fetchOne()
 
     suspend fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

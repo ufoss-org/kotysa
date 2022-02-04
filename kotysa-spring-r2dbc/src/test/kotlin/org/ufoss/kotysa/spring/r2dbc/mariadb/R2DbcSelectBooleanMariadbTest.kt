@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.MARIADB_USER
+import org.ufoss.kotysa.test.MariadbUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
@@ -44,7 +44,7 @@ class R2DbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMar
 class UserRepositoryMariadbSelectBoolean(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractUserRepositoryMariadb(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MARIADB_USER
-                    where MARIADB_USER.isAdmin eq value
+            (sqlClient selectFrom MariadbUsers
+                    where MariadbUsers.isAdmin eq value
                     ).fetchAll()
 }

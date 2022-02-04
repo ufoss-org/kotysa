@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_USER
+import org.ufoss.kotysa.test.PostgresqlUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -36,7 +36,7 @@ class UserRepositoryJdbcPostgresqlSelectBoolean(private val sqlClient: R2dbcSqlC
     AbstractUserRepositoryR2dbcPostgresql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom POSTGRESQL_USER
-                where POSTGRESQL_USER.isAdmin eq value
+        (sqlClient selectFrom PostgresqlUsers
+                where PostgresqlUsers.isAdmin eq value
                 ).fetchAll()
 }

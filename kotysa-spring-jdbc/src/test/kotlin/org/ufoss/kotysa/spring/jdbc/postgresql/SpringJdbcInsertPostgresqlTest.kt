@@ -140,10 +140,10 @@ class RepositoryPostgresqlInsert(dbClient: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_INT
-        sqlClient createTableIfNotExists POSTGRESQL_LONG
-        sqlClient createTableIfNotExists POSTGRESQL_CUSTOMER
-        sqlClient createTableIfNotExists POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists PostgresqlInts
+        sqlClient createTableIfNotExists PostgresqlLongs
+        sqlClient createTableIfNotExists PostgresqlCustomers
+        sqlClient createTableIfNotExists PostgresqlAllTypesNullableDefaultValues
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
@@ -152,7 +152,7 @@ class RepositoryPostgresqlInsert(dbClient: JdbcOperations) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom POSTGRESQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom PostgresqlCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

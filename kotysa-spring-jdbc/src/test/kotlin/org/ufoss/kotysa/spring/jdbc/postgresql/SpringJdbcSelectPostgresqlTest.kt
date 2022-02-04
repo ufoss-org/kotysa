@@ -175,94 +175,94 @@ class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcOperations) :
     AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectOneNonUnique() =
-        (sqlClient selectFrom POSTGRESQL_USER
+        (sqlClient selectFrom PostgresqlUsers
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
         (sqlClient select {
-            UserDto("${it[POSTGRESQL_USER.firstname]} ${it[POSTGRESQL_USER.lastname]}", it[POSTGRESQL_USER.alias])
+            UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}", it[PostgresqlUsers.alias])
         }
-                from POSTGRESQL_USER
+                from PostgresqlUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[POSTGRESQL_USER.lastname]!!, it[POSTGRESQL_ROLE.label]!!) }
-                from POSTGRESQL_USER innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER.roleId eq POSTGRESQL_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[PostgresqlUsers.lastname]!!, it[PostgresqlRoles.label]!!) }
+                from PostgresqlUsers innerJoin PostgresqlRoles on PostgresqlUsers.roleId eq PostgresqlRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[POSTGRESQL_USER.lastname]!!, it[POSTGRESQL_ROLE.label]!!) }
-                from POSTGRESQL_USER and POSTGRESQL_ROLE
-                where POSTGRESQL_USER.roleId eq POSTGRESQL_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[PostgresqlUsers.lastname]!!, it[PostgresqlRoles.label]!!) }
+                from PostgresqlUsers and PostgresqlRoles
+                where PostgresqlUsers.roleId eq PostgresqlRoles.id
                 ).fetchAll()
 
     fun selectAllStream() =
-        (sqlClient selectFrom POSTGRESQL_USER
+        (sqlClient selectFrom PostgresqlUsers
                 ).fetchAllStream()
 
     fun selectAllIn(aliases: Collection<String>) =
-        (sqlClient selectFrom POSTGRESQL_USER
-                where POSTGRESQL_USER.alias `in` aliases
+        (sqlClient selectFrom PostgresqlUsers
+                where PostgresqlUsers.alias `in` aliases
                 ).fetchAll()
 
     fun selectOneById(id: Int) =
-        (sqlClient select POSTGRESQL_USER
-                from POSTGRESQL_USER
-                where POSTGRESQL_USER.id eq id
+        (sqlClient select PostgresqlUsers
+                from PostgresqlUsers
+                where PostgresqlUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameById(id: Int) =
-        (sqlClient select POSTGRESQL_USER.firstname
-                from POSTGRESQL_USER
-                where POSTGRESQL_USER.id eq id
+        (sqlClient select PostgresqlUsers.firstname
+                from PostgresqlUsers
+                where PostgresqlUsers.id eq id
                 ).fetchOne()
 
     fun selectAliasById(id: Int) =
-        (sqlClient select POSTGRESQL_USER.alias
-                from POSTGRESQL_USER
-                where POSTGRESQL_USER.id eq id
+        (sqlClient select PostgresqlUsers.alias
+                from PostgresqlUsers
+                where PostgresqlUsers.id eq id
                 ).fetchOneOrNull()
 
     fun selectFirstnameAndAliasById(id: Int) =
-        (sqlClient select POSTGRESQL_USER.firstname and POSTGRESQL_USER.alias
-                from POSTGRESQL_USER
-                where POSTGRESQL_USER.id eq id
+        (sqlClient select PostgresqlUsers.firstname and PostgresqlUsers.alias
+                from PostgresqlUsers
+                where PostgresqlUsers.id eq id
                 ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-        (sqlClient select POSTGRESQL_USER.firstname and POSTGRESQL_USER.alias
-                from POSTGRESQL_USER
+        (sqlClient select PostgresqlUsers.firstname and PostgresqlUsers.alias
+                from PostgresqlUsers
                 ).fetchAll()
 
     fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-        (sqlClient select POSTGRESQL_USER.firstname and POSTGRESQL_USER.lastname and POSTGRESQL_USER.alias
-                from POSTGRESQL_USER
-                where POSTGRESQL_USER.id eq id
+        (sqlClient select PostgresqlUsers.firstname and PostgresqlUsers.lastname and PostgresqlUsers.alias
+                from PostgresqlUsers
+                where PostgresqlUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-        (sqlClient select POSTGRESQL_USER.firstname and POSTGRESQL_USER.lastname and POSTGRESQL_USER.alias and POSTGRESQL_USER.isAdmin
-                from POSTGRESQL_USER
-                where POSTGRESQL_USER.id eq id
+        (sqlClient select PostgresqlUsers.firstname and PostgresqlUsers.lastname and PostgresqlUsers.alias and PostgresqlUsers.isAdmin
+                from PostgresqlUsers
+                where PostgresqlUsers.id eq id
                 ).fetchOne()
 
     fun countAllUsersAndAliases() =
-        (sqlClient selectCount POSTGRESQL_USER.id
-                andCount POSTGRESQL_USER.alias
-                from POSTGRESQL_USER
+        (sqlClient selectCount PostgresqlUsers.id
+                andCount PostgresqlUsers.alias
+                from PostgresqlUsers
                 ).fetchOne()
 
     fun selectRoleLabelFromUserId(userId: Int) =
-        (sqlClient select POSTGRESQL_ROLE.label
-                from POSTGRESQL_ROLE innerJoin POSTGRESQL_USER on POSTGRESQL_ROLE.id eq POSTGRESQL_USER.roleId
-                where POSTGRESQL_USER.id eq userId)
+        (sqlClient select PostgresqlRoles.label
+                from PostgresqlRoles innerJoin PostgresqlUsers on PostgresqlRoles.id eq PostgresqlUsers.roleId
+                where PostgresqlUsers.id eq userId)
             .fetchOne()
 
-    fun countAllUsers() = sqlClient selectCountAllFrom POSTGRESQL_USER
+    fun countAllUsers() = sqlClient selectCountAllFrom PostgresqlUsers
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-        (sqlClient select POSTGRESQL_ROLE.label
-                from POSTGRESQL_USER_ROLE innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER_ROLE.roleId eq POSTGRESQL_ROLE.id
-                where POSTGRESQL_USER_ROLE.userId eq userId)
+        (sqlClient select PostgresqlRoles.label
+                from PostgresqlUserRoles innerJoin PostgresqlRoles on PostgresqlUserRoles.roleId eq PostgresqlRoles.id
+                where PostgresqlUserRoles.userId eq userId)
             .fetchAll()
 }

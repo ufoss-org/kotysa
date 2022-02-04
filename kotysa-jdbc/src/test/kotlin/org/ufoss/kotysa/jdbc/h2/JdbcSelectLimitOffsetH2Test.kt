@@ -43,25 +43,25 @@ class JdbcSelectLimitOffsetH2Test : AbstractJdbcH2Test<LimitOffsetRepositoryH2Se
 class LimitOffsetRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom H2_CUSTOMER
+            (sqlClient selectFrom H2Customers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

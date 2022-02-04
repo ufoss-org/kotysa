@@ -15,7 +15,7 @@ data class MariadblUser(
         val id: Int?
 )
 
-object MARIADB_USER : MariadbTable<MariadblUser>() {
+object MariadbUsers : MariadbTable<MariadblUser>() {
     val id = autoIncrementInteger(MariadblUser::id)
             .primaryKey()
     val firstname = varchar(MariadblUser::firstname, "fname")
@@ -24,4 +24,4 @@ object MARIADB_USER : MariadbTable<MariadblUser>() {
     val alias = varchar(MariadblUser::alias)
 }
 
-fun mariadbTables() = tables().mariadb(MARIADB_USER)
+fun mariadbTables() = tables().mariadb(MariadbUsers)

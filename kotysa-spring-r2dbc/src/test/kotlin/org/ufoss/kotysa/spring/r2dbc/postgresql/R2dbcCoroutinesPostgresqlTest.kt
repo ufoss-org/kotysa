@@ -130,55 +130,55 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_ROLE
-        sqlClient createTableIfNotExists POSTGRESQL_USER
+        sqlClient createTableIfNotExists PostgresqlRoles
+        sqlClient createTableIfNotExists PostgresqlUsers
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom PostgresqlRoles
 
-    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom PostgresqlUsers
 
-    fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom PostgresqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname eq firstname
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname eq firstname
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname eq firstname
                     ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom POSTGRESQL_USER
+            (sqlClient selectFrom PostgresqlUsers
                     ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.alias eq alias
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.alias eq alias
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
             (sqlClient.select {
-                UserDto("${it[POSTGRESQL_USER.firstname]} ${it[POSTGRESQL_USER.lastname]}",
-                        it[POSTGRESQL_USER.alias])
+                UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}",
+                        it[PostgresqlUsers.alias])
             }
-                    from POSTGRESQL_USER
+                    from PostgresqlUsers
                     ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update POSTGRESQL_USER
-                    set POSTGRESQL_USER.lastname eq newLastname
-                    where POSTGRESQL_USER.id eq userJdoe.id
+            (sqlClient update PostgresqlUsers
+                    set PostgresqlUsers.lastname eq newLastname
+                    where PostgresqlUsers.id eq userJdoe.id
                     ).execute()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom POSTGRESQL_USER
+            (sqlClient selectFrom PostgresqlUsers
                     limit 1 offset 1
                     ).fetchAll()
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MARIADB_CUSTOMER
+import org.ufoss.kotysa.test.MariadbCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -49,25 +49,25 @@ class LimitOffsetRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) 
     AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-        (sqlClient selectFrom MARIADB_CUSTOMER
-                orderByAsc MARIADB_CUSTOMER.id
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.id
                 offset 2
                 ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-        (sqlClient selectFrom MARIADB_CUSTOMER
-                orderByAsc MARIADB_CUSTOMER.id
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.id
                 limit 1
                 ).fetchAll()
 
     fun selectAllLimitOffset() =
-        (sqlClient selectFrom MARIADB_CUSTOMER
+        (sqlClient selectFrom MariadbCustomers
                 limit 1 offset 1
                 ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-        (sqlClient selectFrom MARIADB_CUSTOMER
-                orderByAsc MARIADB_CUSTOMER.id
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.id
                 limit 2 offset 1
                 ).fetchAll()
 }

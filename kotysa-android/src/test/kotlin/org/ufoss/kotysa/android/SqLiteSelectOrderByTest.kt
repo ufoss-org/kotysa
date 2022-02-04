@@ -35,12 +35,12 @@ class OrderByRepositorySelect(
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom SQLITE_CUSTOMER
-                    orderByAsc SQLITE_CUSTOMER.age
+            (sqlClient selectFrom SqliteCustomers
+                    orderByAsc SqliteCustomers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom SQLITE_CUSTOMER
-                    orderByAsc SQLITE_CUSTOMER.age andAsc SQLITE_CUSTOMER.id
+            (sqlClient selectFrom SqliteCustomers
+                    orderByAsc SqliteCustomers.age andAsc SqliteCustomers.id
                     ).fetchAll()
 }

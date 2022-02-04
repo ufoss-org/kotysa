@@ -197,77 +197,77 @@ class IntRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : Reposit
     }
 
     private fun createTables() {
-        sqlClient createTable MARIADB_INT
+        sqlClient createTable MariadbInts
     }
 
     private fun insertInts() {
         sqlClient.insert(intWithNullable, intWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_INT
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbInts
 
     fun selectAllByIntNotNull(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull eq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull eq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullNotEq(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull notEq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull notEq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullIn(values: Sequence<Int>) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull `in` values
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByIntNotNullInf(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull inf int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull inf int
                     ).fetchAll()
 
     fun selectAllByIntNotNullInfOrEq(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull infOrEq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullSup(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull sup int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull sup int
                     ).fetchAll()
 
     fun selectAllByIntNotNullSupOrEq(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNotNull supOrEq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNotNull supOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNullable(int: Int?) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNullable eq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNullable eq int
                     ).fetchAll()
 
     fun selectAllByIntNullableNotEq(int: Int?) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNullable notEq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNullable notEq int
                     ).fetchAll()
 
     fun selectAllByIntNullableInf(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNullable inf int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNullable inf int
                     ).fetchAll()
 
     fun selectAllByIntNullableInfOrEq(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNullable infOrEq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNullable infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNullableSup(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNullable sup int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNullable sup int
                     ).fetchAll()
 
     fun selectAllByIntNullableSupOrEq(int: Int) =
-            (sqlClient selectFrom MARIADB_INT
-                    where MARIADB_INT.intNullable supOrEq int
+            (sqlClient selectFrom MariadbInts
+                    where MariadbInts.intNullable supOrEq int
                     ).fetchAll()
 }

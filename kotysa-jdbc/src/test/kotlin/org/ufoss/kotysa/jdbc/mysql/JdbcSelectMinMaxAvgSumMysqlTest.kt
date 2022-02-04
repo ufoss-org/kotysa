@@ -41,22 +41,22 @@ class MinMaxAvgSumRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
     AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin MYSQL_CUSTOMER.age
-                    from MYSQL_CUSTOMER
+            (sqlClient selectMin MysqlCustomers.age
+                    from MysqlCustomers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax MYSQL_CUSTOMER.age
-                    from MYSQL_CUSTOMER
+            (sqlClient selectMax MysqlCustomers.age
+                    from MysqlCustomers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg MYSQL_CUSTOMER.age
-                    from MYSQL_CUSTOMER
+            (sqlClient selectAvg MysqlCustomers.age
+                    from MysqlCustomers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum MYSQL_CUSTOMER.age
-                    from MYSQL_CUSTOMER
+            (sqlClient selectSum MysqlCustomers.age
+                    from MysqlCustomers
                     ).fetchOne()
 }

@@ -7,7 +7,7 @@ package org.ufoss.kotysa.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.jdbc.JdbcSqlClient
-import org.ufoss.kotysa.test.H2_ROLE
+import org.ufoss.kotysa.test.H2Roles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
 
@@ -27,8 +27,8 @@ class JdbcSelectOrH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectOr>() {
 class UserRepositoryJdbcH2SelectOr(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom H2_ROLE
-                    where H2_ROLE.label eq label1
-                    or H2_ROLE.label eq label2
+            (sqlClient selectFrom H2Roles
+                    where H2Roles.label eq label1
+                    or H2Roles.label eq label2
                     ).fetchAll()
 }

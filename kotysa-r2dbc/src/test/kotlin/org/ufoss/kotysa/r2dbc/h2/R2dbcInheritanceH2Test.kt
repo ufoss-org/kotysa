@@ -23,13 +23,13 @@ class R2dbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
 
     @Test
     fun `Verify extension function selectById finds inherited`() = runTest {
-        assertThat(repository.selectById(H2_INHERITED, "id"))
+        assertThat(repository.selectById(H2Inheriteds, "id"))
             .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() = runTest {
-        assertThat(repository.selectFirstByName(H2_INHERITED, "name"))
+        assertThat(repository.selectFirstByName(H2Inheriteds, "name"))
             .isEqualTo(inherited)
     }
 
@@ -37,7 +37,7 @@ class R2dbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
     fun `Verify deleteById deletes inherited`() = runTest {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById(H2_INHERITED, "id"))
+            assertThat(repository.deleteById(H2Inheriteds, "id"))
                 .isEqualTo(1)
             assertThat(repository.selectAll().toList())
                 .isEmpty()
@@ -57,20 +57,20 @@ class InheritanceH2Repository(private val sqlClient: R2dbcSqlClient) : Repositor
     }
 
     private suspend fun createTable() {
-        sqlClient createTable H2_INHERITED
+        sqlClient createTable H2Inheriteds
     }
 
     private suspend fun insert() {
         sqlClient insert inherited
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_INHERITED
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2Inheriteds
 
-    fun selectAll() = sqlClient selectAllFrom H2_INHERITED
+    fun selectAll() = sqlClient selectAllFrom H2Inheriteds
 
     suspend fun selectInheritedById(id: String) =
-        (sqlClient selectFrom H2_INHERITED
-                where H2_INHERITED.id eq id
+        (sqlClient selectFrom H2Inheriteds
+                where H2Inheriteds.id eq id
                 ).fetchOne()
 
     suspend fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

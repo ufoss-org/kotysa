@@ -31,12 +31,12 @@ class SpringJdbcSelectOrderByH2Test : AbstractSpringJdbcH2Test<OrderByRepository
 class OrderByRepositoryH2Select(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcH2(client) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.age
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.age andAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.age andAsc H2Customers.id
                     ).fetchAll()
 }

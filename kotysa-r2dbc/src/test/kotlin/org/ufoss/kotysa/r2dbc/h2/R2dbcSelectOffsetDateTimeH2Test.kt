@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_OFFSET_DATE_TIME
+import org.ufoss.kotysa.test.H2OffsetDateTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.offsetDateTimeWithNullable
 import org.ufoss.kotysa.test.offsetDateTimeWithoutNullable
@@ -284,77 +284,77 @@ class OffsetDateTimeRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : 
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2_OFFSET_DATE_TIME
+        sqlClient createTable H2OffsetDateTimes
     }
 
     private suspend fun insertOffsetDateTimes() {
         sqlClient.insert(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_OFFSET_DATE_TIME
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2OffsetDateTimes
 
     fun selectAllByOffsetDateTimeNotNull(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull eq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull eq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull notEq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull notEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull `in` values
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull before offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull before offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull beforeOrEq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull beforeOrEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull after offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull after offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNotNull afterOrEq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNotNull afterOrEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullable(offsetDateTime: OffsetDateTime?) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNullable eq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNullable eq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNullable notEq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNullable notEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBefore(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNullable before offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNullable before offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNullable beforeOrEq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNullable beforeOrEq offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfter(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNullable after offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNullable after offsetDateTime
                 ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) =
-        (sqlClient selectFrom H2_OFFSET_DATE_TIME
-                where H2_OFFSET_DATE_TIME.offsetDateTimeNullable afterOrEq offsetDateTime
+        (sqlClient selectFrom H2OffsetDateTimes
+                where H2OffsetDateTimes.offsetDateTimeNullable afterOrEq offsetDateTime
                 ).fetchAll()
 }

@@ -173,72 +173,72 @@ class StringAsLongTextRepositoryMariadbSelect(private val sqlClient: JdbcSqlClie
     }
 
     private fun createTables() {
-        sqlClient createTable MARIADB_LONG_TEXT
+        sqlClient createTable MariadbLongTexts
     }
 
     private fun insertLongTexts() {
         sqlClient.insert(stringAsLongTextNotNull, stringAsLongTextNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_LONG_TEXT
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbLongTexts
 
     fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom MARIADB_LONG_TEXT
-                where MARIADB_LONG_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MariadbLongTexts
+                where MariadbLongTexts.stringNotNull eq value
                 ).fetchFirstOrNull()
 
     fun selectFirstByStringNotNull(value: String) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNotNull eq value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNotNull eq value
                     ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNotNull notEq value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNotNull notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNotNull `in` values
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MARIADB_LONG_TEXT
-                where MARIADB_LONG_TEXT.stringNotNull contains value
+        (sqlClient selectFrom MariadbLongTexts
+                where MariadbLongTexts.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MARIADB_LONG_TEXT
-                where MARIADB_LONG_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom MariadbLongTexts
+                where MariadbLongTexts.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MARIADB_LONG_TEXT
-                where MARIADB_LONG_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom MariadbLongTexts
+                where MariadbLongTexts.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNullable eq value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNullable eq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNullable notEq value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNullable notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNullable contains value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNullable contains value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNullable startsWith value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNullable startsWith value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-            (sqlClient selectFrom MARIADB_LONG_TEXT
-                    where MARIADB_LONG_TEXT.stringNullable endsWith value
+            (sqlClient selectFrom MariadbLongTexts
+                    where MariadbLongTexts.stringNullable endsWith value
                     ).fetchAll()
 }

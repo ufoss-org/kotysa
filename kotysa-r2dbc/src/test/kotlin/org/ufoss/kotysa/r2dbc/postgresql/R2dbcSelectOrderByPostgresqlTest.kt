@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_CUSTOMER
+import org.ufoss.kotysa.test.PostgresqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -36,12 +36,12 @@ class OrderByRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcPostgresql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-        (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                orderByAsc POSTGRESQL_CUSTOMER.age
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.age
                 ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-        (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                orderByAsc POSTGRESQL_CUSTOMER.age andAsc POSTGRESQL_CUSTOMER.id
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.age andAsc PostgresqlCustomers.id
                 ).fetchAll()
 }

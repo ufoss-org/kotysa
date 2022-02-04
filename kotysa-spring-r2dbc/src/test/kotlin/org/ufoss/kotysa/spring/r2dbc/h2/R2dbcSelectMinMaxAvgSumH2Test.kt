@@ -41,22 +41,22 @@ class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractR2dbcH2Test<MinMaxAvgSumRepos
 class MinMaxAvgSumRepositoryH2Select(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractCustomerRepositoryH2(sqlClient) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectMin H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectMax H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectAvg H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectSum H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 }

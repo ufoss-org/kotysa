@@ -23,8 +23,8 @@ class JdbcSelectGroupByMssqlTest : AbstractJdbcMssqlTest<GroupByRepositoryMssqlS
 class GroupByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcMssql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MSSQL_CUSTOMER.id and MSSQL_CUSTOMER.country
-                    from MSSQL_CUSTOMER
-                    groupBy MSSQL_CUSTOMER.country
+            (sqlClient selectCount MssqlCustomers.id and MssqlCustomers.country
+                    from MssqlCustomers
+                    groupBy MssqlCustomers.country
                     ).fetchAll()
 }

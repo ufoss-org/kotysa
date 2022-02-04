@@ -118,55 +118,55 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists H2_ROLE
-        sqlClient createTableIfNotExists H2_USER
+        sqlClient createTableIfNotExists H2Roles
+        sqlClient createTableIfNotExists H2Users
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom H2_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom H2Roles
 
-    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom H2Users
 
-    fun selectAllUsers() = sqlClient selectAllFrom H2_USER
+    fun selectAllUsers() = sqlClient selectAllFrom H2Users
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname eq firstname
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname eq firstname
                     ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname eq firstname
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname eq firstname
                     ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom H2_USER
+            (sqlClient selectFrom H2Users
                     ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.alias eq alias
+            (sqlClient selectFrom H2Users
+                    where H2Users.alias eq alias
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
             (sqlClient.select {
-                UserDto("${it[H2_USER.firstname]} ${it[H2_USER.lastname]}",
-                        it[H2_USER.alias])
+                UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}",
+                        it[H2Users.alias])
             }
-                    from H2_USER
+                    from H2Users
                     ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update H2_USER
-                    set H2_USER.lastname eq newLastname
-                    where H2_USER.id eq userJdoe.id
+            (sqlClient update H2Users
+                    set H2Users.lastname eq newLastname
+                    where H2Users.id eq userJdoe.id
                     ).execute()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom H2_USER
+            (sqlClient selectFrom H2Users
                     limit 1 offset 1
                     ).fetchAll()
 }

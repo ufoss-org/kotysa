@@ -150,10 +150,10 @@ class RepositoryMariadbInsert(dbClient: DatabaseClient) : Repository {
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists MARIADB_INT)
-            .then(sqlClient createTableIfNotExists MARIADB_LONG)
-            .then(sqlClient createTableIfNotExists MARIADB_CUSTOMER)
-            .then(sqlClient createTableIfNotExists MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+        (sqlClient createTableIfNotExists MariadbInts)
+            .then(sqlClient createTableIfNotExists MariadbLongs)
+            .then(sqlClient createTableIfNotExists MariadbCustomers)
+            .then(sqlClient createTableIfNotExists MariadbAllTypesNullableDefaultValueWithTimes)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -161,7 +161,7 @@ class RepositoryMariadbInsert(dbClient: DatabaseClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MARIADB_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MariadbCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

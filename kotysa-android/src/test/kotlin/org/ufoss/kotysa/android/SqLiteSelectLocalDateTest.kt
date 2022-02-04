@@ -189,77 +189,77 @@ class LocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tabl
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_LOCAL_DATE
+        sqlClient createTable SqliteLocalDates
     }
 
     private fun insertLocalDates() {
         sqlClient.insert(localDateWithNullable, localDateWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_LOCAL_DATE
+    private fun deleteAll() = sqlClient deleteAllFrom SqliteLocalDates
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull eq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull eq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull notEq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull notEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull `in` values
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull before localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull before localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull beforeOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull after localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull after localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNotNull afterOrEq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNotNull afterOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNullable eq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNullable eq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNullable notEq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNullable notEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNullable before localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNullable before localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNullable beforeOrEq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNullable beforeOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNullable after localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNullable after localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom SQLITE_LOCAL_DATE
-                    where SQLITE_LOCAL_DATE.localDateNullable afterOrEq localDate
+            (sqlClient selectFrom SqliteLocalDates
+                    where SqliteLocalDates.localDateNullable afterOrEq localDate
                     ).fetchAll()
 }

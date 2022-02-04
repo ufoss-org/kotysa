@@ -24,8 +24,8 @@ class GroupByRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
     AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country
-                    from MYSQL_CUSTOMER
-                    groupBy MYSQL_CUSTOMER.country
+            (sqlClient selectCount MysqlCustomers.id and MysqlCustomers.country
+                    from MysqlCustomers
+                    groupBy MysqlCustomers.country
                     ).fetchAll()
 }

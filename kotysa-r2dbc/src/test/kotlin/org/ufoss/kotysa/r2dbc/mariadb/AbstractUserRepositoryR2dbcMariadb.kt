@@ -24,9 +24,9 @@ abstract class AbstractUserRepositoryR2dbcMariadb(private val sqlClient: R2dbcSq
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MARIADB_ROLE
-        sqlClient createTableIfNotExists MARIADB_USER
-        sqlClient createTableIfNotExists MARIADB_USER_ROLE
+        sqlClient createTableIfNotExists MariadbRoles
+        sqlClient createTableIfNotExists MariadbUsers
+        sqlClient createTableIfNotExists MariadbUserRoles
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
@@ -37,18 +37,18 @@ abstract class AbstractUserRepositoryR2dbcMariadb(private val sqlClient: R2dbcSq
         sqlClient insert userRoleBboss
     }
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MARIADB_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MariadbRoles
 
-    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MARIADB_USER
+    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MariadbUsers
 
-    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MARIADB_USER_ROLE
+    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MariadbUserRoles
 
-    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom MARIADB_USER_ROLE
+    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom MariadbUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom MARIADB_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MariadbUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MARIADB_USER
-                    where MARIADB_USER.firstname eq firstname
+            (sqlClient selectFrom MariadbUsers
+                    where MariadbUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 }

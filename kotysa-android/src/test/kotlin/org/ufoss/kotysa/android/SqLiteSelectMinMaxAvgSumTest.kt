@@ -45,22 +45,22 @@ class MinMaxAvgSumRepositorySelect(
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMin SqliteCustomers.age
+                    from SqliteCustomers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectMax SqliteCustomers.age
+                    from SqliteCustomers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectAvg SqliteCustomers.age
+                    from SqliteCustomers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum SQLITE_CUSTOMER.age
-                    from SQLITE_CUSTOMER
+            (sqlClient selectSum SqliteCustomers.age
+                    from SqliteCustomers
                     ).fetchOne()
 }

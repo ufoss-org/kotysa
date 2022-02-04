@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.MYSQL_ROLE
+import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
@@ -38,7 +38,7 @@ class R2DbcSelectDistinctMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlS
 class UserRepositoryMysqlSelectDistinct(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MYSQL_ROLE.label
-                    from MYSQL_ROLE
+            (sqlClient selectDistinct MysqlRoles.label
+                    from MysqlRoles
                     ).fetchAll()
 }

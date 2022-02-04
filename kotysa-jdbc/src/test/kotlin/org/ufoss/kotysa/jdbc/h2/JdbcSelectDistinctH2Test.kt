@@ -24,7 +24,7 @@ class JdbcSelectDistinctH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectDi
 class UserRepositoryJdbcH2SelectDistinct(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct H2_ROLE.label
-                    from H2_ROLE
+            (sqlClient selectDistinct H2Roles.label
+                    from H2Roles
                     ).fetchAll()
 }

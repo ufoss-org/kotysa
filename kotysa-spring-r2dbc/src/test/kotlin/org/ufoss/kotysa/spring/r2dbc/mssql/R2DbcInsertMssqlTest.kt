@@ -148,10 +148,10 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists MSSQL_INT)
-            .then(sqlClient createTableIfNotExists MSSQL_LONG)
-            .then(sqlClient createTableIfNotExists MSSQL_CUSTOMER)
-            .then(sqlClient createTableIfNotExists MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+        (sqlClient createTableIfNotExists MssqlInts)
+            .then(sqlClient createTableIfNotExists MssqlLongs)
+            .then(sqlClient createTableIfNotExists MssqlCustomers)
+            .then(sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -159,7 +159,7 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MSSQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MssqlCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

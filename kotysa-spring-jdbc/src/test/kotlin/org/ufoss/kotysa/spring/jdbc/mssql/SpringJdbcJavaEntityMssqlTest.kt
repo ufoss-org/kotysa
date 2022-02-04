@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.MSSQL_JAVA_USER
+import org.ufoss.kotysa.test.MssqlJavaUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
@@ -17,7 +17,7 @@ import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 class SpringJdbcJavaEntityMssqlTest :
     AbstractSpringJdbcMssqlTest<JavaUserMssqlRepository>(),
-    JavaEntityTest<MSSQL_JAVA_USER, JavaUserMssqlRepository, SpringJdbcTransaction> {
+    JavaEntityTest<MssqlJavaUsers, JavaUserMssqlRepository, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -31,4 +31,4 @@ class SpringJdbcJavaEntityMssqlTest :
 
 
 class JavaUserMssqlRepository(client: JdbcOperations) :
-    JavaUserRepository<MSSQL_JAVA_USER>(client.sqlClient(mssqlTables), MSSQL_JAVA_USER)
+    JavaUserRepository<MssqlJavaUsers>(client.sqlClient(mssqlTables), MssqlJavaUsers)

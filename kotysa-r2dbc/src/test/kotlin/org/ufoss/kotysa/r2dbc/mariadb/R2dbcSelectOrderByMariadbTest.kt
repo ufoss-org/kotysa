@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MARIADB_CUSTOMER
+import org.ufoss.kotysa.test.MariadbCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -36,12 +36,12 @@ class OrderByRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-        (sqlClient selectFrom MARIADB_CUSTOMER
-                orderByAsc MARIADB_CUSTOMER.age
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.age
                 ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-        (sqlClient selectFrom MARIADB_CUSTOMER
-                orderByAsc MARIADB_CUSTOMER.age andAsc MARIADB_CUSTOMER.id
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
                 ).fetchAll()
 }

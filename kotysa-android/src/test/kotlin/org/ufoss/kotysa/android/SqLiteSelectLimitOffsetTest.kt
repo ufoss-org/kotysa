@@ -48,25 +48,25 @@ class LimitOffsetRepositorySelect(
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom SQLITE_CUSTOMER
-                    orderByAsc SQLITE_CUSTOMER.id
+            (sqlClient selectFrom SqliteCustomers
+                    orderByAsc SqliteCustomers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom SQLITE_CUSTOMER
-                    orderByAsc SQLITE_CUSTOMER.id
+            (sqlClient selectFrom SqliteCustomers
+                    orderByAsc SqliteCustomers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom SQLITE_CUSTOMER
+            (sqlClient selectFrom SqliteCustomers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom SQLITE_CUSTOMER
-                    orderByAsc SQLITE_CUSTOMER.id
+            (sqlClient selectFrom SqliteCustomers
+                    orderByAsc SqliteCustomers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

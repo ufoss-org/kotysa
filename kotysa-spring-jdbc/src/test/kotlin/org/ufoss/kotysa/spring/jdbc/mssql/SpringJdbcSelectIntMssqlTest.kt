@@ -210,77 +210,77 @@ class IntRepositoryMssqlSelect(client: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTable MSSQL_INT
+        sqlClient createTable MssqlInts
     }
 
     private fun insertInts() {
         sqlClient.insert(intWithNullable, intWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MSSQL_INT
+    private fun deleteAll() = sqlClient deleteAllFrom MssqlInts
 
     fun selectAllByIntNotNull(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull eq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull eq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullNotEq(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull notEq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull notEq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullIn(values: Sequence<Int>) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull `in` values
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByIntNotNullInf(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull inf int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull inf int
                     ).fetchAll()
 
     fun selectAllByIntNotNullInfOrEq(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull infOrEq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullSup(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull sup int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull sup int
                     ).fetchAll()
 
     fun selectAllByIntNotNullSupOrEq(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNotNull supOrEq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNotNull supOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNullable(int: Int?) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNullable eq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNullable eq int
                     ).fetchAll()
 
     fun selectAllByIntNullableNotEq(int: Int?) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNullable notEq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNullable notEq int
                     ).fetchAll()
 
     fun selectAllByIntNullableInf(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNullable inf int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNullable inf int
                     ).fetchAll()
 
     fun selectAllByIntNullableInfOrEq(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNullable infOrEq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNullable infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNullableSup(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNullable sup int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNullable sup int
                     ).fetchAll()
 
     fun selectAllByIntNullableSupOrEq(int: Int) =
-            (sqlClient selectFrom MSSQL_INT
-                    where MSSQL_INT.intNullable supOrEq int
+            (sqlClient selectFrom MssqlInts
+                    where MssqlInts.intNullable supOrEq int
                     ).fetchAll()
 }

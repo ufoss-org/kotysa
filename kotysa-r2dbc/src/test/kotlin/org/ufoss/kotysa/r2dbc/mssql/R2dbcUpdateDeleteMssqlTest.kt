@@ -138,43 +138,43 @@ class UserRepositoryJdbcMssqlUpdateDelete(private val sqlClient: R2dbcSqlClient)
     AbstractUserRepositoryR2dbcMssql(sqlClient) {
 
     suspend fun deleteUserById(id: Int) =
-        (sqlClient deleteFrom MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient deleteFrom MssqlUsers
+                where MssqlUsers.id eq id
                 ).execute()
 
     suspend fun deleteUserIn(ids: Collection<Int>) =
-        (sqlClient deleteFrom MSSQL_USER
-                where MSSQL_USER.id `in` ids
+        (sqlClient deleteFrom MssqlUsers
+                where MssqlUsers.id `in` ids
                 ).execute()
 
     suspend fun deleteUserWithJoin(roleLabel: String) =
-        (sqlClient deleteFrom MSSQL_USER
-                innerJoin MSSQL_ROLE on MSSQL_USER.roleId eq MSSQL_ROLE.id
-                where MSSQL_ROLE.label eq roleLabel
+        (sqlClient deleteFrom MssqlUsers
+                innerJoin MssqlRoles on MssqlUsers.roleId eq MssqlRoles.id
+                where MssqlRoles.label eq roleLabel
                 ).execute()
 
     suspend fun updateLastname(newLastname: String) =
-        (sqlClient update MSSQL_USER
-                set MSSQL_USER.lastname eq newLastname
-                where MSSQL_USER.id eq userJdoe.id
+        (sqlClient update MssqlUsers
+                set MssqlUsers.lastname eq newLastname
+                where MssqlUsers.id eq userJdoe.id
                 ).execute()
 
     suspend fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-        (sqlClient update MSSQL_USER
-                set MSSQL_USER.lastname eq newLastname
-                where MSSQL_USER.id `in` ids
+        (sqlClient update MssqlUsers
+                set MssqlUsers.lastname eq newLastname
+                where MssqlUsers.id `in` ids
                 ).execute()
 
     suspend fun updateAlias(newAlias: String?) =
-        (sqlClient update MSSQL_USER
-                set MSSQL_USER.alias eq newAlias
-                where MSSQL_USER.id eq userBboss.id
+        (sqlClient update MssqlUsers
+                set MssqlUsers.alias eq newAlias
+                where MssqlUsers.id eq userBboss.id
                 ).execute()
 
     suspend fun updateWithJoin(newLastname: String, roleLabel: String) =
-        (sqlClient update MSSQL_USER
-                set MSSQL_USER.lastname eq newLastname
-                innerJoin MSSQL_ROLE on MSSQL_USER.roleId eq MSSQL_ROLE.id
-                where MSSQL_ROLE.label eq roleLabel
+        (sqlClient update MssqlUsers
+                set MssqlUsers.lastname eq newLastname
+                innerJoin MssqlRoles on MssqlUsers.roleId eq MssqlRoles.id
+                where MssqlRoles.label eq roleLabel
                 ).execute()
 }

@@ -200,77 +200,77 @@ class KotlinxLocalDateRepositoryMssqlSelect(client: JdbcOperations) : Repository
     }
 
     private fun createTables() {
-        sqlClient createTable MSSQL_KOTLINX_LOCAL_DATE
+        sqlClient createTable MssqlKotlinxLocalDates
     }
 
     private fun insertLocalDates() {
         sqlClient.insert(kotlinxLocalDateWithNullable, kotlinxLocalDateWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MSSQL_KOTLINX_LOCAL_DATE
+    private fun deleteAll() = sqlClient deleteAllFrom MssqlKotlinxLocalDates
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull eq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull eq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull notEq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull notEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull `in` values
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull before localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull before localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull beforeOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull after localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull after localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNotNull afterOrEq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNotNull afterOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNullable eq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNullable eq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNullable notEq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNullable notEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNullable before localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNullable before localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNullable beforeOrEq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNullable beforeOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNullable after localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNullable after localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE
-                    where MSSQL_KOTLINX_LOCAL_DATE.localDateNullable afterOrEq localDate
+            (sqlClient selectFrom MssqlKotlinxLocalDates
+                    where MssqlKotlinxLocalDates.localDateNullable afterOrEq localDate
                     ).fetchAll()
 }

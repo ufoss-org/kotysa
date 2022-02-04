@@ -28,8 +28,8 @@ class GroupByRepositorySelect(
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount SQLITE_CUSTOMER.id and SQLITE_CUSTOMER.country
-                    from SQLITE_CUSTOMER
-                    groupBy SQLITE_CUSTOMER.country
+            (sqlClient selectCount SqliteCustomers.id and SqliteCustomers.country
+                    from SqliteCustomers
+                    groupBy SqliteCustomers.country
                     ).fetchAll()
 }

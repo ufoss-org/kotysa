@@ -27,7 +27,7 @@ class R2DbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbR
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(MARIADB_INHERITED, "id").block())
+        assertThat(repository.selectById(MariadbInheriteds, "id").block())
                 .isEqualTo(inherited)
     }
 
@@ -39,7 +39,7 @@ class R2DbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbR
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(MARIADB_INHERITED, "name").block())
+        assertThat(repository.selectFirstByName(MariadbInheriteds, "name").block())
                 .isEqualTo(inherited)
     }
 
@@ -47,7 +47,7 @@ class R2DbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbR
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            repository.deleteById(MARIADB_INHERITED, "id")
+            repository.deleteById(MariadbInheriteds, "id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAll())
         }.test()
@@ -71,17 +71,17 @@ class InheritanceMariadbRepository(dbClient: DatabaseClient) : Repository {
                 .block()
     }
 
-    private fun createTable() = sqlClient createTable MARIADB_INHERITED
+    private fun createTable() = sqlClient createTable MariadbInheriteds
 
     fun insert() = sqlClient insert inherited
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbInheriteds
 
-    fun selectAll() = sqlClient selectAllFrom MARIADB_INHERITED
+    fun selectAll() = sqlClient selectAllFrom MariadbInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MARIADB_INHERITED
-                    where MARIADB_INHERITED.id eq id
+            (sqlClient selectFrom MariadbInheriteds
+                    where MariadbInheriteds.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

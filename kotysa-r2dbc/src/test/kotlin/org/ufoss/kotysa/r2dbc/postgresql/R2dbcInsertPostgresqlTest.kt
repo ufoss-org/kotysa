@@ -130,10 +130,10 @@ class RepositoryPostgresqlInsert(private val sqlClient: R2dbcSqlClient) : Reposi
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_INT
-        sqlClient createTableIfNotExists POSTGRESQL_LONG
-        sqlClient createTableIfNotExists POSTGRESQL_CUSTOMER
-        sqlClient createTableIfNotExists POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists PostgresqlInts
+        sqlClient createTableIfNotExists PostgresqlLongs
+        sqlClient createTableIfNotExists PostgresqlCustomers
+        sqlClient createTableIfNotExists PostgresqlAllTypesNullableDefaultValues
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -142,7 +142,7 @@ class RepositoryPostgresqlInsert(private val sqlClient: R2dbcSqlClient) : Reposi
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom POSTGRESQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom PostgresqlCustomers
 
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

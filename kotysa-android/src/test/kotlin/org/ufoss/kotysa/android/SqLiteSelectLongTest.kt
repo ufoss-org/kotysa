@@ -198,77 +198,77 @@ class LongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) :
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_LONG
+        sqlClient createTable SqliteLongs
     }
 
     private fun insertLongs() {
         sqlClient.insert(longWithNullable, longWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_LONG
+    private fun deleteAll() = sqlClient deleteAllFrom SqliteLongs
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull eq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull eq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull notEq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull notEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull `in` values
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull inf long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull inf long
                     ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull infOrEq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull sup long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull sup long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNotNull supOrEq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNotNull supOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable eq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNullable eq long
                     ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable notEq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNullable notEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable inf long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNullable inf long
                     ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable infOrEq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNullable infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable sup long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNullable sup long
                     ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom SQLITE_LONG
-                    where SQLITE_LONG.longNullable supOrEq long
+            (sqlClient selectFrom SqliteLongs
+                    where SqliteLongs.longNullable supOrEq long
                     ).fetchAll()
 }

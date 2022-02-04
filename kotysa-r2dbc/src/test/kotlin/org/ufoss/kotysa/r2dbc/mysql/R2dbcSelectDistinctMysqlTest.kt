@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_ROLE
+import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
 import org.ufoss.kotysa.test.roleUser
@@ -30,7 +30,7 @@ class UserRepositoryJdbcMysqlSelectDistinct(private val sqlClient: R2dbcSqlClien
     AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct MYSQL_ROLE.label
-                from MYSQL_ROLE
+        (sqlClient selectDistinct MysqlRoles.label
+                from MysqlRoles
                 ).fetchAll()
 }

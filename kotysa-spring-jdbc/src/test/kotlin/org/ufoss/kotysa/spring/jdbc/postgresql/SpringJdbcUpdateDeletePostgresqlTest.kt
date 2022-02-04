@@ -146,43 +146,43 @@ class SpringJdbcUpdateDeletePostgresqlTest : AbstractSpringJdbcPostgresqlTest<Us
 class UserRepositorySpringJdbcPostgresqlUpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun deleteUserById(id: Int) =
-            (sqlClient deleteFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.id eq id
+            (sqlClient deleteFrom PostgresqlUsers
+                    where PostgresqlUsers.id eq id
                     ).execute()
 
     fun deleteUserIn(ids: Collection<Int>) =
-            (sqlClient deleteFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.id `in` ids
+            (sqlClient deleteFrom PostgresqlUsers
+                    where PostgresqlUsers.id `in` ids
                     ).execute()
 
     fun deleteUserWithJoin(roleLabel: String) =
-            (sqlClient deleteFrom POSTGRESQL_USER
-                    innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER.roleId eq POSTGRESQL_ROLE.id
-                    where POSTGRESQL_ROLE.label eq roleLabel
+            (sqlClient deleteFrom PostgresqlUsers
+                    innerJoin PostgresqlRoles on PostgresqlUsers.roleId eq PostgresqlRoles.id
+                    where PostgresqlRoles.label eq roleLabel
                     ).execute()
 
     fun updateLastname(newLastname: String) =
-            (sqlClient update POSTGRESQL_USER
-                    set POSTGRESQL_USER.lastname eq newLastname
-                    where POSTGRESQL_USER.id eq userJdoe.id
+            (sqlClient update PostgresqlUsers
+                    set PostgresqlUsers.lastname eq newLastname
+                    where PostgresqlUsers.id eq userJdoe.id
                     ).execute()
 
     fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-            (sqlClient update POSTGRESQL_USER
-                    set POSTGRESQL_USER.lastname eq newLastname
-                    where POSTGRESQL_USER.id `in` ids
+            (sqlClient update PostgresqlUsers
+                    set PostgresqlUsers.lastname eq newLastname
+                    where PostgresqlUsers.id `in` ids
                     ).execute()
 
     fun updateAlias(newAlias: String?) =
-            (sqlClient update POSTGRESQL_USER
-                    set POSTGRESQL_USER.alias eq newAlias
-                    where POSTGRESQL_USER.id eq userBboss.id
+            (sqlClient update PostgresqlUsers
+                    set PostgresqlUsers.alias eq newAlias
+                    where PostgresqlUsers.id eq userBboss.id
                     ).execute()
 
     fun updateWithJoin(newLastname: String, roleLabel: String) =
-            (sqlClient update POSTGRESQL_USER
-                    set POSTGRESQL_USER.lastname eq newLastname
-                    innerJoin POSTGRESQL_ROLE on POSTGRESQL_USER.roleId eq POSTGRESQL_ROLE.id
-                    where POSTGRESQL_ROLE.label eq roleLabel
+            (sqlClient update PostgresqlUsers
+                    set PostgresqlUsers.lastname eq newLastname
+                    innerJoin PostgresqlRoles on PostgresqlUsers.roleId eq PostgresqlRoles.id
+                    where PostgresqlRoles.label eq roleLabel
                     ).execute()
 }

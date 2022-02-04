@@ -7,7 +7,7 @@ package org.ufoss.kotysa.sample
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import org.ufoss.kotysa.tables
 
-data class SqLiteUser(
+data class SqliteUser(
         val firstname: String,
         val lastname: String,
         val isAdmin: Boolean,
@@ -15,13 +15,13 @@ data class SqLiteUser(
         val id: Int?
 )
 
-object SQLITE_USER : SqLiteTable<SqLiteUser>() {
-    val id = autoIncrementInteger(SqLiteUser::id)
+object SqliteUsers : SqLiteTable<SqliteUser>() {
+    val id = autoIncrementInteger(SqliteUser::id)
             .primaryKey()
-    val firstname = text(SqLiteUser::firstname, "fname")
-    val lastname = text(SqLiteUser::lastname, "lname")
-    val isAdmin = integer(SqLiteUser::isAdmin)
-    val alias = text(SqLiteUser::alias)
+    val firstname = text(SqliteUser::firstname, "fname")
+    val lastname = text(SqliteUser::lastname, "lname")
+    val isAdmin = integer(SqliteUser::isAdmin)
+    val alias = text(SqliteUser::alias)
 }
 
-fun sqLiteTables() = tables().sqlite(SQLITE_USER)
+fun sqLiteTables() = tables().sqlite(SqliteUsers)

@@ -26,7 +26,7 @@ class SpringJdbcSelectDistinctH2Test : AbstractSpringJdbcH2Test<UserRepositorySp
 class UserRepositorySpringJdbcH2SelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct H2_ROLE.label
-                    from H2_ROLE
+            (sqlClient selectDistinct H2Roles.label
+                    from H2Roles
                     ).fetchAll()
 }

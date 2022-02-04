@@ -200,77 +200,77 @@ class KotlinxLocalDateRepositoryPostgresqlSelect(client: JdbcOperations) : Repos
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_KOTLINX_LOCAL_DATE
+        sqlClient createTable PostgresqlKotlinxLocalDates
     }
 
     private fun insertLocalDates() {
         sqlClient.insert(kotlinxLocalDateWithNullable, kotlinxLocalDateWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_KOTLINX_LOCAL_DATE
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlKotlinxLocalDates
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull eq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull eq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull notEq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull notEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull `in` values
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull before localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull before localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull beforeOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull after localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull after localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNotNull afterOrEq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNotNull afterOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNullable eq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNullable eq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNullable notEq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNullable notEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNullable before localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNullable before localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNullable beforeOrEq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNullable beforeOrEq localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNullable after localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNullable after localDate
                     ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE.localDateNullable afterOrEq localDate
+            (sqlClient selectFrom PostgresqlKotlinxLocalDates
+                    where PostgresqlKotlinxLocalDates.localDateNullable afterOrEq localDate
                     ).fetchAll()
 }

@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_LONG_TEXT
+import org.ufoss.kotysa.test.MysqlLongText
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.stringAsLongTextNotNull
 import org.ufoss.kotysa.test.stringAsLongTextNullable
@@ -182,72 +182,72 @@ class StringAsLongTextRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClien
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MYSQL_LONG_TEXT
+        sqlClient createTable MysqlLongText
     }
 
     private suspend fun insertLongTexts() {
         sqlClient.insert(stringAsLongTextNotNull, stringAsLongTextNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MYSQL_LONG_TEXT
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlLongText
 
     suspend fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull eq value
                 ).fetchFirstOrNull()
 
     suspend fun selectFirstByStringNotNull(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull eq value
                 ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull notEq value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull notEq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull `in` values
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull contains value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNullable eq value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNullable eq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNullable notEq value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNullable notEq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNullable contains value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNullable contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNullable startsWith value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNullable startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-        (sqlClient selectFrom MYSQL_LONG_TEXT
-                where MYSQL_LONG_TEXT.stringNullable endsWith value
+        (sqlClient selectFrom MysqlLongText
+                where MysqlLongText.stringNullable endsWith value
                 ).fetchAll()
 }

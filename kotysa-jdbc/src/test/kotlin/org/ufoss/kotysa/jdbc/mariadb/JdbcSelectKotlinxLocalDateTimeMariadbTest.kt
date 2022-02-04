@@ -186,77 +186,77 @@ class KotlinxLocalDateTimeRepositoryMariadbSelect(private val sqlClient: JdbcSql
     }
 
     private fun createTables() {
-        sqlClient createTable MARIADB_KOTLINX_LOCAL_DATE_TIME
+        sqlClient createTable MariadbKotlinxLocalDateTimes
     }
 
     private fun insertLocalDateTimes() {
         sqlClient.insert(kotlinxLocalDateTimeWithNullable, kotlinxLocalDateTimeWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbKotlinxLocalDateTimes
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNotNull afterOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNullable eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNullable notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNullable before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNullable beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNullable after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MARIADB_KOTLINX_LOCAL_DATE_TIME
-                    where MARIADB_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+            (sqlClient selectFrom MariadbKotlinxLocalDateTimes
+                    where MariadbKotlinxLocalDateTimes.localDateTimeNullable afterOrEq localDateTime
                     ).fetchAll()
 }

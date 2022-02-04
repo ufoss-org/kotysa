@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.H2_ROLE
+import org.ufoss.kotysa.test.H2Roles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
 import org.ufoss.kotysa.test.roleUser
@@ -31,7 +31,7 @@ class UserRepositoryH2SelectDistinct(
 ) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct H2_ROLE.label
-                    from H2_ROLE
+            (sqlClient selectDistinct H2Roles.label
+                    from H2Roles
                     ).fetchAll()
 }

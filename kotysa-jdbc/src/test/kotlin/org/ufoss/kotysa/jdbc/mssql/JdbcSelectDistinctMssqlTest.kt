@@ -25,7 +25,7 @@ class UserRepositoryJdbcMssqlSelectDistinct(private val sqlClient: JdbcSqlClient
     AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MSSQL_ROLE.label
-                    from MSSQL_ROLE
+            (sqlClient selectDistinct MssqlRoles.label
+                    from MssqlRoles
                     ).fetchAll()
 }

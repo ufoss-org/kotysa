@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_LOCAL_TIME
+import org.ufoss.kotysa.test.MysqlLocalTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.localTimeWithNullable
 import org.ufoss.kotysa.test.localTimeWithoutNullable
@@ -193,77 +193,77 @@ class LocalTimeRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClient) : Re
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MYSQL_LOCAL_TIME
+        sqlClient createTable MysqlLocalTimes
     }
 
     private suspend fun insertLocalTimes() {
         sqlClient.insert(localTimeWithNullable, localTimeWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MYSQL_LOCAL_TIME
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlLocalTimes
 
     fun selectAllByLocalTimeNotNull(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull eq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull eq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullNotEq(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull notEq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull notEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullIn(values: Sequence<LocalTime>) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull `in` values
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullBefore(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull before localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull before localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullBeforeOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull beforeOrEq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull beforeOrEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullAfter(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull after localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull after localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNotNullAfterOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNotNull afterOrEq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNotNull afterOrEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullable(localTime: LocalTime?) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNullable eq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNullable eq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableNotEq(localTime: LocalTime?) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNullable notEq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNullable notEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableBefore(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNullable before localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNullable before localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableBeforeOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNullable beforeOrEq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNullable beforeOrEq localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableAfter(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNullable after localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNullable after localTime
                 ).fetchAll()
 
     fun selectAllByLocalTimeNullableAfterOrEq(localTime: LocalTime) =
-        (sqlClient selectFrom MYSQL_LOCAL_TIME
-                where MYSQL_LOCAL_TIME.localTimeNullable afterOrEq localTime
+        (sqlClient selectFrom MysqlLocalTimes
+                where MysqlLocalTimes.localTimeNullable afterOrEq localTime
                 ).fetchAll()
 }

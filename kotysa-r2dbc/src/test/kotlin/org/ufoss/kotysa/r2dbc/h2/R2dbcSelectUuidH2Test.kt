@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_UUID
+import org.ufoss.kotysa.test.H2Uuids
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.uuidWithNullable
 import org.ufoss.kotysa.test.uuidWithoutNullable
@@ -82,37 +82,37 @@ class UuidRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : Repository
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2_UUID
+        sqlClient createTable H2Uuids
     }
 
     private suspend fun insertUuids() {
         sqlClient.insert(uuidWithNullable, uuidWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_UUID
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2Uuids
 
     fun selectAllByUuidIdNotNull(uuid: UUID) =
-        (sqlClient selectFrom H2_UUID
-                where H2_UUID.uuidNotNull eq uuid
+        (sqlClient selectFrom H2Uuids
+                where H2Uuids.uuidNotNull eq uuid
                 ).fetchAll()
 
     fun selectAllByUuidNotNullNotEq(uuid: UUID) =
-        (sqlClient selectFrom H2_UUID
-                where H2_UUID.uuidNotNull notEq uuid
+        (sqlClient selectFrom H2Uuids
+                where H2Uuids.uuidNotNull notEq uuid
                 ).fetchAll()
 
     fun selectAllByUuidNotNullIn(uuids: Sequence<UUID>) =
-        (sqlClient selectFrom H2_UUID
-                where H2_UUID.id `in` uuids
+        (sqlClient selectFrom H2Uuids
+                where H2Uuids.id `in` uuids
                 ).fetchAll()
 
     fun selectAllByUuidNullable(uuid: UUID?) =
-        (sqlClient selectFrom H2_UUID
-                where H2_UUID.uuidNullable eq uuid
+        (sqlClient selectFrom H2Uuids
+                where H2Uuids.uuidNullable eq uuid
                 ).fetchAll()
 
     fun selectAllByUuidNullableNotEq(uuid: UUID?) =
-        (sqlClient selectFrom H2_UUID
-                where H2_UUID.uuidNullable notEq uuid
+        (sqlClient selectFrom H2Uuids
+                where H2Uuids.uuidNullable notEq uuid
                 ).fetchAll()
 }

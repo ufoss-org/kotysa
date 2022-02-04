@@ -7,7 +7,7 @@ package org.ufoss.kotysa.sample
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.tables
 
-data class MySqlUser(
+data class MysqlUser(
         val firstname: String,
         val lastname: String,
         val isAdmin: Boolean,
@@ -15,13 +15,13 @@ data class MySqlUser(
         val id: Int?
 )
 
-object MYSQL_USER : MysqlTable<MySqlUser>() {
-    val id = autoIncrementInteger(MySqlUser::id)
+object MysqlUsers : MysqlTable<MysqlUser>() {
+    val id = autoIncrementInteger(MysqlUser::id)
             .primaryKey()
-    val firstname = varchar(MySqlUser::firstname, "fname")
-    val lastname = varchar(MySqlUser::lastname, "lname")
-    val isAdmin = boolean(MySqlUser::isAdmin)
-    val alias = varchar(MySqlUser::alias)
+    val firstname = varchar(MysqlUser::firstname, "fname")
+    val lastname = varchar(MysqlUser::lastname, "lname")
+    val isAdmin = boolean(MysqlUser::isAdmin)
+    val alias = varchar(MysqlUser::alias)
 }
 
-fun mysqlTables() = tables().mysql(MYSQL_USER)
+fun mysqlTables() = tables().mysql(MysqlUsers)

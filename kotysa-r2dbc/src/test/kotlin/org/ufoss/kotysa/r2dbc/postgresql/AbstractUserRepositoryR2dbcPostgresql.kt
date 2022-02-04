@@ -24,9 +24,9 @@ abstract class AbstractUserRepositoryR2dbcPostgresql(private val sqlClient: R2db
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_ROLE
-        sqlClient createTableIfNotExists POSTGRESQL_USER
-        sqlClient createTableIfNotExists POSTGRESQL_USER_ROLE
+        sqlClient createTableIfNotExists PostgresqlRoles
+        sqlClient createTableIfNotExists PostgresqlUsers
+        sqlClient createTableIfNotExists PostgresqlUserRoles
     }
 
     private suspend fun insertRoles() {
@@ -41,18 +41,18 @@ abstract class AbstractUserRepositoryR2dbcPostgresql(private val sqlClient: R2db
         sqlClient insert userRoleBboss
     }
 
-    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
+    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom PostgresqlUsers
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom PostgresqlRoles
 
-    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom POSTGRESQL_USER_ROLE
+    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom PostgresqlUserRoles
 
-    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom POSTGRESQL_USER_ROLE
+    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom PostgresqlUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom PostgresqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-        (sqlClient selectFrom POSTGRESQL_USER
-                where POSTGRESQL_USER.firstname eq firstname
+        (sqlClient selectFrom PostgresqlUsers
+                where PostgresqlUsers.firstname eq firstname
                 ).fetchFirstOrNull()
 }

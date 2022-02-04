@@ -20,13 +20,13 @@ class JdbcInheritanceMariadbTest : AbstractJdbcMariadbTest<InheritanceMariadbRep
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(MARIADB_INHERITED, "id"))
+        assertThat(repository.selectById(MariadbInheriteds, "id"))
                 .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(MARIADB_INHERITED, "name"))
+        assertThat(repository.selectFirstByName(MariadbInheriteds, "name"))
                 .isEqualTo(inherited)
     }
 
@@ -34,7 +34,7 @@ class JdbcInheritanceMariadbTest : AbstractJdbcMariadbTest<InheritanceMariadbRep
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById(MARIADB_INHERITED, "id"))
+            assertThat(repository.deleteById(MariadbInheriteds, "id"))
                     .isEqualTo(1)
             assertThat(repository.selectAll())
                     .isEmpty()
@@ -55,20 +55,20 @@ class InheritanceMariadbRepository(private val sqlClient: JdbcSqlClient) : Repos
     }
 
     private fun createTable() {
-        sqlClient createTable MARIADB_INHERITED
+        sqlClient createTable MariadbInheriteds
     }
 
     fun insert() {
         sqlClient insert inherited
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbInheriteds
 
-    fun selectAll() = sqlClient selectAllFrom MARIADB_INHERITED
+    fun selectAll() = sqlClient selectAllFrom MariadbInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MARIADB_INHERITED
-                    where MARIADB_INHERITED.id eq id
+            (sqlClient selectFrom MariadbInheriteds
+                    where MariadbInheriteds.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

@@ -197,77 +197,77 @@ class LongRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) : Reposi
     }
 
     private fun createTables() {
-        sqlClient createTable MARIADB_LONG
+        sqlClient createTable MariadbLongs
     }
 
     private fun insertLongs() {
         sqlClient.insert(longWithNullable, longWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_LONG
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbLongs
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull eq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull eq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull notEq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull notEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull `in` values
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull inf long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull inf long
                     ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull infOrEq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull sup long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull sup long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNotNull supOrEq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNotNull supOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNullable eq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNullable eq long
                     ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNullable notEq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNullable notEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNullable inf long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNullable inf long
                     ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNullable infOrEq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNullable infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNullable sup long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNullable sup long
                     ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom MARIADB_LONG
-                    where MARIADB_LONG.longNullable supOrEq long
+            (sqlClient selectFrom MariadbLongs
+                    where MariadbLongs.longNullable supOrEq long
                     ).fetchAll()
 }

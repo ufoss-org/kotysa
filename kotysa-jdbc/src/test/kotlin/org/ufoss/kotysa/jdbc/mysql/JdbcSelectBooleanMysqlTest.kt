@@ -7,7 +7,7 @@ package org.ufoss.kotysa.jdbc.mysql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.jdbc.JdbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_USER
+import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -33,7 +33,7 @@ class JdbcSelectBooleanMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysql
 class UserRepositoryJdbcMysqlSelectBoolean(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMysql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.isAdmin eq value
+            (sqlClient selectFrom MysqlUsers
+                    where MysqlUsers.isAdmin eq value
                     ).fetchAll()
 }

@@ -31,12 +31,12 @@ class OrderByRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
     AbstractCustomerRepositoryJdbcMysql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.age
+            (sqlClient selectFrom MysqlCustomers
+                    orderByAsc MysqlCustomers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.age andAsc MYSQL_CUSTOMER.id
+            (sqlClient selectFrom MysqlCustomers
+                    orderByAsc MysqlCustomers.age andAsc MysqlCustomers.id
                     ).fetchAll()
 }

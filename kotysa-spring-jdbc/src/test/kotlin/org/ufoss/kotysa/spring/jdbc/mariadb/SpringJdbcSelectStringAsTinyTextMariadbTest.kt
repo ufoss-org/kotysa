@@ -187,72 +187,72 @@ class StringAsTinyTextRepositoryMariadbSelect(client: JdbcOperations) : Reposito
     }
 
     private fun createTables() {
-        sqlClient createTable MARIADB_TINY_TEXT
+        sqlClient createTable MariadbTinyTexts
     }
 
     private fun insertTexts() {
         sqlClient.insert(stringAsTinyTextNotNull, stringAsTinyTextNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_TINY_TEXT
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbTinyTexts
 
     fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom MARIADB_TINY_TEXT
-                where MARIADB_TINY_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MariadbTinyTexts
+                where MariadbTinyTexts.stringNotNull eq value
                 ).fetchFirstOrNull()
 
     fun selectFirstByStringNotNull(value: String) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNotNull eq value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNotNull eq value
                     ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNotNull notEq value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNotNull notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNotNull `in` values
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MARIADB_TINY_TEXT
-                where MARIADB_TINY_TEXT.stringNotNull contains value
+        (sqlClient selectFrom MariadbTinyTexts
+                where MariadbTinyTexts.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MARIADB_TINY_TEXT
-                where MARIADB_TINY_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom MariadbTinyTexts
+                where MariadbTinyTexts.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MARIADB_TINY_TEXT
-                where MARIADB_TINY_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom MariadbTinyTexts
+                where MariadbTinyTexts.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNullable eq value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNullable eq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNullable notEq value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNullable notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNullable contains value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNullable contains value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNullable startsWith value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNullable startsWith value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-            (sqlClient selectFrom MARIADB_TINY_TEXT
-                    where MARIADB_TINY_TEXT.stringNullable endsWith value
+            (sqlClient selectFrom MariadbTinyTexts
+                    where MariadbTinyTexts.stringNullable endsWith value
                     ).fetchAll()
 }

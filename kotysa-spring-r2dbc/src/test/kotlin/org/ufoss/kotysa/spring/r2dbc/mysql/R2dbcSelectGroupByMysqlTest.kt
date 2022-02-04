@@ -33,8 +33,8 @@ class R2dbcSelectGroupByMysqlTest : AbstractR2dbcMysqlTest<GroupByRepositoryMysq
 class GroupByRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMysql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MYSQL_CUSTOMER.id and MYSQL_CUSTOMER.country
-                    from MYSQL_CUSTOMER
-                    groupBy MYSQL_CUSTOMER.country
+            (sqlClient selectCount MysqlCustomers.id and MysqlCustomers.country
+                    from MysqlCustomers
+                    groupBy MysqlCustomers.country
                     ).fetchAll()
 }

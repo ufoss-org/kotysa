@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.MSSQL_USER
+import org.ufoss.kotysa.test.MssqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
@@ -175,57 +175,57 @@ class R2DbcSelectStringMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlSel
 class UserRepositoryMssqlSelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMssql(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname eq firstname
                     ).fetchFirst()
 
     fun selectAllByFirstnameNotEq(firstname: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname notEq firstname
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname notEq firstname
                     ).fetchAll()
 
     fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname `in` firstnames
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname `in` firstnames
                     ).fetchAll()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.alias eq alias
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.alias eq alias
                     ).fetchAll()
 
     fun selectAllByAliasNotEq(alias: String?) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.alias notEq alias
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.alias notEq alias
                     ).fetchAll()
 
     fun selectAllByFirstnameContains(firstnameContains: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname contains firstnameContains
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname contains firstnameContains
                     ).fetchAll()
 
     fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname startsWith firstnameStartsWith
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname startsWith firstnameStartsWith
                     ).fetchAll()
 
     fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname endsWith firstnameEndsWith
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname endsWith firstnameEndsWith
                     ).fetchAll()
 
     fun selectAllByAliasContains(aliasContains: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.alias contains aliasContains
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.alias contains aliasContains
                     ).fetchAll()
 
     fun selectAllByAliasStartsWith(aliasStartsWith: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.alias startsWith aliasStartsWith
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.alias startsWith aliasStartsWith
                     ).fetchAll()
 
     fun selectAllByAliasEndsWith(aliasEndsWith: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.alias endsWith aliasEndsWith
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.alias endsWith aliasEndsWith
                     ).fetchAll()
 }

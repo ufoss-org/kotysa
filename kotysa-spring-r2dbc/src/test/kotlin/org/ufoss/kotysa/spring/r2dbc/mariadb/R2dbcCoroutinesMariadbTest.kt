@@ -130,55 +130,55 @@ class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MARIADB_ROLE
-        sqlClient createTableIfNotExists MARIADB_USER
+        sqlClient createTableIfNotExists MariadbRoles
+        sqlClient createTableIfNotExists MariadbUsers
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MARIADB_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MariadbRoles
 
-    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MARIADB_USER
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MariadbUsers
 
-    fun selectAllUsers() = sqlClient selectAllFrom MARIADB_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MariadbUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MARIADB_USER
-                    where MARIADB_USER.firstname eq firstname
+            (sqlClient selectFrom MariadbUsers
+                    where MariadbUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MARIADB_USER
-                    where MARIADB_USER.firstname eq firstname
+            (sqlClient selectFrom MariadbUsers
+                    where MariadbUsers.firstname eq firstname
                     ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom MARIADB_USER
+            (sqlClient selectFrom MariadbUsers
                     ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MARIADB_USER
-                    where MARIADB_USER.alias eq alias
+            (sqlClient selectFrom MariadbUsers
+                    where MariadbUsers.alias eq alias
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
             (sqlClient.select {
-                UserDto("${it[MARIADB_USER.firstname]} ${it[MARIADB_USER.lastname]}",
-                        it[MARIADB_USER.alias])
+                UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}",
+                        it[MariadbUsers.alias])
             }
-                    from MARIADB_USER
+                    from MariadbUsers
                     ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update MARIADB_USER
-                    set MARIADB_USER.lastname eq newLastname
-                    where MARIADB_USER.id eq userJdoe.id
+            (sqlClient update MariadbUsers
+                    set MariadbUsers.lastname eq newLastname
+                    where MariadbUsers.id eq userJdoe.id
                     ).execute()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MARIADB_USER
+            (sqlClient selectFrom MariadbUsers
                     limit 1 offset 1
                     ).fetchAll()
 }

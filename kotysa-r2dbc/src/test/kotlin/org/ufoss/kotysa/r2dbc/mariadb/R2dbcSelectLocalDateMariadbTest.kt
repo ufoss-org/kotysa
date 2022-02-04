@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MARIADB_LOCAL_DATE
+import org.ufoss.kotysa.test.MariadbLocalDates
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.localDateWithNullable
 import org.ufoss.kotysa.test.localDateWithoutNullable
@@ -193,77 +193,77 @@ class LocalDateRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) : 
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MARIADB_LOCAL_DATE
+        sqlClient createTable MariadbLocalDates
     }
 
     private suspend fun insertLocalDates() {
         sqlClient.insert(localDateWithNullable, localDateWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MARIADB_LOCAL_DATE
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MariadbLocalDates
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull eq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull eq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull notEq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull notEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull `in` values
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull before localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull before localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull beforeOrEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull after localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull after localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNotNull afterOrEq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNotNull afterOrEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNullable eq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNullable eq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNullable notEq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNullable notEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNullable before localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNullable before localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNullable beforeOrEq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNullable beforeOrEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNullable after localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNullable after localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MARIADB_LOCAL_DATE
-                where MARIADB_LOCAL_DATE.localDateNullable afterOrEq localDate
+        (sqlClient selectFrom MariadbLocalDates
+                where MariadbLocalDates.localDateNullable afterOrEq localDate
                 ).fetchAll()
 }

@@ -138,43 +138,43 @@ class UserRepositoryJdbcH2UpdateDelete(private val sqlClient: R2dbcSqlClient) :
     AbstractUserRepositoryR2dbcH2(sqlClient) {
 
     suspend fun deleteUserById(id: Int) =
-            (sqlClient deleteFrom H2_USER
-                    where H2_USER.id eq id
+            (sqlClient deleteFrom H2Users
+                    where H2Users.id eq id
                     ).execute()
 
     suspend fun deleteUserIn(ids: Collection<Int>) =
-            (sqlClient deleteFrom H2_USER
-                    where H2_USER.id `in` ids
+            (sqlClient deleteFrom H2Users
+                    where H2Users.id `in` ids
                     ).execute()
 
     suspend fun deleteUserWithJoin(roleLabel: String) =
-            (sqlClient deleteFrom H2_USER
-                    innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
-                    where H2_ROLE.label eq roleLabel
+            (sqlClient deleteFrom H2Users
+                    innerJoin H2Roles on H2Users.roleId eq H2Roles.id
+                    where H2Roles.label eq roleLabel
                     ).execute()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update H2_USER
-                    set H2_USER.lastname eq newLastname
-                    where H2_USER.id eq userJdoe.id
+            (sqlClient update H2Users
+                    set H2Users.lastname eq newLastname
+                    where H2Users.id eq userJdoe.id
                     ).execute()
 
     suspend fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-            (sqlClient update H2_USER
-                    set H2_USER.lastname eq newLastname
-                    where H2_USER.id `in` ids
+            (sqlClient update H2Users
+                    set H2Users.lastname eq newLastname
+                    where H2Users.id `in` ids
                     ).execute()
 
     suspend fun updateAlias(newAlias: String?) =
-            (sqlClient update H2_USER
-                    set H2_USER.alias eq newAlias
-                    where H2_USER.id eq userBboss.id
+            (sqlClient update H2Users
+                    set H2Users.alias eq newAlias
+                    where H2Users.id eq userBboss.id
                     ).execute()
 
     suspend fun updateWithJoin(newLastname: String, roleLabel: String) =
-            (sqlClient update H2_USER
-                    set H2_USER.lastname eq newLastname
-                    innerJoin H2_ROLE on H2_USER.roleId eq H2_ROLE.id
-                    where H2_ROLE.label eq roleLabel
+            (sqlClient update H2Users
+                    set H2Users.lastname eq newLastname
+                    innerJoin H2Roles on H2Users.roleId eq H2Roles.id
+                    where H2Roles.label eq roleLabel
                     ).execute()
 }

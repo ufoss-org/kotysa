@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.SQLITE_USER
+import org.ufoss.kotysa.test.SqliteUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -37,7 +37,7 @@ class UserRepositoryBooleanSelect(
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom SQLITE_USER
-                    where SQLITE_USER.isAdmin eq value
+            (sqlClient selectFrom SqliteUsers
+                    where SqliteUsers.isAdmin eq value
                     ).fetchAll()
 }

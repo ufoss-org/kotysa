@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MSSQL_KOTLINX_LOCAL_DATE_TIME
+import org.ufoss.kotysa.test.MssqlKotlinxLocalDateTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.kotlinxLocalDateTimeWithNullable
 import org.ufoss.kotysa.test.kotlinxLocalDateTimeWithoutNullable
@@ -197,77 +197,77 @@ class KotlinxLocalDateTimeRepositoryMssqlSelect(private val sqlClient: R2dbcSqlC
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MSSQL_KOTLINX_LOCAL_DATE_TIME
+        sqlClient createTable MssqlKotlinxLocalDateTimes
     }
 
     private suspend fun insertLocalDateTimes() {
         sqlClient.insert(kotlinxLocalDateTimeWithNullable, kotlinxLocalDateTimeWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MssqlKotlinxLocalDateTimes
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull eq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull notEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull before localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull beforeOrEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull after localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNotNull afterOrEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNullable eq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNullable notEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNullable before localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNullable beforeOrEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNullable after localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom MSSQL_KOTLINX_LOCAL_DATE_TIME
-                where MSSQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+        (sqlClient selectFrom MssqlKotlinxLocalDateTimes
+                where MssqlKotlinxLocalDateTimes.localDateTimeNullable afterOrEq localDateTime
                 ).fetchAll()
 }

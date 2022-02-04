@@ -36,7 +36,7 @@ class SpringJdbcSelectDistinctPostgresqlTest :
 class UserRepositorySpringJdbcPostgresqlSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct POSTGRESQL_ROLE.label
-                    from POSTGRESQL_ROLE
+            (sqlClient selectDistinct PostgresqlRoles.label
+                    from PostgresqlRoles
                     ).fetchAll()
 }

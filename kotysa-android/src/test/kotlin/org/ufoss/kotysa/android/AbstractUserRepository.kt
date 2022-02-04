@@ -30,9 +30,9 @@ abstract class AbstractUserRepository(
     }
 
     private fun createTable() {
-        sqlClient createTableIfNotExists SQLITE_ROLE
-        sqlClient createTableIfNotExists SQLITE_USER
-        sqlClient createTableIfNotExists SQLITE_USER_ROLE
+        sqlClient createTableIfNotExists SqliteRoles
+        sqlClient createTableIfNotExists SqliteUsers
+        sqlClient createTableIfNotExists SqliteUserRoles
     }
 
     private fun insertRoles() {
@@ -50,18 +50,18 @@ abstract class AbstractUserRepository(
         sqlClient insert userRoleBboss
     }
 
-    private fun deleteAllFromUsers() = sqlClient deleteAllFrom SQLITE_USER
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom SqliteUsers
 
-    private fun deleteAllFromRoles() = sqlClient deleteAllFrom SQLITE_ROLE
+    private fun deleteAllFromRoles() = sqlClient deleteAllFrom SqliteRoles
 
-    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom SQLITE_USER_ROLE
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom SqliteUserRoles
 
-    fun countAllUserRoles() = sqlClient selectCountAllFrom SQLITE_USER_ROLE
+    fun countAllUserRoles() = sqlClient selectCountAllFrom SqliteUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom SQLITE_USER
+    fun selectAllUsers() = sqlClient selectAllFrom SqliteUsers
 
     fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom SQLITE_USER
-                    where SQLITE_USER.firstname eq firstname
+            (sqlClient selectFrom SqliteUsers
+                    where SqliteUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 }

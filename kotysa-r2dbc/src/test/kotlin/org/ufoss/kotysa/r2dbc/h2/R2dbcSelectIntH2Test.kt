@@ -200,77 +200,77 @@ class IntRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2_INT
+        sqlClient createTable H2Ints
     }
 
     private suspend fun insertInts() {
         sqlClient.insert(intWithNullable, intWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_INT
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2Ints
 
     fun selectAllByIntNotNull(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull eq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull eq int
                 ).fetchAll()
 
     fun selectAllByIntNotNullNotEq(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull notEq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull notEq int
                 ).fetchAll()
 
     fun selectAllByIntNotNullIn(values: Sequence<Int>) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull `in` values
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByIntNotNullInf(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull inf int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull inf int
                 ).fetchAll()
 
     fun selectAllByIntNotNullInfOrEq(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull infOrEq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull infOrEq int
                 ).fetchAll()
 
     fun selectAllByIntNotNullSup(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull sup int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull sup int
                 ).fetchAll()
 
     fun selectAllByIntNotNullSupOrEq(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNotNull supOrEq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNotNull supOrEq int
                 ).fetchAll()
 
     fun selectAllByIntNullable(int: Int?) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNullable eq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNullable eq int
                 ).fetchAll()
 
     fun selectAllByIntNullableNotEq(int: Int?) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNullable notEq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNullable notEq int
                 ).fetchAll()
 
     fun selectAllByIntNullableInf(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNullable inf int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNullable inf int
                 ).fetchAll()
 
     fun selectAllByIntNullableInfOrEq(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNullable infOrEq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNullable infOrEq int
                 ).fetchAll()
 
     fun selectAllByIntNullableSup(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNullable sup int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNullable sup int
                 ).fetchAll()
 
     fun selectAllByIntNullableSupOrEq(int: Int) =
-        (sqlClient selectFrom H2_INT
-                where H2_INT.intNullable supOrEq int
+        (sqlClient selectFrom H2Ints
+                where H2Ints.intNullable supOrEq int
                 ).fetchAll()
 }

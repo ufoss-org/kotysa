@@ -7,7 +7,7 @@ package org.ufoss.kotysa.sample
 import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.tables
 
-data class MsSqlUser(
+data class MssqlUser(
         val firstname: String,
         val lastname: String,
         val isAdmin: Boolean,
@@ -15,13 +15,13 @@ data class MsSqlUser(
         val id: Int?
 )
 
-object MSSQL_USER : MssqlTable<MsSqlUser>() {
-    val id = identityInteger(MsSqlUser::id)
+object MssqlUsers : MssqlTable<MssqlUser>() {
+    val id = identityInteger(MssqlUser::id)
             .primaryKey()
-    val firstname = varchar(MsSqlUser::firstname, "fname")
-    val lastname = varchar(MsSqlUser::lastname, "lname")
-    val isAdmin = bit(MsSqlUser::isAdmin)
-    val alias = varchar(MsSqlUser::alias)
+    val firstname = varchar(MssqlUser::firstname, "fname")
+    val lastname = varchar(MssqlUser::lastname, "lname")
+    val isAdmin = bit(MssqlUser::isAdmin)
+    val alias = varchar(MssqlUser::alias)
 }
 
-fun mssqlTables() = tables().mssql(MSSQL_USER)
+fun mssqlTables() = tables().mssql(MssqlUsers)

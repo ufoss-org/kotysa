@@ -180,64 +180,64 @@ class UserRepositoryMysqlSelectStringAsMediumText(dbClient: DatabaseClient) : Re
             .block()
     }
 
-    private fun createTables() = sqlClient createTable MYSQL_MEDIUM_TEXT
+    private fun createTables() = sqlClient createTable MysqlMediumText
 
     private fun insertMediumTexts() = sqlClient.insert(stringAsMediumTextNotNull, stringAsMediumTextNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_MEDIUM_TEXT
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlMediumText
 
     fun selectFirstByStringNotNull(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNotNull eq value
                 ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNotNull notEq value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNotNull notEq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNotNull `in` values
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNotNull contains value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNullable eq value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNullable eq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNullable notEq value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNullable notEq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNullable contains value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNullable contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNullable startsWith value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNullable startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-        (sqlClient selectFrom MYSQL_MEDIUM_TEXT
-                where MYSQL_MEDIUM_TEXT.stringNullable endsWith value
+        (sqlClient selectFrom MysqlMediumText
+                where MysqlMediumText.stringNullable endsWith value
                 ).fetchAll()
 }

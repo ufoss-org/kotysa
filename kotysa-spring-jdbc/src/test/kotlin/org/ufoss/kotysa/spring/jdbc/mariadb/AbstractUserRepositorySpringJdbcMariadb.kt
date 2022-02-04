@@ -27,9 +27,9 @@ abstract class AbstractUserRepositorySpringJdbcMariadb(client: JdbcOperations) :
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists MARIADB_ROLE
-        sqlClient createTableIfNotExists MARIADB_USER
-        sqlClient createTableIfNotExists MARIADB_USER_ROLE
+        sqlClient createTableIfNotExists MariadbRoles
+        sqlClient createTableIfNotExists MariadbUsers
+        sqlClient createTableIfNotExists MariadbUserRoles
     }
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
@@ -40,18 +40,18 @@ abstract class AbstractUserRepositorySpringJdbcMariadb(client: JdbcOperations) :
         sqlClient insert userRoleBboss
     }
 
-    private fun deleteAllFromRole() = sqlClient deleteAllFrom MARIADB_ROLE
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom MariadbRoles
 
-    private fun deleteAllFromUsers() = sqlClient deleteAllFrom MARIADB_USER
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom MariadbUsers
 
-    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MARIADB_USER_ROLE
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MariadbUserRoles
 
-    fun countAllUserRoles() = sqlClient selectCountAllFrom MARIADB_USER_ROLE
+    fun countAllUserRoles() = sqlClient selectCountAllFrom MariadbUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom MARIADB_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MariadbUsers
 
     fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MARIADB_USER
-                    where MARIADB_USER.firstname eq firstname
+            (sqlClient selectFrom MariadbUsers
+                    where MariadbUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 }

@@ -27,7 +27,7 @@ class R2DbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(MYSQL_INHERITED, "id").block())
+        assertThat(repository.selectById(MysqlInheriteds, "id").block())
                 .isEqualTo(inherited)
     }
 
@@ -39,7 +39,7 @@ class R2DbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(MYSQL_INHERITED, "name").block())
+        assertThat(repository.selectFirstByName(MysqlInheriteds, "name").block())
                 .isEqualTo(inherited)
     }
 
@@ -47,7 +47,7 @@ class R2DbcInheritanceMysqlTest : AbstractR2dbcMysqlTest<InheritanceMysqlReposit
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            repository.deleteById(MYSQL_INHERITED, "id")
+            repository.deleteById(MysqlInheriteds, "id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAll())
         }.test()
@@ -71,17 +71,17 @@ class InheritanceMysqlRepository(dbClient: DatabaseClient) : Repository {
                 .block()
     }
 
-    private fun createTable() = sqlClient createTable MYSQL_INHERITED
+    private fun createTable() = sqlClient createTable MysqlInheriteds
 
     fun insert() = sqlClient insert inherited
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlInheriteds
 
-    fun selectAll() = sqlClient selectAllFrom MYSQL_INHERITED
+    fun selectAll() = sqlClient selectAllFrom MysqlInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MYSQL_INHERITED
-                    where MYSQL_INHERITED.id eq id
+            (sqlClient selectFrom MysqlInheriteds
+                    where MysqlInheriteds.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

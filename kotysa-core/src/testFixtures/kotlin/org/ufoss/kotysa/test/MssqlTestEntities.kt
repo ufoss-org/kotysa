@@ -14,28 +14,28 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 
-object MSSQL_ROLE : MssqlTable<RoleEntity>("roles") {
+object MssqlRoles : MssqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
             .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
-object MSSQL_USER : MssqlTable<UserEntity>("users") {
+object MssqlUsers : MssqlTable<UserEntity>("users") {
     val id = integer(UserEntity::id)
             .primaryKey("PK_users")
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = bit(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(MSSQL_ROLE.id, "FK_users_roles")
+            .foreignKey(MssqlRoles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
-object MSSQL_USER_ROLE : MssqlTable<UserRoleEntity>("userRoles") {
+object MssqlUserRoles : MssqlTable<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-            .foreignKey(MSSQL_USER.id)
+            .foreignKey(MssqlUsers.id)
     val roleId = integer(UserRoleEntity::roleId)
-            .foreignKey(MSSQL_ROLE.id)
+            .foreignKey(MssqlRoles.id)
     val pk = primaryKey(userId, roleId)
 }
 
@@ -100,7 +100,7 @@ val mssqlAllTypesNotNull = MssqlAllTypesNotNull(
         Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L
 )
 
-object MSSQL_ALL_TYPES_NOT_NULL : MssqlTable<MssqlAllTypesNotNull>("all_types") {
+object MssqlAllTypesNotNulls : MssqlTable<MssqlAllTypesNotNull>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
@@ -115,7 +115,7 @@ object MSSQL_ALL_TYPES_NOT_NULL : MssqlTable<MssqlAllTypesNotNull>("all_types") 
     val longe = bigInt(AllTypesNotNullEntity::long)
 }
 
-object MSSQL_ALL_TYPES_NULLABLE : MssqlTable<AllTypesNullableEntity>("all_types_nullable") {
+object MssqlAllTypesNullables : MssqlTable<AllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
@@ -129,7 +129,7 @@ object MSSQL_ALL_TYPES_NULLABLE : MssqlTable<AllTypesNullableEntity>("all_types_
     val longe = bigInt(AllTypesNullableEntity::long)
 }
 
-object MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MssqlTable<AllTypesNullableDefaultValueEntity>() {
+object MssqlAllTypesNullableDefaultValues : MssqlTable<AllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -161,56 +161,56 @@ object MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MssqlTable<AllTypesNullableDefau
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
 }
 
-object MSSQL_LOCAL_DATE : MssqlTable<LocalDateEntity>() {
+object MssqlLocalDates : MssqlTable<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = date(LocalDateEntity::localDateNotNull)
     val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object MSSQL_KOTLINX_LOCAL_DATE : MssqlTable<KotlinxLocalDateEntity>() {
+object MssqlKotlinxLocalDates : MssqlTable<KotlinxLocalDateEntity>() {
     val id = integer(KotlinxLocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object MSSQL_LOCAL_DATE_TIME : MssqlTable<LocalDateTimeEntity>() {
+object MssqlLocalDateTimes : MssqlTable<LocalDateTimeEntity>() {
     val id = integer(LocalDateTimeEntity::id)
             .primaryKey()
     val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MSSQL_KOTLINX_LOCAL_DATE_TIME : MssqlTable<KotlinxLocalDateTimeEntity>() {
+object MssqlKotlinxLocalDateTimes : MssqlTable<KotlinxLocalDateTimeEntity>() {
     val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
     val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MSSQL_INT : MssqlTable<IntEntity>() {
+object MssqlInts : MssqlTable<IntEntity>() {
     val id = identityInteger(IntEntity::id)
             .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
 
-object MSSQL_LONG : MssqlTable<LongEntity>() {
+object MssqlLongs : MssqlTable<LongEntity>() {
     val id = identityBigInt(LongEntity::id)
             .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
 }
 
-object MSSQL_INHERITED : MssqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object MssqlInheriteds : MssqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
             .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
-object MSSQL_JAVA_USER : MssqlTable<JavaUser>("java_users"), JAVA_USER {
+object MssqlJavaUsers : MssqlTable<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
             .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -221,7 +221,7 @@ object MSSQL_JAVA_USER : MssqlTable<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-object MSSQL_CUSTOMER : MssqlTable<CustomerEntity>() {
+object MssqlCustomers : MssqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
             .primaryKey()
     val name = varchar(CustomerEntity::name)
@@ -230,19 +230,19 @@ object MSSQL_CUSTOMER : MssqlTable<CustomerEntity>() {
 }
 
 val mssqlTables = tables().mssql(
-        MSSQL_ROLE,
-        MSSQL_USER,
-        MSSQL_USER_ROLE,
-        MSSQL_ALL_TYPES_NOT_NULL,
-        MSSQL_ALL_TYPES_NULLABLE,
-        MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
-        MSSQL_LOCAL_DATE,
-        MSSQL_KOTLINX_LOCAL_DATE,
-        MSSQL_LOCAL_DATE_TIME,
-        MSSQL_KOTLINX_LOCAL_DATE_TIME,
-        MSSQL_INT,
-        MSSQL_LONG,
-        MSSQL_INHERITED,
-        MSSQL_JAVA_USER,
-        MSSQL_CUSTOMER,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles,
+        MssqlAllTypesNotNulls,
+        MssqlAllTypesNullables,
+        MssqlAllTypesNullableDefaultValues,
+        MssqlLocalDates,
+        MssqlKotlinxLocalDates,
+        MssqlLocalDateTimes,
+        MssqlKotlinxLocalDateTimes,
+        MssqlInts,
+        MssqlLongs,
+        MssqlInheriteds,
+        MssqlJavaUsers,
+        MssqlCustomers,
 )

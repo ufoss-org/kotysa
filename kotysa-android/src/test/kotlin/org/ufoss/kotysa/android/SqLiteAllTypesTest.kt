@@ -96,15 +96,15 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
     }
 
     override fun delete() {
-        sqlClient deleteAllFrom SQLITE_ALL_TYPES_NOT_NULL
-        sqlClient deleteAllFrom SQLITE_ALL_TYPES_NULLABLE
-        sqlClient deleteAllFrom SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient deleteAllFrom SqliteAllTypesNotNullWithTimes
+        sqlClient deleteAllFrom SqliteAllTypesNullableWithTimes
+        sqlClient deleteAllFrom SqliteAllTypesNullableDefaultValueWithTimes
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_ALL_TYPES_NOT_NULL
-        sqlClient createTable SQLITE_ALL_TYPES_NULLABLE
-        sqlClient createTableIfNotExists SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTable SqliteAllTypesNotNullWithTimes
+        sqlClient createTable SqliteAllTypesNullableWithTimes
+        sqlClient createTableIfNotExists SqliteAllTypesNullableDefaultValueWithTimes
     }
 
     private fun insertAllTypes() {
@@ -113,29 +113,29 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
         sqlClient.insert(allTypesNullableDefaultValueWithTime)
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom SQLITE_ALL_TYPES_NOT_NULL
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom SqliteAllTypesNotNullWithTimes
 
-    fun selectAllAllTypesNullable() = sqlClient selectAllFrom SQLITE_ALL_TYPES_NULLABLE
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom SqliteAllTypesNullableWithTimes
 
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom SQLITE_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom SqliteAllTypesNullableDefaultValueWithTimes
 
     fun updateAllTypesNotNull(
             newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
             newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
             newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long
     ) =
-            (sqlClient update SQLITE_ALL_TYPES_NOT_NULL
-                    set SQLITE_ALL_TYPES_NOT_NULL.string eq newString
-                    set SQLITE_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                    set SQLITE_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                    set SQLITE_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                    set SQLITE_ALL_TYPES_NOT_NULL.localTime eq newLocalTime
-                    set SQLITE_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                    set SQLITE_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                    set SQLITE_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                    set SQLITE_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                    set SQLITE_ALL_TYPES_NOT_NULL.int eq newInt
-                    set SQLITE_ALL_TYPES_NOT_NULL.long eq newLong
-                    where SQLITE_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+            (sqlClient update SqliteAllTypesNotNullWithTimes
+                    set SqliteAllTypesNotNullWithTimes.string eq newString
+                    set SqliteAllTypesNotNullWithTimes.boolean eq newBoolean
+                    set SqliteAllTypesNotNullWithTimes.localDate eq newLocalDate
+                    set SqliteAllTypesNotNullWithTimes.kotlinxLocalDate eq newKotlinxLocalDate
+                    set SqliteAllTypesNotNullWithTimes.localTime eq newLocalTime
+                    set SqliteAllTypesNotNullWithTimes.localDateTime1 eq newLocalDateTime
+                    set SqliteAllTypesNotNullWithTimes.localDateTime2 eq newLocalDateTime
+                    set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set SqliteAllTypesNotNullWithTimes.int eq newInt
+                    set SqliteAllTypesNotNullWithTimes.long eq newLong
+                    where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

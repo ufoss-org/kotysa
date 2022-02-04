@@ -146,43 +146,43 @@ class SpringJdbcUpdateDeleteMariadbTest : AbstractSpringJdbcMariadbTest<UserRepo
 class UserRepositorySpringJdbcMariadbUpdateDelete(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMariadb(client) {
 
     fun deleteUserById(id: Int) =
-            (sqlClient deleteFrom MARIADB_USER
-                    where MARIADB_USER.id eq id
+            (sqlClient deleteFrom MariadbUsers
+                    where MariadbUsers.id eq id
                     ).execute()
 
     fun deleteUserIn(ids: Collection<Int>) =
-            (sqlClient deleteFrom MARIADB_USER
-                    where MARIADB_USER.id `in` ids
+            (sqlClient deleteFrom MariadbUsers
+                    where MariadbUsers.id `in` ids
                     ).execute()
 
     fun deleteUserWithJoin(roleLabel: String) =
-            (sqlClient deleteFrom MARIADB_USER
-                    innerJoin MARIADB_ROLE on MARIADB_USER.roleId eq MARIADB_ROLE.id
-                    where MARIADB_ROLE.label eq roleLabel
+            (sqlClient deleteFrom MariadbUsers
+                    innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
+                    where MariadbRoles.label eq roleLabel
                     ).execute()
 
     fun updateLastname(newLastname: String) =
-            (sqlClient update MARIADB_USER
-                    set MARIADB_USER.lastname eq newLastname
-                    where MARIADB_USER.id eq userJdoe.id
+            (sqlClient update MariadbUsers
+                    set MariadbUsers.lastname eq newLastname
+                    where MariadbUsers.id eq userJdoe.id
                     ).execute()
 
     fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-            (sqlClient update MARIADB_USER
-                    set MARIADB_USER.lastname eq newLastname
-                    where MARIADB_USER.id `in` ids
+            (sqlClient update MariadbUsers
+                    set MariadbUsers.lastname eq newLastname
+                    where MariadbUsers.id `in` ids
                     ).execute()
 
     fun updateAlias(newAlias: String?) =
-            (sqlClient update MARIADB_USER
-                    set MARIADB_USER.alias eq newAlias
-                    where MARIADB_USER.id eq userBboss.id
+            (sqlClient update MariadbUsers
+                    set MariadbUsers.alias eq newAlias
+                    where MariadbUsers.id eq userBboss.id
                     ).execute()
 
     fun updateWithJoin(newLastname: String, roleLabel: String) =
-            (sqlClient update MARIADB_USER
-                    set MARIADB_USER.lastname eq newLastname
-                    innerJoin MARIADB_ROLE on MARIADB_USER.roleId eq MARIADB_ROLE.id
-                    where MARIADB_ROLE.label eq roleLabel
+            (sqlClient update MariadbUsers
+                    set MariadbUsers.lastname eq newLastname
+                    innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
+                    where MariadbRoles.label eq roleLabel
                     ).execute()
 }

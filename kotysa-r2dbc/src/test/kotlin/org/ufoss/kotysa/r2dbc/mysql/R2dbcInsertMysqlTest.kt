@@ -127,10 +127,10 @@ class RepositoryMysqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MYSQL_INT
-        sqlClient createTableIfNotExists MYSQL_LONG
-        sqlClient createTableIfNotExists MYSQL_CUSTOMER
-        sqlClient createTableIfNotExists MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MysqlInts
+        sqlClient createTableIfNotExists MysqlLongs
+        sqlClient createTableIfNotExists MysqlCustomers
+        sqlClient createTableIfNotExists MysqlAllTypesNullableDefaultValueWithTimes
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -139,7 +139,7 @@ class RepositoryMysqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MYSQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MysqlCustomers
 
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

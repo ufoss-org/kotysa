@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.MARIADB_ROLE
+import org.ufoss.kotysa.test.MariadbRoles
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
@@ -37,8 +37,8 @@ class R2DbcSelectOrMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbS
 class UserRepositoryMariadbSelectOr(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractUserRepositoryMariadb(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom MARIADB_ROLE
-                    where MARIADB_ROLE.label eq label1
-                    or MARIADB_ROLE.label eq label2
+            (sqlClient selectFrom MariadbRoles
+                    where MariadbRoles.label eq label1
+                    or MariadbRoles.label eq label2
                     ).fetchAll()
 }

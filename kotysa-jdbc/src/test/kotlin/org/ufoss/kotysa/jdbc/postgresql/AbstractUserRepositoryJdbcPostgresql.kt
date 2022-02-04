@@ -23,9 +23,9 @@ abstract class AbstractUserRepositoryJdbcPostgresql(private val sqlClient: JdbcS
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_ROLE
-        sqlClient createTableIfNotExists POSTGRESQL_USER
-        sqlClient createTableIfNotExists POSTGRESQL_USER_ROLE
+        sqlClient createTableIfNotExists PostgresqlRoles
+        sqlClient createTableIfNotExists PostgresqlUsers
+        sqlClient createTableIfNotExists PostgresqlUserRoles
     }
 
     private fun insertRoles() {
@@ -40,18 +40,18 @@ abstract class AbstractUserRepositoryJdbcPostgresql(private val sqlClient: JdbcS
         sqlClient insert userRoleBboss
     }
 
-    private fun deleteAllFromUsers() = sqlClient deleteAllFrom POSTGRESQL_USER
+    private fun deleteAllFromUsers() = sqlClient deleteAllFrom PostgresqlUsers
 
-    private fun deleteAllFromRole() = sqlClient deleteAllFrom POSTGRESQL_ROLE
+    private fun deleteAllFromRole() = sqlClient deleteAllFrom PostgresqlRoles
 
-    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom POSTGRESQL_USER_ROLE
+    fun deleteAllFromUserRoles() = sqlClient deleteAllFrom PostgresqlUserRoles
 
-    fun countAllUserRoles() = sqlClient selectCountAllFrom POSTGRESQL_USER_ROLE
+    fun countAllUserRoles() = sqlClient selectCountAllFrom PostgresqlUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom POSTGRESQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom PostgresqlUsers
 
     fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.firstname eq firstname
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 }

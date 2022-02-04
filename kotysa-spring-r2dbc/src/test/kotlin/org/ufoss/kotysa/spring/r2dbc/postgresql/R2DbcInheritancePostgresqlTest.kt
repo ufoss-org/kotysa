@@ -27,7 +27,7 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(POSTGRESQL_INHERITED, "id").block())
+        assertThat(repository.selectById(PostgresqlInheriteds, "id").block())
                 .isEqualTo(inherited)
     }
 
@@ -39,7 +39,7 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(POSTGRESQL_INHERITED, "name").block())
+        assertThat(repository.selectFirstByName(PostgresqlInheriteds, "name").block())
                 .isEqualTo(inherited)
     }
 
@@ -47,7 +47,7 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            repository.deleteById(POSTGRESQL_INHERITED, "id")
+            repository.deleteById(PostgresqlInheriteds, "id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAll())
         }.test()
@@ -71,17 +71,17 @@ class InheritancePostgresqlRepository(dbClient: DatabaseClient) : Repository {
                 .block()
     }
 
-    private fun createTable() = sqlClient createTable POSTGRESQL_INHERITED
+    private fun createTable() = sqlClient createTable PostgresqlInheriteds
 
     fun insert() = sqlClient insert inherited
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlInheriteds
 
-    fun selectAll() = sqlClient selectAllFrom POSTGRESQL_INHERITED
+    fun selectAll() = sqlClient selectAllFrom PostgresqlInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom POSTGRESQL_INHERITED
-                    where POSTGRESQL_INHERITED.id eq id
+            (sqlClient selectFrom PostgresqlInheriteds
+                    where PostgresqlInheriteds.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

@@ -90,37 +90,37 @@ class UuidRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_UUID
+        sqlClient createTable PostgresqlUuids
     }
 
     private fun insertUuids() {
         sqlClient.insert(uuidWithNullable, uuidWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_UUID
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlUuids
 
     fun selectAllByUuidIdNotNull(uuid: UUID) =
-            (sqlClient selectFrom POSTGRESQL_UUID
-                    where POSTGRESQL_UUID.uuidNotNull eq uuid
+            (sqlClient selectFrom PostgresqlUuids
+                    where PostgresqlUuids.uuidNotNull eq uuid
                     ).fetchAll()
 
     fun selectAllByUuidNotNullNotEq(uuid: UUID) =
-            (sqlClient selectFrom POSTGRESQL_UUID
-                    where POSTGRESQL_UUID.uuidNotNull notEq uuid
+            (sqlClient selectFrom PostgresqlUuids
+                    where PostgresqlUuids.uuidNotNull notEq uuid
                     ).fetchAll()
 
     fun selectAllByUuidNotNullIn(uuids: Sequence<UUID>) =
-            (sqlClient selectFrom POSTGRESQL_UUID
-                    where POSTGRESQL_UUID.id `in` uuids
+            (sqlClient selectFrom PostgresqlUuids
+                    where PostgresqlUuids.id `in` uuids
                     ).fetchAll()
 
     fun selectAllByUuidNullable(uuid: UUID?) =
-            (sqlClient selectFrom POSTGRESQL_UUID
-                    where POSTGRESQL_UUID.uuidNullable eq uuid
+            (sqlClient selectFrom PostgresqlUuids
+                    where PostgresqlUuids.uuidNullable eq uuid
                     ).fetchAll()
 
     fun selectAllByUuidNullableNotEq(uuid: UUID?) =
-            (sqlClient selectFrom POSTGRESQL_UUID
-                    where POSTGRESQL_UUID.uuidNullable notEq uuid
+            (sqlClient selectFrom PostgresqlUuids
+                    where PostgresqlUuids.uuidNullable notEq uuid
                     ).fetchAll()
 }

@@ -16,7 +16,7 @@ data class H2User(
         val id: UUID
 )
 
-object H2_USER : H2Table<H2User>() {
+object H2Users : H2Table<H2User>() {
     val id = uuid(H2User::id)
             .primaryKey()
     val firstname = varchar(H2User::firstname, "fname")
@@ -25,4 +25,4 @@ object H2_USER : H2Table<H2User>() {
     val alias = varchar(H2User::alias)
 }
 
-fun h2Tables() = tables().h2(H2_USER)
+fun h2Tables() = tables().h2(H2Users)

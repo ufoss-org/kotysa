@@ -25,7 +25,7 @@ class UserRepositoryJdbcMariadbSelectDistinct(private val sqlClient: JdbcSqlClie
     AbstractUserRepositoryJdbcMariadb(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MARIADB_ROLE.label
-                    from MARIADB_ROLE
+            (sqlClient selectDistinct MariadbRoles.label
+                    from MariadbRoles
                     ).fetchAll()
 }

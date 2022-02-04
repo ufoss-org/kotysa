@@ -24,8 +24,8 @@ class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcH2Test<GroupByRepository
 class GroupByRepositoryH2Select(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcH2(client) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount H2_CUSTOMER.id and H2_CUSTOMER.country
-                    from H2_CUSTOMER
-                    groupBy H2_CUSTOMER.country
+            (sqlClient selectCount H2Customers.id and H2Customers.country
+                    from H2Customers
+                    groupBy H2Customers.country
                     ).fetchAll()
 }

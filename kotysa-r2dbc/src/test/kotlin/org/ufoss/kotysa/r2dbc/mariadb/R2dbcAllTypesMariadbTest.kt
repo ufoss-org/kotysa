@@ -95,15 +95,15 @@ class AllTypesRepositoryMariadb(private val sqlClient: R2dbcSqlClient) : Reposit
     }
 
     override fun delete() = runBlocking<Unit> {
-        sqlClient deleteAllFrom MARIADB_ALL_TYPES_NOT_NULL
-        sqlClient deleteAllFrom MARIADB_ALL_TYPES_NULLABLE
-        sqlClient deleteAllFrom MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient deleteAllFrom MariadbAllTypesNotNulls
+        sqlClient deleteAllFrom MariadbAllTypesNullableWithTimes
+        sqlClient deleteAllFrom MariadbAllTypesNullableDefaultValueWithTimes
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MARIADB_ALL_TYPES_NOT_NULL
-        sqlClient createTable MARIADB_ALL_TYPES_NULLABLE
-        sqlClient createTableIfNotExists MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTable MariadbAllTypesNotNulls
+        sqlClient createTable MariadbAllTypesNullableWithTimes
+        sqlClient createTableIfNotExists MariadbAllTypesNullableDefaultValueWithTimes
     }
 
     private suspend fun insertAllTypes() {
@@ -112,11 +112,11 @@ class AllTypesRepositoryMariadb(private val sqlClient: R2dbcSqlClient) : Reposit
         sqlClient insert allTypesNullableDefaultValueWithTime
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MARIADB_ALL_TYPES_NOT_NULL
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MariadbAllTypesNotNulls
 
-    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MARIADB_ALL_TYPES_NULLABLE
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MariadbAllTypesNullableWithTimes
 
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MARIADB_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MariadbAllTypesNullableDefaultValueWithTimes
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
@@ -124,18 +124,18 @@ class AllTypesRepositoryMariadb(private val sqlClient: R2dbcSqlClient) : Reposit
         newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long
     ) =
-        (sqlClient update MARIADB_ALL_TYPES_NOT_NULL
-                set MARIADB_ALL_TYPES_NOT_NULL.string eq newString
-                set MARIADB_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                set MARIADB_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                set MARIADB_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                set MARIADB_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
-                set MARIADB_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                set MARIADB_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                set MARIADB_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                set MARIADB_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                set MARIADB_ALL_TYPES_NOT_NULL.inte eq newInt
-                set MARIADB_ALL_TYPES_NOT_NULL.longe eq newLong
-                where MARIADB_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+        (sqlClient update MariadbAllTypesNotNulls
+                set MariadbAllTypesNotNulls.string eq newString
+                set MariadbAllTypesNotNulls.boolean eq newBoolean
+                set MariadbAllTypesNotNulls.localDate eq newLocalDate
+                set MariadbAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                set MariadbAllTypesNotNulls.localTim eq newLocalTime
+                set MariadbAllTypesNotNulls.localDateTime1 eq newLocalDateTime
+                set MariadbAllTypesNotNulls.localDateTime2 eq newLocalDateTime
+                set MariadbAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                set MariadbAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                set MariadbAllTypesNotNulls.inte eq newInt
+                set MariadbAllTypesNotNulls.longe eq newLong
+                where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

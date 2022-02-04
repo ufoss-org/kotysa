@@ -24,9 +24,9 @@ abstract class AbstractUserRepositoryR2dbcH2(private val sqlClient: R2dbcSqlClie
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists H2_ROLE
-        sqlClient createTableIfNotExists H2_USER
-        sqlClient createTableIfNotExists H2_USER_ROLE
+        sqlClient createTableIfNotExists H2Roles
+        sqlClient createTableIfNotExists H2Users
+        sqlClient createTableIfNotExists H2UserRoles
     }
 
     private suspend fun insertRoles() {
@@ -41,18 +41,18 @@ abstract class AbstractUserRepositoryR2dbcH2(private val sqlClient: R2dbcSqlClie
         sqlClient insert userRoleBboss
     }
 
-    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom H2_USER
+    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom H2Users
     
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom H2_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom H2Roles
 
-    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom H2_USER_ROLE
+    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom H2UserRoles
 
-    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom H2_USER_ROLE
+    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom H2UserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom H2_USER
+    fun selectAllUsers() = sqlClient selectAllFrom H2Users
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname eq firstname
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname eq firstname
                     ).fetchFirstOrNull()
 }

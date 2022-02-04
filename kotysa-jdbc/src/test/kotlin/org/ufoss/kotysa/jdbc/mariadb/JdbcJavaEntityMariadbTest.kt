@@ -6,17 +6,17 @@ package org.ufoss.kotysa.jdbc.mariadb
 
 import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
-import org.ufoss.kotysa.test.MARIADB_JAVA_USER
+import org.ufoss.kotysa.test.MariadbJavaUsers
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 class JdbcJavaEntityMariadbTest :
     AbstractJdbcMariadbTest<JavaUserMariadbRepository>(),
-    JavaEntityTest<MARIADB_JAVA_USER, JavaUserMariadbRepository, JdbcTransaction> {
+    JavaEntityTest<MariadbJavaUsers, JavaUserMariadbRepository, JdbcTransaction> {
 
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = JavaUserMariadbRepository(sqlClient)
 }
 
 
 class JavaUserMariadbRepository(sqlClient: JdbcSqlClient) :
-    JavaUserRepository<MARIADB_JAVA_USER>(sqlClient, MARIADB_JAVA_USER)
+    JavaUserRepository<MariadbJavaUsers>(sqlClient, MariadbJavaUsers)

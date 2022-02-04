@@ -131,10 +131,10 @@ class RepositoryH2Insert(private val sqlClient: R2dbcSqlClient) : Repository {
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists H2_INT
-        sqlClient createTableIfNotExists H2_LONG
-        sqlClient createTableIfNotExists H2_CUSTOMER
-        sqlClient createTableIfNotExists H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists H2Ints
+        sqlClient createTableIfNotExists H2Longs
+        sqlClient createTableIfNotExists H2Customers
+        sqlClient createTableIfNotExists H2AllTypesNullableDefaultValues
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -143,7 +143,7 @@ class RepositoryH2Insert(private val sqlClient: R2dbcSqlClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom H2_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom H2Customers
 
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

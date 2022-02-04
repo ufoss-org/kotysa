@@ -128,10 +128,10 @@ class RepositoryH2Insert(private val sqlClient: JdbcSqlClient) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists H2_INT
-        sqlClient createTableIfNotExists H2_LONG
-        sqlClient createTableIfNotExists H2_CUSTOMER
-        sqlClient createTableIfNotExists H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists H2Ints
+        sqlClient createTableIfNotExists H2Longs
+        sqlClient createTableIfNotExists H2Customers
+        sqlClient createTableIfNotExists H2AllTypesNullableDefaultValues
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
@@ -140,7 +140,7 @@ class RepositoryH2Insert(private val sqlClient: JdbcSqlClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom H2_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom H2Customers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

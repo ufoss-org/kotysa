@@ -54,25 +54,25 @@ class SpringJdbcSelectLimitOffsetMssqlTest : AbstractSpringJdbcMssqlTest<LimitOf
 class LimitOffsetByRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom MSSQL_CUSTOMER
-                    orderByAsc MSSQL_CUSTOMER.id
+            (sqlClient selectFrom MssqlCustomers
+                    orderByAsc MssqlCustomers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom MSSQL_CUSTOMER
-                    orderByAsc MSSQL_CUSTOMER.id
+            (sqlClient selectFrom MssqlCustomers
+                    orderByAsc MssqlCustomers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MSSQL_CUSTOMER
+            (sqlClient selectFrom MssqlCustomers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom MSSQL_CUSTOMER
-                    orderByAsc MSSQL_CUSTOMER.id
+            (sqlClient selectFrom MssqlCustomers
+                    orderByAsc MssqlCustomers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

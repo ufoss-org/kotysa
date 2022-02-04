@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.MSSQL_USER
+import org.ufoss.kotysa.test.MssqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
@@ -44,7 +44,7 @@ class SpringJdbcSelectBooleanMssqlTest : AbstractSpringJdbcMssqlTest<UserReposit
 class UserRepositorySpringJdbcMssqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMssql(client) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.isAdmin eq value
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.isAdmin eq value
                     ).fetchAll()
 }

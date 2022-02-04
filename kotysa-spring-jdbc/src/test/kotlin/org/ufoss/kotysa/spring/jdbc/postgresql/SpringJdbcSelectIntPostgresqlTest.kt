@@ -210,77 +210,77 @@ class IntRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_INT
+        sqlClient createTable PostgresqlInts
     }
 
     private fun insertInts() {
         sqlClient.insert(intWithNullable, intWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_INT
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlInts
 
     fun selectAllByIntNotNull(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull eq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull eq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullNotEq(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull notEq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull notEq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullIn(values: Sequence<Int>) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull `in` values
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByIntNotNullInf(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull inf int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull inf int
                     ).fetchAll()
 
     fun selectAllByIntNotNullInfOrEq(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull infOrEq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNotNullSup(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull sup int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull sup int
                     ).fetchAll()
 
     fun selectAllByIntNotNullSupOrEq(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNotNull supOrEq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNotNull supOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNullable(int: Int?) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNullable eq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNullable eq int
                     ).fetchAll()
 
     fun selectAllByIntNullableNotEq(int: Int?) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNullable notEq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNullable notEq int
                     ).fetchAll()
 
     fun selectAllByIntNullableInf(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNullable inf int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNullable inf int
                     ).fetchAll()
 
     fun selectAllByIntNullableInfOrEq(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNullable infOrEq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNullable infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntNullableSup(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNullable sup int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNullable sup int
                     ).fetchAll()
 
     fun selectAllByIntNullableSupOrEq(int: Int) =
-            (sqlClient selectFrom POSTGRESQL_INT
-                    where POSTGRESQL_INT.intNullable supOrEq int
+            (sqlClient selectFrom PostgresqlInts
+                    where PostgresqlInts.intNullable supOrEq int
                     ).fetchAll()
 }

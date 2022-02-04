@@ -104,26 +104,26 @@ class AllTypesRepositoryPostgresql(client: JdbcOperations) : Repository {
     }
 
     override fun delete() {
-        sqlClient deleteAllFrom POSTGRESQL_ALL_TYPES_NOT_NULL
-        sqlClient deleteAllFrom POSTGRESQL_ALL_TYPES_NULLABLE
-        sqlClient deleteAllFrom POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient deleteAllFrom PostgresqlAllTypesNotNulls
+        sqlClient deleteAllFrom PostgresqlAllTypesNullables
+        sqlClient deleteAllFrom PostgresqlAllTypesNullableDefaultValues
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_ALL_TYPES_NOT_NULL
-        sqlClient createTable POSTGRESQL_ALL_TYPES_NULLABLE
-        sqlClient createTableIfNotExists POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTable PostgresqlAllTypesNotNulls
+        sqlClient createTable PostgresqlAllTypesNullables
+        sqlClient createTableIfNotExists PostgresqlAllTypesNullableDefaultValues
     }
 
     private fun insertAllTypes() {
         sqlClient.insert(postgresqlAllTypesNotNull, postgresqlAllTypesNullable, postgresqlAllTypesNullableDefaultValue)
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NOT_NULL
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom PostgresqlAllTypesNotNulls
 
-    fun selectAllAllTypesNullable() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NULLABLE
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom PostgresqlAllTypesNullables
 
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom POSTGRESQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom PostgresqlAllTypesNullableDefaultValues
 
     fun updateAllTypesNotNull(
             newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
@@ -131,20 +131,20 @@ class AllTypesRepositoryPostgresql(client: JdbcOperations) : Repository {
             newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
             newLong: Long, newOffsetDateTime: OffsetDateTime, newUuid: UUID
     ) =
-            (sqlClient update POSTGRESQL_ALL_TYPES_NOT_NULL
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.string eq newString
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.int eq newInt
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.long eq newLong
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
-                    set POSTGRESQL_ALL_TYPES_NOT_NULL.uuid eq newUuid
-                    where POSTGRESQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+            (sqlClient update PostgresqlAllTypesNotNulls
+                    set PostgresqlAllTypesNotNulls.string eq newString
+                    set PostgresqlAllTypesNotNulls.boolean eq newBoolean
+                    set PostgresqlAllTypesNotNulls.localDate eq newLocalDate
+                    set PostgresqlAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                    set PostgresqlAllTypesNotNulls.localTim eq newLocalTime
+                    set PostgresqlAllTypesNotNulls.localDateTime1 eq newLocalDateTime
+                    set PostgresqlAllTypesNotNulls.localDateTime2 eq newLocalDateTime
+                    set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set PostgresqlAllTypesNotNulls.int eq newInt
+                    set PostgresqlAllTypesNotNulls.long eq newLong
+                    set PostgresqlAllTypesNotNulls.offsetDateTime eq newOffsetDateTime
+                    set PostgresqlAllTypesNotNulls.uuid eq newUuid
+                    where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                     ).execute()
 }

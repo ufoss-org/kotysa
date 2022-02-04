@@ -44,25 +44,25 @@ class R2dbcSelectLimitOffsetH2Test : AbstractR2dbcH2Test<LimitOffsetRepositoryH2
 class LimitOffsetRepositoryH2Select(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractCustomerRepositoryH2(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom H2_CUSTOMER
+            (sqlClient selectFrom H2Customers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom H2_CUSTOMER
-                    orderByAsc H2_CUSTOMER.id
+            (sqlClient selectFrom H2Customers
+                    orderByAsc H2Customers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

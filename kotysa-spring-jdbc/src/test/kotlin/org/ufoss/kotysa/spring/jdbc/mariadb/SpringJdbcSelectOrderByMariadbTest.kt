@@ -40,12 +40,12 @@ class SpringJdbcSelectOrderByMariadbTest : AbstractSpringJdbcMariadbTest<OrderBy
 class OrderByRepositoryMariadbSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMariadb(client) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.age
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.age andAsc MARIADB_CUSTOMER.id
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
                     ).fetchAll()
 }

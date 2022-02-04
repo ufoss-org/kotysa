@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.H2_USER
+import org.ufoss.kotysa.test.H2Users
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -35,7 +35,7 @@ class SpringJdbcSelectBooleanH2Test : AbstractSpringJdbcH2Test<UserRepositorySpr
 class UserRepositorySpringJdbcH2SelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.isAdmin eq value
+            (sqlClient selectFrom H2Users
+                    where H2Users.isAdmin eq value
                     ).fetchAll()
 }

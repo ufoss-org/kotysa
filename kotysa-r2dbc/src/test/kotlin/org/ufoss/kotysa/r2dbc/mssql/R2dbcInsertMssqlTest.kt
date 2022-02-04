@@ -125,10 +125,10 @@ class RepositoryMssqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MSSQL_INT
-        sqlClient createTableIfNotExists MSSQL_LONG
-        sqlClient createTableIfNotExists MSSQL_CUSTOMER
-        sqlClient createTableIfNotExists MSSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTableIfNotExists MssqlInts
+        sqlClient createTableIfNotExists MssqlLongs
+        sqlClient createTableIfNotExists MssqlCustomers
+        sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -137,7 +137,7 @@ class RepositoryMssqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MSSQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MssqlCustomers
 
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

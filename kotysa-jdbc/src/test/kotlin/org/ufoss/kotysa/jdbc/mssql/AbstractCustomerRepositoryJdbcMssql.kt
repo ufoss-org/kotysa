@@ -19,12 +19,12 @@ abstract class AbstractCustomerRepositoryJdbcMssql(private val sqlClient: JdbcSq
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists MSSQL_CUSTOMER
+        sqlClient createTableIfNotExists MssqlCustomers
     }
 
     private fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MSSQL_CUSTOMER
+    private fun deleteAll() = sqlClient deleteAllFrom MssqlCustomers
 }

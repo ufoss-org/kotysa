@@ -201,74 +201,74 @@ class LocalDateTimeRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository 
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable MYSQL_LOCAL_DATE_TIME
+    private fun createTables() = sqlClient createTable MysqlLocalDateTimes
 
     private fun insertLocalDateTimes() = sqlClient.insert(localDateTimeWithNullable, localDateTimeWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_LOCAL_DATE_TIME
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlLocalDateTimes
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNotNull afterOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNullable eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNullable notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNullable before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNullable beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNullable after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom MYSQL_LOCAL_DATE_TIME
-                    where MYSQL_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+            (sqlClient selectFrom MysqlLocalDateTimes
+                    where MysqlLocalDateTimes.localDateTimeNullable afterOrEq localDateTime
                     ).fetchAll()
 }

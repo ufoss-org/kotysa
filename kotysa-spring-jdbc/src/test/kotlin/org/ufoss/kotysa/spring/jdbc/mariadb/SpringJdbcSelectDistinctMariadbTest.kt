@@ -35,7 +35,7 @@ class SpringJdbcSelectDistinctMariadbTest : AbstractSpringJdbcMariadbTest<UserRe
 class UserRepositorySpringJdbcMariadbSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMariadb(client) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MARIADB_ROLE.label
-                    from MARIADB_ROLE
+            (sqlClient selectDistinct MariadbRoles.label
+                    from MariadbRoles
                     ).fetchAll()
 }

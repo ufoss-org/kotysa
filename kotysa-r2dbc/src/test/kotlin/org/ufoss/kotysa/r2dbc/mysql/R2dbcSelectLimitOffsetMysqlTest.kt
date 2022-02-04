@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_CUSTOMER
+import org.ufoss.kotysa.test.MysqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -49,25 +49,25 @@ class LimitOffsetRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcMysql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-        (sqlClient selectFrom MYSQL_CUSTOMER
-                orderByAsc MYSQL_CUSTOMER.id
+        (sqlClient selectFrom MysqlCustomers
+                orderByAsc MysqlCustomers.id
                 offset 2
                 ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-        (sqlClient selectFrom MYSQL_CUSTOMER
-                orderByAsc MYSQL_CUSTOMER.id
+        (sqlClient selectFrom MysqlCustomers
+                orderByAsc MysqlCustomers.id
                 limit 1
                 ).fetchAll()
 
     fun selectAllLimitOffset() =
-        (sqlClient selectFrom MYSQL_CUSTOMER
+        (sqlClient selectFrom MysqlCustomers
                 limit 1 offset 1
                 ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-        (sqlClient selectFrom MYSQL_CUSTOMER
-                orderByAsc MYSQL_CUSTOMER.id
+        (sqlClient selectFrom MysqlCustomers
+                orderByAsc MysqlCustomers.id
                 limit 2 offset 1
                 ).fetchAll()
 }

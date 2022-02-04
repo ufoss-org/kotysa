@@ -40,12 +40,12 @@ class R2dbcSelectOrderByPostgresqlTest : AbstractR2dbcPostgresqlTest<OrderByRepo
 class OrderByRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryPostgresql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                    orderByAsc POSTGRESQL_CUSTOMER.age
+            (sqlClient selectFrom PostgresqlCustomers
+                    orderByAsc PostgresqlCustomers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                    orderByAsc POSTGRESQL_CUSTOMER.age andAsc POSTGRESQL_CUSTOMER.id
+            (sqlClient selectFrom PostgresqlCustomers
+                    orderByAsc PostgresqlCustomers.age andAsc PostgresqlCustomers.id
                     ).fetchAll()
 }

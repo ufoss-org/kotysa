@@ -211,75 +211,75 @@ class LongRepositoryMssqlSelect(dbClient: DatabaseClient) : Repository {
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable MSSQL_LONG
+    private fun createTables() = sqlClient createTable MssqlLongs
 
     private fun insertLongs() =
             sqlClient.insert(longWithNullable, longWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom MSSQL_LONG
+    private fun deleteAll() = sqlClient deleteAllFrom MssqlLongs
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull eq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull eq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull notEq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull notEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull `in` values
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull inf long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull inf long
                     ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull infOrEq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull sup long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull sup long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNotNull supOrEq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNotNull supOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNullable eq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNullable eq long
                     ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNullable notEq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNullable notEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNullable inf long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNullable inf long
                     ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNullable infOrEq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNullable infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNullable sup long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNullable sup long
                     ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom MSSQL_LONG
-                    where MSSQL_LONG.longNullable supOrEq long
+            (sqlClient selectFrom MssqlLongs
+                    where MssqlLongs.longNullable supOrEq long
                     ).fetchAll()
 }

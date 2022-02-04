@@ -187,72 +187,72 @@ class StringAsTextRepositoryPostgresqlSelect(client: JdbcOperations) : Repositor
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_TEXT
+        sqlClient createTable PostgresqlTexts
     }
 
     private fun insertTexts() {
         sqlClient.insert(stringAsTextNotNull, stringAsTextNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_TEXT
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlTexts
 
     fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom POSTGRESQL_TEXT
-                where POSTGRESQL_TEXT.stringNotNull eq value
+        (sqlClient selectFrom PostgresqlTexts
+                where PostgresqlTexts.stringNotNull eq value
                 ).fetchFirstOrNull()
 
     fun selectFirstByStringNotNull(value: String) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNotNull eq value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNotNull eq value
                     ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNotNull notEq value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNotNull notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNotNull `in` values
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom POSTGRESQL_TEXT
-                where POSTGRESQL_TEXT.stringNotNull contains value
+        (sqlClient selectFrom PostgresqlTexts
+                where PostgresqlTexts.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom POSTGRESQL_TEXT
-                where POSTGRESQL_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom PostgresqlTexts
+                where PostgresqlTexts.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom POSTGRESQL_TEXT
-                where POSTGRESQL_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom PostgresqlTexts
+                where PostgresqlTexts.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNullable eq value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNullable eq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNullable notEq value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNullable notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNullable contains value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNullable contains value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNullable startsWith value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNullable startsWith value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-            (sqlClient selectFrom POSTGRESQL_TEXT
-                    where POSTGRESQL_TEXT.stringNullable endsWith value
+            (sqlClient selectFrom PostgresqlTexts
+                    where PostgresqlTexts.stringNullable endsWith value
                     ).fetchAll()
 }

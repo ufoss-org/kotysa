@@ -50,22 +50,22 @@ class SpringJdbcSelectMinMaxAvgSumMssqlTest : AbstractSpringJdbcMssqlTest<MinMax
 class MinMaxAvgSumRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin MSSQL_CUSTOMER.age
-                    from MSSQL_CUSTOMER
+            (sqlClient selectMin MssqlCustomers.age
+                    from MssqlCustomers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax MSSQL_CUSTOMER.age
-                    from MSSQL_CUSTOMER
+            (sqlClient selectMax MssqlCustomers.age
+                    from MssqlCustomers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg MSSQL_CUSTOMER.age
-                    from MSSQL_CUSTOMER
+            (sqlClient selectAvg MssqlCustomers.age
+                    from MssqlCustomers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum MSSQL_CUSTOMER.age
-                    from MSSQL_CUSTOMER
+            (sqlClient selectSum MssqlCustomers.age
+                    from MssqlCustomers
                     ).fetchOne()
 }

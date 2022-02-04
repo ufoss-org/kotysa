@@ -35,7 +35,7 @@ class SpringJdbcSelectDistinctMysqlTest : AbstractSpringJdbcMysqlTest<UserReposi
 class UserRepositorySpringJdbcMysqlSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MYSQL_ROLE.label
-                    from MYSQL_ROLE
+            (sqlClient selectDistinct MysqlRoles.label
+                    from MysqlRoles
                     ).fetchAll()
 }

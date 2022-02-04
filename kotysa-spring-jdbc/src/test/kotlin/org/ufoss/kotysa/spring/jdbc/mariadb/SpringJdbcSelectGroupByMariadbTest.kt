@@ -33,8 +33,8 @@ class SpringJdbcSelectGroupByMariadbTest : AbstractSpringJdbcMariadbTest<GroupBy
 class GroupByRepositoryMariadbSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMariadb(client) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MARIADB_CUSTOMER.id and MARIADB_CUSTOMER.country
-                    from MARIADB_CUSTOMER
-                    groupBy MARIADB_CUSTOMER.country
+            (sqlClient selectCount MariadbCustomers.id and MariadbCustomers.country
+                    from MariadbCustomers
+                    groupBy MariadbCustomers.country
                     ).fetchAll()
 }

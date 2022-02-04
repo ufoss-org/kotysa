@@ -41,22 +41,22 @@ class SpringJdbcSelectMinMaxAvgSumH2Test : AbstractSpringJdbcH2Test<MinMaxAvgSum
 class MinMaxAvgSumRepositoryH2Select(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcH2(client) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectMin H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectMax H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectAvg H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectSum H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MSSQL_CUSTOMER
+import org.ufoss.kotysa.test.MssqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -36,12 +36,12 @@ class OrderByRepositoryMssqlSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcMssql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-        (sqlClient selectFrom MSSQL_CUSTOMER
-                orderByAsc MSSQL_CUSTOMER.age
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.age
                 ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-        (sqlClient selectFrom MSSQL_CUSTOMER
-                orderByAsc MSSQL_CUSTOMER.age andAsc MSSQL_CUSTOMER.id
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.age andAsc MssqlCustomers.id
                 ).fetchAll()
 }

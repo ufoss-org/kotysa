@@ -143,10 +143,10 @@ class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists H2_INT)
-            .then(sqlClient createTableIfNotExists H2_LONG)
-            .then(sqlClient createTableIfNotExists H2_CUSTOMER)
-            .then(sqlClient createTableIfNotExists H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+        (sqlClient createTableIfNotExists H2Ints)
+            .then(sqlClient createTableIfNotExists H2Longs)
+            .then(sqlClient createTableIfNotExists H2Customers)
+            .then(sqlClient createTableIfNotExists H2AllTypesNullableDefaultValues)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -154,7 +154,7 @@ class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom H2_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom H2Customers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

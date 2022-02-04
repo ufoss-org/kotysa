@@ -130,55 +130,55 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MYSQL_ROLE
-        sqlClient createTableIfNotExists MYSQL_USER
+        sqlClient createTableIfNotExists MysqlRoles
+        sqlClient createTableIfNotExists MysqlUsers
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MYSQL_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MysqlRoles
 
-    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MYSQL_USER
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MysqlUsers
 
-    fun selectAllUsers() = sqlClient selectAllFrom MYSQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MysqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MysqlUsers
+                    where MysqlUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MysqlUsers
+                    where MysqlUsers.firstname eq firstname
                     ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom MYSQL_USER
+            (sqlClient selectFrom MysqlUsers
                     ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MYSQL_USER
-                    where MYSQL_USER.alias eq alias
+            (sqlClient selectFrom MysqlUsers
+                    where MysqlUsers.alias eq alias
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
             (sqlClient.select {
-                UserDto("${it[MYSQL_USER.firstname]} ${it[MYSQL_USER.lastname]}",
-                        it[MYSQL_USER.alias])
+                UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}",
+                        it[MysqlUsers.alias])
             }
-                    from MYSQL_USER
+                    from MysqlUsers
                     ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update MYSQL_USER
-                    set MYSQL_USER.lastname eq newLastname
-                    where MYSQL_USER.id eq userJdoe.id
+            (sqlClient update MysqlUsers
+                    set MysqlUsers.lastname eq newLastname
+                    where MysqlUsers.id eq userJdoe.id
                     ).execute()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MYSQL_USER
+            (sqlClient selectFrom MysqlUsers
                     limit 1 offset 1
                     ).fetchAll()
 }

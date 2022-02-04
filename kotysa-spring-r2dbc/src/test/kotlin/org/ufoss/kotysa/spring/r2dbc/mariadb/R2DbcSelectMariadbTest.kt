@@ -168,90 +168,90 @@ class R2DbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSel
 class UserRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractUserRepositoryMariadb(sqlClient) {
 
     fun selectOneNonUnique() =
-        (sqlClient selectFrom MARIADB_USER
+        (sqlClient selectFrom MariadbUsers
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
         (sqlClient select {
-            UserDto("${it[MARIADB_USER.firstname]} ${it[MARIADB_USER.lastname]}", it[MARIADB_USER.alias])
+            UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.alias])
         }
-                from MARIADB_USER
+                from MariadbUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[MARIADB_USER.lastname]!!, it[MARIADB_ROLE.label]!!) }
-                from MARIADB_USER innerJoin MARIADB_ROLE on MARIADB_USER.roleId eq MARIADB_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[MariadbUsers.lastname]!!, it[MariadbRoles.label]!!) }
+                from MariadbUsers innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[MARIADB_USER.lastname]!!, it[MARIADB_ROLE.label]!!) }
-                from MARIADB_USER and MARIADB_ROLE
-                where MARIADB_USER.roleId eq MARIADB_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[MariadbUsers.lastname]!!, it[MariadbRoles.label]!!) }
+                from MariadbUsers and MariadbRoles
+                where MariadbUsers.roleId eq MariadbRoles.id
                 ).fetchAll()
 
     fun selectAllIn(aliases: Collection<String>) =
-        (sqlClient selectFrom MARIADB_USER
-                where MARIADB_USER.alias `in` aliases
+        (sqlClient selectFrom MariadbUsers
+                where MariadbUsers.alias `in` aliases
                 ).fetchAll()
 
     fun selectOneById(id: Int) =
-        (sqlClient select MARIADB_USER
-                from MARIADB_USER
-                where MARIADB_USER.id eq id
+        (sqlClient select MariadbUsers
+                from MariadbUsers
+                where MariadbUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameById(id: Int) =
-        (sqlClient select MARIADB_USER.firstname
-                from MARIADB_USER
-                where MARIADB_USER.id eq id
+        (sqlClient select MariadbUsers.firstname
+                from MariadbUsers
+                where MariadbUsers.id eq id
                 ).fetchOne()
 
     fun selectAliasById(id: Int) =
-        (sqlClient select MARIADB_USER.alias
-                from MARIADB_USER
-                where MARIADB_USER.id eq id
+        (sqlClient select MariadbUsers.alias
+                from MariadbUsers
+                where MariadbUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameAndAliasById(id: Int) =
-        (sqlClient select MARIADB_USER.firstname and MARIADB_USER.alias
-                from MARIADB_USER
-                where MARIADB_USER.id eq id
+        (sqlClient select MariadbUsers.firstname and MariadbUsers.alias
+                from MariadbUsers
+                where MariadbUsers.id eq id
                 ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-        (sqlClient select MARIADB_USER.firstname and MARIADB_USER.alias
-                from MARIADB_USER
+        (sqlClient select MariadbUsers.firstname and MariadbUsers.alias
+                from MariadbUsers
                 ).fetchAll()
 
     fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-        (sqlClient select MARIADB_USER.firstname and MARIADB_USER.lastname and MARIADB_USER.alias
-                from MARIADB_USER
-                where MARIADB_USER.id eq id
+        (sqlClient select MariadbUsers.firstname and MariadbUsers.lastname and MariadbUsers.alias
+                from MariadbUsers
+                where MariadbUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-        (sqlClient select MARIADB_USER.firstname and MARIADB_USER.lastname and MARIADB_USER.alias and MARIADB_USER.isAdmin
-                from MARIADB_USER
-                where MARIADB_USER.id eq id
+        (sqlClient select MariadbUsers.firstname and MariadbUsers.lastname and MariadbUsers.alias and MariadbUsers.isAdmin
+                from MariadbUsers
+                where MariadbUsers.id eq id
                 ).fetchOne()
 
     fun countAllUsersAndAliases() =
-        (sqlClient selectCount MARIADB_USER.id
-                andCount MARIADB_USER.alias
-                from MARIADB_USER
+        (sqlClient selectCount MariadbUsers.id
+                andCount MariadbUsers.alias
+                from MariadbUsers
                 ).fetchOne()
 
     fun selectRoleLabelFromUserId(userId: Int) =
-        (sqlClient select MARIADB_ROLE.label
-                from MARIADB_ROLE innerJoin MARIADB_USER on MARIADB_ROLE.id eq MARIADB_USER.roleId
-                where MARIADB_USER.id eq userId)
+        (sqlClient select MariadbRoles.label
+                from MariadbRoles innerJoin MariadbUsers on MariadbRoles.id eq MariadbUsers.roleId
+                where MariadbUsers.id eq userId)
             .fetchOne()
 
-    fun countAllUsers() = sqlClient selectCountAllFrom MARIADB_USER
+    fun countAllUsers() = sqlClient selectCountAllFrom MariadbUsers
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-        (sqlClient select MARIADB_ROLE.label
-                from MARIADB_USER_ROLE innerJoin MARIADB_ROLE on MARIADB_USER_ROLE.roleId eq MARIADB_ROLE.id
-                where MARIADB_USER_ROLE.userId eq userId)
+        (sqlClient select MariadbRoles.label
+                from MariadbUserRoles innerJoin MariadbRoles on MariadbUserRoles.roleId eq MariadbRoles.id
+                where MariadbUserRoles.userId eq userId)
             .fetchAll()
 }

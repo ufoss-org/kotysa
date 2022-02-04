@@ -30,13 +30,13 @@ class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(H2_INHERITED, "id").block())
+        assertThat(repository.selectById(H2Inheriteds, "id").block())
                 .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(H2_INHERITED, "name").block())
+        assertThat(repository.selectFirstByName(H2Inheriteds, "name").block())
                 .isEqualTo(inherited)
     }
 
@@ -44,7 +44,7 @@ class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            repository.deleteById(H2_INHERITED, "id")
+            repository.deleteById(H2Inheriteds, "id")
                     .doOnNext { n -> assertThat(n).isEqualTo(1) }
                     .thenMany(repository.selectAll())
         }.test()
@@ -68,17 +68,17 @@ class InheritanceH2Repository(dbClient: DatabaseClient) : Repository {
                 .block()
     }
 
-    private fun createTable() = sqlClient createTable H2_INHERITED
+    private fun createTable() = sqlClient createTable H2Inheriteds
 
     fun insert() = sqlClient insert inherited
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom H2Inheriteds
 
-    fun selectAll() = sqlClient selectAllFrom H2_INHERITED
+    fun selectAll() = sqlClient selectAllFrom H2Inheriteds
 
     fun selectInheritedById(id: String) =
-        (sqlClient selectFrom H2_INHERITED
-                where H2_INHERITED.id eq id
+        (sqlClient selectFrom H2Inheriteds
+                where H2Inheriteds.id eq id
                 ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

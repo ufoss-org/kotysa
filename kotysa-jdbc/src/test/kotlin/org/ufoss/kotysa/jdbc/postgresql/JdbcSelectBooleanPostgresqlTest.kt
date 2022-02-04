@@ -32,7 +32,7 @@ class UserRepositoryJdbcPostgresqlSelectBoolean(private val sqlClient: JdbcSqlCl
     AbstractUserRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.isAdmin eq value
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.isAdmin eq value
                     ).fetchAll()
 }

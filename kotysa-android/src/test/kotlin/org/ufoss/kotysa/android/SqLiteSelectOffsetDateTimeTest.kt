@@ -449,77 +449,77 @@ class OffsetDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables:
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_OFFSET_DATE_TIME
+        sqlClient createTable SqliteOffsetDateTimes
     }
 
     private fun insertOffsetDateTimes() {
         sqlClient.insert(offsetDateTimeWithNullable, offsetDateTimeWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_OFFSET_DATE_TIME
+    private fun deleteAll() = sqlClient deleteAllFrom SqliteOffsetDateTimes
 
     fun selectAllByOffsetDateTimeNotNull(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull eq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull eq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullNotEq(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull notEq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull notEq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullIn(values: Sequence<OffsetDateTime>) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull `in` values
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBefore(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull before offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull before offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullBeforeOrEq(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull beforeOrEq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull beforeOrEq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfter(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull after offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull after offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNotNullAfterOrEq(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNotNull afterOrEq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNotNull afterOrEq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullable(offsetDateTime: OffsetDateTime?) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable eq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNullable eq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableNotEq(offsetDateTime: OffsetDateTime?) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable notEq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNullable notEq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBefore(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable before offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNullable before offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableBeforeOrEq(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable beforeOrEq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNullable beforeOrEq offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfter(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable after offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNullable after offsetDateTime
                     ).fetchAll()
 
     fun selectAllByOffsetDateTimeNullableAfterOrEq(offsetDateTime: OffsetDateTime) =
-            (sqlClient selectFrom SQLITE_OFFSET_DATE_TIME
-                    where SQLITE_OFFSET_DATE_TIME.offsetDateTimeNullable afterOrEq offsetDateTime
+            (sqlClient selectFrom SqliteOffsetDateTimes
+                    where SqliteOffsetDateTimes.offsetDateTimeNullable afterOrEq offsetDateTime
                     ).fetchAll()
 }

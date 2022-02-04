@@ -79,34 +79,34 @@ class UuidRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Reposito
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable H2_UUID
+    private fun createTables() = sqlClient createTable H2Uuids
 
     private fun insertUuids() = sqlClient.insert(uuidWithNullable, uuidWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2_UUID
+    private fun deleteAll() = sqlClient deleteAllFrom H2Uuids
 
     fun selectAllByUuidIdNotNull(uuid: UUID) =
-            (sqlClient selectFrom H2_UUID
-                    where H2_UUID.uuidNotNull eq uuid
+            (sqlClient selectFrom H2Uuids
+                    where H2Uuids.uuidNotNull eq uuid
                     ).fetchAll()
 
     fun selectAllByUuidNotNullNotEq(uuid: UUID) =
-            (sqlClient selectFrom H2_UUID
-                    where H2_UUID.uuidNotNull notEq uuid
+            (sqlClient selectFrom H2Uuids
+                    where H2Uuids.uuidNotNull notEq uuid
                     ).fetchAll()
 
     fun selectAllByUuidNotNullIn(uuids: Sequence<UUID>) =
-            (sqlClient selectFrom H2_UUID
-                    where H2_UUID.id `in` uuids
+            (sqlClient selectFrom H2Uuids
+                    where H2Uuids.id `in` uuids
                     ).fetchAll()
 
     fun selectAllByUuidNullable(uuid: UUID?) =
-            (sqlClient selectFrom H2_UUID
-                    where H2_UUID.uuidNullable eq uuid
+            (sqlClient selectFrom H2Uuids
+                    where H2Uuids.uuidNullable eq uuid
                     ).fetchAll()
 
     fun selectAllByUuidNullableNotEq(uuid: UUID?) =
-            (sqlClient selectFrom H2_UUID
-                    where H2_UUID.uuidNullable notEq uuid
+            (sqlClient selectFrom H2Uuids
+                    where H2Uuids.uuidNullable notEq uuid
                     ).fetchAll()
 }

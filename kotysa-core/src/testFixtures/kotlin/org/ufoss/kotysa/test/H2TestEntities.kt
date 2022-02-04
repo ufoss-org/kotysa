@@ -16,28 +16,28 @@ import org.ufoss.kotysa.tables
 import java.time.*
 import java.util.*
 
-object H2_ROLE : H2Table<RoleEntity>("roles") {
+object H2Roles : H2Table<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
             .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
-object H2_USER : H2Table<UserEntity>("users") {
+object H2Users : H2Table<UserEntity>("users") {
     val id = integer(UserEntity::id)
             .primaryKey("PK_users")
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-            .foreignKey(H2_ROLE.id, "FK_users_roles")
+            .foreignKey(H2Roles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
-object H2_USER_ROLE : H2Table<UserRoleEntity>("userRoles") {
+object H2UserRoles : H2Table<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-            .foreignKey(H2_USER.id)
+            .foreignKey(H2Users.id)
     val roleId = integer(UserRoleEntity::roleId)
-            .foreignKey(H2_ROLE.id)
+            .foreignKey(H2Roles.id)
     val pk = primaryKey(userId, roleId)
 }
 
@@ -71,7 +71,7 @@ val h2AllTypesNotNull = H2AllTypesNotNullEntity(
 ), UUID.randomUUID()
 )
 
-object H2_ALL_TYPES_NOT_NULL : H2Table<H2AllTypesNotNullEntity>("all_types") {
+object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val id = integer(AllTypesNotNullEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNotNullEntity::string)
@@ -113,7 +113,7 @@ val h2AllTypesNullable = H2AllTypesNullableEntity(
         null, null, null, null, null, null
 )
 
-object H2_ALL_TYPES_NULLABLE : H2Table<H2AllTypesNullableEntity>("all_types_nullable") {
+object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
@@ -151,7 +151,7 @@ data class H2AllTypesNullableDefaultValueEntity(
 
 val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
 
-object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<H2AllTypesNullableDefaultValueEntity>() {
+object H2AllTypesNullableDefaultValues : H2Table<H2AllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
             .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -195,91 +195,91 @@ object H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE : H2Table<H2AllTypesNullableDefaultVa
     val uuid = uuid(H2AllTypesNullableDefaultValueEntity::uuid, defaultValue = UUID.fromString(defaultUuid))
 }
 
-object H2_LOCAL_DATE : H2Table<LocalDateEntity>() {
+object H2LocalDates : H2Table<LocalDateEntity>() {
     val id = integer(LocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = date(LocalDateEntity::localDateNotNull)
     val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object H2_KOTLINX_LOCAL_DATE : H2Table<KotlinxLocalDateEntity>() {
+object H2KotlinxLocalDates : H2Table<KotlinxLocalDateEntity>() {
     val id = integer(KotlinxLocalDateEntity::id)
             .primaryKey()
     val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
     val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object H2_LOCAL_DATE_TIME : H2Table<LocalDateTimeEntity>() {
+object H2LocalDateTimes : H2Table<LocalDateTimeEntity>() {
     val id = integer(LocalDateTimeEntity::id)
             .primaryKey()
     val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2_LOCAL_DATE_TIME_AS_TIMESTAMP : H2Table<LocalDateTimeAsTimestampEntity>() {
+object H2LocalDateTimeAsTimestamps : H2Table<LocalDateTimeAsTimestampEntity>() {
     val id = integer(LocalDateTimeAsTimestampEntity::id)
             .primaryKey()
     val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
     val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object H2_KOTLINX_LOCAL_DATE_TIME : H2Table<KotlinxLocalDateTimeEntity>() {
+object H2KotlinxLocalDateTimes : H2Table<KotlinxLocalDateTimeEntity>() {
     val id = integer(KotlinxLocalDateTimeEntity::id)
             .primaryKey()
     val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP : H2Table<KotlinxLocalDateTimeAsTimestampEntity>() {
+object H2KotlinxLocalDateTimeAsTimestamps : H2Table<KotlinxLocalDateTimeAsTimestampEntity>() {
     val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
             .primaryKey()
     val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
     val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object H2_OFFSET_DATE_TIME : H2Table<OffsetDateTimeEntity>() {
+object H2OffsetDateTimes : H2Table<OffsetDateTimeEntity>() {
     val id = integer(OffsetDateTimeEntity::id)
             .primaryKey()
     val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
     val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
-object H2_LOCAL_TIME : H2Table<LocalTimeEntity>() {
+object H2LocalTimes : H2Table<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
             .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
-object H2_INT : H2Table<IntEntity>() {
+object H2Ints : H2Table<IntEntity>() {
     val id = autoIncrementInteger(IntEntity::id)
             .primaryKey()
     val intNotNull = integer(IntEntity::intNotNull)
     val intNullable = integer(IntEntity::intNullable)
 }
 
-object H2_LONG : H2Table<LongEntity>() {
+object H2Longs : H2Table<LongEntity>() {
     val id = autoIncrementBigInt(LongEntity::id)
             .primaryKey()
     val longNotNull = bigInt(LongEntity::longNotNull)
     val longNullable = bigInt(LongEntity::longNullable)
 }
 
-object H2_UUID : H2Table<UuidEntity>() {
+object H2Uuids : H2Table<UuidEntity>() {
     val id = uuid(UuidEntity::id)
             .primaryKey()
     val uuidNotNull = uuid(UuidEntity::uuidNotNull)
     val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
-object H2_INHERITED : H2Table<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object H2Inheriteds : H2Table<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
             .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
-object H2_JAVA_USER : H2Table<JavaUser>("java_users"), JAVA_USER {
+object H2JavaUsers : H2Table<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
             .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -290,7 +290,7 @@ object H2_JAVA_USER : H2Table<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-object H2_CUSTOMER : H2Table<CustomerEntity>() {
+object H2Customers : H2Table<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
             .primaryKey()
     val name = varchar(CustomerEntity::name)
@@ -299,24 +299,24 @@ object H2_CUSTOMER : H2Table<CustomerEntity>() {
 }
 
 val h2Tables = tables().h2(
-        H2_ROLE,
-        H2_USER,
-        H2_USER_ROLE,
-        H2_ALL_TYPES_NOT_NULL,
-        H2_ALL_TYPES_NULLABLE,
-        H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
-        H2_LOCAL_DATE,
-        H2_KOTLINX_LOCAL_DATE,
-        H2_LOCAL_DATE_TIME,
-        H2_LOCAL_DATE_TIME_AS_TIMESTAMP,
-        H2_KOTLINX_LOCAL_DATE_TIME,
-        H2_KOTLINX_LOCAL_DATE_TIME_AS_TIMESTAMP,
-        H2_OFFSET_DATE_TIME,
-        H2_LOCAL_TIME,
-        H2_INT,
-        H2_LONG,
-        H2_UUID,
-        H2_INHERITED,
-        H2_JAVA_USER,
-        H2_CUSTOMER,
+        H2Roles,
+        H2Users,
+        H2UserRoles,
+        H2AllTypesNotNulls,
+        H2AllTypesNullables,
+        H2AllTypesNullableDefaultValues,
+        H2LocalDates,
+        H2KotlinxLocalDates,
+        H2LocalDateTimes,
+        H2LocalDateTimeAsTimestamps,
+        H2KotlinxLocalDateTimes,
+        H2KotlinxLocalDateTimeAsTimestamps,
+        H2OffsetDateTimes,
+        H2LocalTimes,
+        H2Ints,
+        H2Longs,
+        H2Uuids,
+        H2Inheriteds,
+        H2JavaUsers,
+        H2Customers,
 )

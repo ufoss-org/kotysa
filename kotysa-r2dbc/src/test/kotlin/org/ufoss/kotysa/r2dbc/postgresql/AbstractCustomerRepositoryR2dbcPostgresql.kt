@@ -20,12 +20,12 @@ abstract class AbstractCustomerRepositoryR2dbcPostgresql(private val sqlClient: 
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists POSTGRESQL_CUSTOMER
+        sqlClient createTableIfNotExists PostgresqlCustomers
     }
 
     private suspend fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_CUSTOMER
+    private suspend fun deleteAll() = sqlClient deleteAllFrom PostgresqlCustomers
 }

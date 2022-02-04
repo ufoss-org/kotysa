@@ -167,94 +167,94 @@ class UserRepositorySelect(
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectOneNonUnique() =
-            (sqlClient selectFrom SQLITE_USER
+            (sqlClient selectFrom SqliteUsers
                     ).fetchOne()
 
     fun selectAllMappedToDto() =
             (sqlClient select {
-                UserDto("${it[SQLITE_USER.firstname]} ${it[SQLITE_USER.lastname]}", it[SQLITE_USER.alias])
+                UserDto("${it[SqliteUsers.firstname]} ${it[SqliteUsers.lastname]}", it[SqliteUsers.alias])
             }
-                    from SQLITE_USER
+                    from SqliteUsers
                     ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname]!!, it[SQLITE_ROLE.label]!!) }
-                    from SQLITE_USER innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
+            (sqlClient select { UserWithRoleDto(it[SqliteUsers.lastname]!!, it[SqliteRoles.label]!!) }
+                    from SqliteUsers innerJoin SqliteRoles on SqliteUsers.roleId eq SqliteRoles.id
                     ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[SQLITE_USER.lastname]!!, it[SQLITE_ROLE.label]!!) }
-                from SQLITE_USER and SQLITE_ROLE
-                where SQLITE_USER.roleId eq SQLITE_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[SqliteUsers.lastname]!!, it[SqliteRoles.label]!!) }
+                from SqliteUsers and SqliteRoles
+                where SqliteUsers.roleId eq SqliteRoles.id
                 ).fetchAll()
 
     fun selectAllStream() =
-            (sqlClient selectFrom SQLITE_USER
+            (sqlClient selectFrom SqliteUsers
                     ).fetchAllStream()
 
     fun selectAllIn(aliases: Collection<String>) =
-            (sqlClient selectFrom SQLITE_USER
-                    where SQLITE_USER.alias `in` aliases
+            (sqlClient selectFrom SqliteUsers
+                    where SqliteUsers.alias `in` aliases
                     ).fetchAll()
 
     fun selectOneById(id: Int) =
-            (sqlClient select SQLITE_USER
-                    from SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient select SqliteUsers
+                    from SqliteUsers
+                    where SqliteUsers.id eq id
                     ).fetchOne()
 
     fun selectFirstnameById(id: Int) =
-            (sqlClient select SQLITE_USER.firstname
-                    from SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient select SqliteUsers.firstname
+                    from SqliteUsers
+                    where SqliteUsers.id eq id
                     ).fetchOne()
 
     fun selectAliasById(id: Int) =
-            (sqlClient select SQLITE_USER.alias
-                    from SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient select SqliteUsers.alias
+                    from SqliteUsers
+                    where SqliteUsers.id eq id
                     ).fetchOneOrNull()
 
     fun selectFirstnameAndAliasById(id: Int) =
-            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.alias
-                    from SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient select SqliteUsers.firstname and SqliteUsers.alias
+                    from SqliteUsers
+                    where SqliteUsers.id eq id
                     ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.alias
-                    from SQLITE_USER
+            (sqlClient select SqliteUsers.firstname and SqliteUsers.alias
+                    from SqliteUsers
                     ).fetchAll()
 
     fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.lastname and SQLITE_USER.alias
-                    from SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient select SqliteUsers.firstname and SqliteUsers.lastname and SqliteUsers.alias
+                    from SqliteUsers
+                    where SqliteUsers.id eq id
                     ).fetchOne()
 
     fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-            (sqlClient select SQLITE_USER.firstname and SQLITE_USER.lastname and SQLITE_USER.alias and SQLITE_USER.isAdmin
-                    from SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient select SqliteUsers.firstname and SqliteUsers.lastname and SqliteUsers.alias and SqliteUsers.isAdmin
+                    from SqliteUsers
+                    where SqliteUsers.id eq id
                     ).fetchOne()
 
     fun countAllUsersAndAliases() =
-            (sqlClient selectCount SQLITE_USER.id
-                    andCount SQLITE_USER.alias
-                    from SQLITE_USER
+            (sqlClient selectCount SqliteUsers.id
+                    andCount SqliteUsers.alias
+                    from SqliteUsers
                     ).fetchOne()
 
     fun selectRoleLabelFromUserId(userId: Int) =
-            (sqlClient select SQLITE_ROLE.label
-                    from SQLITE_ROLE innerJoin SQLITE_USER on SQLITE_ROLE.id eq SQLITE_USER.roleId
-                    where SQLITE_USER.id eq userId)
+            (sqlClient select SqliteRoles.label
+                    from SqliteRoles innerJoin SqliteUsers on SqliteRoles.id eq SqliteUsers.roleId
+                    where SqliteUsers.id eq userId)
                     .fetchOne()
 
-    fun countAllUsers() = sqlClient selectCountAllFrom SQLITE_USER
+    fun countAllUsers() = sqlClient selectCountAllFrom SqliteUsers
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-            (sqlClient select SQLITE_ROLE.label
-                    from SQLITE_USER_ROLE innerJoin SQLITE_ROLE on SQLITE_USER_ROLE.roleId eq SQLITE_ROLE.id
-                    where SQLITE_USER_ROLE.userId eq userId)
+            (sqlClient select SqliteRoles.label
+                    from SqliteUserRoles innerJoin SqliteRoles on SqliteUserRoles.roleId eq SqliteRoles.id
+                    where SqliteUserRoles.userId eq userId)
                     .fetchAll()
 }

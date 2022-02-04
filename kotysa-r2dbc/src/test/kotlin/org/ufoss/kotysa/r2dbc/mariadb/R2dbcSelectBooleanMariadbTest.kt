@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MARIADB_USER
+import org.ufoss.kotysa.test.MariadbUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -36,7 +36,7 @@ class UserRepositoryJdbcMariadbSelectBoolean(private val sqlClient: R2dbcSqlClie
     AbstractUserRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MARIADB_USER
-                where MARIADB_USER.isAdmin eq value
+        (sqlClient selectFrom MariadbUsers
+                where MariadbUsers.isAdmin eq value
                 ).fetchAll()
 }

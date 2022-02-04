@@ -40,12 +40,12 @@ class SpringJdbcSelectOrderByMssqlTest : AbstractSpringJdbcMssqlTest<OrderByRepo
 class OrderByRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MSSQL_CUSTOMER
-                    orderByAsc MSSQL_CUSTOMER.age
+            (sqlClient selectFrom MssqlCustomers
+                    orderByAsc MssqlCustomers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MSSQL_CUSTOMER
-                    orderByAsc MSSQL_CUSTOMER.age andAsc MSSQL_CUSTOMER.id
+            (sqlClient selectFrom MssqlCustomers
+                    orderByAsc MssqlCustomers.age andAsc MssqlCustomers.id
                     ).fetchAll()
 }

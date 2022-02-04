@@ -35,7 +35,7 @@ class SpringJdbcSelectDistinctMssqlTest : AbstractSpringJdbcMssqlTest<UserReposi
 class UserRepositorySpringJdbcMssqlSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMssql(client) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MSSQL_ROLE.label
-                    from MSSQL_ROLE
+            (sqlClient selectDistinct MssqlRoles.label
+                    from MssqlRoles
                     ).fetchAll()
 }

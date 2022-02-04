@@ -20,9 +20,9 @@ abstract class AbstractCustomerRepositoryMariadb(protected val sqlClient: Reacto
         deleteAll().block()
     }
 
-    private fun createTables() = sqlClient createTableIfNotExists MARIADB_CUSTOMER
+    private fun createTables() = sqlClient createTableIfNotExists MariadbCustomers
 
     private fun insertCustomers() = sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
 
-    private fun deleteAll() = sqlClient deleteAllFrom MARIADB_CUSTOMER
+    private fun deleteAll() = sqlClient deleteAllFrom MariadbCustomers
 }

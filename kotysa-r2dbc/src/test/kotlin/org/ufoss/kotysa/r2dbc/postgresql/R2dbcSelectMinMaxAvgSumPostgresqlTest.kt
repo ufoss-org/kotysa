@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_CUSTOMER
+import org.ufoss.kotysa.test.PostgresqlCustomers
 
 class R2dbcSelectMinMaxAvgSumPostgresqlTest : AbstractR2dbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
@@ -42,22 +42,22 @@ class MinMaxAvgSumRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlClie
     AbstractCustomerRepositoryR2dbcPostgresql(sqlClient) {
 
     suspend fun selectCustomerMinAge() =
-        (sqlClient selectMin POSTGRESQL_CUSTOMER.age
-                from POSTGRESQL_CUSTOMER
+        (sqlClient selectMin PostgresqlCustomers.age
+                from PostgresqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerMaxAge() =
-        (sqlClient selectMax POSTGRESQL_CUSTOMER.age
-                from POSTGRESQL_CUSTOMER
+        (sqlClient selectMax PostgresqlCustomers.age
+                from PostgresqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerAvgAge() =
-        (sqlClient selectAvg POSTGRESQL_CUSTOMER.age
-                from POSTGRESQL_CUSTOMER
+        (sqlClient selectAvg PostgresqlCustomers.age
+                from PostgresqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerSumAge() =
-        (sqlClient selectSum POSTGRESQL_CUSTOMER.age
-                from POSTGRESQL_CUSTOMER
+        (sqlClient selectSum PostgresqlCustomers.age
+                from PostgresqlCustomers
                 ).fetchOne()
 }

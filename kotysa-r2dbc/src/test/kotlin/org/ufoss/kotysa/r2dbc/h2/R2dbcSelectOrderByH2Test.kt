@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_CUSTOMER
+import org.ufoss.kotysa.test.H2Customers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -35,12 +35,12 @@ class R2dbcSelectOrderByH2Test : AbstractR2dbcH2Test<OrderByRepositoryH2Select>(
 class OrderByRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : AbstractCustomerRepositoryR2dbcH2(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-        (sqlClient selectFrom H2_CUSTOMER
-                orderByAsc H2_CUSTOMER.age
+        (sqlClient selectFrom H2Customers
+                orderByAsc H2Customers.age
                 ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-        (sqlClient selectFrom H2_CUSTOMER
-                orderByAsc H2_CUSTOMER.age andAsc H2_CUSTOMER.id
+        (sqlClient selectFrom H2Customers
+                orderByAsc H2Customers.age andAsc H2Customers.id
                 ).fetchAll()
 }

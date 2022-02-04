@@ -40,12 +40,12 @@ class R2dbcSelectOrderByMariadbTest : AbstractR2dbcMariadbTest<OrderByRepository
 class OrderByRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractCustomerRepositoryMariadb(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.age
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.age
                     ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.age andAsc MARIADB_CUSTOMER.id
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
                     ).fetchAll()
 }

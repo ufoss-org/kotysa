@@ -173,72 +173,72 @@ class StringAsTinyTextRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient
     }
 
     private fun createTables() {
-        sqlClient createTable MYSQL_TINY_TEXT
+        sqlClient createTable MysqlTinyTexts
     }
 
     private fun insertTinyTexts() {
         sqlClient.insert(stringAsTinyTextNotNull, stringAsTinyTextNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_TINY_TEXT
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlTinyTexts
 
     fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom MYSQL_TINY_TEXT
-                where MYSQL_TINY_TEXT.stringNotNull eq value
+        (sqlClient selectFrom MysqlTinyTexts
+                where MysqlTinyTexts.stringNotNull eq value
                 ).fetchFirstOrNull()
 
     fun selectFirstByStringNotNull(value: String) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNotNull eq value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNotNull eq value
                     ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNotNull notEq value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNotNull notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNotNull `in` values
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MYSQL_TINY_TEXT
-                where MYSQL_TINY_TEXT.stringNotNull contains value
+        (sqlClient selectFrom MysqlTinyTexts
+                where MysqlTinyTexts.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MYSQL_TINY_TEXT
-                where MYSQL_TINY_TEXT.stringNotNull startsWith value
+        (sqlClient selectFrom MysqlTinyTexts
+                where MysqlTinyTexts.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MYSQL_TINY_TEXT
-                where MYSQL_TINY_TEXT.stringNotNull endsWith value
+        (sqlClient selectFrom MysqlTinyTexts
+                where MysqlTinyTexts.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNullable eq value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNullable eq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNullable notEq value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNullable notEq value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNullable contains value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNullable contains value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNullable startsWith value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNullable startsWith value
                     ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-            (sqlClient selectFrom MYSQL_TINY_TEXT
-                    where MYSQL_TINY_TEXT.stringNullable endsWith value
+            (sqlClient selectFrom MysqlTinyTexts
+                    where MysqlTinyTexts.stringNullable endsWith value
                     ).fetchAll()
 }

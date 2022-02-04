@@ -23,13 +23,13 @@ class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Reposi
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(H2_INHERITED, "id"))
+        assertThat(repository.selectById(H2Inheriteds, "id"))
                 .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(H2_INHERITED, "name"))
+        assertThat(repository.selectFirstByName(H2Inheriteds, "name"))
                 .isEqualTo(inherited)
     }
 
@@ -37,7 +37,7 @@ class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Reposi
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById(H2_INHERITED, "id"))
+            assertThat(repository.deleteById(H2Inheriteds, "id"))
                     .isEqualTo(1)
             assertThat(repository.selectAll())
                     .isEmpty()
@@ -60,20 +60,20 @@ class InheritanceH2Repository(client: JdbcOperations) : Repository {
     }
 
     private fun createTable() {
-        sqlClient createTable H2_INHERITED
+        sqlClient createTable H2Inheriteds
     }
 
     fun insert() {
         sqlClient insert inherited
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom H2Inheriteds
 
-    fun selectAll() = sqlClient selectAllFrom H2_INHERITED
+    fun selectAll() = sqlClient selectAllFrom H2Inheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom H2_INHERITED
-                    where H2_INHERITED.id eq id
+            (sqlClient selectFrom H2Inheriteds
+                    where H2Inheriteds.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

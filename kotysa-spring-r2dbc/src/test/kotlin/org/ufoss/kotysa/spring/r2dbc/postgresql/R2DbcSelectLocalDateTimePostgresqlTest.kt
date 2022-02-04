@@ -201,75 +201,75 @@ class LocalDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) : Reposi
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable POSTGRESQL_LOCAL_DATE_TIME
+    private fun createTables() = sqlClient createTable PostgresqlLocalDateTimeAsTimestamps
 
     private fun insertLocalDateTimes() =
             sqlClient.insert(localDateTimeAsTimestampWithNullable, localDateTimeAsTimestampWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_LOCAL_DATE_TIME
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlLocalDateTimeAsTimestamps
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNotNull afterOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNullable eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNullable notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNullable before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNullable beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNullable after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_LOCAL_DATE_TIME
-                    where POSTGRESQL_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+            (sqlClient selectFrom PostgresqlLocalDateTimeAsTimestamps
+                    where PostgresqlLocalDateTimeAsTimestamps.localDateTimeNullable afterOrEq localDateTime
                     ).fetchAll()
 }

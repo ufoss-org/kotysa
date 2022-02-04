@@ -138,43 +138,43 @@ class UserRepositoryJdbcMysqlUpdateDelete(private val sqlClient: R2dbcSqlClient)
     AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     suspend fun deleteUserById(id: Int) =
-        (sqlClient deleteFrom MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient deleteFrom MysqlUsers
+                where MysqlUsers.id eq id
                 ).execute()
 
     suspend fun deleteUserIn(ids: Collection<Int>) =
-        (sqlClient deleteFrom MYSQL_USER
-                where MYSQL_USER.id `in` ids
+        (sqlClient deleteFrom MysqlUsers
+                where MysqlUsers.id `in` ids
                 ).execute()
 
     suspend fun deleteUserWithJoin(roleLabel: String) =
-        (sqlClient deleteFrom MYSQL_USER
-                innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
-                where MYSQL_ROLE.label eq roleLabel
+        (sqlClient deleteFrom MysqlUsers
+                innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
+                where MysqlRoles.label eq roleLabel
                 ).execute()
 
     suspend fun updateLastname(newLastname: String) =
-        (sqlClient update MYSQL_USER
-                set MYSQL_USER.lastname eq newLastname
-                where MYSQL_USER.id eq userJdoe.id
+        (sqlClient update MysqlUsers
+                set MysqlUsers.lastname eq newLastname
+                where MysqlUsers.id eq userJdoe.id
                 ).execute()
 
     suspend fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-        (sqlClient update MYSQL_USER
-                set MYSQL_USER.lastname eq newLastname
-                where MYSQL_USER.id `in` ids
+        (sqlClient update MysqlUsers
+                set MysqlUsers.lastname eq newLastname
+                where MysqlUsers.id `in` ids
                 ).execute()
 
     suspend fun updateAlias(newAlias: String?) =
-        (sqlClient update MYSQL_USER
-                set MYSQL_USER.alias eq newAlias
-                where MYSQL_USER.id eq userBboss.id
+        (sqlClient update MysqlUsers
+                set MysqlUsers.alias eq newAlias
+                where MysqlUsers.id eq userBboss.id
                 ).execute()
 
     suspend fun updateWithJoin(newLastname: String, roleLabel: String) =
-        (sqlClient update MYSQL_USER
-                set MYSQL_USER.lastname eq newLastname
-                innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
-                where MYSQL_ROLE.label eq roleLabel
+        (sqlClient update MysqlUsers
+                set MysqlUsers.lastname eq newLastname
+                innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
+                where MysqlRoles.label eq roleLabel
                 ).execute()
 }

@@ -26,8 +26,8 @@ class GroupByRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MARIADB_CUSTOMER.id and MARIADB_CUSTOMER.country
-                    from MARIADB_CUSTOMER
-                    groupBy MARIADB_CUSTOMER.country
+            (sqlClient selectCount MariadbCustomers.id and MariadbCustomers.country
+                    from MariadbCustomers
+                    groupBy MariadbCustomers.country
                     ).fetchAll()
 }

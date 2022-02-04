@@ -25,7 +25,7 @@ class UserRepositoryJdbcPostgresqlSelectDistinct(private val sqlClient: JdbcSqlC
     AbstractUserRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct POSTGRESQL_ROLE.label
-                    from POSTGRESQL_ROLE
+            (sqlClient selectDistinct PostgresqlRoles.label
+                    from PostgresqlRoles
                     ).fetchAll()
 }

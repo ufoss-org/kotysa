@@ -16,7 +16,7 @@ data class PostgresqlUser(
         val id: UUID
 )
 
-object POSTGRESQL_USER : PostgresqlTable<PostgresqlUser>() {
+object PostgresqlUsers : PostgresqlTable<PostgresqlUser>() {
     val id = uuid(PostgresqlUser::id)
             .primaryKey()
     val firstname = varchar(PostgresqlUser::firstname, "fname")
@@ -25,4 +25,4 @@ object POSTGRESQL_USER : PostgresqlTable<PostgresqlUser>() {
     val alias = varchar(PostgresqlUser::alias)
 }
 
-fun postgresqlTables() = tables().postgresql(POSTGRESQL_USER)
+fun postgresqlTables() = tables().postgresql(PostgresqlUsers)

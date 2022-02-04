@@ -25,12 +25,12 @@ abstract class AbstractCustomerRepository(
     }
 
     private fun createTables() {
-        sqlClient createTableIfNotExists SQLITE_CUSTOMER
+        sqlClient createTableIfNotExists SqliteCustomers
     }
 
     private fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_CUSTOMER
+    private fun deleteAll() = sqlClient deleteAllFrom SqliteCustomers
 }

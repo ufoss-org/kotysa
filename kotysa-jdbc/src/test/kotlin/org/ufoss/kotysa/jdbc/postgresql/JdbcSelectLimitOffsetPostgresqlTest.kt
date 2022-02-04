@@ -44,25 +44,25 @@ class LimitOffsetRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient
     AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                    orderByAsc POSTGRESQL_CUSTOMER.id
+            (sqlClient selectFrom PostgresqlCustomers
+                    orderByAsc PostgresqlCustomers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                    orderByAsc POSTGRESQL_CUSTOMER.id
+            (sqlClient selectFrom PostgresqlCustomers
+                    orderByAsc PostgresqlCustomers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom POSTGRESQL_CUSTOMER
+            (sqlClient selectFrom PostgresqlCustomers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                    orderByAsc POSTGRESQL_CUSTOMER.id
+            (sqlClient selectFrom PostgresqlCustomers
+                    orderByAsc PostgresqlCustomers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

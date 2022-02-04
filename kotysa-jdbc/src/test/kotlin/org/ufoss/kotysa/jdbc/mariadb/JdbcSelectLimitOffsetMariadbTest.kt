@@ -44,25 +44,25 @@ class LimitOffsetRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) :
     AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.id
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.id
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
+            (sqlClient selectFrom MariadbCustomers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom MARIADB_CUSTOMER
-                    orderByAsc MARIADB_CUSTOMER.id
+            (sqlClient selectFrom MariadbCustomers
+                    orderByAsc MariadbCustomers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

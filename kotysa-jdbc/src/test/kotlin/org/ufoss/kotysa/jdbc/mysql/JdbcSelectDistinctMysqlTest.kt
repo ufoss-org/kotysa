@@ -25,7 +25,7 @@ class UserRepositoryJdbcMysqlSelectDistinct(private val sqlClient: JdbcSqlClient
     AbstractUserRepositoryJdbcMysql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MYSQL_ROLE.label
-                    from MYSQL_ROLE
+            (sqlClient selectDistinct MysqlRoles.label
+                    from MysqlRoles
                     ).fetchAll()
 }

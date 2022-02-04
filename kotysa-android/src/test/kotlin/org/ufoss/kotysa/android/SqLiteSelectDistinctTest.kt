@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.Tables
-import org.ufoss.kotysa.test.SQLITE_ROLE
+import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
 import org.ufoss.kotysa.test.roleUser
@@ -31,7 +31,7 @@ class UserRepositorySelectDistinct(
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct SQLITE_ROLE.label
-                    from SQLITE_ROLE
+            (sqlClient selectDistinct SqliteRoles.label
+                    from SqliteRoles
                     ).fetchAll()
 }

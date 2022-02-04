@@ -26,24 +26,24 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
             val id: String
     )
 
-    private object ROLE : SqLiteTable<Role>("roles") {
+    private object Roles : SqLiteTable<Role>("roles") {
         val id = text(Role::id).primaryKey()
         val label = text(Role::label)
     }
 
-    private object USER : SqLiteTable<User>("users") {
+    private object Users : SqLiteTable<User>("users") {
         val id = text(User::id).primaryKey()
         val firstname = text(User::firstname, "fname")
         val lastname = text(User::lastname, "lname")
         val isAdmin = integer(User::isAdmin)
         val roleId = text(User::roleId)
-                .foreignKey(ROLE.id, "FK_users_roles")
+                .foreignKey(Roles.id, "FK_users_roles")
         val alias = text(User::alias)
     }
 
     private val tables = tables().sqlite(
-            ROLE,
-            USER,
+            Roles,
+            Users,
     )
 
     private val roleUser = Role("user", "ghi")
@@ -60,40 +60,40 @@ class UserRepositorySqLite(sqLiteOpenHelper: SQLiteOpenHelper) {
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 
     fun simplifiedExample() {
-        sqlClient createTable ROLE
-        sqlClient deleteAllFrom ROLE
+        sqlClient createTable Roles
+        sqlClient deleteAllFrom Roles
         sqlClient.insert(roleUser, roleAdmin)
 
-        sqlClient createTable USER
-        sqlClient deleteAllFrom USER
+        sqlClient createTable Users
+        sqlClient deleteAllFrom Users
         sqlClient.insert(userJdoe, userBboss)
 
-        val count = sqlClient selectCountAllFrom USER
+        val count = sqlClient selectCountAllFrom Users
 
-        val all = sqlClient selectAllFrom USER
+        val all = sqlClient selectAllFrom Users
 
-        val johny = (sqlClient select { UserWithRoleDto(it[USER.lastname]!!, it[ROLE.label]!!) }
-                from USER innerJoin ROLE on USER.roleId eq ROLE.id
-                where USER.alias eq "Johny"
+        val johny = (sqlClient select { UserWithRoleDto(it[Users.lastname]!!, it[Roles.label]!!) }
+                from Users innerJoin Roles on Users.roleId eq Roles.id
+                where Users.alias eq "Johny"
                 // null String accepted        ^^^^^ , if alias=null, gives "WHERE user.alias IS NULL"
-                or USER.alias eq "Johnny"
+                or Users.alias eq "Johnny"
                 ).fetchFirst()
 
-        val nbUpdated = (sqlClient update USER
-                set USER.lastname eq "NewLastName"
-                innerJoin ROLE on USER.roleId eq ROLE.id
-                where ROLE.label eq roleUser.label
+        val nbUpdated = (sqlClient update Users
+                set Users.lastname eq "NewLastName"
+                innerJoin Roles on Users.roleId eq Roles.id
+                where Roles.label eq roleUser.label
                 // null String forbidden      ^^^^^^^^^^^^
                 ).execute()
 
-        val nbDeleted = (sqlClient deleteFrom USER
-                innerJoin ROLE on USER.roleId eq ROLE.id
-                where ROLE.label eq roleUser.label
+        val nbDeleted = (sqlClient deleteFrom Users
+                innerJoin Roles on Users.roleId eq Roles.id
+                where Roles.label eq roleUser.label
                 ).execute()
 
-        val admins = (sqlClient selectFrom USER
-                innerJoin ROLE on USER.roleId eq ROLE.id
-                where ROLE.label eq "admin"
+        val admins = (sqlClient selectFrom Users
+                innerJoin Roles on Users.roleId eq Roles.id
+                where Roles.label eq "admin"
                 ).fetchAll() // returns all admin users
     }
 }

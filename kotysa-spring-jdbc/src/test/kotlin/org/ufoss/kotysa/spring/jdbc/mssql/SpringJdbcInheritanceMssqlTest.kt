@@ -32,13 +32,13 @@ class SpringJdbcInheritanceMssqlTest : AbstractSpringJdbcMssqlTest<InheritanceMs
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(MSSQL_INHERITED, "id"))
+        assertThat(repository.selectById(MssqlInheriteds, "id"))
                 .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(MSSQL_INHERITED, "name"))
+        assertThat(repository.selectFirstByName(MssqlInheriteds, "name"))
                 .isEqualTo(inherited)
     }
 
@@ -46,7 +46,7 @@ class SpringJdbcInheritanceMssqlTest : AbstractSpringJdbcMssqlTest<InheritanceMs
     fun `Verify deleteById deletes inherited`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
-            assertThat(repository.deleteById(MSSQL_INHERITED, "id"))
+            assertThat(repository.deleteById(MssqlInheriteds, "id"))
                     .isEqualTo(1)
             assertThat(repository.selectAll())
                     .isEmpty()
@@ -69,20 +69,20 @@ class InheritanceMssqlRepository(client: JdbcOperations) : Repository {
     }
 
     private fun createTable() {
-        sqlClient createTable MSSQL_INHERITED
+        sqlClient createTable MssqlInheriteds
     }
 
     fun insert() {
         sqlClient insert inherited
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom MSSQL_INHERITED
+    private fun deleteAll() = sqlClient deleteAllFrom MssqlInheriteds
 
-    fun selectAll() = sqlClient selectAllFrom MSSQL_INHERITED
+    fun selectAll() = sqlClient selectAllFrom MssqlInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MSSQL_INHERITED
-                    where MSSQL_INHERITED.id eq id
+            (sqlClient selectFrom MssqlInheriteds
+                    where MssqlInheriteds.id eq id
                     ).fetchOne()
 
     fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =

@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_ROLE
+import org.ufoss.kotysa.test.H2Roles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
 import org.ufoss.kotysa.test.roleUser
@@ -30,7 +30,7 @@ class UserRepositoryJdbcH2SelectDistinct(private val sqlClient: R2dbcSqlClient) 
     AbstractUserRepositoryR2dbcH2(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct H2_ROLE.label
-                from H2_ROLE
+        (sqlClient selectDistinct H2Roles.label
+                from H2Roles
                 ).fetchAll()
 }

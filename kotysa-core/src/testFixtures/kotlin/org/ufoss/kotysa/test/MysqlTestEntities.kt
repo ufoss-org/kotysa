@@ -15,152 +15,29 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 
-object MYSQL_ROLE : MysqlTable<RoleEntity>("roles") {
+object MysqlRoles : MysqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
 }
 
-object MYSQL_USER : MysqlTable<UserEntity>("users") {
+object MysqlUsers : MysqlTable<UserEntity>("users") {
     val id = integer(UserEntity::id, "PK_users")
         .primaryKey()
     val firstname = varchar(UserEntity::firstname, "fname")
     val lastname = varchar(UserEntity::lastname, "lname")
     val isAdmin = boolean(UserEntity::isAdmin)
     val roleId = integer(UserEntity::roleId)
-        .foreignKey(MYSQL_ROLE.id, "FK_users_roles")
+        .foreignKey(MysqlRoles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
 }
 
-object MYSQL_USER_ROLE : MysqlTable<UserRoleEntity>("userRoles") {
+object MysqlUserRoles : MysqlTable<UserRoleEntity>("userRoles") {
     val userId = integer(UserRoleEntity::userId)
-        .foreignKey(MYSQL_USER.id)
+        .foreignKey(MysqlUsers.id)
     val roleId = integer(UserRoleEntity::roleId)
-        .foreignKey(MYSQL_ROLE.id)
+        .foreignKey(MysqlRoles.id)
     val pk = primaryKey(userId, roleId)
-}
-
-object MYSQL_ALL_TYPES_NOT_NULL : MysqlTable<MysqlAllTypesNotNull>("all_types") {
-    val id = integer(AllTypesNotNullEntity::id)
-        .primaryKey()
-    val string = varchar(AllTypesNotNullEntity::string)
-    val boolean = boolean(AllTypesNotNullEntity::boolean)
-    val localDate = date(AllTypesNotNullEntity::localDate)
-    val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNotNullWithTimeEntity::localTime) // todo test fractionalSecondsPart later
-    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
-    val localDateTime2 = dateTime(AllTypesNotNullEntity::localDateTime2)
-    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
-    val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
-    val inte = integer(AllTypesNotNullEntity::int)
-    val longe = bigInt(AllTypesNotNullEntity::long)
-}
-
-object MYSQL_ALL_TYPES_NULLABLE : MysqlTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
-    val id = integer(AllTypesNullableEntity::id)
-        .primaryKey()
-    val string = varchar(AllTypesNullableEntity::string)
-    val localDate = date(AllTypesNullableEntity::localDate)
-    val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
-    val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
-    val localDateTime2 = dateTime(AllTypesNullableEntity::localDateTime2)
-    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
-    val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
-    val inte = integer(AllTypesNullableEntity::int)
-    val longe = bigInt(AllTypesNullableEntity::long)
-}
-
-object MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE : MysqlTable<AllTypesNullableDefaultValueWithTimeEntity>() {
-    val id = integer(AllTypesNullableDefaultValueEntity::id)
-        .primaryKey()
-    val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
-    val localDate = date(
-        AllTypesNullableDefaultValueEntity::localDate,
-        defaultValue = LocalDate.of(2019, 11, 4)
-    )
-    val kotlinxLocalDate = date(
-        AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
-        defaultValue = LocalDate(2019, 11, 6)
-    )
-    val localTim = time(
-        AllTypesNullableDefaultValueWithTimeEntity::localTime,
-        defaultValue = LocalTime.of(11, 25, 55, 123456789)
-    )
-    val localDateTime1 = dateTime(
-        AllTypesNullableDefaultValueEntity::localDateTime1,
-        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
-    )
-    val localDateTime2 = dateTime(
-        AllTypesNullableDefaultValueEntity::localDateTime2,
-        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
-    )
-    val kotlinxLocalDateTime1 = dateTime(
-        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
-        defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
-    )
-    val kotlinxLocalDateTime2 = dateTime(
-        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
-        defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
-    )
-    val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
-    val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
-}
-
-object MYSQL_LOCAL_DATE : MysqlTable<LocalDateEntity>() {
-    val id = integer(LocalDateEntity::id)
-        .primaryKey()
-    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
-    val localDateNullable = date(LocalDateEntity::localDateNullable)
-}
-
-object MYSQL_KOTLINX_LOCAL_DATE : MysqlTable<KotlinxLocalDateEntity>() {
-    val id = integer(KotlinxLocalDateEntity::id)
-        .primaryKey()
-    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
-    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
-}
-
-object MYSQL_LOCAL_DATE_TIME : MysqlTable<LocalDateTimeEntity>() {
-    val id = integer(LocalDateTimeEntity::id)
-        .primaryKey()
-    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
-}
-
-object MYSQL_KOTLINX_LOCAL_DATE_TIME : MysqlTable<KotlinxLocalDateTimeEntity>() {
-    val id = integer(KotlinxLocalDateTimeEntity::id)
-        .primaryKey()
-    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
-}
-
-// object MYSQL_OFFSET_DATE_TIME : MysqlTable<OffsetDateTimeEntity>() {
-//     val id = integer(OffsetDateTimeEntity::id)
-//             .primaryKey()
-//     val offsetDateTimeNotNull = timestamp(OffsetDateTimeEntity::offsetDateTimeNotNull)
-//     val offsetDateTimeNullable = timestamp(OffsetDateTimeEntity::offsetDateTimeNullable)
-// }
-
-object MYSQL_LOCAL_TIME : MysqlTable<LocalTimeEntity>() {
-    val id = integer(LocalTimeEntity::id)
-        .primaryKey()
-    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
-}
-
-object MYSQL_INT : MysqlTable<IntEntity>() {
-    val id = autoIncrementInteger(IntEntity::id)
-        .primaryKey()
-    val intNotNull = integer(IntEntity::intNotNull)
-    val intNullable = integer(IntEntity::intNullable)
-}
-
-object MYSQL_LONG : MysqlTable<LongEntity>() {
-    val id = autoIncrementBigInt(LongEntity::id)
-        .primaryKey()
-    val longNotNull = bigInt(LongEntity::longNotNull)
-    val longNullable = bigInt(LongEntity::longNullable)
 }
 
 private fun LocalTime.roundToSecond(): LocalTime {
@@ -245,14 +122,137 @@ val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
     1L, LocalTime.now()
 )
 
-object MYSQL_INHERITED : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object MysqlAllTypesNotNulls : MysqlTable<MysqlAllTypesNotNull>("all_types") {
+    val id = integer(AllTypesNotNullEntity::id)
+        .primaryKey()
+    val string = varchar(AllTypesNotNullEntity::string)
+    val boolean = boolean(AllTypesNotNullEntity::boolean)
+    val localDate = date(AllTypesNotNullEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
+    val localTim = time(AllTypesNotNullWithTimeEntity::localTime) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
+    val localDateTime2 = dateTime(AllTypesNotNullEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
+    val inte = integer(AllTypesNotNullEntity::int)
+    val longe = bigInt(AllTypesNotNullEntity::long)
+}
+
+object MysqlAllTypesNullableWithTimes : MysqlTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
+    val id = integer(AllTypesNullableEntity::id)
+        .primaryKey()
+    val string = varchar(AllTypesNullableEntity::string)
+    val localDate = date(AllTypesNullableEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
+    val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
+    val localDateTime2 = dateTime(AllTypesNullableEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
+    val inte = integer(AllTypesNullableEntity::int)
+    val longe = bigInt(AllTypesNullableEntity::long)
+}
+
+object MysqlAllTypesNullableDefaultValueWithTimes : MysqlTable<AllTypesNullableDefaultValueWithTimeEntity>() {
+    val id = integer(AllTypesNullableDefaultValueEntity::id)
+        .primaryKey()
+    val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
+    val localDate = date(
+        AllTypesNullableDefaultValueEntity::localDate,
+        defaultValue = LocalDate.of(2019, 11, 4)
+    )
+    val kotlinxLocalDate = date(
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+        defaultValue = LocalDate(2019, 11, 6)
+    )
+    val localTim = time(
+        AllTypesNullableDefaultValueWithTimeEntity::localTime,
+        defaultValue = LocalTime.of(11, 25, 55, 123456789)
+    )
+    val localDateTime1 = dateTime(
+        AllTypesNullableDefaultValueEntity::localDateTime1,
+        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+    )
+    val localDateTime2 = dateTime(
+        AllTypesNullableDefaultValueEntity::localDateTime2,
+        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime1 = dateTime(
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+        defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime2 = dateTime(
+        AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+        defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
+    )
+    val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
+    val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+}
+
+object MysqlLocalDates : MysqlTable<LocalDateEntity>() {
+    val id = integer(LocalDateEntity::id)
+        .primaryKey()
+    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
+    val localDateNullable = date(LocalDateEntity::localDateNullable)
+}
+
+object MysqlKotlinxLocalDates : MysqlTable<KotlinxLocalDateEntity>() {
+    val id = integer(KotlinxLocalDateEntity::id)
+        .primaryKey()
+    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
+    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
+}
+
+object MysqlLocalDateTimes : MysqlTable<LocalDateTimeEntity>() {
+    val id = integer(LocalDateTimeEntity::id)
+        .primaryKey()
+    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
+}
+
+object MysqlKotlinxLocalDateTimes : MysqlTable<KotlinxLocalDateTimeEntity>() {
+    val id = integer(KotlinxLocalDateTimeEntity::id)
+        .primaryKey()
+    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
+}
+
+// object MYSQL_OFFSET_DATE_TIME : MysqlTable<OffsetDateTimeEntity>() {
+//     val id = integer(OffsetDateTimeEntity::id)
+//             .primaryKey()
+//     val offsetDateTimeNotNull = timestamp(OffsetDateTimeEntity::offsetDateTimeNotNull)
+//     val offsetDateTimeNullable = timestamp(OffsetDateTimeEntity::offsetDateTimeNullable)
+// }
+
+object MysqlLocalTimes : MysqlTable<LocalTimeEntity>() {
+    val id = integer(LocalTimeEntity::id)
+        .primaryKey()
+    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+}
+
+object MysqlInts : MysqlTable<IntEntity>() {
+    val id = autoIncrementInteger(IntEntity::id)
+        .primaryKey()
+    val intNotNull = integer(IntEntity::intNotNull)
+    val intNullable = integer(IntEntity::intNullable)
+}
+
+object MysqlLongs : MysqlTable<LongEntity>() {
+    val id = autoIncrementBigInt(LongEntity::id)
+        .primaryKey()
+    val longNotNull = bigInt(LongEntity::longNotNull)
+    val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object MysqlInheriteds : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
     override val id = varchar(Inherited::getId)
         .primaryKey()
     override val name = varchar(Inherited::name)
     val firstname = varchar(Inherited::firstname)
 }
 
-object MYSQL_JAVA_USER : MysqlTable<JavaUser>("java_users"), JAVA_USER {
+object MysqlJavaUsers : MysqlTable<JavaUser>("java_users"), JAVA_USER {
     override val login = varchar(JavaUser::getLogin)
         .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -263,7 +263,7 @@ object MYSQL_JAVA_USER : MysqlTable<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-object MYSQL_CUSTOMER : MysqlTable<CustomerEntity>() {
+object MysqlCustomers : MysqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = varchar(CustomerEntity::name)
@@ -271,28 +271,28 @@ object MYSQL_CUSTOMER : MysqlTable<CustomerEntity>() {
     val age = integer(CustomerEntity::age)
 }
 
-object MYSQL_TINY_TEXT : MysqlTable<StringAsTinyTextEntity>() {
+object MysqlTinyTexts : MysqlTable<StringAsTinyTextEntity>() {
     val id = integer(StringAsTinyTextEntity::id)
         .primaryKey()
     val stringNotNull = tinyText(StringAsTinyTextEntity::stringNotNull)
     val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
 }
 
-object MYSQL_TEXT : MysqlTable<StringAsTextEntity>() {
+object MysqlText : MysqlTable<StringAsTextEntity>() {
     val id = integer(StringAsTextEntity::id)
         .primaryKey()
     val stringNotNull = text(StringAsTextEntity::stringNotNull)
     val stringNullable = text(StringAsTextEntity::stringNullable)
 }
 
-object MYSQL_MEDIUM_TEXT : MysqlTable<StringAsMediumTextEntity>() {
+object MysqlMediumText : MysqlTable<StringAsMediumTextEntity>() {
     val id = integer(StringAsMediumTextEntity::id)
         .primaryKey()
     val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
     val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
 }
 
-object MYSQL_LONG_TEXT : MysqlTable<StringAsLongTextEntity>() {
+object MysqlLongText : MysqlTable<StringAsLongTextEntity>() {
     val id = integer(StringAsLongTextEntity::id)
         .primaryKey()
     val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
@@ -300,25 +300,25 @@ object MYSQL_LONG_TEXT : MysqlTable<StringAsLongTextEntity>() {
 }
 
 val mysqlTables = tables().mysql(
-    MYSQL_ROLE,
-    MYSQL_USER,
-    MYSQL_USER_ROLE,
-    MYSQL_ALL_TYPES_NOT_NULL,
-    MYSQL_ALL_TYPES_NULLABLE,
-    MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE,
-    MYSQL_LOCAL_DATE,
-    MYSQL_KOTLINX_LOCAL_DATE,
-    MYSQL_LOCAL_DATE_TIME,
-    MYSQL_KOTLINX_LOCAL_DATE_TIME,
+    MysqlRoles,
+    MysqlUsers,
+    MysqlUserRoles,
+    MysqlAllTypesNotNulls,
+    MysqlAllTypesNullableWithTimes,
+    MysqlAllTypesNullableDefaultValueWithTimes,
+    MysqlLocalDates,
+    MysqlKotlinxLocalDates,
+    MysqlLocalDateTimes,
+    MysqlKotlinxLocalDateTimes,
 //                 MYSQL_OFFSET_DATE_TIME,
-    MYSQL_LOCAL_TIME,
-    MYSQL_INT,
-    MYSQL_LONG,
-    MYSQL_INHERITED,
-    MYSQL_JAVA_USER,
-    MYSQL_CUSTOMER,
-    MYSQL_TINY_TEXT,
-    MYSQL_TEXT,
-    MYSQL_MEDIUM_TEXT,
-    MYSQL_LONG_TEXT,
+    MysqlLocalTimes,
+    MysqlInts,
+    MysqlLongs,
+    MysqlInheriteds,
+    MysqlJavaUsers,
+    MysqlCustomers,
+    MysqlTinyTexts,
+    MysqlText,
+    MysqlMediumText,
+    MysqlLongText,
 )

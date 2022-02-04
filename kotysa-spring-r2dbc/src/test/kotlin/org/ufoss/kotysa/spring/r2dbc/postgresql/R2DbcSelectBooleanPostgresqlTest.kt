@@ -42,7 +42,7 @@ class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposit
 class UserRepositoryPostgresqlSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom POSTGRESQL_USER
-                    where POSTGRESQL_USER.isAdmin eq value
+            (sqlClient selectFrom PostgresqlUsers
+                    where PostgresqlUsers.isAdmin eq value
                     ).fetchAll()
 }

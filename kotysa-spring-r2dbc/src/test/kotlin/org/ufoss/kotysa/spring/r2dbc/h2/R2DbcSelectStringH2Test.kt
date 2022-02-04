@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.H2_USER
+import org.ufoss.kotysa.test.H2Users
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
@@ -168,57 +168,57 @@ class UserRepositoryH2SelectString(
 ) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname eq firstname
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname eq firstname
                     ).fetchFirst()
 
     fun selectAllByFirstnameNotEq(firstname: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname notEq firstname
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname notEq firstname
                     ).fetchAll()
 
     fun selectAllByFirstnameIn(firstnames: Sequence<String>) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname `in` firstnames
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname `in` firstnames
                     ).fetchAll()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.alias eq alias
+            (sqlClient selectFrom H2Users
+                    where H2Users.alias eq alias
                     ).fetchAll()
 
     fun selectAllByAliasNotEq(alias: String?) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.alias notEq alias
+            (sqlClient selectFrom H2Users
+                    where H2Users.alias notEq alias
                     ).fetchAll()
 
     fun selectAllByFirstnameContains(firstnameContains: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname contains firstnameContains
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname contains firstnameContains
                     ).fetchAll()
 
     fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname startsWith firstnameStartsWith
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname startsWith firstnameStartsWith
                     ).fetchAll()
 
     fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.firstname endsWith firstnameEndsWith
+            (sqlClient selectFrom H2Users
+                    where H2Users.firstname endsWith firstnameEndsWith
                     ).fetchAll()
 
     fun selectAllByAliasContains(aliasContains: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.alias contains aliasContains
+            (sqlClient selectFrom H2Users
+                    where H2Users.alias contains aliasContains
                     ).fetchAll()
 
     fun selectAllByAliasStartsWith(aliasStartsWith: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.alias startsWith aliasStartsWith
+            (sqlClient selectFrom H2Users
+                    where H2Users.alias startsWith aliasStartsWith
                     ).fetchAll()
 
     fun selectAllByAliasEndsWith(aliasEndsWith: String) =
-            (sqlClient selectFrom H2_USER
-                    where H2_USER.alias endsWith aliasEndsWith
+            (sqlClient selectFrom H2Users
+                    where H2Users.alias endsWith aliasEndsWith
                     ).fetchAll()
 }

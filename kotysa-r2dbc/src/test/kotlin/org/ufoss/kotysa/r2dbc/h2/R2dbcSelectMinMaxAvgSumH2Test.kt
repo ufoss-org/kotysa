@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_CUSTOMER
+import org.ufoss.kotysa.test.H2Customers
 
 class R2dbcSelectMinMaxAvgSumH2Test : AbstractR2dbcH2Test<MinMaxAvgSumRepositoryH2Select>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = MinMaxAvgSumRepositoryH2Select(sqlClient)
@@ -42,22 +42,22 @@ class MinMaxAvgSumRepositoryH2Select(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcH2(sqlClient) {
 
     suspend fun selectCustomerMinAge() =
-        (sqlClient selectMin H2_CUSTOMER.age
-                from H2_CUSTOMER
+        (sqlClient selectMin H2Customers.age
+                from H2Customers
                 ).fetchOne()
 
     suspend fun selectCustomerMaxAge() =
-        (sqlClient selectMax H2_CUSTOMER.age
-                from H2_CUSTOMER
+        (sqlClient selectMax H2Customers.age
+                from H2Customers
                 ).fetchOne()
 
     suspend fun selectCustomerAvgAge() =
-        (sqlClient selectAvg H2_CUSTOMER.age
-                from H2_CUSTOMER
+        (sqlClient selectAvg H2Customers.age
+                from H2Customers
                 ).fetchOne()
 
     suspend fun selectCustomerSumAge() =
-        (sqlClient selectSum H2_CUSTOMER.age
-                from H2_CUSTOMER
+        (sqlClient selectSum H2Customers.age
+                from H2Customers
                 ).fetchOne()
 }

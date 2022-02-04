@@ -167,90 +167,90 @@ class UserRepositoryJdbcMysqlSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     suspend fun selectOneNonUnique() =
-        (sqlClient selectFrom MYSQL_USER
+        (sqlClient selectFrom MysqlUsers
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
         (sqlClient select {
-            UserDto("${it[MYSQL_USER.firstname]} ${it[MYSQL_USER.lastname]}", it[MYSQL_USER.alias])
+            UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.alias])
         }
-                from MYSQL_USER
+                from MysqlUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname]!!, it[MYSQL_ROLE.label]!!) }
-                from MYSQL_USER innerJoin MYSQL_ROLE on MYSQL_USER.roleId eq MYSQL_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[MysqlUsers.lastname]!!, it[MysqlRoles.label]!!) }
+                from MysqlUsers innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[MYSQL_USER.lastname]!!, it[MYSQL_ROLE.label]!!) }
-                from MYSQL_USER and MYSQL_ROLE
-                where MYSQL_USER.roleId eq MYSQL_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[MysqlUsers.lastname]!!, it[MysqlRoles.label]!!) }
+                from MysqlUsers and MysqlRoles
+                where MysqlUsers.roleId eq MysqlRoles.id
                 ).fetchAll()
 
     fun selectAllIn(aliases: Collection<String>) =
-        (sqlClient selectFrom MYSQL_USER
-                where MYSQL_USER.alias `in` aliases
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias `in` aliases
                 ).fetchAll()
 
     suspend fun selectOneById(id: Int) =
-        (sqlClient select MYSQL_USER
-                from MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient select MysqlUsers
+                from MysqlUsers
+                where MysqlUsers.id eq id
                 ).fetchOne()
 
     suspend fun selectFirstnameById(id: Int) =
-        (sqlClient select MYSQL_USER.firstname
-                from MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient select MysqlUsers.firstname
+                from MysqlUsers
+                where MysqlUsers.id eq id
                 ).fetchOne()
 
     suspend fun selectAliasById(id: Int) =
-        (sqlClient select MYSQL_USER.alias
-                from MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient select MysqlUsers.alias
+                from MysqlUsers
+                where MysqlUsers.id eq id
                 ).fetchOneOrNull()
 
     suspend fun selectFirstnameAndAliasById(id: Int) =
-        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.alias
-                from MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient select MysqlUsers.firstname and MysqlUsers.alias
+                from MysqlUsers
+                where MysqlUsers.id eq id
                 ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.alias
-                from MYSQL_USER
+        (sqlClient select MysqlUsers.firstname and MysqlUsers.alias
+                from MysqlUsers
                 ).fetchAll()
 
     suspend fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.lastname and MYSQL_USER.alias
-                from MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient select MysqlUsers.firstname and MysqlUsers.lastname and MysqlUsers.alias
+                from MysqlUsers
+                where MysqlUsers.id eq id
                 ).fetchOne()
 
     suspend fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-        (sqlClient select MYSQL_USER.firstname and MYSQL_USER.lastname and MYSQL_USER.alias and MYSQL_USER.isAdmin
-                from MYSQL_USER
-                where MYSQL_USER.id eq id
+        (sqlClient select MysqlUsers.firstname and MysqlUsers.lastname and MysqlUsers.alias and MysqlUsers.isAdmin
+                from MysqlUsers
+                where MysqlUsers.id eq id
                 ).fetchOne()
 
     suspend fun countAllUsersAndAliases() =
-        (sqlClient selectCount MYSQL_USER.id
-                andCount MYSQL_USER.alias
-                from MYSQL_USER
+        (sqlClient selectCount MysqlUsers.id
+                andCount MysqlUsers.alias
+                from MysqlUsers
                 ).fetchOne()
 
     suspend fun selectRoleLabelFromUserId(userId: Int) =
-        (sqlClient select MYSQL_ROLE.label
-                from MYSQL_ROLE innerJoin MYSQL_USER on MYSQL_ROLE.id eq MYSQL_USER.roleId
-                where MYSQL_USER.id eq userId)
+        (sqlClient select MysqlRoles.label
+                from MysqlRoles innerJoin MysqlUsers on MysqlRoles.id eq MysqlUsers.roleId
+                where MysqlUsers.id eq userId)
             .fetchOne()
 
-    suspend fun countAllUsers() = sqlClient selectCountAllFrom MYSQL_USER
+    suspend fun countAllUsers() = sqlClient selectCountAllFrom MysqlUsers
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-        (sqlClient select MYSQL_ROLE.label
-                from MYSQL_USER_ROLE innerJoin MYSQL_ROLE on MYSQL_USER_ROLE.roleId eq MYSQL_ROLE.id
-                where MYSQL_USER_ROLE.userId eq userId)
+        (sqlClient select MysqlRoles.label
+                from MysqlUserRoles innerJoin MysqlRoles on MysqlUserRoles.roleId eq MysqlRoles.id
+                where MysqlUserRoles.userId eq userId)
             .fetchAll()
 }

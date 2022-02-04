@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MSSQL_CUSTOMER
+import org.ufoss.kotysa.test.MssqlCustomers
 
 class R2dbcSelectMinMaxAvgSumMssqlTest : AbstractR2dbcMssqlTest<MinMaxAvgSumRepositoryMssqlSelect>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = MinMaxAvgSumRepositoryMssqlSelect(sqlClient)
@@ -42,22 +42,22 @@ class MinMaxAvgSumRepositoryMssqlSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcMssql(sqlClient) {
 
     suspend fun selectCustomerMinAge() =
-        (sqlClient selectMin MSSQL_CUSTOMER.age
-                from MSSQL_CUSTOMER
+        (sqlClient selectMin MssqlCustomers.age
+                from MssqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerMaxAge() =
-        (sqlClient selectMax MSSQL_CUSTOMER.age
-                from MSSQL_CUSTOMER
+        (sqlClient selectMax MssqlCustomers.age
+                from MssqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerAvgAge() =
-        (sqlClient selectAvg MSSQL_CUSTOMER.age
-                from MSSQL_CUSTOMER
+        (sqlClient selectAvg MssqlCustomers.age
+                from MssqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerSumAge() =
-        (sqlClient selectSum MSSQL_CUSTOMER.age
-                from MSSQL_CUSTOMER
+        (sqlClient selectSum MssqlCustomers.age
+                from MssqlCustomers
                 ).fetchOne()
 }

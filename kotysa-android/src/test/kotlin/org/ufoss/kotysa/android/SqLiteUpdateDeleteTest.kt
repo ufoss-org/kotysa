@@ -147,43 +147,43 @@ class UserRepositoryUpdateDelete(
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun deleteUserById(id: Int) =
-            (sqlClient deleteFrom SQLITE_USER
-                    where SQLITE_USER.id eq id
+            (sqlClient deleteFrom SqliteUsers
+                    where SqliteUsers.id eq id
                     ).execute()
 
     fun deleteUserIn(ids: Collection<Int>) =
-            (sqlClient deleteFrom SQLITE_USER
-                    where SQLITE_USER.id `in` ids
+            (sqlClient deleteFrom SqliteUsers
+                    where SqliteUsers.id `in` ids
                     ).execute()
 
     fun deleteUserWithJoin(roleLabel: String) =
-            (sqlClient deleteFrom SQLITE_USER
-                    innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
-                    where SQLITE_ROLE.label eq roleLabel
+            (sqlClient deleteFrom SqliteUsers
+                    innerJoin SqliteRoles on SqliteUsers.roleId eq SqliteRoles.id
+                    where SqliteRoles.label eq roleLabel
                     ).execute()
 
     fun updateLastname(newLastname: String) =
-            (sqlClient update SQLITE_USER
-                    set SQLITE_USER.lastname eq newLastname
-                    where SQLITE_USER.id eq userJdoe.id
+            (sqlClient update SqliteUsers
+                    set SqliteUsers.lastname eq newLastname
+                    where SqliteUsers.id eq userJdoe.id
                     ).execute()
 
     fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-            (sqlClient update SQLITE_USER
-                    set SQLITE_USER.lastname eq newLastname
-                    where SQLITE_USER.id `in` ids
+            (sqlClient update SqliteUsers
+                    set SqliteUsers.lastname eq newLastname
+                    where SqliteUsers.id `in` ids
                     ).execute()
 
     fun updateAlias(newAlias: String?) =
-            (sqlClient update SQLITE_USER
-                    set SQLITE_USER.alias eq newAlias
-                    where SQLITE_USER.id eq userBboss.id
+            (sqlClient update SqliteUsers
+                    set SqliteUsers.alias eq newAlias
+                    where SqliteUsers.id eq userBboss.id
                     ).execute()
 
     fun updateWithJoin(newLastname: String, roleLabel: String) =
-            (sqlClient update SQLITE_USER
-                    set SQLITE_USER.lastname eq newLastname
-                    innerJoin SQLITE_ROLE on SQLITE_USER.roleId eq SQLITE_ROLE.id
-                    where SQLITE_ROLE.label eq roleLabel
+            (sqlClient update SqliteUsers
+                    set SqliteUsers.lastname eq newLastname
+                    innerJoin SqliteRoles on SqliteUsers.roleId eq SqliteRoles.id
+                    where SqliteRoles.label eq roleLabel
                     ).execute()
 }

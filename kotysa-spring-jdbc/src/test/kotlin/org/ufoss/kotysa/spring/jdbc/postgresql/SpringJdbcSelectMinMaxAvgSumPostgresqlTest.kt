@@ -51,22 +51,22 @@ class MinMaxAvgSumRepositoryPostgresqlSelect(client: JdbcOperations) :
         AbstractCustomerRepositorySpringJdbcPostgresql(client) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin POSTGRESQL_CUSTOMER.age
-                    from POSTGRESQL_CUSTOMER
+            (sqlClient selectMin PostgresqlCustomers.age
+                    from PostgresqlCustomers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax POSTGRESQL_CUSTOMER.age
-                    from POSTGRESQL_CUSTOMER
+            (sqlClient selectMax PostgresqlCustomers.age
+                    from PostgresqlCustomers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg POSTGRESQL_CUSTOMER.age
-                    from POSTGRESQL_CUSTOMER
+            (sqlClient selectAvg PostgresqlCustomers.age
+                    from PostgresqlCustomers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum POSTGRESQL_CUSTOMER.age
-                    from POSTGRESQL_CUSTOMER
+            (sqlClient selectSum PostgresqlCustomers.age
+                    from PostgresqlCustomers
                     ).fetchOne()
 }

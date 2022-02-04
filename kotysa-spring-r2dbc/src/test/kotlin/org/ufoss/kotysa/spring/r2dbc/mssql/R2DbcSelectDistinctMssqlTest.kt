@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.MSSQL_ROLE
+import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
@@ -38,7 +38,7 @@ class R2DbcSelectDistinctMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlS
 class UserRepositoryMssqlSelectDistinct(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMssql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MSSQL_ROLE.label
-                    from MSSQL_ROLE
+            (sqlClient selectDistinct MssqlRoles.label
+                    from MssqlRoles
                     ).fetchAll()
 }

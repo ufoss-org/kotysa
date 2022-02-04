@@ -163,94 +163,94 @@ class JdbcSelectMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelect>
 class UserRepositoryJdbcMssqlSelect(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectOneNonUnique() =
-        (sqlClient selectFrom MSSQL_USER
+        (sqlClient selectFrom MssqlUsers
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
         (sqlClient select {
-            UserDto("${it[MSSQL_USER.firstname]} ${it[MSSQL_USER.lastname]}", it[MSSQL_USER.alias])
+            UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.alias])
         }
-                from MSSQL_USER
+                from MssqlUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[MSSQL_USER.lastname]!!, it[MSSQL_ROLE.label]!!) }
-                from MSSQL_USER innerJoin MSSQL_ROLE on MSSQL_USER.roleId eq MSSQL_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[MssqlUsers.lastname]!!, it[MssqlRoles.label]!!) }
+                from MssqlUsers innerJoin MssqlRoles on MssqlUsers.roleId eq MssqlRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[MSSQL_USER.lastname]!!, it[MSSQL_ROLE.label]!!) }
-                from MSSQL_USER and MSSQL_ROLE
-                where MSSQL_USER.roleId eq MSSQL_ROLE.id
+        (sqlClient select { UserWithRoleDto(it[MssqlUsers.lastname]!!, it[MssqlRoles.label]!!) }
+                from MssqlUsers and MssqlRoles
+                where MssqlUsers.roleId eq MssqlRoles.id
                 ).fetchAll()
 
     fun selectAllStream() =
-        (sqlClient selectFrom MSSQL_USER
+        (sqlClient selectFrom MssqlUsers
                 ).fetchAllStream()
 
     fun selectAllIn(aliases: Collection<String>) =
-        (sqlClient selectFrom MSSQL_USER
-                where MSSQL_USER.alias `in` aliases
+        (sqlClient selectFrom MssqlUsers
+                where MssqlUsers.alias `in` aliases
                 ).fetchAll()
 
     fun selectOneById(id: Int) =
-        (sqlClient select MSSQL_USER
-                from MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient select MssqlUsers
+                from MssqlUsers
+                where MssqlUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameById(id: Int) =
-        (sqlClient select MSSQL_USER.firstname
-                from MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient select MssqlUsers.firstname
+                from MssqlUsers
+                where MssqlUsers.id eq id
                 ).fetchOne()
 
     fun selectAliasById(id: Int) =
-        (sqlClient select MSSQL_USER.alias
-                from MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient select MssqlUsers.alias
+                from MssqlUsers
+                where MssqlUsers.id eq id
                 ).fetchOneOrNull()
 
     fun selectFirstnameAndAliasById(id: Int) =
-        (sqlClient select MSSQL_USER.firstname and MSSQL_USER.alias
-                from MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient select MssqlUsers.firstname and MssqlUsers.alias
+                from MssqlUsers
+                where MssqlUsers.id eq id
                 ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-        (sqlClient select MSSQL_USER.firstname and MSSQL_USER.alias
-                from MSSQL_USER
+        (sqlClient select MssqlUsers.firstname and MssqlUsers.alias
+                from MssqlUsers
                 ).fetchAll()
 
     fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-        (sqlClient select MSSQL_USER.firstname and MSSQL_USER.lastname and MSSQL_USER.alias
-                from MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient select MssqlUsers.firstname and MssqlUsers.lastname and MssqlUsers.alias
+                from MssqlUsers
+                where MssqlUsers.id eq id
                 ).fetchOne()
 
     fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-        (sqlClient select MSSQL_USER.firstname and MSSQL_USER.lastname and MSSQL_USER.alias and MSSQL_USER.isAdmin
-                from MSSQL_USER
-                where MSSQL_USER.id eq id
+        (sqlClient select MssqlUsers.firstname and MssqlUsers.lastname and MssqlUsers.alias and MssqlUsers.isAdmin
+                from MssqlUsers
+                where MssqlUsers.id eq id
                 ).fetchOne()
 
     fun countAllUsersAndAliases() =
-        (sqlClient selectCount MSSQL_USER.id
-                andCount MSSQL_USER.alias
-                from MSSQL_USER
+        (sqlClient selectCount MssqlUsers.id
+                andCount MssqlUsers.alias
+                from MssqlUsers
                 ).fetchOne()
 
     fun selectRoleLabelFromUserId(userId: Int) =
-        (sqlClient select MSSQL_ROLE.label
-                from MSSQL_ROLE innerJoin MSSQL_USER on MSSQL_ROLE.id eq MSSQL_USER.roleId
-                where MSSQL_USER.id eq userId)
+        (sqlClient select MssqlRoles.label
+                from MssqlRoles innerJoin MssqlUsers on MssqlRoles.id eq MssqlUsers.roleId
+                where MssqlUsers.id eq userId)
             .fetchOne()
 
-    fun countAllUsers() = sqlClient selectCountAllFrom MSSQL_USER
+    fun countAllUsers() = sqlClient selectCountAllFrom MssqlUsers
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-        (sqlClient select MSSQL_ROLE.label
-                from MSSQL_USER_ROLE innerJoin MSSQL_ROLE on MSSQL_USER_ROLE.roleId eq MSSQL_ROLE.id
-                where MSSQL_USER_ROLE.userId eq userId)
+        (sqlClient select MssqlRoles.label
+                from MssqlUserRoles innerJoin MssqlRoles on MssqlUserRoles.roleId eq MssqlRoles.id
+                where MssqlUserRoles.userId eq userId)
             .fetchAll()
 }

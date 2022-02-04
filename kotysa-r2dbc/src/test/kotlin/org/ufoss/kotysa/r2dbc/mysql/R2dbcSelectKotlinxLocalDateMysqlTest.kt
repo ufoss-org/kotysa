@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_KOTLINX_LOCAL_DATE
+import org.ufoss.kotysa.test.MysqlKotlinxLocalDates
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.kotlinxLocalDateWithNullable
 import org.ufoss.kotysa.test.kotlinxLocalDateWithoutNullable
@@ -193,77 +193,77 @@ class KotlinxLocalDateRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClien
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MYSQL_KOTLINX_LOCAL_DATE
+        sqlClient createTable MysqlKotlinxLocalDates
     }
 
     private suspend fun insertLocalDates() {
         sqlClient.insert(kotlinxLocalDateWithNullable, kotlinxLocalDateWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MYSQL_KOTLINX_LOCAL_DATE
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlKotlinxLocalDates
 
     fun selectAllByLocalDateNotNull(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull eq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull eq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullNotEq(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull notEq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull notEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullIn(values: Sequence<LocalDate>) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull `in` values
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullBefore(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull before localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull before localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullBeforeOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull beforeOrEq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull beforeOrEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfter(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull after localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull after localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNotNullAfterOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNotNull afterOrEq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNotNull afterOrEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullable(localDate: LocalDate?) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNullable eq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNullable eq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableNotEq(localDate: LocalDate?) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNullable notEq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNullable notEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableBefore(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNullable before localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNullable before localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableBeforeOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNullable beforeOrEq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNullable beforeOrEq localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableAfter(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNullable after localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNullable after localDate
                 ).fetchAll()
 
     fun selectAllByLocalDateNullableAfterOrEq(localDate: LocalDate) =
-        (sqlClient selectFrom MYSQL_KOTLINX_LOCAL_DATE
-                where MYSQL_KOTLINX_LOCAL_DATE.localDateNullable afterOrEq localDate
+        (sqlClient selectFrom MysqlKotlinxLocalDates
+                where MysqlKotlinxLocalDates.localDateNullable afterOrEq localDate
                 ).fetchAll()
 }

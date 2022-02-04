@@ -150,10 +150,10 @@ class RepositoryMysqlInsert(dbClient: DatabaseClient) : Repository {
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists MYSQL_INT)
-            .then(sqlClient createTableIfNotExists MYSQL_LONG)
-            .then(sqlClient createTableIfNotExists MYSQL_CUSTOMER)
-            .then(sqlClient createTableIfNotExists MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE)
+        (sqlClient createTableIfNotExists MysqlInts)
+            .then(sqlClient createTableIfNotExists MysqlLongs)
+            .then(sqlClient createTableIfNotExists MysqlCustomers)
+            .then(sqlClient createTableIfNotExists MysqlAllTypesNullableDefaultValueWithTimes)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -161,7 +161,7 @@ class RepositoryMysqlInsert(dbClient: DatabaseClient) : Repository {
 
     fun insertAndReturnCustomers() = sqlClient.insertAndReturn(customerUSA1, customerUSA2)
 
-    fun selectAllCustomers() = sqlClient selectAllFrom MYSQL_CUSTOMER
+    fun selectAllCustomers() = sqlClient selectAllFrom MysqlCustomers
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 

@@ -20,12 +20,12 @@ abstract class AbstractCustomerRepositoryR2dbcH2(private val sqlClient: R2dbcSql
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists H2_CUSTOMER
+        sqlClient createTableIfNotExists H2Customers
     }
 
     private suspend fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_CUSTOMER
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2Customers
 }

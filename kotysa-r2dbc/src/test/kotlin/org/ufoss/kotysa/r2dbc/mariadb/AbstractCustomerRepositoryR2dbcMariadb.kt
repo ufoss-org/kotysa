@@ -20,12 +20,12 @@ abstract class AbstractCustomerRepositoryR2dbcMariadb(private val sqlClient: R2d
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MARIADB_CUSTOMER
+        sqlClient createTableIfNotExists MariadbCustomers
     }
 
     private suspend fun insertCustomers() {
         sqlClient.insert(customerFrance, customerUSA1, customerUSA2)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MARIADB_CUSTOMER
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MariadbCustomers
 }

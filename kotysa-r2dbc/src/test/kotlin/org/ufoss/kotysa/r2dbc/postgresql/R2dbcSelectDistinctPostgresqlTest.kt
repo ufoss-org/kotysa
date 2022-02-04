@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_ROLE
+import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
 import org.ufoss.kotysa.test.roleUser
@@ -31,7 +31,7 @@ class UserRepositoryJdbcPostgresqlSelectDistinct(private val sqlClient: R2dbcSql
     AbstractUserRepositoryR2dbcPostgresql(sqlClient) {
 
     fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct POSTGRESQL_ROLE.label
-                from POSTGRESQL_ROLE
+        (sqlClient selectDistinct PostgresqlRoles.label
+                from PostgresqlRoles
                 ).fetchAll()
 }

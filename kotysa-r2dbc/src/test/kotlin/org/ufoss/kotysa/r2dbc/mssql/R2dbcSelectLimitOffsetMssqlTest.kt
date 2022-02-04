@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MSSQL_CUSTOMER
+import org.ufoss.kotysa.test.MssqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -56,25 +56,25 @@ class LimitOffsetByRepositoryMssqlSelect(private val sqlClient: R2dbcSqlClient) 
     AbstractCustomerRepositoryR2dbcMssql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-        (sqlClient selectFrom MSSQL_CUSTOMER
-                orderByAsc MSSQL_CUSTOMER.id
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.id
                 offset 2
                 ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-        (sqlClient selectFrom MSSQL_CUSTOMER
-                orderByAsc MSSQL_CUSTOMER.id
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.id
                 limit 1
                 ).fetchAll()
 
     fun selectAllLimitOffset() =
-        (sqlClient selectFrom MSSQL_CUSTOMER
+        (sqlClient selectFrom MssqlCustomers
                 limit 1 offset 1
                 ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-        (sqlClient selectFrom MSSQL_CUSTOMER
-                orderByAsc MSSQL_CUSTOMER.id
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.id
                 limit 2 offset 1
                 ).fetchAll()
 }

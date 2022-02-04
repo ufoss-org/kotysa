@@ -197,77 +197,77 @@ class LongRepositoryH2Select(private val sqlClient: JdbcSqlClient) : Repository 
     }
 
     private fun createTables() {
-        sqlClient createTable H2_LONG
+        sqlClient createTable H2Longs
     }
 
     private fun insertLongs() {
         sqlClient.insert(longWithNullable, longWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2_LONG
+    private fun deleteAll() = sqlClient deleteAllFrom H2Longs
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull eq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull eq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull notEq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull notEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull `in` values
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull inf long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull inf long
                     ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull infOrEq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull sup long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull sup long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNotNull supOrEq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNotNull supOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNullable eq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNullable eq long
                     ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNullable notEq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNullable notEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNullable inf long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNullable inf long
                     ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNullable infOrEq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNullable infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNullable sup long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNullable sup long
                     ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom H2_LONG
-                    where H2_LONG.longNullable supOrEq long
+            (sqlClient selectFrom H2Longs
+                    where H2Longs.longNullable supOrEq long
                     ).fetchAll()
 }

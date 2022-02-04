@@ -189,75 +189,75 @@ class LocalDateTimeAsTimestampRepositoryH2Select(private val sqlClient: ReactorS
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable H2_LOCAL_DATE_TIME_AS_TIMESTAMP
+    private fun createTables() = sqlClient createTable H2LocalDateTimeAsTimestamps
 
     private fun insertLocalDateTimes() =
         sqlClient.insert(localDateTimeAsTimestampWithNullable, localDateTimeAsTimestampWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
+    private fun deleteAll() = sqlClient deleteAllFrom H2LocalDateTimeAsTimestamps
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull eq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull notEq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull `in` values
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull before localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull beforeOrEq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull after localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNotNull afterOrEq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNotNull afterOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable eq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNullable eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable notEq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNullable notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable before localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNullable before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable beforeOrEq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNullable beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable after localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNullable after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom H2_LOCAL_DATE_TIME_AS_TIMESTAMP
-                    where H2_LOCAL_DATE_TIME_AS_TIMESTAMP.localDateTimeNullable afterOrEq localDateTime
+            (sqlClient selectFrom H2LocalDateTimeAsTimestamps
+                    where H2LocalDateTimeAsTimestamps.localDateTimeNullable afterOrEq localDateTime
                     ).fetchAll()
 }

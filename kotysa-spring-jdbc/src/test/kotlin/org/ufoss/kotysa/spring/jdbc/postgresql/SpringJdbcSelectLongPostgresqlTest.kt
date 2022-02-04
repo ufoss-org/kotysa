@@ -210,77 +210,77 @@ class LongRepositoryPostgresqlSelect(client: JdbcOperations) : Repository {
     }
 
     private fun createTables() {
-        sqlClient createTable POSTGRESQL_LONG
+        sqlClient createTable PostgresqlLongs
     }
 
     private fun insertLongs() {
         sqlClient.insert(longWithNullable, longWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_LONG
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlLongs
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull eq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull eq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull notEq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull notEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull `in` values
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull inf long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull inf long
                     ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull infOrEq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull sup long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull sup long
                     ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNotNull supOrEq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNotNull supOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNullable eq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNullable eq long
                     ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNullable notEq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNullable notEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNullable inf long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNullable inf long
                     ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNullable infOrEq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNullable infOrEq long
                     ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNullable sup long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNullable sup long
                     ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom POSTGRESQL_LONG
-                    where POSTGRESQL_LONG.longNullable supOrEq long
+            (sqlClient selectFrom PostgresqlLongs
+                    where PostgresqlLongs.longNullable supOrEq long
                     ).fetchAll()
 }

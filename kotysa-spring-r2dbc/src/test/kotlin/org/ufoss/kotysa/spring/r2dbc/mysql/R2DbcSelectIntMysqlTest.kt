@@ -211,74 +211,74 @@ class IntRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
             .block()
     }
 
-    private fun createTables() = sqlClient createTableIfNotExists MYSQL_INT
+    private fun createTables() = sqlClient createTableIfNotExists MysqlInts
 
     private fun insertInts() = sqlClient.insert(intWithNullable, intWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom MYSQL_INT
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlInts
 
     fun selectAllByIntNotNull(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull eq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull eq int
                 ).fetchAll()
 
     fun selectAllByIntNotNullNotEq(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull notEq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull notEq int
                 ).fetchAll()
 
     fun selectAllByIntNotNullIn(values: Sequence<Int>) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull `in` values
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByIntNotNullInf(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull inf int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull inf int
                 ).fetchAll()
 
     fun selectAllByIntNotNullInfOrEq(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull infOrEq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull infOrEq int
                 ).fetchAll()
 
     fun selectAllByIntNotNullSup(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull sup int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull sup int
                 ).fetchAll()
 
     fun selectAllByIntNotNullSupOrEq(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNotNull supOrEq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNotNull supOrEq int
                 ).fetchAll()
 
     fun selectAllByIntNullable(int: Int?) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNullable eq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNullable eq int
                 ).fetchAll()
 
     fun selectAllByIntNullableNotEq(int: Int?) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNullable notEq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNullable notEq int
                 ).fetchAll()
 
     fun selectAllByIntNullableInf(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNullable inf int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNullable inf int
                 ).fetchAll()
 
     fun selectAllByIntNullableInfOrEq(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNullable infOrEq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNullable infOrEq int
                 ).fetchAll()
 
     fun selectAllByIntNullableSup(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNullable sup int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNullable sup int
                 ).fetchAll()
 
     fun selectAllByIntNullableSupOrEq(int: Int) =
-        (sqlClient selectFrom MYSQL_INT
-                where MYSQL_INT.intNullable supOrEq int
+        (sqlClient selectFrom MysqlInts
+                where MysqlInts.intNullable supOrEq int
                 ).fetchAll()
 }

@@ -23,8 +23,8 @@ class JdbcSelectGroupByH2Test : AbstractJdbcH2Test<GroupByRepositoryH2Select>() 
 class GroupByRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount H2_CUSTOMER.id and H2_CUSTOMER.country
-                    from H2_CUSTOMER
-                    groupBy H2_CUSTOMER.country
+            (sqlClient selectCount H2Customers.id and H2Customers.country
+                    from H2Customers
+                    groupBy H2Customers.country
                     ).fetchAll()
 }

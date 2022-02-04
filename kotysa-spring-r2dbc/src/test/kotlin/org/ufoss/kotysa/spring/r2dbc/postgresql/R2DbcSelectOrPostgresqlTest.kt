@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_ROLE
+import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
@@ -37,8 +37,8 @@ class R2DbcSelectOrPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPo
 class UserRepositoryPostgresqlSelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom POSTGRESQL_ROLE
-                    where POSTGRESQL_ROLE.label eq label1
-                    or POSTGRESQL_ROLE.label eq label2
+            (sqlClient selectFrom PostgresqlRoles
+                    where PostgresqlRoles.label eq label1
+                    or PostgresqlRoles.label eq label2
                     ).fetchAll()
 }

@@ -24,9 +24,9 @@ abstract class AbstractUserRepositoryR2dbcMssql(private val sqlClient: R2dbcSqlC
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MSSQL_ROLE
-        sqlClient createTableIfNotExists MSSQL_USER
-        sqlClient createTableIfNotExists MSSQL_USER_ROLE
+        sqlClient createTableIfNotExists MssqlRoles
+        sqlClient createTableIfNotExists MssqlUsers
+        sqlClient createTableIfNotExists MssqlUserRoles
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
@@ -37,18 +37,18 @@ abstract class AbstractUserRepositoryR2dbcMssql(private val sqlClient: R2dbcSqlC
         sqlClient insert userRoleBboss
     }
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MSSQL_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MssqlRoles
 
-    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MSSQL_USER
+    private suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MssqlUsers
 
-    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MSSQL_USER_ROLE
+    suspend fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MssqlUserRoles
 
-    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom MSSQL_USER_ROLE
+    suspend fun countAllUserRoles() = sqlClient selectCountAllFrom MssqlUserRoles
 
-    fun selectAllUsers() = sqlClient selectAllFrom MSSQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MssqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 }

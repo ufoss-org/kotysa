@@ -40,22 +40,22 @@ class JdbcSelectMinMaxAvgSumH2Test : AbstractJdbcH2Test<MinMaxAvgSumRepositoryH2
 class MinMaxAvgSumRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectMin H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectMax H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectAvg H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum H2_CUSTOMER.age
-                    from H2_CUSTOMER
+            (sqlClient selectSum H2Customers.age
+                    from H2Customers
                     ).fetchOne()
 }

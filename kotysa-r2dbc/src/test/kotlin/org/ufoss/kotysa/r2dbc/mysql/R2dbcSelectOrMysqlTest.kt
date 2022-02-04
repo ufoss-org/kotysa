@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_ROLE
+import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
 
@@ -29,8 +29,8 @@ class UserRepositoryJdbcMysqlSelectOr(private val sqlClient: R2dbcSqlClient) :
     AbstractUserRepositoryR2dbcMysql(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
-        (sqlClient selectFrom MYSQL_ROLE
-                where MYSQL_ROLE.label eq label1
-                or MYSQL_ROLE.label eq label2
+        (sqlClient selectFrom MysqlRoles
+                where MysqlRoles.label eq label1
+                or MysqlRoles.label eq label2
                 ).fetchAll()
 }

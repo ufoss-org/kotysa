@@ -53,25 +53,25 @@ class SpringJdbcSelectLimitOffsetMysqlTest: AbstractSpringJdbcMysqlTest<LimitOff
 class LimitOffsetRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
 
     fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.id
+            (sqlClient selectFrom MysqlCustomers
+                    orderByAsc MysqlCustomers.id
                     offset 2
                     ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.id
+            (sqlClient selectFrom MysqlCustomers
+                    orderByAsc MysqlCustomers.id
                     limit 1
                     ).fetchAll()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
+            (sqlClient selectFrom MysqlCustomers
                     limit 1 offset 1
                     ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom MYSQL_CUSTOMER
-                    orderByAsc MYSQL_CUSTOMER.id
+            (sqlClient selectFrom MysqlCustomers
+                    orderByAsc MysqlCustomers.id
                     limit 2 offset 1
                     ).fetchAll()
 }

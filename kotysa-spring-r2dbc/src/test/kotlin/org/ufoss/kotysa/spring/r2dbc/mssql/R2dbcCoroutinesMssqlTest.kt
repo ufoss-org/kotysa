@@ -124,50 +124,50 @@ class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
     }
 
     private suspend fun createTables() {
-        sqlClient createTableIfNotExists MSSQL_ROLE
-        sqlClient createTableIfNotExists MSSQL_USER
+        sqlClient createTableIfNotExists MssqlRoles
+        sqlClient createTableIfNotExists MssqlUsers
     }
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MSSQL_ROLE
+    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MssqlRoles
 
-    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MSSQL_USER
+    suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MssqlUsers
 
-    fun selectAllUsers() = sqlClient selectAllFrom MSSQL_USER
+    fun selectAllUsers() = sqlClient selectAllFrom MssqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname eq firstname
                     ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.firstname eq firstname
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.firstname eq firstname
                     ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom MSSQL_USER
+            (sqlClient selectFrom MssqlUsers
                     ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MSSQL_USER
-                    where MSSQL_USER.alias eq alias
+            (sqlClient selectFrom MssqlUsers
+                    where MssqlUsers.alias eq alias
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
             (sqlClient.select {
-                UserDto("${it[MSSQL_USER.firstname]} ${it[MSSQL_USER.lastname]}",
-                        it[MSSQL_USER.alias])
+                UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}",
+                        it[MssqlUsers.alias])
             }
-                    from MSSQL_USER
+                    from MssqlUsers
                     ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update MSSQL_USER
-                    set MSSQL_USER.lastname eq newLastname
-                    where MSSQL_USER.id eq userJdoe.id
+            (sqlClient update MssqlUsers
+                    set MssqlUsers.lastname eq newLastname
+                    where MssqlUsers.id eq userJdoe.id
                     ).execute()
 }

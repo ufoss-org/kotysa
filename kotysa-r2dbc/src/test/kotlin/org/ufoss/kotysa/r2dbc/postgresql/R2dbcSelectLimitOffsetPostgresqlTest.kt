@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.POSTGRESQL_CUSTOMER
+import org.ufoss.kotysa.test.PostgresqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
@@ -49,25 +49,25 @@ class LimitOffsetRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlClien
     AbstractCustomerRepositoryR2dbcPostgresql(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
-        (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                orderByAsc POSTGRESQL_CUSTOMER.id
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.id
                 offset 2
                 ).fetchAll()
 
     fun selectAllOrderByIdLimit() =
-        (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                orderByAsc POSTGRESQL_CUSTOMER.id
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.id
                 limit 1
                 ).fetchAll()
 
     fun selectAllLimitOffset() =
-        (sqlClient selectFrom POSTGRESQL_CUSTOMER
+        (sqlClient selectFrom PostgresqlCustomers
                 limit 1 offset 1
                 ).fetchAll()
 
     fun selectAllOrderByIdLimitOffset() =
-        (sqlClient selectFrom POSTGRESQL_CUSTOMER
-                orderByAsc POSTGRESQL_CUSTOMER.id
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.id
                 limit 2 offset 1
                 ).fetchAll()
 }

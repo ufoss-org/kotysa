@@ -95,15 +95,15 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
     }
 
     override fun delete() = runBlocking<Unit> {
-        sqlClient deleteAllFrom MYSQL_ALL_TYPES_NOT_NULL
-        sqlClient deleteAllFrom MYSQL_ALL_TYPES_NULLABLE
-        sqlClient deleteAllFrom MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient deleteAllFrom MysqlAllTypesNotNulls
+        sqlClient deleteAllFrom MysqlAllTypesNullableWithTimes
+        sqlClient deleteAllFrom MysqlAllTypesNullableDefaultValueWithTimes
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MYSQL_ALL_TYPES_NOT_NULL
-        sqlClient createTable MYSQL_ALL_TYPES_NULLABLE
-        sqlClient createTableIfNotExists MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTable MysqlAllTypesNotNulls
+        sqlClient createTable MysqlAllTypesNullableWithTimes
+        sqlClient createTableIfNotExists MysqlAllTypesNullableDefaultValueWithTimes
     }
 
     private suspend fun insertAllTypes() {
@@ -112,11 +112,11 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
         sqlClient insert allTypesNullableDefaultValueWithTime
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NOT_NULL
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MysqlAllTypesNotNulls
 
-    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NULLABLE
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom MysqlAllTypesNullableWithTimes
 
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MYSQL_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MysqlAllTypesNullableDefaultValueWithTimes
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
@@ -124,18 +124,18 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
         newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long
     ) =
-        (sqlClient update MYSQL_ALL_TYPES_NOT_NULL
-                set MYSQL_ALL_TYPES_NOT_NULL.string eq newString
-                set MYSQL_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                set MYSQL_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                set MYSQL_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
-                set MYSQL_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                set MYSQL_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                set MYSQL_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                set MYSQL_ALL_TYPES_NOT_NULL.inte eq newInt
-                set MYSQL_ALL_TYPES_NOT_NULL.longe eq newLong
-                where MYSQL_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+        (sqlClient update MysqlAllTypesNotNulls
+                set MysqlAllTypesNotNulls.string eq newString
+                set MysqlAllTypesNotNulls.boolean eq newBoolean
+                set MysqlAllTypesNotNulls.localDate eq newLocalDate
+                set MysqlAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                set MysqlAllTypesNotNulls.localTim eq newLocalTime
+                set MysqlAllTypesNotNulls.localDateTime1 eq newLocalDateTime
+                set MysqlAllTypesNotNulls.localDateTime2 eq newLocalDateTime
+                set MysqlAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                set MysqlAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                set MysqlAllTypesNotNulls.inte eq newInt
+                set MysqlAllTypesNotNulls.longe eq newLong
+                where MysqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

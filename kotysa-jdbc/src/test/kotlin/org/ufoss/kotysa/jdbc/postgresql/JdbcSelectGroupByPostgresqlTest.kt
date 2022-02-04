@@ -24,8 +24,8 @@ class GroupByRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
     AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
 
     fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount POSTGRESQL_CUSTOMER.id and POSTGRESQL_CUSTOMER.country
-                    from POSTGRESQL_CUSTOMER
-                    groupBy POSTGRESQL_CUSTOMER.country
+            (sqlClient selectCount PostgresqlCustomers.id and PostgresqlCustomers.country
+                    from PostgresqlCustomers
+                    groupBy PostgresqlCustomers.country
                     ).fetchAll()
 }

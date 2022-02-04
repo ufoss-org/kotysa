@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.H2_KOTLINX_LOCAL_DATE_TIME
+import org.ufoss.kotysa.test.H2KotlinxLocalDateTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.kotlinxLocalDateTimeWithNullable
 import org.ufoss.kotysa.test.kotlinxLocalDateTimeWithoutNullable
@@ -198,77 +198,77 @@ class KotlinxLocalDateTimeRepositoryH2Select(private val sqlClient: R2dbcSqlClie
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2_KOTLINX_LOCAL_DATE_TIME
+        sqlClient createTable H2KotlinxLocalDateTimes
     }
 
     private suspend fun insertLocalDateTimes() {
         sqlClient.insert(kotlinxLocalDateTimeWithNullable, kotlinxLocalDateTimeWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2_KOTLINX_LOCAL_DATE_TIME
+    private suspend fun deleteAll() = sqlClient deleteAllFrom H2KotlinxLocalDateTimes
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull eq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull notEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull before localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull beforeOrEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull after localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNotNull afterOrEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNullable eq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNullable notEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNullable before localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNullable beforeOrEq localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNullable after localDateTime
                 ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-        (sqlClient selectFrom H2_KOTLINX_LOCAL_DATE_TIME
-                where H2_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+        (sqlClient selectFrom H2KotlinxLocalDateTimes
+                where H2KotlinxLocalDateTimes.localDateTimeNullable afterOrEq localDateTime
                 ).fetchAll()
 }

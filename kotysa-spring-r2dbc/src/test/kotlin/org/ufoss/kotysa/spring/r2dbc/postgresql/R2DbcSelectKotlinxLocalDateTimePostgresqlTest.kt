@@ -201,75 +201,75 @@ class KotlinxLocalDateTimeRepositoryPostgresqlSelect(dbClient: DatabaseClient) :
                 .block()
     }
 
-    private fun createTables() = sqlClient createTable POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
+    private fun createTables() = sqlClient createTable PostgresqlKotlinxLocalDateTimeAsTimestamps
 
     private fun insertLocalDateTimes() =
             sqlClient.insert(kotlinxLocalDateTimeAsTimestampWithNullable, kotlinxLocalDateTimeAsTimestampWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
+    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
 
     fun selectAllByLocalDateTimeNotNull(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull eq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullNotEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull notEq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullIn(values: Sequence<LocalDateTime>) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull `in` values
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull before localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull beforeOrEq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull after localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNotNullAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNotNull afterOrEq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNotNull afterOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullable(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable eq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNullable eq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableNotEq(localDateTime: LocalDateTime?) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable notEq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNullable notEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBefore(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable before localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNullable before localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableBeforeOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable beforeOrEq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNullable beforeOrEq localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfter(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable after localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNullable after localDateTime
                     ).fetchAll()
 
     fun selectAllByLocalDateTimeNullableAfterOrEq(localDateTime: LocalDateTime) =
-            (sqlClient selectFrom POSTGRESQL_KOTLINX_LOCAL_DATE_TIME
-                    where POSTGRESQL_KOTLINX_LOCAL_DATE_TIME.localDateTimeNullable afterOrEq localDateTime
+            (sqlClient selectFrom PostgresqlKotlinxLocalDateTimeAsTimestamps
+                    where PostgresqlKotlinxLocalDateTimeAsTimestamps.localDateTimeNullable afterOrEq localDateTime
                     ).fetchAll()
 }

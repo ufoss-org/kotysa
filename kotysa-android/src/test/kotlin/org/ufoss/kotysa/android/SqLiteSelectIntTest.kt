@@ -198,77 +198,77 @@ class IntRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : 
     }
 
     private fun createTables() {
-        sqlClient createTable SQLITE_INT
+        sqlClient createTable SqliteInts
     }
 
     private fun insertIntegers() {
         sqlClient.insert(intWithNullable, intWithoutNullable)
     }
 
-    private fun deleteAll() = sqlClient deleteAllFrom SQLITE_INT
+    private fun deleteAll() = sqlClient deleteAllFrom SqliteInts
 
     fun selectAllByIntegerNotNull(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull eq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull eq int
                     ).fetchAll()
 
     fun selectAllByIntegerNotNullNotEq(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull notEq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull notEq int
                     ).fetchAll()
 
     fun selectAllByIntegerNotNullIn(values: Sequence<Int>) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull `in` values
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByIntegerNotNullInf(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull inf int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull inf int
                     ).fetchAll()
 
     fun selectAllByIntegerNotNullInfOrEq(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull infOrEq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntegerNotNullSup(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull sup int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull sup int
                     ).fetchAll()
 
     fun selectAllByIntegerNotNullSupOrEq(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNotNull supOrEq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNotNull supOrEq int
                     ).fetchAll()
 
     fun selectAllByIntegerNullable(int: Int?) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNullable eq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNullable eq int
                     ).fetchAll()
 
     fun selectAllByIntegerNullableNotEq(int: Int?) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNullable notEq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNullable notEq int
                     ).fetchAll()
 
     fun selectAllByIntegerNullableInf(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNullable inf int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNullable inf int
                     ).fetchAll()
 
     fun selectAllByIntegerNullableInfOrEq(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNullable infOrEq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNullable infOrEq int
                     ).fetchAll()
 
     fun selectAllByIntegerNullableSup(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNullable sup int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNullable sup int
                     ).fetchAll()
 
     fun selectAllByIntegerNullableSupOrEq(int: Int) =
-            (sqlClient selectFrom SQLITE_INT
-                    where SQLITE_INT.intNullable supOrEq int
+            (sqlClient selectFrom SqliteInts
+                    where SqliteInts.intNullable supOrEq int
                     ).fetchAll()
 }

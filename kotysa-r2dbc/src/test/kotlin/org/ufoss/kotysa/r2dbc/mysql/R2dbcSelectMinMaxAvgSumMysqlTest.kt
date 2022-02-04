@@ -8,7 +8,7 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.test.MYSQL_CUSTOMER
+import org.ufoss.kotysa.test.MysqlCustomers
 
 class R2dbcSelectMinMaxAvgSumMysqlTest : AbstractR2dbcMysqlTest<MinMaxAvgSumRepositoryMysqlSelect>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = MinMaxAvgSumRepositoryMysqlSelect(sqlClient)
@@ -42,22 +42,22 @@ class MinMaxAvgSumRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClient) :
     AbstractCustomerRepositoryR2dbcMysql(sqlClient) {
 
     suspend fun selectCustomerMinAge() =
-        (sqlClient selectMin MYSQL_CUSTOMER.age
-                from MYSQL_CUSTOMER
+        (sqlClient selectMin MysqlCustomers.age
+                from MysqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerMaxAge() =
-        (sqlClient selectMax MYSQL_CUSTOMER.age
-                from MYSQL_CUSTOMER
+        (sqlClient selectMax MysqlCustomers.age
+                from MysqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerAvgAge() =
-        (sqlClient selectAvg MYSQL_CUSTOMER.age
-                from MYSQL_CUSTOMER
+        (sqlClient selectAvg MysqlCustomers.age
+                from MysqlCustomers
                 ).fetchOne()
 
     suspend fun selectCustomerSumAge() =
-        (sqlClient selectSum MYSQL_CUSTOMER.age
-                from MYSQL_CUSTOMER
+        (sqlClient selectSum MysqlCustomers.age
+                from MysqlCustomers
                 ).fetchOne()
 }

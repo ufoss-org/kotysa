@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.MYSQL_JAVA_USER
+import org.ufoss.kotysa.test.MysqlJavaUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
@@ -17,7 +17,7 @@ import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 class SpringJdbcJavaEntityMysqlTest :
     AbstractSpringJdbcMysqlTest<JavaUserMysqlRepository>(),
-    JavaEntityTest<MYSQL_JAVA_USER, JavaUserMysqlRepository, SpringJdbcTransaction> {
+    JavaEntityTest<MysqlJavaUsers, JavaUserMysqlRepository, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -31,4 +31,4 @@ class SpringJdbcJavaEntityMysqlTest :
 
 
 class JavaUserMysqlRepository(client: JdbcOperations) :
-    JavaUserRepository<MYSQL_JAVA_USER>(client.sqlClient(mysqlTables), MYSQL_JAVA_USER)
+    JavaUserRepository<MysqlJavaUsers>(client.sqlClient(mysqlTables), MysqlJavaUsers)

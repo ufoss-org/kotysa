@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.MARIADB_JAVA_USER
+import org.ufoss.kotysa.test.MariadbJavaUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mariadbTables
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
@@ -17,7 +17,7 @@ import org.ufoss.kotysa.test.repositories.JavaUserRepository
 
 class SpringJdbcJavaEntityMariadbTest :
     AbstractSpringJdbcMariadbTest<JavaUserMariadbRepository>(),
-    JavaEntityTest<MARIADB_JAVA_USER, JavaUserMariadbRepository, SpringJdbcTransaction> {
+    JavaEntityTest<MariadbJavaUsers, JavaUserMariadbRepository, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -31,4 +31,4 @@ class SpringJdbcJavaEntityMariadbTest :
 
 
 class JavaUserMariadbRepository(client: JdbcOperations) :
-    JavaUserRepository<MARIADB_JAVA_USER>(client.sqlClient(mariadbTables), MARIADB_JAVA_USER)
+    JavaUserRepository<MariadbJavaUsers>(client.sqlClient(mariadbTables), MariadbJavaUsers)

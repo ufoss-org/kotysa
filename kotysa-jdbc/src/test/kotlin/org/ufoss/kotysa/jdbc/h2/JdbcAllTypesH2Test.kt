@@ -90,15 +90,15 @@ class AllTypesRepositoryH2(private val sqlClient: JdbcSqlClient) : Repository {
     }
 
     override fun delete() {
-        sqlClient deleteAllFrom H2_ALL_TYPES_NOT_NULL
-        sqlClient deleteAllFrom H2_ALL_TYPES_NULLABLE
-        sqlClient deleteAllFrom H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient deleteAllFrom H2AllTypesNotNulls
+        sqlClient deleteAllFrom H2AllTypesNullables
+        sqlClient deleteAllFrom H2AllTypesNullableDefaultValues
     }
 
     private fun createTables() {
-        sqlClient createTable H2_ALL_TYPES_NOT_NULL
-        sqlClient createTable H2_ALL_TYPES_NULLABLE
-        sqlClient createTableIfNotExists H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+        sqlClient createTable H2AllTypesNotNulls
+        sqlClient createTable H2AllTypesNullables
+        sqlClient createTableIfNotExists H2AllTypesNullableDefaultValues
     }
 
     private fun insertAllTypes() {
@@ -107,11 +107,11 @@ class AllTypesRepositoryH2(private val sqlClient: JdbcSqlClient) : Repository {
         sqlClient.insert(h2AllTypesNullableDefaultValue)
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom H2_ALL_TYPES_NOT_NULL
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom H2AllTypesNotNulls
 
-    fun selectAllAllTypesNullable() = sqlClient selectAllFrom H2_ALL_TYPES_NULLABLE
+    fun selectAllAllTypesNullable() = sqlClient selectAllFrom H2AllTypesNullables
 
-    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom H2_ALL_TYPES_NULLABLE_DEFAULT_VALUE
+    fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom H2AllTypesNullableDefaultValues
 
     fun updateAllTypesNotNull(
             newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
@@ -119,20 +119,20 @@ class AllTypesRepositoryH2(private val sqlClient: JdbcSqlClient) : Repository {
             newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
             newLong: Long, newOffsetDateTime: OffsetDateTime, newUuid: UUID
     ) =
-            (sqlClient update H2_ALL_TYPES_NOT_NULL
-                    set H2_ALL_TYPES_NOT_NULL.string eq newString
-                    set H2_ALL_TYPES_NOT_NULL.boolean eq newBoolean
-                    set H2_ALL_TYPES_NOT_NULL.localDate eq newLocalDate
-                    set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDate eq newKotlinxLocalDate
-                    set H2_ALL_TYPES_NOT_NULL.localTim eq newLocalTime
-                    set H2_ALL_TYPES_NOT_NULL.localDateTime1 eq newLocalDateTime
-                    set H2_ALL_TYPES_NOT_NULL.localDateTime2 eq newLocalDateTime
-                    set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                    set H2_ALL_TYPES_NOT_NULL.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                    set H2_ALL_TYPES_NOT_NULL.int eq newInt
-                    set H2_ALL_TYPES_NOT_NULL.long eq newLong
-                    set H2_ALL_TYPES_NOT_NULL.offsetDateTime eq newOffsetDateTime
-                    set H2_ALL_TYPES_NOT_NULL.uuid eq newUuid
-                    where H2_ALL_TYPES_NOT_NULL.id eq allTypesNotNullWithTime.id
+            (sqlClient update H2AllTypesNotNulls
+                    set H2AllTypesNotNulls.string eq newString
+                    set H2AllTypesNotNulls.boolean eq newBoolean
+                    set H2AllTypesNotNulls.localDate eq newLocalDate
+                    set H2AllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                    set H2AllTypesNotNulls.localTim eq newLocalTime
+                    set H2AllTypesNotNulls.localDateTime1 eq newLocalDateTime
+                    set H2AllTypesNotNulls.localDateTime2 eq newLocalDateTime
+                    set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                    set H2AllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                    set H2AllTypesNotNulls.int eq newInt
+                    set H2AllTypesNotNulls.long eq newLong
+                    set H2AllTypesNotNulls.offsetDateTime eq newOffsetDateTime
+                    set H2AllTypesNotNulls.uuid eq newUuid
+                    where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
                     ).execute()
 }
