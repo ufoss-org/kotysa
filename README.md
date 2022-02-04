@@ -4,9 +4,18 @@
 
 # Kotysa
 
-The idiomatic way to write **Ko**tlin **ty**pe-**sa**fe SQL.
+The idiomatic way to write **Ko**tlin **ty**pe-**sa**fe SQL for JVM and Android
 
-## Easy to use : 3 steps only
+## Getting started
+
+<p align="center">
+<a href="https://ufoss.org/kotysa/kotysa.html">Full documentation</a>
+</p>
+
+## Basic example
+
+Kotysa is easy to use : 3 steps only
+
 ### step 1 -> Create Kotlin entities
 
 data classes are great for that !
@@ -31,23 +40,23 @@ Use our type-safe Tables DSL to map your entities with the database tables,
 this is the ORM (object-relational mapping) step
 
 ```kotlin
-object ROLE : H2Table<Role>("roles") {
+object Roles : H2Table<Role>("roles") {
     val id = uuid(Role::id)
         .primaryKey()
     val label = varchar(Role::label)
 }
 
-object USER : H2Table<User>("users") {
+object Users : H2Table<User>("users") {
     val id = uuid(User::id)
         .primaryKey("PK_users")
-    val firstname = varchar(User::firstname, "fname")
+    val firstname = varchar(User::firstname, "f_name")
     val roleId = uuid(User::roleId)
         .foreignKey(ROLE.id, "FK_users_roles")
     val alias = varchar(User::alias)
 }
 
 // List all your mapped tables
-private val tables = tables().h2(ROLE, USER)
+private val tables = tables().h2(Roles, Users)
 ```
 
 ### step 3 -> Write SQL queries
@@ -63,15 +72,9 @@ val admins = (sqlClient selectFrom USER
 
 **No annotations, no code generation, no proxy, just regular Kotlin code ! No JPA, just pure SQL !**
 
-## Getting started
-
-<p align="center">
-<a href="https://ufoss.org/kotysa/kotysa.html">Full documentation</a>
-</p>
-
 ## Contributors
 
-Contributions are very welcome.
+Contributions are welcome.
 
 * To compile Kotysa use a JDK 8.
 * You need a local docker, like docker-ce : some tests use testcontainers to start real databases like PostgreSQL, MySQL...
