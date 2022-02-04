@@ -8,7 +8,6 @@ mainClassName = "com.sample.ApplicationKt"
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {

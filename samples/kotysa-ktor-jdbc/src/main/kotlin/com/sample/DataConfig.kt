@@ -5,12 +5,9 @@ import org.h2.jdbcx.JdbcConnectionPool
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
-import org.ufoss.kotysa.SqlClient
+import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.jdbc.sqlClient
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionalOp
-import org.ufoss.kotysa.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.tables
-import javax.sql.DataSource
 
 fun Application.dataConfig() {
     di {
@@ -23,15 +20,17 @@ fun Application.dataConfig() {
     userRepository.init()
 }
 
-private val h2Tables = tables().h2(ROLE, USER)
+private val h2Tables = tables().h2(Roles, Users)
 
 private val dataModule = DI.Module(name = "data") {
-    bind<DataSource>() with singleton {
-        JdbcConnectionPool.create("jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1", "sa", "sa")
+    // create Kotysa SqlClient from jdbc DataSource
+    bind<JdbcSqlClient>() with singleton {
+        JdbcConnectionPool.create(
+            "jdbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1", "sa", "sa"
+        )
+            .sqlClient(h2Tables)
     }
-    // create Kotysa SqlClient and TransactionalOp
-    bind<SqlClient>() with provider { instance<DataSource>().connection.sqlClient(h2Tables) }
-    bind<JdbcTransactionalOp>() with provider { instance<DataSource>().connection.transactionalOp() }
+    // Repositories
     bind<RoleRepository>() with provider { RoleRepository(instance()) }
-    bind<UserRepository>() with provider { UserRepository(instance(), instance()) }
+    bind<UserRepository>() with provider { UserRepository(instance()) }
 }   
