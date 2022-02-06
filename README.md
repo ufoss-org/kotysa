@@ -51,7 +51,7 @@ object Users : H2Table<User>("users") {
         .primaryKey("PK_users")
     val firstname = varchar(User::firstname, "f_name")
     val roleId = uuid(User::roleId)
-        .foreignKey(ROLE.id, "FK_users_roles")
+        .foreignKey(Roles.id, "FK_users_roles")
     val alias = varchar(User::alias)
 }
 
@@ -64,9 +64,9 @@ private val tables = tables().h2(Roles, Users)
 Use our type-safe SqlClient DSL, Kotysa executes SQL query for you !
 
 ```kotlin
-val admins = (sqlClient selectFrom USER
-        innerJoin ROLE on USER.roleId eq ROLE.id
-        where ROLE.label eq "admin"
+val admins = (sqlClient selectFrom Users
+        innerJoin Roles on Users.roleId eq Roles.id
+        where Roles.label eq "admin"
         ).fetchAll() // returns all admin users
 ```
 
