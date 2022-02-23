@@ -10,9 +10,27 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.*
 
-internal class SqlClientSubQuery internal constructor() {
+internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSelect() {
 
-    public interface Scope {
+    internal class Properties(
+        override val tables: Tables,
+        override val dbAccessType: DbAccessType,
+        override val module: Module,
+    ) : DefaultSqlClientCommon.Properties {
+        internal val selectedFields = mutableListOf<Field<*>>()
+        override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
+        override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
+
+        override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
+        override var index: Int = 0
+        override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
+    }
+
+    private interface WithProperties : DefaultSqlClientCommon.WithProperties {
+        override val properties: Properties
+    }
+
+    public interface Selectable {
         public infix fun <T : Any> select(column: Column<*, T>): Andable
         public infix fun <T : Any> select(table: Table<T>): Andable
         public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable
