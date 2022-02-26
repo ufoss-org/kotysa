@@ -13,16 +13,21 @@ import java.util.*
 public abstract class SqlClientQuery protected constructor() {
 
     public interface Selectable {
-        public infix fun <T : Any> select(column: Column<*, T>): Andable
-        public infix fun <T : Any> select(table: Table<T>): Andable
-        public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable
-        public infix fun <T : Any> selectCount(column: Column<*, T>?): Andable
-        public infix fun <T : Any> selectDistinct(column: Column<*, T>): Andable
-        public infix fun <T : Any> selectMin(column: MinMaxColumn<*, T>): Andable
-        public infix fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Andable
-        public infix fun <T : Any> selectAvg(column: NumericColumn<*, T>): Andable
-        public infix fun selectSum(column: IntColumn<*>): Andable
+        public infix fun <T : Any> select(column: Column<*, T>): Select
+        public infix fun <T : Any> selectCount(column: Column<*, T>?): Select
+        public infix fun <T : Any> selectDistinct(column: Column<*, T>): Select
+        public infix fun <T : Any> selectMin(column: MinMaxColumn<*, T>): Select
+        public infix fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Select
+        public infix fun <T : Any> selectAvg(column: NumericColumn<*, T>): Select
+        public infix fun selectSum(column: IntColumn<*>): Select
     }
+
+    public interface SelectableFull : Selectable {
+        public infix fun <T : Any> select(table: Table<T>): Select
+        public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Select
+    }
+
+    public interface Select
 
     public interface Fromable {
         public infix fun <T : Any> from(table: Table<T>): From<T, *>

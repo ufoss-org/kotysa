@@ -37,12 +37,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val properties: Properties<T>
     }
 
-    public abstract class Select<T : Any> protected constructor() : Fromable, Andable, WithProperties<T> {
+    public abstract class Select<T : Any> protected constructor() : SqlClientQuery.Select, Fromable, WithProperties<T> {
 
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *, *>): V = with(properties) {
+        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereableSubQuery<T, U, V, *, *, *>): V = with(properties) {
             select = when (selectedFields.size) {
                 1 -> selectedFields[0].builder as (RowImpl) -> T?
                 2 -> {
@@ -85,7 +85,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     public abstract class SelectWithDsl<T : Any> protected constructor(
             final override val properties: Properties<T>,
             dsl: (ValueProvider) -> T,
-    ) : Fromable, WithProperties<T> {
+    ) : SqlClientQuery.Select, Fromable, WithProperties<T> {
         init {
             val field = FieldDsl(properties, dsl)
             properties.selectedFields.add(field)
@@ -96,19 +96,30 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 from.addFromTable(table)
     }
 
+    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
+            X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>>
+    protected constructor(
+        final override val properties: Properties<T>,
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y> {
+        protected fun <A : Any, B : From<A, B>> addFromTable(table: Table<A>, from: FromWhereableSubQuery<T, A, B, *, *, *>): B =
+            from.addFromTable(table)
+    }
+
     public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
             X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>, Z : SqlClientQuery.OrderByPart2<Z>>
     protected constructor(
-            final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y>, OrderBy<T, Z> {
-        protected fun <X : Any, Y : From<X, Y>> addFromTable(table: Table<X>, from: FromWhereable<T, X, Y, *, *, *, *>): Y =
-            from.addFromTable(table)
-    }
+            properties: Properties<T>,
+    ) : FromWhereableSubQuery<T, U, V, W, X, Y>(properties), OrderBy<T, Z>
+
+    public abstract class WhereSubQuery<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
+            W : SqlClientQuery.GroupByPart2<W>>
+    protected constructor()
+        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, W>
 
     public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>, X : SqlClientQuery.OrderByPart2<X>>
     protected constructor()
-        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, W>, OrderBy<T, X>
+        : WhereSubQuery<T, U, V, W>(), OrderBy<T, X>
 
     protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
         : SqlClientQuery.LimitOffset<U>, WithProperties<T> {

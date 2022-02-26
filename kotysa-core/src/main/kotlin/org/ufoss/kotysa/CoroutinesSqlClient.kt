@@ -50,7 +50,7 @@ public interface CoroutinesSqlClient {
 
 public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() {
 
-    public interface Selectable : SqlClientQuery.Selectable {
+    public interface Selectable : SelectableFull {
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
@@ -62,11 +62,11 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
     }
 
-    public interface Fromable<T : Any> : SqlClientQuery.Fromable {
+    public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
         override fun <U : Any> from(table: Table<U>): From<T, U>
     }
 
-    public interface FirstSelect<T : Any> : Fromable<T>, Andable {
+    public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, Andable {
         override fun <U : Any> and(column: Column<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
         override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
