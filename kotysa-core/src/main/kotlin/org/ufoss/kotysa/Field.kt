@@ -200,6 +200,17 @@ internal class TableField<T : Any> internal constructor(
     }
 }
 
+internal class SubQueryField<T : Any> internal constructor(
+    subQueryProperties: DefaultSqlClientSelect.Properties<T>,
+) : FieldNullable<T> {
+    override val fieldNames =
+        subQueryProperties.selectedFields
+            .flatMap { field -> field.fieldNames }
+        
+    override val builder = subQueryProperties.select
+
+}
+
 internal class FieldDsl<T : Any>(
     properties: DefaultSqlClientSelect.Properties<T>,
     private val dsl: (ValueProvider) -> T
@@ -236,9 +247,9 @@ internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, Kotys
 internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
     getKotysaTable(availableTables).getFieldName()
 
-private fun KotysaTable<*>.getFieldName() =
-    if (this is AliasedTable<*>) {
+private fun KotysaTable<*>.getFieldName() = name
+    /*if (this is AliasedTable<*>) {
         alias
     } else {
         name
-    }
+    }*/

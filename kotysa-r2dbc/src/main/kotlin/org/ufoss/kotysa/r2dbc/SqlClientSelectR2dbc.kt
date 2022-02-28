@@ -31,7 +31,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
             FirstSelect<T>(connectionFactory, properties()).apply { addSelectTable(table) }
 
-        override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
+        override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
             SelectWithDsl(connectionFactory, properties(), dsl)
 
         override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.FirstSelect<Long> =

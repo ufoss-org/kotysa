@@ -26,7 +26,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
                 FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
         override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
-        override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
+        override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, properties(), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): ReactorSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, properties()).apply { addCountColumn(column) }

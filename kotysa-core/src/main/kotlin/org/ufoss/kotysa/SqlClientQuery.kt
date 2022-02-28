@@ -24,7 +24,12 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface SelectableFull : Selectable {
         public infix fun <T : Any> select(table: Table<T>): Select
-        public infix fun <T : Any> select(dsl: (ValueProvider) -> T): Select
+        public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Select
+
+        /**
+         * sub-query
+         */
+        public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
     }
 
     public interface Select
@@ -42,6 +47,11 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> andMax(column: MinMaxColumn<*, T>): Andable
         public infix fun <T : Any> andAvg(column: NumericColumn<*, T>): Andable
         public infix fun andSum(column: IntColumn<*>): Andable
+
+        /**
+         * sub-query
+         */
+        public infix fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Andable
     }
 
     public interface From<T : Any, U : From<T, U>> {

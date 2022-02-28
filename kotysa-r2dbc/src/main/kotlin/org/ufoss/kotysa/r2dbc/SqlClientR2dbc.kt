@@ -197,7 +197,7 @@ internal class SqlClientR2dbc(
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(table)
 
     override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(dsl)
+        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectAndBuild(dsl)
 
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectCount<Any>(null)

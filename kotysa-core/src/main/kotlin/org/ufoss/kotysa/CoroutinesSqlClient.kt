@@ -53,7 +53,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
     public interface Selectable : SelectableFull {
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
-        override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
+        override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Fromable<T>
         override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
         override fun <T : Any> selectDistinct(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): FirstSelect<T>

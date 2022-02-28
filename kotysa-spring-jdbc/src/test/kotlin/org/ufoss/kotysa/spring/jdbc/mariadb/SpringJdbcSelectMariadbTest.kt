@@ -178,19 +178,19 @@ class UserRepositorySpringJdbcMariadbSelect(client: JdbcOperations) : AbstractUs
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
-        (sqlClient select {
+        (sqlClient selectAndBuild {
             UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.alias])
         }
                 from MariadbUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[MariadbUsers.lastname]!!, it[MariadbRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[MariadbUsers.lastname]!!, it[MariadbRoles.label]!!) }
                 from MariadbUsers innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[MariadbUsers.lastname]!!, it[MariadbRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[MariadbUsers.lastname]!!, it[MariadbRoles.label]!!) }
                 from MariadbUsers and MariadbRoles
                 where MariadbUsers.roleId eq MariadbRoles.id
                 ).fetchAll()

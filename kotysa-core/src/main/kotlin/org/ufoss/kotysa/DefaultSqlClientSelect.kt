@@ -80,6 +80,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public fun <U : Any> addLongSumColumn(column: Column<*, U>) {
             properties.selectedFields.add(LongSumField(properties, column))
         }
+
+        public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
+            val subQuery = SqlClientSubQueryImpl.Selectable(properties)
+            // invoke sub-query
+            dsl(subQuery)
+            properties.selectedFields.add(SubQueryField(subQuery.properties()))
+        }
     }
 
     public abstract class SelectWithDsl<T : Any> protected constructor(

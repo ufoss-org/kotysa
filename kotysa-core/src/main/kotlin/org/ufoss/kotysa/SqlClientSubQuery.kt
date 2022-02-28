@@ -22,16 +22,19 @@ public class SqlClientSubQuery private constructor() {
         public override infix fun <U : Any> from(table: Table<U>): From<T, U>
     }
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, SqlClientQuery.Whereable<Any, Where<T>>,
-        GroupBy<T>, LimitOffset<T> {
+    public interface From<T : Any, U : Any> :
+        SqlClientQuery.From<U, From<T, U>>, SqlClientQuery.Whereable<Any, Where<T>>, GroupBy<T>, LimitOffset<T>,
+        Return<T> {
         public infix fun <V : Any> and(table: Table<V>): From<T, V>
     }
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, GroupBy<T>, LimitOffset<T>
+    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, GroupBy<T>, LimitOffset<T>, Return<T>
 
     public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>
 
-    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, LimitOffset<T>
+    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, LimitOffset<T>, Return<T>
 
-    public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>
+    public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
+
+    public interface Return<T : Any>
 }

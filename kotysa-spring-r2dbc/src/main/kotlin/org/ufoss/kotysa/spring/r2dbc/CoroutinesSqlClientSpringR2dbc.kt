@@ -57,7 +57,7 @@ private class CoroutinesSqlClientSpringR2Dbc(
     override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(dsl)
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAndBuild(dsl)
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =

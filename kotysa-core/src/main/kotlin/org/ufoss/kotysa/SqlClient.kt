@@ -28,7 +28,7 @@ public interface SqlClient {
 
     public infix fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
     public infix fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T>
-    public infix fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
+    public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T>
     public fun selectCount(): SqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long>
     public infix fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U>
@@ -36,6 +36,8 @@ public interface SqlClient {
     public infix fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U>
     public infix fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal>
     public infix fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long>
+    public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>)
+            : SqlClientSelect.FirstSelect<T>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
             select(table).from(table)
@@ -52,13 +54,14 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
     public interface Selectable : SelectableFull {
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
-        override fun <T : Any> select(dsl: (ValueProvider) -> T): Fromable<T>
+        override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Fromable<T>
         override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
         override fun <T : Any> selectDistinct(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
         override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
+        override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): FirstSelect<T>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
@@ -74,6 +77,8 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
         override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
+        override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>)
+                : SecondSelect<T?, U?>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
@@ -85,6 +90,8 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
         override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
+        override fun <V : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>)
+                : ThirdSelect<T, U, V?>
     }
 
     public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
@@ -96,6 +103,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
         override fun andSum(column: IntColumn<*>): Select
+        override fun <W : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>): Select
     }
 
     public interface Select : Fromable<List<Any?>>, Andable {
@@ -107,6 +115,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
         override fun andSum(column: IntColumn<*>): Select
+        override fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
     }
 
     public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,

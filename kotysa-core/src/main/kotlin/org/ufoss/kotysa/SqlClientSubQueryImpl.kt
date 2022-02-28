@@ -10,11 +10,9 @@ import java.math.BigDecimal
 internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSelect() {
 
     internal class Selectable internal constructor(
-        private val tables: Tables,
-        private val dbAccessType: DbAccessType,
-        private val module: Module,
+        private val initialProps: DefaultSqlClientCommon.Properties,
     ) : SqlClientSubQuery.Scope {
-        private fun <T : Any> properties() = Properties<T>(tables, dbAccessType, module)
+        internal fun <T : Any> properties() = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module)
 
         override fun <T : Any> select(column: Column<*, T>): SqlClientSubQuery.Fromable<T> =
             FirstSelect<T>(properties()).apply { addSelectColumn(column) }

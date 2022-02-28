@@ -50,7 +50,7 @@ private class SqlClientSpringR2dbc(
     override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).select(table)
     override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(dsl)
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAndBuild(dsl)
     override fun selectCount(): ReactorSqlClientSelect.Fromable<Long> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =

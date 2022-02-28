@@ -27,7 +27,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
                 FirstSelect<T>(client, properties()).apply { addSelectColumn(column) }
         override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
-        override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
+        override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, properties(), dsl)
         override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, properties()).apply { addCountColumn(column) }

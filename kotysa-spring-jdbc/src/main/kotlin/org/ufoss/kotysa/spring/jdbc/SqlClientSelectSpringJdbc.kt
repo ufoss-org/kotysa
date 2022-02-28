@@ -29,7 +29,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
                 FirstSelect<T>(client, properties()).apply { addSelectTable(table) }
 
-        override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+        override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
                 SelectWithDsl(client, properties(), dsl)
 
         override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSelect.FirstSelect<Long> =
