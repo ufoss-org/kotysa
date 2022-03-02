@@ -85,7 +85,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             val subQuery = SqlClientSubQueryImpl.Selectable(properties)
             // invoke sub-query
             dsl(subQuery)
-            properties.selectedFields.add(SubQueryField(subQuery.properties()))
+            properties.selectedFields.add(SubQueryField(subQuery.properties))
         }
     }
 

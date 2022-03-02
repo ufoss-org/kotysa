@@ -12,7 +12,12 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
     internal class Selectable internal constructor(
         private val initialProps: DefaultSqlClientCommon.Properties,
     ) : SqlClientSubQuery.Scope {
-        internal fun <T : Any> properties() = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module)
+        internal lateinit var properties: Properties<*>
+        private fun <T : Any> properties(): Properties<T> {
+            val props = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module)
+            properties = props
+            return props
+        }
 
         override fun <T : Any> select(column: Column<*, T>): SqlClientSubQuery.Fromable<T> =
             FirstSelect<T>(properties()).apply { addSelectColumn(column) }
