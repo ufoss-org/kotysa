@@ -201,14 +201,10 @@ internal class TableField<T : Any> internal constructor(
 }
 
 internal class SubQueryField<T : Any> internal constructor(
-    subQueryProperties: DefaultSqlClientSelect.Properties<T>,
+    private val subQueryReturn: SqlClientSubQuery.Return<T>,
+    override val builder: (RowImpl) -> T?,
 ) : FieldNullable<T> {
-    override val fieldNames =
-        subQueryProperties.selectedFields
-            .flatMap { field -> field.fieldNames }
-        
-    override val builder = subQueryProperties.select
-
+    override val fieldNames get() = listOf("( ${subQueryReturn.sql()} )")
 }
 
 internal class FieldDsl<T : Any>(

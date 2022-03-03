@@ -14,7 +14,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
     ) : SqlClientSubQuery.Scope {
         internal lateinit var properties: Properties<*>
         private fun <T : Any> properties(): Properties<T> {
-            val props = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module)
+            val props = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module,
+                initialProps.availableColumns)
             properties = props
             return props
         }
@@ -41,8 +42,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             FirstSelect<Long>(properties()).apply { addLongSumColumn(column) }
     }
 
-    private class FirstSelect<T : Any>(override val properties: Properties<T>)
-        : Select<T>(), SqlClientSubQuery.Fromable<T> {
+    private class FirstSelect<T : Any>(override val properties: Properties<T>) : Select<T>(),
+        SqlClientSubQuery.Fromable<T> {
         private val from: From<T, *> by lazy {
             From<T, Any>(properties)
         }
@@ -54,8 +55,9 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
     private class From<T : Any, U : Any>(
         properties: Properties<T>,
     ) : FromWhereableSubQuery<T, U, SqlClientSubQuery.From<T, U>, SqlClientSubQuery.Where<T>,
-            SqlClientSubQuery.LimitOffset<T>, SqlClientSubQuery.GroupByPart2<T>>(properties), SqlClientSubQuery.From<T, U>,
-        GroupBy<T>, SqlClientSubQuery.LimitOffset<T> {
+            SqlClientSubQuery.LimitOffset<T>,
+            SqlClientSubQuery.GroupByPart2<T>>(properties), SqlClientSubQuery.From<T, U>, GroupBy<T>,
+        SqlClientSubQuery.LimitOffset<T>, Return<T> {
         override val from = this
         override val where by lazy { Where(properties) }
         override val limitOffset by lazy { LimitOffset(properties) }
@@ -68,7 +70,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override val properties: Properties<T>,
     ) : WhereSubQuery<T, SqlClientSubQuery.Where<T>, SqlClientSubQuery.LimitOffset<T>,
             SqlClientSubQuery.GroupByPart2<T>>(), SqlClientSubQuery.Where<T>, GroupBy<T>,
-        SqlClientSubQuery.LimitOffset<T> {
+        SqlClientSubQuery.LimitOffset<T>, Return<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(properties) }
         override val groupByPart2 by lazy { GroupByPart2(properties) }
@@ -80,14 +82,19 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
     private class GroupByPart2<T : Any>(
         override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSubQuery.GroupByPart2<T>>, SqlClientSubQuery.GroupByPart2<T>,
-       DefaultSqlClientSelect.LimitOffset<T, SqlClientSubQuery.LimitOffset<T>> {
+        DefaultSqlClientSelect.LimitOffset<T, SqlClientSubQuery.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(properties) }
         override val groupByPart2 = this
     }
 
     private class LimitOffset<T : Any>(
         override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.LimitOffset<T, SqlClientSubQuery.LimitOffset<T>>, SqlClientSubQuery.LimitOffset<T> {
+    ) : DefaultSqlClientSelect.LimitOffset<T, SqlClientSubQuery.LimitOffset<T>>, SqlClientSubQuery.LimitOffset<T>,
+        Return<T> {
         override val limitOffset = this
+    }
+
+    private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSubQuery.Return<T> {
+        override fun sql() = selectSql(false)
     }
 }

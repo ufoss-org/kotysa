@@ -256,7 +256,8 @@ class UserRepositoryJdbcH2Select(private val sqlClient: JdbcSqlClient) : Abstrac
         (sqlClient select {
             (this select H2Roles.label
                     from H2Roles
-                    where H2Roles.id eq H2Users.roleId)
+                    where H2Roles.id eq H2Users.roleId
+                    and H2Roles.label eq roleAdmin.label)
         }
                 from H2Users
                 where H2Users.id eq userId)

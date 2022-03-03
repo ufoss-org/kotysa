@@ -15,12 +15,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val tables: Tables,
         override val dbAccessType: DbAccessType,
         override val module: Module,
+        override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf(),
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
-
-        override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
         override var index: Int = 0
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
 
@@ -84,8 +83,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
             val subQuery = SqlClientSubQueryImpl.Selectable(properties)
             // invoke sub-query
-            dsl(subQuery)
-            properties.selectedFields.add(SubQueryField(subQuery.properties))
+            val result = dsl(subQuery)
+            // add all sub-query parameters to parent's properties
+            subQuery.properties.whereClauses
+            properties.selectedFields.add(SubQueryField(result, subQuery.properties.select as (RowImpl) -> U?))
         }
     }
 
@@ -194,7 +195,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
-        public fun selectSql(): String = with(properties) {
+        public fun selectSql(doLog: Boolean = true): String = with(properties) {
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
             val froms = froms()
             val wheres = wheres()
@@ -228,7 +229,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             // reset index
             index = 0
 
-            logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limitOffset" }
+            if (doLog) {
+                logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limitOffset" }
+            }
             "$selects $froms $wheres $groupBy $orderBy $limitOffset"
         }
 
