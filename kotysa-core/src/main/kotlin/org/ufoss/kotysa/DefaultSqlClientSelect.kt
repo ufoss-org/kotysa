@@ -18,6 +18,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf(),
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
+        override val parameters: MutableList<Any> = mutableListOf()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
         override var index: Int = 0
@@ -84,7 +85,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             val subQuery = SqlClientSubQueryImpl.Selectable(properties)
             // invoke sub-query
             val result = dsl(subQuery)
-            // add all sub-query parameters to parent's properties
+            // add all sub-query parameters, if any, to parent's properties
+            if (subQuery.properties.parameters.isNotEmpty()) {
+                properties.parameters.addAll(subQuery.properties.parameters)
+            }
             subQuery.properties.whereClauses
             properties.selectedFields.add(SubQueryField(result, subQuery.properties.select as (RowImpl) -> U?))
         }

@@ -146,6 +146,12 @@ class JdbcSelectPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPo
     }
 
     @Test
+    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
+            .isEqualTo(roleAdmin.label)
+    }
+
+    @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
             .isEqualTo(2L)
@@ -244,6 +250,17 @@ class UserRepositoryJdbcPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
     fun selectRoleLabelFromUserId(userId: Int) =
         (sqlClient select PostgresqlRoles.label
                 from PostgresqlRoles innerJoin PostgresqlUsers on PostgresqlRoles.id eq PostgresqlUsers.roleId
+                where PostgresqlUsers.id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
+        (sqlClient select {
+            (this select PostgresqlRoles.label
+                    from PostgresqlRoles
+                    where PostgresqlRoles.id eq PostgresqlUsers.roleId
+                    and PostgresqlRoles.label eq roleAdmin.label)
+        }
+                from PostgresqlUsers
                 where PostgresqlUsers.id eq userId)
             .fetchOne()
 

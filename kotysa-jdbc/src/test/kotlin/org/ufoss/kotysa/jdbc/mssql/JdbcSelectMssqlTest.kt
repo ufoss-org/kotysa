@@ -146,6 +146,12 @@ class JdbcSelectMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelect>
     }
 
     @Test
+    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
+            .isEqualTo(roleAdmin.label)
+    }
+
+    @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
             .isEqualTo(2L)
@@ -243,6 +249,17 @@ class UserRepositoryJdbcMssqlSelect(private val sqlClient: JdbcSqlClient) : Abst
     fun selectRoleLabelFromUserId(userId: Int) =
         (sqlClient select MssqlRoles.label
                 from MssqlRoles innerJoin MssqlUsers on MssqlRoles.id eq MssqlUsers.roleId
+                where MssqlUsers.id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
+        (sqlClient select {
+            (this select MssqlRoles.label
+                    from MssqlRoles
+                    where MssqlRoles.id eq MssqlUsers.roleId
+                    and MssqlRoles.label eq roleAdmin.label)
+        }
+                from MssqlUsers
                 where MssqlUsers.id eq userId)
             .fetchOne()
 

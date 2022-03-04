@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.core.jdbc.jdbcBindWhereParams
+import org.ufoss.kotysa.core.jdbc.jdbcBindParams
 
 internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
@@ -56,7 +56,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
                     .forEach { dbValue -> statement.setObject(++index, dbValue) }
 
                 // 2) add all values from where part
-                jdbcBindWhereParams(statement)
+                jdbcBindParams(statement)
                 // 3) reset index
                 index = 0
 

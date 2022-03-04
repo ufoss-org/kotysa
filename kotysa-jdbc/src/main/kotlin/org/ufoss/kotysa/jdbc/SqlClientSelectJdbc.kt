@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.core.jdbc.jdbcBindWhereParams
+import org.ufoss.kotysa.core.jdbc.jdbcBindParams
 import org.ufoss.kotysa.core.jdbc.toRow
 import java.math.BigDecimal
 import java.sql.Connection
@@ -366,7 +366,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         private fun buildParameters(statement: PreparedStatement) {
             with(properties) {
                 // 1) add all values from where part
-                jdbcBindWhereParams(statement)
+                jdbcBindParams(statement)
                 // 2) add limit and offset (order is different depending on DbType)
                 if (DbType.MSSQL == tables.dbType) {
                     offsetParam(statement)

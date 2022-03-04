@@ -17,7 +17,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val dbAccessType: DbAccessType
         public val tables: Tables
         public val module: Module
-        public val parameters: List<Any>
+        public val parameters: MutableList<Any>
         public val fromClauses: MutableList<FromClause<*>>
         public val whereClauses: MutableList<WhereClauseWithType<*>>
 
@@ -38,7 +38,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
 
         protected fun <X : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<X>) {
-            isAvailable(properties, kotysaTable)
+            makeAvailable(properties, kotysaTable)
             properties.fromClauses.add(FromClause(kotysaTable.table))
         }
 
@@ -48,14 +48,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
 
         override fun <X : Any> innerJoin(table: Table<X>): SqlClientQuery.Joinable<T, U, X> {
-            isAvailable(properties, properties.tables.getTable(table))
+            makeAvailable(properties, properties.tables.getTable(table))
             val joinable = (joinable as Joinable<T, U, X>)
             joinable.type = JoinClauseType.INNER
             joinable.table = table
             return joinable
         }
 
-        private fun <X : Any> isAvailable(properties: Properties, kotysaTable: KotysaTable<X>) {
+        private fun <X : Any> makeAvailable(properties: Properties, kotysaTable: KotysaTable<X>) {
             properties.apply {
                 // This table becomes available
                 availableTables[kotysaTable.table] = kotysaTable
@@ -468,6 +468,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             value: Any?,
             whereClauseType: WhereClauseType
         ) {
+            // Add value to parameters, if not null
+            if (value != null) {
+                properties.parameters.add(value)
+            }
             properties.whereClauses.add(
                 WhereClauseWithType(
                     WhereClauseValue(column, operation, value),
