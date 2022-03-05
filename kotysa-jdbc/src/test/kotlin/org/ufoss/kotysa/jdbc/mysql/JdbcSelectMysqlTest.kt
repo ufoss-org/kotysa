@@ -146,12 +146,6 @@ class JdbcSelectMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelect>
     }
 
     @Test
-    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
-            .isEqualTo(roleAdmin.label)
-    }
-
-    @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
             .isEqualTo(2L)
@@ -249,17 +243,6 @@ class UserRepositoryJdbcMysqlSelect(private val sqlClient: JdbcSqlClient) : Abst
     fun selectRoleLabelFromUserId(userId: Int) =
         (sqlClient select MysqlRoles.label
                 from MysqlRoles innerJoin MysqlUsers on MysqlRoles.id eq MysqlUsers.roleId
-                where MysqlUsers.id eq userId)
-            .fetchOne()
-
-    fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
-        (sqlClient select {
-            (this select MysqlRoles.label
-                    from MysqlRoles
-                    where MysqlRoles.id eq MysqlUsers.roleId
-                    and MysqlRoles.label eq roleAdmin.label)
-        }
-                from MysqlUsers
                 where MysqlUsers.id eq userId)
             .fetchOne()
 

@@ -146,12 +146,6 @@ class JdbcSelectMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbS
     }
 
     @Test
-    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
-            .isEqualTo(roleAdmin.label)
-    }
-
-    @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
             .isEqualTo(2L)
@@ -250,17 +244,6 @@ class UserRepositoryJdbcMariadbSelect(private val sqlClient: JdbcSqlClient) :
     fun selectRoleLabelFromUserId(userId: Int) =
         (sqlClient select MariadbRoles.label
                 from MariadbRoles innerJoin MariadbUsers on MariadbRoles.id eq MariadbUsers.roleId
-                where MariadbUsers.id eq userId)
-            .fetchOne()
-
-    fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
-        (sqlClient select {
-            (this select MariadbRoles.label
-                    from MariadbRoles
-                    where MariadbRoles.id eq MariadbUsers.roleId
-                    and MariadbRoles.label eq roleAdmin.label)
-        }
-                from MariadbUsers
                 where MariadbUsers.id eq userId)
             .fetchOne()
 

@@ -146,12 +146,6 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>() {
     }
 
     @Test
-    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
-            .isEqualTo(roleAdmin.label)
-    }
-
-    @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
             .isEqualTo(2L)
@@ -249,17 +243,6 @@ class UserRepositoryJdbcH2Select(private val sqlClient: JdbcSqlClient) : Abstrac
     fun selectRoleLabelFromUserId(userId: Int) =
         (sqlClient select H2Roles.label
                 from H2Roles innerJoin H2Users on H2Roles.id eq H2Users.roleId
-                where H2Users.id eq userId)
-            .fetchOne()
-
-    fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
-        (sqlClient select {
-            (this select H2Roles.label
-                    from H2Roles
-                    where H2Roles.id eq H2Users.roleId
-                    and H2Roles.label eq roleAdmin.label)
-        }
-                from H2Users
                 where H2Users.id eq userId)
             .fetchOne()
 
