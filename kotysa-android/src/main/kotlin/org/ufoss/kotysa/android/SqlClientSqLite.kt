@@ -118,6 +118,10 @@ internal class SqlClientSqLite(
 
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.FirstSelect<T> = SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
 }
 
 /**
