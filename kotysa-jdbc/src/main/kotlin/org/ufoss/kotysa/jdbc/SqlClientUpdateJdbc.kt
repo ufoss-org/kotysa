@@ -13,7 +13,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
         override val jdbcConnection: JdbcConnection,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.JDBC, Module.JDBC),
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(jdbcConnection, properties) // fixme try with a lazy
@@ -26,7 +26,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
     internal class Update<T : Any> internal constructor(
         override val jdbcConnection: JdbcConnection,
         override val properties: Properties<T>
-    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<Any>>(),
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")

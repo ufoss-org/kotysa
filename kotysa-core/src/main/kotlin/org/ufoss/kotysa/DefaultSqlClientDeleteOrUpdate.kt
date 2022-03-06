@@ -39,10 +39,10 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public val properties: Properties<T>
     }
 
-    public abstract class FirstDeleteOrUpdate<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> protected constructor(
+    public abstract class FirstDeleteOrUpdate<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
             private val dbAccessType: DbAccessType,
             private val module: Module,
-    ) : FromWhereable<T, U, V, W>(), From<T, U> {
+    ) : FromWhereable<T, U, V>(), From<T, U> {
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
 
@@ -55,13 +55,13 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class DeleteOrUpdate<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> protected constructor(
-    ) : FromWhereable<T, U, V, W>(), From<T, U>
+    public abstract class DeleteOrUpdate<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
+    ) : FromWhereable<T, U, V>(), From<T, U>
 
 
-    public abstract class Update<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>,
-            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType, module: Module,)
-        : FirstDeleteOrUpdate<T, U, V, W>(dbAccessType, module), SqlClientQuery.Update<T, X> {
+    public abstract class Update<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>,
+            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType, module: Module)
+        : FirstDeleteOrUpdate<T, U, V>(dbAccessType, module), SqlClientQuery.Update<T, X> {
 
         protected abstract val update: X
 
@@ -205,7 +205,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<T, U>> : DefaultSqlClientCommon.Where<T, U>(), WithProperties<T>, Return<T>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<U>> : DefaultSqlClientCommon.Where<U>(), WithProperties<T>, Return<T>
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 

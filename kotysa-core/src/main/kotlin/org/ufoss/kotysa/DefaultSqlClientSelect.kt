@@ -101,27 +101,27 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 from.addFromTable(table)
     }
 
-    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
+    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<W>,
             X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>>
     protected constructor(
         final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, Any, W>(), LimitOffset<T, X>, GroupBy<T, Y> {
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, W>(), LimitOffset<T, X>, GroupBy<T, Y> {
         protected fun <A : Any, B : From<A, B>> addFromTable(table: Table<A>, from: FromWhereableSubQuery<T, A, B, *, *, *>): B =
             from.addFromTable(table)
     }
 
-    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<Any, W>,
+    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<W>,
             X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>, Z : SqlClientQuery.OrderByPart2<Z>>
     protected constructor(
             properties: Properties<T>,
     ) : FromWhereableSubQuery<T, U, V, W, X, Y>(properties), OrderBy<T, Z>
 
-    public abstract class WhereSubQuery<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
+    public abstract class WhereSubQuery<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>>
     protected constructor()
-        : DefaultSqlClientCommon.Where<Any, U>(), LimitOffset<T, V>, GroupBy<T, W>
+        : DefaultSqlClientCommon.Where<U>(), LimitOffset<T, V>, GroupBy<T, W>
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<Any, U>, V : SqlClientQuery.LimitOffset<V>,
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>, X : SqlClientQuery.OrderByPart2<X>>
     protected constructor()
         : WhereSubQuery<T, U, V, W>(), OrderBy<T, X>

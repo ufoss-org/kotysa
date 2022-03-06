@@ -94,47 +94,47 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun eq(value: V): U
     }
 
-    public interface Whereable<T : Any, U : Where<T, U>> {
-        public infix fun where(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U>
-        public infix fun where(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U>
-        public infix fun where(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDateTime>
-        public infix fun where(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDateTime>
-        public infix fun where(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime>
-        public infix fun where(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime>
-        public infix fun where(localDateColumnNotNull: LocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDate>
-        public infix fun where(localDateColumnNullable: LocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDate>
-        public infix fun where(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate>
-        public infix fun where(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate>
-        public infix fun where(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, OffsetDateTime>
-        public infix fun where(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, OffsetDateTime>
-        public infix fun where(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalTime>
-        public infix fun where(localTimeColumnNullable: LocalTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalTime>
-        public infix fun where(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U>
-        public infix fun where(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U>
-        public infix fun where(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U>
-        public infix fun where(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U>
-        public infix fun where(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U>
-        public infix fun where(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
-        public infix fun where(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
-        public infix fun <V : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
+    public interface Whereable<T : Where<T>> {
+        public infix fun <U : Any> where(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T>
+        public infix fun <U : Any> where(stringColumnNullable: StringColumnNullable<U>): WhereOpStringColumnNullable<U, T>
+        public infix fun <U : Any> where(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDateTime>
+        public infix fun <U : Any> where(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDateTime>
+        public infix fun <U : Any> where(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDateTime>
+        public infix fun <U : Any> where(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDateTime>
+        public infix fun <U : Any> where(localDateColumnNotNull: LocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDate>
+        public infix fun <U : Any> where(localDateColumnNullable: LocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDate>
+        public infix fun <U : Any> where(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDate>
+        public infix fun <U : Any> where(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDate>
+        public infix fun <U : Any> where(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, OffsetDateTime>
+        public infix fun <U : Any> where(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, OffsetDateTime>
+        public infix fun <U : Any> where(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalTime>
+        public infix fun <U : Any> where(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalTime>
+        public infix fun <U : Any> where(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T>
+        public infix fun <U : Any> where(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntColumnNotNull<U, T>
+        public infix fun <U : Any> where(intColumnNullable: IntColumnNullable<U>): WhereOpIntColumnNullable<U, T>
+        public infix fun <U : Any> where(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongColumnNotNull<U, T>
+        public infix fun <U : Any> where(longColumnNullable: LongColumnNullable<U>): WhereOpLongColumnNullable<U, T>
+        public infix fun <U : Any> where(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidColumnNotNull<U, T>
+        public infix fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T>
+        public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
     }
 
-    public interface WhereInOpColumn<T : Any, U : Where<T, U>, V : Any> {
+    public interface WhereInOpColumn<T : Any, U : Where<U>, V : Any> {
         public infix fun `in`(values: Collection<V>): U
         public infix fun `in`(values: Sequence<V>): U = this.`in`(values.toSet())
     }
 
-    public interface WhereOpColumnNotNull<T : Any, U : Where<T, U>, V : Any> {
+    public interface WhereOpColumnNotNull<T : Any, U : Where<U>, V : Any> {
         public infix fun eq(value: V): U
         public infix fun notEq(value: V): U
     }
 
-    public interface WhereOpColumnNullable<T : Any, U : Where<T, U>, V : Any> {
+    public interface WhereOpColumnNullable<T : Any, U : Where<U>, V : Any> {
         public infix fun eq(value: V?): U
         public infix fun notEq(value: V?): U
     }
 
-    public interface WhereOpStringColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, String> {
+    public interface WhereOpStringColumn<T : Any, U : Where<U>> : WhereInOpColumn<T, U, String> {
         public infix fun contains(value: String): U
         public infix fun startsWith(value: String): U
         public infix fun endsWith(value: String): U
@@ -145,13 +145,13 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun endsWith(otherStringColumn: StringColumn<*>): U
     }
 
-    public interface WhereOpStringColumnNotNull<T : Any, U : Where<T, U>> :
+    public interface WhereOpStringColumnNotNull<T : Any, U : Where<U>> :
         WhereOpStringColumn<T, U>, WhereOpColumnNotNull<T, U, String>
 
-    public interface WhereOpStringColumnNullable<T : Any, U : Where<T, U>> :
+    public interface WhereOpStringColumnNullable<T : Any, U : Where<U>> :
         WhereOpStringColumn<T, U>, WhereOpColumnNullable<T, U, String>
 
-    public interface WhereOpDateColumn<T : Any, U : Where<T, U>, V : Any> : WhereInOpColumn<T, U, V> {
+    public interface WhereOpDateColumn<T : Any, U : Where<U>, V : Any> : WhereInOpColumn<T, U, V> {
         public infix fun before(value: V): U
         public infix fun after(value: V): U
         public infix fun beforeOrEq(value: V): U
@@ -164,18 +164,18 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun afterOrEq(otherDateColumn: Column<*, V>): U
     }
 
-    public interface WhereOpDateColumnNotNull<T : Any, U : Where<T, U>, V : Any> :
+    public interface WhereOpDateColumnNotNull<T : Any, U : Where<U>, V : Any> :
         WhereOpDateColumn<T, U, V>, WhereOpColumnNotNull<T, U, V>
 
-    public interface WhereOpDateColumnNullable<T : Any, U : Where<T, U>, V : Any> :
+    public interface WhereOpDateColumnNullable<T : Any, U : Where<U>, V : Any> :
         WhereOpDateColumn<T, U, V>, WhereOpColumnNullable<T, U, V>
 
-    public interface WhereOpBooleanColumnNotNull<T : Any, U : Where<T, U>> {
+    public interface WhereOpBooleanColumnNotNull<T : Any, U : Where<U>> {
         public infix fun eq(value: Boolean): U
         public infix fun eq(otherBooleanColumn: BooleanColumnNotNull<*>): U
     }
 
-    public interface WhereOpIntColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, Int> {
+    public interface WhereOpIntColumn<T : Any, U : Where<U>> : WhereInOpColumn<T, U, Int> {
         public infix fun inf(value: Int): U
         public infix fun sup(value: Int): U
         public infix fun infOrEq(value: Int): U
@@ -188,13 +188,13 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun supOrEq(otherIntColumn: IntColumn<*>): U
     }
 
-    public interface WhereOpIntColumnNotNull<T : Any, U : Where<T, U>> :
+    public interface WhereOpIntColumnNotNull<T : Any, U : Where<U>> :
         WhereOpIntColumn<T, U>, WhereOpColumnNotNull<T, U, Int>
 
-    public interface WhereOpIntColumnNullable<T : Any, U : Where<T, U>> :
+    public interface WhereOpIntColumnNullable<T : Any, U : Where<U>> :
         WhereOpIntColumn<T, U>, WhereOpColumnNullable<T, U, Int>
 
-    public interface WhereOpLongColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, Long> {
+    public interface WhereOpLongColumn<T : Any, U : Where<U>> : WhereInOpColumn<T, U, Long> {
         public infix fun inf(value: Long): U
         public infix fun sup(value: Long): U
         public infix fun infOrEq(value: Long): U
@@ -207,67 +207,69 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun supOrEq(otherLongColumn: LongColumn<*>): U
     }
 
-    public interface WhereOpLongColumnNotNull<T : Any, U : Where<T, U>> :
+    public interface WhereOpLongColumnNotNull<T : Any, U : Where<U>> :
         WhereOpLongColumn<T, U>, WhereOpColumnNotNull<T, U, Long>
 
-    public interface WhereOpLongColumnNullable<T : Any, U : Where<T, U>> :
+    public interface WhereOpLongColumnNullable<T : Any, U : Where<U>> :
         WhereOpLongColumn<T, U>, WhereOpColumnNullable<T, U, Long>
 
-    public interface WhereOpUuidColumn<T : Any, U : Where<T, U>> : WhereInOpColumn<T, U, UUID> {
+    public interface WhereOpUuidColumn<T : Any, U : Where<U>> : WhereInOpColumn<T, U, UUID> {
         public infix fun eq(otherUuidColumn: UuidColumn<*>): U
         public infix fun notEq(otherUuidColumn: UuidColumn<*>): U
     }
 
-    public interface WhereOpUuidColumnNotNull<T : Any, U : Where<T, U>> :
+    public interface WhereOpUuidColumnNotNull<T : Any, U : Where<U>> :
         WhereOpUuidColumn<T, U>, WhereOpColumnNotNull<T, U, UUID>
 
-    public interface WhereOpUuidColumnNullable<T : Any, U : Where<T, U>> :
+    public interface WhereOpUuidColumnNullable<T : Any, U : Where<U>> :
         WhereOpUuidColumn<T, U>, WhereOpColumnNullable<T, U, UUID>
 
-    public interface Where<T : Any, U : Where<T, U>> {
-        public infix fun and(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U>
-        public infix fun and(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U>
-        public infix fun and(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDateTime>
-        public infix fun and(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDateTime>
-        public infix fun and(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime>
-        public infix fun and(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime>
-        public infix fun and(localDateColumnNotNull: LocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDate>
-        public infix fun and(localDateColumnNullable: LocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDate>
-        public infix fun and(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate>
-        public infix fun and(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate>
-        public infix fun and(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, OffsetDateTime>
-        public infix fun and(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, OffsetDateTime>
-        public infix fun and(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalTime>
-        public infix fun and(localTimeColumnNullable: LocalTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalTime>
-        public infix fun and(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U>
-        public infix fun and(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U>
-        public infix fun and(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U>
-        public infix fun and(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U>
-        public infix fun and(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U>
-        public infix fun and(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
-        public infix fun and(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
-        public infix fun <V : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
+    public interface Where<T : Where<T>> {
+        public infix fun <U : Any> and(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T>
+        public infix fun <U : Any> and(stringColumnNullable: StringColumnNullable<U>): WhereOpStringColumnNullable<U, T>
+        public infix fun <U : Any> and(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDateTime>
+        public infix fun <U : Any> and(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDateTime>
+        public infix fun <U : Any> and(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDateTime>
+        public infix fun <U : Any> and(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDateTime>
+        public infix fun <U : Any> and(localDateColumnNotNull: LocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDate>
+        public infix fun <U : Any> and(localDateColumnNullable: LocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDate>
+        public infix fun <U : Any> and(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDate>
+        public infix fun <U : Any> and(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDate>
+        public infix fun <U : Any> and(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, OffsetDateTime>
+        public infix fun <U : Any> and(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, OffsetDateTime>
+        public infix fun <U : Any> and(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalTime>
+        public infix fun <U : Any> and(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalTime>
+        public infix fun <U : Any> and(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T>
+        public infix fun <U : Any> and(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntColumnNotNull<U, T>
+        public infix fun <U : Any> and(intColumnNullable: IntColumnNullable<U>): WhereOpIntColumnNullable<U, T>
+        public infix fun <U : Any> and(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongColumnNotNull<U, T>
+        public infix fun <U : Any> and(longColumnNullable: LongColumnNullable<U>): WhereOpLongColumnNullable<U, T>
+        public infix fun <U : Any> and(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidColumnNotNull<U, T>
+        public infix fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T>
+        public infix fun <U : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
 
-        public infix fun or(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U>
-        public infix fun or(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U>
-        public infix fun or(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDateTime>
-        public infix fun or(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDateTime>
-        public infix fun or(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime>
-        public infix fun or(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime>
-        public infix fun or(localDateColumnNotNull: LocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDate>
-        public infix fun or(localDateColumnNullable: LocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDate>
-        public infix fun or(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate>
-        public infix fun or(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate>
-        public infix fun or(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, OffsetDateTime>
-        public infix fun or(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, OffsetDateTime>
-        public infix fun or(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalTime>
-        public infix fun or(localTimeColumnNullable: LocalTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalTime>
-        public infix fun or(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U>
-        public infix fun or(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U>
-        public infix fun or(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U>
-        public infix fun or(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
-        public infix fun or(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
-        public infix fun <V : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
+        public infix fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T>
+        public infix fun <U : Any> or(stringColumnNullable: StringColumnNullable<U>): WhereOpStringColumnNullable<U, T>
+        public infix fun <U : Any> or(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDateTime>
+        public infix fun <U : Any> or(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDateTime>
+        public infix fun <U : Any> or(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDateTime>
+        public infix fun <U : Any> or(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDateTime>
+        public infix fun <U : Any> or(localDateColumnNotNull: LocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDate>
+        public infix fun <U : Any> or(localDateColumnNullable: LocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDate>
+        public infix fun <U : Any> or(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDate>
+        public infix fun <U : Any> or(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDate>
+        public infix fun <U : Any> or(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, OffsetDateTime>
+        public infix fun <U : Any> or(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, OffsetDateTime>
+        public infix fun <U : Any> or(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalTime>
+        public infix fun <U : Any> or(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalTime>
+        public infix fun <U : Any> or(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T>
+        public infix fun <U : Any> or(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntColumnNotNull<U, T>
+        public infix fun <U : Any> or(intColumnNullable: IntColumnNullable<U>): WhereOpIntColumnNullable<U, T>
+        public infix fun <U : Any> or(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongColumnNotNull<U, T>
+        public infix fun <U : Any> or(longColumnNullable: LongColumnNullable<U>): WhereOpLongColumnNullable<U, T>
+        public infix fun <U : Any> or(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidColumnNotNull<U, T>
+        public infix fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T>
+        public infix fun <U : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
     }
 
     public interface LimitOffset<T : LimitOffset<T>> {

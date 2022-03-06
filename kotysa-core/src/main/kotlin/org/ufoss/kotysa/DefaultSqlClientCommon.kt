@@ -30,32 +30,32 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val properties: Properties
     }
 
-    public abstract class FromWhereable<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> :
-        Whereable<V, W>(), From<T, U> {
+    public abstract class FromWhereable<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>> :
+        Whereable<V>(), From<T, U> {
         protected abstract val from: U
         private val joinable: Joinable<T, U, *> by lazy {
             Joinable<T, U, Any>(properties, from)
         }
 
-        protected fun <X : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<X>) {
+        protected fun <W : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<W>) {
             makeAvailable(properties, kotysaTable)
             properties.fromClauses.add(FromClause(kotysaTable.table))
         }
 
-        internal fun <X : Any> addFromTable(table: Table<X>): U = with(properties) {
+        internal fun <W : Any> addFromTable(table: Table<W>): U = with(properties) {
             addFromTable(this, tables.getTable(table))
             from
         }
 
-        override fun <X : Any> innerJoin(table: Table<X>): SqlClientQuery.Joinable<T, U, X> {
+        override fun <W : Any> innerJoin(table: Table<W>): SqlClientQuery.Joinable<T, U, W> {
             makeAvailable(properties, properties.tables.getTable(table))
-            val joinable = (joinable as Joinable<T, U, X>)
+            val joinable = (joinable as Joinable<T, U, W>)
             joinable.type = JoinClauseType.INNER
             joinable.table = table
             return joinable
         }
 
-        private fun <X : Any> makeAvailable(properties: Properties, kotysaTable: KotysaTable<X>) {
+        private fun <W : Any> makeAvailable(properties: Properties, kotysaTable: KotysaTable<W>) {
             properties.apply {
                 // This table becomes available
                 availableTables[kotysaTable.table] = kotysaTable
@@ -65,16 +65,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public class Joinable<U : Any, V : From<U, V>, W : Any> internal constructor(
+    public class Joinable<T : Any, U : From<T, U>, V : Any> internal constructor(
         override val properties: Properties,
-        from: V,
-    ) : SqlClientQuery.Joinable<U, V, W>, WithProperties {
+        from: U,
+    ) : SqlClientQuery.Joinable<T, U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
-        internal lateinit var table: Table<W>
+        internal lateinit var table: Table<V>
 
-        private val join = Join<U, V, W>(properties, from)
+        private val join = Join<T, U, V>(properties, from)
 
-        override fun on(column: Column<U, *>): SqlClientQuery.Join<U, V, W> =
+        override fun on(column: Column<T, *>): SqlClientQuery.Join<T, U, V> =
             join.apply {
                 type = this@Joinable.type
                 table = this@Joinable.table
@@ -82,189 +82,123 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             }
     }
 
-    public class Join<U : Any, V : From<U, V>, W : Any> internal constructor(
+    public class Join<T : Any, U : From<T, U>, V : Any> internal constructor(
         override val properties: Properties,
-        private val from: V,
-    ) : SqlClientQuery.Join<U, V, W>, WithProperties {
+        private val from: U,
+    ) : SqlClientQuery.Join<T, U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
-        internal lateinit var table: Table<W>
-        internal lateinit var column: Column<U, *>
+        internal lateinit var table: Table<V>
+        internal lateinit var column: Column<T, *>
 
-        override fun eq(column: Column<W, *>): V = with(properties) {
+        override fun eq(column: Column<V, *>): U = with(properties) {
             // get last from
             val joinClause = JoinClause(table, mapOf(Pair(this@Join.column, column)), type)
-            (fromClauses[fromClauses.size - 1] as FromClause<U>).joinClauses.add(joinClause)
+            (fromClauses[fromClauses.size - 1] as FromClause<T>).joinClauses.add(joinClause)
             from
         }
 
     }
 
-    public abstract class Whereable<T : Any, U : SqlClientQuery.Where<T, U>> protected constructor() :
-        WithWhere<T, U>(), SqlClientQuery.Whereable<T, U>, WithProperties {
+    public abstract class Whereable<T : SqlClientQuery.Where<T>> protected constructor() : WithWhere<T>(),
+        SqlClientQuery.Whereable<T>, WithProperties {
 
-        override fun where(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U> =
-            whereOpStringColumnNotNull.apply {
-                this.column = stringColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T> =
+            whereOpStringColumnNotNull(stringColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U> =
-            whereOpStringColumnNullable.apply {
-                this.column = stringColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(stringColumnNullable: StringColumnNullable<U>): WhereOpStringColumnNullable<U, T> =
+            whereOpStringColumnNullable(stringColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDateTime> =
-            whereOpLocalDateTimeColumnNotNull.apply {
-                this.column = localDateTimeColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDateTime> =
+            whereOpLocalDateTimeColumnNotNull(localDateTimeColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDateTime> =
-            whereOpLocalDateTimeColumnNullable.apply {
-                this.column = localDateTimeColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDateTime> =
+            whereOpLocalDateTimeColumnNullable(localDateTimeColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> =
-            whereOpKotlinxLocalDateTimeColumnNotNull.apply {
-                this.column = kotlinxLocalDateTimeColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDateTime> =
+            whereOpKotlinxLocalDateTimeColumnNotNull(kotlinxLocalDateTimeColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> =
-            whereOpKotlinxLocalDateTimeColumnNullable.apply {
-                this.column = kotlinxLocalDateTimeColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDateTime> =
+            whereOpKotlinxLocalDateTimeColumnNullable(kotlinxLocalDateTimeColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(localDateColumnNotNull: LocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDate> =
-            whereOpLocalDateColumnNotNull.apply {
-                this.column = localDateColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(localDateColumnNotNull: LocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDate> =
+            whereOpLocalDateColumnNotNull(localDateColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(localDateColumnNullable: LocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDate> =
-            whereOpLocalDateColumnNullable.apply {
-                this.column = localDateColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(localDateColumnNullable: LocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDate> =
+            whereOpLocalDateColumnNullable(localDateColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> =
-            whereOpKotlinxLocalDateColumnNotNull.apply {
-                this.column = kotlinxLocalDateColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDate> =
+            whereOpKotlinxLocalDateColumnNotNull(kotlinxLocalDateColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> =
-            whereOpKotlinxLocalDateColumnNullable.apply {
-                this.column = kotlinxLocalDateColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDate> =
+            whereOpKotlinxLocalDateColumnNullable(kotlinxLocalDateColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, OffsetDateTime> =
-            whereOpOffsetDateTimeColumnNotNull.apply {
-                this.column = offsetDateTimeColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, OffsetDateTime> =
+            whereOpOffsetDateTimeColumnNotNull(offsetDateTimeColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, OffsetDateTime> =
-            whereOpOffsetDateTimeColumnNullable.apply {
-                this.column = offsetDateTimeColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, OffsetDateTime> =
+            whereOpOffsetDateTimeColumnNullable(offsetDateTimeColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalTime> =
-            whereOpLocalTimeColumnNotNull.apply {
-                this.column = localTimeColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalTime> =
+            whereOpLocalTimeColumnNotNull(localTimeColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(localTimeColumnNullable: LocalTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalTime> =
-            whereOpLocalTimeColumnNullable.apply {
-                this.column = localTimeColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalTime> =
+            whereOpLocalTimeColumnNullable(localTimeColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U> =
-            whereOpBooleanColumnNotNull.apply {
-                this.column = booleanColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T> =
+            whereOpBooleanColumnNotNull(booleanColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U> =
-            whereOpIntColumnNotNull.apply {
-                this.column = intColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntColumnNotNull<U, T> =
+            whereOpIntColumnNotNull(intColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U> =
-            whereOpIntColumnNullable.apply {
-                this.column = intColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(intColumnNullable: IntColumnNullable<U>): WhereOpIntColumnNullable<U, T> =
+            whereOpIntColumnNullable(intColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U> =
-            whereOpLongColumnNotNull.apply {
-                this.column = longColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongColumnNotNull<U, T> =
+            whereOpLongColumnNotNull(longColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U> =
-            whereOpLongColumnNullable.apply {
-                this.column = longColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(longColumnNullable: LongColumnNullable<U>): WhereOpLongColumnNullable<U, T> =
+            whereOpLongColumnNullable(longColumnNullable, WhereClauseType.WHERE)
 
-        override fun where(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U> =
-            whereOpUuidColumnNotNull.apply {
-                this.column = uuidColumnNotNull
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidColumnNotNull<U, T> =
+            whereOpUuidColumnNotNull(uuidColumnNotNull, WhereClauseType.WHERE)
 
-        override fun where(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U> =
-            whereOpUuidColumnNullable.apply {
-                this.column = uuidColumnNullable
-                type = WhereClauseType.WHERE
-            }
+        override fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
+            whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.WHERE)
 
-        override fun <V : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U {
+        override fun <U : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.WHERE))
             return where
         }
     }
 
-    public interface WhereOpColumn<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> : WhereCommon<T> {
+    public interface WhereOpColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> : WhereCommon {
         public val where: U
-        public var column: Column<T, V>
-        public var type: WhereClauseType
+        public val column: Column<T, V>
+        public val type: WhereClauseType
     }
 
-    public interface WhereInOpColumn<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> :
+    public interface WhereInOpColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereOpColumn<T, U, V>, SqlClientQuery.WhereInOpColumn<T, U, V> {
         override infix fun `in`(values: Collection<V>): U =
             where.apply { addClauseValue(column, Operation.IN, values, type) }
     }
 
-    public interface WhereOpColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> :
+    public interface WhereOpColumnNotNull<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereOpColumn<T, U, V>, SqlClientQuery.WhereOpColumnNotNull<T, U, V> {
         override infix fun eq(value: V): U = where.apply { addClauseValue(column, Operation.EQ, value, type) }
         override infix fun notEq(value: V): U = where.apply { addClauseValue(column, Operation.NOT_EQ, value, type) }
     }
 
-    public interface WhereOpColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> :
+    public interface WhereOpColumnNullable<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereOpColumn<T, U, V>, SqlClientQuery.WhereOpColumnNullable<T, U, V> {
         override infix fun eq(value: V?): U = where.apply { addClauseValue(column, Operation.EQ, value, type) }
         override infix fun notEq(value: V?): U = where.apply { addClauseValue(column, Operation.NOT_EQ, value, type) }
     }
 
-    public abstract class AbstractWhereOpColumn<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> internal constructor() :
-        Where<T, U>(), WhereOpColumn<T, U, V> {
-        override lateinit var column: Column<T, V>
-        override lateinit var type: WhereClauseType
-    }
+    public abstract class AbstractWhereOpColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> internal constructor() :
+        Where<U>(), WhereOpColumn<T, U, V>
 
-    public interface WhereOpStringColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
+    public interface WhereOpStringColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, String>, SqlClientQuery.WhereOpStringColumn<T, U> {
         override infix fun contains(value: String): U =
             where.apply { addClauseValue(column, Operation.CONTAINS, "%$value%", type) }
@@ -291,19 +225,23 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.ENDS_WITH, otherStringColumn, type) }
     }
 
-    public class WhereOpStringColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpStringColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, String>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, String>(), WhereOpStringColumn<T, U>,
         WhereOpColumnNotNull<T, U, String>, SqlClientQuery.WhereOpStringColumnNotNull<T, U>
 
-    public class WhereOpStringColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpStringColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, String>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, String>(), WhereOpStringColumn<T, U>,
         WhereOpColumnNullable<T, U, String>, SqlClientQuery.WhereOpStringColumnNullable<T, U>
 
-    public interface WhereOpDateColumn<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> :
+    public interface WhereOpDateColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereInOpColumn<T, U, V>, SqlClientQuery.WhereOpDateColumn<T, U, V> {
         override infix fun before(value: V): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
         override infix fun after(value: V): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
@@ -332,21 +270,27 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherDateColumn, type) }
     }
 
-    public class WhereOpDateColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> internal constructor(
+    public class WhereOpDateColumnNotNull<T : Any, U : SqlClientQuery.Where<U>, V : Any> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, V>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, V>(), WhereOpDateColumn<T, U, V>,
         WhereOpColumnNotNull<T, U, V>, SqlClientQuery.WhereOpDateColumnNotNull<T, U, V>
 
-    public class WhereOpDateColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> internal constructor(
+    public class WhereOpDateColumnNullable<T : Any, U : SqlClientQuery.Where<U>, V : Any> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, V>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, V>(), WhereOpDateColumn<T, U, V>,
         WhereOpColumnNullable<T, U, V>, SqlClientQuery.WhereOpDateColumnNullable<T, U, V>
 
-    public class WhereOpBooleanColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpBooleanColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, Boolean>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Boolean>(), SqlClientQuery.WhereOpBooleanColumnNotNull<T, U> {
         override infix fun eq(value: Boolean): U =
             where.apply {
@@ -363,7 +307,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.EQ, otherBooleanColumn, type) }
     }
 
-    public interface WhereOpIntColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
+    public interface WhereOpIntColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, Int>, SqlClientQuery.WhereOpIntColumn<T, U> {
         override infix fun inf(value: Int): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
         override infix fun sup(value: Int): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
@@ -392,19 +336,23 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherIntColumn, type) }
     }
 
-    public class WhereOpIntColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpIntColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, Int>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Int>(), WhereOpIntColumn<T, U>,
         WhereOpColumnNotNull<T, U, Int>, SqlClientQuery.WhereOpIntColumnNotNull<T, U>
 
-    public class WhereOpIntColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpIntColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, Int>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Int>(), WhereOpIntColumn<T, U>,
         WhereOpColumnNullable<T, U, Int>, SqlClientQuery.WhereOpIntColumnNullable<T, U>
 
-    public interface WhereOpLongColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
+    public interface WhereOpLongColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, Long>, SqlClientQuery.WhereOpLongColumn<T, U> {
         override infix fun inf(value: Long): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
         override infix fun sup(value: Long): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
@@ -433,19 +381,23 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherLongColumn, type) }
     }
 
-    public class WhereOpLongColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpLongColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, Long>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Long>(), WhereOpLongColumn<T, U>,
         WhereOpColumnNotNull<T, U, Long>, SqlClientQuery.WhereOpLongColumnNotNull<T, U>
 
-    public class WhereOpLongColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpLongColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, Long>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Long>(), WhereOpLongColumn<T, U>,
         WhereOpColumnNullable<T, U, Long>, SqlClientQuery.WhereOpLongColumnNullable<T, U>
 
-    public interface WhereOpUuidColumn<T : Any, U : SqlClientQuery.Where<T, U>> :
+    public interface WhereOpUuidColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, UUID>, SqlClientQuery.WhereOpUuidColumn<T, U> {
         override infix fun eq(otherUuidColumn: UuidColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.EQ, otherUuidColumn, type) }
@@ -454,20 +406,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.NOT_EQ, otherUuidColumn, type) }
     }
 
-    public class WhereOpUuidColumnNotNull<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpUuidColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, UUID>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, UUID>(), WhereOpUuidColumn<T, U>,
         WhereOpColumnNotNull<T, U, UUID>, SqlClientQuery.WhereOpUuidColumnNotNull<T, U>
 
-    public class WhereOpUuidColumnNullable<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor(
+    public class WhereOpUuidColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
+        override val column: Column<T, UUID>,
+        override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, UUID>(), WhereOpUuidColumn<T, U>,
         WhereOpColumnNullable<T, U, UUID>, SqlClientQuery.WhereOpUuidColumnNullable<T, U>
 
-    public interface WhereCommon<T : Any> : WithProperties {
-        public fun addClauseValue(
+    public interface WhereCommon : WithProperties {
+        public fun <T : Any> addClauseValue(
             column: Column<T, *>,
             operation: Operation,
             value: Any?,
@@ -485,7 +441,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             )
         }
 
-        public fun addClauseColumn(
+        public fun <T : Any> addClauseColumn(
             column: Column<T, *>,
             operation: Operation,
             otherColumn: Column<*, *>,
@@ -500,255 +456,141 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithWhere<T, U>(),
-        SqlClientQuery.Where<T, U>, WhereCommon<T> {
+    public abstract class Where<T : SqlClientQuery.Where<T>> internal constructor() : WithWhere<T>(),
+        SqlClientQuery.Where<T>, WhereCommon {
 
-        override fun and(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U> =
-            whereOpStringColumnNotNull.apply {
-                this.column = stringColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T> =
+            whereOpStringColumnNotNull(stringColumnNotNull, WhereClauseType.AND)
 
-        override fun and(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U> =
-            whereOpStringColumnNullable.apply {
-                this.column = stringColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(stringColumnNullable: StringColumnNullable<U>): WhereOpStringColumnNullable<U, T> =
+            whereOpStringColumnNullable(stringColumnNullable, WhereClauseType.AND)
 
-        override fun and(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDateTime> =
-            whereOpLocalDateTimeColumnNotNull.apply {
-                this.column = localDateTimeColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDateTime> =
+            whereOpLocalDateTimeColumnNotNull(localDateTimeColumnNotNull, WhereClauseType.AND)
 
-        override fun and(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDateTime> =
-            whereOpLocalDateTimeColumnNullable.apply {
-                this.column = localDateTimeColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDateTime> =
+            whereOpLocalDateTimeColumnNullable(localDateTimeColumnNullable, WhereClauseType.AND)
 
-        override fun and(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> =
-            whereOpKotlinxLocalDateTimeColumnNotNull.apply {
-                this.column = kotlinxLocalDateTimeColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDateTime> =
+            whereOpKotlinxLocalDateTimeColumnNotNull(kotlinxLocalDateTimeColumnNotNull, WhereClauseType.AND)
 
-        override fun and(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> =
-            whereOpKotlinxLocalDateTimeColumnNullable.apply {
-                this.column = kotlinxLocalDateTimeColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDateTime> =
+            whereOpKotlinxLocalDateTimeColumnNullable(kotlinxLocalDateTimeColumnNullable, WhereClauseType.AND)
 
-        override fun and(localDateColumnNotNull: LocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDate> =
-            whereOpLocalDateColumnNotNull.apply {
-                this.column = localDateColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(localDateColumnNotNull: LocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDate> =
+            whereOpLocalDateColumnNotNull(localDateColumnNotNull, WhereClauseType.AND)
 
-        override fun and(localDateColumnNullable: LocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDate> =
-            whereOpLocalDateColumnNullable.apply {
-                this.column = localDateColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(localDateColumnNullable: LocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDate> =
+            whereOpLocalDateColumnNullable(localDateColumnNullable, WhereClauseType.AND)
 
-        override fun and(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> =
-            whereOpKotlinxLocalDateColumnNotNull.apply {
-                this.column = kotlinxLocalDateColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDate> =
+            whereOpKotlinxLocalDateColumnNotNull(kotlinxLocalDateColumnNotNull, WhereClauseType.AND)
 
-        override fun and(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> =
-            whereOpKotlinxLocalDateColumnNullable.apply {
-                this.column = kotlinxLocalDateColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDate> =
+            whereOpKotlinxLocalDateColumnNullable(kotlinxLocalDateColumnNullable, WhereClauseType.AND)
 
-        override fun and(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, OffsetDateTime> =
-            whereOpOffsetDateTimeColumnNotNull.apply {
-                this.column = offsetDateTimeColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, OffsetDateTime> =
+            whereOpOffsetDateTimeColumnNotNull(offsetDateTimeColumnNotNull, WhereClauseType.AND)
 
-        override fun and(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, OffsetDateTime> =
-            whereOpOffsetDateTimeColumnNullable.apply {
-                this.column = offsetDateTimeColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, OffsetDateTime> =
+            whereOpOffsetDateTimeColumnNullable(offsetDateTimeColumnNullable, WhereClauseType.AND)
 
-        override fun and(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalTime> =
-            whereOpLocalTimeColumnNotNull.apply {
-                this.column = localTimeColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalTime> =
+            whereOpLocalTimeColumnNotNull(localTimeColumnNotNull, WhereClauseType.AND)
 
-        override fun and(localTimeColumnNullable: LocalTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalTime> =
-            whereOpLocalTimeColumnNullable.apply {
-                this.column = localTimeColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalTime> =
+            whereOpLocalTimeColumnNullable(localTimeColumnNullable, WhereClauseType.AND)
 
-        override fun and(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U> =
-            whereOpBooleanColumnNotNull.apply {
-                this.column = booleanColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T> =
+            whereOpBooleanColumnNotNull(booleanColumnNotNull, WhereClauseType.AND)
 
-        override fun and(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U> =
-            whereOpIntColumnNotNull.apply {
-                this.column = intColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntColumnNotNull<U, T> =
+            whereOpIntColumnNotNull(intColumnNotNull, WhereClauseType.AND)
 
-        override fun and(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U> =
-            whereOpIntColumnNullable.apply {
-                this.column = intColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(intColumnNullable: IntColumnNullable<U>): WhereOpIntColumnNullable<U, T> =
+            whereOpIntColumnNullable(intColumnNullable, WhereClauseType.AND)
 
-        override fun and(longColumnNotNull: LongColumnNotNull<T>): WhereOpLongColumnNotNull<T, U> =
-            whereOpLongColumnNotNull.apply {
-                this.column = longColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongColumnNotNull<U, T> =
+            whereOpLongColumnNotNull(longColumnNotNull, WhereClauseType.AND)
 
-        override fun and(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U> =
-            whereOpLongColumnNullable.apply {
-                this.column = longColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(longColumnNullable: LongColumnNullable<U>): WhereOpLongColumnNullable<U, T> =
+            whereOpLongColumnNullable(longColumnNullable, WhereClauseType.AND)
 
-        override fun and(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U> =
-            whereOpUuidColumnNotNull.apply {
-                this.column = uuidColumnNotNull
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidColumnNotNull<U, T> =
+            whereOpUuidColumnNotNull(uuidColumnNotNull, WhereClauseType.AND)
 
-        override fun and(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U> =
-            whereOpUuidColumnNullable.apply {
-                this.column = uuidColumnNullable
-                type = WhereClauseType.AND
-            }
+        override fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
+            whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.AND)
 
-        override fun <V : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U {
+        override fun <U : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.AND))
             return where
         }
 
-        override fun or(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U> =
-            whereOpStringColumnNotNull.apply {
-                this.column = stringColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T> =
+            whereOpStringColumnNotNull(stringColumnNotNull, WhereClauseType.OR)
 
-        override fun or(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U> =
-            whereOpStringColumnNullable.apply {
-                this.column = stringColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(stringColumnNullable: StringColumnNullable<U>): WhereOpStringColumnNullable<U, T> =
+            whereOpStringColumnNullable(stringColumnNullable, WhereClauseType.OR)
 
-        override fun or(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDateTime> =
-            whereOpLocalDateTimeColumnNotNull.apply {
-                this.column = localDateTimeColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDateTime> =
+            whereOpLocalDateTimeColumnNotNull(localDateTimeColumnNotNull, WhereClauseType.OR)
 
-        override fun or(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDateTime> =
-            whereOpLocalDateTimeColumnNullable.apply {
-                this.column = localDateTimeColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDateTime> =
+            whereOpLocalDateTimeColumnNullable(localDateTimeColumnNullable, WhereClauseType.OR)
 
-        override fun or(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> =
-            whereOpKotlinxLocalDateTimeColumnNotNull.apply {
-                this.column = kotlinxLocalDateTimeColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDateTime> =
+            whereOpKotlinxLocalDateTimeColumnNotNull(kotlinxLocalDateTimeColumnNotNull, WhereClauseType.OR)
 
-        override fun or(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> =
-            whereOpKotlinxLocalDateTimeColumnNullable.apply {
-                this.column = kotlinxLocalDateTimeColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDateTime> =
+            whereOpKotlinxLocalDateTimeColumnNullable(kotlinxLocalDateTimeColumnNullable, WhereClauseType.OR)
 
-        override fun or(localDateColumnNotNull: LocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalDate> =
-            whereOpLocalDateColumnNotNull.apply {
-                this.column = localDateColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(localDateColumnNotNull: LocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalDate> =
+            whereOpLocalDateColumnNotNull(localDateColumnNotNull, WhereClauseType.OR)
 
-        override fun or(localDateColumnNullable: LocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalDate> =
-            whereOpLocalDateColumnNullable.apply {
-                this.column = localDateColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(localDateColumnNullable: LocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalDate> =
+            whereOpLocalDateColumnNullable(localDateColumnNullable, WhereClauseType.OR)
 
-        override fun or(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> =
-            whereOpKotlinxLocalDateColumnNotNull.apply {
-                this.column = kotlinxLocalDateColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, kotlinx.datetime.LocalDate> =
+            whereOpKotlinxLocalDateColumnNotNull(kotlinxLocalDateColumnNotNull, WhereClauseType.OR)
 
-        override fun or(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>): WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> =
-            whereOpKotlinxLocalDateColumnNullable.apply {
-                this.column = kotlinxLocalDateColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalDate> =
+            whereOpKotlinxLocalDateColumnNullable(kotlinxLocalDateColumnNullable, WhereClauseType.OR)
 
-        override fun or(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, OffsetDateTime> =
-            whereOpOffsetDateTimeColumnNotNull.apply {
-                this.column = offsetDateTimeColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, OffsetDateTime> =
+            whereOpOffsetDateTimeColumnNotNull(offsetDateTimeColumnNotNull, WhereClauseType.OR)
 
-        override fun or(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, OffsetDateTime> =
-            whereOpOffsetDateTimeColumnNullable.apply {
-                this.column = offsetDateTimeColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, OffsetDateTime> =
+            whereOpOffsetDateTimeColumnNullable(offsetDateTimeColumnNullable, WhereClauseType.OR)
 
-        override fun or(localTimeColumnNotNull: LocalTimeColumnNotNull<T>): WhereOpDateColumnNotNull<T, U, LocalTime> =
-            whereOpLocalTimeColumnNotNull.apply {
-                this.column = localTimeColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateColumnNotNull<U, T, LocalTime> =
+            whereOpLocalTimeColumnNotNull(localTimeColumnNotNull, WhereClauseType.OR)
 
-        override fun or(localTimeColumnNullable: LocalTimeColumnNullable<T>): WhereOpDateColumnNullable<T, U, LocalTime> =
-            whereOpLocalTimeColumnNullable.apply {
-                this.column = localTimeColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, LocalTime> =
+            whereOpLocalTimeColumnNullable(localTimeColumnNullable, WhereClauseType.OR)
 
-        override fun or(booleanColumnNotNull: BooleanColumnNotNull<T>): WhereOpBooleanColumnNotNull<T, U> =
-            whereOpBooleanColumnNotNull.apply {
-                this.column = booleanColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T> =
+            whereOpBooleanColumnNotNull(booleanColumnNotNull, WhereClauseType.OR)
 
-        override fun or(intColumnNotNull: IntColumnNotNull<T>): WhereOpIntColumnNotNull<T, U> =
-            whereOpIntColumnNotNull.apply {
-                this.column = intColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntColumnNotNull<U, T> =
+            whereOpIntColumnNotNull(intColumnNotNull, WhereClauseType.OR)
 
-        override fun or(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U> =
-            whereOpIntColumnNullable.apply {
-                this.column = intColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(intColumnNullable: IntColumnNullable<U>): WhereOpIntColumnNullable<U, T> =
+            whereOpIntColumnNullable(intColumnNullable, WhereClauseType.OR)
 
-        override fun or(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U> =
-            whereOpUuidColumnNotNull.apply {
-                this.column = uuidColumnNotNull
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongColumnNotNull<U, T> =
+            whereOpLongColumnNotNull(longColumnNotNull, WhereClauseType.OR)
 
-        override fun or(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U> =
-            whereOpUuidColumnNullable.apply {
-                this.column = uuidColumnNullable
-                type = WhereClauseType.OR
-            }
+        override fun <U : Any> or(longColumnNullable: LongColumnNullable<U>): WhereOpLongColumnNullable<U, T> =
+            whereOpLongColumnNullable(longColumnNullable, WhereClauseType.OR)
 
-        override fun <V : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U {
+        override fun <U : Any> or(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidColumnNotNull<U, T> =
+            whereOpUuidColumnNotNull(uuidColumnNotNull, WhereClauseType.OR)
+
+        override fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
+            whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.OR)
+
+        override fun <U : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.OR))
             return where
         }
@@ -884,72 +726,113 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public abstract class WithWhere<T : Any, U : SqlClientQuery.Where<T, U>> internal constructor() : WithProperties {
-        protected abstract val where: U
+    public abstract class WithWhere<T : SqlClientQuery.Where<T>> internal constructor() : WithProperties {
+        protected abstract val where: T
 
-        internal val whereOpStringColumnNotNull: WhereOpStringColumnNotNull<T, U> by lazy {
-            WhereOpStringColumnNotNull(where, properties)
-        }
-        internal val whereOpStringColumnNullable: WhereOpStringColumnNullable<T, U> by lazy {
-            WhereOpStringColumnNullable(where, properties)
-        }
-        internal val whereOpLocalDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalDateTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpLocalDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, LocalDateTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDateTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDateTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpLocalDateColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalDate> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpLocalDateColumnNullable: WhereOpDateColumnNullable<T, U, LocalDate> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateColumnNotNull: WhereOpDateColumnNotNull<T, U, kotlinx.datetime.LocalDate> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpKotlinxLocalDateColumnNullable: WhereOpDateColumnNullable<T, U, kotlinx.datetime.LocalDate> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpOffsetDateTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, OffsetDateTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpOffsetDateTimeColumnNullable: WhereOpDateColumnNullable<T, U, OffsetDateTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpLocalTimeColumnNotNull: WhereOpDateColumnNotNull<T, U, LocalTime> by lazy {
-            WhereOpDateColumnNotNull(where, properties)
-        }
-        internal val whereOpLocalTimeColumnNullable: WhereOpDateColumnNullable<T, U, LocalTime> by lazy {
-            WhereOpDateColumnNullable(where, properties)
-        }
-        internal val whereOpBooleanColumnNotNull: WhereOpBooleanColumnNotNull<T, U> by lazy {
-            WhereOpBooleanColumnNotNull(where, properties)
-        }
-        internal val whereOpIntColumnNotNull: WhereOpIntColumnNotNull<T, U> by lazy {
-            WhereOpIntColumnNotNull(where, properties)
-        }
-        internal val whereOpIntColumnNullable: WhereOpIntColumnNullable<T, U> by lazy {
-            WhereOpIntColumnNullable(where, properties)
-        }
-        internal val whereOpLongColumnNotNull: WhereOpLongColumnNotNull<T, U> by lazy {
-            WhereOpLongColumnNotNull(where, properties)
-        }
-        internal val whereOpLongColumnNullable: WhereOpLongColumnNullable<T, U> by lazy {
-            WhereOpLongColumnNullable(where, properties)
-        }
-        internal val whereOpUuidColumnNotNull: WhereOpUuidColumnNotNull<T, U> by lazy {
-            WhereOpUuidColumnNotNull(where, properties)
-        }
-        internal val whereOpUuidColumnNullable: WhereOpUuidColumnNullable<T, U> by lazy {
-            WhereOpUuidColumnNullable(where, properties)
-        }
+        internal fun <U : Any> whereOpStringColumnNotNull(
+            stringColumnNotNull: StringColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpStringColumnNotNull(where, properties, stringColumnNotNull, whereClauseType)
+        
+        internal fun <U : Any> whereOpStringColumnNullable(
+            stringColumnNullable: StringColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpStringColumnNullable(where, properties, stringColumnNullable, whereClauseType)
+        
+        internal fun <U : Any> whereOpLocalDateTimeColumnNotNull(
+            localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNotNull(where, properties, localDateTimeColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpLocalDateTimeColumnNullable(
+            localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNullable(where, properties, localDateTimeColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpKotlinxLocalDateTimeColumnNotNull(
+            localDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNotNull(where, properties, localDateTimeColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpKotlinxLocalDateTimeColumnNullable(
+            localDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNullable(where, properties, localDateTimeColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpLocalDateColumnNotNull(
+            localDateColumnNotNull: LocalDateColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNotNull(where, properties, localDateColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpLocalDateColumnNullable(
+            localDateColumnNullable: LocalDateColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNullable(where, properties, localDateColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpKotlinxLocalDateColumnNotNull(
+            localDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNotNull(where, properties, localDateColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpKotlinxLocalDateColumnNullable(
+            localDateColumnNullable: KotlinxLocalDateColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNullable(where, properties, localDateColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpOffsetDateTimeColumnNotNull(
+            offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNotNull(where, properties, offsetDateTimeColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpOffsetDateTimeColumnNullable(
+            offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNullable(where, properties, offsetDateTimeColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpLocalTimeColumnNotNull(
+            localTimeColumnNotNull: LocalTimeColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNotNull(where, properties, localTimeColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpLocalTimeColumnNullable(
+            localTimeColumnNullable: LocalTimeColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDateColumnNullable(where, properties, localTimeColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpBooleanColumnNotNull(
+            booleanColumnNotNull: BooleanColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpBooleanColumnNotNull(where, properties, booleanColumnNotNull, whereClauseType)
+        
+        internal fun <U : Any> whereOpIntColumnNotNull(
+            intColumnNotNull: IntColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpIntColumnNotNull(where, properties, intColumnNotNull, whereClauseType)
+        
+        internal fun <U : Any> whereOpIntColumnNullable(
+            intColumnNullable: IntColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpIntColumnNullable(where, properties, intColumnNullable, whereClauseType)
+        
+        internal fun <U : Any> whereOpLongColumnNotNull(
+            longColumnNotNull: LongColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLongColumnNotNull(where, properties, longColumnNotNull, whereClauseType)
+        
+        internal fun <U : Any> whereOpLongColumnNullable(
+            longColumnNullable: LongColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLongColumnNullable(where, properties, longColumnNullable, whereClauseType)
+        
+        internal fun <U : Any> whereOpUuidColumnNotNull(
+            uuidColumnNotNull: UuidColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpUuidColumnNotNull(where, properties, uuidColumnNotNull, whereClauseType)
+        
+        internal fun <U : Any> whereOpUuidColumnNullable(
+            uuidColumnNullable: UuidColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpUuidColumnNullable(where, properties, uuidColumnNullable, whereClauseType)
     }
 }
 

@@ -118,12 +118,12 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
     }
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
+    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Where<T>>, GroupBy<T>,
         OrderBy<T>, LimitOffset<T>, Return<T> {
         public infix fun <V : Any> and(table: Table<V>): From<T, V>
     }
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
             Return<T>
 
     public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>
@@ -180,13 +180,13 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
 
 
 public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
-    public interface FirstDeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<T, Where<T>>, Return
+    public interface FirstDeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Where<T>>, Return
 
-    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Any, Where<Any>>, Return
+    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Where<Any>>, Return
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<T, Where<T>>, Return
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
 
     public interface Return {
         /**
