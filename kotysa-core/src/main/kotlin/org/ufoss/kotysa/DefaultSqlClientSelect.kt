@@ -20,7 +20,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         internal val selectedFields = mutableListOf<Field<*>>()
         override val parameters: MutableList<Any> = mutableListOf()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
-        override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
+        override val whereClauses: MutableList<WhereClauseWithType> = mutableListOf()
         override var index: Int = 0
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
 
@@ -82,15 +82,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
 
         public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
-            val subQuery = SqlClientSubQueryImpl.Selectable(properties)
-            // invoke sub-query
-            val result = dsl(subQuery)
-            // add all sub-query parameters, if any, to parent's properties
-            if (subQuery.properties.parameters.isNotEmpty()) {
-                properties.parameters.addAll(subQuery.properties.parameters)
-            }
-            subQuery.properties.whereClauses
-            properties.selectedFields.add(SubQueryField(result, subQuery.properties.select as (RowImpl) -> U?))
+            val (subQueryProperties, result) = properties.executeSubQuery(dsl)
+            properties.selectedFields.add(SubQueryField(result, subQueryProperties.select))
         }
     }
 

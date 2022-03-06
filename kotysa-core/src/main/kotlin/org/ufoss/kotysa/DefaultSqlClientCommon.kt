@@ -19,7 +19,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val module: Module
         public val parameters: MutableList<Any>
         public val fromClauses: MutableList<FromClause<*>>
-        public val whereClauses: MutableList<WhereClauseWithType<*>>
+        public val whereClauses: MutableList<WhereClauseWithType>
 
         public val availableTables: MutableMap<Table<*>, KotysaTable<*>>
         public val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>
@@ -227,6 +227,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 this.column = uuidColumnNullable
                 type = WhereClauseType.WHERE
             }
+
+        override fun <V : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U {
+            properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.WHERE))
+            return where
+        }
     }
 
     public interface WhereOpColumn<T : Any, U : SqlClientQuery.Where<T, U>, V : Any> : WhereCommon<T> {
@@ -624,6 +629,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 type = WhereClauseType.AND
             }
 
+        override fun <V : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U {
+            properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.AND))
+            return where
+        }
+
         override fun or(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U> =
             whereOpStringColumnNotNull.apply {
                 this.column = stringColumnNotNull
@@ -737,6 +747,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 this.column = uuidColumnNullable
                 type = WhereClauseType.OR
             }
+
+        override fun <V : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U {
+            properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.OR))
+            return where
+        }
     }
 
     public interface Return : WithProperties {
@@ -785,62 +800,81 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 )
                 where.append("(")
                 typedWhereClause.whereClause.apply {
-                    val fieldName = column.getFieldName(availableColumns)
                     where.append(
-                        when (operation) {
-                            Operation.EQ ->
-                                when (this) {
-                                    is WhereClauseValue<*> ->
-                                        if (value == null) {
-                                            "$fieldName IS NULL"
-                                        } else {
-                                            "$fieldName = ${variable()}"
-                                        }
-                                    is WhereClauseColumn -> "$fieldName = ${otherColumn.getFieldName(availableColumns)}"
-                                }
-                            Operation.NOT_EQ ->
-                                when (this) {
-                                    is WhereClauseValue<*> ->
-                                        if (value == null) {
-                                            "$fieldName IS NOT NULL"
-                                        } else {
-                                            "$fieldName <> ${variable()}"
-                                        }
-                                    is WhereClauseColumn -> "$fieldName <> ${otherColumn.getFieldName(availableColumns)}"
-                                }
-                            Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
-                                "$fieldName LIKE ${variable()}"
-                            Operation.INF -> "$fieldName < ${variable()}"
-                            Operation.INF_OR_EQ -> "$fieldName <= ${variable()}"
-                            Operation.SUP -> "$fieldName > ${variable()}"
-                            Operation.SUP_OR_EQ -> "$fieldName >= ${variable()}"
-                            Operation.IN ->
-                                when (this) {
-                                    is WhereClauseValue<*> ->
-                                        when (module) {
-                                            // SQLITE, JDBC and R2DBC : must put as much params as collection size
-                                            Module.SQLITE, Module.JDBC ->
-                                                "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
-                                            Module.R2DBC ->
-                                                when (tables.dbType) {
-                                                    DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
-                                                    DbType.H2, DbType.POSTGRESQL ->
-                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
-                                                    DbType.MSSQL ->
-                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "@p${++index}" }})"
-                                                    else ->
-                                                        "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
+                        when (this) {
+                            is WhereClauseExists<*> -> {
+                                val (_, result) = properties.executeSubQuery(
+                                    dsl as SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Any>
+                                )
+                                "EXISTS (${result.sql()})"
+                            }
+                            is WhereClauseWithColumn<*> -> {
+                                val fieldName = column.getFieldName(availableColumns)
+                                when (operation) {
+                                    Operation.EQ ->
+                                        when (this) {
+                                            is WhereClauseValue<*> ->
+                                                if (value == null) {
+                                                    "$fieldName IS NULL"
+                                                } else {
+                                                    "$fieldName = ${variable()}"
                                                 }
-                                            else -> "$fieldName IN (:k${index++})"
+                                            is WhereClauseColumn<*> -> "$fieldName = ${
+                                                otherColumn.getFieldName(
+                                                    availableColumns
+                                                )
+                                            }"
                                         }
-                                    is WhereClauseColumn -> TODO()
+                                    Operation.NOT_EQ ->
+                                        when (this) {
+                                            is WhereClauseValue<*> ->
+                                                if (value == null) {
+                                                    "$fieldName IS NOT NULL"
+                                                } else {
+                                                    "$fieldName <> ${variable()}"
+                                                }
+                                            is WhereClauseColumn<*> -> "$fieldName <> ${
+                                                otherColumn.getFieldName(
+                                                    availableColumns
+                                                )
+                                            }"
+                                        }
+                                    Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
+                                        "$fieldName LIKE ${variable()}"
+                                    Operation.INF -> "$fieldName < ${variable()}"
+                                    Operation.INF_OR_EQ -> "$fieldName <= ${variable()}"
+                                    Operation.SUP -> "$fieldName > ${variable()}"
+                                    Operation.SUP_OR_EQ -> "$fieldName >= ${variable()}"
+                                    Operation.IN ->
+                                        when (this) {
+                                            is WhereClauseValue<*> ->
+                                                when (module) {
+                                                    // SQLITE, JDBC and R2DBC : must put as much params as collection size
+                                                    Module.SQLITE, Module.JDBC ->
+                                                        "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+                                                    Module.R2DBC ->
+                                                        when (tables.dbType) {
+                                                            DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+                                                            DbType.H2, DbType.POSTGRESQL ->
+                                                                "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
+                                                            DbType.MSSQL ->
+                                                                "$fieldName IN (${(value as Collection<*>).joinToString { "@p${++index}" }})"
+                                                            else ->
+                                                                "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
+                                                        }
+                                                    else -> "$fieldName IN (:k${index++})"
+                                                }
+                                            is WhereClauseColumn<*> -> TODO()
+                                        }
+                                    /*Operation.IS ->
+                                        if (DbType.SQLITE == tables.dbType) {
+                                            "$fieldName IS ?"
+                                        } else {
+                                            "$fieldName IS :k${index++}"
+                                        }*/
+                                    else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                 }
-                            /*Operation.IS ->
-                                if (DbType.SQLITE == tables.dbType) {
-                                    "$fieldName IS ?"
-                                } else {
-                                    "$fieldName IS :k${index++}"
-                                }*/
+                            }
                         }
                     )
                 }
@@ -925,4 +959,23 @@ internal fun DefaultSqlClientCommon.Properties.variable() = when {
     module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++this.index}"
     module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
     else -> ":k${this.index++}"
+}
+
+internal data class SubQueryResult<T : Any>(
+    internal val subQueryProperties: DefaultSqlClientSelect.Properties<T>,
+    internal val result: SqlClientSubQuery.Return<T>,
+)
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
+    dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+): SubQueryResult<T> {
+    val subQuery = SqlClientSubQueryImpl.Selectable(this)
+// invoke sub-query
+    val result = dsl(subQuery)
+// add all sub-query parameters, if any, to parent's properties
+    if (subQuery.properties.parameters.isNotEmpty()) {
+        this.parameters.addAll(subQuery.properties.parameters)
+    }
+    return SubQueryResult(subQuery.properties as DefaultSqlClientSelect.Properties<T>, result)
 }

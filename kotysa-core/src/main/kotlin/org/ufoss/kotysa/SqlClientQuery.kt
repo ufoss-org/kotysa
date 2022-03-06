@@ -116,6 +116,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun where(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U>
         public infix fun where(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
         public infix fun where(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
+        public infix fun <V : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
     }
 
     public interface WhereInOpColumn<T : Any, U : Where<T, U>, V : Any> {
@@ -245,6 +246,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(longColumnNullable: LongColumnNullable<T>): WhereOpLongColumnNullable<T, U>
         public infix fun and(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
         public infix fun and(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
+        public infix fun <V : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
 
         public infix fun or(stringColumnNotNull: StringColumnNotNull<T>): WhereOpStringColumnNotNull<T, U>
         public infix fun or(stringColumnNullable: StringColumnNullable<T>): WhereOpStringColumnNullable<T, U>
@@ -265,6 +267,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun or(intColumnNullable: IntColumnNullable<T>): WhereOpIntColumnNullable<T, U>
         public infix fun or(uuidColumnNotNull: UuidColumnNotNull<T>): WhereOpUuidColumnNotNull<T, U>
         public infix fun or(uuidColumnNullable: UuidColumnNullable<T>): WhereOpUuidColumnNullable<T, U>
+        public infix fun <V : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
     }
 
     public interface LimitOffset<T : LimitOffset<T>> {

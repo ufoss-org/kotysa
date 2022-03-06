@@ -18,6 +18,13 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
         assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
             .isEqualTo(Pair(userBboss.firstname, roleAdmin.label))
     }
+
+    @Test
+    fun `Verify selectRoleLabelWhereExistsUserSubQuery returns User and Admin roles`() {
+        assertThat(repository.selectRoleLabelWhereExistsUserSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(roleAdmin.label, roleUser.label)
+    }
 }
 
 
@@ -36,4 +43,16 @@ class UserRepositorySqliteSubQuery(
                 from SqliteUsers
                 where SqliteUsers.id eq userId)
             .fetchOne()
+
+    fun selectRoleLabelWhereExistsUserSubQuery(userIds: List<Int>) =
+        (sqlClient select SqliteRoles.label
+                from SqliteRoles
+        whereExists 
+        {
+            (this select SqliteUsers.id
+                    from SqliteUsers
+                    where SqliteUsers.roleId eq SqliteRoles.id
+                    and SqliteUsers.id `in` userIds)
+        })
+            .fetchAll()
 }
