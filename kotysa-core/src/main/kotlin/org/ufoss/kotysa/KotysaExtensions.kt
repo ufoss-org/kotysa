@@ -33,3 +33,10 @@ public fun List<WhereClauseWithType>.dbValues(tables: Tables): List<Any> =
             tables.getDbValue(value)
         } as Any
     }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, KotysaTable<*>>): KotysaTable<T> {
+    return requireNotNull(availableTables[this]) { "Requested table \"$this\" is not mapped" } as KotysaTable<T>
+}
+
+public infix fun <T : Any, U : Any> Column<T, U>.`as`(alias: String): Column<T, U> = AliasedColumn(this, alias)

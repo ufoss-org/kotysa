@@ -45,8 +45,3 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
 
     internal fun isPkInitialized() = ::pk.isInitialized
 }
-
-@Suppress("UNCHECKED_CAST")
-internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, KotysaTable<*>>): KotysaTable<T> {
-    return requireNotNull(availableTables[this]) { "Requested table \"$this\" is not mapped" } as KotysaTable<T>
-}

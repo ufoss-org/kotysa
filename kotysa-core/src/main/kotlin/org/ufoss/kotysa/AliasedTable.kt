@@ -5,7 +5,7 @@
 package org.ufoss.kotysa
 
 /**
- * A table with an alias (that may be null)
+ * A table with an alias
  */
 internal class AliasedTable<T : Any> internal constructor(
         table: AbstractTable<T>,
