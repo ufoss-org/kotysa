@@ -234,7 +234,7 @@ internal fun Any?.dbValue(): String = when (this) {
     }
 }
 
-private fun Any?.defaultValue(): String = when (this) {
+internal fun Any?.defaultValue(): String = when (this) {
     is Int -> "$this"
     is Long -> "$this"
     else -> "'${this.dbValue()}'"

@@ -122,6 +122,11 @@ internal class SqlClientSqLite(
     override fun <T : Any> select(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.FirstSelect<T> = SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCaseWhenExists(dsl)
 }
 
 /**

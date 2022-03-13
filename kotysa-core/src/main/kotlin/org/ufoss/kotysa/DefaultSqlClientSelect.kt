@@ -86,6 +86,15 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add(SubQueryField(result, subQueryProperties.select))
         }
 
+        public fun <U : Any, V : Any> addSelectCaseWhenExistsSubQuery(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+            then: V,
+            elseVal: V
+        ) {
+            val (_, result) = properties.executeSubQuery(dsl)
+            properties.selectedFields.add(CaseWhenExistsSubQueryField(result, then, elseVal))
+        }
+
         protected fun aliasLastColumn(alias: String) {
             val lastField = properties.selectedFields.last()
             if (lastField !is ColumnField<*, *>) {

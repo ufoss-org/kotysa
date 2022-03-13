@@ -38,6 +38,9 @@ public interface SqlClient {
     public infix fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long>
     public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>)
             : SqlClientSelect.FirstSelect<T>
+    public infix fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.SelectCaseWhenExistsFirst<T>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): SqlClientSelect.From<T, T> =
             select(table).from(table)
@@ -62,6 +65,17 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
         override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
         override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): FirstSelect<T>
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SelectCaseWhenExistsFirst<T>
+    }
+
+    public interface SelectCaseWhenExistsFirst<T : Any>: SelectCaseWhenExists {
+        public override fun <U : Any> then(value: U): SelectCaseWhenExistsFirstPart2<T, U>
+    }
+
+    public interface SelectCaseWhenExistsFirstPart2<T : Any, U : Any> : SelectCaseWhenExistsPart2<U> {
+        public override fun `else`(value: U): FirstSelect<U>
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {

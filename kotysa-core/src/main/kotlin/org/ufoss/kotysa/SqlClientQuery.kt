@@ -32,15 +32,15 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
         public infix fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-        ): SelectWhen<*>
+        ): SelectCaseWhenExists
     }
 
-    public interface SelectWhen<T : Select> {
-        public infix fun <U : Any> then(value: U): SelectWhenPart2<U, T>
+    public interface SelectCaseWhenExists {
+        public infix fun <T : Any> then(value: T): SelectCaseWhenExistsPart2<T>
     }
 
-    public interface SelectWhenPart2<T : Any, U : Select> {
-        public infix fun `else`(value: T): U
+    public interface SelectCaseWhenExistsPart2<T : Any> {
+        public infix fun `else`(value: T): Select
     }
 
     public interface Select {

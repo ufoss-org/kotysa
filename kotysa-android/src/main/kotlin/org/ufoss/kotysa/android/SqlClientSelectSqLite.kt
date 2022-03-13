@@ -49,6 +49,30 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.FirstSelect<T> =
             FirstSelect<T>(client, properties()).apply { addSelectSubQuery(dsl) }
+
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.SelectCaseWhenExistsFirst<T> = SelectCaseWhenExistsFirst(client, tables, dsl)
+    }
+
+    private class SelectCaseWhenExistsFirst<T : Any>(
+        private val client: SQLiteDatabase,
+        private val tables: Tables,
+        private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ) : SqlClientSelect.SelectCaseWhenExistsFirst<T> {
+        private fun <U : Any> properties() = Properties<U>(tables, DbAccessType.ANDROID, Module.SQLITE)
+        override fun <U : Any> then(value: U): SqlClientSelect.SelectCaseWhenExistsFirstPart2<T, U> =
+            SelectCaseWhenExistsFirstPart2(client, properties(), dsl, value)
+    }
+
+    private class SelectCaseWhenExistsFirstPart2<T : Any, U : Any>(
+        private val client: SQLiteDatabase,
+        private val properties: Properties<U>,
+        private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : SqlClientSelect.SelectCaseWhenExistsFirstPart2<T, U> {
+        override fun `else`(value: U): SqlClientSelect.FirstSelect<U> =
+            FirstSelect(client, properties).apply { addSelectCaseWhenExistsSubQuery(dsl, then, value) }
     }
 
     private class FirstSelect<T : Any>(
