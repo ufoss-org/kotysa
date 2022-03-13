@@ -10,7 +10,7 @@ package org.ufoss.kotysa
  * @param T Entity type associated with the table this column is in
  * @param U return type of associated getter to this column
  */
-public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column<T, U> {
+public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column<T, U>, Cloneable {
     public abstract val entityGetter: (T) -> U?
     internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
@@ -19,6 +19,11 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
     internal abstract val isNullable: Boolean
     internal abstract val defaultValue: U?
     internal lateinit var name: String
+    internal var alias: String? = null
+
+    public override fun clone(): Any {
+        return super.clone()
+    }
 
     override fun toString(): String {
         return "DbColumn(entityGetter=$entityGetter)"

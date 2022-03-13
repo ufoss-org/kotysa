@@ -98,6 +98,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
                 addSelectSubQuery(dsl)
             }
+
+        override fun `as`(alias: String): SqlClientSelect.FirstSelect<T> = this.apply { aliasLastColumn(alias) }
     }
 
     private class SecondSelect<T, U>(
@@ -147,6 +149,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
                 addSelectSubQuery(dsl)
             }
+
+        override fun `as`(alias: String): SqlClientSelect.SecondSelect<T, U> = this.apply { aliasLastColumn(alias) }
     }
 
     private class ThirdSelect<T, U, V>(
@@ -195,6 +199,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         ): SqlClientSelect.Select = Select(client, properties as Properties<List<Any?>>).apply {
             addSelectSubQuery(dsl)
         }
+
+        override fun `as`(alias: String): SqlClientSelect.ThirdSelect<T, U, V> = this.apply { aliasLastColumn(alias) }
     }
 
     private class Select(
@@ -230,9 +236,12 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         }
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
+        
         override fun <T : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.Select = this.apply { addSelectSubQuery(dsl) }
+
+        override fun `as`(alias: String): SqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
     private class SelectWithDsl<T : Any>(
@@ -244,6 +253,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.From<T, U> =
             addFromTable(table, from as From<T, U>)
+
+        override fun `as`(alias: String): Nothing {
+            throw IllegalArgumentException("No Alias for selectAndBuild")
+        }
     }
 
     private class From<T : Any, U : Any>(

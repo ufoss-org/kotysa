@@ -32,7 +32,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
     }
 
-    public interface Select
+    public interface Select {
+        public infix fun `as`(alias: String): Select
+    }
 
     public interface Fromable {
         public infix fun <T : Any> from(table: Table<T>): From<T, *>

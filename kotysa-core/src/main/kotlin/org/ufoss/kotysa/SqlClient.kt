@@ -79,6 +79,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>)
                 : SecondSelect<T?, U?>
+        override fun `as`(alias: String): FirstSelect<T>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
@@ -92,6 +93,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
         override fun <V : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>)
                 : ThirdSelect<T, U, V?>
+        override fun `as`(alias: String): SecondSelect<T, U>
     }
 
     public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
@@ -104,6 +106,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
         override fun andSum(column: IntColumn<*>): Select
         override fun <W : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>): Select
+        override fun `as`(alias: String): ThirdSelect<T, U, V>
     }
 
     public interface Select : Fromable<List<Any?>>, Andable {
@@ -116,6 +119,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
         override fun andSum(column: IntColumn<*>): Select
         override fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
+        override fun `as`(alias: String): Select
     }
 
     public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Where<T>>, GroupBy<T>,

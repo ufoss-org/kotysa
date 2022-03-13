@@ -35,8 +35,53 @@ public fun List<WhereClauseWithType>.dbValues(tables: Tables): List<Any> =
     }
 
 @Suppress("UNCHECKED_CAST")
+public operator fun <T : Any, U : Any, V : Column<T, U>> V.get(alias: String): V =
+    (this as DbColumn<T, U>).clone().apply { (this as DbColumn<T, U>).alias = alias } as V
+
+@Suppress("UNCHECKED_CAST")
 internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, KotysaTable<*>>): KotysaTable<T> {
     return requireNotNull(availableTables[this]) { "Requested table \"$this\" is not mapped" } as KotysaTable<T>
 }
 
-public infix fun <T : Any, U : Any> Column<T, U>.`as`(alias: String): Column<T, U> = AliasedColumn(this, alias)
+@Suppress("UNCHECKED_CAST")
+internal fun <T : Any, U: Any> Column<T, U>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<T, U> {
+    return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" } as KotysaColumn<T, U>
+}
+
+internal fun <T : Any, U : Any> Column<T, U>.toField(
+    properties: DefaultSqlClientCommon.Properties,
+    classifier: FieldClassifier,
+): ColumnField<T, U> = ColumnField(properties, this, classifier)
+
+public fun <T : Any> AbstractTable<T>.toField(
+    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+    availableTables: Map<Table<*>, KotysaTable<*>>,
+): Field<T> =
+    TableField(availableColumns, availableTables, this)
+
+internal fun Field<*>.getFieldName(): String {
+    var fieldName = fieldNames.joinToString()
+    if (alias != null) {
+        fieldName += " AS $alias"
+    }
+    return fieldName
+}
+
+internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+    if ((this as DbColumn<*, *>).alias != null) {
+        return this.alias!!
+    }
+    val kotysaColumn = getKotysaColumn(availableColumns)
+    val kotysaTable = kotysaColumn.table
+    return "${kotysaTable.getFieldName()}.${kotysaColumn.name}"
+}
+
+internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
+    getKotysaTable(availableTables).getFieldName()
+
+private fun KotysaTable<*>.getFieldName() = name
+/*if (this is AliasedTable<*>) {
+    alias
+} else {
+    name
+}*/

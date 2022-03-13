@@ -50,6 +50,11 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun <U : Any> from(table: Table<U>): SqlClientSubQuery.From<T, U> =
             addFromTable(table, from as From<T, U>)
+
+        override fun `as`(alias: String): FirstSelect<T> {
+            aliasLastColumn(alias)
+            return this
+        }
     }
 
     private class From<T : Any, U : Any>(

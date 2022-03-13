@@ -85,6 +85,14 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             val (subQueryProperties, result) = properties.executeSubQuery(dsl)
             properties.selectedFields.add(SubQueryField(result, subQueryProperties.select))
         }
+
+        protected fun aliasLastColumn(alias: String) {
+            val lastField = properties.selectedFields.last()
+            if (lastField !is ColumnField<*, *>) {
+                throw IllegalArgumentException("Alias is only supported on Columns")
+            }
+            lastField.alias = alias
+        }
     }
 
     public abstract class SelectWithDsl<T : Any> protected constructor(
@@ -193,7 +201,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(doLog: Boolean = true): String = with(properties) {
-            val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.fieldNames.joinToString() }
+            val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.getFieldName() }
             val froms = froms()
             val wheres = wheres()
             val groupBy = groupBy()

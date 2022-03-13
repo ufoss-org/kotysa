@@ -78,10 +78,3 @@ public interface LongColumnNullable<out T : Any> : LongColumn<T>, ColumnNullable
 public interface UuidColumn<out T : Any> : Column<T, UUID>
 public interface UuidColumnNotNull<out T : Any> : UuidColumn<T>, ColumnNotNull<T, UUID>
 public interface UuidColumnNullable<out T : Any> : UuidColumn<T>, ColumnNullable<T, UUID>
-
-// Extension functions
-
-@Suppress("UNCHECKED_CAST")
-internal fun <T : Any, U: Any> Column<T, U>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<T, U> {
-    return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" } as KotysaColumn<T, U>
-}

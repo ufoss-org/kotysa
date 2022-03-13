@@ -11,6 +11,7 @@ import org.junit.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
@@ -105,6 +106,12 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
     fun `Verify selectFirstnameById returns TheBoss firstname`() {
         assertThat(repository.selectFirstnameById(userBboss.id))
                 .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectAliasedFirstnameByFirstname returns TheBoss firstname`() {
+        assertThat(repository.selectAliasedFirstnameByFirstname(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
     }
 
     @Test
@@ -208,6 +215,12 @@ class UserRepositorySelect(
                     from SqliteUsers
                     where SqliteUsers.id eq id
                     ).fetchOne()
+
+    fun selectAliasedFirstnameByFirstname(firstname: String) =
+        (sqlClient select SqliteUsers.firstname `as` "fn"
+                from SqliteUsers
+                where SqliteUsers.firstname["fn"] eq firstname
+                ).fetchOne()
 
     fun selectAliasById(id: Int) =
             (sqlClient select SqliteUsers.alias

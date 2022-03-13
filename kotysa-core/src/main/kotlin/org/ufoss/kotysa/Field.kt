@@ -14,7 +14,12 @@ import kotlin.reflect.full.primaryConstructor
 
 public sealed interface Field<T> {
     public val fieldNames: List<String>
+    public var alias: String?
     public val builder: (RowImpl) -> T
+}
+
+internal abstract class AbstractField<T> : Field<T> {
+    final override var alias: String? = null
 }
 
 public enum class FieldClassifier {
@@ -28,10 +33,9 @@ public interface FieldNullable<T : Any> : Field<T?>
 internal class CountField<T : Any, U : Any> internal constructor(
     properties: DefaultSqlClientCommon.Properties,
     column: Column<T, U>?,
-) : FieldNotNull<Long> {
+) : AbstractField<Long>(), FieldNotNull<Long> {
     override val fieldNames: List<String> =
         listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
-
     override val builder: (RowImpl) -> Long = { row -> row.getAndIncrement(Long::class.javaObjectType)!! }
 }
 
@@ -39,23 +43,21 @@ internal class ColumnField<T : Any, U : Any> internal constructor(
     properties: DefaultSqlClientCommon.Properties,
     column: Column<T, U>,
     classifier: FieldClassifier,
-) : FieldNullable<U> {
+) : AbstractField<U?>(), FieldNullable<U> {
     override val fieldNames: List<String> = when (classifier) {
         FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns))
         FieldClassifier.DISTINCT -> listOf("DISTINCT ${column.getFieldName(properties.tables.allColumns)}")
         FieldClassifier.MAX -> listOf("MAX(${column.getFieldName(properties.tables.allColumns)})")
         FieldClassifier.MIN -> listOf("MIN(${column.getFieldName(properties.tables.allColumns)})")
     }
-
     override val builder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
 }
 
 internal class AvgField<T : Any, U : Any> internal constructor(
     properties: DefaultSqlClientCommon.Properties,
     column: Column<T, U>,
-) : FieldNotNull<BigDecimal> {
+) : AbstractField<BigDecimal>(), FieldNotNull<BigDecimal> {
     override val fieldNames: List<String> = listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
-
     override val builder: (RowImpl) -> BigDecimal = { row ->
         when {
             properties.tables.dbType == DbType.H2 && properties.module == Module.R2DBC ->
@@ -71,7 +73,7 @@ internal class AvgField<T : Any, U : Any> internal constructor(
 internal class LongSumField<T : Any, U : Any> internal constructor(
     properties: DefaultSqlClientCommon.Properties,
     column: Column<T, U>,
-) : FieldNotNull<Long> {
+) : AbstractField<Long>(), FieldNotNull<Long> {
     override val fieldNames: List<String> = listOf("SUM(${column.getFieldName(properties.tables.allColumns)})")
 
     override val builder: (RowImpl) -> Long = { row ->
@@ -90,7 +92,7 @@ internal class TableField<T : Any> internal constructor(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
     availableTables: Map<Table<*>, KotysaTable<*>>,
     internal val table: AbstractTable<T>,
-) : Field<T> {
+) : AbstractField<T>() {
 
     override val fieldNames: List<String> =
         table.columns.map { column -> column.getFieldName(availableColumns) }
@@ -203,14 +205,14 @@ internal class TableField<T : Any> internal constructor(
 internal class SubQueryField<T : Any> internal constructor(
     private val subQueryReturn: SqlClientSubQuery.Return<T>,
     override val builder: (RowImpl) -> T?,
-) : FieldNullable<T> {
+) : AbstractField<T?>(), FieldNullable<T> {
     override val fieldNames get() = listOf("( ${subQueryReturn.sql()} )")
 }
 
 internal class FieldDsl<T : Any>(
     properties: DefaultSqlClientSelect.Properties<T>,
     private val dsl: (ValueProvider) -> T
-) : FieldNotNull<T> {
+) : AbstractField<T>(), FieldNotNull<T> {
     private val selectDsl = SelectDsl(properties)
 
     override val fieldNames: List<String> = FieldValueProvider(properties).initialize(dsl)
@@ -220,32 +222,3 @@ internal class FieldDsl<T : Any>(
         dsl(selectDsl)
     }
 }
-
-// Extension functions
-
-internal fun <T : Any, U : Any> Column<T, U>.toField(
-    properties: DefaultSqlClientCommon.Properties,
-    classifier: FieldClassifier,
-): ColumnField<T, U> = ColumnField(properties, this, classifier)
-
-public fun <T : Any> AbstractTable<T>.toField(
-    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
-    availableTables: Map<Table<*>, KotysaTable<*>>,
-): Field<T> =
-    TableField(availableColumns, availableTables, this)
-
-internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
-    val kotysaColumn = getKotysaColumn(availableColumns)
-    val kotysaTable = kotysaColumn.table
-    return "${kotysaTable.getFieldName()}.${kotysaColumn.name}"
-}
-
-internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
-    getKotysaTable(availableTables).getFieldName()
-
-private fun KotysaTable<*>.getFieldName() = name
-    /*if (this is AliasedTable<*>) {
-        alias
-    } else {
-        name
-    }*/
