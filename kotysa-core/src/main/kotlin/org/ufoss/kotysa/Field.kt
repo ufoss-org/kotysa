@@ -210,12 +210,13 @@ internal class SubQueryField<T : Any> internal constructor(
 }
 
 internal class CaseWhenExistsSubQueryField<T : Any, U : Any> internal constructor(
+    private val dbType: DbType,
     private val subQueryReturn: SqlClientSubQuery.Return<T>,
     private val then: U,
     private val elseVal: U,
 ) : AbstractField<U>(), FieldNotNull<U> {
-    override val fieldNames get() = listOf("CASE WHEN\nEXISTS( ${subQueryReturn.sql()} )\nTHEN ${then.defaultValue()} " +
-            "ELSE ${elseVal.defaultValue()}\nEND")
+    override val fieldNames get() = listOf("CASE WHEN\nEXISTS( ${subQueryReturn.sql()} )\n" +
+            "THEN ${then.defaultValue(dbType)} ELSE ${elseVal.defaultValue(dbType)}\nEND")
     override val builder: (RowImpl) -> U = { row -> row.getAndIncrement(then::class.javaObjectType)!! }
 }
 

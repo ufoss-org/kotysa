@@ -92,13 +92,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             elseVal: V
         ) {
             val (_, result) = properties.executeSubQuery(dsl)
-            properties.selectedFields.add(CaseWhenExistsSubQueryField(result, then, elseVal))
+            properties.selectedFields.add(CaseWhenExistsSubQueryField(properties.tables.dbType, result, then, elseVal))
         }
 
         protected fun aliasLastColumn(alias: String) {
             val lastField = properties.selectedFields.last()
-            if (lastField !is ColumnField<*, *>) {
-                throw IllegalArgumentException("Alias is only supported on Columns")
+            if (lastField is TableField) {
+                throw IllegalArgumentException("Alias is not supported on Table")
             }
             lastField.alias = alias
         }

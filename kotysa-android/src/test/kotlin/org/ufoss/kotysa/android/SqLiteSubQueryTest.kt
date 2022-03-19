@@ -29,8 +29,12 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
     @Test
     fun `Verify selectCaseWhenExistsSubQuery returns results`() {
         assertThat(repository.selectCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(2)
-            .containsExactlyInAnyOrder(Pair(true, roleAdmin.label), Pair(true, roleUser.label))
+            .hasSize(3)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+                Pair(roleGod.label, false)
+            )
     }
 }
 
@@ -54,24 +58,23 @@ class UserRepositorySqliteSubQuery(
     fun selectRoleLabelWhereExistsUserSubQuery(userIds: List<Int>) =
         (sqlClient select SqliteRoles.label
                 from SqliteRoles
-        whereExists 
-        {
-            (this select SqliteUsers.id
-                    from SqliteUsers
-                    where SqliteUsers.roleId eq SqliteRoles.id
-                    and SqliteUsers.id `in` userIds)
-        })
+                whereExists
+                {
+                    (this select SqliteUsers.id
+                            from SqliteUsers
+                            where SqliteUsers.roleId eq SqliteRoles.id
+                            and SqliteUsers.id `in` userIds)
+                })
             .fetchAll()
 
     fun selectCaseWhenExistsSubQuery(userIds: List<Int>) =
-        (sqlClient selectCaseWhenExists
-        {
+        (sqlClient selectDistinct SqliteRoles.label
+                andCaseWhenExists {
             (this select SqliteUsers.id
                     from SqliteUsers
                     where SqliteUsers.roleId eq SqliteRoles.id
                     and SqliteUsers.id `in` userIds)
-        } then true `else` false // `as` "roleUsedByUser"
-                and SqliteRoles.label
+        } then true `else` false `as` "roleUsedByUser"
                 from SqliteRoles)
             .fetchAll()
 }

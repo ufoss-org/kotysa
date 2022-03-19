@@ -12,7 +12,6 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
 private val logger = Logger.of<DefaultSqlClient>()
 
 public interface DefaultSqlClient {
@@ -41,7 +40,7 @@ public interface DefaultSqlClient {
                 ""
             }
             val default = if (column.defaultValue != null) {
-                " DEFAULT ${column.defaultValue.defaultValue()}"
+                " DEFAULT ${column.defaultValue.defaultValue(tables.dbType)}"
             } else {
                 ""
             }
@@ -106,7 +105,7 @@ public interface DefaultSqlClient {
     public fun <T : Any> insertSqlQuery(row: T, withReturn: Boolean): String {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
-        var index = 0
+        val counter = Counter()
         val values = kotysaTable.columns
             // filter out null values with default value or Serial types
             .filterNot { column ->
@@ -118,13 +117,7 @@ public interface DefaultSqlClient {
             }
             .joinToString { column ->
                 columnNames.add(column.name)
-                when {
-                    module == Module.SQLITE || module == Module.JDBC
-                            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-                    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
-                    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
-                    else -> ":k${index++}"
-                }
+                variable(counter)
             }
         var prefix = ""
         var suffix = ""
@@ -182,43 +175,40 @@ public interface DefaultSqlClient {
                 }
                 "${pkColumns[0].name} = $selected"
             } else {
-                var index = 0
+            val counter = Counter()
                 pkColumns
                     .joinToString(" AND ") { column ->
-                        val variable = when {
-                            module == Module.SQLITE || module == Module.JDBC
-                                    || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-                            module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
-                            module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
-                            else -> ":k${index++}"
-                        }
-                        "${column.name} = $variable"
+                        "${column.name} = ${variable(counter)}"
                     }
             }
 
         return "SELECT $allTableColumnNames FROM ${kotysaTable.name} WHERE $wheres"
     }
+
+    public fun variable(counter: Counter): String =
+        when {
+            module == Module.SQLITE || module == Module.JDBC
+                    || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+            module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++counter.index}"
+            module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++counter.index}"
+            else -> ":k${counter.index++}"
+        }
 }
 
-internal fun Any?.dbValue(): String = when (this) {
+internal fun Any?.dbValue(dbType: DbType): String = when (this) {
     null -> "null"
     is String -> "$this"
-    is Boolean -> "$this"
+    is Boolean -> if (DbType.SQLITE == dbType) {
+        if (this) "1" else "0"
+    } else {
+        "$this"
+    }
     is UUID -> "$this"
     is Int -> "$this"
     is Long -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    /*DateTimeFormatterBuilder()
-            .parseCaseInsensitive()
-            .append(DateTimeFormatter.ISO_LOCAL_DATE)
-            .appendLiteral(' ')
-            .append(DateTimeFormatter.ISO_LOCAL_TIME)
-            .optionalStart()
-            .appendFraction(MICRO_OF_SECOND, 0, 6, true)
-            .optionalEnd()
-            .toFormatter(Locale.ENGLISH))*/
-    is LocalTime -> /*"+" + */this.format(DateTimeFormatter.ISO_LOCAL_TIME)
+    is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     else -> when (this::class.qualifiedName) {
         "kotlinx.datetime.LocalDate" -> this.toString()
@@ -234,8 +224,17 @@ internal fun Any?.dbValue(): String = when (this) {
     }
 }
 
-internal fun Any?.defaultValue(): String = when (this) {
+internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
+    is Boolean -> if (DbType.SQLITE == dbType) {
+        if (this) "1" else "0"
+    } else {
+        "'${this.dbValue(dbType)}'"
+    }
     is Int -> "$this"
     is Long -> "$this"
-    else -> "'${this.dbValue()}'"
+    else -> "'${this.dbValue(dbType)}'"
+}
+
+public class Counter {
+    internal var index = 0
 }

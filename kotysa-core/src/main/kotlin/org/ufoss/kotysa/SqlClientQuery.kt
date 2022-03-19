@@ -51,6 +51,14 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> from(table: Table<T>): From<T, *>
     }
 
+    public interface AndCaseWhenExists {
+        public infix fun <T : Any> then(value: T): AndCaseWhenExistsPart2<T>
+    }
+
+    public interface AndCaseWhenExistsPart2<T : Any> {
+        public infix fun `else`(value: T): Andable
+    }
+
     public interface Andable {
         public infix fun <T : Any> and(table: Table<T>): Andable
         public infix fun <T : Any> and(column: Column<*, T>): Andable
@@ -65,6 +73,9 @@ public abstract class SqlClientQuery protected constructor() {
          * sub-query
          */
         public infix fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Andable
+        public infix fun <T : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): AndCaseWhenExists
     }
 
     public interface From<T : Any, U : From<T, U>> {

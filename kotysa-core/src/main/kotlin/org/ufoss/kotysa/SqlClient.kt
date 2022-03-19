@@ -93,7 +93,20 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>)
                 : SecondSelect<T?, U?>
+
+        override fun <U : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): AndCaseWhenExistsSecond<T, U>
+        
         override fun `as`(alias: String): FirstSelect<T>
+    }
+
+    public interface AndCaseWhenExistsSecond<T : Any, U : Any>: AndCaseWhenExists {
+        public override fun <V : Any> then(value: V): AndCaseWhenExistsSecondPart2<T, U, V>
+    }
+
+    public interface AndCaseWhenExistsSecondPart2<T : Any, U : Any, V : Any> : AndCaseWhenExistsPart2<V> {
+        public override fun `else`(value: V): SecondSelect<T?, V?>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
