@@ -106,7 +106,7 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
     }
 
     public interface AndCaseWhenExistsSecondPart2<T : Any, U : Any, V : Any> : AndCaseWhenExistsPart2<V> {
-        public override fun `else`(value: V): SecondSelect<T?, V?>
+        public override fun `else`(value: V): SecondSelect<T?, V>
     }
 
     public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
@@ -120,7 +120,19 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
         override fun <V : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>)
                 : ThirdSelect<T, U, V?>
+
+        override fun <V : Any> andCaseWhenExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>)
+        : AndCaseWhenExistsThird<T, U, V>
+        
         override fun `as`(alias: String): SecondSelect<T, U>
+    }
+
+    public interface AndCaseWhenExistsThird<T, U, V : Any>: AndCaseWhenExists {
+        public override fun <W : Any> then(value: W): AndCaseWhenExistsThirdPart2<T, U, V, W>
+    }
+
+    public interface AndCaseWhenExistsThirdPart2<T, U, V : Any, W : Any> : AndCaseWhenExistsPart2<W> {
+        public override fun `else`(value: W): ThirdSelect<T, U, W>
     }
 
     public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
@@ -133,7 +145,18 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
         override fun andSum(column: IntColumn<*>): Select
         override fun <W : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>): Select
+        override fun <W : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
+        ): AndCaseWhenExistsLast<W>
         override fun `as`(alias: String): ThirdSelect<T, U, V>
+    }
+
+    public interface AndCaseWhenExistsLast<T : Any>: AndCaseWhenExists {
+        public override fun <U : Any> then(value: U): AndCaseWhenExistsLastPart2<T, U>
+    }
+
+    public interface AndCaseWhenExistsLastPart2<T : Any, U : Any> : AndCaseWhenExistsPart2<U> {
+        public override fun `else`(value: U): Select
     }
 
     public interface Select : Fromable<List<Any?>>, Andable {
@@ -146,6 +169,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
         override fun andSum(column: IntColumn<*>): Select
         override fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
+        override fun <T : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): AndCaseWhenExistsLast<T>
         override fun `as`(alias: String): Select
     }
 

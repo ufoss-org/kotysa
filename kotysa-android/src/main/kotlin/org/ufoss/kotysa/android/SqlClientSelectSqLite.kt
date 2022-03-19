@@ -145,8 +145,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
         private val then: V,
     ) : SqlClientSelect.AndCaseWhenExistsSecondPart2<T, U, V> {
-        override fun `else`(value: V): SqlClientSelect.SecondSelect<T?, V?> =
-            SecondSelect(client, properties as Properties<Pair<T?, V?>>).apply { addSelectCaseWhenExistsSubQuery(dsl, then, value) }
+        override fun `else`(value: V): SqlClientSelect.SecondSelect<T?, V> =
+            SecondSelect(client, properties as Properties<Pair<T?, V>>).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
     }
 
     private class SecondSelect<T, U>(
@@ -196,12 +198,33 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
                 addSelectSubQuery(dsl)
             }
-        
-        override fun <T : Any> andCaseWhenExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): AndCaseWhenExists {
-            TODO("Not yet implemented")
-        }
+
+        override fun <V : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(client, properties, dsl)
 
         override fun `as`(alias: String): SqlClientSelect.SecondSelect<T, U> = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class AndCaseWhenExistsThird<T, U, V : Any>(
+        private val client: SQLiteDatabase,
+        private val properties: Properties<Pair<T, U>>,
+        private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+    ) : SqlClientSelect.AndCaseWhenExistsThird<T, U, V> {
+        override fun <W : Any> then(value: W): SqlClientSelect.AndCaseWhenExistsThirdPart2<T, U, V, W> =
+            AndCaseWhenExistsThirdPart2(client, properties, dsl, value)
+    }
+
+    private class AndCaseWhenExistsThirdPart2<T, U, V : Any, W : Any>(
+        private val client: SQLiteDatabase,
+        private val properties: Properties<Pair<T, U>>,
+        private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>,
+        private val then: W,
+    ) : SqlClientSelect.AndCaseWhenExistsThirdPart2<T, U, V, W> {
+        override fun `else`(value: W): SqlClientSelect.ThirdSelect<T, U, W> =
+            ThirdSelect(client, properties as Properties<Triple<T, U, W>>).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
     }
 
     private class ThirdSelect<T, U, V>(
@@ -251,15 +274,37 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             addSelectSubQuery(dsl)
         }
 
-        override fun <T : Any> andCaseWhenExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): AndCaseWhenExists {
-            TODO("Not yet implemented")
-        }
+        override fun <W : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
+        ): SqlClientSelect.AndCaseWhenExistsLast<W> =
+            AndCaseWhenExistsLast(client, properties as Properties<List<Any?>>, dsl)
 
         override fun `as`(alias: String): SqlClientSelect.ThirdSelect<T, U, V> = this.apply { aliasLastColumn(alias) }
     }
 
+    private class AndCaseWhenExistsLast<T : Any>(
+        private val client: SQLiteDatabase,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ) : SqlClientSelect.AndCaseWhenExistsLast<T> {
+        override fun <U : Any> then(value: U): SqlClientSelect.AndCaseWhenExistsLastPart2<T, U> =
+            AndCaseWhenExistsLastPart2(client, properties, dsl, value)
+    }
+
+    private class AndCaseWhenExistsLastPart2<T : Any, U : Any>(
+        private val client: SQLiteDatabase,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : SqlClientSelect.AndCaseWhenExistsLastPart2<T, U> {
+        override fun `else`(value: U): SqlClientSelect.Select =
+            Select(client, properties).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
+    }
+
     private class Select(
-        client: SQLiteDatabase,
+        private val client: SQLiteDatabase,
         override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
         private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
@@ -296,9 +341,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.Select = this.apply { addSelectSubQuery(dsl) }
 
-        override fun <T : Any> andCaseWhenExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): AndCaseWhenExists {
-            TODO("Not yet implemented")
-        }
+        override fun <T : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(client, properties, dsl)
 
         override fun `as`(alias: String): SqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
