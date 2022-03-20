@@ -16,7 +16,7 @@ public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> 
 
 public fun List<WhereClauseWithType>.dbValues(tables: Tables): List<Any> =
     mapNotNull { typedWhereClause ->
-        if (typedWhereClause.whereClause is WhereClauseValue<*>) {
+        if (typedWhereClause.whereClause is WhereClauseValue) {
             typedWhereClause.whereClause.value
         } else {
             null

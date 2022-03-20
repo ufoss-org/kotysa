@@ -17,7 +17,7 @@ public fun DefaultSqlClientCommon.Properties.r2dbcBindWhereParams(statement: Sta
     with(this) {
         whereClauses
             .mapNotNull { typedWhereClause ->
-                if (typedWhereClause.whereClause is WhereClauseValue<*>) {
+                if (typedWhereClause.whereClause is WhereClauseValue) {
                     typedWhereClause.whereClause.value
                 } else {
                     null
@@ -31,7 +31,6 @@ public fun DefaultSqlClientCommon.Properties.r2dbcBindWhereParams(statement: Sta
             }
             .forEach { whereValue ->
                 val dbValue = tables.getDbValue(whereValue)!!
-//                statement.bind(index++, value)
                 when (this.tables.dbType) {
                     DbType.H2 -> statement.bind("$${++index}", dbValue)
                     else -> statement.bind(index++, dbValue)
