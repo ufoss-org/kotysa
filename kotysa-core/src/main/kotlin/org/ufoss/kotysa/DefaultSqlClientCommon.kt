@@ -176,6 +176,50 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun where(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T> =
             whereOpStringAliasNullable(stringAliasNullable, WhereClauseType.WHERE)
 
+        override infix fun where(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
+                WhereOpLocalDateTimeNotNull<LocalDateTime, T> =
+            whereOpLocalDateTimeAliasNotNull(localDateTimeAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
+                WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T> =
+            whereOpKotlinxLocalDateTimeAliasNotNull(kotlinxLocalDateTimeAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T> =
+            whereOpLocalDateAliasNotNull(localDateAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
+                WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T> =
+            whereOpKotlinxLocalDateAliasNotNull(kotlinxLocalDateAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
+                WhereOpOffsetDateTimeNotNull<OffsetDateTime, T> =
+            whereOpOffsetDateTimeAliasNotNull(offsetDateTimeAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T> =
+            whereOpLocalTimeAliasNotNull(localTimeAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
+                WhereOpLocalDateTimeNullable<LocalDateTime, T> =
+            whereOpLocalDateTimeAliasNullable(localDateTimeAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
+                WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T> =
+            whereOpKotlinxLocalDateTimeAliasNullable(kotlinxLocalDateTimeAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T> =
+            whereOpLocalDateAliasNullable(localDateAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
+                WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T> =
+            whereOpKotlinxLocalDateAliasNullable(kotlinxLocalDateAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
+                WhereOpOffsetDateTimeNullable<OffsetDateTime, T> =
+            whereOpOffsetDateTimeAliasNullable(offsetDateTimeAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T> =
+            whereOpLocalTimeAliasNullable(localTimeAliasNullable, WhereClauseType.WHERE)
+
         override fun where(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T> =
             whereOpBooleanAliasNotNull(booleanAliasNotNull, WhereClauseType.WHERE)
     }
@@ -426,6 +470,35 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherDateColumn, type) }
     }
 
+    public interface WhereOpDateAlias<T, U : SqlClientQuery.Where<U>, V : Any> :
+        WhereInOpAlias<T, V, U>, WhereOpDate<V, U, V> {
+        override infix fun before(value: V): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
+        override infix fun after(value: V): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
+        override infix fun beforeOrEq(value: V): U =
+            where.apply { addClauseValue(alias, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun afterOrEq(value: V): U =
+            where.apply { addClauseValue(alias, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherDateColumn: Column<*, V>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherDateColumn, type) }
+
+        override infix fun notEq(otherDateColumn: Column<*, V>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherDateColumn, type) }
+
+        override infix fun before(otherDateColumn: Column<*, V>): U =
+            where.apply { addClauseColumn(alias, Operation.INF, otherDateColumn, type) }
+
+        override infix fun after(otherDateColumn: Column<*, V>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP, otherDateColumn, type) }
+
+        override infix fun beforeOrEq(otherDateColumn: Column<*, V>): U =
+            where.apply { addClauseColumn(alias, Operation.INF_OR_EQ, otherDateColumn, type) }
+
+        override infix fun afterOrEq(otherDateColumn: Column<*, V>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherDateColumn, type) }
+    }
+
     public class WhereOpDateColumnNotNull<T : Any, U : SqlClientQuery.Where<U>, V : Any> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -434,6 +507,57 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : AbstractWhereOpColumn<T, U, V>(), WhereOpDateColumn<T, U, V>,
         WhereOpColumnNotNull<T, U, V>, WhereOpDateNotNull<T, U, V>
 
+    public interface WhereOpDateAliasNotNull<T : SqlClientQuery.Where<T>, U : Any> : WhereOpDateAlias<U, T, U>,
+        WhereOpAliasNotNull<U, T>, WhereOpDateNotNull<U, T, U>
+
+    public class WhereOpLocalDateTimeAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<LocalDateTime>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<LocalDateTime, T>(), WhereOpDateAliasNotNull<T, LocalDateTime>,
+        WhereOpLocalDateTimeNotNull<LocalDateTime, T>
+
+    public class WhereOpKotlinxLocalDateTimeAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<kotlinx.datetime.LocalDateTime>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<kotlinx.datetime.LocalDateTime, T>(), WhereOpDateAliasNotNull<T, kotlinx.datetime.LocalDateTime>,
+        WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
+
+    public class WhereOpLocalDateAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<LocalDate>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<LocalDate, T>(), WhereOpDateAliasNotNull<T, LocalDate>,
+        WhereOpLocalDateNotNull<LocalDate, T>
+
+    public class WhereOpKotlinxLocalDateAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<kotlinx.datetime.LocalDate>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<kotlinx.datetime.LocalDate, T>(), WhereOpDateAliasNotNull<T, kotlinx.datetime.LocalDate>,
+        WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
+
+    public class WhereOpOffsetDateTimeAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<OffsetDateTime>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<OffsetDateTime, T>(), WhereOpDateAliasNotNull<T, OffsetDateTime>,
+        WhereOpOffsetDateTimeNotNull<OffsetDateTime, T>
+
+    public class WhereOpLocalTimeAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<LocalTime>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<LocalTime, T>(), WhereOpDateAliasNotNull<T, LocalTime>,
+        WhereOpLocalTimeNotNull<LocalTime, T>
+
     public class WhereOpDateColumnNullable<T : Any, U : SqlClientQuery.Where<U>, V : Any> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -441,6 +565,57 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, V>(), WhereOpDateColumn<T, U, V>,
         WhereOpColumnNullable<T, U, V>, WhereOpDateNullable<T, U, V>
+
+    public interface WhereOpDateAliasNullable<T : SqlClientQuery.Where<T>, U : Any> : WhereOpDateAlias<U?, T, U>,
+        WhereOpAliasNullable<U, T>, WhereOpDateNullable<U, T, U>
+
+    public class WhereOpLocalDateTimeAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<LocalDateTime?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<LocalDateTime, T>(), WhereOpDateAliasNullable<T, LocalDateTime>,
+        WhereOpLocalDateTimeNullable<LocalDateTime, T>
+
+    public class WhereOpKotlinxLocalDateTimeAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<kotlinx.datetime.LocalDateTime?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<kotlinx.datetime.LocalDateTime, T>(), WhereOpDateAliasNullable<T, kotlinx.datetime.LocalDateTime>,
+        WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
+
+    public class WhereOpLocalDateAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<LocalDate?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<LocalDate, T>(), WhereOpDateAliasNullable<T, LocalDate>,
+        WhereOpLocalDateNullable<LocalDate, T>
+
+    public class WhereOpKotlinxLocalDateAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<kotlinx.datetime.LocalDate?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<kotlinx.datetime.LocalDate, T>(), WhereOpDateAliasNullable<T, kotlinx.datetime.LocalDate>,
+        WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
+
+    public class WhereOpOffsetDateTimeAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<OffsetDateTime?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<OffsetDateTime, T>(), WhereOpDateAliasNullable<T, OffsetDateTime>,
+        WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
+
+    public class WhereOpLocalTimeAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<LocalTime?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<LocalTime, T>(), WhereOpDateAliasNullable<T, LocalTime>,
+        WhereOpLocalTimeNullable<LocalTime, T>
 
     public class WhereOpBooleanColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
@@ -977,6 +1152,66 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             stringAliasNullable: QueryAlias<String?>,
             whereClauseType: WhereClauseType,
         ) = WhereOpStringAliasNullable(where, properties, stringAliasNullable, whereClauseType)
+
+        internal fun whereOpLocalDateTimeAliasNotNull(
+            localDateTimeAliasNotNull: QueryAlias<LocalDateTime>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLocalDateTimeAliasNotNull(where, properties, localDateTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpKotlinxLocalDateTimeAliasNotNull(
+            kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpKotlinxLocalDateTimeAliasNotNull(where, properties, kotlinxLocalDateTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpLocalDateAliasNotNull(
+            localDateAliasNotNull: QueryAlias<LocalDate>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLocalDateAliasNotNull(where, properties, localDateAliasNotNull, whereClauseType)
+
+        internal fun whereOpKotlinxLocalDateAliasNotNull(
+            kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpKotlinxLocalDateAliasNotNull(where, properties, kotlinxLocalDateAliasNotNull, whereClauseType)
+
+        internal fun whereOpOffsetDateTimeAliasNotNull(
+            offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpOffsetDateTimeAliasNotNull(where, properties, offsetDateTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpLocalTimeAliasNotNull(
+            localTimeAliasNotNull: QueryAlias<LocalTime>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLocalTimeAliasNotNull(where, properties, localTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpLocalDateTimeAliasNullable(
+            localDateTimeAliasNotNull: QueryAlias<LocalDateTime?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLocalDateTimeAliasNullable(where, properties, localDateTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpKotlinxLocalDateTimeAliasNullable(
+            kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpKotlinxLocalDateTimeAliasNullable(where, properties, kotlinxLocalDateTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpLocalDateAliasNullable(
+            localDateAliasNotNull: QueryAlias<LocalDate?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLocalDateAliasNullable(where, properties, localDateAliasNotNull, whereClauseType)
+
+        internal fun whereOpKotlinxLocalDateAliasNullable(
+            kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpKotlinxLocalDateAliasNullable(where, properties, kotlinxLocalDateAliasNotNull, whereClauseType)
+
+        internal fun whereOpOffsetDateTimeAliasNullable(
+            offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpOffsetDateTimeAliasNullable(where, properties, offsetDateTimeAliasNotNull, whereClauseType)
+
+        internal fun whereOpLocalTimeAliasNullable(
+            localTimeAliasNotNull: QueryAlias<LocalTime?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLocalTimeAliasNullable(where, properties, localTimeAliasNotNull, whereClauseType)
 
         internal fun whereOpBooleanAliasNotNull(
             booleanAliasNotNull: QueryAlias<Boolean>,
