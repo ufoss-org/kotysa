@@ -27,6 +27,16 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
         assertThat(repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname))
             .isEqualTo(userBboss.firstname)
     }
+
+    @Test
+    fun `Verify selectCaseWhenExistsSubQueryAlias returns results`() {
+        assertThat(repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+            )
+    }
 }
 
 class UserRepositorySelectAlias(
@@ -43,6 +53,18 @@ class UserRepositorySelectAlias(
     fun selectAliasedFirstnameByFirstnameAlias(firstname: String) =
         (sqlClient select SqliteUsers.firstname `as` "fn"
                 from SqliteUsers
-                where QueryAlias("fn") eq firstname
+                where QueryAlias<String>("fn") eq firstname
                 ).fetchOne()
+
+    fun selectCaseWhenExistsSubQueryAlias(userIds: List<Int>) =
+        (sqlClient selectDistinct SqliteRoles.label
+                andCaseWhenExists {
+            (this select SqliteUsers.id
+                    from SqliteUsers
+                    where SqliteUsers.roleId eq SqliteRoles.id
+                    and SqliteUsers.id `in` userIds)
+        } then true `else` false `as` "roleUsedByUser"
+                from SqliteRoles
+                where QueryAlias<Boolean>("roleUsedByUser") eq true)
+            .fetchAll()
 }

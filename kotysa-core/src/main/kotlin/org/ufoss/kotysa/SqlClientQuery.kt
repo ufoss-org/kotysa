@@ -134,7 +134,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> where(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateNullable<U, T, OffsetDateTime>
         public infix fun <U : Any> where(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalTime>
         public infix fun <U : Any> where(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, LocalTime>
-        public infix fun <U : Any> where(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T>
+        public infix fun <U : Any> where(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> where(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> where(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
         public infix fun <U : Any> where(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongNotNull<U, T>
@@ -144,8 +144,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
         
         // Where with alias
-        public infix fun where(stringAlias: QueryAlias<String>): WhereOpStringNotNull<String, T>
-//        public infix fun where(stringAlias: Alias<String?>): WhereOpStringNullable<String, T>
+        public infix fun where(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
+        public infix fun where(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T>
+        public infix fun where(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
     }
 
     public interface WhereInOp<T : Any, U : Where<U>, V : Any> {
@@ -199,7 +200,7 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereOpDateNullable<T : Any, U : Where<U>, V : Any> :
         WhereOpDate<T, U, V>, WhereOpNullable<T, U, V>
 
-    public interface WhereOpBooleanColumnNotNull<T : Any, U : Where<U>> {
+    public interface WhereOpBooleanNotNull<T : Any, U : Where<U>> {
         public infix fun eq(value: Boolean): U
         public infix fun eq(otherBooleanColumn: BooleanColumnNotNull<*>): U
     }
@@ -268,7 +269,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateNullable<U, T, OffsetDateTime>
         public infix fun <U : Any> and(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalTime>
         public infix fun <U : Any> and(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, LocalTime>
-        public infix fun <U : Any> and(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T>
+        public infix fun <U : Any> and(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> and(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> and(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
         public infix fun <U : Any> and(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongNotNull<U, T>
@@ -291,7 +292,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> or(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateNullable<U, T, OffsetDateTime>
         public infix fun <U : Any> or(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalTime>
         public infix fun <U : Any> or(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, LocalTime>
-        public infix fun <U : Any> or(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T>
+        public infix fun <U : Any> or(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> or(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> or(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
         public infix fun <U : Any> or(longColumnNotNull: LongColumnNotNull<U>): WhereOpLongNotNull<U, T>

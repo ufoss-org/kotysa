@@ -33,7 +33,7 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
             .containsExactlyInAnyOrder(
                 Pair(roleAdmin.label, true),
                 Pair(roleUser.label, true),
-                Pair(roleGod.label, false)
+                Pair(roleGod.label, false),
             )
     }
 }
@@ -74,7 +74,7 @@ class UserRepositorySqliteSubQuery(
                     from SqliteUsers
                     where SqliteUsers.roleId eq SqliteRoles.id
                     and SqliteUsers.id `in` userIds)
-        } then true `else` false `as` "roleUsedByUser"
+        } then true `else` false
                 from SqliteRoles)
             .fetchAll()
 }

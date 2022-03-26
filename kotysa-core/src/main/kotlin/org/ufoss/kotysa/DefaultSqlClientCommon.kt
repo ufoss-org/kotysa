@@ -170,8 +170,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             return where
         }
 
-        override fun where(stringAlias: QueryAlias<String>): WhereOpStringNotNull<String, T> =
-            whereOpStringAliasNotNull(stringAlias, WhereClauseType.WHERE)
+        override fun where(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T> =
+            whereOpStringAliasNotNull(stringAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T> =
+            whereOpStringAliasNullable(stringAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T> =
+            whereOpBooleanAliasNotNull(booleanAliasNotNull, WhereClauseType.WHERE)
     }
 
     public interface WhereColumnCommon : WithProperties {
@@ -260,11 +266,17 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseValue(column, Operation.IN, values, type) }
     }
 
-    public interface WhereInOpAlias<T : Any, U : SqlClientQuery.Where<U>> :
-        WhereOpAlias<T, U>, WhereInOp<T, U, T> {
-        override infix fun `in`(values: Collection<T>): U =
+    public interface WhereInOpAlias<T, U: Any, V : SqlClientQuery.Where<V>> :
+        WhereOpAlias<T, V>, WhereInOp<U, V, U> {
+        override infix fun `in`(values: Collection<U>): V =
             where.apply { addClauseValue(alias, Operation.IN, values, type) }
     }
+
+    public interface WhereInOpAliasNotNull<T : Any, U : SqlClientQuery.Where<U>> :
+        WhereInOpAlias<T, T, U>, WhereOpAliasNotNull<T, U>
+
+    public interface WhereInOpAliasNullable<T : Any, U : SqlClientQuery.Where<U>> :
+        WhereInOpAlias<T?, T, U>, WhereOpAliasNullable<T, U>
 
     public interface WhereOpColumnNotNull<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereOpColumn<T, U, V>, WhereOpNotNull<T, U, V> {
@@ -285,7 +297,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     }
 
     public interface WhereOpAliasNullable<T : Any, U : SqlClientQuery.Where<U>> :
-        WhereOpAlias<T, U>, WhereOpNullable<T, U, T> {
+        WhereOpAlias<T?, U>, WhereOpNullable<T, U, T> {
         override infix fun eq(value: T?): U = where.apply { addClauseValue(alias, Operation.EQ, value, type) }
         override infix fun notEq(value: T?): U = where.apply { addClauseValue(alias, Operation.NOT_EQ, value, type) }
     }
@@ -293,8 +305,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     public abstract class AbstractWhereOpColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> internal constructor() :
         Where<U>(), WhereOpColumn<T, U, V>
 
-    public abstract class AbstractWhereOpAlias<T : Any, U : SqlClientQuery.Where<U>> internal constructor() :
+    public abstract class AbstractWhereOpAliasNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor() :
         Where<U>(), WhereOpAlias<T, U>
+
+    public abstract class AbstractWhereOpAliasNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor() :
+        Where<U>(), WhereOpAlias<T?, U>
 
     public interface WhereOpStringColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, String>, WhereOpString<T, U> {
@@ -323,30 +338,30 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.ENDS_WITH, otherStringColumn, type) }
     }
 
-    public interface WhereOpStringAlias<T : SqlClientQuery.Where<T>> :
-        WhereInOpAlias<String, T>, WhereOpString<String, T> {
-        override infix fun contains(value: String): T =
+    public interface WhereOpStringAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereInOpAlias<T, String, U>, WhereOpString<String, U> {
+        override infix fun contains(value: String): U =
             where.apply { addClauseValue(alias, Operation.CONTAINS, "%$value%", type) }
 
-        override infix fun startsWith(value: String): T =
+        override infix fun startsWith(value: String): U =
             where.apply { addClauseValue(alias, Operation.STARTS_WITH, "$value%", type) }
 
-        override infix fun endsWith(value: String): T =
+        override infix fun endsWith(value: String): U =
             where.apply { addClauseValue(alias, Operation.ENDS_WITH, "%$value", type) }
 
-        override infix fun eq(otherStringColumn: StringColumn<*>): T =
+        override infix fun eq(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.EQ, otherStringColumn, type) }
 
-        override infix fun notEq(otherStringColumn: StringColumn<*>): T =
+        override infix fun notEq(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherStringColumn, type) }
 
-        override infix fun contains(otherStringColumn: StringColumn<*>): T =
+        override infix fun contains(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.CONTAINS, otherStringColumn, type) }
 
-        override infix fun startsWith(otherStringColumn: StringColumn<*>): T =
+        override infix fun startsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.STARTS_WITH, otherStringColumn, type) }
 
-        override infix fun endsWith(otherStringColumn: StringColumn<*>): T =
+        override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.ENDS_WITH, otherStringColumn, type) }
     }
 
@@ -363,7 +378,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val alias: QueryAlias<String>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpAlias<String, T>(), WhereOpStringAlias<T>,
+    ) : AbstractWhereOpAliasNotNull<String, T>(), WhereOpStringAlias<String, T>,
         WhereOpAliasNotNull<String, T>, WhereOpStringNotNull<String, T>
 
     public class WhereOpStringColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
@@ -373,6 +388,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, String>(), WhereOpStringColumn<T, U>,
         WhereOpColumnNullable<T, U, String>, WhereOpStringNullable<T, U>
+
+    public class WhereOpStringAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<String?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<String, T>(), WhereOpStringAlias<String?, T>,
+        WhereOpAliasNullable<String, T>, WhereOpStringNullable<String, T>
 
     public interface WhereOpDateColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereInOpColumn<T, U, V>, WhereOpDate<T, U, V> {
@@ -424,20 +447,25 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val column: Column<T, Boolean>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpColumn<T, U, Boolean>(), SqlClientQuery.WhereOpBooleanColumnNotNull<T, U> {
+    ) : AbstractWhereOpColumn<T, U, Boolean>(), WhereOpBooleanNotNull<T, U> {
         override infix fun eq(value: Boolean): U =
-            where.apply {
-                // SqLite does not support Boolean literal
-                if (properties.tables.dbType == DbType.SQLITE) {
-                    val intValue = if (value) 1 else 0
-                    addClauseValue(column, Operation.EQ, intValue, type)
-                } else {
-                    addClauseValue(column, Operation.EQ, value, type)
-                }
-            }
+            where.apply { addClauseValue(column, Operation.EQ, value, type) }
 
         override infix fun eq(otherBooleanColumn: BooleanColumnNotNull<*>): U =
             where.apply { addClauseColumn(column, Operation.EQ, otherBooleanColumn, type) }
+    }
+
+    public class WhereOpBooleanAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Boolean>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<Boolean, T>(), WhereOpBooleanNotNull<Boolean, T> {
+        override infix fun eq(value: Boolean): T =
+            where.apply { addClauseValue(alias, Operation.EQ, value, type) }
+
+        override infix fun eq(otherBooleanColumn: BooleanColumnNotNull<*>): T =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherBooleanColumn, type) }
     }
 
     public interface WhereOpIntColumn<T : Any, U : SqlClientQuery.Where<U>> :
@@ -944,6 +972,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             stringAliasNotNull: QueryAlias<String>,
             whereClauseType: WhereClauseType,
         ) = WhereOpStringAliasNotNull(where, properties, stringAliasNotNull, whereClauseType)
+
+        internal fun whereOpStringAliasNullable(
+            stringAliasNullable: QueryAlias<String?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpStringAliasNullable(where, properties, stringAliasNullable, whereClauseType)
+
+        internal fun whereOpBooleanAliasNotNull(
+            booleanAliasNotNull: QueryAlias<Boolean>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpBooleanAliasNotNull(where, properties, booleanAliasNotNull, whereClauseType)
     }
 }
 

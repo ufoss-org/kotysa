@@ -226,7 +226,7 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
 
 internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
     is Boolean -> if (DbType.SQLITE == dbType) {
-        if (this) "1" else "0"
+        if (this) "'1'" else "'0'"
     } else {
         "'${this.dbValue(dbType)}'"
     }
