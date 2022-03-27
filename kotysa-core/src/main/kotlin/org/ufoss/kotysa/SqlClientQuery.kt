@@ -179,12 +179,12 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun where(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
         public infix fun where(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
         public infix fun where(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
-//        public infix fun where(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
-//        public infix fun where(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
-//        public infix fun where(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T>
-//        public infix fun where(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T>
-//        public infix fun where(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T>
-//        public infix fun where(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
+        public infix fun where(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
+        public infix fun where(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
+        public infix fun where(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T>
+        public infix fun where(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T>
+        public infix fun where(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T>
+        public infix fun where(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
     }
 
     public interface WhereInOp<T : Any, U : Where<U>, V : Any> {
@@ -344,6 +344,37 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
 
+        // And with alias
+        public infix fun and(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
+        public infix fun and(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T>
+        public infix fun and(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
+                WhereOpLocalDateTimeNotNull<LocalDateTime, T>
+        public infix fun and(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
+                WhereOpLocalDateTimeNullable<LocalDateTime, T>
+        public infix fun and(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
+                WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
+        public infix fun and(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
+                WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
+        public infix fun and(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T>
+        public infix fun and(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T>
+        public infix fun and(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
+                WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
+        public infix fun and(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
+                WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
+        public infix fun and(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
+                WhereOpOffsetDateTimeNotNull<OffsetDateTime, T>
+        public infix fun and(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
+                WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
+        public infix fun and(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
+        public infix fun and(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
+        public infix fun and(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
+        public infix fun and(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
+        public infix fun and(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
+        public infix fun and(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T>
+        public infix fun and(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T>
+        public infix fun and(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T>
+        public infix fun and(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
+
         public infix fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringNotNull<U, T>
         public infix fun <U : Any> or(stringColumnNullable: StringColumnNullable<U>): WhereOpStringNullable<U, T>
         public infix fun <U : Any> or(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalDateTime>
@@ -366,6 +397,37 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> or(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidNotNull<U, T>
         public infix fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
+
+        // Or with alias
+        public infix fun or(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
+        public infix fun or(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T>
+        public infix fun or(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
+                WhereOpLocalDateTimeNotNull<LocalDateTime, T>
+        public infix fun or(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
+                WhereOpLocalDateTimeNullable<LocalDateTime, T>
+        public infix fun or(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
+                WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
+        public infix fun or(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
+                WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
+        public infix fun or(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T>
+        public infix fun or(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T>
+        public infix fun or(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
+                WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
+        public infix fun or(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
+                WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
+        public infix fun or(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
+                WhereOpOffsetDateTimeNotNull<OffsetDateTime, T>
+        public infix fun or(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
+                WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
+        public infix fun or(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
+        public infix fun or(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
+        public infix fun or(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
+        public infix fun or(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
+        public infix fun or(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
+        public infix fun or(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T>
+        public infix fun or(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T>
+        public infix fun or(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T>
+        public infix fun or(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
     }
 
     public interface LimitOffset<T : LimitOffset<T>> {

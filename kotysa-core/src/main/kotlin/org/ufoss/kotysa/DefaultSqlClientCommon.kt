@@ -170,6 +170,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             return where
         }
 
+        // Where with alias
         override fun where(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T> =
             whereOpStringAliasNotNull(stringAliasNotNull, WhereClauseType.WHERE)
 
@@ -222,6 +223,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun where(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T> =
             whereOpBooleanAliasNotNull(booleanAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T> =
+            whereOpIntAliasNotNull(intAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T> =
+            whereOpIntAliasNullable(intAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T> =
+            whereOpLongAliasNotNull(longAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T> =
+            whereOpLongAliasNullable(longAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T> =
+            whereOpUuidAliasNotNull(uuidAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T> =
+            whereOpUuidAliasNullable(uuidAliasNullable, WhereClauseType.WHERE)
     }
 
     public interface WhereColumnCommon : WithProperties {
@@ -672,6 +691,35 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherIntColumn, type) }
     }
 
+    public interface WhereOpIntAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereInOpAlias<T, Int, U>, WhereOpInt<Int, U> {
+        override infix fun inf(value: Int): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
+        override infix fun sup(value: Int): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Int): U =
+            where.apply { addClauseValue(alias, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: Int): U =
+            where.apply { addClauseValue(alias, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherIntColumn: IntColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherIntColumn, type) }
+
+        override infix fun notEq(otherIntColumn: IntColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherIntColumn, type) }
+
+        override infix fun inf(otherIntColumn: IntColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF, otherIntColumn, type) }
+
+        override infix fun sup(otherIntColumn: IntColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP, otherIntColumn, type) }
+
+        override infix fun infOrEq(otherIntColumn: IntColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF_OR_EQ, otherIntColumn, type) }
+
+        override infix fun supOrEq(otherIntColumn: IntColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherIntColumn, type) }
+    }
+
     public class WhereOpIntColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -680,6 +728,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : AbstractWhereOpColumn<T, U, Int>(), WhereOpIntColumn<T, U>,
         WhereOpColumnNotNull<T, U, Int>, WhereOpIntNotNull<T, U>
 
+    public class WhereOpIntAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Int>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<Int, T>(), WhereOpIntAlias<Int, T>,
+        WhereOpAliasNotNull<Int, T>, WhereOpIntNotNull<Int, T>
+
     public class WhereOpIntColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -687,6 +743,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Int>(), WhereOpIntColumn<T, U>,
         WhereOpColumnNullable<T, U, Int>, WhereOpIntNullable<T, U>
+
+    public class WhereOpIntAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Int?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<Int, T>(), WhereOpIntAlias<Int?, T>,
+        WhereOpAliasNullable<Int, T>, WhereOpIntNullable<Int, T>
 
     public interface WhereOpLongColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, Long>, WhereOpLong<T, U> {
@@ -717,6 +781,35 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherLongColumn, type) }
     }
 
+    public interface WhereOpLongAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereInOpAlias<T, Long, U>, WhereOpLong<Long, U> {
+        override infix fun inf(value: Long): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
+        override infix fun sup(value: Long): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Long): U =
+            where.apply { addClauseValue(alias, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: Long): U =
+            where.apply { addClauseValue(alias, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherLongColumn: LongColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherLongColumn, type) }
+
+        override infix fun notEq(otherLongColumn: LongColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherLongColumn, type) }
+
+        override infix fun inf(otherLongColumn: LongColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF, otherLongColumn, type) }
+
+        override infix fun sup(otherLongColumn: LongColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP, otherLongColumn, type) }
+
+        override infix fun infOrEq(otherLongColumn: LongColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF_OR_EQ, otherLongColumn, type) }
+
+        override infix fun supOrEq(otherLongColumn: LongColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherLongColumn, type) }
+    }
+
     public class WhereOpLongColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -725,6 +818,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : AbstractWhereOpColumn<T, U, Long>(), WhereOpLongColumn<T, U>,
         WhereOpColumnNotNull<T, U, Long>, WhereOpLongNotNull<T, U>
 
+    public class WhereOpLongAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Long>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<Long, T>(), WhereOpLongAlias<Long, T>,
+        WhereOpAliasNotNull<Long, T>, WhereOpLongNotNull<Long, T>
+
     public class WhereOpLongColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -732,6 +833,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, Long>(), WhereOpLongColumn<T, U>,
         WhereOpColumnNullable<T, U, Long>, WhereOpLongNullable<T, U>
+
+    public class WhereOpLongAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Long?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<Long, T>(), WhereOpLongAlias<Long?, T>,
+        WhereOpAliasNullable<Long, T>, WhereOpLongNullable<Long, T>
 
     public interface WhereOpUuidColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereInOpColumn<T, U, UUID>, WhereOpUuid<T, U> {
@@ -742,6 +851,15 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             where.apply { addClauseColumn(column, Operation.NOT_EQ, otherUuidColumn, type) }
     }
 
+    public interface WhereOpUuidAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereInOpAlias<T, UUID, U>, WhereOpUuid<UUID, U> {
+        override infix fun eq(otherUuidColumn: UuidColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherUuidColumn, type) }
+
+        override infix fun notEq(otherUuidColumn: UuidColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherUuidColumn, type) }
+    }
+
     public class WhereOpUuidColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -750,6 +868,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : AbstractWhereOpColumn<T, U, UUID>(), WhereOpUuidColumn<T, U>,
         WhereOpColumnNotNull<T, U, UUID>, WhereOpUuidNotNull<T, U>
 
+    public class WhereOpUuidAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<UUID>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<UUID, T>(), WhereOpUuidAlias<UUID, T>,
+        WhereOpAliasNotNull<UUID, T>, WhereOpUuidNotNull<UUID, T>
+
     public class WhereOpUuidColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
         override val where: U,
         override val properties: Properties,
@@ -757,6 +883,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val type: WhereClauseType,
     ) : AbstractWhereOpColumn<T, U, UUID>(), WhereOpUuidColumn<T, U>,
         WhereOpColumnNullable<T, U, UUID>, WhereOpUuidNullable<T, U>
+
+    public class WhereOpUuidAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<UUID?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<UUID, T>(), WhereOpUuidAlias<UUID?, T>,
+        WhereOpAliasNullable<UUID, T>, WhereOpUuidNullable<UUID, T>
 
     public abstract class Where<T : SqlClientQuery.Where<T>> internal constructor() : WithWhere<T>(),
         SqlClientQuery.Where<T>, WhereColumnCommon, WhereAliasCommon {
@@ -829,6 +963,78 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             return where
         }
 
+        // And with alias
+        override fun and(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T> =
+            whereOpStringAliasNotNull(stringAliasNotNull, WhereClauseType.AND)
+
+        override fun and(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T> =
+            whereOpStringAliasNullable(stringAliasNullable, WhereClauseType.AND)
+
+        override infix fun and(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
+                WhereOpLocalDateTimeNotNull<LocalDateTime, T> =
+            whereOpLocalDateTimeAliasNotNull(localDateTimeAliasNotNull, WhereClauseType.AND)
+
+        override fun and(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
+                WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T> =
+            whereOpKotlinxLocalDateTimeAliasNotNull(kotlinxLocalDateTimeAliasNotNull, WhereClauseType.AND)
+
+        override fun and(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T> =
+            whereOpLocalDateAliasNotNull(localDateAliasNotNull, WhereClauseType.AND)
+
+        override fun and(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
+                WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T> =
+            whereOpKotlinxLocalDateAliasNotNull(kotlinxLocalDateAliasNotNull, WhereClauseType.AND)
+
+        override fun and(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
+                WhereOpOffsetDateTimeNotNull<OffsetDateTime, T> =
+            whereOpOffsetDateTimeAliasNotNull(offsetDateTimeAliasNotNull, WhereClauseType.AND)
+
+        override fun and(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T> =
+            whereOpLocalTimeAliasNotNull(localTimeAliasNotNull, WhereClauseType.AND)
+
+        override fun and(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
+                WhereOpLocalDateTimeNullable<LocalDateTime, T> =
+            whereOpLocalDateTimeAliasNullable(localDateTimeAliasNullable, WhereClauseType.AND)
+
+        override fun and(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
+                WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T> =
+            whereOpKotlinxLocalDateTimeAliasNullable(kotlinxLocalDateTimeAliasNullable, WhereClauseType.AND)
+
+        override fun and(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T> =
+            whereOpLocalDateAliasNullable(localDateAliasNullable, WhereClauseType.AND)
+
+        override fun and(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
+                WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T> =
+            whereOpKotlinxLocalDateAliasNullable(kotlinxLocalDateAliasNullable, WhereClauseType.AND)
+
+        override fun and(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
+                WhereOpOffsetDateTimeNullable<OffsetDateTime, T> =
+            whereOpOffsetDateTimeAliasNullable(offsetDateTimeAliasNullable, WhereClauseType.AND)
+
+        override fun and(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T> =
+            whereOpLocalTimeAliasNullable(localTimeAliasNullable, WhereClauseType.AND)
+
+        override fun and(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T> =
+            whereOpBooleanAliasNotNull(booleanAliasNotNull, WhereClauseType.AND)
+
+        override fun and(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T> =
+            whereOpIntAliasNotNull(intAliasNotNull, WhereClauseType.AND)
+
+        override fun and(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T> =
+            whereOpIntAliasNullable(intAliasNullable, WhereClauseType.AND)
+
+        override fun and(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T> =
+            whereOpLongAliasNotNull(longAliasNotNull, WhereClauseType.AND)
+
+        override fun and(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T> =
+            whereOpLongAliasNullable(longAliasNullable, WhereClauseType.AND)
+
+        override fun and(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T> =
+            whereOpUuidAliasNotNull(uuidAliasNotNull, WhereClauseType.AND)
+
+        override fun and(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T> =
+            whereOpUuidAliasNullable(uuidAliasNullable, WhereClauseType.AND)
+
         override fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T> =
             whereOpStringColumnNotNull(stringColumnNotNull, WhereClauseType.OR)
 
@@ -896,6 +1102,78 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.OR))
             return where
         }
+
+        // Or with alias
+        override fun or(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T> =
+            whereOpStringAliasNotNull(stringAliasNotNull, WhereClauseType.OR)
+
+        override fun or(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T> =
+            whereOpStringAliasNullable(stringAliasNullable, WhereClauseType.OR)
+
+        override infix fun or(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
+                WhereOpLocalDateTimeNotNull<LocalDateTime, T> =
+            whereOpLocalDateTimeAliasNotNull(localDateTimeAliasNotNull, WhereClauseType.OR)
+
+        override fun or(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
+                WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T> =
+            whereOpKotlinxLocalDateTimeAliasNotNull(kotlinxLocalDateTimeAliasNotNull, WhereClauseType.OR)
+
+        override fun or(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T> =
+            whereOpLocalDateAliasNotNull(localDateAliasNotNull, WhereClauseType.OR)
+
+        override fun or(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
+                WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T> =
+            whereOpKotlinxLocalDateAliasNotNull(kotlinxLocalDateAliasNotNull, WhereClauseType.OR)
+
+        override fun or(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
+                WhereOpOffsetDateTimeNotNull<OffsetDateTime, T> =
+            whereOpOffsetDateTimeAliasNotNull(offsetDateTimeAliasNotNull, WhereClauseType.OR)
+
+        override fun or(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T> =
+            whereOpLocalTimeAliasNotNull(localTimeAliasNotNull, WhereClauseType.OR)
+
+        override fun or(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
+                WhereOpLocalDateTimeNullable<LocalDateTime, T> =
+            whereOpLocalDateTimeAliasNullable(localDateTimeAliasNullable, WhereClauseType.OR)
+
+        override fun or(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
+                WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T> =
+            whereOpKotlinxLocalDateTimeAliasNullable(kotlinxLocalDateTimeAliasNullable, WhereClauseType.OR)
+
+        override fun or(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T> =
+            whereOpLocalDateAliasNullable(localDateAliasNullable, WhereClauseType.OR)
+
+        override fun or(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
+                WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T> =
+            whereOpKotlinxLocalDateAliasNullable(kotlinxLocalDateAliasNullable, WhereClauseType.OR)
+
+        override fun or(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
+                WhereOpOffsetDateTimeNullable<OffsetDateTime, T> =
+            whereOpOffsetDateTimeAliasNullable(offsetDateTimeAliasNullable, WhereClauseType.OR)
+
+        override fun or(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T> =
+            whereOpLocalTimeAliasNullable(localTimeAliasNullable, WhereClauseType.OR)
+
+        override fun or(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T> =
+            whereOpBooleanAliasNotNull(booleanAliasNotNull, WhereClauseType.OR)
+
+        override fun or(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T> =
+            whereOpIntAliasNotNull(intAliasNotNull, WhereClauseType.OR)
+
+        override fun or(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T> =
+            whereOpIntAliasNullable(intAliasNullable, WhereClauseType.OR)
+
+        override fun or(longAliasNotNull: QueryAlias<Long>): WhereOpLongNotNull<Long, T> =
+            whereOpLongAliasNotNull(longAliasNotNull, WhereClauseType.OR)
+
+        override fun or(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T> =
+            whereOpLongAliasNullable(longAliasNullable, WhereClauseType.OR)
+
+        override fun or(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T> =
+            whereOpUuidAliasNotNull(uuidAliasNotNull, WhereClauseType.OR)
+
+        override fun or(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T> =
+            whereOpUuidAliasNullable(uuidAliasNullable, WhereClauseType.OR)
     }
 
     public interface Return : WithProperties {
@@ -1217,6 +1495,36 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             booleanAliasNotNull: QueryAlias<Boolean>,
             whereClauseType: WhereClauseType,
         ) = WhereOpBooleanAliasNotNull(where, properties, booleanAliasNotNull, whereClauseType)
+
+        internal fun whereOpIntAliasNotNull(
+            intAliasNotNull: QueryAlias<Int>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpIntAliasNotNull(where, properties, intAliasNotNull, whereClauseType)
+
+        internal fun whereOpIntAliasNullable(
+            intAliasNullable: QueryAlias<Int?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpIntAliasNullable(where, properties, intAliasNullable, whereClauseType)
+
+        internal fun whereOpLongAliasNotNull(
+            longAliasNotNull: QueryAlias<Long>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLongAliasNotNull(where, properties, longAliasNotNull, whereClauseType)
+
+        internal fun whereOpLongAliasNullable(
+            longAliasNullable: QueryAlias<Long?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpLongAliasNullable(where, properties, longAliasNullable, whereClauseType)
+
+        internal fun whereOpUuidAliasNotNull(
+            uuidAliasNotNull: QueryAlias<UUID>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpUuidAliasNotNull(where, properties, uuidAliasNotNull, whereClauseType)
+
+        internal fun whereOpUuidAliasNullable(
+            uuidAliasNullable: QueryAlias<UUID?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpUuidAliasNullable(where, properties, uuidAliasNullable, whereClauseType)
     }
 }
 
