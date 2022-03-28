@@ -4,4 +4,4 @@
 
 package org.ufoss.kotysa
 
-public class QueryAlias<T>(internal val alias: String) : ColumnOrAlias
+public sealed interface ColumnOrAlias

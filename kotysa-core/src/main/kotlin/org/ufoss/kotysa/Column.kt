@@ -16,7 +16,7 @@ import java.util.*
  * @param T Entity type associated with the table this column is in
  * @param U return type of associated getter to this column
  */
-public interface Column<out T : Any, U : Any>
+public interface Column<out T : Any, U : Any> : ColumnOrAlias
 
 public interface MinMaxColumn<out T : Any, U : Any> : Column<T, U>
 public interface NumericColumn<out T : Any, U : Any> : Column<T, U>

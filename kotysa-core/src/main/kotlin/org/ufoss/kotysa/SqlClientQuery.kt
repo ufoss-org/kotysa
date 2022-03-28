@@ -447,10 +447,18 @@ public abstract class SqlClientQuery protected constructor() {
     public interface OrderBy<T : OrderByPart2<T>> {
         public infix fun orderByAsc(column: Column<*, *>): T
         public infix fun orderByDesc(column: Column<*, *>): T
+
+        // With alias
+        public infix fun orderByAsc(alias: QueryAlias<*>): T
+        public infix fun orderByDesc(alias: QueryAlias<*>): T
     }
 
     public interface OrderByPart2<T : OrderByPart2<T>> {
         public infix fun andAsc(column: Column<*, *>): T
         public infix fun andDesc(column: Column<*, *>): T
+
+        // With alias
+        public infix fun orderByAsc(alias: QueryAlias<*>): T
+        public infix fun orderByDesc(alias: QueryAlias<*>): T
     }
 }

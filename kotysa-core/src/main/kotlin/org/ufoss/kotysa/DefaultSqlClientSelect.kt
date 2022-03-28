@@ -27,7 +27,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public lateinit var select: (RowImpl) -> T?
 
         internal val groupBy = mutableListOf<Column<*, *>>()
-        internal val orderBy = mutableListOf<Pair<Column<*, *>, Order>>()
+        internal val orderBy = mutableListOf<Pair<ColumnOrAlias, Order>>()
 
         public var limit: Long? = null
         public var offset: Long? = null
@@ -191,6 +191,16 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.orderBy.add(Pair(column, Order.DESC))
             return orderByPart2
         }
+
+        override fun orderByAsc(alias: QueryAlias<*>): U {
+            properties.orderBy.add(Pair(alias, Order.ASC))
+            return orderByPart2
+        }
+
+        override fun orderByDesc(alias: QueryAlias<*>): U {
+            properties.orderBy.add(Pair(alias, Order.DESC))
+            return orderByPart2
+        }
     }
 
     protected interface OrderByPart2<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderByPart2<U>,
@@ -204,6 +214,16 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         override fun andDesc(column: Column<*, *>): U {
             properties.orderBy.add(Pair(column, Order.DESC))
+            return orderByPart2
+        }
+
+        override fun orderByAsc(alias: QueryAlias<*>): U {
+            properties.orderBy.add(Pair(alias, Order.ASC))
+            return orderByPart2
+        }
+
+        override fun orderByDesc(alias: QueryAlias<*>): U {
+            properties.orderBy.add(Pair(alias, Order.DESC))
             return orderByPart2
         }
     }
@@ -263,9 +283,16 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 return ""
             }
             return orderBy.joinToString(prefix = "ORDER BY ") { pair ->
-                "${pair.first.getFieldName(availableColumns)} ${pair.second}"
+                val fieldName = fieldName(pair.first)
+                "$fieldName ${pair.second}"
             }
         }
+
+        private fun fieldName(columnOrAlias: ColumnOrAlias) =
+            when (columnOrAlias) {
+                is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns)
+                is QueryAlias<*> -> columnOrAlias.alias
+            }
 
         private fun offset(): String = with(properties) {
             if (offset != null) {
