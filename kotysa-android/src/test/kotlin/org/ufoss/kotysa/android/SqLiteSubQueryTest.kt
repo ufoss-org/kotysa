@@ -36,6 +36,17 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
                 Pair(roleGod.label, false),
             )
     }
+
+    @Test
+    fun `Verify selectOrderByCaseWhenExistsSubQuery returns results`() {
+        assertThat(repository.selectOrderByCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(3)
+            .containsExactly(
+                roleAdmin.label,
+                roleUser.label,
+                roleGod.label,
+            )
+    }
 }
 
 
@@ -76,5 +87,17 @@ class UserRepositorySqliteSubQuery(
                     and SqliteUsers.id `in` userIds)
         } then true `else` false
                 from SqliteRoles)
+            .fetchAll()
+
+    fun selectOrderByCaseWhenExistsSubQuery(userIds: List<Int>) =
+        (sqlClient selectDistinct SqliteRoles.label
+                from SqliteRoles
+                orderByDescCaseWhenExists {
+            (this select SqliteUsers.id
+                    from SqliteUsers
+                    where SqliteUsers.roleId eq SqliteRoles.id
+                    and SqliteUsers.id `in` userIds)
+        } then true `else` false
+                andAsc SqliteRoles.label)
             .fetchAll()
 }

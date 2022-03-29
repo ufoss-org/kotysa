@@ -37,11 +37,21 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
                 Pair(roleUser.label, true),
             )
     }
+
+    @Test
+    fun `Verify selectAliasedFirstnameOrderByFirstnameAlias returns results`() {
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAlias())
+            .hasSize(2)
+            .containsExactly(
+                userBboss.firstname,
+                userJdoe.firstname,
+            )
+    }
 }
 
 class UserRepositorySelectAlias(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: Tables
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
@@ -67,4 +77,10 @@ class UserRepositorySelectAlias(
                 from SqliteRoles
                 where QueryAlias<Boolean>("roleUsedByUser") eq true)
             .fetchAll()
+
+    fun selectAliasedFirstnameOrderByFirstnameAlias() =
+        (sqlClient select SqliteUsers.firstname `as` "fn"
+                from SqliteUsers
+                orderByAsc QueryAlias<String>("fn")
+                ).fetchAll()
 }

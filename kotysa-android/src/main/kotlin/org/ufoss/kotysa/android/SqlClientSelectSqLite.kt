@@ -399,14 +399,43 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override val properties: Properties<T>
     ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSelect.GroupByPart2<T>>, SqlClientSelect.GroupByPart2<T>,
         DefaultSqlClientSelect.OrderBy<T, SqlClientSelect.OrderByPart2<T>>,
-        DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, Return<T> {
+        OrderBy<T>, DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
         override val groupByPart2 = this
     }
 
     private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, SqlClientSelect.OrderByPart2<T>>,
-        SqlClientSelect.OrderBy<T>, Return<T>
+        SqlClientSelect.OrderBy<T>, Return<T> {
+        override fun <U : Any> orderByAscCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
+
+        override fun <U : Any> orderByDescCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
+    }
+
+    private class OrderByCaseWhenExists<T : Any, U : Any>(
+        override val properties: Properties<T>,
+        override val orderByPart2: SqlClientSelect.OrderByPart2<T>,
+        override val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+        override val order: Order
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExists<T, U, SqlClientSelect.OrderByPart2<T>> {
+        override fun <V : Any> then(value: V): SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, SqlClientSelect.OrderByPart2<T>> {
+            return OrderByCaseWhenExistsPart2(properties, orderByPart2, dsl, value, order)
+        }
+    }
+
+    private class OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any>(
+        override val properties: Properties<T>,
+        override val orderByPart2: SqlClientSelect.OrderByPart2<T>,
+        override val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+        override val then: V,
+        override val order: Order
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExistsPart2<T, U, V, SqlClientSelect.OrderByPart2<T>>
 
     private class OrderByPart2<T : Any>(
         override val client: SQLiteDatabase,
@@ -417,6 +446,16 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 = this
+        
+        override fun <U : Any> andAscCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
+
+        override fun <U : Any> andDescCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
     }
 
     private class LimitOffset<T : Any>(

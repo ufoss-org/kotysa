@@ -27,7 +27,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public lateinit var select: (RowImpl) -> T?
 
         internal val groupBy = mutableListOf<Column<*, *>>()
-        internal val orderBy = mutableListOf<Pair<ColumnOrAlias, Order>>()
+        internal val orderByClauses = mutableListOf<OrderByClause>()
 
         public var limit: Long? = null
         public var offset: Long? = null
@@ -183,22 +183,43 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val orderByPart2: U
 
         override fun orderByAsc(column: Column<*, *>): U {
-            properties.orderBy.add(Pair(column, Order.ASC))
+            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.ASC))
             return orderByPart2
         }
 
         override fun orderByDesc(column: Column<*, *>): U {
-            properties.orderBy.add(Pair(column, Order.DESC))
+            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.DESC))
             return orderByPart2
         }
 
         override fun orderByAsc(alias: QueryAlias<*>): U {
-            properties.orderBy.add(Pair(alias, Order.ASC))
+            properties.orderByClauses.add(OrderByClauseWithAlias(alias, Order.ASC))
             return orderByPart2
         }
 
         override fun orderByDesc(alias: QueryAlias<*>): U {
-            properties.orderBy.add(Pair(alias, Order.DESC))
+            properties.orderByClauses.add(OrderByClauseWithAlias(alias, Order.DESC))
+            return orderByPart2
+        }
+    }
+
+    protected interface OrderByCaseWhenExists<T : Any, U : Any,V : SqlClientQuery.OrderByPart2<V>>
+        : SqlClientQuery.OrderByCaseWhenExists<U, V>, WithProperties<T> {
+        public val orderByPart2: V
+        public val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        public val order: Order
+    }
+
+    protected interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any, W : SqlClientQuery.OrderByPart2<W>>
+        : SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, W>, WithProperties<T> {
+        public val orderByPart2: W
+        public val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        public val then: V
+        public val order: Order
+        
+        override fun `else`(value: V): W {
+            val (_, result) = properties.executeSubQuery(dsl)
+            properties.orderByClauses.add(OrderByClauseCaseWhenExistsSubQuery(result, then, value, order))
             return orderByPart2
         }
     }
@@ -208,22 +229,22 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val orderByPart2: U
 
         override fun andAsc(column: Column<*, *>): U {
-            properties.orderBy.add(Pair(column, Order.ASC))
+            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.ASC))
             return orderByPart2
         }
 
         override fun andDesc(column: Column<*, *>): U {
-            properties.orderBy.add(Pair(column, Order.DESC))
+            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.DESC))
             return orderByPart2
         }
 
-        override fun orderByAsc(alias: QueryAlias<*>): U {
-            properties.orderBy.add(Pair(alias, Order.ASC))
+        override fun andAsc(alias: QueryAlias<*>): U {
+            properties.orderByClauses.add(OrderByClauseWithAlias(alias, Order.ASC))
             return orderByPart2
         }
 
-        override fun orderByDesc(alias: QueryAlias<*>): U {
-            properties.orderBy.add(Pair(alias, Order.DESC))
+        override fun andDesc(alias: QueryAlias<*>): U {
+            properties.orderByClauses.add(OrderByClauseWithAlias(alias, Order.DESC))
             return orderByPart2
         }
     }
@@ -279,12 +300,19 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
 
         private fun orderBy(): String = with(properties) {
-            if (orderBy.isEmpty()) {
+            if (orderByClauses.isEmpty()) {
                 return ""
             }
-            return orderBy.joinToString(prefix = "ORDER BY ") { pair ->
-                val fieldName = fieldName(pair.first)
-                "$fieldName ${pair.second}"
+            return orderByClauses.joinToString(prefix = "ORDER BY ") { orderByClause ->
+                val fieldName = when(orderByClause) {
+                    is OrderByClauseWithColumn -> fieldName(orderByClause.column)
+                    is OrderByClauseWithAlias -> fieldName(orderByClause.alias)
+                    is OrderByClauseCaseWhenExistsSubQuery<*> ->
+                        "(CASE WHEN\nEXISTS( ${orderByClause.subQueryReturn.sql()} )\n" + 
+                                "THEN ${orderByClause.then.defaultValue(properties.tables.dbType)} " +
+                                "ELSE ${orderByClause.elseVal.defaultValue(properties.tables.dbType)}\nEND)"
+                }
+                "$fieldName ${orderByClause.order}"
             }
         }
 

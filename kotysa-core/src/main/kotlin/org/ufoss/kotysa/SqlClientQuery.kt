@@ -451,6 +451,22 @@ public abstract class SqlClientQuery protected constructor() {
         // With alias
         public infix fun orderByAsc(alias: QueryAlias<*>): T
         public infix fun orderByDesc(alias: QueryAlias<*>): T
+
+        public infix fun <U : Any> orderByAscCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): OrderByCaseWhenExists<U, T>
+        
+        public infix fun <U : Any> orderByDescCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): OrderByCaseWhenExists<U, T>
+    }
+
+    public interface OrderByCaseWhenExists<T : Any, U : OrderByPart2<U>> {
+        public infix fun <V : Any> then(value: V): OrderByCaseWhenExistsPart2<T, V, U>
+    }
+
+    public interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : OrderByPart2<V>> {
+        public infix fun `else`(value: U): V
     }
 
     public interface OrderByPart2<T : OrderByPart2<T>> {
@@ -458,7 +474,15 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun andDesc(column: Column<*, *>): T
 
         // With alias
-        public infix fun orderByAsc(alias: QueryAlias<*>): T
-        public infix fun orderByDesc(alias: QueryAlias<*>): T
+        public infix fun andAsc(alias: QueryAlias<*>): T
+        public infix fun andDesc(alias: QueryAlias<*>): T
+
+        public infix fun <U : Any> andAscCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): OrderByCaseWhenExists<U, T>
+
+        public infix fun <U : Any> andDescCaseWhenExists(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): OrderByCaseWhenExists<U, T>
     }
 }
