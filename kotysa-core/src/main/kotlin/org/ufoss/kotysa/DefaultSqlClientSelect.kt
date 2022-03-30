@@ -26,7 +26,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         public lateinit var select: (RowImpl) -> T?
 
-        internal val groupBy = mutableListOf<Column<*, *>>()
+        internal val groupByClauses = mutableListOf<ColumnOrAlias>()
         internal val orderByClauses = mutableListOf<OrderByClause>()
 
         public var limit: Long? = null
@@ -163,7 +163,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val groupByPart2: U
 
         override fun groupBy(column: Column<*, *>): U {
-            properties.groupBy.add(column)
+            properties.groupByClauses.add(column)
+            return groupByPart2
+        }
+
+        override fun groupBy(alias: QueryAlias<*>): U {
+            properties.groupByClauses.add(alias)
             return groupByPart2
         }
     }
@@ -173,7 +178,12 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val groupByPart2: U
 
         override fun and(column: Column<*, *>): U {
-            properties.groupBy.add(column)
+            properties.groupByClauses.add(column)
+            return groupByPart2
+        }
+
+        override fun and(alias: QueryAlias<*>): U {
+            properties.groupByClauses.add(alias)
             return groupByPart2
         }
     }
@@ -291,12 +301,10 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
 
         private fun groupBy(): String = with(properties) {
-            if (groupBy.isEmpty()) {
+            if (groupByClauses.isEmpty()) {
                 return ""
             }
-            return groupBy.joinToString(prefix = "GROUP BY ") { column ->
-                column.getFieldName(availableColumns)
-            }
+            return groupByClauses.joinToString(prefix = "GROUP BY ") { columnOrAlias -> fieldName(columnOrAlias) }
         }
 
         private fun orderBy(): String = with(properties) {

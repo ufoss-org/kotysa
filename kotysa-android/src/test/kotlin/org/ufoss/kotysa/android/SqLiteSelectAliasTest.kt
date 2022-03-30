@@ -39,6 +39,16 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
     }
 
     @Test
+    fun `Verify selectAliasedFirstnameOrderByFirstnameGet returns results`() {
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameGet())
+            .hasSize(2)
+            .containsExactly(
+                userBboss.firstname,
+                userJdoe.firstname,
+            )
+    }
+
+    @Test
     fun `Verify selectAliasedFirstnameOrderByFirstnameAlias returns results`() {
         assertThat(repository.selectAliasedFirstnameOrderByFirstnameAlias())
             .hasSize(2)
@@ -46,6 +56,20 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
                 userBboss.firstname,
                 userJdoe.firstname,
             )
+    }
+
+    @Test
+    fun `Verify selectCountCustomerGroupByCountryGet counts and group`() {
+        assertThat(repository.selectCountUserGroupByCountryGet())
+            .hasSize(2)
+            .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
+    }
+
+    @Test
+    fun `Verify selectCountCustomerGroupByCountryAlias counts and group`() {
+        assertThat(repository.selectCountUserGroupByCountryAlias())
+            .hasSize(2)
+            .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
     }
 }
 
@@ -78,9 +102,27 @@ class UserRepositorySelectAlias(
                 where QueryAlias<Boolean>("roleUsedByUser") eq true)
             .fetchAll()
 
+    fun selectAliasedFirstnameOrderByFirstnameGet() =
+        (sqlClient select SqliteUsers.firstname `as` "fn"
+                from SqliteUsers
+                orderByAsc SqliteUsers.firstname["fn"]
+                ).fetchAll()
+
     fun selectAliasedFirstnameOrderByFirstnameAlias() =
         (sqlClient select SqliteUsers.firstname `as` "fn"
                 from SqliteUsers
                 orderByAsc QueryAlias<String>("fn")
+                ).fetchAll()
+
+    fun selectCountUserGroupByCountryGet() =
+        (sqlClient selectCount SqliteUsers.id and SqliteUsers.roleId `as` "roleId"
+                from SqliteUsers
+                groupBy SqliteUsers.roleId["roleId"]
+                ).fetchAll()
+
+    fun selectCountUserGroupByCountryAlias() =
+        (sqlClient selectCount SqliteUsers.id and SqliteUsers.roleId `as` "roleId"
+                from SqliteUsers
+                groupBy QueryAlias<Int>("roleId")
                 ).fetchAll()
 }

@@ -437,10 +437,13 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface GroupBy<T : GroupByPart2<T>> {
         public infix fun groupBy(column: Column<*, *>): T
+        public infix fun groupBy(alias: QueryAlias<*>): T
     }
 
     public interface GroupByPart2<T : GroupByPart2<T>> {
         public infix fun and(column: Column<*, *>): T
+        public infix fun and(alias: QueryAlias<*>): T
+        
         // todo HAVING https://www.dofactory.com/sql/having
     }
 
