@@ -28,6 +28,10 @@ public sealed interface WhereClauseColumn {
     public val otherColumn: Column<*, *>
 }
 
+public sealed interface WhereClauseSubQuery<T : Any> {
+    public val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+}
+
 public class WhereClauseValueWithColumn<T : Any> internal constructor(
     override val column: Column<T, *>,
     override val operation: Operation,
@@ -57,6 +61,18 @@ public class WhereClauseExists<T : Any> internal constructor(
 ) : WhereClause {
     override val operation: Operation = Operation.EXISTS
 }
+
+public class WhereClauseSubQueryWithColumn<T : Any, U : Any> internal constructor(
+    override val column: Column<T, U>,
+    override val operation: Operation,
+    override val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+) : WhereClauseWithColumn<T>, WhereClauseSubQuery<U>
+
+public class WhereClauseSubQueryWithAlias<T, U : Any> internal constructor(
+    override val alias: QueryAlias<T>,
+    override val operation: Operation,
+    override val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+) : WhereClauseWithAlias<T>, WhereClauseSubQuery<U>
 
 public class WhereClauseWithType internal constructor(
     public val whereClause: WhereClause,

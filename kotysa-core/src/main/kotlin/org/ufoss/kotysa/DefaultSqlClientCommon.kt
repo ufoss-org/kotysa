@@ -275,6 +275,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 )
             )
         }
+
+        public fun <T : Any, U : Any> addClauseSubQuery(
+            column: Column<T, U>,
+            operation: Operation,
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+            whereClauseType: WhereClauseType
+        ) {
+            properties.whereClauses.add(
+                WhereClauseWithType(
+                    WhereClauseSubQueryWithColumn(column, operation, dsl),
+                    whereClauseType,
+                )
+            )
+        }
     }
 
     public interface WhereAliasCommon : WithProperties {
@@ -309,6 +323,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 )
             )
         }
+
+        public fun <T, U : Any> addClauseSubQuery(
+            alias: QueryAlias<T>,
+            operation: Operation,
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+            whereClauseType: WhereClauseType
+        ) {
+            properties.whereClauses.add(
+                WhereClauseWithType(
+                    WhereClauseSubQueryWithAlias(alias, operation, dsl),
+                    whereClauseType,
+                )
+            )
+        }
     }
 
     public interface WhereOpColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any> : WhereColumnCommon {
@@ -327,19 +355,25 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         WhereOpColumn<T, U, V>, WhereInOp<T, U, V> {
         override infix fun `in`(values: Collection<V>): U =
             where.apply { addClauseValue(column, Operation.IN, values, type) }
+        
+        override fun `in`(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+            where.apply { addClauseSubQuery(column, Operation.IN, dsl, type) }
     }
 
-    public interface WhereInOpAlias<T, U: Any, V : SqlClientQuery.Where<V>> :
-        WhereOpAlias<T, V>, WhereInOp<U, V, U> {
-        override infix fun `in`(values: Collection<U>): V =
+    public interface WhereInOpAlias<T, U: SqlClientQuery.Where<U>, V : Any> :
+        WhereOpAlias<T, U>, WhereInOp<V, U, V> {
+        override infix fun `in`(values: Collection<V>): U =
             where.apply { addClauseValue(alias, Operation.IN, values, type) }
+
+        override fun `in`(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+            where.apply { addClauseSubQuery(alias, Operation.IN, dsl, type) }
     }
 
     public interface WhereInOpAliasNotNull<T : Any, U : SqlClientQuery.Where<U>> :
-        WhereInOpAlias<T, T, U>, WhereOpAliasNotNull<T, U>
+        WhereInOpAlias<T, U, T>, WhereOpAliasNotNull<T, U>
 
     public interface WhereInOpAliasNullable<T : Any, U : SqlClientQuery.Where<U>> :
-        WhereInOpAlias<T?, T, U>, WhereOpAliasNullable<T, U>
+        WhereInOpAlias<T?, U, T>, WhereOpAliasNullable<T, U>
 
     public interface WhereOpColumnNotNull<T : Any, U : SqlClientQuery.Where<U>, V : Any> :
         WhereOpColumn<T, U, V>, WhereOpNotNull<T, U, V> {
@@ -399,10 +433,25 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.ENDS_WITH, otherStringColumn, type) }
+
+        override fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.EQ, dsl, type) }
+
+        override fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.NOT_EQ, dsl, type) }
+
+        override fun contains(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.CONTAINS, dsl, type) }
+
+        override fun startsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.STARTS_WITH, dsl, type) }
+
+        override fun endsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.ENDS_WITH, dsl, type) }
     }
 
     public interface WhereOpStringAlias<T, U : SqlClientQuery.Where<U>> :
-        WhereInOpAlias<T, String, U>, WhereOpString<String, U> {
+        WhereInOpAlias<T, U, String>, WhereOpString<String, U> {
         override infix fun contains(value: String): U =
             where.apply { addClauseValue(alias, Operation.CONTAINS, "%$value%", type) }
 
@@ -426,6 +475,21 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.ENDS_WITH, otherStringColumn, type) }
+
+        override fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.EQ, dsl, type) }
+
+        override fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.NOT_EQ, dsl, type) }
+
+        override fun contains(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.CONTAINS, dsl, type) }
+
+        override fun startsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.STARTS_WITH, dsl, type) }
+
+        override fun endsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.ENDS_WITH, dsl, type) }
     }
 
     public class WhereOpStringColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
@@ -490,7 +554,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     }
 
     public interface WhereOpDateAlias<T, U : SqlClientQuery.Where<U>, V : Any> :
-        WhereInOpAlias<T, V, U>, WhereOpDate<V, U, V> {
+        WhereInOpAlias<T, U, V>, WhereOpDate<V, U, V> {
         override infix fun before(value: V): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
         override infix fun after(value: V): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
         override infix fun beforeOrEq(value: V): U =
@@ -689,10 +753,28 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override infix fun supOrEq(otherIntColumn: IntColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherIntColumn, type) }
+
+        override infix fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(column, Operation.EQ, dsl, type) }
+
+        override infix fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(column, Operation.NOT_EQ, dsl, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
     }
 
     public interface WhereOpIntAlias<T, U : SqlClientQuery.Where<U>> :
-        WhereInOpAlias<T, Int, U>, WhereOpInt<Int, U> {
+        WhereInOpAlias<T, U, Int>, WhereOpInt<Int, U> {
         override infix fun inf(value: Int): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
         override infix fun sup(value: Int): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
         override infix fun infOrEq(value: Int): U =
@@ -718,6 +800,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override infix fun supOrEq(otherIntColumn: IntColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherIntColumn, type) }
+
+        override infix fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(alias, Operation.EQ, dsl, type) }
+
+        override infix fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(alias, Operation.NOT_EQ, dsl, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
     }
 
     public class WhereOpIntColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
@@ -782,7 +882,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     }
 
     public interface WhereOpLongAlias<T, U : SqlClientQuery.Where<U>> :
-        WhereInOpAlias<T, Long, U>, WhereOpLong<Long, U> {
+        WhereInOpAlias<T, U, Long>, WhereOpLong<Long, U> {
         override infix fun inf(value: Long): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
         override infix fun sup(value: Long): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
         override infix fun infOrEq(value: Long): U =
@@ -849,15 +949,27 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override infix fun notEq(otherUuidColumn: UuidColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.NOT_EQ, otherUuidColumn, type) }
+
+        override fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<UUID>): U =
+            where.apply { addClauseSubQuery(column, Operation.EQ, dsl, type) }
+
+        override fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<UUID>): U =
+            where.apply { addClauseSubQuery(column, Operation.NOT_EQ, dsl, type) }
     }
 
     public interface WhereOpUuidAlias<T, U : SqlClientQuery.Where<U>> :
-        WhereInOpAlias<T, UUID, U>, WhereOpUuid<UUID, U> {
+        WhereInOpAlias<T, U, UUID>, WhereOpUuid<UUID, U> {
         override infix fun eq(otherUuidColumn: UuidColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.EQ, otherUuidColumn, type) }
 
         override infix fun notEq(otherUuidColumn: UuidColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherUuidColumn, type) }
+
+        override fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<UUID>): U =
+            where.apply { addClauseSubQuery(alias, Operation.EQ, dsl, type) }
+
+        override fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<UUID>): U =
+            where.apply { addClauseSubQuery(alias, Operation.NOT_EQ, dsl, type) }
     }
 
     public class WhereOpUuidColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
@@ -1250,6 +1362,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                     availableColumns
                                                 )
                                             }"
+                                            is WhereClauseSubQuery<*> -> {
+                                                val (_, result) = properties.executeSubQuery(
+                                                    dsl as SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Any>
+                                                )
+                                                "$fieldName = (${result.sql()})"
+                                            }
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
                                     Operation.NOT_EQ ->
@@ -1293,6 +1411,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                     else -> "$fieldName IN (:k${index++})"
                                                 }
                                             is WhereClauseColumn -> TODO()
+                                            is WhereClauseSubQuery<*> -> {
+                                                val (_, result) = properties.executeSubQuery(
+                                                    dsl as SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Any>
+                                                )
+                                                "$fieldName IN (${result.sql()})"
+                                            }
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
                                     /*Operation.IS ->

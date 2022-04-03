@@ -190,6 +190,7 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereInOp<T : Any, U : Where<U>, V : Any> {
         public infix fun `in`(values: Collection<V>): U
         public infix fun `in`(values: Sequence<V>): U = this.`in`(values.toSet())
+        public infix fun `in`(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
     }
 
     public interface WhereOpNotNull<T : Any, U : Where<U>, V : Any> {
@@ -211,6 +212,11 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun contains(otherStringColumn: StringColumn<*>): U
         public infix fun startsWith(otherStringColumn: StringColumn<*>): U
         public infix fun endsWith(otherStringColumn: StringColumn<*>): U
+        public infix fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun contains(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun startsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun endsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
     }
 
     public interface WhereOpStringNotNull<T : Any, U : Where<U>> :
@@ -282,6 +288,12 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun sup(otherIntColumn: IntColumn<*>): U
         public infix fun infOrEq(otherIntColumn: IntColumn<*>): U
         public infix fun supOrEq(otherIntColumn: IntColumn<*>): U
+        public infix fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
     }
 
     public interface WhereOpIntNotNull<T : Any, U : Where<U>> :
@@ -312,6 +324,8 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereOpUuid<T : Any, U : Where<U>> : WhereInOp<T, U, UUID> {
         public infix fun eq(otherUuidColumn: UuidColumn<*>): U
         public infix fun notEq(otherUuidColumn: UuidColumn<*>): U
+        public infix fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<UUID>): U
+        public infix fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<UUID>): U
     }
 
     public interface WhereOpUuidNotNull<T : Any, U : Where<U>> :
