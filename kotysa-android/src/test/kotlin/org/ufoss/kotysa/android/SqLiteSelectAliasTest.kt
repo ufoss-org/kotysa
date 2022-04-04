@@ -71,6 +71,13 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
             .hasSize(2)
             .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
     }
+
+    @Test
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias returns User and Admin roles`() {
+        assertThat(repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    }
 }
 
 class UserRepositorySelectAlias(
@@ -125,4 +132,15 @@ class UserRepositorySelectAlias(
                 from SqliteUsers
                 groupBy QueryAlias<Int>("roleId")
                 ).fetchAll()
+
+    fun selectRoleLabelWhereInUserSubQueryAlias(userIds: List<Int>) =
+        (sqlClient select SqliteRoles.label and SqliteRoles.id `as` "roleId"
+                from SqliteRoles
+                where QueryAlias<Int>("roleId") `in`
+                {
+                    (this select SqliteUsers.roleId
+                            from SqliteUsers
+                            where SqliteUsers.id `in` userIds)
+                })
+            .fetchAll()
 }

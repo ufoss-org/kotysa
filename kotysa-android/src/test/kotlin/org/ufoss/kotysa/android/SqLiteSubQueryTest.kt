@@ -30,7 +30,7 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
         assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)))
             .hasSize(2)
-            .containsExactlyInAnyOrder(roleAdmin.label, roleUser.label)
+            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
 
     @Test
@@ -86,7 +86,7 @@ class UserRepositorySqliteSubQuery(
             .fetchAll()
 
     fun selectRoleLabelWhereInUserSubQuery(userIds: List<Int>) =
-        (sqlClient select SqliteRoles.label
+        (sqlClient select SqliteRoles.label and SqliteRoles.id
                 from SqliteRoles
                 where SqliteRoles.id `in`
                 {
