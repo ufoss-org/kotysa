@@ -24,6 +24,36 @@ class JdbcSubQueryH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SubQuery>() {
             .hasSize(2)
             .containsExactlyInAnyOrder(roleAdmin.label, roleUser.label)
     }
+
+    @Test
+    fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
+        assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
+    fun `Verify selectCaseWhenExistsSubQuery returns results`() {
+        assertThat(repository.selectCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(3)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+                Pair(roleGod.label, false),
+            )
+    }
+
+    @Test
+    fun `Verify selectOrderByCaseWhenExistsSubQuery returns results`() {
+        assertThat(repository.selectOrderByCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(4)
+            .containsExactly(
+                roleAdmin.label,
+                roleUser.label,
+                roleGod.label,
+                roleGod.label,
+            )
+    }
 }
 
 
@@ -50,5 +80,39 @@ class UserRepositoryJdbcH2SubQuery(private val sqlClient: JdbcSqlClient) : Abstr
                             where H2Users.roleId eq H2Roles.id
                             and H2Users.id `in` userIds)
                 })
+            .fetchAll()
+
+    fun selectRoleLabelWhereInUserSubQuery(userIds: List<Int>) =
+        (sqlClient select H2Roles.label and H2Roles.id
+                from H2Roles
+                where H2Roles.id `in`
+                {
+                    (this select H2Users.roleId
+                            from H2Users
+                            where H2Users.id `in` userIds)
+                })
+            .fetchAll()
+
+    fun selectCaseWhenExistsSubQuery(userIds: List<Int>) =
+        (sqlClient selectDistinct H2Roles.label
+                andCaseWhenExists {
+            (this select H2Users.id
+                    from H2Users
+                    where H2Users.roleId eq H2Roles.id
+                    and H2Users.id `in` userIds)
+        } then true `else` false
+                from H2Roles)
+            .fetchAll()
+
+    fun selectOrderByCaseWhenExistsSubQuery(userIds: List<Int>) =
+        (sqlClient select H2Roles.label
+                from H2Roles
+                orderByDescCaseWhenExists {
+            (this select H2Users.id
+                    from H2Users
+                    where H2Users.roleId eq H2Roles.id
+                    and H2Users.id `in` userIds)
+        } then true `else` false
+                andAsc H2Roles.label)
             .fetchAll()
 }

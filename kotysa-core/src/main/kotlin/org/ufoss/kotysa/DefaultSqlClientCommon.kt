@@ -1374,7 +1374,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 val fieldName = if (this is WhereClauseWithColumn<*>) {
                                     column.getFieldName(availableColumns)
                                 } else {
-                                    (this as WhereClauseWithAlias<*>).alias.alias
+                                    "\"${(this as WhereClauseWithAlias<*>).alias.alias}\""
                                 }
                                 when (operation) {
                                     Operation.EQ ->

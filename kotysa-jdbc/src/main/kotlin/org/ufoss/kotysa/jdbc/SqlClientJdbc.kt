@@ -182,6 +182,11 @@ internal class SqlClientJdbc(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.FirstSelect<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(dsl)
 
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCaseWhenExists(dsl)
+
     override fun <T> transactional(block: (JdbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val isOrigin = currentTransaction == null
