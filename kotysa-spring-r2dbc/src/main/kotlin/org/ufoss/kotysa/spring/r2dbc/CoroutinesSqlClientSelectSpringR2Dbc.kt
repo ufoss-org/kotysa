@@ -47,12 +47,12 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             private val client: DatabaseClient,
             override val properties: Properties<T>,
     ) : DefaultSqlClientSelect.Select<T>(), CoroutinesSqlClientSelect.FirstSelect<T> {
-        private val from: From<T, *> by lazy {
-            From<T, Any>(client, properties)
+        private val from: FromTable<T, *> by lazy {
+            FromTable<T, Any>(client, properties)
         }
 
-        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.From<T, U> =
-                addFromTable(table, from as From<T, U>)
+        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<T, U> =
+                addFromTable(table, from as FromTable<T, U>)
 
         override fun <U : Any> and(column: Column<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, U?> =
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
@@ -82,12 +82,12 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             private val client: DatabaseClient,
             override val properties: Properties<Pair<T, U>>,
     ) : DefaultSqlClientSelect.Select<Pair<T, U>>(), CoroutinesSqlClientSelect.SecondSelect<T, U> {
-        private val from: From<Pair<T, U>, *> by lazy {
-            From<Pair<T, U>, Any>(client, properties)
+        private val from: FromTable<Pair<T, U>, *> by lazy {
+            FromTable<Pair<T, U>, Any>(client, properties)
         }
 
-        override fun <V : Any> from(table: Table<V>): CoroutinesSqlClientSelect.From<Pair<T, U>, V> =
-                addFromTable(table, from as From<Pair<T, U>, V>)
+        override fun <V : Any> from(table: Table<V>): CoroutinesSqlClientSelect.FromTable<Pair<T, U>, V> =
+                addFromTable(table, from as FromTable<Pair<T, U>, V>)
 
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -117,12 +117,12 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             private val client: DatabaseClient,
             override val properties: Properties<Triple<T, U, V>>,
     ) : DefaultSqlClientSelect.Select<Triple<T, U, V>>(), CoroutinesSqlClientSelect.ThirdSelect<T, U, V> {
-        private val from: From<Triple<T, U, V>, *> by lazy {
-            From<Triple<T, U, V>, Any>(client, properties)
+        private val from: FromTable<Triple<T, U, V>, *> by lazy {
+            FromTable<Triple<T, U, V>, Any>(client, properties)
         }
 
-        override fun <W : Any> from(table: Table<W>): CoroutinesSqlClientSelect.From<Triple<T, U, V>, W> =
-                addFromTable(table, from as From<Triple<T, U, V>, W>)
+        override fun <W : Any> from(table: Table<W>): CoroutinesSqlClientSelect.FromTable<Triple<T, U, V>, W> =
+                addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
 
         override fun <W : Any> and(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -152,10 +152,10 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             client: DatabaseClient,
             override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), CoroutinesSqlClientSelect.Select {
-        private val from: From<List<Any?>, *> = From<List<Any?>, Any>(client, properties)
+        private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(client, properties)
 
-        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.From<List<Any?>, U> =
-                addFromTable(table, from as From<List<Any?>, U>)
+        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<List<Any?>, U> =
+                addFromTable(table, from as FromTable<List<Any?>, U>)
 
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.Select = this.apply { addSelectTable(table) }
@@ -180,27 +180,27 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             properties: Properties<T>,
             dsl: (ValueProvider) -> T,
     ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), CoroutinesSqlClientSelect.Fromable<T> {
-        private val from: From<T, *> = From<T, Any>(client, properties)
+        private val from: FromTable<T, *> = FromTable<T, Any>(client, properties)
 
-        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.From<T, U> =
-                addFromTable(table, from as From<T, U>)
+        override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<T, U> =
+                addFromTable(table, from as FromTable<T, U>)
     }
 
-    private class From<T : Any, U : Any>(
+    private class FromTable<T : Any, U : Any>(
             override val client: DatabaseClient,
             properties: Properties<T>,
-    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.From<T, U>,
+    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.FromTable<T, U>,
             CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
             CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(properties),
-            CoroutinesSqlClientSelect.From<T, U>, GroupBy<T>, OrderBy<T>,
+            CoroutinesSqlClientSelect.FromTable<T, U>, GroupBy<T>, OrderBy<T>,
             CoroutinesSqlClientSelect.LimitOffset<T> {
         override val from = this
         override val where by lazy { Where(client, properties) }
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
-        override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.From<T, V> =
-            addFromTable(table, from as From<T, V>)
+        override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.FromTable<T, V> =
+            addFromTable(table, from as FromTable<T, V>)
     }
 
     private class Where<T : Any>(

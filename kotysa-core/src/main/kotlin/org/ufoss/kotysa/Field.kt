@@ -36,6 +36,7 @@ internal class CountField<T : Any, U : Any> internal constructor(
 ) : AbstractField<Long>(), FieldNotNull<Long> {
     override val fieldNames: List<String> =
         listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
+    
     override val builder: (RowImpl) -> Long = { row -> row.getAndIncrement(Long::class.javaObjectType)!! }
 }
 
@@ -58,6 +59,7 @@ internal class AvgField<T : Any, U : Any> internal constructor(
     column: Column<T, U>,
 ) : AbstractField<BigDecimal>(), FieldNotNull<BigDecimal> {
     override val fieldNames: List<String> = listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
+    
     override val builder: (RowImpl) -> BigDecimal = { row ->
         when {
             properties.tables.dbType == DbType.H2 && properties.module == Module.R2DBC ->
@@ -85,9 +87,6 @@ internal class LongSumField<T : Any, U : Any> internal constructor(
     }
 }
 
-/**
- * Selected field
- */
 internal class TableField<T : Any> internal constructor(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
     availableTables: Map<Table<*>, KotysaTable<*>>,
@@ -217,7 +216,14 @@ internal class CaseWhenExistsSubQueryField<T : Any, U : Any> internal constructo
 ) : AbstractField<U>(), FieldNotNull<U> {
     override val fieldNames get() = listOf("CASE WHEN\nEXISTS( ${subQueryReturn.sql()} )\n" +
             "THEN ${then.defaultValue(dbType)} ELSE ${elseVal.defaultValue(dbType)}\nEND")
+    
     override val builder: (RowImpl) -> U = { row -> row.getAndIncrement(then::class.javaObjectType)!! }
+}
+
+internal class StarField<T : Any> internal constructor(
+    override val builder: (RowImpl) -> T?,
+) : AbstractField<T?>(), FieldNullable<T> {
+    override val fieldNames: List<String> = listOf("*")
 }
 
 internal class FieldDsl<T : Any>(

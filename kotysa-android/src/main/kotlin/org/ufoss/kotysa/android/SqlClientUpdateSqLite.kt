@@ -18,7 +18,7 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
-        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }
     }
@@ -31,7 +31,7 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(

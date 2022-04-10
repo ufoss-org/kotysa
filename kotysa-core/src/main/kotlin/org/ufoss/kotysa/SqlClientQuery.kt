@@ -12,7 +12,7 @@ import java.util.*
 
 public abstract class SqlClientQuery protected constructor() {
 
-    public interface Selectable {
+    public interface SelectableSingle {
         public infix fun <T : Any> select(column: Column<*, T>): Select
         public infix fun <T : Any> selectCount(column: Column<*, T>?): Select
         public infix fun <T : Any> selectDistinct(column: Column<*, T>): Select
@@ -22,17 +22,23 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun selectSum(column: IntColumn<*>): Select
     }
 
-    public interface SelectableFull : Selectable {
+    public interface Selectable : SelectableSingle {
         public infix fun <T : Any> select(table: Table<T>): Select
-        public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Select
+        public infix fun <T : Any> selectStarFromSubQuery(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): From<*>
 
         /**
          * sub-query
          */
         public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
         public infix fun <T : Any> selectCaseWhenExists(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SelectCaseWhenExists
+    }
+
+    public interface SelectableFull : Selectable {
+        public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Select
     }
 
     public interface SelectCaseWhenExists {
@@ -48,7 +54,8 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface Fromable {
-        public infix fun <T : Any> from(table: Table<T>): From<T, *>
+        public infix fun <T : Any> from(table: Table<T>): FromTable<T, *>
+        public infix fun <T : Any> from(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>): From<*>
     }
 
     public interface AndCaseWhenExists {
@@ -72,21 +79,26 @@ public abstract class SqlClientQuery protected constructor() {
         /**
          * sub-query
          */
-        public infix fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Andable
+        public infix fun <T : Any> and(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>): Andable
         public infix fun <T : Any> andCaseWhenExists(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): AndCaseWhenExists
     }
 
-    public interface From<T : Any, U : From<T, U>> {
+    public interface From<T : From<T>> {
+        public infix fun <U : Any> and(table: Table<U>): FromTable<U, *>
+        public infix fun <U : Any> and(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): From<*>
+    }
+
+    public interface FromTable<T : Any, U : FromTable<T, U>> {
         public infix fun <V : Any> innerJoin(table: Table<V>): Joinable<T, U, V>
     }
 
-    public interface Joinable<T : Any, U : From<T, U>, V : Any> {
+    public interface Joinable<T : Any, U : FromTable<T, U>, V : Any> {
         public infix fun on(column: Column<T, *>): Join<T, U, V>
     }
 
-    public interface Join<T : Any, U : From<T, U>, V : Any> {
+    public interface Join<T : Any, U : FromTable<T, U>, V : Any> {
         public infix fun eq(column: Column<V, *>): U
     }
 
@@ -153,7 +165,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> where(longColumnNullable: LongColumnNullable<U>): WhereOpLongNullable<U, T>
         public infix fun <U : Any> where(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidNotNull<U, T>
         public infix fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
-        public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
+        public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
         
         // Where with alias
         public infix fun where(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
@@ -190,12 +202,12 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereInOp<T : Any, U : Where<U>, V : Any> {
         public infix fun `in`(values: Collection<V>): U
         public infix fun `in`(values: Sequence<V>): U = this.`in`(values.toSet())
-        public infix fun `in`(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
+        public infix fun `in`(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U
     }
     
     public interface WhereOp<T : Where<T>, U : Any> {
-        public infix fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
-        public infix fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
+        public infix fun eq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
+        public infix fun notEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
     }
 
     public interface WhereOpNotNull<T : Any, U : Where<U>, V : Any> : WhereOp<U, V> {
@@ -218,9 +230,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun startsWith(otherStringColumn: StringColumn<*>): U
         public infix fun endsWith(otherStringColumn: StringColumn<*>): U
         
-        public infix fun contains(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
-        public infix fun startsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
-        public infix fun endsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
     }
 
     public interface WhereOpStringNotNull<T : Any, U : Where<U>> :
@@ -242,10 +254,10 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun beforeOrEq(otherDateColumn: Column<*, V>): U
         public infix fun afterOrEq(otherDateColumn: Column<*, V>): U
 
-        public infix fun before(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
-        public infix fun after(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
-        public infix fun beforeOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
-        public infix fun afterOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U
+        public infix fun before(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U
+        public infix fun after(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U
+        public infix fun beforeOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U
+        public infix fun afterOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U
     }
 
     public interface WhereOpDateNotNull<T : Any, U : Where<U>, V : Any> :
@@ -299,10 +311,10 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun infOrEq(otherIntColumn: IntColumn<*>): U
         public infix fun supOrEq(otherIntColumn: IntColumn<*>): U
         
-        public infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
-        public infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
-        public infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
-        public infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
+        public infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
     }
 
     public interface WhereOpIntNotNull<T : Any, U : Where<U>> :
@@ -323,10 +335,10 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun infOrEq(otherLongColumn: LongColumn<*>): U
         public infix fun supOrEq(otherLongColumn: LongColumn<*>): U
 
-        public infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U
-        public infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U
-        public infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U
-        public infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U
+        public infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U
+        public infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U
+        public infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U
+        public infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U
     }
 
     public interface WhereOpLongNotNull<T : Any, U : Where<U>> :
@@ -368,7 +380,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(longColumnNullable: LongColumnNullable<U>): WhereOpLongNullable<U, T>
         public infix fun <U : Any> and(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidNotNull<U, T>
         public infix fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
-        public infix fun <U : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
+        public infix fun <U : Any> andExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
 
         // And with alias
         public infix fun and(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
@@ -422,7 +434,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> or(longColumnNullable: LongColumnNullable<U>): WhereOpLongNullable<U, T>
         public infix fun <U : Any> or(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidNotNull<U, T>
         public infix fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
-        public infix fun <U : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T
+        public infix fun <U : Any> orExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
 
         // Or with alias
         public infix fun or(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
@@ -482,11 +494,11 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun orderByDesc(alias: QueryAlias<*>): T
 
         public infix fun <U : Any> orderByAscCaseWhenExists(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
         
         public infix fun <U : Any> orderByDescCaseWhenExists(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
     }
 
@@ -507,11 +519,11 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun andDesc(alias: QueryAlias<*>): T
 
         public infix fun <U : Any> andAscCaseWhenExists(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
 
         public infix fun <U : Any> andDescCaseWhenExists(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
     }
 }

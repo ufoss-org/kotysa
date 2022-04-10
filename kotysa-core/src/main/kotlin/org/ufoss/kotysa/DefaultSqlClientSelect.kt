@@ -42,27 +42,62 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereableSubQuery<T, U, V, *, *, *>): V = with(properties) {
-            select = when (selectedFields.size) {
+        protected fun <U : Any, V : FromTable<U, V>> addFromTable(
+            table: Table<U>,
+            from: FromWhereableSubQuery<T, U, V, *, *, *, *>,
+        ): V {
+            properties.select = buildSelect()
+            return from.addFromTable(table)
+        }
+
+        /**
+         * 'select' phase is finished, start 'from' phase
+         */
+        protected fun <U : Any, V : From<V>> addFromSubQuery(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+            from: FromWhereableSubQuery<T, U, *, V, *, *, *>,
+            selectStar: Boolean = false,
+        ): V {
+            val result = properties.executeSubQuery(dsl)
+            if (selectStar) {
+                addSelectStarFromSubQuery(result.subQueryProperties.select)
+            }
+            properties.select = buildSelect()
+            return from.addFromSubQuery(result)
+        }
+
+        private fun buildSelect(): (RowImpl) -> T? = with(properties) {
+            when (selectedFields.size) {
                 1 -> selectedFields[0].builder as (RowImpl) -> T?
                 2 -> {
-                    { row: RowImpl -> Pair(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row)) } as (RowImpl) -> T?
+                    { row: RowImpl ->
+                        Pair(
+                            selectedFields[0].builder.invoke(row),
+                            selectedFields[1].builder.invoke(row)
+                        )
+                    } as (RowImpl) -> T?
                 }
                 3 -> {
                     { row: RowImpl ->
-                        Triple(selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row),
-                                selectedFields[2].builder.invoke(row))
+                        Triple(
+                            selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row),
+                            selectedFields[2].builder.invoke(row)
+                        )
                     } as (RowImpl) -> T?
                 }
                 else -> {
                     { row: RowImpl -> selectedFields.map { selectedField -> selectedField.builder.invoke(row) } } as (RowImpl) -> T?
                 }
             }
-            from.addFromTable(table)
         }
 
         public fun <U : Any> addSelectTable(table: Table<U>) {
-            properties.selectedFields.add((table as AbstractTable<U>).toField(properties.tables.allColumns, properties.availableTables))
+            properties.selectedFields.add(
+                (table as AbstractTable<U>).toField(
+                    properties.tables.allColumns,
+                    properties.availableTables
+                )
+            )
         }
 
         public fun <U : Any> addSelectColumn(column: Column<*, U>, classifier: FieldClassifier = FieldClassifier.NONE) {
@@ -81,18 +116,22 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add(LongSumField(properties, column))
         }
 
-        public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
+        public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>) {
             val (subQueryProperties, result) = properties.executeSubQuery(dsl)
             properties.selectedFields.add(SubQueryField(result, subQueryProperties.select))
         }
 
         public fun <U : Any, V : Any> addSelectCaseWhenExistsSubQuery(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
             then: V,
             elseVal: V
         ) {
             val (_, result) = properties.executeSubQuery(dsl)
             properties.selectedFields.add(CaseWhenExistsSubQueryField(properties.tables.dbType, result, then, elseVal))
+        }
+
+        private fun <U : Any> addSelectStarFromSubQuery(select: (RowImpl) -> U?) {
+            properties.selectedFields.add(StarField(select))
         }
 
         protected fun aliasLastColumn(alias: String) {
@@ -105,8 +144,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     public abstract class SelectWithDsl<T : Any> protected constructor(
-            final override val properties: Properties<T>,
-            dsl: (ValueProvider) -> T,
+        final override val properties: Properties<T>,
+        dsl: (ValueProvider) -> T,
     ) : SqlClientQuery.Select, Fromable, WithProperties<T> {
         init {
             val field = FieldDsl(properties, dsl)
@@ -114,34 +153,46 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.select = field.builder
         }
 
-        protected fun <U : Any, V : From<U, V>> addFromTable(table: Table<U>, from: FromWhereable<T, U, V, *, *, *, *>): V =
-                from.addFromTable(table)
+        protected fun <U : Any, V : FromTable<U, V>> addFromTable(
+            table: Table<U>,
+            from: FromWhereable<T, U, V, *, *, *, *, *>
+        ): V = from.addFromTable(table)
+
+        protected fun <U : Any, V : From<V>> addFromSubQuery(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+            from: FromWhereable<T, U, *, V, *, *, *, *>
+        ): V = from.addFromSubQuery(properties.executeSubQuery(dsl))
     }
 
-    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<W>,
-            X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>>
+    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : FromTable<U, V>, W : From<W>, X : SqlClientQuery.Where<X>,
+            Y : SqlClientQuery.LimitOffset<Y>, Z : SqlClientQuery.GroupByPart2<Z>>
     protected constructor(
         final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, W>(), LimitOffset<T, X>, GroupBy<T, Y> {
-        protected fun <A : Any, B : From<A, B>> addFromTable(table: Table<A>, from: FromWhereableSubQuery<T, A, B, *, *, *>): B =
-            from.addFromTable(table)
+    ) : DefaultSqlClientCommon.FromWhereable<U, V, W, X>(), LimitOffset<T, Y>, GroupBy<T, Z> {
+        protected fun <A : Any, B : FromTable<A, B>> addFromTable(
+            table: Table<A>,
+            from: FromWhereableSubQuery<T, A, B, *, *, *, *>,
+        ): B = from.addFromTable(table)
+
+        protected fun <A : Any, B : From<B>> addFromSubQuery(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<A>,
+            from: FromWhereableSubQuery<T, A, *, B, *, *, *>
+        ): B = from.addFromSubQuery(properties.executeSubQuery(dsl))
     }
 
-    public abstract class FromWhereable<T : Any, U : Any, V : From<U, V>, W : SqlClientQuery.Where<W>,
-            X : SqlClientQuery.LimitOffset<X>, Y : SqlClientQuery.GroupByPart2<Y>, Z : SqlClientQuery.OrderByPart2<Z>>
+    public abstract class FromWhereable<T : Any, U : Any, V : FromTable<U, V>, W : From<W>, X : SqlClientQuery.Where<X>,
+            Y : SqlClientQuery.LimitOffset<Y>, Z : SqlClientQuery.GroupByPart2<Z>, A : SqlClientQuery.OrderByPart2<A>>
     protected constructor(
-            properties: Properties<T>,
-    ) : FromWhereableSubQuery<T, U, V, W, X, Y>(properties), OrderBy<T, Z>
+        properties: Properties<T>,
+    ) : FromWhereableSubQuery<T, U, V, W, X, Y, Z>(properties), OrderBy<T, A>
 
     public abstract class WhereSubQuery<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>>
-    protected constructor()
-        : DefaultSqlClientCommon.Where<U>(), LimitOffset<T, V>, GroupBy<T, W>
+    protected constructor() : DefaultSqlClientCommon.Where<U>(), LimitOffset<T, V>, GroupBy<T, W>
 
     public abstract class Where<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>, X : SqlClientQuery.OrderByPart2<X>>
-    protected constructor()
-        : WhereSubQuery<T, U, V, W>(), OrderBy<T, X>
+    protected constructor() : WhereSubQuery<T, U, V, W>(), OrderBy<T, X>
 
     protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
         : SqlClientQuery.LimitOffset<U>, WithProperties<T> {
@@ -159,7 +210,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     protected interface GroupBy<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupBy<U>,
-            WithProperties<T> {
+        WithProperties<T> {
         public val groupByPart2: U
 
         override fun groupBy(column: Column<*, *>): U {
@@ -174,7 +225,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     protected interface GroupByPart2<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupByPart2<U>,
-            WithProperties<T> {
+        WithProperties<T> {
         public val groupByPart2: U
 
         override fun and(column: Column<*, *>): U {
@@ -189,7 +240,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     protected interface OrderBy<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderBy<U>,
-            WithProperties<T> {
+        WithProperties<T> {
         public val orderByPart2: U
 
         override fun orderByAsc(column: Column<*, *>): U {
@@ -213,20 +264,20 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface OrderByCaseWhenExists<T : Any, U : Any,V : SqlClientQuery.OrderByPart2<V>>
+    protected interface OrderByCaseWhenExists<T : Any, U : Any, V : SqlClientQuery.OrderByPart2<V>>
         : SqlClientQuery.OrderByCaseWhenExists<U, V>, WithProperties<T> {
         public val orderByPart2: V
-        public val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        public val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         public val order: Order
     }
 
     protected interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any, W : SqlClientQuery.OrderByPart2<W>>
         : SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, W>, WithProperties<T> {
         public val orderByPart2: W
-        public val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        public val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         public val then: V
         public val order: Order
-        
+
         override fun `else`(value: V): W {
             val (_, result) = properties.executeSubQuery(dsl)
             properties.orderByClauses.add(OrderByClauseCaseWhenExistsSubQuery(result, then, value, order))
@@ -235,7 +286,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     protected interface OrderByPart2<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderByPart2<U>,
-            WithProperties<T> {
+        WithProperties<T> {
         public val orderByPart2: U
 
         override fun andAsc(column: Column<*, *>): U {
@@ -312,11 +363,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 return ""
             }
             return orderByClauses.joinToString(prefix = "ORDER BY ") { orderByClause ->
-                val fieldName = when(orderByClause) {
+                val fieldName = when (orderByClause) {
                     is OrderByClauseWithColumn -> fieldName(orderByClause.column)
                     is OrderByClauseWithAlias -> fieldName(orderByClause.alias)
                     is OrderByClauseCaseWhenExistsSubQuery<*> ->
-                        "(CASE WHEN\nEXISTS( ${orderByClause.subQueryReturn.sql()} )\n" + 
+                        "(CASE WHEN\nEXISTS( ${orderByClause.subQueryReturn.sql()} )\n" +
                                 "THEN ${orderByClause.then.defaultValue(properties.tables.dbType)} " +
                                 "ELSE ${orderByClause.elseVal.defaultValue(properties.tables.dbType)}\nEND)"
                 }

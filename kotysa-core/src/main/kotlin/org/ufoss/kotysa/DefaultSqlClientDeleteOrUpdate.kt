@@ -39,10 +39,10 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public val properties: Properties<T>
     }
 
-    public abstract class FirstDeleteOrUpdate<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
+    public abstract class FirstDeleteOrUpdate<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
             private val dbAccessType: DbAccessType,
             private val module: Module,
-    ) : FromWhereable<T, U, V>(), From<T, U> {
+    ) : FromTableWhereable<T, U, V>(), FromTable<T, U> {
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
 
@@ -55,11 +55,11 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class DeleteOrUpdate<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
-    ) : FromWhereable<T, U, V>(), From<T, U>
+    public abstract class DeleteOrUpdate<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
+    ) : FromTableWhereable<T, U, V>(), FromTable<T, U>
 
 
-    public abstract class Update<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>,
+    public abstract class Update<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>,
             X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType, module: Module)
         : FirstDeleteOrUpdate<T, U, V>(dbAccessType, module), SqlClientQuery.Update<T, X> {
 
@@ -260,7 +260,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
          * Handle froms as EXISTS + nested SELECT
          */
         private fun joinsWithExists() = with(properties) {
-            val rootJoinClauses = fromClauses[0].joinClauses
+            val rootJoinClauses = (fromClauses[0] as FromClauseTable).joinClauses
             if (fromClauses.size > 1 || rootJoinClauses.isNotEmpty()) {
                 // fixme handle other cases
                 if (rootJoinClauses.isNotEmpty()) {

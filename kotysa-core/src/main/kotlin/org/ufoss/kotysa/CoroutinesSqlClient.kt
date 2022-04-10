@@ -37,10 +37,10 @@ public interface CoroutinesSqlClient {
     public infix fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal>
     public infix fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long>
 
-    public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.From<T, T> =
+    public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.FromTable<T, T> =
         select(table).from(table)
 
-    public infix fun <T : Any> selectCountFrom(table: Table<T>): CoroutinesSqlClientSelect.From<Long, T> =
+    public infix fun <T : Any> selectCountFrom(table: Table<T>): CoroutinesSqlClientSelect.FromTable<Long, T> =
         selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flow<T> = selectFrom(table).fetchAll()
@@ -63,7 +63,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
-        override fun <U : Any> from(table: Table<U>): From<T, U>
+        override fun <U : Any> from(table: Table<U>): FromTable<T, U>
     }
 
     public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, Andable {
@@ -110,9 +110,9 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun andSum(column: IntColumn<*>): Select
     }
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Where<T>>, GroupBy<T>,
+    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>, Whereable<Where<T>>, GroupBy<T>,
         OrderBy<T>, LimitOffset<T>, Return<T> {
-        public infix fun <V : Any> and(table: Table<V>): From<T, V>
+        public infix fun <V : Any> and(table: Table<V>): FromTable<T, V>
     }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
@@ -168,9 +168,9 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
 
 public class CoroutinesSqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
 
-    public interface FirstDeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Where<T>>, Return
+    public interface FirstDeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<T>>, Return
 
-    public interface DeleteOrUpdate<T : Any> : From<T, DeleteOrUpdate<T>>, Whereable<Where<Any>>, Return
+    public interface DeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<Any>>, Return
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
 

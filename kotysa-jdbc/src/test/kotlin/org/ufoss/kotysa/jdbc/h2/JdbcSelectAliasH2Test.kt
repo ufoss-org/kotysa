@@ -76,6 +76,18 @@ class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
+
+    @Test
+    fun `Verify selectAliasedFirstnameByFirstnameGetSubQuery returns TheBoss firstname`() {
+        assertThat(repository.selectAliasedFirstnameByFirstnameGetSubQuery(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
+        assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
 }
 
 class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
@@ -137,5 +149,33 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                             from H2Users
                             where H2Users.id `in` userIds)
                 })
+            .fetchAll()
+
+    fun selectAliasedFirstnameByFirstnameGetSubQuery(firstname: String) =
+        (sqlClient selectFrom {
+            (this select H2Users.firstname `as` "fna"
+                    from H2Users)
+        } where H2Users.firstname["fna"] eq firstname
+                ).fetchOne()
+
+    fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
+        (sqlClient selectFrom {
+            (this select H2Users.firstname `as` "fna"
+                    from H2Users)
+        } where QueryAlias<String>("fna") eq firstname
+                ).fetchOne()
+
+    fun selectCaseWhenExistsSubQueryAliasSubQuery(userIds: List<Int>) =
+        (sqlClient selectFrom {
+            (this selectDistinct H2Roles.label
+                    andCaseWhenExists {
+                (this select H2Users.id
+                        from H2Users
+                        where H2Users.roleId eq H2Roles.id
+                        and H2Users.id `in` userIds)
+            } then true `else` false `as` "roleUsedByUser"
+                    from H2Roles
+                    where QueryAlias<Boolean>("roleUsedByUser") eq true)
+        })
             .fetchAll()
 }

@@ -29,7 +29,7 @@ public sealed interface WhereClauseColumn {
 }
 
 public sealed interface WhereClauseSubQuery<T : Any> {
-    public val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    public val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
 }
 
 public class WhereClauseValueWithColumn<T : Any> internal constructor(
@@ -57,7 +57,7 @@ public class WhereClauseColumnWithAlias<T> internal constructor(
 ) : WhereClauseWithAlias<T>, WhereClauseColumn
 
 public class WhereClauseExists<T : Any> internal constructor(
-    internal val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>,
+    internal val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
 ) : WhereClause {
     override val operation: Operation = Operation.EXISTS
 }
@@ -65,13 +65,13 @@ public class WhereClauseExists<T : Any> internal constructor(
 public class WhereClauseSubQueryWithColumn<T : Any, U : Any> internal constructor(
     override val column: Column<T, U>,
     override val operation: Operation,
-    override val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+    override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
 ) : WhereClauseWithColumn<T>, WhereClauseSubQuery<U>
 
 public class WhereClauseSubQueryWithAlias<T, U : Any> internal constructor(
     override val alias: QueryAlias<T>,
     override val operation: Operation,
-    override val dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+    override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
 ) : WhereClauseWithAlias<T>, WhereClauseSubQuery<U>
 
 public class WhereClauseWithType internal constructor(

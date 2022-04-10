@@ -30,21 +30,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val properties: Properties
     }
 
-    public abstract class FromWhereable<T : Any, U : From<T, U>, V : SqlClientQuery.Where<V>> :
-        Whereable<V>(), From<T, U> {
-        protected abstract val from: U
+    public abstract class FromTableWhereable<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>> :
+        Whereable<V>(), FromTable<T, U> {
+        protected abstract val fromTable: U
         private val joinable: Joinable<T, U, *> by lazy {
-            Joinable<T, U, Any>(properties, from)
+            Joinable<T, U, Any>(properties, fromTable)
         }
 
         protected fun <W : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<W>) {
             makeAvailable(properties, kotysaTable)
-            properties.fromClauses.add(FromClause(kotysaTable.table))
-        }
-
-        internal fun <W : Any> addFromTable(table: Table<W>): U = with(properties) {
-            addFromTable(this, tables.getTable(table))
-            from
+            properties.fromClauses.add(FromClauseTable(kotysaTable.table))
         }
 
         override fun <W : Any> innerJoin(table: Table<W>): SqlClientQuery.Joinable<T, U, W> {
@@ -65,7 +60,28 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public class Joinable<T : Any, U : From<T, U>, V : Any> internal constructor(
+    public abstract class FromWhereable<T : Any, U : FromTable<T, U>, V : From<V>, W : SqlClientQuery.Where<W>> :
+        FromTableWhereable<T, U, W>(), From<V> {
+        protected abstract val from: V
+
+        internal fun <X : Any> addFromTable(table: Table<X>): U = with(properties) {
+            addFromTable(this, tables.getTable(table))
+            fromTable
+        }
+
+        internal fun <X : Any> addFromSubQuery(
+            result: SubQueryResult<X>,
+        ): V = with(properties) {
+            // All selected tables and columns become available
+            availableTables.putAll(result.subQueryProperties.availableTables)
+            availableColumns.putAll(result.subQueryProperties.availableColumns)
+
+            properties.fromClauses.add(FromClauseSubQuery(result.result))
+            from
+        }
+    }
+
+    public class Joinable<T : Any, U : FromTable<T, U>, V : Any> internal constructor(
         override val properties: Properties,
         from: U,
     ) : SqlClientQuery.Joinable<T, U, V>, WithProperties {
@@ -82,7 +98,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             }
     }
 
-    public class Join<T : Any, U : From<T, U>, V : Any> internal constructor(
+    public class Join<T : Any, U : FromTable<T, U>, V : Any> internal constructor(
         override val properties: Properties,
         private val from: U,
     ) : SqlClientQuery.Join<T, U, V>, WithProperties {
@@ -93,7 +109,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun eq(column: Column<V, *>): U = with(properties) {
             // get last from
             val joinClause = JoinClause(table, mapOf(Pair(this@Join.column, column)), type)
-            (fromClauses[fromClauses.size - 1] as FromClause<T>).joinClauses.add(joinClause)
+            (fromClauses[fromClauses.size - 1] as FromClauseTable<T>).joinClauses.add(joinClause)
             from
         }
 
@@ -165,7 +181,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.WHERE)
 
-        override fun <U : Any> whereExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T {
+        override fun <U : Any> whereExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.WHERE))
             return where
         }
@@ -279,7 +295,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun <T : Any, U : Any> addClauseSubQuery(
             column: Column<T, U>,
             operation: Operation,
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
             whereClauseType: WhereClauseType
         ) {
             properties.whereClauses.add(
@@ -327,7 +343,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun <T, U : Any> addClauseSubQuery(
             alias: QueryAlias<T>,
             operation: Operation,
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
             whereClauseType: WhereClauseType
         ) {
             properties.whereClauses.add(
@@ -353,17 +369,19 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface WhereOpColumn<T : Any, U : SqlClientQuery.Where<U>, V : Any>
         : WhereOpColumnCommon<T, U, V>, WhereOp<U, V> {
-        override fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override fun eq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.EQ, dsl, type) }
-        override fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+
+        override fun notEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.IN, dsl, type) }
     }
 
     public interface WhereOpAlias<T, U : SqlClientQuery.Where<U>, V : Any>
         : WhereOpAliasCommon<T, U>, WhereOp<U, V> {
-        override fun eq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override fun eq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.EQ, dsl, type) }
-        override fun notEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+
+        override fun notEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.IN, dsl, type) }
     }
 
@@ -371,17 +389,17 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         WhereOpColumnCommon<T, U, V>, WhereInOp<T, U, V> {
         override fun `in`(values: Collection<V>): U =
             where.apply { addClauseValue(column, Operation.IN, values, type) }
-        
-        override fun `in`(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+
+        override fun `in`(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.IN, dsl, type) }
     }
 
-    public interface WhereInOpAlias<T, U: SqlClientQuery.Where<U>, V : Any> :
+    public interface WhereInOpAlias<T, U : SqlClientQuery.Where<U>, V : Any> :
         WhereOpAliasCommon<T, U>, WhereInOp<V, U, V> {
         override infix fun `in`(values: Collection<V>): U =
             where.apply { addClauseValue(alias, Operation.IN, values, type) }
 
-        override fun `in`(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override fun `in`(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.IN, dsl, type) }
     }
 
@@ -450,13 +468,13 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.ENDS_WITH, otherStringColumn, type) }
 
-        override fun contains(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+        override fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(column, Operation.CONTAINS, dsl, type) }
 
-        override fun startsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+        override fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(column, Operation.STARTS_WITH, dsl, type) }
 
-        override fun endsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+        override fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(column, Operation.ENDS_WITH, dsl, type) }
     }
 
@@ -486,13 +504,13 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.ENDS_WITH, otherStringColumn, type) }
 
-        override fun contains(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+        override fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(alias, Operation.CONTAINS, dsl, type) }
 
-        override fun startsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+        override fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(alias, Operation.STARTS_WITH, dsl, type) }
 
-        override fun endsWith(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<String>): U =
+        override fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(alias, Operation.ENDS_WITH, dsl, type) }
     }
 
@@ -556,16 +574,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun afterOrEq(otherDateColumn: Column<*, V>): U =
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherDateColumn, type) }
 
-        override infix fun before(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun before(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
 
-        override infix fun after(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun after(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
 
-        override infix fun beforeOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun beforeOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
 
-        override infix fun afterOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun afterOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
     }
 
@@ -597,16 +615,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun afterOrEq(otherDateColumn: Column<*, V>): U =
             where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherDateColumn, type) }
 
-        override infix fun before(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun before(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
 
-        override infix fun after(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun after(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
 
-        override infix fun beforeOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun beforeOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
 
-        override infix fun afterOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>): U =
+        override infix fun afterOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U =
             where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
     }
 
@@ -634,7 +652,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val alias: QueryAlias<kotlinx.datetime.LocalDateTime>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpAliasNotNull<kotlinx.datetime.LocalDateTime, T>(), WhereOpDateAliasNotNull<T, kotlinx.datetime.LocalDateTime>,
+    ) : AbstractWhereOpAliasNotNull<kotlinx.datetime.LocalDateTime, T>(),
+        WhereOpDateAliasNotNull<T, kotlinx.datetime.LocalDateTime>,
         WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
 
     public class WhereOpLocalDateAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
@@ -650,7 +669,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val alias: QueryAlias<kotlinx.datetime.LocalDate>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpAliasNotNull<kotlinx.datetime.LocalDate, T>(), WhereOpDateAliasNotNull<T, kotlinx.datetime.LocalDate>,
+    ) : AbstractWhereOpAliasNotNull<kotlinx.datetime.LocalDate, T>(),
+        WhereOpDateAliasNotNull<T, kotlinx.datetime.LocalDate>,
         WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
 
     public class WhereOpOffsetDateTimeAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
@@ -693,7 +713,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val alias: QueryAlias<kotlinx.datetime.LocalDateTime?>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpAliasNullable<kotlinx.datetime.LocalDateTime, T>(), WhereOpDateAliasNullable<T, kotlinx.datetime.LocalDateTime>,
+    ) : AbstractWhereOpAliasNullable<kotlinx.datetime.LocalDateTime, T>(),
+        WhereOpDateAliasNullable<T, kotlinx.datetime.LocalDateTime>,
         WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
 
     public class WhereOpLocalDateAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
@@ -709,7 +730,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val alias: QueryAlias<kotlinx.datetime.LocalDate?>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpAliasNullable<kotlinx.datetime.LocalDate, T>(), WhereOpDateAliasNullable<T, kotlinx.datetime.LocalDate>,
+    ) : AbstractWhereOpAliasNullable<kotlinx.datetime.LocalDate, T>(),
+        WhereOpDateAliasNullable<T, kotlinx.datetime.LocalDate>,
         WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
 
     public class WhereOpOffsetDateTimeAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
@@ -746,7 +768,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override val properties: Properties,
         override val alias: QueryAlias<Boolean>,
         override val type: WhereClauseType,
-    ) : AbstractWhereOpAliasNotNull<Boolean, T>(), WhereOpAlias<Boolean, T, Boolean>, WhereOpBooleanNotNull<Boolean, T> {
+    ) : AbstractWhereOpAliasNotNull<Boolean, T>(), WhereOpAlias<Boolean, T, Boolean>,
+        WhereOpBooleanNotNull<Boolean, T> {
         override infix fun eq(value: Boolean): T =
             where.apply { addClauseValue(alias, Operation.EQ, value, type) }
 
@@ -782,16 +805,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun supOrEq(otherIntColumn: IntColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherIntColumn, type) }
 
-        override infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
 
-        override infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
 
-        override infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
 
-        override infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
     }
 
@@ -823,16 +846,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun supOrEq(otherIntColumn: IntColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherIntColumn, type) }
 
-       override infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
 
-        override infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
 
-        override infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
 
-        override infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Int>): U =
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U =
             where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
     }
 
@@ -896,16 +919,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun supOrEq(otherLongColumn: LongColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherLongColumn, type) }
 
-        override infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
 
-        override infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
 
-        override infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
 
-        override infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
     }
 
@@ -937,16 +960,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun supOrEq(otherLongColumn: LongColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherLongColumn, type) }
 
-        override infix fun inf(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
 
-        override infix fun sup(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
 
-        override infix fun infOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
 
-        override infix fun supOrEq(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Long>): U =
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Long>): U =
             where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
     }
 
@@ -1098,7 +1121,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.AND)
 
-        override fun <U : Any> andExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T {
+        override fun <U : Any> andExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.AND))
             return where
         }
@@ -1238,7 +1261,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.OR)
 
-        override fun <U : Any> orExists(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): T {
+        override fun <U : Any> orExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.OR))
             return where
         }
@@ -1330,16 +1353,21 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 ""
             }
             fromClauses.joinToString(prefix = prefix) { fromClause ->
-                fromClause.table.getFieldName(availableTables) + " " + fromClause.joinClauses.joinToString { joinClause ->
-                    val ons = joinClause.references.entries.joinToString("and ") { reference ->
-                        "${reference.key.getFieldName(availableColumns)} = ${
-                            reference.value.getFieldName(
-                                availableColumns
-                            )
-                        }"
-                    }
+                when (fromClause) {
+                    is FromClauseTable<*> ->
+                        fromClause.table.getFieldName(availableTables) + " " + fromClause.joinClauses.joinToString { joinClause ->
+                            val ons = joinClause.references.entries.joinToString("and ") { reference ->
+                                "${reference.key.getFieldName(availableColumns)} = ${
+                                    reference.value.getFieldName(
+                                        availableColumns
+                                    )
+                                }"
+                            }
 
-                    "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)} ON $ons"
+                            "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)} ON $ons"
+                        }
+                    is FromClauseSubQuery ->
+                        "( ${fromClause.result.sql()} )"
                 }
             }
         }
@@ -1366,7 +1394,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                         when (this) {
                             is WhereClauseExists<*> -> {
                                 val (_, result) = properties.executeSubQuery(
-                                    dsl as SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Any>
+                                    dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                 )
                                 "EXISTS (${result.sql()})"
                             }
@@ -1392,7 +1420,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                             }"
                                             is WhereClauseSubQuery<*> -> {
                                                 val (_, result) = properties.executeSubQuery(
-                                                    dsl as SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Any>
+                                                    dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                                 )
                                                 "$fieldName = (${result.sql()})"
                                             }
@@ -1441,7 +1469,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                             is WhereClauseColumn -> TODO()
                                             is WhereClauseSubQuery<*> -> {
                                                 val (_, result) = properties.executeSubQuery(
-                                                    dsl as SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Any>
+                                                    dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                                 )
                                                 "$fieldName IN (${result.sql()})"
                                             }
@@ -1472,12 +1500,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             stringColumnNotNull: StringColumnNotNull<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpStringColumnNotNull(where, properties, stringColumnNotNull, whereClauseType)
-        
+
         internal fun <U : Any> whereOpStringColumnNullable(
             stringColumnNullable: StringColumnNullable<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpStringColumnNullable(where, properties, stringColumnNullable, whereClauseType)
-        
+
         internal fun <U : Any> whereOpLocalDateTimeColumnNotNull(
             localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>,
             whereClauseType: WhereClauseType,
@@ -1542,32 +1570,32 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             booleanColumnNotNull: BooleanColumnNotNull<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpBooleanColumnNotNull(where, properties, booleanColumnNotNull, whereClauseType)
-        
+
         internal fun <U : Any> whereOpIntColumnNotNull(
             intColumnNotNull: IntColumnNotNull<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpIntColumnNotNull(where, properties, intColumnNotNull, whereClauseType)
-        
+
         internal fun <U : Any> whereOpIntColumnNullable(
             intColumnNullable: IntColumnNullable<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpIntColumnNullable(where, properties, intColumnNullable, whereClauseType)
-        
+
         internal fun <U : Any> whereOpLongColumnNotNull(
             longColumnNotNull: LongColumnNotNull<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpLongColumnNotNull(where, properties, longColumnNotNull, whereClauseType)
-        
+
         internal fun <U : Any> whereOpLongColumnNullable(
             longColumnNullable: LongColumnNullable<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpLongColumnNullable(where, properties, longColumnNullable, whereClauseType)
-        
+
         internal fun <U : Any> whereOpUuidColumnNotNull(
             uuidColumnNotNull: UuidColumnNotNull<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpUuidColumnNotNull(where, properties, uuidColumnNotNull, whereClauseType)
-        
+
         internal fun <U : Any> whereOpUuidColumnNullable(
             uuidColumnNullable: UuidColumnNullable<U>,
             whereClauseType: WhereClauseType,
@@ -1591,7 +1619,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         internal fun whereOpKotlinxLocalDateTimeAliasNotNull(
             kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>,
             whereClauseType: WhereClauseType,
-        ) = WhereOpKotlinxLocalDateTimeAliasNotNull(where, properties, kotlinxLocalDateTimeAliasNotNull, whereClauseType)
+        ) = WhereOpKotlinxLocalDateTimeAliasNotNull(
+            where,
+            properties,
+            kotlinxLocalDateTimeAliasNotNull,
+            whereClauseType
+        )
 
         internal fun whereOpLocalDateAliasNotNull(
             localDateAliasNotNull: QueryAlias<LocalDate>,
@@ -1621,7 +1654,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         internal fun whereOpKotlinxLocalDateTimeAliasNullable(
             kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime?>,
             whereClauseType: WhereClauseType,
-        ) = WhereOpKotlinxLocalDateTimeAliasNullable(where, properties, kotlinxLocalDateTimeAliasNotNull, whereClauseType)
+        ) = WhereOpKotlinxLocalDateTimeAliasNullable(
+            where,
+            properties,
+            kotlinxLocalDateTimeAliasNotNull,
+            whereClauseType
+        )
 
         internal fun whereOpLocalDateAliasNullable(
             localDateAliasNotNull: QueryAlias<LocalDate?>,
@@ -1688,21 +1726,7 @@ internal fun DefaultSqlClientCommon.Properties.variable() = when {
     else -> ":k${this.index++}"
 }
 
-internal data class SubQueryResult<T : Any>(
+public data class SubQueryResult<T : Any>(
     internal val subQueryProperties: DefaultSqlClientSelect.Properties<T>,
     internal val result: SqlClientSubQuery.Return<T>,
 )
-
-@Suppress("UNCHECKED_CAST")
-internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
-    dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-): SubQueryResult<T> {
-    val subQuery = SqlClientSubQueryImpl.Selectable(this)
-// invoke sub-query
-    val result = dsl(subQuery)
-// add all sub-query parameters, if any, to parent's properties
-    if (subQuery.properties.parameters.isNotEmpty()) {
-        this.parameters.addAll(subQuery.properties.parameters)
-    }
-    return SubQueryResult(subQuery.properties as DefaultSqlClientSelect.Properties<T>, result)
-}

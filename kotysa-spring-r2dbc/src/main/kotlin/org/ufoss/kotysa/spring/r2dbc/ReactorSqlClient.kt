@@ -41,9 +41,9 @@ public interface ReactorSqlClient {
     public infix fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): ReactorSqlClientSelect.FirstSelect<BigDecimal>
     public infix fun <T : Any> selectSum(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long>
 
-    public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.From<T, T> =
+    public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.FromTable<T, T> =
             select(table).from(table)
-    public infix fun <T : Any> selectCountFrom(table: Table<T>): ReactorSqlClientSelect.From<Long, T> =
+    public infix fun <T : Any> selectCountFrom(table: Table<T>): ReactorSqlClientSelect.FromTable<Long, T> =
             selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T> = selectFrom(table).fetchAll()
@@ -66,7 +66,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
     }
 
     public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
-        override fun <U : Any> from(table: Table<U>): From<T, U>
+        override fun <U : Any> from(table: Table<U>): FromTable<T, U>
     }
 
     public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, Andable {
@@ -113,9 +113,9 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun andSum(column: IntColumn<*>): Select
     }
 
-    public interface From<T : Any, U : Any> : SqlClientQuery.From<U, From<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
+    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>, Whereable<Any, Where<T>>, GroupBy<T>,
         OrderBy<T>, LimitOffset<T> {
-        public infix fun <V : Any> and(table: Table<V>): From<T, V>
+        public infix fun <V : Any> and(table: Table<V>): FromTable<T, V>
     }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Any, Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>
@@ -154,10 +154,10 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
 
 public class ReactorSqlClientDeleteOrUpdate private constructor() {
 
-    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.From<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<T, Where<T>>,
+    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<T, Where<T>>,
         Return
 
-    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.From<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Any, Where<Any>>,
+    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Any, Where<Any>>,
         Return
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>

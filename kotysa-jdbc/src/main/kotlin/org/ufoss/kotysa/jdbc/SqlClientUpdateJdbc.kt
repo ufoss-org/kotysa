@@ -18,7 +18,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(jdbcConnection, properties) // fixme try with a lazy
         override val update = this
-        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: Update<T> by lazy {
             Update(jdbcConnection, properties)
         }
     }
@@ -31,7 +31,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(jdbcConnection, properties as Properties<Any>) // fixme try with a lazy
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(
