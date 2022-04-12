@@ -120,13 +120,18 @@ internal class SqlClientSqLite(
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
 
     override fun <T : Any> select(
-        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.FirstSelect<T> = SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
 
     override fun <T : Any> selectCaseWhenExists(
         dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.From<T> =
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectStarFromSubQuery(dsl)
 }
 
 /**

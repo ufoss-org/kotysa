@@ -54,7 +54,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
          * 'select' phase is finished, start 'from' phase
          */
         protected fun <U : Any, V : From<V>> addFromSubQuery(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
             from: FromWhereableSubQuery<T, U, *, V, *, *, *>,
             selectStar: Boolean = false,
         ): V {
@@ -116,7 +116,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add(LongSumField(properties, column))
         }
 
-        public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>) {
+        public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
             val (subQueryProperties, result) = properties.executeSubQuery(dsl)
             properties.selectedFields.add(SubQueryField(result, subQueryProperties.select))
         }
@@ -159,7 +159,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         ): V = from.addFromTable(table)
 
         protected fun <U : Any, V : From<V>> addFromSubQuery(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
             from: FromWhereable<T, U, *, V, *, *, *, *>
         ): V = from.addFromSubQuery(properties.executeSubQuery(dsl))
     }
@@ -175,7 +175,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         ): B = from.addFromTable(table)
 
         protected fun <A : Any, B : From<B>> addFromSubQuery(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<A>,
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<A>,
             from: FromWhereableSubQuery<T, A, *, B, *, *, *>
         ): B = from.addFromSubQuery(properties.executeSubQuery(dsl))
     }
@@ -378,7 +378,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         private fun fieldName(columnOrAlias: ColumnOrAlias) =
             when (columnOrAlias) {
                 is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns)
-                is QueryAlias<*> -> columnOrAlias.alias
+                is QueryAlias<*> -> "\"${columnOrAlias.alias}\""
             }
 
         private fun offset(): String = with(properties) {

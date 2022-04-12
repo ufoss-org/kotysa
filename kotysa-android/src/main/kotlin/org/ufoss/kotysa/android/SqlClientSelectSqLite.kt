@@ -46,23 +46,26 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
 
         override fun <T : Any> select(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.FirstSelect<T> =
             FirstSelect<T>(client, properties()).apply { addSelectSubQuery(dsl) }
 
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
-        ): SqlClientSelect.SelectCaseWhenExistsFirst<T> = SelectCaseWhenExistsFirst(client, tables, dsl)
+        ): SqlClientSelect.SelectCaseWhenExistsFirst<T> = SelectCaseWhenExistsFirst(client, properties(), dsl)
+
+        override fun <T : Any> selectStarFromSubQuery(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.From<T> = FirstSelect<T>(client, properties()).selectStarFrom(dsl)
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
         private val client: SQLiteDatabase,
-        private val tables: Tables,
+        private val properties: Properties<T>,
         private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ) : SqlClientSelect.SelectCaseWhenExistsFirst<T> {
-        private fun <U : Any> properties() = Properties<U>(tables, DbAccessType.ANDROID, Module.SQLITE)
         override fun <U : Any> then(value: U): SqlClientSelect.SelectCaseWhenExistsFirstPart2<T, U> =
-            SelectCaseWhenExistsFirstPart2(client, properties(), dsl, value)
+            SelectCaseWhenExistsFirstPart2(client, properties as Properties<U>, dsl, value)
     }
 
     private class SelectCaseWhenExistsFirstPart2<T : Any, U : Any>(
@@ -85,6 +88,14 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
+
+        override fun <U : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        fun <U : Any> selectStarFrom(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>, true)
 
         override fun <U : Any> and(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
             SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
@@ -117,7 +128,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun <U : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.SecondSelect<T?, U?> =
             SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
                 addSelectSubQuery(dsl)
@@ -162,6 +173,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> from(table: Table<V>): SqlClientSelect.FromTable<Pair<T, U>, V> =
             addFromTable(table, from as FromTable<Pair<T, U>, V>)
 
+        override fun <V : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
 
@@ -193,7 +208,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
                 addSelectSubQuery(dsl)
@@ -238,6 +253,11 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <W : Any> from(table: Table<W>): SqlClientSelect.FromTable<Triple<T, U, V>, W> =
             addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
 
+        override fun <W : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
+        ): SqlClientSelect.From<Triple<T, U, V>> =
+            addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+
         override fun <W : Any> and(column: Column<*, W>): SqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
 
@@ -269,7 +289,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun <W : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): SqlClientSelect.Select = Select(client, properties as Properties<List<Any?>>).apply {
             addSelectSubQuery(dsl)
         }
@@ -312,6 +332,11 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <T : Any> from(table: Table<T>): SqlClientSelect.FromTable<List<Any?>, T> =
             addFromTable(table, from as FromTable<List<Any?>, T>)
 
+        override fun <T : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.From<List<Any?>> =
+            addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
+
         override fun <T : Any> and(column: Column<*, T>): SqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -338,7 +363,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
         
         override fun <T : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.Select = this.apply { addSelectSubQuery(dsl) }
 
         override fun <T : Any> andCaseWhenExists(
@@ -358,6 +383,10 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
 
+        override fun <U : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
         }
@@ -366,17 +395,23 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
     private class FromTable<T : Any, U : Any>(
         override val client: SQLiteDatabase,
         properties: Properties<T>,
-    ) : FromWhereable<T, U, SqlClientSelect.FromTable<T, U>, SqlClientSelect.Where<T>,
+    ) : FromWhereable<T, U, SqlClientSelect.FromTable<T, U>, SqlClientSelect.From<T>, SqlClientSelect.Where<T>,
             SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>,
             SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.FromTable<T, U>, GroupBy<T>, OrderBy<T>,
         SqlClientSelect.LimitOffset<T> {
+        override val fromTable = this
         override val from = this
+        
         override val where by lazy { Where(client, properties) }
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.FromTable<T, V> =
-            addFromTable(table, from as FromTable<T, V>)
+            addFromTable(table, fromTable as FromTable<T, V>)
+
+        override fun <V : Any> and(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
     }
 
     private class Where<T : Any>(

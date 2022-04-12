@@ -18,7 +18,7 @@ public class SqlClientSubQuery private constructor() {
         override fun selectSum(column: IntColumn<*>): Fromable<Long>
     }
 
-    public interface Scope : SqlClientQuery.Selectable {
+    public interface Scope : SingleScope, SqlClientQuery.Selectable {
         override fun <T : Any> select(column: Column<*, T>): FirstSelect<T>
         override fun <T : Any> select(table: Table<T>): FirstSelect<T>
         override fun <T : Any> selectCount(column: Column<*, T>?): FirstSelect<Long>
@@ -45,7 +45,7 @@ public class SqlClientSubQuery private constructor() {
 
     public interface Fromable<T : Any> : SqlClientQuery.Select, SqlClientQuery.Fromable {
         override fun <U : Any> from(table: Table<U>): FromTable<T, U>
-        override fun <U : Any> from(dsl: SingleScope.() -> Return<U>): From<T>
+        override fun <U : Any> from(dsl: Scope.() -> Return<U>): From<T>
 
         override fun `as`(alias: String): Fromable<T>
     }
@@ -59,7 +59,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
         override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
-        override fun <U : Any> and(dsl: SingleScope.() -> Return<U>)
+        override fun <U : Any> and(dsl: Scope.() -> Return<U>)
                 : SecondSelect<T?, U?>
 
         override fun <U : Any> andCaseWhenExists(
@@ -87,7 +87,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
         override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
-        override fun <V : Any> and(dsl: SingleScope.() -> Return<V>)
+        override fun <V : Any> and(dsl: Scope.() -> Return<V>)
                 : ThirdSelect<T, U, V?>
 
         override fun <V : Any> andCaseWhenExists(dsl: SingleScope.() -> Return<V>)
@@ -113,7 +113,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
         override fun andSum(column: IntColumn<*>): Select
-        override fun <W : Any> and(dsl: SingleScope.() -> Return<W>): Select
+        override fun <W : Any> and(dsl: Scope.() -> Return<W>): Select
         override fun <W : Any> andCaseWhenExists(
             dsl: SingleScope.() -> Return<W>
         ): AndCaseWhenExistsLast<W>
@@ -138,7 +138,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
         override fun andSum(column: IntColumn<*>): Select
-        override fun <T : Any> and(dsl: SingleScope.() -> Return<T>): Select
+        override fun <T : Any> and(dsl: Scope.() -> Return<T>): Select
         override fun <T : Any> andCaseWhenExists(
             dsl: SingleScope.() -> Return<T>
         ): AndCaseWhenExistsLast<T>
@@ -149,7 +149,7 @@ public class SqlClientSubQuery private constructor() {
     public interface From<T : Any> : SqlClientQuery.From<From<T>>, SqlClientQuery.Whereable<Where<T>>, GroupBy<T>,
         LimitOffset<T>, Return<T> {
         override fun <U : Any> and(table: Table<U>): FromTable<T, U>
-        override fun <U : Any> and(dsl: SingleScope.() -> Return<U>): From<T>
+        override fun <U : Any> and(dsl: Scope.() -> Return<U>): From<T>
     }
 
     public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,

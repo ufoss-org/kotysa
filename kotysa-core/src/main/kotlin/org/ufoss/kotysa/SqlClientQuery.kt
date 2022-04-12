@@ -55,7 +55,7 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface Fromable {
         public infix fun <T : Any> from(table: Table<T>): FromTable<T, *>
-        public infix fun <T : Any> from(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>): From<*>
+        public infix fun <T : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): From<*>
     }
 
     public interface AndCaseWhenExists {
@@ -79,7 +79,7 @@ public abstract class SqlClientQuery protected constructor() {
         /**
          * sub-query
          */
-        public infix fun <T : Any> and(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>): Andable
+        public infix fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Andable
         public infix fun <T : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): AndCaseWhenExists
@@ -87,7 +87,7 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface From<T : From<T>> {
         public infix fun <U : Any> and(table: Table<U>): FromTable<U, *>
-        public infix fun <U : Any> and(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): From<*>
+        public infix fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<*>
     }
 
     public interface FromTable<T : Any, U : FromTable<T, U>> {

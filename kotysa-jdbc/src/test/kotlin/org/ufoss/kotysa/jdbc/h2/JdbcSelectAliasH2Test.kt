@@ -4,7 +4,9 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.h2.jdbc.JdbcSQLSyntaxErrorException
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
@@ -15,25 +17,21 @@ class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet returns TheBoss firstname`() {
-        assertThat(repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname))
-            .isEqualTo(userBboss.firstname)
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
+        assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname) }
+            .isInstanceOf(JdbcSQLSyntaxErrorException::class.java)
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias returns TheBoss firstname`() {
-        assertThat(repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname))
-            .isEqualTo(userBboss.firstname)
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
+        assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname) }
+            .isInstanceOf(JdbcSQLSyntaxErrorException::class.java)
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias returns results`() {
-        assertThat(repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(2)
-            .containsExactlyInAnyOrder(
-                Pair(roleAdmin.label, true),
-                Pair(roleUser.label, true),
-            )
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+        assertThatThrownBy { repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
+            .isInstanceOf(JdbcSQLSyntaxErrorException::class.java)
     }
 
     @Test
@@ -71,10 +69,9 @@ class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias returns User and Admin roles`() {
-        assertThat(repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(2)
-            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+        assertThatThrownBy { repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
+            .isInstanceOf(JdbcSQLSyntaxErrorException::class.java)
     }
 
     @Test
@@ -87,6 +84,33 @@ class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
     fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
         assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
             .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery returns results`() {
+        assertThat(repository.selectCaseWhenExistsSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+            )
+    }
+
+    @Test
+    fun `Verify selectAliasedFirstnameOrderByFirstnameAliasSubQuery returns results`() {
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAliasSubQuery())
+            .hasSize(2)
+            .containsExactly(
+                userBboss.firstname,
+                userJdoe.firstname,
+            )
+    }
+
+    @Test
+    fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() {
+        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
 }
 
@@ -141,9 +165,9 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                 ).fetchAll()
 
     fun selectRoleLabelWhereInUserSubQueryAlias(userIds: List<Int>) =
-        (sqlClient select H2Roles.label and H2Roles.id `as` "freddee"
+        (sqlClient select H2Roles.label and H2Roles.id `as` "roleId"
                 from H2Roles
-                where QueryAlias<Int>("freddee") `in`
+                where QueryAlias<Int>("roleId") `in`
                 {
                     (this select H2Users.roleId
                             from H2Users
@@ -152,21 +176,21 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
             .fetchAll()
 
     fun selectAliasedFirstnameByFirstnameGetSubQuery(firstname: String) =
-        (sqlClient selectFrom {
+        (sqlClient selectStarFrom {
             (this select H2Users.firstname `as` "fna"
                     from H2Users)
         } where H2Users.firstname["fna"] eq firstname
                 ).fetchOne()
 
     fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
-        (sqlClient selectFrom {
+        (sqlClient selectStarFrom {
             (this select H2Users.firstname `as` "fna"
                     from H2Users)
         } where QueryAlias<String>("fna") eq firstname
                 ).fetchOne()
 
     fun selectCaseWhenExistsSubQueryAliasSubQuery(userIds: List<Int>) =
-        (sqlClient selectFrom {
+        (sqlClient selectStarFrom {
             (this selectDistinct H2Roles.label
                     andCaseWhenExists {
                 (this select H2Users.id
@@ -174,8 +198,26 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                         where H2Users.roleId eq H2Roles.id
                         and H2Users.id `in` userIds)
             } then true `else` false `as` "roleUsedByUser"
-                    from H2Roles
-                    where QueryAlias<Boolean>("roleUsedByUser") eq true)
-        })
+                    from H2Roles)
+        } where QueryAlias<Boolean>("roleUsedByUser") eq true)
+            .fetchAll()
+
+    fun selectAliasedFirstnameOrderByFirstnameAliasSubQuery() =
+        (sqlClient selectStarFrom {
+            (this select H2Users.firstname `as` "fna"
+                    from H2Users)
+        } orderByAsc QueryAlias<String>("fna"))
+            .fetchAll()
+
+    fun selectRoleLabelWhereInUserSubQueryAliasSubQuery(userIds: List<Int>) =
+        (sqlClient selectStarFrom {
+            (this select H2Roles.label and H2Roles.id `as` "roleId"
+                    from H2Roles)
+        } where QueryAlias<Int>("roleId") `in`
+                {
+                    (this select H2Users.roleId
+                            from H2Users
+                            where H2Users.id `in` userIds)
+                })
             .fetchAll()
 }

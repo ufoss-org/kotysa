@@ -77,7 +77,7 @@ internal class SqlClientJdbc(
             (table.table as AbstractTable<T>).toField(
                 tables.allColumns,
                 tables.allTables,
-            ).builder.invoke(rs.toRow())
+            ).builder(rs.toRow())
         }
 
     override fun <T : Any> insertAndReturn(vararg rows: T): List<T> {
@@ -179,7 +179,7 @@ internal class SqlClientJdbc(
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectSum(column)
 
     override fun <T : Any> select(
-        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.FirstSelect<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(dsl)
 
     override fun <T : Any> selectCaseWhenExists(
@@ -187,8 +187,8 @@ internal class SqlClientJdbc(
     ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCaseWhenExists(dsl)
 
-    override fun <T : Any> selectFrom(
-        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.From<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectStarFromSubQuery(dsl)
 
     override fun <T> transactional(block: (JdbcTransaction) -> T): T? {

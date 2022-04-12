@@ -88,7 +88,7 @@ private fun KotysaTable<*>.getFieldName() = name
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
-    dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
+    dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>,
 ): SubQueryResult<T> {
     val subQuery = SqlClientSubQueryImpl.Scope(this)
     // invoke sub-query

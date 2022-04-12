@@ -78,6 +78,45 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
+
+    @Test
+    fun `Verify selectAliasedFirstnameByFirstnameGetSubQuery returns TheBoss firstname`() {
+        assertThat(repository.selectAliasedFirstnameByFirstnameGetSubQuery(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
+        assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery returns results`() {
+        assertThat(repository.selectCaseWhenExistsSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+            )
+    }
+
+    @Test
+    fun `Verify selectAliasedFirstnameOrderByFirstnameAliasSubQuery returns results`() {
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAliasSubQuery())
+            .hasSize(2)
+            .containsExactly(
+                userBboss.firstname,
+                userJdoe.firstname,
+            )
+    }
+
+    @Test
+    fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() {
+        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    }
 }
 
 class UserRepositorySelectAlias(
@@ -137,6 +176,52 @@ class UserRepositorySelectAlias(
         (sqlClient select SqliteRoles.label and SqliteRoles.id `as` "roleId"
                 from SqliteRoles
                 where QueryAlias<Int>("roleId") `in`
+                {
+                    (this select SqliteUsers.roleId
+                            from SqliteUsers
+                            where SqliteUsers.id `in` userIds)
+                })
+            .fetchAll()
+
+    fun selectAliasedFirstnameByFirstnameGetSubQuery(firstname: String) =
+        (sqlClient selectStarFrom {
+            (this select SqliteUsers.firstname `as` "fna"
+                    from SqliteUsers)
+        } where SqliteUsers.firstname["fna"] eq firstname
+                ).fetchOne()
+
+    fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
+        (sqlClient selectStarFrom {
+            (this select SqliteUsers.firstname `as` "fna"
+                    from SqliteUsers)
+        } where QueryAlias<String>("fna") eq firstname
+                ).fetchOne()
+
+    fun selectCaseWhenExistsSubQueryAliasSubQuery(userIds: List<Int>) =
+        (sqlClient selectStarFrom {
+            (this selectDistinct SqliteRoles.label
+                    andCaseWhenExists {
+                (this select SqliteUsers.id
+                        from SqliteUsers
+                        where SqliteUsers.roleId eq SqliteRoles.id
+                        and SqliteUsers.id `in` userIds)
+            } then true `else` false `as` "roleUsedByUser"
+                    from SqliteRoles)
+        } where QueryAlias<Boolean>("roleUsedByUser") eq true)
+            .fetchAll()
+
+    fun selectAliasedFirstnameOrderByFirstnameAliasSubQuery() =
+        (sqlClient selectStarFrom {
+            (this select SqliteUsers.firstname `as` "fna"
+                    from SqliteUsers)
+        } orderByAsc QueryAlias<String>("fna"))
+            .fetchAll()
+
+    fun selectRoleLabelWhereInUserSubQueryAliasSubQuery(userIds: List<Int>) =
+        (sqlClient selectStarFrom {
+            (this select SqliteRoles.label and SqliteRoles.id `as` "roleId"
+                    from SqliteRoles)
+        } where QueryAlias<Int>("roleId") `in`
                 {
                     (this select SqliteUsers.roleId
                             from SqliteUsers

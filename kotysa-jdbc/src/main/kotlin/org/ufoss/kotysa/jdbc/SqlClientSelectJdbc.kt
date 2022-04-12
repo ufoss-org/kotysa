@@ -49,27 +49,26 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             FirstSelect<Long>(jdbcConnection, properties()).apply { addLongSumColumn(column) }
 
         override fun <T : Any> select(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.FirstSelect<T> =
             FirstSelect<T>(jdbcConnection, properties()).apply { addSelectSubQuery(dsl) }
 
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
-        ): SqlClientSelect.SelectCaseWhenExistsFirst<T> = SelectCaseWhenExistsFirst(jdbcConnection, tables, dsl)
+        ): SqlClientSelect.SelectCaseWhenExistsFirst<T> = SelectCaseWhenExistsFirst(jdbcConnection, properties(), dsl)
 
         override fun <T : Any> selectStarFromSubQuery(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.From<T> = FirstSelect<T>(jdbcConnection, properties()).selectStarFrom(dsl)
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
         private val jdbcConnection: JdbcConnection,
-        private val tables: Tables,
+        private val properties: Properties<T>,
         private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ) : SqlClientSelect.SelectCaseWhenExistsFirst<T> {
-        private fun <U : Any> properties() = Properties<U>(tables, DbAccessType.ANDROID, Module.SQLITE)
         override fun <U : Any> then(value: U): SqlClientSelect.SelectCaseWhenExistsFirstPart2<T, U> =
-            SelectCaseWhenExistsFirstPart2(jdbcConnection, properties(), dsl, value)
+            SelectCaseWhenExistsFirstPart2(jdbcConnection, properties as Properties<U>, dsl, value)
     }
 
     private class SelectCaseWhenExistsFirstPart2<T : Any, U : Any>(
@@ -94,14 +93,12 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             addFromTable(table, from as FromTable<T, U>)
 
         override fun <U : Any> from(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientSelect.From<T> =
-            addFromSubQuery(dsl, from as FromTable<T, U>)
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
         fun <U : Any> selectStarFrom(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientSelect.From<T> =
-            addFromSubQuery(dsl, from as FromTable<T, U>, true)
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>, true)
 
         override fun <U : Any> and(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
             SecondSelect(jdbcConnection, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
@@ -134,7 +131,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             SecondSelect(jdbcConnection, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun <U : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.SecondSelect<T?, U?> =
             SecondSelect(jdbcConnection, properties as Properties<Pair<T?, U?>>).apply {
                 addSelectSubQuery(dsl)
@@ -180,9 +177,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             addFromTable(table, from as FromTable<Pair<T, U>, V>)
 
         override fun <V : Any> from(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
-        ): SqlClientSelect.From<Pair<T, U>> =
-            addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(jdbcConnection, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -218,7 +214,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             ThirdSelect(jdbcConnection, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(jdbcConnection, properties as Properties<Triple<T, U, V?>>).apply {
                 addSelectSubQuery(dsl)
@@ -264,7 +260,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
 
         override fun <W : Any> from(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): SqlClientSelect.From<Triple<T, U, V>> =
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
 
@@ -299,7 +295,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             Select(jdbcConnection, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun <W : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): SqlClientSelect.Select = Select(jdbcConnection, properties as Properties<List<Any?>>).apply {
             addSelectSubQuery(dsl)
         }
@@ -343,7 +339,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             addFromTable(table, from as FromTable<List<Any?>, T>)
 
         override fun <T : Any> from(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.From<List<Any?>> =
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
@@ -374,7 +370,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
         
         override fun <T : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.Select = this.apply { addSelectSubQuery(dsl) }
 
         override fun <T : Any> andCaseWhenExists(
@@ -394,13 +390,13 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
 
+        override fun <U : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
         }
-
-        override fun <U : Any> from(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
     }
 
     private class FromTable<T : Any, U : Any>(
@@ -422,7 +418,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             addFromTable(table, fromTable as FromTable<T, V>)
 
         override fun <V : Any> and(
-            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
     }
 
