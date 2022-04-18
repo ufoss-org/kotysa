@@ -26,6 +26,18 @@ class JdbcSubQueryH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SubQuery>() {
     }
 
     @Test
+    fun `Verify selectRoleLabelWhereEqUserSubQuery returns User role`() {
+        assertThat(repository.selectRoleLabelWhereEqUserSubQuery(userJdoe.id))
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndEqUserSubQuery returns User role`() {
+        assertThat(repository.selectRoleLabelAndEqUserSubQuery(userJdoe.id))
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
         assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)))
             .hasSize(2)
@@ -81,6 +93,29 @@ class UserRepositoryJdbcH2SubQuery(private val sqlClient: JdbcSqlClient) : Abstr
                             and H2Users.id `in` userIds)
                 })
             .fetchAll()
+
+    fun selectRoleLabelWhereEqUserSubQuery(userId: Int) =
+        (sqlClient select H2Roles.label and H2Roles.id
+                from H2Roles
+                where H2Roles.id eq
+                {
+                    (this select H2Users.roleId
+                            from H2Users
+                            where H2Users.id eq userId)
+                })
+            .fetchOne()
+
+    fun selectRoleLabelAndEqUserSubQuery(userId: Int) =
+        (sqlClient select H2Roles.label and H2Roles.id
+                from H2Roles
+                where H2Roles.id notEq 0
+                and H2Roles.id eq
+                {
+                    (this select H2Users.roleId
+                            from H2Users
+                            where H2Users.id eq userId)
+                })
+            .fetchOne()
 
     fun selectRoleLabelWhereInUserSubQuery(userIds: List<Int>) =
         (sqlClient select H2Roles.label and H2Roles.id

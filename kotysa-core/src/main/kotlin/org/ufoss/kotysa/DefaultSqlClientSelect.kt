@@ -378,7 +378,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         private fun fieldName(columnOrAlias: ColumnOrAlias) =
             when (columnOrAlias) {
                 is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns)
-                is QueryAlias<*> -> "\"${columnOrAlias.alias}\""
+                is QueryAlias<*> -> "`${columnOrAlias.alias}`"
             }
 
         private fun offset(): String = with(properties) {

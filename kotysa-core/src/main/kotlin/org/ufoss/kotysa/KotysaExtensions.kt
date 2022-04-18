@@ -62,14 +62,14 @@ public fun <T : Any> AbstractTable<T>.toField(
 internal fun Field<*>.getFieldName(): String {
     var fieldName = fieldNames.joinToString()
     if (alias != null) {
-        fieldName += " AS \"$alias\""
+        fieldName += " AS `$alias`"
     }
     return fieldName
 }
 
 internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
     if ((this as DbColumn<*, *>).alias != null) {
-        return "\"${this.alias!!}\""
+        return "`${this.alias!!}`"
     }
     val kotysaColumn = getKotysaColumn(availableColumns)
     val kotysaTable = kotysaColumn.table

@@ -27,6 +27,18 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
     }
 
     @Test
+    fun `Verify selectRoleLabelWhereEqUserSubQuery returns User role`() {
+        assertThat(repository.selectRoleLabelWhereEqUserSubQuery(userJdoe.id))
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndEqUserSubQuery returns User role`() {
+        assertThat(repository.selectRoleLabelAndEqUserSubQuery(userJdoe.id))
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
         assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)))
             .hasSize(2)
@@ -85,6 +97,29 @@ class UserRepositorySqliteSubQuery(
                             and SqliteUsers.id `in` userIds)
                 })
             .fetchAll()
+
+    fun selectRoleLabelWhereEqUserSubQuery(userId: Int) =
+        (sqlClient select SqliteRoles.label and SqliteRoles.id
+                from SqliteRoles
+                where SqliteRoles.id eq
+                {
+                    (this select SqliteUsers.roleId
+                            from SqliteUsers
+                            where SqliteUsers.id eq userId)
+                })
+            .fetchOne()
+
+    fun selectRoleLabelAndEqUserSubQuery(userId: Int) =
+        (sqlClient select SqliteRoles.label and SqliteRoles.id
+                from SqliteRoles
+                where SqliteRoles.id notEq 0
+                and SqliteRoles.id eq
+                {
+                    (this select SqliteUsers.roleId
+                            from SqliteUsers
+                            where SqliteUsers.id eq userId)
+                })
+            .fetchOne()
 
     fun selectRoleLabelWhereInUserSubQuery(userIds: List<Int>) =
         (sqlClient select SqliteRoles.label and SqliteRoles.id
