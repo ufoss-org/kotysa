@@ -13,5 +13,6 @@ public class FromClauseTable<T : Any> internal constructor(
 }
 
 public class FromClauseSubQuery<T : Any> internal constructor(
-    internal val result: SqlClientSubQuery.Return<T>
+    internal val result: SqlClientSubQuery.Return<T>,
+    internal val selectStar: Boolean,
 ) : FromClause<T>

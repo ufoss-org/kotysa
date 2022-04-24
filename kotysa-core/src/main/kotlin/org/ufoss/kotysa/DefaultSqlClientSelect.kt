@@ -63,7 +63,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 addSelectStarFromSubQuery(result.subQueryProperties.select)
             }
             properties.select = buildSelect()
-            return from.addFromSubQuery(result)
+            return from.addFromSubQuery(result, selectStar)
         }
 
         private fun buildSelect(): (RowImpl) -> T? = with(properties) {

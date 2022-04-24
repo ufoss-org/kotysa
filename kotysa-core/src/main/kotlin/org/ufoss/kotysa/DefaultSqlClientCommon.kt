@@ -71,12 +71,13 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         internal fun <X : Any> addFromSubQuery(
             result: SubQueryResult<X>,
+            selectStar: Boolean = false,
         ): V = with(properties) {
             // All selected tables and columns become available
             availableTables.putAll(result.subQueryProperties.availableTables)
             availableColumns.putAll(result.subQueryProperties.availableColumns)
 
-            properties.fromClauses.add(FromClauseSubQuery(result.result))
+            properties.fromClauses.add(FromClauseSubQuery(result.result, selectStar))
             from
         }
     }
@@ -1366,8 +1367,15 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
                             "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)} ON $ons"
                         }
-                    is FromClauseSubQuery ->
-                        "( ${fromClause.result.sql()} )"
+                    is FromClauseSubQuery -> {
+                        // generate required random alias for MySql for SELECT * FROM ( SELECT ....) AS random
+                        val alias = if (fromClause.selectStar && tables.dbType == DbType.MYSQL) {
+                            " AS ${kotysaRandomString()}"
+                        } else {
+                            ""
+                        }
+                        "( ${fromClause.result.sql()} )$alias"
+                    }
                 }
             }
         }

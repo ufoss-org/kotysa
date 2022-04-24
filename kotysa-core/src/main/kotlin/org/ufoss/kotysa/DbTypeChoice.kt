@@ -86,14 +86,14 @@ public object DbTypeChoice {
 
     private fun initializeTable(table: AbstractTable<Any>, tableClass: KClass<Any>): KotysaTable<*> {
         // define table name = provided name or else mapping class simpleName
-        table.name = table.tableName ?: table::class.simpleName!!
+        table.kotysaName = table.tableName ?: table::class.simpleName!!
 
         require(table.isPkInitialized()) { "Table primary key is mandatory" }
-        require(table.columns.isNotEmpty()) { "Table must declare at least one column" }
+        require(table.kotysaColumns.isNotEmpty()) { "Table must declare at least one column" }
 
         // build KotysaColumns
         val kotysaColumnsMap = linkedMapOf<Column<Any, *>, KotysaColumn<Any, *>>()
-        table.columns.forEach { column ->
+        table.kotysaColumns.forEach { column ->
             // If the name of the column is null, use the 'Table mapping' property name
             column.name = column.columnName
                     ?: table::class.members
@@ -108,7 +108,7 @@ public object DbTypeChoice {
             kotysaColumnsMap[column] = kotysaColumn
         }
 
-        val kotysaTable = KotysaTableImpl(tableClass, table, table.name, kotysaColumnsMap.values.toList(), table.pk, table.foreignKeys)
+        val kotysaTable = KotysaTableImpl(tableClass, table, table.kotysaName, kotysaColumnsMap.values.toList(), table.kotysaPk, table.kotysaForeignKeys)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable

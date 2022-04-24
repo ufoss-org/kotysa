@@ -18,21 +18,23 @@ class MariadbContainerExecutionHook : ParameterResolver {
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
-                .getOrComputeIfAbsent("mariadbContainer") {
-                    val mariadbContainer = MariaDBContainer("mariadb:10.6.1")
-                            .withDatabaseName("db")
-                            .withUsername("mariadb")
-                            .withPassword("test")
-                    mariadbContainer.start()
-                    println("MariadbContainer started")
+            .getOrComputeIfAbsent("mariadbContainer") {
+                val mariadbContainer = MariaDBContainer("mariadb:10.6.1")
+                    .withDatabaseName("db")
+                    .withUsername("mariadb")
+                    .withPassword("test")
+                    // required for syntax : SELECT * FROM ( SELECT ...)
+                    .withCommand("--sql_mode=ORACLE")
+                mariadbContainer.start()
+                println("MariadbContainer started")
 
-                    MariadbContainerResource(mariadbContainer)
-                }
+                MariadbContainerResource(mariadbContainer)
+            }
     }
 }
 
 class MariadbContainerResource internal constructor(
-        private val dbContainer: MariaDBContainer<*>
+    private val dbContainer: MariaDBContainer<*>
 ) : TestContainersCloseableResource {
     companion object {
         const val ID = "MariadbContainerResource"

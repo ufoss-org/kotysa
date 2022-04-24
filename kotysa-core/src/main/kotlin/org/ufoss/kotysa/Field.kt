@@ -94,7 +94,7 @@ internal class TableField<T : Any> internal constructor(
 ) : AbstractField<T>() {
 
     override val fieldNames: List<String> =
-        table.columns.map { column -> column.getFieldName(availableColumns) }
+        table.kotysaColumns.map { column -> column.getFieldName(availableColumns) }
 
     @Suppress("UNCHECKED_CAST")
     override val builder: (RowImpl) -> T = { row ->
@@ -134,7 +134,7 @@ internal class TableField<T : Any> internal constructor(
         }
 
         // Then try to invoke var or setter for each unassociated getter
-        if (associatedColumns.size < table.columns.size) {
+        if (associatedColumns.size < table.kotysaColumns.size) {
             kotysaTable.columns
                 .filter { column -> !associatedColumns.contains(column) }
                 .forEach { column ->
