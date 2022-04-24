@@ -35,7 +35,7 @@ internal class CountField<T : Any, U : Any> internal constructor(
     column: Column<T, U>?,
 ) : AbstractField<Long>(), FieldNotNull<Long> {
     override val fieldNames: List<String> =
-        listOf("COUNT(${column?.getFieldName(properties.tables.allColumns) ?: "*"})")
+        listOf("COUNT(${column?.getFieldName(properties.tables.allColumns, properties.tables.dbType) ?: "*"})")
     
     override val builder: (RowImpl) -> Long = { row -> row.getAndIncrement(Long::class.javaObjectType)!! }
 }
@@ -46,10 +46,10 @@ internal class ColumnField<T : Any, U : Any> internal constructor(
     classifier: FieldClassifier,
 ) : AbstractField<U?>(), FieldNullable<U> {
     override val fieldNames: List<String> = when (classifier) {
-        FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns))
-        FieldClassifier.DISTINCT -> listOf("DISTINCT ${column.getFieldName(properties.tables.allColumns)}")
-        FieldClassifier.MAX -> listOf("MAX(${column.getFieldName(properties.tables.allColumns)})")
-        FieldClassifier.MIN -> listOf("MIN(${column.getFieldName(properties.tables.allColumns)})")
+        FieldClassifier.NONE -> listOf(column.getFieldName(properties.tables.allColumns, properties.tables.dbType))
+        FieldClassifier.DISTINCT -> listOf("DISTINCT ${column.getFieldName(properties.tables.allColumns, properties.tables.dbType)}")
+        FieldClassifier.MAX -> listOf("MAX(${column.getFieldName(properties.tables.allColumns, properties.tables.dbType)})")
+        FieldClassifier.MIN -> listOf("MIN(${column.getFieldName(properties.tables.allColumns, properties.tables.dbType)})")
     }
     override val builder: (RowImpl) -> U? = { row -> row.getAndIncrement(column, properties) }
 }
@@ -58,7 +58,10 @@ internal class AvgField<T : Any, U : Any> internal constructor(
     properties: DefaultSqlClientCommon.Properties,
     column: Column<T, U>,
 ) : AbstractField<BigDecimal>(), FieldNotNull<BigDecimal> {
-    override val fieldNames: List<String> = listOf("AVG(${column.getFieldName(properties.tables.allColumns)})")
+    override val fieldNames: List<String> = listOf("AVG(${column.getFieldName(
+        properties.tables.allColumns,
+        properties.tables.dbType
+    )})")
     
     override val builder: (RowImpl) -> BigDecimal = { row ->
         when {
@@ -76,7 +79,10 @@ internal class LongSumField<T : Any, U : Any> internal constructor(
     properties: DefaultSqlClientCommon.Properties,
     column: Column<T, U>,
 ) : AbstractField<Long>(), FieldNotNull<Long> {
-    override val fieldNames: List<String> = listOf("SUM(${column.getFieldName(properties.tables.allColumns)})")
+    override val fieldNames: List<String> = listOf("SUM(${column.getFieldName(
+        properties.tables.allColumns,
+        properties.tables.dbType
+    )})")
 
     override val builder: (RowImpl) -> Long = { row ->
         when {
@@ -91,10 +97,11 @@ internal class TableField<T : Any> internal constructor(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
     availableTables: Map<Table<*>, KotysaTable<*>>,
     internal val table: AbstractTable<T>,
+    dbType: DbType,
 ) : AbstractField<T>() {
 
     override val fieldNames: List<String> =
-        table.kotysaColumns.map { column -> column.getFieldName(availableColumns) }
+        table.kotysaColumns.map { column -> column.getFieldName(availableColumns, dbType) }
 
     @Suppress("UNCHECKED_CAST")
     override val builder: (RowImpl) -> T = { row ->

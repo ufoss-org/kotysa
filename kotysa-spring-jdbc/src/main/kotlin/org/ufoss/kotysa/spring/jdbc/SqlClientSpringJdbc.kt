@@ -58,6 +58,7 @@ internal class SqlClientSpringJdbc(
                 (table.table as AbstractTable<T>).toField(
                     tables.allColumns,
                     tables.allTables,
+                    tables.dbType,
                 ).builder.invoke(rs.toRow())
             }!!
         }
@@ -103,6 +104,7 @@ internal class SqlClientSpringJdbc(
             (table.table as AbstractTable<T>).toField(
                 tables.allColumns,
                 tables.allTables,
+                tables.dbType,
             ).builder.invoke(rs.toRow())
         }!!
     }

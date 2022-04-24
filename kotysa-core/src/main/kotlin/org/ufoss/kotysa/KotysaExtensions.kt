@@ -4,6 +4,12 @@
 
 package org.ufoss.kotysa
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
@@ -56,20 +62,31 @@ internal fun <T : Any, U : Any> Column<T, U>.toField(
 public fun <T : Any> AbstractTable<T>.toField(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
     availableTables: Map<Table<*>, KotysaTable<*>>,
+    dbType: DbType,
 ): Field<T> =
-    TableField(availableColumns, availableTables, this)
+    TableField(availableColumns, availableTables, this, dbType)
 
-internal fun Field<*>.getFieldName(): String {
+internal fun Field<*>.getFieldName(dbType: DbType): String {
     var fieldName = fieldNames.joinToString()
     if (alias != null) {
-        fieldName += " AS `$alias`"
+        val aliasPart = when(dbType) {
+            DbType.MSSQL -> " AS '$alias'"
+            else -> " AS `$alias`"
+        }
+        fieldName += aliasPart
     }
     return fieldName
 }
 
-internal fun Column<*, *>.getFieldName(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): String {
+internal fun Column<*, *>.getFieldName(
+    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+    dbType: DbType,
+): String {
     if ((this as DbColumn<*, *>).alias != null) {
-        return "`${this.alias!!}`"
+        return when (dbType) {
+            DbType.MSSQL -> this.alias!!
+            else -> "`${this.alias!!}`"
+        }
     }
     val kotysaColumn = getKotysaColumn(availableColumns)
     val kotysaTable = kotysaColumn.table
@@ -98,4 +115,52 @@ internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
         this.parameters.addAll(subQuery.properties.parameters)
     }
     return SubQueryResult(subQuery.properties as DefaultSqlClientSelect.Properties<T>, result)
+}
+
+internal fun Any?.dbValue(dbType: DbType): String = when (this) {
+    null -> "null"
+    is String -> "$this"
+    is Boolean -> when (dbType) {
+        DbType.SQLITE -> if (this) "1" else "0"
+        DbType.MSSQL -> "'$this'"
+        else -> "$this"
+    }
+    is UUID -> "$this"
+    is Int -> "$this"
+    is Long -> "$this"
+    is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
+    is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
+    is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
+    else -> when (this::class.qualifiedName) {
+        "kotlinx.datetime.LocalDate" -> this.toString()
+        "kotlinx.datetime.LocalDateTime" -> {
+            val kotlinxLocalDateTime = this as kotlinx.datetime.LocalDateTime
+            if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
+                "$kotlinxLocalDateTime:00" // missing seconds
+            } else {
+                kotlinxLocalDateTime.toString()
+            }
+        }
+        else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
+    }
+}
+
+internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
+    is Boolean -> if (DbType.SQLITE == dbType) {
+        if (this) "'1'" else "'0'"
+    } else {
+        this.dbValue(dbType)
+    }
+    is Int -> "$this"
+    is Long -> "$this"
+    else -> "'${this.dbValue(dbType)}'"
+}
+
+internal fun DefaultSqlClientCommon.Properties.variable() = when {
+    module == Module.SQLITE || module == Module.JDBC
+            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++this.index}"
+    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
+    else -> ":k${this.index++}"
 }

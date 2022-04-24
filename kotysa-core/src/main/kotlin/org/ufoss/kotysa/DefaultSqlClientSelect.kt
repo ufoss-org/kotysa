@@ -95,7 +95,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add(
                 (table as AbstractTable<U>).toField(
                     properties.tables.allColumns,
-                    properties.availableTables
+                    properties.availableTables,
+                    properties.tables.dbType,
                 )
             )
         }
@@ -312,7 +313,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
         public fun selectSql(doLog: Boolean = true): String = with(properties) {
-            val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.getFieldName() }
+            val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.getFieldName(tables.dbType) }
             val froms = froms()
             val wheres = wheres()
             val groupBy = groupBy()
@@ -377,8 +378,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         private fun fieldName(columnOrAlias: ColumnOrAlias) =
             when (columnOrAlias) {
-                is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns)
-                is QueryAlias<*> -> "`${columnOrAlias.alias}`"
+                is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns, properties.tables.dbType)
+                is QueryAlias<*> -> when (properties.tables.dbType) {
+                    DbType.MSSQL -> "'${columnOrAlias.alias}'"
+                    else -> "`${columnOrAlias.alias}`"
+                }
             }
 
         private fun offset(): String = with(properties) {

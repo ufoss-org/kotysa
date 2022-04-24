@@ -77,6 +77,7 @@ internal class SqlClientJdbc(
             (table.table as AbstractTable<T>).toField(
                 tables.allColumns,
                 tables.allTables,
+                tables.dbType,
             ).builder(rs.toRow())
         }
 
@@ -123,6 +124,7 @@ internal class SqlClientJdbc(
         return (table.table as AbstractTable<T>).toField(
             tables.allColumns,
             tables.allTables,
+            tables.dbType,
         ).builder.invoke(rs.toRow())
     }
 

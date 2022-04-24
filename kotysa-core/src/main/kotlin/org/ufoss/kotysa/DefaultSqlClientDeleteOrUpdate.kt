@@ -271,7 +271,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                     val wheres = rootJoinClauses
                             .flatMap { joinClause -> joinClause.references.asIterable() }
                             .joinToString(" AND ", "(", ")") { joinClause ->
-                                "${joinClause.key.getFieldName(tables.allColumns)} = ${joinClause.value.getFieldName(tables.allColumns)}"
+                                "${joinClause.key.getFieldName(tables.allColumns, tables.dbType)} = " +
+                                        joinClause.value.getFieldName(tables.allColumns, tables.dbType)
                             }
                     // remaining froms
                     fromClauses.removeAt(0)

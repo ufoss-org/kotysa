@@ -5,12 +5,6 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 private val logger = Logger.of<DefaultSqlClient>()
 
@@ -123,7 +117,8 @@ public interface DefaultSqlClient {
         var suffix = ""
         // on MSSQL identity cannot be set a value, must activate IDENTITY_INSERT
         if (tables.dbType == DbType.MSSQL
-                && kotysaTable.columns.any { column -> column.isAutoIncrement && column.entityGetter(row) != null }) {
+            && kotysaTable.columns.any { column -> column.isAutoIncrement && column.entityGetter(row) != null }
+        ) {
             prefix = "SET IDENTITY_INSERT ${kotysaTable.name} ON\n"
             suffix = "\nSET IDENTITY_INSERT ${kotysaTable.name} OFF"
         }
@@ -157,6 +152,7 @@ public interface DefaultSqlClient {
 
     public fun <T : Any> lastInsertedQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
+
         @Suppress("UNCHECKED_CAST")
         val pkColumns = kotysaTable.primaryKey.columns as List<DbColumn<T, *>>
 
@@ -164,23 +160,23 @@ public interface DefaultSqlClient {
             .joinToString { column -> column.name }
 
         val wheres = if (
-                pkColumns.size == 1 &&
-                pkColumns[0].isAutoIncrement &&
-                pkColumns[0].entityGetter(row) == null
-            ) {
-                val selected = if (tables.dbType == DbType.MYSQL) {
-                    "(SELECT LAST_INSERT_ID())"
-                } else {
-                    "?"
-                }
-                "${pkColumns[0].name} = $selected"
+            pkColumns.size == 1 &&
+            pkColumns[0].isAutoIncrement &&
+            pkColumns[0].entityGetter(row) == null
+        ) {
+            val selected = if (tables.dbType == DbType.MYSQL) {
+                "(SELECT LAST_INSERT_ID())"
             } else {
-            val counter = Counter()
-                pkColumns
-                    .joinToString(" AND ") { column ->
-                        "${column.name} = ${variable(counter)}"
-                    }
+                "?"
             }
+            "${pkColumns[0].name} = $selected"
+        } else {
+            val counter = Counter()
+            pkColumns
+                .joinToString(" AND ") { column ->
+                    "${column.name} = ${variable(counter)}"
+                }
+        }
 
         return "SELECT $allTableColumnNames FROM ${kotysaTable.name} WHERE $wheres"
     }
@@ -193,46 +189,6 @@ public interface DefaultSqlClient {
             module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++counter.index}"
             else -> ":k${counter.index++}"
         }
-}
-
-internal fun Any?.dbValue(dbType: DbType): String = when (this) {
-    null -> "null"
-    is String -> "$this"
-    is Boolean -> if (DbType.SQLITE == dbType) {
-        if (this) "1" else "0"
-    } else {
-        "$this"
-    }
-    is UUID -> "$this"
-    is Int -> "$this"
-    is Long -> "$this"
-    is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
-    is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
-    is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-    else -> when (this::class.qualifiedName) {
-        "kotlinx.datetime.LocalDate" -> this.toString()
-        "kotlinx.datetime.LocalDateTime" -> {
-            val kotlinxLocalDateTime = this as kotlinx.datetime.LocalDateTime
-            if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
-                "$kotlinxLocalDateTime:00" // missing seconds
-            } else {
-                kotlinxLocalDateTime.toString()
-            }
-        }
-        else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
-    }
-}
-
-internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
-    is Boolean -> if (DbType.SQLITE == dbType) {
-        if (this) "'1'" else "'0'"
-    } else {
-        this.dbValue(dbType)
-    }
-    is Int -> "$this"
-    is Long -> "$this"
-    else -> "'${this.dbValue(dbType)}'"
 }
 
 public class Counter {

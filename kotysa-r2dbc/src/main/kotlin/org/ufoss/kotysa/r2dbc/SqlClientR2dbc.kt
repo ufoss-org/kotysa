@@ -90,6 +90,7 @@ internal class SqlClientR2dbc(
                         (table.table as AbstractTable<T>).toField(
                             tables.allColumns,
                             tables.allTables,
+                            tables.dbType,
                         ).builder.invoke(row.toRow())
                     }.awaitFirstOrNull()
                 }
@@ -162,7 +163,8 @@ internal class SqlClientR2dbc(
             .map { r, _ ->
                 (table.table as AbstractTable<T>).toField(
                     tables.allColumns,
-                    tables.allTables
+                    tables.allTables,
+                    tables.dbType,
                 ).builder.invoke(r.toRow())
             }.awaitSingle()
     }

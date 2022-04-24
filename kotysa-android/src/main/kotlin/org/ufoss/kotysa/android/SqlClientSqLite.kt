@@ -55,6 +55,7 @@ internal class SqlClientSqLite(
         return (table.table as AbstractTable<T>).toField(
             tables.allColumns,
             tables.allTables,
+            tables.dbType,
         ).builder.invoke(cursor.toRow())
     }
 

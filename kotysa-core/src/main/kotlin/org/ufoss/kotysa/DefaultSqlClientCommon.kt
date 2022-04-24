@@ -1358,9 +1358,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                     is FromClauseTable<*> ->
                         fromClause.table.getFieldName(availableTables) + " " + fromClause.joinClauses.joinToString { joinClause ->
                             val ons = joinClause.references.entries.joinToString("and ") { reference ->
-                                "${reference.key.getFieldName(availableColumns)} = ${
+                                "${reference.key.getFieldName(availableColumns, tables.dbType)} = ${
                                     reference.value.getFieldName(
-                                        availableColumns
+                                        availableColumns,
+                                        tables.dbType
                                     )
                                 }"
                             }
@@ -1369,8 +1370,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                         }
                     is FromClauseSubQuery -> {
                         // generate required random alias for MySql for SELECT * FROM ( SELECT ....) AS random
-                        val alias = if (fromClause.selectStar && tables.dbType == DbType.MYSQL) {
-                            " AS ${kotysaRandomString()}"
+                        val alias = if (fromClause.selectStar
+                            && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MSSQL)) {
+                            // alias is mandatory
+                            " AS ksdfsdg"
                         } else {
                             ""
                         }
@@ -1408,9 +1411,13 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             }
                             else -> {
                                 val fieldName = if (this is WhereClauseWithColumn<*>) {
-                                    column.getFieldName(availableColumns)
+                                    column.getFieldName(availableColumns, tables.dbType)
                                 } else {
-                                    "`${(this as WhereClauseWithAlias<*>).alias.alias}`"
+                                    // alias
+                                    when (tables.dbType) {
+                                        DbType.MSSQL -> "'${(this as WhereClauseWithAlias<*>).alias.alias}'"
+                                        else -> "`${(this as WhereClauseWithAlias<*>).alias.alias}`"
+                                    }
                                 }
                                 when (operation) {
                                     Operation.EQ ->
@@ -1423,7 +1430,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 }
                                             is WhereClauseColumn -> "$fieldName = ${
                                                 otherColumn.getFieldName(
-                                                    availableColumns
+                                                    availableColumns,
+                                                    tables.dbType
                                                 )
                                             }"
                                             is WhereClauseSubQuery<*> -> {
@@ -1444,7 +1452,8 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 }
                                             is WhereClauseColumn -> "$fieldName <> ${
                                                 otherColumn.getFieldName(
-                                                    availableColumns
+                                                    availableColumns,
+                                                    tables.dbType
                                                 )
                                             }"
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
@@ -1724,14 +1733,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             whereClauseType: WhereClauseType,
         ) = WhereOpUuidAliasNullable(where, properties, uuidAliasNullable, whereClauseType)
     }
-}
-
-internal fun DefaultSqlClientCommon.Properties.variable() = when {
-    module == Module.SQLITE || module == Module.JDBC
-            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++this.index}"
-    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
-    else -> ":k${this.index++}"
 }
 
 public data class SubQueryResult<T : Any>(
