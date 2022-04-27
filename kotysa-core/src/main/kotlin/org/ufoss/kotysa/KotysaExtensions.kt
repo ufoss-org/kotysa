@@ -45,6 +45,10 @@ public operator fun <T : Any, U : Any, V : Column<T, U>> V.get(alias: String): V
     (this as DbColumn<T, U>).clone().apply { (this as DbColumn<T, U>).alias = alias } as V
 
 @Suppress("UNCHECKED_CAST")
+public operator fun <T : Any, U : Table<T>> U.get(alias: String): U =
+    (this as AbstractTable<T>).clone().apply { (this as AbstractTable<T>).kotysaAlias = alias } as U
+
+@Suppress("UNCHECKED_CAST")
 internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, KotysaTable<*>>): KotysaTable<T> {
     return requireNotNull(availableTables[this]) { "Requested table \"$this\" is not mapped" } as KotysaTable<T>
 }

@@ -88,6 +88,8 @@ public abstract class SqlClientQuery protected constructor() {
     public interface From<T : From<T>> {
         public infix fun <U : Any> and(table: Table<U>): FromTable<U, *>
         public infix fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<*>
+
+        public infix fun `as`(alias: String): T
     }
 
     public interface FromTable<T : Any, U : FromTable<T, U>> {

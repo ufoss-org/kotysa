@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
+import com.microsoft.sqlserver.jdbc.SQLServerException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -11,7 +12,6 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.SQLSyntaxErrorException
 
 class JdbcSelectAliasMssqlTest : AbstractJdbcMssqlTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
@@ -19,19 +19,19 @@ class JdbcSelectAliasMssqlTest : AbstractJdbcMssqlTest<UserRepositorySelectAlias
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+            .isInstanceOf(SQLServerException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+            .isInstanceOf(SQLServerException::class.java)
     }
 
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+            .isInstanceOf(SQLServerException::class.java)
     }
 
     @Test
@@ -71,7 +71,7 @@ class JdbcSelectAliasMssqlTest : AbstractJdbcMssqlTest<UserRepositorySelectAlias
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+            .isInstanceOf(SQLServerException::class.java)
     }
 
     @Test
@@ -179,14 +179,14 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
         (sqlClient selectStarFrom {
             (this select MssqlUsers.firstname `as` "fna"
                     from MssqlUsers)
-        } where MssqlUsers.firstname["fna"] eq firstname
+        } `as` "derivedTable" where MssqlUsers.firstname["derivedTable.fna"] eq firstname
                 ).fetchOne()
 
     fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
         (sqlClient selectStarFrom {
             (this select MssqlUsers.firstname `as` "fna"
                     from MssqlUsers)
-        } where QueryAlias<String>("fna") eq firstname
+        } `as` "derivedTable" where QueryAlias<String>("derivedTable.fna") eq firstname
                 ).fetchOne()
 
     fun selectCaseWhenExistsSubQueryAliasSubQuery(userIds: List<Int>) =
@@ -199,21 +199,21 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                         and MssqlUsers.id `in` userIds)
             } then true `else` false `as` "roleUsedByUser"
                     from MssqlRoles)
-        } where QueryAlias<Boolean>("roleUsedByUser") eq true)
+        } `as` "derivedTable" where QueryAlias<Boolean>("derivedTable.roleUsedByUser") eq true)
             .fetchAll()
 
     fun selectAliasedFirstnameOrderByFirstnameAliasSubQuery() =
         (sqlClient selectStarFrom {
             (this select MssqlUsers.firstname `as` "fna"
                     from MssqlUsers)
-        } orderByAsc QueryAlias<String>("fna"))
+        } `as` "derivedTable" orderByAsc QueryAlias<String>("derivedTable.fna"))
             .fetchAll()
 
     fun selectRoleLabelWhereInUserSubQueryAliasSubQuery(userIds: List<Int>) =
         (sqlClient selectStarFrom {
             (this select MssqlRoles.label and MssqlRoles.id `as` "roleId"
                     from MssqlRoles)
-        } where QueryAlias<Int>("roleId") `in`
+        } `as` "derivedTable" where QueryAlias<Int>("derivedTable.roleId") `in`
                 {
                     (this select MssqlUsers.roleId
                             from MssqlUsers

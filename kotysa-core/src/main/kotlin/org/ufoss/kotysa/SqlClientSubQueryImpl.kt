@@ -380,6 +380,9 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSubQuery.From<T> =
             addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun `as`(alias: String): SqlClientSubQuery.From<T> =
+            from.apply { aliasLastFrom(alias) }
     }
 
     private class Where<T : Any>(

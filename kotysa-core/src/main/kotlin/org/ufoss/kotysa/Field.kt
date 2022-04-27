@@ -18,7 +18,7 @@ public sealed interface Field<T> {
     public val builder: (RowImpl) -> T
 }
 
-internal abstract class AbstractField<T> : Field<T> {
+internal sealed class AbstractField<T> : Field<T> {
     final override var alias: String? = null
 }
 

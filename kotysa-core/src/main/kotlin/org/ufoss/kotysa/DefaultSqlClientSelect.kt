@@ -179,6 +179,13 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<A>,
             from: FromWhereableSubQuery<T, A, *, B, *, *, *>
         ): B = from.addFromSubQuery(properties.executeSubQuery(dsl))
+
+        protected fun <A : From<A>> aliasLastFrom(
+            alias: String
+        ) {
+            val lastFrom = properties.fromClauses.last()
+            lastFrom.alias = alias
+        }
     }
 
     public abstract class FromWhereable<T : Any, U : Any, V : FromTable<U, V>, W : From<W>, X : SqlClientQuery.Where<X>,
@@ -380,7 +387,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             when (columnOrAlias) {
                 is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns, properties.tables.dbType)
                 is QueryAlias<*> -> when (properties.tables.dbType) {
-                    DbType.MSSQL -> "'${columnOrAlias.alias}'"
+                    DbType.MSSQL -> columnOrAlias.alias
                     else -> "`${columnOrAlias.alias}`"
                 }
             }

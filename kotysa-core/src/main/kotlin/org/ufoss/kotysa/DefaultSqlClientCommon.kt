@@ -1354,9 +1354,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 ""
             }
             fromClauses.joinToString(prefix = prefix) { fromClause ->
+                val alias = if (fromClause.alias.isNullOrBlank()) {
+                    ""
+                } else {
+                    " AS ${fromClause.alias}"
+                }
                 when (fromClause) {
                     is FromClauseTable<*> ->
-                        fromClause.table.getFieldName(availableTables) + " " + fromClause.joinClauses.joinToString { joinClause ->
+                        "${fromClause.table.getFieldName(availableTables)}$alias  " + fromClause.joinClauses.joinToString { joinClause ->
                             val ons = joinClause.references.entries.joinToString("and ") { reference ->
                                 "${reference.key.getFieldName(availableColumns, tables.dbType)} = ${
                                     reference.value.getFieldName(
@@ -1369,13 +1374,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)} ON $ons"
                         }
                     is FromClauseSubQuery -> {
-                        // generate required random alias for MySql for SELECT * FROM ( SELECT ....) AS random
-                        val alias = if (fromClause.selectStar
-                            && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MSSQL)) {
-                            // alias is mandatory
-                            " AS ksdfsdg"
-                        } else {
-                            ""
+                        if (fromClause.selectStar
+                            && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MSSQL)
+                            && alias.isBlank()) {
+                            // alias is mandatory for MySql and MsSql
+                            throw IllegalArgumentException("Alias is mandatory for MySql and MsSql")
                         }
                         "( ${fromClause.result.sql()} )$alias"
                     }
@@ -1415,7 +1418,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 } else {
                                     // alias
                                     when (tables.dbType) {
-                                        DbType.MSSQL -> "'${(this as WhereClauseWithAlias<*>).alias.alias}'"
+                                        DbType.MSSQL -> (this as WhereClauseWithAlias<*>).alias.alias
                                         else -> "`${(this as WhereClauseWithAlias<*>).alias.alias}`"
                                     }
                                 }

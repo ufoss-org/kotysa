@@ -412,6 +412,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun `as`(alias: String): SqlClientSelect.From<T> =
+            from.apply { aliasLastFrom(alias) }
     }
 
     private class Where<T : Any>(

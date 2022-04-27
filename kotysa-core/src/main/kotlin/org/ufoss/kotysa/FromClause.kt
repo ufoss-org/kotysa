@@ -4,15 +4,21 @@
 
 package org.ufoss.kotysa
 
-public sealed interface FromClause<T : Any>
+public sealed interface FromClause<T : Any> {
+    public var alias: String?
+}
 
-public class FromClauseTable<T : Any> internal constructor(
+internal sealed class AbstractFromClause<T : Any> : FromClause<T> {
+    final override var alias: String? = null
+}
+
+internal class FromClauseTable<T : Any> internal constructor(
     internal val table: Table<T>
-) : FromClause<T> {
+) : AbstractFromClause<T>() {
     internal val joinClauses = mutableListOf<JoinClause<T, *>>()
 }
 
-public class FromClauseSubQuery<T : Any> internal constructor(
+internal class FromClauseSubQuery<T : Any> internal constructor(
     internal val result: SqlClientSubQuery.Return<T>,
     internal val selectStar: Boolean,
-) : FromClause<T>
+) : AbstractFromClause<T>()

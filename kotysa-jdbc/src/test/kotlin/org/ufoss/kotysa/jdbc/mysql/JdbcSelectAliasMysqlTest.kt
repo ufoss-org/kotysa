@@ -179,14 +179,14 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
         (sqlClient selectStarFrom {
             (this select MysqlUsers.firstname `as` "fna"
                     from MysqlUsers)
-        } where MysqlUsers.firstname["fna"] eq firstname
+        } `as` "dummy" where MysqlUsers.firstname["fna"] eq firstname
                 ).fetchOne()
 
     fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
         (sqlClient selectStarFrom {
             (this select MysqlUsers.firstname `as` "fna"
                     from MysqlUsers)
-        } where QueryAlias<String>("fna") eq firstname
+        } `as` "dummy" where QueryAlias<String>("fna") eq firstname
                 ).fetchOne()
 
     fun selectCaseWhenExistsSubQueryAliasSubQuery(userIds: List<Int>) =
@@ -199,21 +199,21 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                         and MysqlUsers.id `in` userIds)
             } then true `else` false `as` "roleUsedByUser"
                     from MysqlRoles)
-        } where QueryAlias<Boolean>("roleUsedByUser") eq true)
+        } `as` "dummy" where QueryAlias<Boolean>("roleUsedByUser") eq true)
             .fetchAll()
 
     fun selectAliasedFirstnameOrderByFirstnameAliasSubQuery() =
         (sqlClient selectStarFrom {
             (this select MysqlUsers.firstname `as` "fna"
                     from MysqlUsers)
-        } orderByAsc QueryAlias<String>("fna"))
+        } `as` "dummy" orderByAsc QueryAlias<String>("fna"))
             .fetchAll()
 
     fun selectRoleLabelWhereInUserSubQueryAliasSubQuery(userIds: List<Int>) =
         (sqlClient selectStarFrom {
             (this select MysqlRoles.label and MysqlRoles.id `as` "roleId"
                     from MysqlRoles)
-        } where QueryAlias<Int>("roleId") `in`
+        } `as` "dummy" where QueryAlias<Int>("roleId") `in`
                 {
                     (this select MysqlUsers.roleId
                             from MysqlUsers
