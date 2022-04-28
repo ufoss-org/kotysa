@@ -1357,7 +1357,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 val alias = if (fromClause.alias.isNullOrBlank()) {
                     ""
                 } else {
-                    " AS ${fromClause.alias}"
+                    when(tables.dbType) {
+                        DbType.MSSQL -> " AS '${fromClause.alias}'"
+                        else -> " AS `${fromClause.alias}`"
+                    }
                 }
                 when (fromClause) {
                     is FromClauseTable<*> ->

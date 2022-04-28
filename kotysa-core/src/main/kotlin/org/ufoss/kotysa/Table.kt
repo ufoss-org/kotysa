@@ -7,16 +7,11 @@ public interface Table<T : Any>
  *
  * @param T Entity type associated with this table
  */
-public abstract class AbstractTable<T : Any>(internal val tableName: String?) : Table<T>, Cloneable {
+public abstract class AbstractTable<T : Any>(internal val tableName: String?) : Table<T> {
     internal lateinit var kotysaName: String
     internal val kotysaColumns = mutableSetOf<DbColumn<T, *>>()
     internal lateinit var kotysaPk: PrimaryKey<T, *>
     internal val kotysaForeignKeys = mutableSetOf<ForeignKey<T, *>>()
-    internal var kotysaAlias: String? = null
-
-    public override fun clone(): Any {
-        return super.clone()
-    }
 
     protected fun <U> primaryKey(
             vararg columns: U,

@@ -45,8 +45,11 @@ public operator fun <T : Any, U : Any, V : Column<T, U>> V.get(alias: String): V
     (this as DbColumn<T, U>).clone().apply { (this as DbColumn<T, U>).alias = alias } as V
 
 @Suppress("UNCHECKED_CAST")
-public operator fun <T : Any, U : Table<T>> U.get(alias: String): U =
-    (this as AbstractTable<T>).clone().apply { (this as AbstractTable<T>).kotysaAlias = alias } as U
+public operator fun <T : Any, U : Table<T>> U.get(alias: String): U {
+    // set tableAlias on all columns
+    (this as AbstractTable<T>).kotysaColumns.forEach { column -> column.tableAlias = alias }
+    return this
+}
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, KotysaTable<*>>): KotysaTable<T> {
@@ -88,24 +91,24 @@ internal fun Column<*, *>.getFieldName(
 ): String {
     if ((this as DbColumn<*, *>).alias != null) {
         return when (dbType) {
-            DbType.MSSQL -> this.alias!!
-            else -> "`${this.alias!!}`"
+            DbType.MSSQL -> alias!!
+            else -> "`${alias!!}`"
         }
     }
     val kotysaColumn = getKotysaColumn(availableColumns)
-    val kotysaTable = kotysaColumn.table
-    return "${kotysaTable.getFieldName()}.${kotysaColumn.name}"
+    val tablePart = if (tableAlias != null) {
+        val tabAlias = tableAlias!!
+        // remove tableAlias on all columns
+        (kotysaColumn.table.table as AbstractTable<*>).kotysaColumns.forEach { column -> column.tableAlias = null }
+        tabAlias
+    } else {
+        kotysaColumn.table.name
+    }
+    return "$tablePart.${kotysaColumn.name}"
 }
 
 internal fun Table<*>.getFieldName(availableTables: Map<Table<*>, KotysaTable<*>>) =
-    getKotysaTable(availableTables).getFieldName()
-
-private fun KotysaTable<*>.getFieldName() = name
-/*if (this is AliasedTable<*>) {
-    alias
-} else {
-    name
-}*/
+    getKotysaTable(availableTables).name
 
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(

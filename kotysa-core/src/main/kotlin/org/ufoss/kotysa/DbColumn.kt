@@ -20,6 +20,7 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
     internal abstract val defaultValue: U?
     internal lateinit var name: String
     internal var alias: String? = null
+    internal var tableAlias: String? = null
 
     public override fun clone(): Any {
         return super.clone()

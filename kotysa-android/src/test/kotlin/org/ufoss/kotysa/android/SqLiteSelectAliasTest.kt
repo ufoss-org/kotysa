@@ -117,6 +117,12 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
+
+    @Test
+    fun `Verify selectFirstnameByFirstnameTableAlias returns TheBoss firstname`() {
+        assertThat(repository.selectFirstnameByFirstnameTableAlias(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
 }
 
 class UserRepositorySelectAlias(
@@ -228,4 +234,10 @@ class UserRepositorySelectAlias(
                             where SqliteUsers.id `in` userIds)
                 })
             .fetchAll()
+
+    fun selectFirstnameByFirstnameTableAlias(firstname: String) =
+        (sqlClient select SqliteUsers["u"].firstname
+                from SqliteUsers `as` "u"
+                where SqliteUsers["u"].firstname eq firstname
+                ).fetchOne()
 }
