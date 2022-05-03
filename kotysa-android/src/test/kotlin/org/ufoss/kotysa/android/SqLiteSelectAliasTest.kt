@@ -4,8 +4,10 @@
 
 package org.ufoss.kotysa.android
 
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.Tables
@@ -86,6 +88,13 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
     }
 
     @Test
+    fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
+        }.isInstanceOf(SQLiteException::class.java)
+    }
+
+    @Test
     fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
         assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
             .isEqualTo(userBboss.firstname)
@@ -122,6 +131,40 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
     fun `Verify selectFirstnameByFirstnameTableAlias returns TheBoss firstname`() {
         assertThat(repository.selectFirstnameByFirstnameTableAlias(userBboss.firstname))
             .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdTableAlias returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelAndIdFromUserIdTableAlias(userBboss.id))
+            .isEqualTo(Pair(roleAdmin.label, roleAdmin.id))
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
+        }.isInstanceOf(SQLiteException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
+        }.isInstanceOf(SQLiteException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
+        }.isInstanceOf(SQLiteException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
+        }.isInstanceOf(SQLiteException::class.java)
     }
 }
 
@@ -196,6 +239,13 @@ class UserRepositorySelectAlias(
         } where SqliteUsers.firstname["fna"] eq firstname
                 ).fetchOne()
 
+    fun selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(firstname: String) =
+        (sqlClient selectStarFrom {
+            (this select SqliteUsers.firstname `as` "fna"
+                    from SqliteUsers)
+        } where SqliteUsers.firstname eq firstname
+                ).fetchOne()
+
     fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
         (sqlClient selectStarFrom {
             (this select SqliteUsers.firstname `as` "fna"
@@ -240,4 +290,34 @@ class UserRepositorySelectAlias(
                 from SqliteUsers `as` "u"
                 where SqliteUsers["u"].firstname eq firstname
                 ).fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdTableAlias(userId: Int) =
+        (sqlClient select SqliteRoles["r"].label and SqliteRoles["r"].id
+                from SqliteRoles `as` "r" innerJoin SqliteUsers `as` "u" on SqliteRoles["r"].id eq SqliteUsers["u"].roleId
+                where SqliteUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias(userId: Int) =
+        (sqlClient select SqliteRoles["r"].label and SqliteRoles.id
+                from SqliteRoles `as` "r" innerJoin SqliteUsers `as` "u" on SqliteRoles["r"].id eq SqliteUsers["u"].roleId
+                where SqliteUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias2(userId: Int) =
+        (sqlClient select SqliteRoles["r"].label and SqliteRoles["r"].id
+                from SqliteRoles `as` "r" innerJoin SqliteUsers `as` "u" on SqliteRoles.id eq SqliteUsers["u"].roleId
+                where SqliteUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias3(userId: Int) =
+        (sqlClient select SqliteRoles["r"].label and SqliteRoles["r"].id
+                from SqliteRoles `as` "r" innerJoin SqliteUsers `as` "u" on SqliteRoles["r"].id eq SqliteUsers.roleId
+                where SqliteUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias4(userId: Int) =
+        (sqlClient select SqliteRoles["r"].label and SqliteRoles["r"].id
+                from SqliteRoles `as` "r" innerJoin SqliteUsers `as` "u" on SqliteRoles["r"].id eq SqliteUsers["u"].roleId
+                where SqliteUsers.id eq userId)
+            .fetchOne()
 }

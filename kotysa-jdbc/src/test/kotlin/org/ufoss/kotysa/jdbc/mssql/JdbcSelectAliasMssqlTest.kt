@@ -81,6 +81,13 @@ class JdbcSelectAliasMssqlTest : AbstractJdbcMssqlTest<UserRepositorySelectAlias
     }
 
     @Test
+    fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
+        }.isInstanceOf(SQLServerException::class.java)
+    }
+
+    @Test
     fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
         assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
             .isEqualTo(userBboss.firstname)
@@ -111,6 +118,46 @@ class JdbcSelectAliasMssqlTest : AbstractJdbcMssqlTest<UserRepositorySelectAlias
         assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
+    fun `Verify selectFirstnameByFirstnameTableAlias returns TheBoss firstname`() {
+        assertThat(repository.selectFirstnameByFirstnameTableAlias(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdTableAlias returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelAndIdFromUserIdTableAlias(userBboss.id))
+            .isEqualTo(Pair(roleAdmin.label, roleAdmin.id))
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
+        }.isInstanceOf(SQLServerException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
+        }.isInstanceOf(SQLServerException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
+        }.isInstanceOf(SQLServerException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
+        }.isInstanceOf(SQLServerException::class.java)
     }
 }
 
@@ -182,6 +229,13 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
         } `as` "derivedTable" where MssqlUsers.firstname["derivedTable.fna"] eq firstname
                 ).fetchOne()
 
+    fun selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(firstname: String) =
+        (sqlClient selectStarFrom {
+            (this select MssqlUsers.firstname `as` "fna"
+                    from MssqlUsers)
+        } `as` "derivedTable" where MssqlUsers.firstname eq firstname
+                ).fetchOne()
+
     fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
         (sqlClient selectStarFrom {
             (this select MssqlUsers.firstname `as` "fna"
@@ -220,4 +274,40 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                             where MssqlUsers.id `in` userIds)
                 })
             .fetchAll()
+
+    fun selectFirstnameByFirstnameTableAlias(firstname: String) =
+        (sqlClient select MssqlUsers["u"].firstname
+                from MssqlUsers `as` "u"
+                where MssqlUsers["u"].firstname eq firstname
+                ).fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdTableAlias(userId: Int) =
+        (sqlClient select MssqlRoles["r"].label and MssqlRoles["r"].id
+                from MssqlRoles `as` "r" innerJoin MssqlUsers `as` "u" on MssqlRoles["r"].id eq MssqlUsers["u"].roleId
+                where MssqlUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias(userId: Int) =
+        (sqlClient select MssqlRoles["r"].label and MssqlRoles.id
+                from MssqlRoles `as` "r" innerJoin MssqlUsers `as` "u" on MssqlRoles["r"].id eq MssqlUsers["u"].roleId
+                where MssqlUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias2(userId: Int) =
+        (sqlClient select MssqlRoles["r"].label and MssqlRoles["r"].id
+                from MssqlRoles `as` "r" innerJoin MssqlUsers `as` "u" on MssqlRoles.id eq MssqlUsers["u"].roleId
+                where MssqlUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias3(userId: Int) =
+        (sqlClient select MssqlRoles["r"].label and MssqlRoles["r"].id
+                from MssqlRoles `as` "r" innerJoin MssqlUsers `as` "u" on MssqlRoles["r"].id eq MssqlUsers.roleId
+                where MssqlUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias4(userId: Int) =
+        (sqlClient select MssqlRoles["r"].label and MssqlRoles["r"].id
+                from MssqlRoles `as` "r" innerJoin MssqlUsers `as` "u" on MssqlRoles["r"].id eq MssqlUsers["u"].roleId
+                where MssqlUsers.id eq userId)
+            .fetchOne()
 }

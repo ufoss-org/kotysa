@@ -381,7 +381,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         ): SqlClientSubQuery.From<T> =
             addFromSubQuery(dsl, from as FromTable<T, V>)
 
-        override fun `as`(alias: String): SqlClientSubQuery.From<T> =
+        override fun `as`(alias: String): SqlClientSubQuery.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
     }
 

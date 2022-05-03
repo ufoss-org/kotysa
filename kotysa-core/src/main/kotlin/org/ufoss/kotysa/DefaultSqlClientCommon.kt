@@ -88,6 +88,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : SqlClientQuery.Joinable<T, U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
         internal lateinit var table: Table<V>
+        internal var alias: String? = null
 
         private val join = Join<T, U, V>(properties, from)
 
@@ -95,8 +96,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             join.apply {
                 type = this@Joinable.type
                 table = this@Joinable.table
+                alias = this@Joinable.alias
                 this.column = column
             }
+
+        public override fun `as`(alias: String): Joinable<T, U, V> {
+            this.alias = alias
+            return this
+        }
     }
 
     public class Join<T : Any, U : FromTable<T, U>, V : Any> internal constructor(
@@ -106,14 +113,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         internal lateinit var type: JoinClauseType
         internal lateinit var table: Table<V>
         internal lateinit var column: Column<T, *>
+        internal var alias: String? = null
 
         override fun eq(column: Column<V, *>): U = with(properties) {
             // get last from
-            val joinClause = JoinClause(table, mapOf(Pair(this@Join.column, column)), type)
+            val joinClause = JoinClause(
+                table,
+                mapOf(
+                    Pair(
+                        this@Join.column.getOrClone(properties.availableColumns),
+                        column.getOrClone(properties.availableColumns)
+                    )
+                ),
+                type,
+                alias
+            )
             (fromClauses[fromClauses.size - 1] as FromClauseTable<T>).joinClauses.add(joinClause)
             from
         }
-
     }
 
     public abstract class Whereable<T : SqlClientQuery.Where<T>> protected constructor() : WithWhere<T>(),
@@ -265,7 +282,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             column: Column<T, *>,
             operation: Operation,
             value: Any?,
-            whereClauseType: WhereClauseType
+            whereClauseType: WhereClauseType,
         ) {
             // Add value to parameters, if not null
             if (value != null) {
@@ -273,7 +290,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             }
             properties.whereClauses.add(
                 WhereClauseWithType(
-                    WhereClauseValueWithColumn(column, operation, value),
+                    WhereClauseValueWithColumn(column.getOrClone(properties.availableColumns), operation, value),
                     whereClauseType,
                 )
             )
@@ -287,7 +304,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         ) {
             properties.whereClauses.add(
                 WhereClauseWithType(
-                    WhereClauseColumnWithColumn(column, operation, otherColumn),
+                    WhereClauseColumnWithColumn(
+                        column.getOrClone(properties.availableColumns),
+                        operation,
+                        otherColumn.getOrClone(properties.availableColumns)
+                    ),
                     whereClauseType,
                 )
             )
@@ -301,7 +322,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         ) {
             properties.whereClauses.add(
                 WhereClauseWithType(
-                    WhereClauseSubQueryWithColumn(column, operation, dsl),
+                    WhereClauseSubQueryWithColumn(column.getOrClone(properties.availableColumns), operation, dsl),
                     whereClauseType,
                 )
             )
@@ -335,7 +356,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         ) {
             properties.whereClauses.add(
                 WhereClauseWithType(
-                    WhereClauseColumnWithAlias(alias, operation, otherColumn),
+                    WhereClauseColumnWithAlias(alias, operation, otherColumn.getOrClone(properties.availableColumns)),
                     whereClauseType,
                 )
             )
@@ -1358,7 +1379,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                     ""
                 } else {
                     when(tables.dbType) {
-                        DbType.MSSQL -> " AS '${fromClause.alias}'"
+                        DbType.MSSQL -> " AS ${fromClause.alias}"
                         else -> " AS `${fromClause.alias}`"
                     }
                 }
@@ -1373,8 +1394,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                     )
                                 }"
                             }
+                            val joinAlias = if (joinClause.alias.isNullOrBlank()) {
+                                ""
+                            } else {
+                                when(tables.dbType) {
+                                    DbType.MSSQL -> " AS ${joinClause.alias}"
+                                    else -> " AS `${joinClause.alias}`"
+                                }
+                            }
 
-                            "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)} ON $ons"
+                            "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)}$joinAlias ON $ons"
                         }
                     is FromClauseSubQuery -> {
                         if (fromClause.selectStar

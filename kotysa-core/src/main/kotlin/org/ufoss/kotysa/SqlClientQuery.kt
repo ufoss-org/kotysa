@@ -98,6 +98,8 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface Joinable<T : Any, U : FromTable<T, U>, V : Any> {
         public infix fun on(column: Column<T, *>): Join<T, U, V>
+
+        public infix fun `as`(alias: String): Joinable<T, U, V>
     }
 
     public interface Join<T : Any, U : FromTable<T, U>, V : Any> {

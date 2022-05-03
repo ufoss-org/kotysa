@@ -81,6 +81,13 @@ class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectA
     }
 
     @Test
+    fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
+        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+    }
+
+    @Test
     fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
         assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
             .isEqualTo(userBboss.firstname)
@@ -111,6 +118,46 @@ class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectA
         assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
+    fun `Verify selectFirstnameByFirstnameTableAlias returns TheBoss firstname`() {
+        assertThat(repository.selectFirstnameByFirstnameTableAlias(userBboss.firstname))
+            .isEqualTo(userBboss.firstname)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdTableAlias returns Admin role for TheBoss`() {
+        assertThat(repository.selectRoleLabelAndIdFromUserIdTableAlias(userBboss.id))
+            .isEqualTo(Pair(roleAdmin.label, roleAdmin.id))
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
+        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
+        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
+        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+    }
+
+    @Test
+    fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
+        }.isInstanceOf(SQLSyntaxErrorException::class.java)
     }
 }
 
@@ -182,6 +229,13 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
         } where MariadbUsers.firstname["fna"] eq firstname
                 ).fetchOne()
 
+    fun selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(firstname: String) =
+        (sqlClient selectStarFrom {
+            (this select MariadbUsers.firstname `as` "fna"
+                    from MariadbUsers)
+        } where MariadbUsers.firstname eq firstname
+                ).fetchOne()
+
     fun selectAliasedFirstnameByFirstnameAliasSubQuery(firstname: String) =
         (sqlClient selectStarFrom {
             (this select MariadbUsers.firstname `as` "fna"
@@ -220,4 +274,40 @@ class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : Abstract
                             where MariadbUsers.id `in` userIds)
                 })
             .fetchAll()
+
+    fun selectFirstnameByFirstnameTableAlias(firstname: String) =
+        (sqlClient select MariadbUsers["u"].firstname
+                from MariadbUsers `as` "u"
+                where MariadbUsers["u"].firstname eq firstname
+                ).fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdTableAlias(userId: Int) =
+        (sqlClient select MariadbRoles["r"].label and MariadbRoles["r"].id
+                from MariadbRoles `as` "r" innerJoin MariadbUsers `as` "u" on MariadbRoles["r"].id eq MariadbUsers["u"].roleId
+                where MariadbUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias(userId: Int) =
+        (sqlClient select MariadbRoles["r"].label and MariadbRoles.id
+                from MariadbRoles `as` "r" innerJoin MariadbUsers `as` "u" on MariadbRoles["r"].id eq MariadbUsers["u"].roleId
+                where MariadbUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias2(userId: Int) =
+        (sqlClient select MariadbRoles["r"].label and MariadbRoles["r"].id
+                from MariadbRoles `as` "r" innerJoin MariadbUsers `as` "u" on MariadbRoles.id eq MariadbUsers["u"].roleId
+                where MariadbUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias3(userId: Int) =
+        (sqlClient select MariadbRoles["r"].label and MariadbRoles["r"].id
+                from MariadbRoles `as` "r" innerJoin MariadbUsers `as` "u" on MariadbRoles["r"].id eq MariadbUsers.roleId
+                where MariadbUsers["u"].id eq userId)
+            .fetchOne()
+
+    fun selectRoleLabelAndIdFromUserIdMissingTableAlias4(userId: Int) =
+        (sqlClient select MariadbRoles["r"].label and MariadbRoles["r"].id
+                from MariadbRoles `as` "r" innerJoin MariadbUsers `as` "u" on MariadbRoles["r"].id eq MariadbUsers["u"].roleId
+                where MariadbUsers.id eq userId)
+            .fetchOne()
 }

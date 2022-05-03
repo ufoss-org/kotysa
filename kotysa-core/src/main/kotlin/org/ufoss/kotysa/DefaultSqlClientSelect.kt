@@ -102,19 +102,19 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
 
         public fun <U : Any> addSelectColumn(column: Column<*, U>, classifier: FieldClassifier = FieldClassifier.NONE) {
-            properties.selectedFields.add(column.toField(properties, classifier))
+            properties.selectedFields.add(column.getOrClone(properties.tables.allColumns).toField(properties, classifier))
         }
 
         public fun <U : Any> addCountColumn(column: Column<*, U>? = null) {
-            properties.selectedFields.add(CountField(properties, column))
+            properties.selectedFields.add(CountField(properties, column?.getOrClone(properties.tables.allColumns)))
         }
 
         public fun <U : Any> addAvgColumn(column: Column<*, U>) {
-            properties.selectedFields.add(AvgField(properties, column))
+            properties.selectedFields.add(AvgField(properties, column.getOrClone(properties.tables.allColumns)))
         }
 
         public fun <U : Any> addLongSumColumn(column: Column<*, U>) {
-            properties.selectedFields.add(LongSumField(properties, column))
+            properties.selectedFields.add(LongSumField(properties, column.getOrClone(properties.tables.allColumns)))
         }
 
         public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
@@ -222,7 +222,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val groupByPart2: U
 
         override fun groupBy(column: Column<*, *>): U {
-            properties.groupByClauses.add(column)
+            properties.groupByClauses.add(column.getOrClone(properties.availableColumns))
             return groupByPart2
         }
 
@@ -237,7 +237,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val groupByPart2: U
 
         override fun and(column: Column<*, *>): U {
-            properties.groupByClauses.add(column)
+            properties.groupByClauses.add(column.getOrClone(properties.availableColumns))
             return groupByPart2
         }
 
@@ -252,12 +252,16 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val orderByPart2: U
 
         override fun orderByAsc(column: Column<*, *>): U {
-            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.ASC))
+            properties.orderByClauses.add(
+                OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.ASC)
+            )
             return orderByPart2
         }
 
         override fun orderByDesc(column: Column<*, *>): U {
-            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.DESC))
+            properties.orderByClauses.add(
+                OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.DESC)
+            )
             return orderByPart2
         }
 
@@ -298,12 +302,16 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         public val orderByPart2: U
 
         override fun andAsc(column: Column<*, *>): U {
-            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.ASC))
+            properties.orderByClauses.add(
+                OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.ASC)
+            )
             return orderByPart2
         }
 
         override fun andDesc(column: Column<*, *>): U {
-            properties.orderByClauses.add(OrderByClauseWithColumn(column, Order.DESC))
+            properties.orderByClauses.add(
+                OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.DESC)
+            )
             return orderByPart2
         }
 

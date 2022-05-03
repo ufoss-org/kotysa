@@ -8,7 +8,8 @@ package org.ufoss.kotysa
 public class JoinClause<T : Any, U : Any> internal constructor(
         internal val table: Table<U>,
         internal val references: Map<Column<T, *>, Column<U, *>>,
-        internal val type: JoinClauseType
+        internal val type: JoinClauseType,
+        internal val alias: String?,
 )
 
 

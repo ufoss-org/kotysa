@@ -77,7 +77,7 @@ internal fun Field<*>.getFieldName(dbType: DbType): String {
     var fieldName = fieldNames.joinToString()
     if (alias != null) {
         val aliasPart = when(dbType) {
-            DbType.MSSQL -> " AS '$alias'"
+            DbType.MSSQL -> " AS $alias"
             else -> " AS `$alias`"
         }
         fieldName += aliasPart
@@ -97,10 +97,7 @@ internal fun Column<*, *>.getFieldName(
     }
     val kotysaColumn = getKotysaColumn(availableColumns)
     val tablePart = if (tableAlias != null) {
-        val tabAlias = tableAlias!!
-        // remove tableAlias on all columns
-        (kotysaColumn.table.table as AbstractTable<*>).kotysaColumns.forEach { column -> column.tableAlias = null }
-        tabAlias
+        tableAlias!!
     } else {
         kotysaColumn.table.name
     }
@@ -171,3 +168,18 @@ internal fun DefaultSqlClientCommon.Properties.variable() = when {
     module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
     else -> ":k${this.index++}"
 }
+
+@Suppress("UNCHECKED_CAST")
+internal fun <T : Any, U : Any> Column<T, U>.getOrClone(
+    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+): Column<T, U> =
+   if ((this as DbColumn<*, *>).tableAlias != null) {
+        // make a clone to keep its tableAlias
+        val clonedColumn = this.clone() as Column<T, U>
+        val kotysaColumn = getKotysaColumn(availableColumns)
+        // remove tableAlias on all columns
+        (kotysaColumn.table.table as AbstractTable<*>).kotysaColumns.forEach { tableColumn -> tableColumn.tableAlias = null }
+        clonedColumn
+    } else {
+        this
+    }

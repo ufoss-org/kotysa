@@ -193,8 +193,11 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
     }
 
-    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>, SqlClientQuery.From<From<T>>,
-        From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T>
+    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
+        SqlClientQuery.From<From<T>>,
+        From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
+        override fun `as`(alias: String): FromTable<T, U>
+    }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
         Return<T>
