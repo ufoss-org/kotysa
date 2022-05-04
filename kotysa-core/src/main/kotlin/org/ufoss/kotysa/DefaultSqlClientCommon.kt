@@ -1379,7 +1379,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                     ""
                 } else {
                     when(tables.dbType) {
-                        DbType.MSSQL -> " AS ${fromClause.alias}"
+                        DbType.MSSQL, DbType.POSTGRESQL -> " AS ${fromClause.alias}"
                         else -> " AS `${fromClause.alias}`"
                     }
                 }
@@ -1398,7 +1398,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 ""
                             } else {
                                 when(tables.dbType) {
-                                    DbType.MSSQL -> " AS ${joinClause.alias}"
+                                    DbType.MSSQL, DbType.POSTGRESQL -> " AS ${joinClause.alias}"
                                     else -> " AS `${joinClause.alias}`"
                                 }
                             }
@@ -1450,7 +1450,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 } else {
                                     // alias
                                     when (tables.dbType) {
-                                        DbType.MSSQL -> (this as WhereClauseWithAlias<*>).alias.alias
+                                        DbType.MSSQL, DbType.POSTGRESQL -> (this as WhereClauseWithAlias<*>).alias.alias
                                         else -> "`${(this as WhereClauseWithAlias<*>).alias.alias}`"
                                     }
                                 }

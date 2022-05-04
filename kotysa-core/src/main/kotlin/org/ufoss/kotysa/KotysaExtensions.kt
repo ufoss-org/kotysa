@@ -77,7 +77,7 @@ internal fun Field<*>.getFieldName(dbType: DbType): String {
     var fieldName = fieldNames.joinToString()
     if (alias != null) {
         val aliasPart = when(dbType) {
-            DbType.MSSQL -> " AS $alias"
+            DbType.MSSQL, DbType.POSTGRESQL -> " AS $alias"
             else -> " AS `$alias`"
         }
         fieldName += aliasPart
@@ -91,7 +91,7 @@ internal fun Column<*, *>.getFieldName(
 ): String {
     if ((this as DbColumn<*, *>).alias != null) {
         return when (dbType) {
-            DbType.MSSQL -> alias!!
+            DbType.MSSQL, DbType.POSTGRESQL -> alias!!
             else -> "`${alias!!}`"
         }
     }

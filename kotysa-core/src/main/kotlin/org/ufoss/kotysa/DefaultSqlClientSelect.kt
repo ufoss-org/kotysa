@@ -395,7 +395,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             when (columnOrAlias) {
                 is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns, properties.tables.dbType)
                 is QueryAlias<*> -> when (properties.tables.dbType) {
-                    DbType.MSSQL -> columnOrAlias.alias
+                    DbType.MSSQL, DbType.POSTGRESQL -> columnOrAlias.alias
                     else -> "`${columnOrAlias.alias}`"
                 }
             }
