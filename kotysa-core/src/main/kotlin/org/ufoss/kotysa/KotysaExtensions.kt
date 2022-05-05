@@ -20,25 +20,21 @@ public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
 public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
     requireNotNull(this.allTables.values.first { kotysaTable -> kotysaTable.tableClass == tableClass }) as KotysaTable<T>
 
-public fun List<WhereClauseWithType>.dbValues(tables: Tables): List<Any> =
-    mapNotNull { typedWhereClause ->
-        if (typedWhereClause.whereClause is WhereClauseValue) {
-            typedWhereClause.whereClause.value
-        } else {
-            null
-        }
-    }.map { value ->
-        if (value is Set<*>) {
-            // create new Set with transformed values
-            mutableSetOf<Any?>().apply {
-                value.forEach { dbVal ->
-                    add(tables.getDbValue(dbVal))
+public fun DefaultSqlClientCommon.Properties.dbValues(): List<Any> = with(this) {
+    parameters
+        .map { value ->
+            if (value is Set<*>) {
+                // create new Set with transformed values
+                mutableSetOf<Any?>().apply {
+                    value.forEach { dbVal ->
+                        add(tables.getDbValue(dbVal))
+                    }
                 }
-            }
-        } else {
-            tables.getDbValue(value)
-        } as Any
-    }
+            } else {
+                tables.getDbValue(value)
+            } as Any
+        }
+}
 
 @Suppress("UNCHECKED_CAST")
 public operator fun <T : Any, U : Any, V : Column<T, U>> V.get(alias: String): V =
@@ -116,8 +112,11 @@ internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
     val result = dsl(subQuery)
     // add all sub-query parameters, if any, to parent's properties
     if (subQuery.properties.parameters.isNotEmpty()) {
-        this.parameters.addAll(subQuery.properties.parameters)
+        parameters.addAll(subQuery.properties.parameters)
     }
+    // update parent's properties with index value
+    index = subQuery.properties.index
+    
     return SubQueryResult(subQuery.properties as DefaultSqlClientSelect.Properties<T>, result)
 }
 
@@ -164,9 +163,9 @@ internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
 internal fun DefaultSqlClientCommon.Properties.variable() = when {
     module == Module.SQLITE || module == Module.JDBC
             || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++this.index}"
+    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
     module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
-    else -> ":k${this.index++}"
+    else -> ":k${index++}"
 }
 
 @Suppress("UNCHECKED_CAST")

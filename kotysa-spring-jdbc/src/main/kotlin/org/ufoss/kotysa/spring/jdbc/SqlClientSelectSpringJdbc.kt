@@ -49,6 +49,38 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun selectSum(column: IntColumn<*>): SqlClientSelect.FirstSelect<Long> =
                 FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
+
+        override fun <T : Any> select(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.FirstSelect<T> =
+            FirstSelect<T>(client, properties()).apply { addSelectSubQuery(dsl) }
+
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.SelectCaseWhenExistsFirst<T> = SelectCaseWhenExistsFirst(client, properties(), dsl)
+
+        override fun <T : Any> selectStarFromSubQuery(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.From<T> = FirstSelect<T>(client, properties()).selectStarFrom(dsl)
+    }
+
+    private class SelectCaseWhenExistsFirst<T : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<T>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ) : SqlClientSelect.SelectCaseWhenExistsFirst<T> {
+        override fun <U : Any> then(value: U): SqlClientSelect.SelectCaseWhenExistsFirstPart2<T, U> =
+            SelectCaseWhenExistsFirstPart2(client, properties as Properties<U>, dsl, value)
+    }
+
+    private class SelectCaseWhenExistsFirstPart2<T : Any, U : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<U>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : SqlClientSelect.SelectCaseWhenExistsFirstPart2<T, U> {
+        override fun `else`(value: U): SqlClientSelect.FirstSelect<U> =
+            FirstSelect(client, properties).apply { addSelectCaseWhenExistsSubQuery(dsl, then, value) }
     }
 
     private class FirstSelect<T : Any>(
@@ -61,6 +93,14 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.FromTable<T, U> =
                 addFromTable(table, from as FromTable<T, U>)
+
+        override fun <U : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        fun <U : Any> selectStarFrom(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>, true)
 
         override fun <U : Any> and(column: Column<*, U>): SqlClientSelect.SecondSelect<T?, U?> =
                 SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply { addSelectColumn(column) }
@@ -91,6 +131,40 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.SecondSelect<T?, Long> =
                 SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
+
+        override fun <U : Any> and(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.SecondSelect<T?, U?> =
+            SecondSelect(client, properties as Properties<Pair<T?, U?>>).apply {
+                addSelectSubQuery(dsl)
+            }
+
+        override fun <U : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.AndCaseWhenExistsSecond<T, U> = AndCaseWhenExistsSecond(client, properties, dsl)
+
+        override fun `as`(alias: String): SqlClientSelect.FirstSelect<T> = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class AndCaseWhenExistsSecond<T : Any, U : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<T>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+    ) : SqlClientSelect.AndCaseWhenExistsSecond<T, U> {
+        override fun <V : Any> then(value: V): SqlClientSelect.AndCaseWhenExistsSecondPart2<T, U, V> =
+            AndCaseWhenExistsSecondPart2(client, properties, dsl, value)
+    }
+
+    private class AndCaseWhenExistsSecondPart2<T : Any, U : Any, V : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<T>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+        private val then: V,
+    ) : SqlClientSelect.AndCaseWhenExistsSecondPart2<T, U, V> {
+        override fun `else`(value: V): SqlClientSelect.SecondSelect<T?, V> =
+            SecondSelect(client, properties as Properties<Pair<T?, V>>).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
     }
 
     private class SecondSelect<T, U>(
@@ -103,6 +177,10 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <V : Any> from(table: Table<V>): SqlClientSelect.FromTable<Pair<T, U>, V> =
                 addFromTable(table, from as FromTable<Pair<T, U>, V>)
+
+        override fun <V : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -133,6 +211,40 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.ThirdSelect<T, U, Long> =
                 ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
+
+        override fun <V : Any> and(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.ThirdSelect<T, U, V?> =
+            ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
+                addSelectSubQuery(dsl)
+            }
+
+        override fun <V : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(client, properties, dsl)
+
+        override fun `as`(alias: String): SqlClientSelect.SecondSelect<T, U> = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class AndCaseWhenExistsThird<T, U, V : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<Pair<T, U>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
+    ) : SqlClientSelect.AndCaseWhenExistsThird<T, U, V> {
+        override fun <W : Any> then(value: W): SqlClientSelect.AndCaseWhenExistsThirdPart2<T, U, V, W> =
+            AndCaseWhenExistsThirdPart2(client, properties, dsl, value)
+    }
+
+    private class AndCaseWhenExistsThirdPart2<T, U, V : Any, W : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<Pair<T, U>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>,
+        private val then: W,
+    ) : SqlClientSelect.AndCaseWhenExistsThirdPart2<T, U, V, W> {
+        override fun `else`(value: W): SqlClientSelect.ThirdSelect<T, U, W> =
+            ThirdSelect(client, properties as Properties<Triple<T, U, W>>).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
     }
 
     private class ThirdSelect<T, U, V>(
@@ -145,6 +257,11 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <W : Any> from(table: Table<W>): SqlClientSelect.FromTable<Triple<T, U, V>, W> =
                 addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
+
+        override fun <W : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
+        ): SqlClientSelect.From<Triple<T, U, V>> =
+            addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
 
         override fun <W : Any> and(column: Column<*, W>): SqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -175,16 +292,55 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.Select =
                 Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
+
+        override fun <W : Any> and(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
+        ): SqlClientSelect.Select = Select(client, properties as Properties<List<Any?>>).apply {
+            addSelectSubQuery(dsl)
+        }
+
+        override fun <W : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
+        ): SqlClientSelect.AndCaseWhenExistsLast<W> =
+            AndCaseWhenExistsLast(client, properties as Properties<List<Any?>>, dsl)
+
+        override fun `as`(alias: String): SqlClientSelect.ThirdSelect<T, U, V> = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class AndCaseWhenExistsLast<T : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ) : SqlClientSelect.AndCaseWhenExistsLast<T> {
+        override fun <U : Any> then(value: U): SqlClientSelect.AndCaseWhenExistsLastPart2<T, U> =
+            AndCaseWhenExistsLastPart2(client, properties, dsl, value)
+    }
+
+    private class AndCaseWhenExistsLastPart2<T : Any, U : Any>(
+        private val client: NamedParameterJdbcOperations,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : SqlClientSelect.AndCaseWhenExistsLastPart2<T, U> {
+        override fun `else`(value: U): SqlClientSelect.Select =
+            Select(client, properties).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
     }
 
     private class Select(
-            client: NamedParameterJdbcOperations,
+            private val client: NamedParameterJdbcOperations,
             override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSelect.Select {
         private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(client, properties)
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.FromTable<List<Any?>, U> =
                 addFromTable(table, from as FromTable<List<Any?>, U>)
+
+        override fun <T : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.From<List<Any?>> =
+            addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.Select = this.apply { addSelectColumn(column) }
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.Select = this.apply { addSelectTable(table) }
@@ -206,6 +362,16 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         }
 
         override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
+
+        override fun <T : Any> and(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.Select = this.apply { addSelectSubQuery(dsl) }
+
+        override fun <T : Any> andCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(client, properties, dsl)
+
+        override fun `as`(alias: String): SqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
     private class SelectWithDsl<T : Any>(
@@ -217,22 +383,40 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <U : Any> from(table: Table<U>): SqlClientSelect.FromTable<T, U> =
                 addFromTable(table, from as FromTable<T, U>)
+
+        override fun <U : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun `as`(alias: String): Nothing {
+            throw IllegalArgumentException("No Alias for selectAndBuild")
+        }
     }
 
     private class FromTable<T : Any, U : Any>(
             override val client: NamedParameterJdbcOperations,
             properties: Properties<T>,
-    ) : FromWhereable<T, U, SqlClientSelect.FromTable<T, U>, SqlClientSelect.Where<T>,
+    ) : FromWhereable<T, U, SqlClientSelect.FromTable<T, U>, SqlClientSelect.From<T>, SqlClientSelect.Where<T>,
             SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>,
-            SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.FromTable<T, U>, GroupBy<T>, OrderBy<T>,
-            SqlClientSelect.LimitOffset<T> {
+            SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.FromTable<T, U>, SqlClientSelect.From<T>,
+            GroupBy<T>, OrderBy<T>, SqlClientSelect.LimitOffset<T> {
+        override val fromTable = this
         override val from = this
+        
         override val where by lazy { Where(client, properties) }
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        
         override fun <V : Any> and(table: Table<V>): SqlClientSelect.FromTable<T, V> =
             addFromTable(table, from as FromTable<T, V>)
+
+        override fun <V : Any> and(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun `as`(alias: String): SqlClientSelect.FromTable<T, U> =
+            from.apply { aliasLastFrom(alias) }
     }
 
     private class Where<T : Any>(
@@ -255,14 +439,44 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
             override val properties: Properties<T>
     ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSelect.GroupByPart2<T>>, SqlClientSelect.GroupByPart2<T>,
             DefaultSqlClientSelect.OrderBy<T, SqlClientSelect.OrderByPart2<T>>,
-            DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, Return<T> {
+            OrderBy<T>, DefaultSqlClientSelect.LimitOffset<T, SqlClientSelect.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val orderByPart2 by lazy { OrderByPart2(client, properties) }
         override val groupByPart2 = this
     }
 
     private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, SqlClientSelect.OrderByPart2<T>>,
-            SqlClientSelect.OrderBy<T>, Return<T>
+        SqlClientSelect.OrderBy<T>, Return<T> {
+
+        override fun <U : Any> orderByAscCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
+
+        override fun <U : Any> orderByDescCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
+    }
+
+    private class OrderByCaseWhenExists<T : Any, U : Any>(
+        override val properties: Properties<T>,
+        override val orderByPart2: SqlClientSelect.OrderByPart2<T>,
+        override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+        override val order: Order
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExists<T, U, SqlClientSelect.OrderByPart2<T>> {
+        override fun <V : Any> then(value: V): SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, SqlClientSelect.OrderByPart2<T>> {
+            return OrderByCaseWhenExistsPart2(properties, orderByPart2, dsl, value, order)
+        }
+    }
+
+    private class OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any>(
+        override val properties: Properties<T>,
+        override val orderByPart2: SqlClientSelect.OrderByPart2<T>,
+        override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+        override val then: V,
+        override val order: Order
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExistsPart2<T, U, V, SqlClientSelect.OrderByPart2<T>>
 
     private class OrderByPart2<T : Any>(
             override val client: NamedParameterJdbcOperations,
@@ -273,6 +487,16 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
         override val orderByPart2 = this
+
+        override fun <U : Any> andAscCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
+
+        override fun <U : Any> andDescCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =
+            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
     }
 
     private class LimitOffset<T : Any>(
@@ -326,7 +550,7 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         private fun buildParameters(): SqlParameterSource = with(properties) {
             val parameters = MapSqlParameterSource()
             // 1) add all values from where part
-            bindWhereParams(parameters)
+            springJdbcBindParams(parameters)
             // 2) add limit and offset (order is different depending on DbType)
             if (DbType.MSSQL == tables.dbType) {
                 offsetParam(parameters)

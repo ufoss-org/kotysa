@@ -164,6 +164,6 @@ public class SqlClientSubQuery private constructor() {
     public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 
     public interface Return<T : Any> {
-        public fun sql(): String
+        public fun sql(parentProperties: DefaultSqlClientCommon.Properties): String
     }
 }

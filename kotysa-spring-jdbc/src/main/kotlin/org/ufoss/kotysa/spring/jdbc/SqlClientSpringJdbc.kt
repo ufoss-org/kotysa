@@ -157,6 +157,21 @@ internal class SqlClientSpringJdbc(
 
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.FirstSelect<T> =
+        SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.From<T> =
+        SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectStarFromSubQuery(dsl)
 }
 
 /**

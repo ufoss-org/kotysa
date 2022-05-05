@@ -15,12 +15,12 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
             override val client: NamedParameterJdbcOperations,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.JDBC, Module.SPRING_JDBC),
             SqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
-        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }
     }
@@ -28,12 +28,12 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
     internal class Update<T : Any> internal constructor(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<Any>>(),
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(
@@ -56,7 +56,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
                     .map { value -> tables.getDbValue(value) }
                     .forEach { value -> parameters.addValue("k${index++}", value) }
             // 2) add all values from where part
-            bindWhereParams(parameters)
+            springJdbcBindParams(parameters)
             // 3) reset index
             index = 0
 

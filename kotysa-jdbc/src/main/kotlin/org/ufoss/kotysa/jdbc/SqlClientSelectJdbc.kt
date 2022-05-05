@@ -430,7 +430,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>,
             SqlClientSelect.GroupByPart2<T>, SqlClientSelect.OrderByPart2<T>>(), SqlClientSelect.Where<T>,
-        GroupBy<T>, OrderBy<T>, SqlClientSelect.LimitOffset<T> {
+            GroupBy<T>, OrderBy<T>, SqlClientSelect.LimitOffset<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(jdbcConnection, properties) }
         override val groupByPart2 by lazy { GroupByPart2(jdbcConnection, properties) }
@@ -453,6 +453,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
 
     private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, SqlClientSelect.OrderByPart2<T>>,
         SqlClientSelect.OrderBy<T>, Return<T> {
+        
         override fun <U : Any> orderByAscCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientQuery.OrderByCaseWhenExists<U, SqlClientSelect.OrderByPart2<T>> =

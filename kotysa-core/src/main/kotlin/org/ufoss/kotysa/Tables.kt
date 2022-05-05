@@ -33,6 +33,6 @@ public class Tables internal constructor(
                     else -> value
                 }
             } else {
-                value
+                null
             }
 }

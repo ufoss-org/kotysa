@@ -16,6 +16,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         private fun <T : Any> properties(): Properties<T> {
             val props = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module,
                 initialProps.availableColumns)
+            props.index = initialProps.index
             properties = props
             return props
         }
@@ -414,6 +415,12 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
     }
 
     private interface Return<T : Any> : DefaultSqlClientSelect.Return<T>, SqlClientSubQuery.Return<T> {
-        override fun sql() = selectSql(false)
+        override fun sql(parentProperties: DefaultSqlClientCommon.Properties): String {
+            // must take care of index
+            properties.index = parentProperties.index
+            val select = selectSql(true)
+            parentProperties.index = properties.index
+            return select
+        }
     }
 }

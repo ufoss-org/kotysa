@@ -119,7 +119,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
             val (subQueryProperties, result) = properties.executeSubQuery(dsl)
-            properties.selectedFields.add(SubQueryField(result, subQueryProperties.select))
+            properties.selectedFields.add(SubQueryField(result, subQueryProperties.select, properties))
         }
 
         public fun <U : Any, V : Any> addSelectCaseWhenExistsSubQuery(
@@ -128,7 +128,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             elseVal: V
         ) {
             val (_, result) = properties.executeSubQuery(dsl)
-            properties.selectedFields.add(CaseWhenExistsSubQueryField(properties.tables.dbType, result, then, elseVal))
+            properties.selectedFields.add(
+                CaseWhenExistsSubQueryField(properties.tables.dbType, result, then, elseVal, properties)
+            )
         }
 
         private fun <U : Any> addSelectStarFromSubQuery(select: (RowImpl) -> U?) {
@@ -327,7 +329,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     }
 
     protected interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
-        public fun selectSql(doLog: Boolean = true): String = with(properties) {
+        public fun selectSql(isSubQuery: Boolean = false): String = with(properties) {
             val selects = selectedFields.joinToString(prefix = "SELECT ") { field -> field.getFieldName(tables.dbType) }
             val froms = froms()
             val wheres = wheres()
@@ -358,10 +360,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                 "${limit()} ${offset()}"
             }
 
-            // reset index
-            index = 0
-
-            if (doLog) {
+            if (!isSubQuery) {
+                // reset index (not for sub-query)
+                index = 0
                 logger.debug { "Exec SQL (${tables.dbType.name}) : $selects $froms $wheres $groupBy $orderBy $limitOffset" }
             }
             "$selects $froms $wheres $groupBy $orderBy $limitOffset"
@@ -383,7 +384,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                     is OrderByClauseWithColumn -> fieldName(orderByClause.column)
                     is OrderByClauseWithAlias -> fieldName(orderByClause.alias)
                     is OrderByClauseCaseWhenExistsSubQuery<*> ->
-                        "(CASE WHEN\nEXISTS( ${orderByClause.subQueryReturn.sql()} )\n" +
+                        "(CASE WHEN\nEXISTS( ${orderByClause.subQueryReturn.sql(this@with)} )\n" +
                                 "THEN ${orderByClause.then.defaultValue(properties.tables.dbType)} " +
                                 "ELSE ${orderByClause.elseVal.defaultValue(properties.tables.dbType)}\nEND)"
                 }

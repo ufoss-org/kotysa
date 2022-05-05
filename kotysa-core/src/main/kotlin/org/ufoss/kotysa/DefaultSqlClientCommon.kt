@@ -1412,7 +1412,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             // alias is mandatory for MySql and MsSql
                             throw IllegalArgumentException("Alias is mandatory for MySql and MsSql")
                         }
-                        "( ${fromClause.result.sql()} )$alias"
+                        "( ${fromClause.result.sql(this@with)} )$alias"
                     }
                 }
             }
@@ -1442,7 +1442,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 val (_, result) = properties.executeSubQuery(
                                     dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                 )
-                                "EXISTS (${result.sql()})"
+                                "EXISTS (${result.sql(this@with)})"
                             }
                             else -> {
                                 val fieldName = if (this is WhereClauseWithColumn<*>) {
@@ -1473,7 +1473,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 val (_, result) = properties.executeSubQuery(
                                                     dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                                 )
-                                                "$fieldName = (${result.sql()})"
+                                                "$fieldName = (${result.sql(this@with)})"
                                             }
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
@@ -1523,7 +1523,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 val (_, result) = properties.executeSubQuery(
                                                     dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                                 )
-                                                "$fieldName IN (${result.sql()})"
+                                                "$fieldName IN (${result.sql(this@with)})"
                                             }
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }

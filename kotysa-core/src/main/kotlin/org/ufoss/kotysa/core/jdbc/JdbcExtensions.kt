@@ -12,15 +12,13 @@ import java.sql.ResultSet
 public fun ResultSet.toRow(): RowImpl = RowImpl(JdbcRow(this))
 
 public fun DefaultSqlClientCommon.Properties.jdbcBindParams(statement: PreparedStatement) {
-    with(this) {
-        parameters
-            .flatMap { parameter ->
-                if (parameter is Collection<*>) {
-                    parameter
-                } else {
-                    setOf(parameter)
-                }
+    parameters
+        .flatMap { parameter ->
+            if (parameter is Collection<*>) {
+                parameter
+            } else {
+                setOf(parameter)
             }
-            .forEach { parameter -> statement.setObject(++index, tables.getDbValue(parameter)) }
-    }
+        }
+        .forEach { parameter -> statement.setObject(++index, tables.getDbValue(parameter)) }
 }
