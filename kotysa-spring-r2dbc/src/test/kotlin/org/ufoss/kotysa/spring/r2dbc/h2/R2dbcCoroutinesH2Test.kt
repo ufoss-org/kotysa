@@ -152,7 +152,7 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.select {
+            (sqlClient.selectAndBuild {
                 UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}",
                         it[H2Users.alias])
             }

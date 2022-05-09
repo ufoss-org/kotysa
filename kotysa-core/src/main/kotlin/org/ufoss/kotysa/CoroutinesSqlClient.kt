@@ -28,7 +28,7 @@ public interface CoroutinesSqlClient {
 
     public infix fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>
     public infix fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T>
-    public infix fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T>
+    public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T>
     public fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long>
     public infix fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long>
     public infix fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U>

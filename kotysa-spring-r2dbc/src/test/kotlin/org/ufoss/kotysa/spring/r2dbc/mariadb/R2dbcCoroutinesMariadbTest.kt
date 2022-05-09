@@ -164,7 +164,7 @@ class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.select {
+            (sqlClient.selectAndBuild {
                 UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}",
                         it[MariadbUsers.alias])
             }
