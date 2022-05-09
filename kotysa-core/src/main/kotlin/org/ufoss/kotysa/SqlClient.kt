@@ -187,15 +187,14 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun `as`(alias: String): Select
     }
 
-    public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Where<T>>, GroupBy<T>,
-        OrderBy<T>, LimitOffset<T>, Return<T> {
+    public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>,
+        LimitOffset<T>, Return<T> {
         override fun <U : Any> and(table: Table<U>): FromTable<T, U>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
     }
 
     public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
-        SqlClientQuery.From<From<T>>,
-        From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
+        SqlClientQuery.From<From<T>>, From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
         override fun `as`(alias: String): FromTable<T, U>
     }
 
