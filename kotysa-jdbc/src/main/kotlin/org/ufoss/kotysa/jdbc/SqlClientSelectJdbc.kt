@@ -564,6 +564,7 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             with(properties) {
                 // 1) add all values from where part
                 jdbcBindParams(statement)
+                
                 // 2) add limit and offset (order is different depending on DbType)
                 if (DbType.MSSQL == tables.dbType) {
                     offsetParam(statement)

@@ -35,7 +35,8 @@ internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDelet
     internal class Where<T : Any>(
             override val jdbcConnection: JdbcConnection,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>,
+        Return<T> {
         override val where = this
     }
 
@@ -45,7 +46,7 @@ internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDelet
         override fun execute() = jdbcConnection.execute { connection ->
             with(properties) {
                 val statement = connection.prepareStatement(deleteFromTableSql())
-                // 1) add all values from where part
+                // 1) add all params
                 jdbcBindParams(statement)
                 // 2) reset index
                 index = 0

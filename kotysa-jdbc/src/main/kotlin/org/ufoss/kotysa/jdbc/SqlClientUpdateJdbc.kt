@@ -55,7 +55,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
                     .map { value -> tables.getDbValue(value) }
                     .forEach { dbValue -> statement.setObject(++index, dbValue) }
 
-                // 2) add all values from where part
+                // 2) add all params
                 jdbcBindParams(statement)
                 // 3) reset index
                 index = 0
