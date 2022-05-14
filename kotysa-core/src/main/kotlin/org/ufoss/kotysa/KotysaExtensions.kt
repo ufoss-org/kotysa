@@ -124,8 +124,7 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
     null -> "null"
     is String -> "$this"
     is Boolean -> when (dbType) {
-        DbType.SQLITE -> if (this) "1" else "0"
-        DbType.MSSQL -> "'$this'"
+        DbType.SQLITE, DbType.MSSQL -> if (this) "1" else "0"
         else -> "$this"
     }
     is UUID -> "$this"
