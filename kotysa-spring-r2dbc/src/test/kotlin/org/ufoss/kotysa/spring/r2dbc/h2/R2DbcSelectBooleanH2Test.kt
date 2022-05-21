@@ -32,9 +32,7 @@ class R2DbcSelectBooleanH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectBoole
 }
 
 
-class UserRepositoryH2SelectBoolean(
-    sqlClient: ReactorSqlClient,
-) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
+class UserRepositoryH2SelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
             (sqlClient selectFrom H2Users

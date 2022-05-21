@@ -453,8 +453,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
             CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(),
-        CoroutinesSqlClientSelect.Where<T>,
-        GroupBy<T>, OrderBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
+        CoroutinesSqlClientSelect.Where<T>, GroupBy<T>, OrderBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(connectionFactory, properties) }
         override val groupByPart2 by lazy { GroupByPart2(connectionFactory, properties) }
@@ -536,8 +535,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override val connectionFactory: ConnectionFactory,
         override val properties: Properties<T>
     ) : DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>,
-        CoroutinesSqlClientSelect.LimitOffset<T>,
-        Return<T> {
+        CoroutinesSqlClientSelect.LimitOffset<T>, Return<T> {
         override val limitOffset = this
     }
 
