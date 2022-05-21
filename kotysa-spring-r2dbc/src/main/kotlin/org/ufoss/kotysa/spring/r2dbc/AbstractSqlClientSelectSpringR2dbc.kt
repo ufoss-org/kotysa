@@ -9,6 +9,7 @@ import org.springframework.r2dbc.core.RowsFetchSpec
 import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.DefaultSqlClientSelect
 import org.ufoss.kotysa.core.r2dbc.toRow
+import org.ufoss.kotysa.dbValues
 import java.util.*
 
 
@@ -22,8 +23,7 @@ internal abstract class AbstractSqlClientSelectSpringR2dbc protected constructor
             var executeSpec = client.sql(selectSql())
 
             // 1) add all values from where part
-            executeSpec = parameters
-                .map { param -> tables.getDbValue(param)!! }
+            executeSpec = dbValues()
                 .fold(executeSpec) { execSpec, value ->
                     execSpec.bind("k${index++}", value)
                 }

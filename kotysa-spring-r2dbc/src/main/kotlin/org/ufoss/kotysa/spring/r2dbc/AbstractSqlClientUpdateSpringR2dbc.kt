@@ -8,6 +8,7 @@ import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.FetchSpec
 import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.DefaultSqlClientDeleteOrUpdate
+import org.ufoss.kotysa.dbValues
 import org.ufoss.kotysa.toCallable
 import kotlin.reflect.KClass
 
@@ -34,8 +35,7 @@ internal abstract class AbstractSqlClientUpdateSpringR2dbc protected constructor
                     }
                 }
 
-            executeSpec = parameters
-                .map { param -> tables.getDbValue(param)!! }
+            executeSpec = dbValues()
                 .fold(executeSpec) { execSpec, value ->
                     execSpec.bind("k${index++}", value)
                 }
