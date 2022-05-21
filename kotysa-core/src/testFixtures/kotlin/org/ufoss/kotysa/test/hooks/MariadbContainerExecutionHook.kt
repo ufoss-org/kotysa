@@ -23,8 +23,6 @@ class MariadbContainerExecutionHook : ParameterResolver {
                     .withDatabaseName("db")
                     .withUsername("mariadb")
                     .withPassword("test")
-                    // required for syntax : SELECT * FROM ( SELECT ...)
-                    .withCommand("--sql_mode=ORACLE")
                 mariadbContainer.start()
                 println("MariadbContainer started")
 
