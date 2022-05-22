@@ -19,7 +19,7 @@ class UserRepository(private val client: R2dbcSqlClient) {
                 ).fetchOne()!!
 
     fun selectWithJoin() =
-        (client.select {
+        (client.selectAndBuild {
             UserDto("${it[Users.firstname]} ${it[Users.lastname]}", it[Users.alias], it[Roles.label]!!)
         } from Users innerJoin Roles on Users.roleId eq Roles.id
                 ).fetchAll()
