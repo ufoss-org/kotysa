@@ -15,13 +15,13 @@ internal class SqlClientUpdateSpringR2dbc private constructor() : AbstractSqlCli
         override val client: DatabaseClient,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             ReactorSqlClientDeleteOrUpdate.Where<T>,
             ReactorSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
         ReactorSqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
-        override val from: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }
     }
@@ -29,12 +29,12 @@ internal class SqlClientUpdateSpringR2dbc private constructor() : AbstractSqlCli
     internal class Update<T : Any> internal constructor(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
+    ) : DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
         ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(

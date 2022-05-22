@@ -164,7 +164,7 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.select {
+            (sqlClient.selectAndBuild {
                 UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}",
                         it[PostgresqlUsers.alias])
             }

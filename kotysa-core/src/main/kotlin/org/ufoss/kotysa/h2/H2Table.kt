@@ -34,7 +34,7 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
 
     protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U =
         this.also {
-            foreignKeys.add(ForeignKey(mapOf(this to references), fkName))
+            kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
         }
 
     protected fun varchar(

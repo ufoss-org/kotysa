@@ -18,40 +18,40 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>() {
     @Test
     fun `Verify selectAllUsers returns all users`() {
         assertThat(repository.selectAllUsers())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(userJdoe, userBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify countAllUsersAndAliases returns all users' count`() {
         assertThat(repository.countAllUsersAndAliases())
-                .isEqualTo(Pair(2L, 1L))
+            .isEqualTo(Pair(2L, 1L))
     }
 
     @Test
     fun `Verify selectOneNonUnique throws NonUniqueResultException`() {
         assertThatThrownBy { repository.selectOneNonUnique() }
-                .isInstanceOf(NonUniqueResultException::class.java)
+            .isInstanceOf(NonUniqueResultException::class.java)
     }
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() {
         assertThat(repository.selectAllMappedToDto())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss")
-                )
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserDto("John Doe", null),
+                UserDto("Big Boss", "TheBoss")
+            )
     }
 
     @Test
     fun `Verify selectWithJoin works correctly`() {
         assertThat(repository.selectWithJoin())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                        UserWithRoleDto(userBboss.lastname, roleAdmin.label)
-                )
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
     }
 
     @Test
@@ -67,15 +67,15 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>() {
     @Test
     fun `Verify selectAllStream returns all users`() {
         assertThat(repository.selectAllStream())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(userJdoe, userBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectAllIn returns TheBoss`() {
         assertThat(repository.selectAllIn(setOf("TheBoss", "TheStar", "TheBest")))
-                .hasSize(1)
-                .containsExactly(userBboss)
+            .hasSize(1)
+            .containsExactly(userBboss)
     }
 
     @Test
@@ -84,78 +84,78 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>() {
         coll.addFirst("TheStar")
         coll.addLast("TheBest")
         assertThat(repository.selectAllIn(coll))
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectOneById returns TheBoss`() {
         assertThat(repository.selectOneById(userBboss.id))
-                .isEqualTo(userBboss)
+            .isEqualTo(userBboss)
     }
 
     @Test
     fun `Verify selectOneById finds no result for -1, throws NoResultException`() {
         assertThatThrownBy { repository.selectOneById(-1) }
-                .isInstanceOf(NoResultException::class.java)
+            .isInstanceOf(NoResultException::class.java)
     }
 
     @Test
     fun `Verify selectFirstnameById returns TheBoss firstname`() {
         assertThat(repository.selectFirstnameById(userBboss.id))
-                .isEqualTo(userBboss.firstname)
+            .isEqualTo(userBboss.firstname)
     }
 
     @Test
     fun `Verify selectAliasById returns null as J Doe alias`() {
         assertThat(repository.selectAliasById(userJdoe.id))
-                .isNull()
+            .isNull()
     }
 
     @Test
     fun `Verify selectFirstnameAndAliasById returns J Doe firstname and alias`() {
         assertThat(repository.selectFirstnameAndAliasById(userJdoe.id))
-                .isEqualTo(Pair(userJdoe.firstname, null))
+            .isEqualTo(Pair(userJdoe.firstname, null))
     }
 
     @Test
     fun `Verify selectAllFirstnameAndAlias returns all users firstname and alias`() {
         assertThat(repository.selectAllFirstnameAndAlias())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        Pair(userJdoe.firstname, null),
-                        Pair(userBboss.firstname, userBboss.alias),
-                )
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                Pair(userJdoe.firstname, null),
+                Pair(userBboss.firstname, userBboss.alias),
+            )
     }
 
     @Test
     fun `Verify selectFirstnameAndLastnameAndAliasById returns J Doe firstname, lastname and alias`() {
         assertThat(repository.selectFirstnameAndLastnameAndAliasById(userJdoe.id))
-                .isEqualTo(Triple(userJdoe.firstname, userJdoe.lastname, null))
+            .isEqualTo(Triple(userJdoe.firstname, userJdoe.lastname, null))
     }
 
     @Test
     fun `Verify selectFirstnameAndLastnameAndAliasAndIsAdminById returns J Doe firstname, lastname, alias and isAdmin`() {
         assertThat(repository.selectFirstnameAndLastnameAndAliasAndIsAdminById(userJdoe.id))
-                .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
+            .isEqualTo(listOf(userJdoe.firstname, userJdoe.lastname, null, false))
     }
 
     @Test
     fun `Verify selectRoleLabelFromUserId returns Admin role for TheBoss`() {
         assertThat(repository.selectRoleLabelFromUserId(userBboss.id))
-                .isEqualTo(roleAdmin.label)
+            .isEqualTo(roleAdmin.label)
     }
 
     @Test
     fun `Verify countAllUsers returns 2`() {
         assertThat(repository.countAllUsers())
-                .isEqualTo(2L)
+            .isEqualTo(2L)
     }
 
     @Test
     fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`() {
         assertThat(repository.selectRoleLabelsFromUserId(userBboss.id))
-                .hasSize(1)
-                .containsExactly(roleAdmin.label)
+            .hasSize(1)
+            .containsExactly(roleAdmin.label)
     }
 }
 
@@ -163,94 +163,94 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>() {
 class UserRepositoryJdbcH2Select(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
 
     fun selectOneNonUnique() =
-            (sqlClient selectFrom H2Users
-                    ).fetchOne()
+        (sqlClient selectFrom H2Users
+                ).fetchOne()
 
     fun selectAllMappedToDto() =
-            (sqlClient select {
-                UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.alias])
-            }
-                    from H2Users
-                    ).fetchAll()
+        (sqlClient selectAndBuild {
+            UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.alias])
+        }
+                from H2Users
+                ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
-                    from H2Users innerJoin H2Roles on H2Users.roleId eq H2Roles.id
-                    ).fetchAll()
+        (sqlClient selectAndBuild { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+                from H2Users innerJoin H2Roles on H2Users.roleId eq H2Roles.id
+                ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
                 from H2Users and H2Roles
                 where H2Users.roleId eq H2Roles.id
                 ).fetchAll()
 
     fun selectAllStream() =
-            (sqlClient selectFrom H2Users
-                    ).fetchAllStream()
+        (sqlClient selectFrom H2Users
+                ).fetchAllStream()
 
     fun selectAllIn(aliases: Collection<String>) =
-            (sqlClient selectFrom H2Users
-                    where H2Users.alias `in` aliases
-                    ).fetchAll()
+        (sqlClient selectFrom H2Users
+                where H2Users.alias `in` aliases
+                ).fetchAll()
 
     fun selectOneById(id: Int) =
-            (sqlClient select H2Users
-                    from H2Users
-                    where H2Users.id eq id
-                    ).fetchOne()
+        (sqlClient select H2Users
+                from H2Users
+                where H2Users.id eq id
+                ).fetchOne()
 
     fun selectFirstnameById(id: Int) =
-            (sqlClient select H2Users.firstname
-                    from H2Users
-                    where H2Users.id eq id
-                    ).fetchOne()
+        (sqlClient select H2Users.firstname
+                from H2Users
+                where H2Users.id eq id
+                ).fetchOne()
 
     fun selectAliasById(id: Int) =
-            (sqlClient select H2Users.alias
-                    from H2Users
-                    where H2Users.id eq id
-                    ).fetchOneOrNull()
+        (sqlClient select H2Users.alias
+                from H2Users
+                where H2Users.id eq id
+                ).fetchOneOrNull()
 
     fun selectFirstnameAndAliasById(id: Int) =
-            (sqlClient select H2Users.firstname and H2Users.alias
-                    from H2Users
-                    where H2Users.id eq id
-                    ).fetchOne()
+        (sqlClient select H2Users.firstname and H2Users.alias
+                from H2Users
+                where H2Users.id eq id
+                ).fetchOne()
 
     fun selectAllFirstnameAndAlias() =
-            (sqlClient select H2Users.firstname and H2Users.alias
-                    from H2Users
-                    ).fetchAll()
+        (sqlClient select H2Users.firstname and H2Users.alias
+                from H2Users
+                ).fetchAll()
 
     fun selectFirstnameAndLastnameAndAliasById(id: Int) =
-            (sqlClient select H2Users.firstname and H2Users.lastname and H2Users.alias
-                    from H2Users
-                    where H2Users.id eq id
-                    ).fetchOne()
+        (sqlClient select H2Users.firstname and H2Users.lastname and H2Users.alias
+                from H2Users
+                where H2Users.id eq id
+                ).fetchOne()
 
     fun selectFirstnameAndLastnameAndAliasAndIsAdminById(id: Int) =
-            (sqlClient select H2Users.firstname and H2Users.lastname and H2Users.alias and H2Users.isAdmin
-                    from H2Users
-                    where H2Users.id eq id
-                    ).fetchOne()
+        (sqlClient select H2Users.firstname and H2Users.lastname and H2Users.alias and H2Users.isAdmin
+                from H2Users
+                where H2Users.id eq id
+                ).fetchOne()
 
     fun countAllUsersAndAliases() =
-            (sqlClient selectCount H2Users.id
-                    andCount H2Users.alias
-                    from H2Users
-                    ).fetchOne()
+        (sqlClient selectCount H2Users.id
+                andCount H2Users.alias
+                from H2Users
+                ).fetchOne()
 
     fun selectRoleLabelFromUserId(userId: Int) =
-            (sqlClient select H2Roles.label
-                    from H2Roles innerJoin H2Users on H2Roles.id eq H2Users.roleId
-                    where H2Users.id eq userId)
-                    .fetchOne()
+        (sqlClient select H2Roles.label
+                from H2Roles innerJoin H2Users on H2Roles.id eq H2Users.roleId
+                where H2Users.id eq userId)
+            .fetchOne()
 
     fun countAllUsers() = sqlClient selectCountAllFrom H2Users
 
     fun selectRoleLabelsFromUserId(userId: Int) =
-            (sqlClient select H2Roles.label
-                    from H2UserRoles innerJoin H2Roles on H2UserRoles.roleId eq H2Roles.id
-                    where H2UserRoles.userId eq userId)
-                    .fetchAll()
+        (sqlClient select H2Roles.label
+                from H2UserRoles innerJoin H2Roles on H2UserRoles.roleId eq H2Roles.id
+                where H2UserRoles.userId eq userId)
+            .fetchAll()
 }

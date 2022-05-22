@@ -26,8 +26,9 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         override val module: Module,
     ) : DefaultSqlClientCommon.Properties {
         public val setValues: MutableMap<Column<T, *>, Any?> = mutableMapOf()
+        override val parameters: MutableList<Any> = mutableListOf()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
-        override val whereClauses: MutableList<WhereClauseWithType<*>> = mutableListOf()
+        override val whereClauses: MutableList<WhereClauseWithType> = mutableListOf()
 
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf()
@@ -38,10 +39,10 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         public val properties: Properties<T>
     }
 
-    public abstract class FirstDeleteOrUpdate<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> protected constructor(
+    public abstract class FirstDeleteOrUpdate<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
             private val dbAccessType: DbAccessType,
             private val module: Module,
-    ) : FromWhereable<T, U, V, W>(), From<T, U> {
+    ) : FromTableWhereable<T, U, V>(), FromTable<T, U> {
         protected abstract val tables: Tables
         protected abstract val table: Table<T>
 
@@ -54,13 +55,13 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class DeleteOrUpdate<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>> protected constructor(
-    ) : FromWhereable<T, U, V, W>(), From<T, U>
+    public abstract class DeleteOrUpdate<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>> protected constructor(
+    ) : FromTableWhereable<T, U, V>(), FromTable<T, U>
 
 
-    public abstract class Update<T : Any, U : From<T, U>, V : Any, W : SqlClientQuery.Where<V, W>,
-            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType, module: Module,)
-        : FirstDeleteOrUpdate<T, U, V, W>(dbAccessType, module), SqlClientQuery.Update<T, X> {
+    public abstract class Update<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>,
+            X : SqlClientQuery.Update<T, X>> protected constructor(dbAccessType: DbAccessType, module: Module)
+        : FirstDeleteOrUpdate<T, U, V>(dbAccessType, module), SqlClientQuery.Update<T, X> {
 
         protected abstract val update: X
 
@@ -204,7 +205,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<T, U>> : DefaultSqlClientCommon.Where<T, U>(), WithProperties<T>, Return<T>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<U>> : DefaultSqlClientCommon.Where<U>(), WithProperties<T>, Return<T>
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 
@@ -259,7 +260,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
          * Handle froms as EXISTS + nested SELECT
          */
         private fun joinsWithExists() = with(properties) {
-            val rootJoinClauses = fromClauses[0].joinClauses
+            val rootJoinClauses = (fromClauses[0] as FromClauseTable).joinClauses
             if (fromClauses.size > 1 || rootJoinClauses.isNotEmpty()) {
                 // fixme handle other cases
                 if (rootJoinClauses.isNotEmpty()) {
@@ -270,7 +271,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                     val wheres = rootJoinClauses
                             .flatMap { joinClause -> joinClause.references.asIterable() }
                             .joinToString(" AND ", "(", ")") { joinClause ->
-                                "${joinClause.key.getFieldName(tables.allColumns)} = ${joinClause.value.getFieldName(tables.allColumns)}"
+                                "${joinClause.key.getFieldName(tables.allColumns, tables.dbType)} = " +
+                                        joinClause.value.getFieldName(tables.allColumns, tables.dbType)
                             }
                     // remaining froms
                     fromClauses.removeAt(0)

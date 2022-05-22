@@ -33,7 +33,7 @@ public abstract class SqLiteTable<T : Any> protected constructor(tableName: Stri
     }*/
 
     protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(mapOf(this to references), fkName))
+        kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
         return this
     }
 

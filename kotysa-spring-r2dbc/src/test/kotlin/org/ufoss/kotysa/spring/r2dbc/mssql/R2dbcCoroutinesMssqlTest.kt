@@ -158,7 +158,7 @@ class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.select {
+            (sqlClient.selectAndBuild {
                 UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}",
                         it[MssqlUsers.alias])
             }

@@ -9,12 +9,9 @@ import org.springframework.jdbc.core.namedparam.set
 import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.dbValues
 
-internal fun DefaultSqlClientCommon.Properties.bindWhereParams(
-        parameters: MapSqlParameterSource
+internal fun DefaultSqlClientCommon.Properties.springJdbcBindParams(
+    parameters: MapSqlParameterSource
 ) {
-    with(this) {
-        whereClauses
-                .dbValues(tables)
-                .forEach { dbValue -> parameters["k${index++}"] = dbValue }
-    }
+    dbValues()
+        .forEach { dbValue -> parameters["k${index++}"] = dbValue }
 }

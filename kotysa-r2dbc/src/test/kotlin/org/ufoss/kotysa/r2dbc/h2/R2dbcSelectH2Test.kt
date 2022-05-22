@@ -171,19 +171,19 @@ class UserRepositoryJdbcH2Select(private val sqlClient: R2dbcSqlClient) : Abstra
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
-        (sqlClient select {
+        (sqlClient selectAndBuild {
             UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.alias])
         }
                 from H2Users
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
                 from H2Users innerJoin H2Roles on H2Users.roleId eq H2Roles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
                 from H2Users and H2Roles
                 where H2Users.roleId eq H2Roles.id
                 ).fetchAll()

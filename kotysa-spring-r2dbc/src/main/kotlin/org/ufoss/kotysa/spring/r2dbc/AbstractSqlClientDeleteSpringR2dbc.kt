@@ -18,11 +18,10 @@ internal abstract class AbstractSqlClientDeleteSpringR2dbc protected constructor
         fun fetch(): FetchSpec<Map<String, Any>> = with(properties) {
             var executeSpec = client.sql(deleteFromTableSql())
 
-            executeSpec = whereClauses
-                    .dbValues(tables)
-                    .foldIndexed(executeSpec) { index, execSpec, value ->
-                        execSpec.bind("k${index}", value)
-                    }
+            executeSpec = dbValues()
+                .foldIndexed(executeSpec) { index, execSpec, value ->
+                    execSpec.bind("k${index}", value)
+                }
 
             executeSpec.fetch()
         }

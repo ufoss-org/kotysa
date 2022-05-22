@@ -14,13 +14,13 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         override val client: NamedParameterJdbcOperations,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC, Module.SPRING_JDBC),
         SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
         Return<T> {
         
         override val where = Where(client, properties)
-        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)
         }
     }
@@ -28,11 +28,11 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
     internal class Delete<T : Any>(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>,
-    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any, SqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, SqlClientDeleteOrUpdate.Where<Any>>(),
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>)
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(
@@ -48,7 +48,7 @@ internal class SqlClientDeleteSpringJdbc private constructor() : DefaultSqlClien
         override fun execute() = with(properties) {
             val parameters = MapSqlParameterSource()
             // 1) add all values from where part
-            bindWhereParams(parameters)
+            springJdbcBindParams(parameters)
             // 2) reset index
             index = 0
 

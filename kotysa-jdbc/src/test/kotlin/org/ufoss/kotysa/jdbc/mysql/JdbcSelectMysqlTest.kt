@@ -167,19 +167,19 @@ class UserRepositoryJdbcMysqlSelect(private val sqlClient: JdbcSqlClient) : Abst
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
-        (sqlClient select {
+        (sqlClient selectAndBuild {
             UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.alias])
         }
                 from MysqlUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[MysqlUsers.lastname]!!, it[MysqlRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[MysqlUsers.lastname]!!, it[MysqlRoles.label]!!) }
                 from MysqlUsers innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[MysqlUsers.lastname]!!, it[MysqlRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[MysqlUsers.lastname]!!, it[MysqlRoles.label]!!) }
                 from MysqlUsers and MysqlRoles
                 where MysqlUsers.roleId eq MysqlRoles.id
                 ).fetchAll()

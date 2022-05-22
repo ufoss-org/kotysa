@@ -7,7 +7,7 @@ package org.ufoss.kotysa.r2dbc
 import io.r2dbc.spi.ConnectionFactory
 import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.core.r2dbc.r2dbcBindWhereParams
+import org.ufoss.kotysa.core.r2dbc.r2dbcBindParams
 import kotlin.reflect.KClass
 
 internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
@@ -16,13 +16,13 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
         override val connectionFactory: ConnectionFactory,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             CoroutinesSqlClientDeleteOrUpdate.Where<T>,
             CoroutinesSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.R2DBC),
         CoroutinesSqlClientDeleteOrUpdate.Update<T>, Return<T> {
         override val where = Where(connectionFactory, properties) // fixme try with a lazy
         override val update = this
-        override val from: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(connectionFactory, properties)
         }
     }
@@ -30,12 +30,12 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
     internal class Update<T : Any> internal constructor(
         override val connectionFactory: ConnectionFactory,
         override val properties: Properties<T>
-    ) : DeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any,
+    ) : DeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             CoroutinesSqlClientDeleteOrUpdate.Where<Any>>(),
         CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(connectionFactory, properties as Properties<Any>) // fixme try with a lazy
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(
@@ -72,8 +72,8 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
                         }
                     }
 
-                // 2) add all values from where part
-                r2dbcBindWhereParams(statement)
+                // 2) add all params
+                r2dbcBindParams(statement)
 
                 // reset index
                 index = 0

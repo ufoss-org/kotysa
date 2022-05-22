@@ -55,6 +55,7 @@ internal class SqlClientSqLite(
         return (table.table as AbstractTable<T>).toField(
             tables.allColumns,
             tables.allTables,
+            tables.dbType,
         ).builder.invoke(cursor.toRow())
     }
 
@@ -95,8 +96,8 @@ internal class SqlClientSqLite(
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(table)
 
-    override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectAndBuild(dsl)
 
     override fun selectCount(): SqlClientSelect.Fromable<Long> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCount<Any>(null)
@@ -118,6 +119,20 @@ internal class SqlClientSqLite(
 
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.FirstSelect<T> = SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.From<T> =
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectStarFromSubQuery(dsl)
 }
 
 /**

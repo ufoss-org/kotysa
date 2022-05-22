@@ -157,28 +157,26 @@ class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
 }
 
 
-class UserRepositoryH2Select(
-    sqlClient: ReactorSqlClient,
-) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
+class UserRepositoryH2Select(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectOneNonUnique() =
         (sqlClient selectFrom H2Users
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
-        (sqlClient select {
+        (sqlClient selectAndBuild {
             UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.alias])
         }
                 from H2Users
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
                 from H2Users innerJoin H2Roles on H2Users.roleId eq H2Roles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[H2Users.lastname]!!, it[H2Roles.label]!!) }
                 from H2Users and H2Roles
                 where H2Users.roleId eq H2Roles.id
                 ).fetchAll()

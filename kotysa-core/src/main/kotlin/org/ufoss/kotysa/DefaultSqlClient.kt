@@ -5,13 +5,6 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.OffsetDateTime
-import java.time.format.DateTimeFormatter
-import java.util.*
-
 
 private val logger = Logger.of<DefaultSqlClient>()
 
@@ -41,7 +34,7 @@ public interface DefaultSqlClient {
                 ""
             }
             val default = if (column.defaultValue != null) {
-                " DEFAULT ${column.defaultValue.defaultValue()}"
+                " DEFAULT ${column.defaultValue.defaultValue(tables.dbType)}"
             } else {
                 ""
             }
@@ -106,7 +99,7 @@ public interface DefaultSqlClient {
     public fun <T : Any> insertSqlQuery(row: T, withReturn: Boolean): String {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
-        var index = 0
+        val counter = Counter()
         val values = kotysaTable.columns
             // filter out null values with default value or Serial types
             .filterNot { column ->
@@ -118,19 +111,14 @@ public interface DefaultSqlClient {
             }
             .joinToString { column ->
                 columnNames.add(column.name)
-                when {
-                    module == Module.SQLITE || module == Module.JDBC
-                            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-                    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
-                    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
-                    else -> ":k${index++}"
-                }
+                variable(counter)
             }
         var prefix = ""
         var suffix = ""
         // on MSSQL identity cannot be set a value, must activate IDENTITY_INSERT
         if (tables.dbType == DbType.MSSQL
-                && kotysaTable.columns.any { column -> column.isAutoIncrement && column.entityGetter(row) != null }) {
+            && kotysaTable.columns.any { column -> column.isAutoIncrement && column.entityGetter(row) != null }
+        ) {
             prefix = "SET IDENTITY_INSERT ${kotysaTable.name} ON\n"
             suffix = "\nSET IDENTITY_INSERT ${kotysaTable.name} OFF"
         }
@@ -164,6 +152,7 @@ public interface DefaultSqlClient {
 
     public fun <T : Any> lastInsertedQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
+
         @Suppress("UNCHECKED_CAST")
         val pkColumns = kotysaTable.primaryKey.columns as List<DbColumn<T, *>>
 
@@ -171,71 +160,37 @@ public interface DefaultSqlClient {
             .joinToString { column -> column.name }
 
         val wheres = if (
-                pkColumns.size == 1 &&
-                pkColumns[0].isAutoIncrement &&
-                pkColumns[0].entityGetter(row) == null
-            ) {
-                val selected = if (tables.dbType == DbType.MYSQL) {
-                    "(SELECT LAST_INSERT_ID())"
-                } else {
-                    "?"
-                }
-                "${pkColumns[0].name} = $selected"
+            pkColumns.size == 1 &&
+            pkColumns[0].isAutoIncrement &&
+            pkColumns[0].entityGetter(row) == null
+        ) {
+            val selected = if (tables.dbType == DbType.MYSQL) {
+                "(SELECT LAST_INSERT_ID())"
             } else {
-                var index = 0
-                pkColumns
-                    .joinToString(" AND ") { column ->
-                        val variable = when {
-                            module == Module.SQLITE || module == Module.JDBC
-                                    || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-                            module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
-                            module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
-                            else -> ":k${index++}"
-                        }
-                        "${column.name} = $variable"
-                    }
+                "?"
             }
+            "${pkColumns[0].name} = $selected"
+        } else {
+            val counter = Counter()
+            pkColumns
+                .joinToString(" AND ") { column ->
+                    "${column.name} = ${variable(counter)}"
+                }
+        }
 
         return "SELECT $allTableColumnNames FROM ${kotysaTable.name} WHERE $wheres"
     }
-}
 
-internal fun Any?.dbValue(): String = when (this) {
-    null -> "null"
-    is String -> "$this"
-    is Boolean -> "$this"
-    is UUID -> "$this"
-    is Int -> "$this"
-    is Long -> "$this"
-    is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
-    is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    /*DateTimeFormatterBuilder()
-            .parseCaseInsensitive()
-            .append(DateTimeFormatter.ISO_LOCAL_DATE)
-            .appendLiteral(' ')
-            .append(DateTimeFormatter.ISO_LOCAL_TIME)
-            .optionalStart()
-            .appendFraction(MICRO_OF_SECOND, 0, 6, true)
-            .optionalEnd()
-            .toFormatter(Locale.ENGLISH))*/
-    is LocalTime -> /*"+" + */this.format(DateTimeFormatter.ISO_LOCAL_TIME)
-    is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-    else -> when (this::class.qualifiedName) {
-        "kotlinx.datetime.LocalDate" -> this.toString()
-        "kotlinx.datetime.LocalDateTime" -> {
-            val kotlinxLocalDateTime = this as kotlinx.datetime.LocalDateTime
-            if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
-                "$kotlinxLocalDateTime:00" // missing seconds
-            } else {
-                kotlinxLocalDateTime.toString()
-            }
+    public fun variable(counter: Counter): String =
+        when {
+            module == Module.SQLITE || module == Module.JDBC
+                    || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+            module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++counter.index}"
+            module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++counter.index}"
+            else -> ":k${counter.index++}"
         }
-        else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
-    }
 }
 
-private fun Any?.defaultValue(): String = when (this) {
-    is Int -> "$this"
-    is Long -> "$this"
-    else -> "'${this.dbValue()}'"
+public class Counter {
+    internal var index = 0
 }
