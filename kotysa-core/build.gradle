@@ -41,15 +41,15 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict']
+        freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-Xexplicit-api=strict']
         jvmTarget = '1.8'
     }
 }
 
 compileTestFixturesKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjvm-default=enable', '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
-                            '-Xopt-in=kotlin.RequiresOptIn']
+        freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
+                            '-opt-in=kotlin.RequiresOptIn']
         jvmTarget = '1.8'
     }
 }

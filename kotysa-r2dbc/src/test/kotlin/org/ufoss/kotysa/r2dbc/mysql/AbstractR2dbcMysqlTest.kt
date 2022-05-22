@@ -32,7 +32,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> : CoroutinesRepositoryTest
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val options = ConnectionFactoryOptions.builder()
             .option(ConnectionFactoryOptions.DRIVER, "mysql")
-            .option(ConnectionFactoryOptions.HOST, containerResource.containerIpAddress)
+            .option(ConnectionFactoryOptions.HOST, containerResource.host)
             .option(ConnectionFactoryOptions.PORT, containerResource.firstMappedPort)
             .option(ConnectionFactoryOptions.DATABASE, "db")
             .option(Option.valueOf("disableMariaDbDriver"), "")

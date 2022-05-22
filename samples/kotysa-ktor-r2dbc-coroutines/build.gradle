@@ -29,14 +29,14 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi', '-Xopt-in=kotlin.RequiresOptIn']
+        freeCompilerArgs = ['-opt-in=kotlinx.serialization.ExperimentalSerializationApi', '-opt-in=kotlin.RequiresOptIn']
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xopt-in=kotlin.RequiresOptIn', '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
-                            '-Xopt-in=kotlinx.serialization.ExperimentalSerializationApi']
+        freeCompilerArgs = ['-opt-in=kotlin.RequiresOptIn', '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
+                            '-opt-in=kotlinx.serialization.ExperimentalSerializationApi']
     }
 }
 

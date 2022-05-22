@@ -41,7 +41,7 @@ abstract class AbstractSpringJdbcMysqlTest<T : Repository> : RepositoryTest<T, S
                     ref<U>().init()
                 }
                 jdbc(DataSourceType.Hikari) {
-                    url = "jdbc:mysql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db?disableMariaDbDriver"
+                    url = "jdbc:mysql://${containerResource.host}:${containerResource.firstMappedPort}/db?disableMariaDbDriver"
                     username = "mysql"
                     password = "test"
                 }

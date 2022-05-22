@@ -38,7 +38,7 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : RepositoryTest
                 ref<U>().init()
             }
             jdbc(DataSourceType.Hikari) {
-                url = "jdbc:postgresql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                url = "jdbc:postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db"
                 username = "postgres"
                 password = "test"
             }

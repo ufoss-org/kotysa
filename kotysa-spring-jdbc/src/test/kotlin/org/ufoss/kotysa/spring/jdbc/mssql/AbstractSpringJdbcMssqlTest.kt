@@ -38,7 +38,7 @@ abstract class AbstractSpringJdbcMssqlTest<T : Repository> : RepositoryTest<T, S
                 ref<U>().init()
             }
             jdbc(DataSourceType.Hikari) {
-                url = "jdbc:sqlserver://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}"
+                url = "jdbc:sqlserver://${containerResource.host}:${containerResource.firstMappedPort}"
                 username = "SA"
                 password = "A_Str0ng_Required_Password"
                 driverClassName = "com.microsoft.sqlserver.jdbc.SQLServerDriver"

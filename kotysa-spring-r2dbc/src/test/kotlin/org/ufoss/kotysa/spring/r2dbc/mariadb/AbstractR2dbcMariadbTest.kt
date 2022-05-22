@@ -41,7 +41,7 @@ abstract class AbstractR2dbcMariadbTest<T : Repository> : R2dbcRepositoryTest<T>
                     ref<U>().init()
                 }
                 r2dbc {
-                    url = "r2dbc:mariadb://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                    url = "r2dbc:mariadb://${containerResource.host}:${containerResource.firstMappedPort}/db"
                     username = "mariadb"
                     password = "test"
                     transactional = true

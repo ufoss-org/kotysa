@@ -39,7 +39,7 @@ abstract class AbstractSpringJdbcMariadbTest<T : Repository> : RepositoryTest<T,
                     ref<U>().init()
                 }
                 jdbc(DataSourceType.Hikari) {
-                    url = "jdbc:mariadb://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                    url = "jdbc:mariadb://${containerResource.host}:${containerResource.firstMappedPort}/db"
                     username = "mariadb"
                     password = "test"
                 }

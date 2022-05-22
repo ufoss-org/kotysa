@@ -27,7 +27,7 @@ abstract class AbstractJdbcMariadbTest<T : Repository> : RepositoryTest<T, JdbcT
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val dataSource = MariaDbDataSource(
-            "jdbc:mariadb://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+            "jdbc:mariadb://${containerResource.host}:${containerResource.firstMappedPort}/db"
         )
         dataSource.user = "mariadb"
         dataSource.setPassword("test")
