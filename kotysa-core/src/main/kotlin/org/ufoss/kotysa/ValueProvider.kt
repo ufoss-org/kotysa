@@ -26,7 +26,7 @@ internal class FieldValueProvider<T : Any> internal constructor(
             }.values.first()]!!*/
 
     override fun <T : Any, U : Any> get(column: Column<T, U>): U {
-        addSelectedFieldName(column.getFieldName(properties.tables.allColumns))
+        addSelectedFieldName(column.getFieldName(properties.tables.allColumns, properties.tables.dbType))
         val columnClass = column.getKotysaColumn(properties.tables.allColumns).columnClass
         @Suppress("UNCHECKED_CAST")
         return when (columnClass) {

@@ -13,12 +13,12 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
         override val client: SQLiteDatabase,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.ANDROID, Module.SQLITE),
         SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         
         override val where = Where(client, properties)
-        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)
         }
     }
@@ -26,11 +26,11 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
     internal class Delete<T : Any>(
             override val client: SQLiteDatabase,
             override val properties: Properties<T>,
-    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any, SqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, SqlClientDeleteOrUpdate.Where<Any>>(),
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>)
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(

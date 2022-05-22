@@ -164,7 +164,7 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.select {
+            (sqlClient.selectAndBuild {
                 UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}",
                         it[MysqlUsers.alias])
             }

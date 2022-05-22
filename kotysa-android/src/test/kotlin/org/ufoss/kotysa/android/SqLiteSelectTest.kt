@@ -171,19 +171,19 @@ class UserRepositorySelect(
                     ).fetchOne()
 
     fun selectAllMappedToDto() =
-            (sqlClient select {
+            (sqlClient selectAndBuild {
                 UserDto("${it[SqliteUsers.firstname]} ${it[SqliteUsers.lastname]}", it[SqliteUsers.alias])
             }
                     from SqliteUsers
                     ).fetchAll()
 
     fun selectWithJoin() =
-            (sqlClient select { UserWithRoleDto(it[SqliteUsers.lastname]!!, it[SqliteRoles.label]!!) }
+            (sqlClient selectAndBuild { UserWithRoleDto(it[SqliteUsers.lastname]!!, it[SqliteRoles.label]!!) }
                     from SqliteUsers innerJoin SqliteRoles on SqliteUsers.roleId eq SqliteRoles.id
                     ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[SqliteUsers.lastname]!!, it[SqliteRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[SqliteUsers.lastname]!!, it[SqliteRoles.label]!!) }
                 from SqliteUsers and SqliteRoles
                 where SqliteUsers.roleId eq SqliteRoles.id
                 ).fetchAll()

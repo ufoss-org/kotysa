@@ -7,7 +7,7 @@ plugins {
 def ossrhUsername = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : System.getenv("OSSRH_USERNAME")
 def ossrhPassword = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : System.getenv("OSSRH_PASSWORD")
 
-configure(subprojects.findAll { it.name != "kotysa-platform" }) {
+subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
 
@@ -78,8 +78,8 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
         dependsOn(test)
 
         reports {
-            html.enabled = true
-            xml.enabled = true
+            html.required.set(true)
+            xml.required.set(true)
         }
     }
 
@@ -103,7 +103,7 @@ configure(subprojects.findAll { it.name != "kotysa-platform" }) {
     // generate xxx-javadoc.jar
     task javadocJar(type: Jar, dependsOn: dokkaHtml) {
         from "$buildDir/javadoc"
-        archiveClassifier = 'javadoc'
+        archiveClassifier.set('javadoc')
     }
 
     publishing {
@@ -174,6 +174,6 @@ release {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '7.3.3'
+    gradleVersion = '7.4'
     distributionType = Wrapper.DistributionType.ALL
 }

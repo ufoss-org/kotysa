@@ -179,19 +179,19 @@ class UserRepositorySpringJdbcPostgresqlSelect(client: JdbcOperations) :
                 ).fetchOne()
 
     fun selectAllMappedToDto() =
-        (sqlClient select {
+        (sqlClient selectAndBuild {
             UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}", it[PostgresqlUsers.alias])
         }
                 from PostgresqlUsers
                 ).fetchAll()
 
     fun selectWithJoin() =
-        (sqlClient select { UserWithRoleDto(it[PostgresqlUsers.lastname]!!, it[PostgresqlRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[PostgresqlUsers.lastname]!!, it[PostgresqlRoles.label]!!) }
                 from PostgresqlUsers innerJoin PostgresqlRoles on PostgresqlUsers.roleId eq PostgresqlRoles.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient select { UserWithRoleDto(it[PostgresqlUsers.lastname]!!, it[PostgresqlRoles.label]!!) }
+        (sqlClient selectAndBuild { UserWithRoleDto(it[PostgresqlUsers.lastname]!!, it[PostgresqlRoles.label]!!) }
                 from PostgresqlUsers and PostgresqlRoles
                 where PostgresqlUsers.roleId eq PostgresqlRoles.id
                 ).fetchAll()

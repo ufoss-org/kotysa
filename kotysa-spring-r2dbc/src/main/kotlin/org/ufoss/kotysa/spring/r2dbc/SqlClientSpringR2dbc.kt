@@ -16,7 +16,7 @@ import java.math.BigDecimal
  */
 private class SqlClientSpringR2dbc(
         override val client: DatabaseClient,
-        override val tables: Tables
+        override val tables: Tables,
 ) : ReactorSqlClient, AbstractSqlClientSpringR2dbc {
 
     override val module = Module.SPRING_R2DBC
@@ -49,8 +49,8 @@ private class SqlClientSpringR2dbc(
             SqlClientSelectSpringR2dbc.Selectable(client, tables).select(column)
     override fun <T : Any> select(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).select(table)
-    override fun <T : Any> select(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(dsl)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
+            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAndBuild(dsl)
     override fun selectCount(): ReactorSqlClientSelect.Fromable<Long> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
@@ -65,6 +65,21 @@ private class SqlClientSpringR2dbc(
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAvg(column)
     override fun <T : Any> selectSum(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): ReactorSqlClientSelect.FirstSelect<T> =
+        SqlClientSelectSpringR2dbc.Selectable(client, tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): ReactorSqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): ReactorSqlClientSelect.From<T> =
+        SqlClientSelectSpringR2dbc.Selectable(client, tables).selectStarFromSubQuery(dsl)
 }
 
 /**

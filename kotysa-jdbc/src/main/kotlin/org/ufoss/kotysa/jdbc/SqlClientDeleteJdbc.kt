@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
-import org.ufoss.kotysa.core.jdbc.jdbcBindWhereParams
+import org.ufoss.kotysa.core.jdbc.jdbcBindParams
 
 internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
@@ -13,11 +13,11 @@ internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDelet
         override val jdbcConnection: JdbcConnection,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, T,
+    ) : FirstDeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<T>>(DbAccessType.JDBC, Module.JDBC),
         SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         override val where = Where(jdbcConnection, properties)
-        override val from: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(jdbcConnection, properties)
         }
     }
@@ -25,17 +25,18 @@ internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDelet
     internal class Delete<T : Any>(
             override val jdbcConnection: JdbcConnection,
             override val properties: Properties<T>,
-    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Any, SqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, SqlClientDeleteOrUpdate.Where<Any>>(),
             SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(jdbcConnection, properties as Properties<Any>)
-        override val from = this
+        override val fromTable = this
     }
 
     internal class Where<T : Any>(
             override val jdbcConnection: JdbcConnection,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>,
+        Return<T> {
         override val where = this
     }
 
@@ -45,8 +46,8 @@ internal class SqlClientDeleteJdbc private constructor() : DefaultSqlClientDelet
         override fun execute() = jdbcConnection.execute { connection ->
             with(properties) {
                 val statement = connection.prepareStatement(deleteFromTableSql())
-                // 1) add all values from where part
-                jdbcBindWhereParams(statement)
+                // 1) add all params
+                jdbcBindParams(statement)
                 // 2) reset index
                 index = 0
 

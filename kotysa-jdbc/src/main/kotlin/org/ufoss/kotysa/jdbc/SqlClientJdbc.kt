@@ -77,7 +77,8 @@ internal class SqlClientJdbc(
             (table.table as AbstractTable<T>).toField(
                 tables.allColumns,
                 tables.allTables,
-            ).builder.invoke(rs.toRow())
+                tables.dbType,
+            ).builder(rs.toRow())
         }
 
     override fun <T : Any> insertAndReturn(vararg rows: T): List<T> {
@@ -123,6 +124,7 @@ internal class SqlClientJdbc(
         return (table.table as AbstractTable<T>).toField(
             tables.allColumns,
             tables.allTables,
+            tables.dbType,
         ).builder.invoke(rs.toRow())
     }
 
@@ -154,8 +156,8 @@ internal class SqlClientJdbc(
     override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(table)
 
-    override fun <T : Any> select(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(dsl)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectAndBuild(dsl)
 
     override fun selectCount(): SqlClientSelect.Fromable<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCount<Any>(null)
@@ -177,6 +179,19 @@ internal class SqlClientJdbc(
 
     override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.FirstSelect<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): SqlClientSelect.From<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectStarFromSubQuery(dsl)
 
     override fun <T> transactional(block: (JdbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection

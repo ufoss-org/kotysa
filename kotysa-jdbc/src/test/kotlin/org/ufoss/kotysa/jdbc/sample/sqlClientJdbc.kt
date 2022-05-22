@@ -72,10 +72,17 @@ class UserRepositoryJdbc(dataSource: DataSource) {
 
         val all = sqlClient selectAllFrom Users
 
-        val johny = (sqlClient select { UserWithRoleDto(it[Users.lastname]!!, it[Roles.label]!!) }
+        val johny = (sqlClient selectAndBuild { UserWithRoleDto(it[Users.lastname]!!, it[Roles.label]!!) }
                 from Users innerJoin Roles on Users.roleId eq Roles.id
                 where Users.alias eq "Johny"
-                // null String accepted        ^^^^^ , if alias=null, gives "WHERE user.alias IS NULL"
+                // null String accepted ^^^, if alias=null, gives "WHERE user.alias IS NULL"
+                or Users.alias eq "Johnny"
+                ).fetchFirst()
+
+        val johnyWithSubQuery = (sqlClient select Users.lastname
+                and { this select Roles.label from Roles where Users.roleId eq Roles.id }
+                from Users
+                where Users.alias eq "Johny"
                 or Users.alias eq "Johnny"
                 ).fetchFirst()
 

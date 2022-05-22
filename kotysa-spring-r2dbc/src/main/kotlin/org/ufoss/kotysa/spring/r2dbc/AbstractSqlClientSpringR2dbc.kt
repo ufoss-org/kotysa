@@ -40,7 +40,8 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
                 .map { r ->
                     (table.table as AbstractTable<T>).toField(
                         tables.allColumns,
-                        tables.allTables
+                        tables.allTables,
+                        tables.dbType,
                     ).builder.invoke(r.toRow())
                 }.one()
         }
@@ -106,7 +107,8 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
             .map { r ->
                 (table.table as AbstractTable<T>).toField(
                     tables.allColumns,
-                    tables.allTables
+                    tables.allTables,
+                    tables.dbType,
                 ).builder.invoke(r.toRow())
             }.one()
     }

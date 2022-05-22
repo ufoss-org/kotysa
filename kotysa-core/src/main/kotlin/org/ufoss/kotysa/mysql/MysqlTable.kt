@@ -31,7 +31,7 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
     }*/
 
     protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U {
-        foreignKeys.add(ForeignKey(mapOf(this to references), fkName))
+        kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
         return this
     }
 

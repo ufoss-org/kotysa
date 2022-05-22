@@ -56,8 +56,8 @@ private class CoroutinesSqlClientSpringR2Dbc(
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(column)
     override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(table)
-    override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(dsl)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
+            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAndBuild(dsl)
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount<Any>(null)
     override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
@@ -72,6 +72,21 @@ private class CoroutinesSqlClientSpringR2Dbc(
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAvg(column)
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
             CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): CoroutinesSqlClientSelect.FirstSelect<T> =
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): CoroutinesSqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): CoroutinesSqlClientSelect.From<T> =
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectStarFromSubQuery(dsl)
 }
 
 /**

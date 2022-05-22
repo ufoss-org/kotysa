@@ -90,6 +90,7 @@ internal class SqlClientR2dbc(
                         (table.table as AbstractTable<T>).toField(
                             tables.allColumns,
                             tables.allTables,
+                            tables.dbType,
                         ).builder.invoke(row.toRow())
                     }.awaitFirstOrNull()
                 }
@@ -162,7 +163,8 @@ internal class SqlClientR2dbc(
             .map { r, _ ->
                 (table.table as AbstractTable<T>).toField(
                     tables.allColumns,
-                    tables.allTables
+                    tables.allTables,
+                    tables.dbType,
                 ).builder.invoke(r.toRow())
             }.awaitSingle()
     }
@@ -196,8 +198,8 @@ internal class SqlClientR2dbc(
     override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(table)
 
-    override fun <T : Any> select(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(dsl)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
+        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectAndBuild(dsl)
 
     override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectCount<Any>(null)
@@ -214,11 +216,26 @@ internal class SqlClientR2dbc(
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectMax(column)
 
-    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>)
+    : CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectAvg(column)
 
     override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectSum(column)
+
+    override fun <T : Any> select(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): CoroutinesSqlClientSelect.FirstSelect<T> = SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): CoroutinesSqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectCaseWhenExists(dsl)
+
+    override fun <T : Any> selectStarFrom(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): CoroutinesSqlClientSelect.From<T> =
+        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectStarFromSubQuery(dsl)
 
     override suspend fun <T> transactional(block: suspend (R2dbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection

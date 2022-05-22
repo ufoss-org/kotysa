@@ -73,7 +73,7 @@ class UserRepositorySpringR2dbcCoroutines(dbClient: DatabaseClient) {
 
         val all = sqlClient selectAllFrom Users
 
-        val johny = (sqlClient select { UserWithRoleDto(it[Users.lastname]!!, it[Roles.label]!!) }
+        val johny = (sqlClient selectAndBuild { UserWithRoleDto(it[Users.lastname]!!, it[Roles.label]!!) }
                 from Users innerJoin Roles on Users.roleId eq Roles.id
                 where Users.alias eq "Johny"
                 // null String accepted        ^^^^^ , if alias=null, gives "WHERE user.alias IS NULL"

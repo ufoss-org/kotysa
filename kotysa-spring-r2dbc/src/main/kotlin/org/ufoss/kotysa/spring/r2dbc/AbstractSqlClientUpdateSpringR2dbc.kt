@@ -23,21 +23,22 @@ internal abstract class AbstractSqlClientUpdateSpringR2dbc protected constructor
 
             var index = 0
             var executeSpec = setValues.entries
-                    .fold(client.sql(updateTableSql())) { execSpec, entry ->
-                        val value = entry.value
-                        if (value == null) {
-                            execSpec.bindNull("k${index++}",
-                                    ((entry.key as DbColumn<*, *>).entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java)
-                        } else {
-                            execSpec.bind("k${index++}", tables.getDbValue(value)!!)
-                        }
+                .fold(client.sql(updateTableSql())) { execSpec, entry ->
+                    val value = entry.value
+                    if (value == null) {
+                        execSpec.bindNull(
+                            "k${index++}",
+                            ((entry.key as DbColumn<*, *>).entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
+                        )
+                    } else {
+                        execSpec.bind("k${index++}", tables.getDbValue(value)!!)
                     }
+                }
 
-            executeSpec = whereClauses
-                    .dbValues(tables)
-                    .fold(executeSpec) { execSpec, value ->
-                        execSpec.bind("k${index++}", value)
-                    }
+            executeSpec = dbValues()
+                .fold(executeSpec) { execSpec, value ->
+                    execSpec.bind("k${index++}", value)
+                }
 
             executeSpec.fetch()
         }

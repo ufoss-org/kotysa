@@ -4,6 +4,4 @@
 
 package org.ufoss.kotysa
 
-internal enum class Order {
-    ASC, DESC
-}
+public class QueryAlias<T>(internal val alias: String) : ColumnOrAlias
