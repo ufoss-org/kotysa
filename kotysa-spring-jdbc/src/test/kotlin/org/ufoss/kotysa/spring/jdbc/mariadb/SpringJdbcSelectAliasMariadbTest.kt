@@ -236,7 +236,7 @@ class UserRepositorySelectAlias(client: JdbcOperations) : AbstractUserRepository
         (sqlClient selectStarFrom {
             (this select MariadbUsers.firstname `as` "fna"
                     from MariadbUsers)
-        } where MariadbUsers.firstname["fna"] eq firstname
+        } `as` "dummy" where MariadbUsers.firstname["fna"] eq firstname
                 ).fetchOne()
 
     fun selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(firstname: String) =
@@ -250,7 +250,7 @@ class UserRepositorySelectAlias(client: JdbcOperations) : AbstractUserRepository
         (sqlClient selectStarFrom {
             (this select MariadbUsers.firstname `as` "fna"
                     from MariadbUsers)
-        } where QueryAlias<String>("fna") eq firstname
+        } `as` "dummy" where QueryAlias<String>("fna") eq firstname
                 ).fetchOne()
 
     fun selectCaseWhenExistsSubQueryAliasSubQuery(userIds: List<Int>) =
@@ -263,21 +263,21 @@ class UserRepositorySelectAlias(client: JdbcOperations) : AbstractUserRepository
                         and MariadbUsers.id `in` userIds)
             } then true `else` false `as` "roleUsedByUser"
                     from MariadbRoles)
-        } where QueryAlias<Boolean>("roleUsedByUser") eq true)
+        } `as` "dummy" where QueryAlias<Boolean>("roleUsedByUser") eq true)
             .fetchAll()
 
     fun selectAliasedFirstnameOrderByFirstnameAliasSubQuery() =
         (sqlClient selectStarFrom {
             (this select MariadbUsers.firstname `as` "fna"
                     from MariadbUsers)
-        } orderByAsc QueryAlias<String>("fna"))
+        } `as` "dummy" orderByAsc QueryAlias<String>("fna"))
             .fetchAll()
 
     fun selectRoleLabelWhereInUserSubQueryAliasSubQuery(userIds: List<Int>) =
         (sqlClient selectStarFrom {
             (this select MariadbRoles.label and MariadbRoles.id `as` "roleId"
                     from MariadbRoles)
-        } where QueryAlias<Int>("roleId") `in`
+        } `as` "dummy" where QueryAlias<Int>("roleId") `in`
                 {
                     (this select MariadbUsers.roleId
                             from MariadbUsers

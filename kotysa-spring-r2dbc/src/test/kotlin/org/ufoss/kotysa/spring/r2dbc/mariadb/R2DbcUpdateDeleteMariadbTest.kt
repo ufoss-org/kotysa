@@ -125,7 +125,7 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
 }
 
 
-class UserRepositoryMariadbUpdateDelete(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractUserRepositoryMariadb(sqlClient) {
+class UserRepositoryMariadbUpdateDelete(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
 
     fun deleteUserById(id: Int) =
             (sqlClient deleteFrom MariadbUsers

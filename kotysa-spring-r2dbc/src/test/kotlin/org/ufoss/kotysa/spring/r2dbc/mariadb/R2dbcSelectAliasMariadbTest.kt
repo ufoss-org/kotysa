@@ -2,41 +2,57 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.jdbc.mariadb
+package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.springframework.r2dbc.BadSqlGrammarException
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import java.sql.SQLSyntaxErrorException
+import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
-class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectAlias>() {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
+class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelectAlias>() {
+    
+    @BeforeAll
+    fun beforeAll(resource: TestContainersCloseableResource) {
+        context = startContext<UserRepositorySelectAlias>(resource)
+    }
 
-    @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+    override val repository: UserRepositorySelectAlias by lazy {
+        getContextRepository()
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {
+        assertThatThrownBy {
+            repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname).block()
+        }
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcBadSqlGrammarException`() {
+        assertThatThrownBy {
+            repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname).block()
+        }
+            .isInstanceOf(BadSqlGrammarException::class.java)
+    }
+
+    @Test
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcBadSqlGrammarException`() {
+        assertThatThrownBy {
+            repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
+        }
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameOrderByFirstnameGet returns results`() {
-        assertThat(repository.selectAliasedFirstnameOrderByFirstnameGet())
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameGet().toIterable())
             .hasSize(2)
             .containsExactly(
                 userBboss.firstname,
@@ -46,7 +62,7 @@ class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectA
 
     @Test
     fun `Verify selectAliasedFirstnameOrderByFirstnameAlias returns results`() {
-        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAlias())
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAlias().toIterable())
             .hasSize(2)
             .containsExactly(
                 userBboss.firstname,
@@ -56,46 +72,48 @@ class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectA
 
     @Test
     fun `Verify selectCountCustomerGroupByCountryGet counts and group`() {
-        assertThat(repository.selectCountUserGroupByCountryGet())
+        assertThat(repository.selectCountUserGroupByCountryGet().toIterable())
             .hasSize(2)
             .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
     }
 
     @Test
     fun `Verify selectCountCustomerGroupByCountryAlias counts and group`() {
-        assertThat(repository.selectCountUserGroupByCountryAlias())
+        assertThat(repository.selectCountUserGroupByCountryAlias().toIterable())
             .hasSize(2)
             .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(SQLSyntaxErrorException::class.java)
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcBadSqlGrammarException`() {
+        assertThatThrownBy {
+            repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
+        }
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGetSubQuery returns TheBoss firstname`() {
-        assertThat(repository.selectAliasedFirstnameByFirstnameGetSubQuery(userBboss.firstname))
+        assertThat(repository.selectAliasedFirstnameByFirstnameGetSubQuery(userBboss.firstname).block())
             .isEqualTo(userBboss.firstname)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
         assertThatThrownBy {
-            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
-        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname).block()
+        }.isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameAliasSubQuery returns TheBoss firstname`() {
-        assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname))
+        assertThat(repository.selectAliasedFirstnameByFirstnameAliasSubQuery(userBboss.firstname).block())
             .isEqualTo(userBboss.firstname)
     }
 
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery returns results`() {
-        assertThat(repository.selectCaseWhenExistsSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
+        assertThat(repository.selectCaseWhenExistsSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
                 Pair(roleAdmin.label, true),
@@ -105,7 +123,7 @@ class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectA
 
     @Test
     fun `Verify selectAliasedFirstnameOrderByFirstnameAliasSubQuery returns results`() {
-        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAliasSubQuery())
+        assertThat(repository.selectAliasedFirstnameOrderByFirstnameAliasSubQuery().toIterable())
             .hasSize(2)
             .containsExactly(
                 userBboss.firstname,
@@ -115,53 +133,55 @@ class JdbcSelectAliasMariadbTest : AbstractJdbcMariadbTest<UserRepositorySelectA
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() {
-        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)))
+        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id))
+            .toIterable()
+        )
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
 
     @Test
     fun `Verify selectFirstnameByFirstnameTableAlias returns TheBoss firstname`() {
-        assertThat(repository.selectFirstnameByFirstnameTableAlias(userBboss.firstname))
+        assertThat(repository.selectFirstnameByFirstnameTableAlias(userBboss.firstname).block())
             .isEqualTo(userBboss.firstname)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdTableAlias returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleLabelAndIdFromUserIdTableAlias(userBboss.id))
+        assertThat(repository.selectRoleLabelAndIdFromUserIdTableAlias(userBboss.id).block())
             .isEqualTo(Pair(roleAdmin.label, roleAdmin.id))
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
         assertThatThrownBy {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
-        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id).block()
+        }.isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
         assertThatThrownBy {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
-        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id).block()
+        }.isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
         assertThatThrownBy {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
-        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id).block()
+        }.isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
         assertThatThrownBy {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
-        }.isInstanceOf(SQLSyntaxErrorException::class.java)
+            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id).block()
+        }.isInstanceOf(BadSqlGrammarException::class.java)
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMariadb(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MariadbUsers.firstname `as` "fna"
