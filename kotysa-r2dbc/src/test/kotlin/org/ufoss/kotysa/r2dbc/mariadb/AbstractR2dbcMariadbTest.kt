@@ -29,7 +29,7 @@ abstract class AbstractR2dbcMariadbTest<T : Repository> : CoroutinesRepositoryTe
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val options = ConnectionFactoryOptions.builder()
             .option(ConnectionFactoryOptions.DRIVER, "mariadb")
-            .option(ConnectionFactoryOptions.HOST, containerResource.containerIpAddress)
+            .option(ConnectionFactoryOptions.HOST, containerResource.host)
             .option(ConnectionFactoryOptions.PORT, containerResource.firstMappedPort)
             .option(ConnectionFactoryOptions.DATABASE, "db")
             .option(ConnectionFactoryOptions.USER, "mariadb")

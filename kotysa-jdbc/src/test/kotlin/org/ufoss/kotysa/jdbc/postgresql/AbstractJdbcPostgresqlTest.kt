@@ -28,7 +28,7 @@ abstract class AbstractJdbcPostgresqlTest<T : Repository> : RepositoryTest<T, Jd
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val dataSource = PGSimpleDataSource()
         dataSource.setUrl(
-            "jdbc:postgresql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+            "jdbc:postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db"
         )
         dataSource.user = "postgres"
         dataSource.password = "test"

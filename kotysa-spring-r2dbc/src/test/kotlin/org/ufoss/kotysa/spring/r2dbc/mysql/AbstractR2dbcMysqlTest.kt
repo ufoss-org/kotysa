@@ -43,7 +43,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> : R2dbcRepositoryTest<T> {
                     ref<U>().init()
                 }
                 r2dbc {
-                    url = "r2dbc:mysql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                    url = "r2dbc:mysql://${containerResource.host}:${containerResource.firstMappedPort}/db"
                     username = "mysql"
                     password = "test"
                     transactional = true

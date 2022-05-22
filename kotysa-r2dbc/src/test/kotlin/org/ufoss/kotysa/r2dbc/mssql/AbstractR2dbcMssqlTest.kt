@@ -31,7 +31,7 @@ abstract class AbstractR2dbcMssqlTest<T : Repository> : CoroutinesRepositoryTest
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val options = ConnectionFactoryOptions.builder()
             .option(ConnectionFactoryOptions.DRIVER, "sqlserver")
-            .option(ConnectionFactoryOptions.HOST, containerResource.containerIpAddress)
+            .option(ConnectionFactoryOptions.HOST, containerResource.host)
             .option(ConnectionFactoryOptions.PORT, containerResource.firstMappedPort)
             .option(ConnectionFactoryOptions.USER, "SA")
             .option(ConnectionFactoryOptions.PASSWORD, "A_Str0ng_Required_Password")

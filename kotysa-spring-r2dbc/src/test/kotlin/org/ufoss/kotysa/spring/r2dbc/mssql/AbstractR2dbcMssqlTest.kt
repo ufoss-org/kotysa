@@ -41,7 +41,7 @@ abstract class AbstractR2dbcMssqlTest<T : Repository> : R2dbcRepositoryTest<T> {
                     ref<U>().init()
                 }
                 r2dbc {
-                    url = "r2dbc:sqlserver://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}"
+                    url = "r2dbc:sqlserver://${containerResource.host}:${containerResource.firstMappedPort}"
                     username = "SA"
                     password = "A_Str0ng_Required_Password"
                     transactional = true

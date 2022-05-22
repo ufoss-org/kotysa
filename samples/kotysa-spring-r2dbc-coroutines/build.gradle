@@ -27,14 +27,14 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all', '-Xopt-in=kotlin.RequiresOptIn',
-                            '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility', '-opt-in=kotlin.RequiresOptIn',
+                            '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi']
     }
 }
 

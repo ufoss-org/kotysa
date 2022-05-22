@@ -25,13 +25,13 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
     }
 }
 

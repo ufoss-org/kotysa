@@ -29,14 +29,14 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable', '-Xexplicit-api=strict', '-Xinline-classes']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility', '-Xexplicit-api=strict', '-Xinline-classes']
         jvmTarget = '1.8'
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
         jvmTarget = '1.8'
     }
 }

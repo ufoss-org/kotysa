@@ -44,7 +44,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> : R2dbcRepositoryTest
                     ref<U>().init()
                 }
                 r2dbc {
-                    url = "r2dbc:postgresql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+                    url = "r2dbc:postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db"
                     username = "postgres"
                     password = "test"
                     transactional = true

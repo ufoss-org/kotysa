@@ -10,7 +10,7 @@ dependencies {
 
     testImplementation testFixtures(project(':kotysa-core'))
 
-    testImplementation 'junit:junit:4.13'
+    testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.robolectric:robolectric:4.0.2'
     testImplementation 'com.google.android:android:4.1.1.4'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
@@ -20,7 +20,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjvm-default=enable', '-Xexplicit-api=strict', '-Xinline-classes']
+        freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-Xexplicit-api=strict', '-Xinline-classes']
         jvmTarget = '1.8'
     }
 }

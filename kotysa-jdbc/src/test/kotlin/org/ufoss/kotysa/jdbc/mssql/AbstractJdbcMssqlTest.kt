@@ -27,9 +27,10 @@ abstract class AbstractJdbcMssqlTest<T : Repository> : RepositoryTest<T, JdbcTra
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val dataSource = SQLServerDataSource()
-        dataSource.url = "jdbc:sqlserver://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}"
+        dataSource.url = "jdbc:sqlserver://${containerResource.host}:${containerResource.firstMappedPort}"
         dataSource.user = "SA"
         dataSource.setPassword("A_Str0ng_Required_Password")
+        dataSource.encrypt = false
         sqlClient = dataSource.sqlClient(mssqlTables)
         repository.init()
     }

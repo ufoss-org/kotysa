@@ -35,16 +35,16 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable', '-Xexplicit-api=strict',
-                            '-Xopt-in=kotlinx.coroutines.FlowPreview', '-Xopt-in=kotlin.RequiresOptIn']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility', '-Xexplicit-api=strict',
+                            '-opt-in=kotlinx.coroutines.FlowPreview', '-opt-in=kotlin.RequiresOptIn']
         jvmTarget = '1.8'
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=enable',
-                            '-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi', '-Xopt-in=kotlin.RequiresOptIn']
+        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility',
+                            '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi', '-opt-in=kotlin.RequiresOptIn']
         jvmTarget = '1.8'
     }
 }

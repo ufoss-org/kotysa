@@ -31,7 +31,7 @@ abstract class AbstractJdbcMysqlTest<T : Repository> : RepositoryTest<T, JdbcTra
     fun beforeAll(containerResource: TestContainersCloseableResource) {
         val dataSource = MysqlDataSource()
         dataSource.setURL(
-            "jdbc:mysql://${containerResource.containerIpAddress}:${containerResource.firstMappedPort}/db"
+            "jdbc:mysql://${containerResource.host}:${containerResource.firstMappedPort}/db"
         )
         dataSource.user = "mysql"
         dataSource.password = "test"
