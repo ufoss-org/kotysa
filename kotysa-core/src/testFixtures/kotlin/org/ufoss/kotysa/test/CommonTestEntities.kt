@@ -682,3 +682,35 @@ data class StringAsLongTextEntity(
 
 val stringAsLongTextNotNull = StringAsLongTextEntity(1, "abc", "def")
 val stringAsLongTextNullable = StringAsLongTextEntity(2, "ghi")
+
+data class ByteArrayEntity(
+    val id: Int,
+    val byteArrayNotNull: ByteArray,
+    val byteArrayNullable: ByteArray? = null,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as ByteArrayEntity
+
+        if (id != other.id) return false
+        if (!byteArrayNotNull.contentEquals(other.byteArrayNotNull)) return false
+        if (byteArrayNullable != null) {
+            if (other.byteArrayNullable == null) return false
+            if (!byteArrayNullable.contentEquals(other.byteArrayNullable)) return false
+        } else if (other.byteArrayNullable != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + byteArrayNotNull.contentHashCode()
+        result = 31 * result + (byteArrayNullable?.contentHashCode() ?: 0)
+        return result
+    }
+}
+
+val byteArrayWithNullable = ByteArrayEntity(1, byteArrayOf(0x2A), byteArrayOf(0x2B))
+val byteArrayWithoutNullable = ByteArrayEntity(2, byteArrayOf(0x2C))
