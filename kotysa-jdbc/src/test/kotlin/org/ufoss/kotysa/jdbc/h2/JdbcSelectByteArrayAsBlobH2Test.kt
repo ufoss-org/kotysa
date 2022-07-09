@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.jdbc.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
-class JdbcSelectByteArrayH2Test : AbstractJdbcH2Test<ByteArrayRepositoryH2Select>() {
+class JdbcSelectByteArrayAsBlobH2Test : AbstractJdbcH2Test<ByteArrayRepositoryH2Select>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = ByteArrayRepositoryH2Select(sqlClient)
 
     @Test

@@ -33,5 +33,6 @@ public enum class SqlType(internal val fullType: String) {
 
     UUID("UUID"),
 
-    BLOB("BLOB")
+    BLOB("BLOB"),
+    BINARY("BINARY")
 }
