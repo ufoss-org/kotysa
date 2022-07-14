@@ -305,11 +305,11 @@ object H2ByteArrays : H2Table<ByteArrayEntity>() {
     val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
 }
 
-object H2ByteArrayBinarys : H2Table<ByteArrayBinaryEntity>() {
-    val id = integer(ByteArrayBinaryEntity::id)
+object H2ByteArrayAsBinarys : H2Table<ByteArrayAsBinaryEntity>() {
+    val id = integer(ByteArrayAsBinaryEntity::id)
         .primaryKey()
-    val byteArrayNotNull = binary(ByteArrayBinaryEntity::byteArrayNotNull)
-    val byteArrayNullable = binary(ByteArrayBinaryEntity::byteArrayNullable)
+    val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
+    val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
 }
 
 val h2Tables = tables().h2(
@@ -334,5 +334,5 @@ val h2Tables = tables().h2(
     H2JavaUsers,
     H2Customers,
     H2ByteArrays,
-    H2ByteArrayBinarys
+    H2ByteArrayAsBinarys
 )

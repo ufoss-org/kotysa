@@ -715,7 +715,7 @@ data class ByteArrayEntity(
 val byteArrayWithNullable = ByteArrayEntity(1, byteArrayOf(0x2A), byteArrayOf(0x2B))
 val byteArrayWithoutNullable = ByteArrayEntity(2, byteArrayOf(0x2C))
 
-data class ByteArrayBinaryEntity(
+data class ByteArrayAsBinaryEntity(
     val id: Int,
     val byteArrayNotNull: ByteArray,
     val byteArrayNullable: ByteArray? = null,
@@ -724,7 +724,7 @@ data class ByteArrayBinaryEntity(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as ByteArrayBinaryEntity
+        other as ByteArrayAsBinaryEntity
 
         if (id != other.id) return false
         if (!byteArrayNotNull.contentEquals(other.byteArrayNotNull)) return false
@@ -744,5 +744,5 @@ data class ByteArrayBinaryEntity(
     }
 }
 
-val byteArrayBinaryWithNullable = ByteArrayBinaryEntity(1, byteArrayOf(0x2A), byteArrayOf(0x2B))
-val byteArrayBinaryWithoutNullable = ByteArrayBinaryEntity(2, byteArrayOf(0x2C))
+val byteArrayBinaryWithNullable = ByteArrayAsBinaryEntity(1, byteArrayOf(0x2A), byteArrayOf(0x2B))
+val byteArrayBinaryWithoutNullable = ByteArrayAsBinaryEntity(2, byteArrayOf(0x2C))

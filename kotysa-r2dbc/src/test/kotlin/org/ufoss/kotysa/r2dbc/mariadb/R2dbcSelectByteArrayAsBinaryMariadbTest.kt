@@ -2,7 +2,7 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc.h2
+package org.ufoss.kotysa.r2dbc.mariadb
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
-class R2dbcSelectByteArrayAsBinaryH2Test : AbstractR2dbcH2Test<ByteArrayRepositoryH2Select>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = ByteArrayRepositoryH2Select(sqlClient)
+class R2dbcSelectByteArrayAsBinaryMariadbTest : AbstractR2dbcMariadbTest<ByteArrayRepositoryMariadbSelect>() {
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = ByteArrayRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByByteArrayNotNull finds byteArrayBinaryWithNullable`() = runTest {
@@ -66,7 +66,7 @@ class R2dbcSelectByteArrayAsBinaryH2Test : AbstractR2dbcH2Test<ByteArrayReposito
 }
 
 
-class ByteArrayRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : Repository {
+class ByteArrayRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) : Repository {
 
     override fun init()  = runBlocking {
         createTables()
@@ -78,37 +78,37 @@ class ByteArrayRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : Repos
     }
 
     private suspend fun createTables() {
-        sqlClient createTable H2ByteArrayAsBinarys
+        sqlClient createTable MariadbByteArrayAsBinarys
     }
 
     private suspend fun insertByteArrays() {
         sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2ByteArrayAsBinarys
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MariadbByteArrayAsBinarys
 
     fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNotNull eq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinarys
+                    where MariadbByteArrayAsBinarys.byteArrayNotNull eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullNotEq(byteArray: ByteArray) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNotNull notEq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinarys
+                    where MariadbByteArrayAsBinarys.byteArrayNotNull notEq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullIn(values: Sequence<ByteArray>) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNotNull `in` values
+            (sqlClient selectFrom MariadbByteArrayAsBinarys
+                    where MariadbByteArrayAsBinarys.byteArrayNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByByteArrayNullable(byteArray: ByteArray?) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNullable eq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinarys
+                    where MariadbByteArrayAsBinarys.byteArrayNullable eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNullableNotEq(byteArray: ByteArray?) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNullable notEq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinarys
+                    where MariadbByteArrayAsBinarys.byteArrayNullable notEq byteArray
                     ).fetchAll()
 }
