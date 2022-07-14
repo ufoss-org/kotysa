@@ -115,6 +115,16 @@ public abstract class MariadbTable<T : Any> protected constructor(tableName: Str
     protected fun time(getter: (T) -> LocalTime?, columnName: String? = null, defaultValue: LocalTime? = null, precision: Int? = null): LocalTimeDbTimeColumnNullable<T> =
             LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
+    protected fun blob(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBlobColumnNotNull<T> =
+        ByteArrayDbBlobColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun blob(
+        getter: (T) -> ByteArray?,
+        columnName: String? = null,
+        defaultValue: ByteArray? = null
+    ): ByteArrayDbBlobColumnNullable<T> =
+        ByteArrayDbBlobColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
     protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
         ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }
 

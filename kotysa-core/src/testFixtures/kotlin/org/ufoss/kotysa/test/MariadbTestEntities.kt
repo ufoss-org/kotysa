@@ -287,6 +287,13 @@ object MariadbLongTexts : MariadbTable<StringAsLongTextEntity>() {
     val stringNullable = longText(StringAsLongTextEntity::stringNullable)
 }
 
+object MariadbByteArrays : MariadbTable<ByteArrayEntity>() {
+    val id = integer(ByteArrayEntity::id)
+        .primaryKey()
+    val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
+    val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
+}
+
 object MariadbByteArrayAsBinarys : MariadbTable<ByteArrayAsBinaryEntity>() {
     val id = integer(ByteArrayAsBinaryEntity::id)
         .primaryKey()
@@ -316,5 +323,6 @@ val mariadbTables = tables().mariadb(
     MariadbTexts,
     MariadbMediumTexts,
     MariadbLongTexts,
+    MariadbByteArrays,
     MariadbByteArrayAsBinarys,
 )
