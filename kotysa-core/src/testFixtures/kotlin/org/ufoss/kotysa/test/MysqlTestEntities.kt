@@ -299,6 +299,20 @@ object MysqlLongText : MysqlTable<StringAsLongTextEntity>() {
     val stringNullable = longText(StringAsLongTextEntity::stringNullable)
 }
 
+object MysqlByteArrays : MysqlTable<ByteArrayEntity>() {
+    val id = integer(ByteArrayEntity::id)
+        .primaryKey()
+    val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
+    val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
+}
+
+object MysqlByteArrayAsBinarys : MysqlTable<ByteArrayAsBinaryEntity>() {
+    val id = integer(ByteArrayAsBinaryEntity::id)
+        .primaryKey()
+    val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
+    val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
+}
+
 val mysqlTables = tables().mysql(
     MysqlRoles,
     MysqlUsers,
@@ -321,4 +335,6 @@ val mysqlTables = tables().mysql(
     MysqlText,
     MysqlMediumText,
     MysqlLongText,
+    MysqlByteArrays,
+    MysqlByteArrayAsBinarys,
 )
