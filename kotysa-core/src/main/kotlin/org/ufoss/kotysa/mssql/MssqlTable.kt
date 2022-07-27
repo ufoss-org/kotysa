@@ -80,4 +80,14 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
 
     protected fun time(getter: (T) -> LocalTime?, columnName: String? = null, defaultValue: LocalTime? = null, precision: Int? = null): LocalTimeDbTimeColumnNullable<T> =
             LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+    
+    protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
+        ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun binary(
+        getter: (T) -> ByteArray?,
+        columnName: String? = null,
+        defaultValue: ByteArray? = null
+    ): ByteArrayDbBinaryColumnNullable<T> =
+        ByteArrayDbBinaryColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 }
