@@ -384,6 +384,13 @@ object PostgresqlTexts : PostgresqlTable<StringAsTextEntity>() {
     val stringNullable = text(StringAsTextEntity::stringNullable)
 }
 
+object PostgresqlByteArrayAsByteas : PostgresqlTable<ByteArrayAsBinaryEntity>() {
+    val id = integer(ByteArrayAsBinaryEntity::id)
+        .primaryKey()
+    val byteArrayNotNull = bytea(ByteArrayAsBinaryEntity::byteArrayNotNull)
+    val byteArrayNullable = bytea(ByteArrayAsBinaryEntity::byteArrayNullable)
+}
+
 val postgresqlTables = tables().postgresql(
     PostgresqlRoles,
     PostgresqlUsers,
@@ -404,4 +411,5 @@ val postgresqlTables = tables().postgresql(
     PostgresqlJavaUsers,
     PostgresqlCustomers,
     PostgresqlTexts,
+    PostgresqlByteArrayAsByteas,
 )
