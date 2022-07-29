@@ -2,90 +2,86 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc.h2
+package org.ufoss.kotysa.spring.r2dbc.h2
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectByteArrayAsBinaryH2Test : AbstractR2dbcH2Test<ByteArrayRepositoryH2Select>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = ByteArrayRepositoryH2Select(sqlClient)
+    override val context = startContext<ByteArrayRepositoryH2Select>()
+    override val repository = getContextRepository<ByteArrayRepositoryH2Select>()
 
     @Test
-    fun `Verify selectAllByByteArrayNotNull finds byteArrayBinaryWithNullable`() = runTest {
-        assertThat(repository.selectAllByByteArrayNotNull(byteArrayBinaryWithNullable.byteArrayNotNull).toList())
+    fun `Verify selectAllByByteArrayNotNull finds byteArrayBinaryWithNullable`() {
+        assertThat(repository.selectAllByByteArrayNotNull(byteArrayBinaryWithNullable.byteArrayNotNull).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(byteArrayBinaryWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNotNullNotEq finds byteArrayWithoutNullable`() = runTest {
-        assertThat(repository.selectAllByByteArrayNotNullNotEq(byteArrayBinaryWithNullable.byteArrayNotNull).toList())
+    fun `Verify selectAllByByteArrayNotNullNotEq finds byteArrayWithoutNullable`() {
+        assertThat(repository.selectAllByByteArrayNotNullNotEq(byteArrayBinaryWithNullable.byteArrayNotNull).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(byteArrayBinaryWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNotNullIn finds both`() = runTest {
+    fun `Verify selectAllByByteArrayNotNullIn finds both`() {
         val seq = sequenceOf(byteArrayBinaryWithNullable.byteArrayNotNull, byteArrayWithoutNullable.byteArrayNotNull)
-        assertThat(repository.selectAllByByteArrayNotNullIn(seq).toList())
+        assertThat(repository.selectAllByByteArrayNotNullIn(seq).toIterable())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullable finds byteArrayBinaryWithNullable`() = runTest {
-        assertThat(repository.selectAllByByteArrayNullable(byteArrayBinaryWithNullable.byteArrayNullable).toList())
+    fun `Verify selectAllByByteArrayNullable finds byteArrayBinaryWithNullable`() {
+        assertThat(repository.selectAllByByteArrayNullable(byteArrayBinaryWithNullable.byteArrayNullable).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(byteArrayBinaryWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullable finds byteArrayWithoutNullable`() = runTest {
-        assertThat(repository.selectAllByByteArrayNullable(null).toList())
+    fun `Verify selectAllByByteArrayNullable finds byteArrayWithoutNullable`() {
+        assertThat(repository.selectAllByByteArrayNullable(null).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(byteArrayBinaryWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullableNotEq finds no results`() = runTest {
-        assertThat(repository.selectAllByByteArrayNullableNotEq(byteArrayBinaryWithNullable.byteArrayNullable).toList())
+    fun `Verify selectAllByByteArrayNullableNotEq finds no results`() {
+        assertThat(repository.selectAllByByteArrayNullableNotEq(byteArrayBinaryWithNullable.byteArrayNullable).toIterable())
                 .isEmpty()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullableNotEq finds byteArrayBinaryWithNullable`() = runTest {
-        assertThat(repository.selectAllByByteArrayNullableNotEq(null).toList())
+    fun `Verify selectAllByByteArrayNullableNotEq finds byteArrayBinaryWithNullable`() {
+        assertThat(repository.selectAllByByteArrayNullableNotEq(null).toIterable())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(byteArrayBinaryWithNullable)
     }
 }
 
 
-class ByteArrayRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : Repository {
+class ByteArrayRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Repository {
 
-    override fun init() = runBlocking {
+    override fun init() {
         createTables()
-        insertByteArrays()
+            .then(insertByteArrays().then())
+            .block()
     }
 
-    override fun delete() = runBlocking<Unit> {
+    override fun delete() {
         deleteAll()
+            .block()
     }
 
-    private suspend fun createTables() {
-        sqlClient createTable H2ByteArrayAsBinarys
-    }
+    private fun createTables() = sqlClient createTable H2ByteArrayAsBinarys
 
-    private suspend fun insertByteArrays() {
-        sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
-    }
+    private fun insertByteArrays() = sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom H2ByteArrayAsBinarys
+    private fun deleteAll() = sqlClient deleteAllFrom H2ByteArrayAsBinarys
 
     fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
             (sqlClient selectFrom H2ByteArrayAsBinarys
