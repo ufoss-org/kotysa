@@ -1425,11 +1425,6 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface Return : WithProperties {
 
-        /**
-         * Used exclusively by SqLite
-         */
-        public fun stringValue(value: Any?): String = value.dbValue(properties.tables.dbType)
-
         public fun froms(withFrom: Boolean = true): String = with(properties) {
             val prefix = if (withFrom) {
                 "FROM "
