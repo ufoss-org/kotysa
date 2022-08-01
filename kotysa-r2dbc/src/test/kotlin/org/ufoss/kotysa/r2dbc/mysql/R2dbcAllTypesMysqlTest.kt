@@ -67,19 +67,20 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newByteArray = byteArrayOf(0x2B)
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate,
-                newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
+                newKotlinxLocalDateTime, newInt, newLong, newByteArray
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
                     MysqlAllTypesNotNull(
-                        mysqlAllTypesNotNull.id, "new", false, newLocalDate,
-                        newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newLocalTime
+                        mysqlAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                        newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
+                        newLong, newByteArray, newLocalTime
                     )
                 )
         }
@@ -120,9 +121,8 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
-        newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
     ) =
         (sqlClient update MysqlAllTypesNotNulls
                 set MysqlAllTypesNotNulls.string eq newString
@@ -136,6 +136,7 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MysqlAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                 set MysqlAllTypesNotNulls.inte eq newInt
                 set MysqlAllTypesNotNulls.longe eq newLong
+                set MysqlAllTypesNotNulls.byteArray eq newByteArray
                 where MysqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

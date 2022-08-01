@@ -34,34 +34,36 @@ class SpringJdbcAllTypesMariadbTest : AbstractSpringJdbcMariadbTest<AllTypesRepo
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
         assertThat(repository.selectAllAllTypesNotNull())
-                .hasSize(1)
-                .containsExactly(mariadbAllTypesNotNull)
+            .hasSize(1)
+            .containsExactly(mariadbAllTypesNotNull)
     }
 
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue())
-                .hasSize(1)
-                .containsExactly(AllTypesNullableDefaultValueWithTimeEntity(
-                        allTypesNullableDefaultValueWithTime.id,
-                        "default",
-                        LocalDate.of(2019, 11, 4),
-                        kotlinx.datetime.LocalDate(2019, 11, 6),
-                        LocalDateTime.of(2018, 11, 4, 0, 0),
-                        LocalDateTime.of(2019, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                        42,
-                        84L,
-                        LocalTime.of(11, 25, 55),
-                ))
+            .hasSize(1)
+            .containsExactly(
+                AllTypesNullableDefaultValueWithTimeEntity(
+                    allTypesNullableDefaultValueWithTime.id,
+                    "default",
+                    LocalDate.of(2019, 11, 4),
+                    kotlinx.datetime.LocalDate(2019, 11, 6),
+                    LocalDateTime.of(2018, 11, 4, 0, 0),
+                    LocalDateTime.of(2019, 11, 4, 0, 0),
+                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                    42,
+                    84L,
+                    LocalTime.of(11, 25, 55),
+                )
+            )
     }
 
     @Test
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() {
         assertThat(repository.selectAllAllTypesNullable())
-                .hasSize(1)
-                .containsExactly(allTypesNullableWithTime)
+            .hasSize(1)
+            .containsExactly(allTypesNullableWithTime)
     }
 
     @Test
@@ -73,16 +75,22 @@ class SpringJdbcAllTypesMariadbTest : AbstractSpringJdbcMariadbTest<AllTypesRepo
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newByteArray = byteArrayOf(0x2B)
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
-            repository.updateAllTypesNotNull("new", false, newLocalDate, newKotlinxLocalDate,
-                    newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong)
+            repository.updateAllTypesNotNull(
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
+                newKotlinxLocalDateTime, newInt, newLong, newByteArray
+            )
             assertThat(repository.selectAllAllTypesNotNull())
-                    .hasSize(1)
-                    .containsExactlyInAnyOrder(
-                            MariadbAllTypesNotNull(mariadbAllTypesNotNull.id, "new", false, newLocalDate,
-                                    newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                                    newKotlinxLocalDateTime, newInt, newLong, newLocalTime))
+                .hasSize(1)
+                .containsExactlyInAnyOrder(
+                    MariadbAllTypesNotNull(
+                        mariadbAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                        newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
+                        newLong, newByteArray, newLocalTime
+                    )
+                )
         }
     }
 }
@@ -119,22 +127,24 @@ class AllTypesRepositoryMariadb(client: JdbcOperations) : Repository {
 
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MariadbAllTypesNullableDefaultValueWithTimes
 
-    fun updateAllTypesNotNull(newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-                              newKotlinxLocalDate: kotlinx.datetime.LocalDate,
-                              newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
-                              newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long) =
-            (sqlClient update MariadbAllTypesNotNulls
-                    set MariadbAllTypesNotNulls.string eq newString
-                    set MariadbAllTypesNotNulls.boolean eq newBoolean
-                    set MariadbAllTypesNotNulls.localDate eq newLocalDate
-                    set MariadbAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
-                    set MariadbAllTypesNotNulls.localTim eq newLocalTime
-                    set MariadbAllTypesNotNulls.localDateTime1 eq newLocalDateTime
-                    set MariadbAllTypesNotNulls.localDateTime2 eq newLocalDateTime
-                    set MariadbAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                    set MariadbAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                    set MariadbAllTypesNotNulls.inte eq newInt
-                    set MariadbAllTypesNotNulls.longe eq newLong
-                    where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
-                    ).execute()
+    fun updateAllTypesNotNull(
+        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
+    ) =
+        (sqlClient update MariadbAllTypesNotNulls
+                set MariadbAllTypesNotNulls.string eq newString
+                set MariadbAllTypesNotNulls.boolean eq newBoolean
+                set MariadbAllTypesNotNulls.localDate eq newLocalDate
+                set MariadbAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                set MariadbAllTypesNotNulls.localTim eq newLocalTime
+                set MariadbAllTypesNotNulls.localDateTime1 eq newLocalDateTime
+                set MariadbAllTypesNotNulls.localDateTime2 eq newLocalDateTime
+                set MariadbAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                set MariadbAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                set MariadbAllTypesNotNulls.inte eq newInt
+                set MariadbAllTypesNotNulls.longe eq newLong
+                set MariadbAllTypesNotNulls.byteArray eq newByteArray
+                where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
 }

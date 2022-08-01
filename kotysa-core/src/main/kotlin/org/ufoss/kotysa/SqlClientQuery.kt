@@ -128,6 +128,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, U, Long?>
         public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID>
         public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?>
+        public infix fun set(byteArrayColumnNotNull: ByteArrayColumnNotNull<T>): UpdateOpColumn<T, U, ByteArray>
+        public infix fun set(byteArrayColumnNullable: ByteArrayColumnNullable<T>): UpdateOpColumn<T, U, ByteArray?>
     }
 
     public interface UpdateOpColumn<T : Any, U : Update<T, U>, V> {
@@ -169,6 +171,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> where(longColumnNullable: LongColumnNullable<U>): WhereOpLongNullable<U, T>
         public infix fun <U : Any> where(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidNotNull<U, T>
         public infix fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
+        public infix fun <U : Any> where(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
+        public infix fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
         public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
         
         // Where with alias
@@ -201,6 +205,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun where(longAliasNullable: QueryAlias<Long?>): WhereOpLongNullable<Long, T>
         public infix fun where(uuidAliasNotNull: QueryAlias<UUID>): WhereOpUuidNotNull<UUID, T>
         public infix fun where(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
+        public infix fun where(byteArrayAliasNotNull: QueryAlias<ByteArray>): WhereOpByteArrayNotNull<ByteArray, T>
+        public infix fun where(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T>
     }
 
     public interface WhereInOp<T : Any, U : Where<U>, V : Any> {
@@ -361,6 +367,17 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface WhereOpUuidNullable<T : Any, U : Where<U>> :
         WhereOpUuid<T, U>, WhereOpNullable<T, U, UUID>
+
+    public interface WhereOpByteArray<T : Any, U : Where<U>> : WhereOp<U, ByteArray>, WhereInOp<T, U, ByteArray> {
+        public infix fun eq(otherByteArrayColumn: ByteArrayColumn<*>): U
+        public infix fun notEq(otherByteArrayColumn: ByteArrayColumn<*>): U
+    }
+
+    public interface WhereOpByteArrayNotNull<T : Any, U : Where<U>> :
+        WhereOpByteArray<T, U>, WhereOpNotNull<T, U, ByteArray>
+
+    public interface WhereOpByteArrayNullable<T : Any, U : Where<U>> :
+        WhereOpByteArray<T, U>, WhereOpNullable<T, U, ByteArray>
 
     public interface Where<T : Where<T>> {
         public infix fun <U : Any> and(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringNotNull<U, T>

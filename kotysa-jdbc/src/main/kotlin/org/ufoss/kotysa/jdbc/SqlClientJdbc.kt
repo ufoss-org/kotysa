@@ -99,8 +99,15 @@ internal class SqlClientJdbc(
                         || SqlType.SERIAL == column.sqlType
                         || SqlType.BIGSERIAL == column.sqlType)
             }
-            .map { column -> tables.getDbValue(column.entityGetter(row)) }
-            .forEachIndexed { index, dbValue -> statement.setObject(index + 1, dbValue) }
+            .forEachIndexed { index, column -> 
+                val dbValue = tables.getDbValue(column.entityGetter(row))
+                // workaround for MSSQL https://progress-supportcommunity.force.com/s/article/Implicit-conversion-from-data-type-nvarchar-to-varbinary-max-is-not-allowed-error-with-SQL-Server-JDBC-driver
+                if (SqlType.BINARY == column.sqlType) {
+                    statement.setObject(index + 1, dbValue, java.sql.Types.VARBINARY)
+                } else {
+                    statement.setObject(index + 1, dbValue)
+                }
+            }
     }
 
     private fun <T : Any> fetchLastInserted(connection: Connection, row: T, table: KotysaTable<T>): T {
