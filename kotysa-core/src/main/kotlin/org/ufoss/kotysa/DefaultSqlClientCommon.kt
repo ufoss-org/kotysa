@@ -1205,6 +1205,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.AND)
 
+        override fun <U : Any> and(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayColumnNotNull<U, T> =
+            whereOpByteArrayColumnNotNull(byteArrayColumnNotNull, WhereClauseType.AND)
+
+        override fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
+            whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.AND)
+
         override fun <U : Any> andExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.AND))
             return where
@@ -1282,6 +1288,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun and(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T> =
             whereOpUuidAliasNullable(uuidAliasNullable, WhereClauseType.AND)
 
+        override fun and(byteArrayAliasNotNull: QueryAlias<ByteArray>): WhereOpByteArrayNotNull<ByteArray, T> =
+            whereOpByteArrayAliasNotNull(byteArrayAliasNotNull, WhereClauseType.AND)
+
+        override fun and(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T> =
+            whereOpByteArrayAliasNullable(byteArrayAliasNullable, WhereClauseType.AND)
+
         override fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T> =
             whereOpStringColumnNotNull(stringColumnNotNull, WhereClauseType.OR)
 
@@ -1344,6 +1356,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.OR)
+
+        override fun <U : Any> or(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayColumnNotNull<U, T> =
+            whereOpByteArrayColumnNotNull(byteArrayColumnNotNull, WhereClauseType.OR)
+
+        override fun <U : Any> or(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
+            whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.OR)
 
         override fun <U : Any> orExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.OR))
@@ -1421,6 +1439,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun or(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T> =
             whereOpUuidAliasNullable(uuidAliasNullable, WhereClauseType.OR)
+
+        override fun or(byteArrayAliasNotNull: QueryAlias<ByteArray>): WhereOpByteArrayNotNull<ByteArray, T> =
+            whereOpByteArrayAliasNotNull(byteArrayAliasNotNull, WhereClauseType.OR)
+
+        override fun or(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T> =
+            whereOpByteArrayAliasNullable(byteArrayAliasNullable, WhereClauseType.OR)
     }
 
     public interface Return : WithProperties {
