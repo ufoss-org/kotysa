@@ -11,6 +11,7 @@ public sealed class DbBinaryColumn<T : Any, U : Any> : DbColumn<T, U>() {
     final override val size = null
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
+    override val defaultValue: U? = null
 
     final override val sqlType = SqlType.BINARY
 }
@@ -19,7 +20,6 @@ public sealed class DbBinaryColumn<T : Any, U : Any> : DbColumn<T, U>() {
 public sealed class DbBinaryColumnNotNull<T : Any, U : Any> : DbBinaryColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
-    final override val defaultValue: U? = null
 }
 
 public class ByteArrayDbBinaryColumnNotNull<T : Any> internal constructor(
@@ -30,7 +30,6 @@ public class ByteArrayDbBinaryColumnNotNull<T : Any> internal constructor(
 public class ByteArrayDbBinaryColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> ByteArray?,
         override val columnName: String?,
-        override val defaultValue: ByteArray?,
 ) : DbBinaryColumn<T, ByteArray>(), ByteArrayColumnNullable<T> {
     override val isNullable = defaultValue == null
 }

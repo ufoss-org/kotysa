@@ -54,18 +54,65 @@ data class H2AllTypesNotNullEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
     override val int: Int,
     override val long: Long,
+    override val byteArray: ByteArray,
     val offsetDateTime: OffsetDateTime,
     val uuid: UUID,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, localTime
-)
+    kotlinxLocalDateTime2, int, long, byteArray, localTime
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as H2AllTypesNotNullEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (boolean != other.boolean) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime != other.localTime) return false
+        if (localDateTime1 != other.localDateTime1) return false
+        if (localDateTime2 != other.localDateTime2) return false
+        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
+        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (int != other.int) return false
+        if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
+        if (offsetDateTime != other.offsetDateTime) return false
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + id
+        result = 31 * result + string.hashCode()
+        result = 31 * result + boolean.hashCode()
+        result = 31 * result + localDate.hashCode()
+        result = 31 * result + kotlinxLocalDate.hashCode()
+        result = 31 * result + localTime.hashCode()
+        result = 31 * result + localDateTime1.hashCode()
+        result = 31 * result + localDateTime2.hashCode()
+        result = 31 * result + kotlinxLocalDateTime1.hashCode()
+        result = 31 * result + kotlinxLocalDateTime2.hashCode()
+        result = 31 * result + int
+        result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
+        result = 31 * result + offsetDateTime.hashCode()
+        result = 31 * result + uuid.hashCode()
+        return result
+    }
+}
 
 val h2AllTypesNotNull = H2AllTypesNotNullEntity(
     1, "",
     true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
     LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, OffsetDateTime.of(
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, byteArrayOf(0x2A), OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
     ), UUID.randomUUID()
@@ -85,6 +132,7 @@ object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNotNullEntity::int)
     val long = bigInt(AllTypesNotNullEntity::long)
+    val byteArray = binary(AllTypesNotNullEntity::byteArray)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNotNullEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNotNullEntity::uuid)
 }
@@ -101,16 +149,64 @@ data class H2AllTypesNullableEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
     override val int: Int?,
     override val long: Long?,
+    override val byteArray: ByteArray?,
     val offsetDateTime: OffsetDateTime?,
     val uuid: UUID?,
 ) : AllTypesNullableWithTimeEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
-)
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as H2AllTypesNullableEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime != other.localTime) return false
+        if (localDateTime1 != other.localDateTime1) return false
+        if (localDateTime2 != other.localDateTime2) return false
+        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
+        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (int != other.int) return false
+        if (long != other.long) return false
+        if (byteArray != null) {
+            if (other.byteArray == null) return false
+            if (!byteArray.contentEquals(other.byteArray)) return false
+        } else if (other.byteArray != null) return false
+        if (offsetDateTime != other.offsetDateTime) return false
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + id
+        result = 31 * result + (string?.hashCode() ?: 0)
+        result = 31 * result + (localDate?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
+        result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (int ?: 0)
+        result = 31 * result + (long?.hashCode() ?: 0)
+        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
+        return result
+    }
+}
 
 val h2AllTypesNullable = H2AllTypesNullableEntity(
     1, null, null, null, null, null, null,
-    null, null, null, null, null, null
+    null, null, null, null, null, null, null
 )
 
 object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullable") {
@@ -126,6 +222,7 @@ object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullab
     val kotlinxLocalDateTime2 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNullableEntity::int)
     val long = bigInt(AllTypesNullableEntity::long)
+    val byteArray = binary(AllTypesNullableEntity::byteArray)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNullableEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNullableEntity::uuid)
 }

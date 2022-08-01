@@ -68,10 +68,11 @@ data class MysqlAllTypesNotNull(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
     override val int: Int,
     override val long: Long,
+    override val byteArray: ByteArray,
     override val localTime: LocalTime,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, localTime
+    kotlinxLocalDateTime2, int, long, byteArray, localTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -94,6 +95,7 @@ data class MysqlAllTypesNotNull(
         ) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
         if (id != other.id) return false
 
         return true
@@ -110,6 +112,7 @@ data class MysqlAllTypesNotNull(
         result = 31 * result + kotlinxLocalDateTime2.hashCode()
         result = 31 * result + int
         result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
         result = 31 * result + id
         return result
     }
@@ -119,7 +122,7 @@ val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
     1, "",
     true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
     Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
-    1L, LocalTime.now()
+    1L, byteArrayOf(0x2A), LocalTime.now()
 )
 
 object MysqlAllTypesNotNulls : MysqlTable<MysqlAllTypesNotNull>("all_types") {
@@ -136,6 +139,7 @@ object MysqlAllTypesNotNulls : MysqlTable<MysqlAllTypesNotNull>("all_types") {
     val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNotNullEntity::int)
     val longe = bigInt(AllTypesNotNullEntity::long)
+    val byteArray = binary(AllTypesNotNullEntity::byteArray)
 }
 
 object MysqlAllTypesNullableWithTimes : MysqlTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
@@ -151,6 +155,7 @@ object MysqlAllTypesNullableWithTimes : MysqlTable<AllTypesNullableWithTimeEntit
     val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNullableEntity::int)
     val longe = bigInt(AllTypesNullableEntity::long)
+    val byteArray = binary(AllTypesNullableEntity::byteArray)
 }
 
 object MysqlAllTypesNullableDefaultValueWithTimes : MysqlTable<AllTypesNullableDefaultValueWithTimeEntity>() {

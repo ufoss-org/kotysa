@@ -114,10 +114,6 @@ public abstract class SqLiteTable<T : Any> protected constructor(tableName: Stri
     protected fun blob(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBlobColumnNotNull<T> =
         ByteArrayDbBlobColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun blob(
-        getter: (T) -> ByteArray?,
-        columnName: String? = null,
-        defaultValue: ByteArray? = null
-    ): ByteArrayDbBlobColumnNullable<T> =
-        ByteArrayDbBlobColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    protected fun blob(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbBlobColumnNullable<T> =
+        ByteArrayDbBlobColumnNullable(getter, columnName).also { addColumn(it) }
 }

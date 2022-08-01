@@ -59,8 +59,9 @@ open class AllTypesNotNullEntity(
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         open val int: Int,
         open val long: Long,
+        open val byteArray: ByteArray,
 ) {
-    // just base equals, hashcode and toString (this class is not a data class)
+    // equals, hashcode and toString (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -78,6 +79,7 @@ open class AllTypesNotNullEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
 
         return true
     }
@@ -94,18 +96,22 @@ open class AllTypesNotNullEntity(
         result = 31 * result + kotlinxLocalDateTime2.hashCode()
         result = 31 * result + int
         result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
         return result
     }
 
     override fun toString(): String {
-        return "AllTypesNotNullEntity(id=$id, string='$string', boolean=$boolean, localDate=$localDate, kotlinxLocalDate=$kotlinxLocalDate, localDateTime1=$localDateTime1, localDateTime2=$localDateTime2, kotlinxLocalDateTime1=$kotlinxLocalDateTime1, kotlinxLocalDateTime2=$kotlinxLocalDateTime2, int=$int, long=$long)"
+        return "AllTypesNotNullEntity(id=$id, string='$string', boolean=$boolean, localDate=$localDate, " +
+                "kotlinxLocalDate=$kotlinxLocalDate, localDateTime1=$localDateTime1, localDateTime2=$localDateTime2, " +
+                "kotlinxLocalDateTime1=$kotlinxLocalDateTime1, kotlinxLocalDateTime2=$kotlinxLocalDateTime2, " +
+                "int=$int, long=$long, byteArray=${byteArray.contentToString()})"
     }
 }
 
 val allTypesNotNull = AllTypesNotNullEntity(1, "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
         Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Int.MAX_VALUE, Long.MAX_VALUE)
+        Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A))
 
 open class AllTypesNotNullWithTimeEntity(
         override val id: Int,
@@ -119,12 +125,13 @@ open class AllTypesNotNullWithTimeEntity(
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
         override val int: Int,
         override val long: Long,
+        override val byteArray: ByteArray,
         open val localTime: LocalTime,
 ) : AllTypesNotNullEntity(
         id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-        kotlinxLocalDateTime2, int, long
+        kotlinxLocalDateTime2, int, long, byteArray
 ) {
-    // just base equals and hashcode (this class is not a data class)
+    // equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -143,6 +150,7 @@ open class AllTypesNotNullWithTimeEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
         if (localTime != other.localTime) return false
 
         return true
@@ -161,6 +169,7 @@ open class AllTypesNotNullWithTimeEntity(
         result = 31 * result + kotlinxLocalDateTime2.hashCode()
         result = 31 * result + int
         result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
         result = 31 * result + localTime.hashCode()
         return result
     }
@@ -170,7 +179,7 @@ open class AllTypesNotNullWithTimeEntity(
 val allTypesNotNullWithTime = AllTypesNotNullWithTimeEntity(1, "",
         true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
         Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-        Int.MAX_VALUE, Long.MAX_VALUE, LocalTime.now())
+        Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A), LocalTime.now())
 
 
 open class AllTypesNullableEntity(
@@ -184,6 +193,7 @@ open class AllTypesNullableEntity(
         open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
         open val int: Int?,
         open val long: Long?,
+        open val byteArray: ByteArray?,
 ) {
     // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
@@ -202,6 +212,10 @@ open class AllTypesNullableEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (byteArray != null) {
+            if (other.byteArray == null) return false
+            if (!byteArray.contentEquals(other.byteArray)) return false
+        } else if (other.byteArray != null) return false
 
         return true
     }
@@ -217,13 +231,14 @@ open class AllTypesNullableEntity(
         result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
         result = 31 * result + (long?.hashCode() ?: 0)
+        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
         return result
     }
 }
 
 val allTypesNullable = AllTypesNullableEntity(1, null, null, null,
         null, null, null, null, null,
-        null)
+        null, null)
 
 open class AllTypesNullableWithTimeEntity(
         override val id: Int,
@@ -236,12 +251,13 @@ open class AllTypesNullableWithTimeEntity(
         override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
         override val int: Int?,
         override val long: Long?,
+        override val byteArray: ByteArray?,
         open val localTime: LocalTime?,
 ) : AllTypesNullableEntity(
         id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-        kotlinxLocalDateTime2, int, long
+        kotlinxLocalDateTime2, int, long, byteArray
 ) {
-    // just base equals and hashcode (this class is not a data class)
+    // equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -259,6 +275,10 @@ open class AllTypesNullableWithTimeEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (byteArray != null) {
+            if (other.byteArray == null) return false
+            if (!byteArray.contentEquals(other.byteArray)) return false
+        } else if (other.byteArray != null) return false
         if (localTime != other.localTime) return false
 
         return true
@@ -276,6 +296,7 @@ open class AllTypesNullableWithTimeEntity(
         result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
         result = 31 * result + (long?.hashCode() ?: 0)
+        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
         return result
     }
@@ -283,7 +304,7 @@ open class AllTypesNullableWithTimeEntity(
 
 val allTypesNullableWithTime = AllTypesNullableWithTimeEntity(1, null, null, null,
         null, null, null, null, null,
-        null, null)
+        null, null, null)
 
 
 open class AllTypesNullableDefaultValueEntity(

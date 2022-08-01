@@ -50,6 +50,7 @@ object SqliteAllTypesNotNullWithTimes : SqLiteTable<AllTypesNotNullWithTimeEntit
     val kotlinxLocalDateTime2 = text(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNotNullEntity::int)
     val long = integer(AllTypesNotNullEntity::long)
+    val byteArray = blob(AllTypesNotNullEntity::byteArray)
 }
 
 object SqliteAllTypesNullableWithTimes : SqLiteTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
@@ -65,6 +66,7 @@ object SqliteAllTypesNullableWithTimes : SqLiteTable<AllTypesNullableWithTimeEnt
     val kotlinxLocalDateTime2 = text(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNullableEntity::int)
     val long = integer(AllTypesNullableEntity::long)
+    val byteArray = blob(AllTypesNullableEntity::byteArray)
 }
 
 object SqliteAllTypesNullableDefaultValueWithTimes :

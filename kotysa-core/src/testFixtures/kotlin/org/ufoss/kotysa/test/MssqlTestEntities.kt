@@ -51,9 +51,10 @@ data class MssqlAllTypesNotNull(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
     override val int: Int,
     override val long: Long,
+    override val byteArray: ByteArray,
 ) : AllTypesNotNullEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long
+    kotlinxLocalDateTime2, int, long, byteArray
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -74,6 +75,7 @@ data class MssqlAllTypesNotNull(
         ) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
         if (id != other.id) return false
 
         return true
@@ -89,6 +91,7 @@ data class MssqlAllTypesNotNull(
         result = 31 * result + kotlinxLocalDateTime2.hashCode()
         result = 31 * result + int
         result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
         result = 31 * result + id
         return result
     }
@@ -97,7 +100,7 @@ data class MssqlAllTypesNotNull(
 val mssqlAllTypesNotNull = MssqlAllTypesNotNull(
     1, "", true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(),
     LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, byteArrayOf(0x2A)
 )
 
 object MssqlAllTypesNotNulls : MssqlTable<MssqlAllTypesNotNull>("all_types") {
@@ -113,6 +116,7 @@ object MssqlAllTypesNotNulls : MssqlTable<MssqlAllTypesNotNull>("all_types") {
     val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNotNullEntity::int)
     val longe = bigInt(AllTypesNotNullEntity::long)
+    val byteArray = binary(AllTypesNotNullEntity::byteArray)
 }
 
 object MssqlAllTypesNullables : MssqlTable<AllTypesNullableEntity>("all_types_nullable") {
@@ -127,6 +131,7 @@ object MssqlAllTypesNullables : MssqlTable<AllTypesNullableEntity>("all_types_nu
     val kotlinxLocalDateTime2 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val inte = integer(AllTypesNullableEntity::int)
     val longe = bigInt(AllTypesNullableEntity::long)
+    val byteArray = binary(AllTypesNullableEntity::byteArray)
 }
 
 object MssqlAllTypesNullableDefaultValues : MssqlTable<AllTypesNullableDefaultValueEntity>() {
@@ -139,7 +144,7 @@ object MssqlAllTypesNullableDefaultValues : MssqlTable<AllTypesNullableDefaultVa
     )
     val kotlinxLocalDate = date(
         AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
-        defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+        defaultValue = LocalDate(2019, 11, 6)
     )
     val localDateTime1 = dateTime(
         AllTypesNullableDefaultValueEntity::localDateTime1,
@@ -151,11 +156,11 @@ object MssqlAllTypesNullableDefaultValues : MssqlTable<AllTypesNullableDefaultVa
     )
     val kotlinxLocalDateTime1 = dateTime(
         AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
-        defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+        defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
     )
     val kotlinxLocalDateTime2 = dateTime(
         AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
-        defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
+        defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)

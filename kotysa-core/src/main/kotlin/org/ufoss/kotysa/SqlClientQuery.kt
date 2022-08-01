@@ -128,6 +128,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, U, Long?>
         public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID>
         public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?>
+        public infix fun set(byteArrayColumnNotNull: ByteArrayColumnNotNull<T>): UpdateOpColumn<T, U, ByteArray>
+        public infix fun set(byteArrayColumnNullable: ByteArrayColumnNullable<T>): UpdateOpColumn<T, U, ByteArray?>
     }
 
     public interface UpdateOpColumn<T : Any, U : Update<T, U>, V> {

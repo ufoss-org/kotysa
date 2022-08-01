@@ -16,7 +16,6 @@ import java.time.*
 import java.time.temporal.ChronoUnit
 import java.util.*
 
-
 object PostgresqlRoles : PostgresqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
@@ -55,11 +54,12 @@ data class PostgresqlAllTypesNotNullEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
     override val int: Int,
     override val long: Long,
+    override val byteArray: ByteArray,
     val offsetDateTime: OffsetDateTime,
     val uuid: UUID,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -80,6 +80,7 @@ data class PostgresqlAllTypesNotNullEntity(
         if (uuid != other.uuid) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
         if (id != other.id) return false
 
         return true
@@ -98,6 +99,7 @@ data class PostgresqlAllTypesNotNullEntity(
         result = 31 * result + uuid.hashCode()
         result = 31 * result + int
         result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
         result = 31 * result + id.hashCode()
         return result
     }
@@ -107,7 +109,7 @@ val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(
     1, "",
     true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
     LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE,
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A),
     OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
@@ -128,6 +130,7 @@ object PostgresqlAllTypesNotNulls : PostgresqlTable<PostgresqlAllTypesNotNullEnt
     val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNotNullEntity::int)
     val long = bigInt(AllTypesNotNullEntity::long)
+    val byteArray = bytea(AllTypesNotNullEntity::byteArray)
     val offsetDateTime = timestampWithTimeZone(PostgresqlAllTypesNotNullEntity::offsetDateTime)
     val uuid = uuid(PostgresqlAllTypesNotNullEntity::uuid)
 }
@@ -144,17 +147,65 @@ data class PostgresqlAllTypesNullableEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
     override val int: Int?,
     override val long: Long?,
+    override val byteArray: ByteArray?,
     val offsetDateTime: OffsetDateTime?,
     val uuid: UUID?,
 ) : AllTypesNullableWithTimeEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
-)
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as PostgresqlAllTypesNullableEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime != other.localTime) return false
+        if (localDateTime1 != other.localDateTime1) return false
+        if (localDateTime2 != other.localDateTime2) return false
+        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
+        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (int != other.int) return false
+        if (long != other.long) return false
+        if (byteArray != null) {
+            if (other.byteArray == null) return false
+            if (!byteArray.contentEquals(other.byteArray)) return false
+        } else if (other.byteArray != null) return false
+        if (offsetDateTime != other.offsetDateTime) return false
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + id
+        result = 31 * result + (string?.hashCode() ?: 0)
+        result = 31 * result + (localDate?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
+        result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
+        result = 31 * result + (int ?: 0)
+        result = 31 * result + (long?.hashCode() ?: 0)
+        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
+        return result
+    }
+}
 
 val postgresqlAllTypesNullable = PostgresqlAllTypesNullableEntity(
     1, null, null, null,
     null, null, null, null, null,
-    null, null, null, null
+    null, null, null, null, null
 )
 
 object PostgresqlAllTypesNullables : PostgresqlTable<PostgresqlAllTypesNullableEntity>("all_types_nullable") {
@@ -170,6 +221,7 @@ object PostgresqlAllTypesNullables : PostgresqlTable<PostgresqlAllTypesNullableE
     val kotlinxLocalDateTime2 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime2)
     val int = integer(AllTypesNullableEntity::int)
     val long = bigInt(AllTypesNullableEntity::long)
+    val byteArray = bytea(AllTypesNullableEntity::byteArray)
     val offsetDateTime = timestampWithTimeZone(PostgresqlAllTypesNullableEntity::offsetDateTime)
     val uuid = uuid(PostgresqlAllTypesNullableEntity::uuid)
 }
@@ -202,11 +254,6 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (offsetDateTime != null) {
-            if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
-        } else if (other.offsetDateTime != null) {
-            return false
-        }
         if (localTime != null) {
             if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime?.truncatedTo(ChronoUnit.SECONDS)) return false
         } else if (other.localTime != null) {
@@ -216,9 +263,14 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (uuid != other.uuid) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (offsetDateTime != null) {
+            if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
+        } else if (other.offsetDateTime != null) {
+            return false
+        }
+        if (uuid != other.uuid) return false
         if (id != other.id) return false
 
         return true
@@ -228,15 +280,15 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         var result = string?.hashCode() ?: 0
         result = 31 * result + (localDate?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
         result = 31 * result + (localDateTime1?.hashCode() ?: 0)
         result = 31 * result + (localDateTime2?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (uuid?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
         result = 31 * result + (long?.hashCode() ?: 0)
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
         result = 31 * result + id.hashCode()
         return result
     }

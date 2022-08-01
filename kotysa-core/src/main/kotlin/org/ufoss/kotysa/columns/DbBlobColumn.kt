@@ -11,6 +11,7 @@ public sealed class DbBlobColumn<T : Any, U : Any> : DbColumn<T, U>() {
     final override val size = null
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
+    override val defaultValue: U? = null
 
     final override val sqlType = SqlType.BLOB
 }
@@ -18,8 +19,7 @@ public sealed class DbBlobColumn<T : Any, U : Any> : DbColumn<T, U>() {
 
 public sealed class DbBlobColumnNotNull<T : Any, U : Any> : DbBlobColumn<T, U>() {
     // Not null
-    final override val isNullable: Boolean = false
-    final override val defaultValue: U? = null
+    final override val isNullable = false
 }
 
 public class ByteArrayDbBlobColumnNotNull<T : Any> internal constructor(
@@ -30,7 +30,6 @@ public class ByteArrayDbBlobColumnNotNull<T : Any> internal constructor(
 public class ByteArrayDbBlobColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> ByteArray?,
         override val columnName: String?,
-        override val defaultValue: ByteArray?,
 ) : DbBlobColumn<T, ByteArray>(), ByteArrayColumnNullable<T> {
-    override val isNullable = defaultValue == null
+    override val isNullable = true
 }

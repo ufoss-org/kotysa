@@ -160,10 +160,6 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
     protected fun bytea(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbByteaColumnNotNull<T> =
         ByteArrayDbByteaColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun bytea(
-        getter: (T) -> ByteArray?,
-        columnName: String? = null,
-        defaultValue: ByteArray? = null
-    ): ByteArrayDbByteaColumnNullable<T> =
-        ByteArrayDbByteaColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    protected fun bytea(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbByteaColumnNullable<T> =
+        ByteArrayDbByteaColumnNullable(getter, columnName).also { addColumn(it) }
 }

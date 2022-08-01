@@ -118,20 +118,12 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
     protected fun blob(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBlobColumnNotNull<T> =
         ByteArrayDbBlobColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun blob(
-        getter: (T) -> ByteArray?,
-        columnName: String? = null,
-        defaultValue: ByteArray? = null
-    ): ByteArrayDbBlobColumnNullable<T> =
-        ByteArrayDbBlobColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    protected fun blob(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbBlobColumnNullable<T> =
+        ByteArrayDbBlobColumnNullable(getter, columnName).also { addColumn(it) }
 
     protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
         ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun binary(
-        getter: (T) -> ByteArray?,
-        columnName: String? = null,
-        defaultValue: ByteArray? = null
-    ): ByteArrayDbBinaryColumnNullable<T> =
-        ByteArrayDbBinaryColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    protected fun binary(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbBinaryColumnNullable<T> =
+        ByteArrayDbBinaryColumnNullable(getter, columnName).also { addColumn(it) }
 }

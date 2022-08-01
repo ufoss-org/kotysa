@@ -14,6 +14,7 @@ public sealed class DbByteaColumn<T : Any, U : Any> : DbColumn<T, U>() {
     final override val size = null
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
+    override val defaultValue: U? = null
 
     final override val sqlType = SqlType.BYTEA
 }
@@ -22,7 +23,6 @@ public sealed class DbByteaColumn<T : Any, U : Any> : DbColumn<T, U>() {
 public sealed class DbByteaColumnNotNull<T : Any, U : Any> : DbByteaColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
-    final override val defaultValue: U? = null
 }
 
 public class ByteArrayDbByteaColumnNotNull<T : Any> internal constructor(
@@ -33,7 +33,6 @@ public class ByteArrayDbByteaColumnNotNull<T : Any> internal constructor(
 public class ByteArrayDbByteaColumnNullable<T : Any> internal constructor(
         override val entityGetter: (T) -> ByteArray?,
         override val columnName: String?,
-        override val defaultValue: ByteArray?,
 ) : DbByteaColumn<T, ByteArray>(), ByteArrayColumnNullable<T> {
-    override val isNullable = defaultValue == null
+    override val isNullable = true
 }

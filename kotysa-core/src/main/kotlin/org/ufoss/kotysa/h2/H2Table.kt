@@ -168,18 +168,13 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
 
     protected fun blob(
         getter: (T) -> ByteArray?,
-        columnName: String? = null,
-        defaultValue: ByteArray? = null
+        columnName: String? = null
     ): ByteArrayDbBlobColumnNullable<T> =
-        ByteArrayDbBlobColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+        ByteArrayDbBlobColumnNullable(getter, columnName).also { addColumn(it) }
 
     protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
         ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun binary(
-        getter: (T) -> ByteArray?,
-        columnName: String? = null,
-        defaultValue: ByteArray? = null
-    ): ByteArrayDbBinaryColumnNullable<T> =
-        ByteArrayDbBinaryColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    protected fun binary(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbBinaryColumnNullable<T> =
+        ByteArrayDbBinaryColumnNullable(getter, columnName).also { addColumn(it) }
 }
