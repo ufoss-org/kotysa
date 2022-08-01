@@ -25,7 +25,7 @@ internal fun SQLiteStatement.bind(index: Int, value: Any?) {
             is Double -> bindDouble(index, value)
             is String -> bindString(index, value)
             is ByteArray -> bindBlob(index, value)
-            // Date are stored as String
+            // Dates are stored as String
             is LocalDate -> bindString(index, value.format(DateTimeFormatter.ISO_LOCAL_DATE))
             is LocalDateTime -> bindString(index, value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             is OffsetDateTime -> bindString(index, value.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -56,14 +56,9 @@ internal fun DefaultSqlClientCommon.Return.bindWhereArgs(statement: SQLiteStatem
             .forEach { whereValue -> statement.bind(index++, whereValue) }
 }
 
-internal fun DefaultSqlClientCommon.Return.buildWhereArgs(): MutableList<String> =
-        whereValues()
-                .map { whereValue -> stringValue(whereValue) }
-                .toMutableList()
-
 internal fun Cursor.toRow() = RowImpl(SqLiteRow(this))
 
-private fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(properties) {
+internal fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(properties) {
     parameters
         .flatMap { parameter ->
             if (parameter is Collection<*>) {

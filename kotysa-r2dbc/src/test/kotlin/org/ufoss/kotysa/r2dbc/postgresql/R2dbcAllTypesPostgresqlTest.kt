@@ -73,21 +73,20 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
         val newUuid = UUID.randomUUID()
         val newInt = 2
         val newLong = 2L
+        val newByteArray = byteArrayOf(0x2B)
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate,
-                newLocalTime, newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newOffsetDateTime,
-                newUuid
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
+                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
                     PostgresqlAllTypesNotNullEntity(
-                        postgresqlAllTypesNotNull.id, "new", false,
-                        newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime, newLocalDateTime,
-                        newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong,
-                        newOffsetDateTime, newUuid
+                        postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                        newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
                     )
                 )
         }
@@ -128,9 +127,9 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-        newLocalDateTime: LocalDateTime, newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int,
-        newLong: Long, newOffsetDateTime: OffsetDateTime, newUuid: UUID
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray,
+        newOffsetDateTime: OffsetDateTime, newUuid: UUID
     ) =
         (sqlClient update PostgresqlAllTypesNotNulls
                 set PostgresqlAllTypesNotNulls.string eq newString
@@ -144,6 +143,7 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
                 set PostgresqlAllTypesNotNulls.int eq newInt
                 set PostgresqlAllTypesNotNulls.long eq newLong
+                set PostgresqlAllTypesNotNulls.byteArray eq newByteArray
                 set PostgresqlAllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set PostgresqlAllTypesNotNulls.uuid eq newUuid
                 where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id

@@ -78,3 +78,7 @@ public interface LongColumnNullable<out T : Any> : LongColumn<T>, ColumnNullable
 public interface UuidColumn<out T : Any> : Column<T, UUID>
 public interface UuidColumnNotNull<out T : Any> : UuidColumn<T>, ColumnNotNull<T, UUID>
 public interface UuidColumnNullable<out T : Any> : UuidColumn<T>, ColumnNullable<T, UUID>
+
+public interface ByteArrayColumn<out T : Any> : Column<T, ByteArray>
+public interface ByteArrayColumnNotNull<out T : Any> : ByteArrayColumn<T>, ColumnNotNull<T, ByteArray>
+public interface ByteArrayColumnNullable<out T : Any> : ByteArrayColumn<T>, ColumnNullable<T, ByteArray>

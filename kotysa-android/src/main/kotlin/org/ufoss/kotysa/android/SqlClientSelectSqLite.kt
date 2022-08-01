@@ -556,15 +556,15 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
 
         private fun fetch(): Cursor = with(properties) {
             val sql = selectSql()
-            val selectionArgs = buildWhereArgs()
+            val selectionArgs = whereValues().toMutableList()
             if (limit != null) {
-                selectionArgs.add(stringValue(limit))
+                selectionArgs.add(limit)
             }
             if (offset != null) {
-                selectionArgs.add(stringValue(offset))
+                selectionArgs.add(offset)
             }
 
-            return client.rawQuery(sql, selectionArgs.toTypedArray())
+            return client.rawQueryWithFactory(SqLiteCursorFactory(selectionArgs), sql, null, null)
         }
     }
 }

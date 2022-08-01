@@ -114,4 +114,16 @@ public abstract class MysqlTable<T : Any> protected constructor(tableName: Strin
 
     protected fun time(getter: (T) -> LocalTime?, columnName: String? = null, defaultValue: LocalTime? = null, precision: Int? = null): LocalTimeDbTimeColumnNullable<T> =
             LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+
+    protected fun blob(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBlobColumnNotNull<T> =
+        ByteArrayDbBlobColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun blob(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbBlobColumnNullable<T> =
+        ByteArrayDbBlobColumnNullable(getter, columnName).also { addColumn(it) }
+
+    protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
+        ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun binary(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbBinaryColumnNullable<T> =
+        ByteArrayDbBinaryColumnNullable(getter, columnName).also { addColumn(it) }
 }

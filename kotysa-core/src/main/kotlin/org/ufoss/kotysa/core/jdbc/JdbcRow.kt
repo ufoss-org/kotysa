@@ -19,6 +19,7 @@ internal class JdbcRow(private val rs: ResultSet) : Row {
                     rs.getObject(index + 1, LocalDate::class.java)?.toKotlinLocalDate()
                 "kotlinx.datetime.LocalDateTime" ->
                     rs.getObject(index + 1, LocalDateTime::class.java)?.toKotlinLocalDateTime()
+                "[B" -> rs.getBytes(index + 1) // required for Postgresql driver
                 else -> rs.getObject(index + 1, clazz)
             } as T?
 }
