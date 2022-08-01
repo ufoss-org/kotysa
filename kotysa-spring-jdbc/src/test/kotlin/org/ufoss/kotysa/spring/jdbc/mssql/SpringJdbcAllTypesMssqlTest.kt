@@ -4,10 +4,7 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
+import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -46,11 +43,11 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
                     allTypesNullableDefaultValueWithTime.id,
                     "default",
                     LocalDate.of(2019, 11, 4),
-                    kotlinx.datetime.LocalDate(2019, 11, 6),
+                    LocalDate(2019, 11, 6),
                     LocalDateTime.of(2018, 11, 4, 0, 0),
                     LocalDateTime.of(2019, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                    LocalDateTime(2018, 11, 4, 0, 0),
+                    LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L
                 )
@@ -67,7 +64,7 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
     @Test
     fun `Verify updateAll works`() {
         val newLocalDate = LocalDate.now()
-        val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
+        val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2

@@ -7,15 +7,18 @@ package org.ufoss.kotysa.r2dbc.h2
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.util.*
 
 class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
@@ -64,7 +67,7 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     @Test
     fun `Verify updateAll works`() = runTest {
         val newLocalDate = LocalDate.now()
-        val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
+        val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()

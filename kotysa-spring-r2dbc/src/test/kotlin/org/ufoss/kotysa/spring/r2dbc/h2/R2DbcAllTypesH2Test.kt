@@ -4,10 +4,9 @@
 
 package org.ufoss.kotysa.spring.r2dbc.h2
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.reactive.TransactionalOperator
@@ -17,6 +16,10 @@ import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.util.*
 
 
@@ -67,7 +70,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     @Test
     fun `Verify updateAll works`() {
         val newLocalDate = LocalDate.now()
-        val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
+        val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()

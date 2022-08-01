@@ -120,7 +120,7 @@ data class MysqlAllTypesNotNull(
 
 val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
     1, "",
-    true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
+    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
     Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
     1L, byteArrayOf(0x2A), LocalTime.now()
 )

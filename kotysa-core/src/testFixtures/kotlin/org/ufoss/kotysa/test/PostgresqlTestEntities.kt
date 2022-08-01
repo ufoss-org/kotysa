@@ -4,15 +4,18 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.postgresql.date
 import org.ufoss.kotysa.postgresql.timestamp
 import org.ufoss.kotysa.tables
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
@@ -107,7 +110,7 @@ data class PostgresqlAllTypesNotNullEntity(
 
 val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(
     1, "",
-    true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
+    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
     LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
     Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A),
     OffsetDateTime.of(

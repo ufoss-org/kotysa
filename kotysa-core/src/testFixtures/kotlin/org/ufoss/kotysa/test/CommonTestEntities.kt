@@ -4,15 +4,18 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.BooleanColumnNotNull
 import org.ufoss.kotysa.StringColumnNotNull
 import org.ufoss.kotysa.StringColumnNullable
 import org.ufoss.kotysa.Table
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.util.*
 
 const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
@@ -109,7 +112,7 @@ open class AllTypesNotNullEntity(
 }
 
 val allTypesNotNull = AllTypesNotNullEntity(1, "",
-        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
+        true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
         Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC),
         Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A))
 
@@ -177,7 +180,7 @@ open class AllTypesNotNullWithTimeEntity(
 
 
 val allTypesNotNullWithTime = AllTypesNotNullWithTimeEntity(1, "",
-        true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
+        true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
         Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC),
         Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A), LocalTime.now())
 

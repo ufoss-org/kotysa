@@ -7,10 +7,7 @@ package org.ufoss.kotysa.r2dbc.mysql
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
+import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
@@ -39,11 +36,11 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                     allTypesNullableDefaultValueWithTime.id,
                     "default",
                     LocalDate.of(2019, 11, 4),
-                    kotlinx.datetime.LocalDate(2019, 11, 6),
+                    LocalDate(2019, 11, 6),
                     LocalDateTime.of(2018, 11, 4, 0, 0),
                     LocalDateTime.of(2019, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                    LocalDateTime(2018, 11, 4, 0, 0),
+                    LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L,
                     LocalTime.of(11, 25, 55),
@@ -61,7 +58,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
     @Test
     fun `Verify updateAll works`() = runTest {
         val newLocalDate = LocalDate.now()
-        val newKotlinxLocalDate = Clock.System.todayAt(TimeZone.UTC)
+        val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalTime = LocalTime.now()
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)

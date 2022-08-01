@@ -4,16 +4,19 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayAt
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.h2.date
 import org.ufoss.kotysa.h2.dateTime
 import org.ufoss.kotysa.h2.timestamp
 import org.ufoss.kotysa.tables
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.util.*
 
 object H2Roles : H2Table<RoleEntity>("roles") {
@@ -110,7 +113,7 @@ data class H2AllTypesNotNullEntity(
 
 val h2AllTypesNotNull = H2AllTypesNotNullEntity(
     1, "",
-    true, LocalDate.now(), Clock.System.todayAt(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
+    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
     LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
     Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, byteArrayOf(0x2A), OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
