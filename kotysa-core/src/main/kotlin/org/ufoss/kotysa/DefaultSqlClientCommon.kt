@@ -17,7 +17,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val dbAccessType: DbAccessType
         public val tables: Tables
         public val module: Module
-        public val parameters: MutableList<Any>
+        public val parameters: MutableList<Any?>
         public val fromClauses: MutableList<FromClause<*>>
         public val whereClauses: MutableList<WhereClauseWithType>
 

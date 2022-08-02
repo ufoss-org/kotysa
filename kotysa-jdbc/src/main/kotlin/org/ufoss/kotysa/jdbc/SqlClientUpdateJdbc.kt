@@ -46,18 +46,13 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
 
         override fun execute() = jdbcConnection.execute { connection ->
             with(properties) {
-                require(setValues.isNotEmpty()) { "At least one value must be set in Update" }
+                require(updateClauses.isNotEmpty()) { "At least one value must be set in Update" }
 
                 val statement = connection.prepareStatement(updateTableSql())
 
-                // 1) add all values from set part
-                setValues.values
-                    .map { value -> tables.getDbValue(value) }
-                    .forEach { dbValue -> statement.setObject(++index, dbValue) }
-
-                // 2) add all params
+                // 1) add all values from update and where part
                 jdbcBindParams(statement)
-                // 3) reset index
+                // 2) reset index
                 index = 0
 
                 statement.executeUpdate()

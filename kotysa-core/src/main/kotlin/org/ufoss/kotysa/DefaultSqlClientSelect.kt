@@ -18,7 +18,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf(),
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
-        override val parameters: MutableList<Any> = mutableListOf()
+        override val parameters: MutableList<Any?> = mutableListOf()
         override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType> = mutableListOf()
         override var index: Int = 0

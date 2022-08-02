@@ -4,9 +4,10 @@
 
 package org.ufoss.kotysa.spring.r2dbc.h2
 
-import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.reactive.TransactionalOperator
@@ -16,10 +17,6 @@ import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.time.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import java.util.*
 
 
@@ -68,7 +65,7 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     }
 
     @Test
-    fun `Verify updateAll works`() {
+    fun `Verify updateAllTypesNotNull works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
@@ -95,6 +92,18 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
                     newLong, newByteArray, newOffsetDateTime, newUuid
                 )
             )
+            .verifyComplete()
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllAllTypesNotNull())
+        }.test()
+            .expectNext(h2AllTypesNotNull)
             .verifyComplete()
     }
 }
@@ -158,6 +167,25 @@ class AllTypesRepositoryH2(
                 set H2AllTypesNotNulls.byteArray eq newByteArray
                 set H2AllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set H2AllTypesNotNulls.uuid eq newUuid
+                where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    fun updateAllTypesNotNullColumn() =
+        (sqlClient update H2AllTypesNotNulls
+                set H2AllTypesNotNulls.string eq H2AllTypesNotNulls.string
+                set H2AllTypesNotNulls.boolean eq H2AllTypesNotNulls.boolean
+                set H2AllTypesNotNulls.localDate eq H2AllTypesNotNulls.localDate
+                set H2AllTypesNotNulls.kotlinxLocalDate eq H2AllTypesNotNulls.kotlinxLocalDate
+                set H2AllTypesNotNulls.localTim eq H2AllTypesNotNulls.localTim
+                set H2AllTypesNotNulls.localDateTime1 eq H2AllTypesNotNulls.localDateTime1
+                set H2AllTypesNotNulls.localDateTime2 eq H2AllTypesNotNulls.localDateTime2
+                set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq H2AllTypesNotNulls.kotlinxLocalDateTime1
+                set H2AllTypesNotNulls.kotlinxLocalDateTime2 eq H2AllTypesNotNulls.kotlinxLocalDateTime2
+                set H2AllTypesNotNulls.int eq H2AllTypesNotNulls.int
+                set H2AllTypesNotNulls.long eq H2AllTypesNotNulls.long
+                set H2AllTypesNotNulls.byteArray eq H2AllTypesNotNulls.byteArray
+                set H2AllTypesNotNulls.offsetDateTime eq H2AllTypesNotNulls.offsetDateTime
+                set H2AllTypesNotNulls.uuid eq H2AllTypesNotNulls.uuid
                 where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

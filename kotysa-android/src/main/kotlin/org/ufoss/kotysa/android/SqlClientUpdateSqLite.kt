@@ -47,11 +47,8 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
         override fun execute() = with(properties) {
             val statement = client.compileStatement(updateTableSql())
 
-            var index = 1
-            // 1) add all values from set part
-            setValues.values.forEach { value -> statement.bind(index++, value) }
-            // 2) add all values from where part
-            bindWhereArgs(statement, index)
+            // add all values from update and where part
+            bindParameters(statement)
 
             statement.executeUpdateDelete()
         }
