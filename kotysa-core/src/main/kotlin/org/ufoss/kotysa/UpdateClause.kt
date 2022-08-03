@@ -15,4 +15,6 @@ public class UpdateClauseValue<T : Any> internal constructor(
 internal class UpdateClauseColumn<T : Any> internal constructor(
     override val column: Column<T, *>,
     internal val otherColumn: Column<*, *>
-) : UpdateClause<T>
+) : UpdateClause<T> {
+    internal var increment: Int? = null
+}

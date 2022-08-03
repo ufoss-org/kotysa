@@ -259,7 +259,9 @@ public class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
 
     public interface DeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<Any>>, Return
 
-    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
+    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>
+
+    public interface UpdateInt<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.UpdateInt<T, Update<T>, UpdateInt<T>>
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
 

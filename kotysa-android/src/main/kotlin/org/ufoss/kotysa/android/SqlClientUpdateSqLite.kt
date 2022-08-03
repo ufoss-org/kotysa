@@ -14,10 +14,11 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
             override val tables: Tables,
             override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.ANDROID, Module.SQLITE),
-            SqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>>(DbAccessType.ANDROID, Module.SQLITE),
+            SqlClientDeleteOrUpdate.Update<T>, Return<T>, SqlClientDeleteOrUpdate.UpdateInt<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }

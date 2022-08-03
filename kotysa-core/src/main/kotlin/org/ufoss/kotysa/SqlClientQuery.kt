@@ -106,67 +106,77 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun eq(column: Column<V, *>): U
     }
 
-    public interface Update<T : Any, U : Update<T, U>> {
-        public infix fun set(stringColumnNotNull: StringColumnNotNull<T>): UpdateOpColumn<T, U, String, StringColumn<*>>
+    public interface Update<T : Any, U : Update<T, U, V>, V : UpdateInt<T, U, V>> {
+        public infix fun set(stringColumnNotNull: StringColumnNotNull<T>): UpdateOpColumn<T, U, String, StringColumn<*>, V>
         public infix fun set(
             stringColumnNullable: StringColumnNullable<T>
-        ): UpdateOpColumn<T, U, String?, StringColumn<*>>
+        ): UpdateOpColumn<T, U, String?, StringColumn<*>, V>
         public infix fun set(
             localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>
-        ): UpdateOpColumn<T, U, LocalDateTime, LocalDateTimeColumn<*>>
+        ): UpdateOpColumn<T, U, LocalDateTime, LocalDateTimeColumn<*>, V>
         public infix fun set(
             localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>
-        ): UpdateOpColumn<T, U, LocalDateTime?, LocalDateTimeColumn<*>>
+        ): UpdateOpColumn<T, U, LocalDateTime?, LocalDateTimeColumn<*>, V>
         public infix fun set(
             kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>
-        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime, KotlinxLocalDateTimeColumn<*>>
+        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime, KotlinxLocalDateTimeColumn<*>, V>
         public infix fun set(
             kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>
-        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime?, KotlinxLocalDateTimeColumn<*>>
+        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime?, KotlinxLocalDateTimeColumn<*>, V>
         public infix fun set(
             localDateColumnNotNull: LocalDateColumnNotNull<T>
-        ): UpdateOpColumn<T, U, LocalDate, LocalDateColumn<*>>
+        ): UpdateOpColumn<T, U, LocalDate, LocalDateColumn<*>, V>
         public infix fun set(
             localDateColumnNullable: LocalDateColumnNullable<T>
-        ): UpdateOpColumn<T, U, LocalDate?, LocalDateColumn<*>>
+        ): UpdateOpColumn<T, U, LocalDate?, LocalDateColumn<*>, V>
         public infix fun set(
             kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>
-        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate, KotlinxLocalDateColumn<*>>
+        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate, KotlinxLocalDateColumn<*>, V>
         public infix fun set(
             kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>
-        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate?, KotlinxLocalDateColumn<*>>
+        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate?, KotlinxLocalDateColumn<*>, V>
         public infix fun set(
             offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>
-        ): UpdateOpColumn<T, U, OffsetDateTime, OffsetDateTimeColumn<*>>
+        ): UpdateOpColumn<T, U, OffsetDateTime, OffsetDateTimeColumn<*>, V>
         public infix fun set(
             offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>
-        ): UpdateOpColumn<T, U, OffsetDateTime?, OffsetDateTimeColumn<*>>
+        ): UpdateOpColumn<T, U, OffsetDateTime?, OffsetDateTimeColumn<*>, V>
         public infix fun set(
             localTimeColumnNotNull: LocalTimeColumnNotNull<T>
-        ): UpdateOpColumn<T, U, LocalTime, LocalTimeColumn<*>>
+        ): UpdateOpColumn<T, U, LocalTime, LocalTimeColumn<*>, V>
         public infix fun set(
             localTimeColumnNullable: LocalTimeColumnNullable<T>
-        ): UpdateOpColumn<T, U, LocalTime?, LocalTimeColumn<*>>
+        ): UpdateOpColumn<T, U, LocalTime?, LocalTimeColumn<*>, V>
         public infix fun set(
             booleanColumnNotNull: BooleanColumnNotNull<T>
-        ): UpdateOpColumn<T, U, Boolean, BooleanColumnNotNull<*>>
-        public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpColumn<T, U, Int, IntColumn<*>>
-        public infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpColumn<T, U, Int?, IntColumn<*>>
-        public infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpColumn<T, U, Long, LongColumn<*>>
-        public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, U, Long?, LongColumn<*>>
-        public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID, UuidColumn<*>>
-        public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?, UuidColumn<*>>
+        ): UpdateOpColumn<T, U, Boolean, BooleanColumnNotNull<*>, V>
+        public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpIntColumn<T, U, Int, IntColumn<*>, V>
+        public infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpIntColumn<T, U, Int?, IntColumn<*>, V>
+        public infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpColumn<T, U, Long, LongColumn<*>, V>
+        public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, U, Long?, LongColumn<*>, V>
+        public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID, UuidColumn<*>, V>
+        public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?, UuidColumn<*>, V>
         public infix fun set(
             byteArrayColumnNotNull: ByteArrayColumnNotNull<T>
-        ): UpdateOpColumn<T, U, ByteArray, ByteArrayColumn<*>>
+        ): UpdateOpColumn<T, U, ByteArray, ByteArrayColumn<*>, V>
         public infix fun set(
             byteArrayColumnNullable: ByteArrayColumnNullable<T>
-        ): UpdateOpColumn<T, U, ByteArray?, ByteArrayColumn<*>>
+        ): UpdateOpColumn<T, U, ByteArray?, ByteArrayColumn<*>, V>
     }
 
-    public interface UpdateOpColumn<T : Any, U : Update<T, U>, V, W : Column<*, *>> {
+    public interface UpdateOpColumn<T : Any, U : Update<T, U, X>, V, W : Column<*, *>, X : UpdateInt<T, U, X>> {
         public infix fun eq(value: V): U
         public infix fun eq(otherColumn: W): U
+    }
+
+    public interface UpdateInt<T : Any, U : Update<T, U, V>, V : UpdateInt<T, U, V>> : Update<T, U, V> {
+        public infix fun plus(increment: Int): U
+        public infix fun minus(decrement: Int): U
+    }
+
+    public interface UpdateOpIntColumn<T : Any, U : Update<T, U, X>, V, W : Column<*, *>, X : UpdateInt<T, U, X>> {
+        public infix fun eq(value: V): U
+        public infix fun eq(otherColumn: W): X
     }
 
     public interface Whereable<T : Where<T>> {
