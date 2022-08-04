@@ -1,5 +1,6 @@
 package com.sample
 
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -37,5 +38,8 @@ class IntegrationTests {
             .expectStatus().is2xxSuccessful
             .expectHeader().contentType(MediaType.APPLICATION_JSON_VALUE)
             .expectBody<User>()
+            .consumeWith { 
+                assertThat(it.responseBody!!.id).isEqualTo(123)
+            }
     }
 }

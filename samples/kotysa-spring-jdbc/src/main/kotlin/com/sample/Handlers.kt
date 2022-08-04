@@ -6,7 +6,6 @@ import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 
 @Component
-@Suppress("UNUSED_PARAMETER")
 class UserHandler(private val repository: UserRepository) {
 
     fun listApi(request: ServerRequest) = ServerResponse
