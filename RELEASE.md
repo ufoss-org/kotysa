@@ -8,5 +8,5 @@
   * then **release**
   * refresh again after several seconds, repo has gone -> it's released on maven central
 * update sample projects with this just released Kotysa version, commit them
-* Open a execute a pull-request on GitHub to target *master*, use rebase option
+* Open and accept a pull-request on GitHub to target *master*, use rebase option
 * do **release** task (for minor release, press Enter for suggested versions : release version = current, new version = current + 1)
