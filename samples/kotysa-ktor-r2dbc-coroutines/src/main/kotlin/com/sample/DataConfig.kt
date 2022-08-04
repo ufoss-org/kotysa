@@ -1,7 +1,7 @@
 package com.sample
 
-import io.ktor.application.*
-import io.ktor.serialization.*
+import io.ktor.server.application.*
+import io.ktor.serialization.kotlinx.json.*
 import io.r2dbc.spi.ConnectionFactories
 import kotlinx.serialization.json.Json
 import org.kodein.di.*

@@ -1,12 +1,13 @@
 package com.sample
 
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.serialization.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
 import kotlinx.serialization.decodeFromString
 import org.assertj.core.api.Assertions.assertThat
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 
 class IntegrationTests {
@@ -14,28 +15,27 @@ class IntegrationTests {
 
     @Test
     fun `Request HTTP API endpoint for listing all users`() = kotysaApiTest {
-        handleRequest(HttpMethod.Get, "/api/users").apply {
-            assertEquals(HttpStatusCode.OK, response.status())
-            assertThat(response.parseBodyList<User>())
-                .hasSize(2)
-        }
+        val response = client.get("/api/users")
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.parseBodyList<User>())
+            .hasSize(2)
     }
 
     @Test
     fun `Request HTTP API endpoint for getting one specified user`() = kotysaApiTest {
-        handleRequest(HttpMethod.Get, "/api/users/123").apply {
-            assertEquals(HttpStatusCode.OK, response.status())
-            response.parseBody<User>()
-        }
+        val response = client.get("/api/users/123")
+        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
+        assertThat(response.parseBody<User>().id).isEqualTo(123)
     }
 
-    private fun kotysaApiTest(test: TestApplicationEngine.() -> Unit) {
-        withTestApplication({ configureApp() }, test)
+    private fun kotysaApiTest(test: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
+        application { configureApp() }
+        test.invoke(this)
     }
 
-    private inline fun <reified T> TestApplicationResponse.parseBody(): T =
-        json.decodeFromString(content!!)
+    private suspend inline fun <reified T> HttpResponse.parseBody(): T =
+        json.decodeFromString(bodyAsText())
 
-    private inline fun <reified T> TestApplicationResponse.parseBodyList(): List<T> =
-        json.decodeFromString(content!!)
+    private suspend inline fun <reified T> HttpResponse.parseBodyList(): List<T> =
+        json.decodeFromString(bodyAsText())
 }
