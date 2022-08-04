@@ -1,6 +1,6 @@
 package com.sample
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.server.testing.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -23,10 +23,10 @@ class UserRepositoryTests {
             .hasSize(2)
     }
 
-    private fun kotysaTest(test: Application.() -> Unit) {
-        withTestApplication({
+    private fun kotysaTest(test: Application.() -> Unit) = testApplication {
+        application {
             configureApp()
             test()
-        }, {})
+        }
     }
 }

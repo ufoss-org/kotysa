@@ -1,6 +1,6 @@
 package com.sample
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import org.h2.jdbcx.JdbcConnectionPool
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
