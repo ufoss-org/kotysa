@@ -131,6 +131,30 @@ class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpri
                     .isEqualTo("Do")
         }
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 
@@ -176,4 +200,16 @@ class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcOperations) : AbstractU
                     innerJoin H2Roles on H2Users.roleId eq H2Roles.id
                     where H2Roles.label eq roleLabel
                     ).execute()
+
+    fun updateAndIncrementRoleId() =
+        (sqlClient update H2Users
+                set H2Users.roleId eq H2Users.roleId plus 2
+                where H2Users.id eq userJdoe.id
+                ).execute()
+
+    fun updateAndDecrementRoleId() =
+        (sqlClient update H2Users
+                set H2Users.roleId eq H2Users.roleId minus 1
+                where H2Users.id eq userBboss.id
+                ).execute()
 }

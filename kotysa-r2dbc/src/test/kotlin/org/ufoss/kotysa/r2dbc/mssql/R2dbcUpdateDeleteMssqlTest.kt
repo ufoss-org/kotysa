@@ -131,6 +131,30 @@ class R2dbcUpdateDeleteMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssq
                 .isEqualTo(null)
         }
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 
@@ -176,5 +200,17 @@ class UserRepositoryJdbcMssqlUpdateDelete(private val sqlClient: R2dbcSqlClient)
                 set MssqlUsers.lastname eq newLastname
                 innerJoin MssqlRoles on MssqlUsers.roleId eq MssqlRoles.id
                 where MssqlRoles.label eq roleLabel
+                ).execute()
+
+    suspend fun updateAndIncrementRoleId() =
+        (sqlClient update MssqlUsers
+                set MssqlUsers.roleId eq MssqlUsers.roleId plus 2
+                where MssqlUsers.id eq userJdoe.id
+                ).execute()
+
+    suspend fun updateAndDecrementRoleId() =
+        (sqlClient update MssqlUsers
+                set MssqlUsers.roleId eq MssqlUsers.roleId minus 1
+                where MssqlUsers.id eq userBboss.id
                 ).execute()
 }

@@ -10,34 +10,37 @@ import org.ufoss.kotysa.*
 internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDeleteOrUpdate() {
 
     internal class FirstUpdate<T : Any> internal constructor(
-            override val client: SQLiteDatabase,
-            override val tables: Tables,
-            override val table: Table<T>,
+        override val client: SQLiteDatabase,
+        override val tables: Tables,
+        override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.ANDROID, Module.SQLITE),
-            SqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>>
+        (DbAccessType.ANDROID, Module.SQLITE), SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>,
+        Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }
     }
 
     internal class Update<T : Any> internal constructor(
-            override val client: SQLiteDatabase,
-            override val properties: Properties<T>,
+        override val client: SQLiteDatabase,
+        override val properties: Properties<T>,
     ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             SqlClientDeleteOrUpdate.Where<Any>>(),
-            SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+        SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
         override val fromTable = this
     }
 
     internal class Where<T : Any>(
-            override val client: SQLiteDatabase,
-            override val properties: Properties<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>, Return<T> {
+        override val client: SQLiteDatabase,
+        override val properties: Properties<T>,
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T, SqlClientDeleteOrUpdate.Where<T>>(), SqlClientDeleteOrUpdate.Where<T>,
+        Return<T> {
         override val where = this
     }
 
@@ -47,11 +50,8 @@ internal class SqlClientUpdateSqLite private constructor() : DefaultSqlClientDel
         override fun execute() = with(properties) {
             val statement = client.compileStatement(updateTableSql())
 
-            var index = 1
-            // 1) add all values from set part
-            setValues.values.forEach { value -> statement.bind(index++, value) }
-            // 2) add all values from where part
-            bindWhereArgs(statement, index)
+            // add all values from update and where part
+            bindParameters(statement)
 
             statement.executeUpdateDelete()
         }

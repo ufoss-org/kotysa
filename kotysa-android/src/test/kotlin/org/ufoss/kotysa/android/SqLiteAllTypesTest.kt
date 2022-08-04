@@ -55,7 +55,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
     }
 
     @Test
-    fun `Verify updateAll works`() {
+    fun `Verify updateAllTypesNotNullValue works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalTime = LocalTime.now()
@@ -67,7 +67,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         val operator = client.transactionalOp()
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
-            repository.updateAllTypesNotNull(
+            repository.updateAllTypesNotNullValue(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime,
                 newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
             )
@@ -80,6 +80,18 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                         newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime
                     )
                 )
+        }
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() {
+        val operator = client.transactionalOp()
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+            assertThat(repository.selectAllAllTypesNotNull())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(allTypesNotNullWithTime)
         }
     }
 }
@@ -117,7 +129,7 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
 
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom SqliteAllTypesNullableDefaultValueWithTimes
 
-    fun updateAllTypesNotNull(
+    fun updateAllTypesNotNullValue(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
         newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
@@ -135,6 +147,23 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : R
                 set SqliteAllTypesNotNullWithTimes.int eq newInt
                 set SqliteAllTypesNotNullWithTimes.long eq newLong
                 set SqliteAllTypesNotNullWithTimes.byteArray eq newByteArray
+                where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    fun updateAllTypesNotNullColumn() =
+        (sqlClient update SqliteAllTypesNotNullWithTimes
+                set SqliteAllTypesNotNullWithTimes.string eq SqliteAllTypesNotNullWithTimes.string
+                set SqliteAllTypesNotNullWithTimes.boolean eq SqliteAllTypesNotNullWithTimes.boolean
+                set SqliteAllTypesNotNullWithTimes.localDate eq SqliteAllTypesNotNullWithTimes.localDate
+                set SqliteAllTypesNotNullWithTimes.kotlinxLocalDate eq SqliteAllTypesNotNullWithTimes.kotlinxLocalDate
+                set SqliteAllTypesNotNullWithTimes.localTime eq SqliteAllTypesNotNullWithTimes.localTime
+                set SqliteAllTypesNotNullWithTimes.localDateTime1 eq SqliteAllTypesNotNullWithTimes.localDateTime1
+                set SqliteAllTypesNotNullWithTimes.localDateTime2 eq SqliteAllTypesNotNullWithTimes.localDateTime2
+                set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime1
+                set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime2 eq SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime2
+                set SqliteAllTypesNotNullWithTimes.int eq SqliteAllTypesNotNullWithTimes.int
+                set SqliteAllTypesNotNullWithTimes.long eq SqliteAllTypesNotNullWithTimes.long
+                set SqliteAllTypesNotNullWithTimes.byteArray eq SqliteAllTypesNotNullWithTimes.byteArray
                 where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

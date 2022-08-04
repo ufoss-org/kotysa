@@ -131,6 +131,30 @@ class R2dbcUpdateDeleteMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysq
                 .isEqualTo(null)
         }
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 
@@ -176,5 +200,17 @@ class UserRepositoryJdbcMysqlUpdateDelete(private val sqlClient: R2dbcSqlClient)
                 set MysqlUsers.lastname eq newLastname
                 innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
                 where MysqlRoles.label eq roleLabel
+                ).execute()
+
+    suspend fun updateAndIncrementRoleId() =
+        (sqlClient update MysqlUsers
+                set MysqlUsers.roleId eq MysqlUsers.roleId plus 2
+                where MysqlUsers.id eq userJdoe.id
+                ).execute()
+
+    suspend fun updateAndDecrementRoleId() =
+        (sqlClient update MysqlUsers
+                set MysqlUsers.roleId eq MysqlUsers.roleId minus 1
+                where MysqlUsers.id eq userBboss.id
                 ).execute()
 }

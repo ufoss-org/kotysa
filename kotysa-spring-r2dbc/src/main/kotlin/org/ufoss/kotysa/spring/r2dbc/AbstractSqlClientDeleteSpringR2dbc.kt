@@ -20,7 +20,7 @@ internal abstract class AbstractSqlClientDeleteSpringR2dbc protected constructor
 
             executeSpec = dbValues()
                 .foldIndexed(executeSpec) { index, execSpec, value ->
-                    execSpec.bind("k${index}", value)
+                    execSpec.bind("k${index}", value!!)
                 }
 
             executeSpec.fetch()

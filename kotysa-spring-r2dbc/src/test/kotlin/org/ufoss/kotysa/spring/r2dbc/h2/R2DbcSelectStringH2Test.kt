@@ -163,9 +163,7 @@ class R2DbcSelectStringH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectString
 }
 
 
-class UserRepositoryH2SelectString(
-    sqlClient: ReactorSqlClient,
-) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
+class UserRepositoryH2SelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
             (sqlClient selectFrom H2Users

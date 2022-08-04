@@ -52,7 +52,7 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
     }
 
     @Test
-    fun `Verify updateAll works`() {
+    fun `Verify updateAllTypesNotNull works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalTime = LocalTime.now()
@@ -76,6 +76,17 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
                         newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime
                     )
                 )
+        }
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+            assertThat(repository.selectAllAllTypesNotNull())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(mariadbAllTypesNotNull)
         }
     }
 }
@@ -130,6 +141,23 @@ class AllTypesRepositoryMariadb(private val sqlClient: JdbcSqlClient) : Reposito
                 set MariadbAllTypesNotNulls.inte eq newInt
                 set MariadbAllTypesNotNulls.longe eq newLong
                 set MariadbAllTypesNotNulls.byteArray eq newByteArray
+                where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    fun updateAllTypesNotNullColumn() =
+        (sqlClient update MariadbAllTypesNotNulls
+                set MariadbAllTypesNotNulls.string eq MariadbAllTypesNotNulls.string
+                set MariadbAllTypesNotNulls.boolean eq MariadbAllTypesNotNulls.boolean
+                set MariadbAllTypesNotNulls.localDate eq MariadbAllTypesNotNulls.localDate
+                set MariadbAllTypesNotNulls.kotlinxLocalDate eq MariadbAllTypesNotNulls.kotlinxLocalDate
+                set MariadbAllTypesNotNulls.localTim eq MariadbAllTypesNotNulls.localTim
+                set MariadbAllTypesNotNulls.localDateTime1 eq MariadbAllTypesNotNulls.localDateTime1
+                set MariadbAllTypesNotNulls.localDateTime2 eq MariadbAllTypesNotNulls.localDateTime2
+                set MariadbAllTypesNotNulls.kotlinxLocalDateTime1 eq MariadbAllTypesNotNulls.kotlinxLocalDateTime1
+                set MariadbAllTypesNotNulls.kotlinxLocalDateTime2 eq MariadbAllTypesNotNulls.kotlinxLocalDateTime2
+                set MariadbAllTypesNotNulls.inte eq MariadbAllTypesNotNulls.inte
+                set MariadbAllTypesNotNulls.longe eq MariadbAllTypesNotNulls.longe
+                set MariadbAllTypesNotNulls.byteArray eq MariadbAllTypesNotNulls.byteArray
                 where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

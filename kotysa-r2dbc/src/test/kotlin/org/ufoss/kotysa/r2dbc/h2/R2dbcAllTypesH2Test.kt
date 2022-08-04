@@ -65,7 +65,7 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
     }
 
     @Test
-    fun `Verify updateAll works`() = runTest {
+    fun `Verify updateAllTypesNotNull works`() = runTest {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
@@ -91,6 +91,17 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
                         newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
                     )
                 )
+        }
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+            assertThat(repository.selectAllAllTypesNotNull().toList())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(h2AllTypesNotNull)
         }
     }
 }
@@ -148,6 +159,25 @@ class AllTypesRepositoryH2(private val sqlClient: R2dbcSqlClient) : Repository {
                 set H2AllTypesNotNulls.byteArray eq newByteArray
                 set H2AllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set H2AllTypesNotNulls.uuid eq newUuid
+                where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    suspend fun updateAllTypesNotNullColumn() =
+        (sqlClient update H2AllTypesNotNulls
+                set H2AllTypesNotNulls.string eq H2AllTypesNotNulls.string
+                set H2AllTypesNotNulls.boolean eq H2AllTypesNotNulls.boolean
+                set H2AllTypesNotNulls.localDate eq H2AllTypesNotNulls.localDate
+                set H2AllTypesNotNulls.kotlinxLocalDate eq H2AllTypesNotNulls.kotlinxLocalDate
+                set H2AllTypesNotNulls.localTim eq H2AllTypesNotNulls.localTim
+                set H2AllTypesNotNulls.localDateTime1 eq H2AllTypesNotNulls.localDateTime1
+                set H2AllTypesNotNulls.localDateTime2 eq H2AllTypesNotNulls.localDateTime2
+                set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq H2AllTypesNotNulls.kotlinxLocalDateTime1
+                set H2AllTypesNotNulls.kotlinxLocalDateTime2 eq H2AllTypesNotNulls.kotlinxLocalDateTime2
+                set H2AllTypesNotNulls.int eq H2AllTypesNotNulls.int
+                set H2AllTypesNotNulls.long eq H2AllTypesNotNulls.long
+                set H2AllTypesNotNulls.byteArray eq H2AllTypesNotNulls.byteArray
+                set H2AllTypesNotNulls.offsetDateTime eq H2AllTypesNotNulls.offsetDateTime
+                set H2AllTypesNotNulls.uuid eq H2AllTypesNotNulls.uuid
                 where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

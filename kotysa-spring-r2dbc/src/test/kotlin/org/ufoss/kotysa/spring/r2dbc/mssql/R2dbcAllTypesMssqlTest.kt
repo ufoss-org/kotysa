@@ -16,7 +16,6 @@ import reactor.kotlin.test.test
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-
 class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>() {
 
     @BeforeAll
@@ -63,7 +62,7 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
     }
 
     @Test
-    fun `Verify updateAll works`() {
+    fun `Verify updateAllTypesNotNull works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalDateTime = LocalDateTime.now()
@@ -82,10 +81,22 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
         }.test()
             .expectNext(
                 MssqlAllTypesNotNull(
-                    allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
+                    mssqlAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
                     newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
                 )
             )
+            .verifyComplete()
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllAllTypesNotNull())
+        }.test()
+            .expectNext(mssqlAllTypesNotNull)
             .verifyComplete()
     }
 }
@@ -139,6 +150,22 @@ class AllTypesRepositoryMssql(dbClient: DatabaseClient) : Repository {
                 set MssqlAllTypesNotNulls.inte eq newInt
                 set MssqlAllTypesNotNulls.longe eq newLong
                 set MssqlAllTypesNotNulls.byteArray eq newByteArray
+                where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    fun updateAllTypesNotNullColumn() =
+        (sqlClient update MssqlAllTypesNotNulls
+                set MssqlAllTypesNotNulls.string eq MssqlAllTypesNotNulls.string
+                set MssqlAllTypesNotNulls.boolean eq MssqlAllTypesNotNulls.boolean
+                set MssqlAllTypesNotNulls.localDate eq MssqlAllTypesNotNulls.localDate
+                set MssqlAllTypesNotNulls.kotlinxLocalDate eq MssqlAllTypesNotNulls.kotlinxLocalDate
+                set MssqlAllTypesNotNulls.localDateTime1 eq MssqlAllTypesNotNulls.localDateTime1
+                set MssqlAllTypesNotNulls.localDateTime2 eq MssqlAllTypesNotNulls.localDateTime2
+                set MssqlAllTypesNotNulls.kotlinxLocalDateTime1 eq MssqlAllTypesNotNulls.kotlinxLocalDateTime1
+                set MssqlAllTypesNotNulls.kotlinxLocalDateTime2 eq MssqlAllTypesNotNulls.kotlinxLocalDateTime2
+                set MssqlAllTypesNotNulls.inte eq MssqlAllTypesNotNulls.inte
+                set MssqlAllTypesNotNulls.longe eq MssqlAllTypesNotNulls.longe
+                set MssqlAllTypesNotNulls.byteArray eq MssqlAllTypesNotNulls.byteArray
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

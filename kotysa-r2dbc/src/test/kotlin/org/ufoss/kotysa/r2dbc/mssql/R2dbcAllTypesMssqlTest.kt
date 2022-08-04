@@ -53,7 +53,7 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
     }
 
     @Test
-    fun `Verify updateAll works`() = runTest {
+    fun `Verify updateAllTypesNotNull works`() = runTest {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalDateTime = LocalDateTime.now()
@@ -76,6 +76,17 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
                         newKotlinxLocalDateTime, newInt, newLong, newByteArray
                     )
                 )
+        }
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+            assertThat(repository.selectAllAllTypesNotNull().toList())
+                .hasSize(1)
+                .containsExactlyInAnyOrder(mssqlAllTypesNotNull)
         }
     }
 }
@@ -129,6 +140,22 @@ class AllTypesRepositoryMssql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MssqlAllTypesNotNulls.inte eq newInt
                 set MssqlAllTypesNotNulls.longe eq newLong
                 set MssqlAllTypesNotNulls.byteArray eq newByteArray
+                where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    suspend fun updateAllTypesNotNullColumn() =
+        (sqlClient update MssqlAllTypesNotNulls
+                set MssqlAllTypesNotNulls.string eq MssqlAllTypesNotNulls.string
+                set MssqlAllTypesNotNulls.boolean eq MssqlAllTypesNotNulls.boolean
+                set MssqlAllTypesNotNulls.localDate eq MssqlAllTypesNotNulls.localDate
+                set MssqlAllTypesNotNulls.kotlinxLocalDate eq MssqlAllTypesNotNulls.kotlinxLocalDate
+                set MssqlAllTypesNotNulls.localDateTime1 eq MssqlAllTypesNotNulls.localDateTime1
+                set MssqlAllTypesNotNulls.localDateTime2 eq MssqlAllTypesNotNulls.localDateTime2
+                set MssqlAllTypesNotNulls.kotlinxLocalDateTime1 eq MssqlAllTypesNotNulls.kotlinxLocalDateTime1
+                set MssqlAllTypesNotNulls.kotlinxLocalDateTime2 eq MssqlAllTypesNotNulls.kotlinxLocalDateTime2
+                set MssqlAllTypesNotNulls.inte eq MssqlAllTypesNotNulls.inte
+                set MssqlAllTypesNotNulls.longe eq MssqlAllTypesNotNulls.longe
+                set MssqlAllTypesNotNulls.byteArray eq MssqlAllTypesNotNulls.byteArray
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

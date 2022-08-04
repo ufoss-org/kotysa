@@ -75,7 +75,7 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
     }
 
     @Test
-    fun `Verify updateAll works`() {
+    fun `Verify updateAllTypesNotNull works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
@@ -103,6 +103,18 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                     newUuid
                 )
             )
+            .verifyComplete()
+    }
+
+    @Test
+    fun `Verify updateAllTypesNotNullColumn works`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAllTypesNotNullColumn()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllAllTypesNotNull())
+        }.test()
+            .expectNext(postgresqlAllTypesNotNull)
             .verifyComplete()
     }
 }
@@ -160,6 +172,25 @@ class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
                 set PostgresqlAllTypesNotNulls.byteArray eq newByteArray
                 set PostgresqlAllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set PostgresqlAllTypesNotNulls.uuid eq newUuid
+                where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+                ).execute()
+
+    fun updateAllTypesNotNullColumn() =
+        (sqlClient update PostgresqlAllTypesNotNulls
+                set PostgresqlAllTypesNotNulls.string eq PostgresqlAllTypesNotNulls.string
+                set PostgresqlAllTypesNotNulls.boolean eq PostgresqlAllTypesNotNulls.boolean
+                set PostgresqlAllTypesNotNulls.localDate eq PostgresqlAllTypesNotNulls.localDate
+                set PostgresqlAllTypesNotNulls.kotlinxLocalDate eq PostgresqlAllTypesNotNulls.kotlinxLocalDate
+                set PostgresqlAllTypesNotNulls.localTim eq PostgresqlAllTypesNotNulls.localTim
+                set PostgresqlAllTypesNotNulls.localDateTime1 eq PostgresqlAllTypesNotNulls.localDateTime1
+                set PostgresqlAllTypesNotNulls.localDateTime2 eq PostgresqlAllTypesNotNulls.localDateTime2
+                set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1 eq PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1
+                set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2 eq PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2
+                set PostgresqlAllTypesNotNulls.int eq PostgresqlAllTypesNotNulls.int
+                set PostgresqlAllTypesNotNulls.long eq PostgresqlAllTypesNotNulls.long
+                set PostgresqlAllTypesNotNulls.byteArray eq PostgresqlAllTypesNotNulls.byteArray
+                set PostgresqlAllTypesNotNulls.offsetDateTime eq PostgresqlAllTypesNotNulls.offsetDateTime
+                set PostgresqlAllTypesNotNulls.uuid eq PostgresqlAllTypesNotNulls.uuid
                 where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 }
