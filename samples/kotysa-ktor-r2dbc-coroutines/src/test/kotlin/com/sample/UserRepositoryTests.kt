@@ -1,6 +1,6 @@
 package com.sample
 
-import io.ktor.application.*
+import io.ktor.server.application.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -25,12 +25,10 @@ class UserRepositoryTests {
             .hasSize(2)
     }
 
-    private fun kotysaTest(test: suspend Application.() -> Unit) {
-        withTestApplication({
+    private fun kotysaTest(test: suspend Application.() -> Unit) = testApplication {
+        application {
             configureApp()
-            runTest {
-                test()
-            }
-        }, {})
+            runTest { test() }
+        }
     }
 }
