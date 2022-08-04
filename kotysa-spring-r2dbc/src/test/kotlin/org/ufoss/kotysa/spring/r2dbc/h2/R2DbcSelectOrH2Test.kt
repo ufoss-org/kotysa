@@ -25,9 +25,7 @@ class R2DbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectOr>() {
 }
 
 
-class UserRepositoryH2SelectOr(
-    sqlClient: ReactorSqlClient,
-) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
+class UserRepositoryH2SelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectRolesByLabels(label1: String, label2: String) =
             (sqlClient selectFrom H2Roles

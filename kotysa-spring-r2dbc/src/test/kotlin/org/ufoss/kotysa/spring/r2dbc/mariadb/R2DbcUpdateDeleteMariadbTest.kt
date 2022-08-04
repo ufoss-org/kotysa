@@ -29,11 +29,11 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAllFromUserRoles()
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.countAllUserRoles())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.countAllUserRoles())
         }.test()
-                .expectNext(0)
-                .verifyComplete()
+            .expectNext(0)
+            .verifyComplete()
     }
 
     @Test
@@ -41,11 +41,11 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserById(userJdoe.id)
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.selectAllUsers())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllUsers())
         }.test()
-                .expectNext(userBboss)
-                .verifyComplete()
+            .expectNext(userBboss)
+            .verifyComplete()
     }
 
     @Test
@@ -53,11 +53,11 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserIn(listOf(userJdoe.id, 9999999))
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.selectAllUsers())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllUsers())
         }.test()
-                .expectNext(userBboss)
-                .verifyComplete()
+            .expectNext(userBboss)
+            .verifyComplete()
     }
 
     @Test
@@ -65,11 +65,11 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteUserWithJoin(roleUser.label)
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.selectAllUsers())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAllUsers())
         }.test()
-                .expectNext(userBboss)
-                .verifyComplete()
+            .expectNext(userBboss)
+            .verifyComplete()
     }
 
     @Test
@@ -77,11 +77,11 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateLastname("Do")
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstname(userJdoe.firstname))
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .then(repository.selectFirstByFirstname(userJdoe.firstname))
         }.test()
-                .expectNextMatches { user -> "Do" == user!!.lastname }
-                .verifyComplete()
+            .expectNextMatches { user -> "Do" == user!!.lastname }
+            .verifyComplete()
     }
 
     @Test
@@ -89,11 +89,11 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999))
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstname(userJdoe.firstname))
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .then(repository.selectFirstByFirstname(userJdoe.firstname))
         }.test()
-                .expectNextMatches { user -> "Do" == user!!.lastname }
-                .verifyComplete()
+            .expectNextMatches { user -> "Do" == user!!.lastname }
+            .verifyComplete()
     }
 
     @Test
@@ -101,26 +101,50 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateWithJoin("Doee", roleUser.label)
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .then(repository.selectFirstByFirstname(userJdoe.firstname))
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .then(repository.selectFirstByFirstname(userJdoe.firstname))
         }.test()
-                .expectNextMatches { user -> "Doee" == user!!.lastname }
-                .verifyComplete()
+            .expectNextMatches { user -> "Doee" == user!!.lastname }
+            .verifyComplete()
     }
 
     @Test
     fun `Verify updateAlias works`() {
         assertThat(repository.updateAlias("TheBigBoss").block()!!)
-                .isEqualTo(1)
+            .isEqualTo(1)
         assertThat(repository.selectFirstByFirstname(userBboss.firstname).block())
-                .extracting { user -> user?.alias }
-                .isEqualTo("TheBigBoss")
+            .extracting { user -> user?.alias }
+            .isEqualTo("TheBigBoss")
         assertThat(repository.updateAlias(null).block()!!)
-                .isEqualTo(1)
+            .isEqualTo(1)
         assertThat(repository.selectFirstByFirstname(userBboss.firstname).block())
-                .extracting { user -> user?.alias }
-                .isEqualTo(null)
+            .extracting { user -> user?.alias }
+            .isEqualTo(null)
         repository.updateAlias(userBboss.alias).block()
+    }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAndIncrementRoleId()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .then(repository.selectFirstByFirstname(userJdoe.firstname))
+        }.test()
+            .expectNextMatches { user -> roleGod.id == user!!.roleId }
+            .verifyComplete()
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.updateAndDecrementRoleId()
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .then(repository.selectFirstByFirstname(userBboss.firstname))
+        }.test()
+            .expectNextMatches { user -> roleUser.id == user!!.roleId }
+            .verifyComplete()
     }
 }
 
@@ -128,43 +152,55 @@ class R2DbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
 class UserRepositoryMariadbUpdateDelete(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
 
     fun deleteUserById(id: Int) =
-            (sqlClient deleteFrom MariadbUsers
-                    where MariadbUsers.id eq id
-                    ).execute()
+        (sqlClient deleteFrom MariadbUsers
+                where MariadbUsers.id eq id
+                ).execute()
 
     fun deleteUserIn(ids: Collection<Int>) =
-            (sqlClient deleteFrom MariadbUsers
-                    where MariadbUsers.id `in` ids
-                    ).execute()
+        (sqlClient deleteFrom MariadbUsers
+                where MariadbUsers.id `in` ids
+                ).execute()
 
     fun deleteUserWithJoin(roleLabel: String) =
-            (sqlClient deleteFrom MariadbUsers
-                    innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
-                    where MariadbRoles.label eq roleLabel
-                    ).execute()
+        (sqlClient deleteFrom MariadbUsers
+                innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
+                where MariadbRoles.label eq roleLabel
+                ).execute()
 
     fun updateLastname(newLastname: String) =
-            (sqlClient update MariadbUsers
-                    set MariadbUsers.lastname eq newLastname
-                    where MariadbUsers.id eq userJdoe.id
-                    ).execute()
+        (sqlClient update MariadbUsers
+                set MariadbUsers.lastname eq newLastname
+                where MariadbUsers.id eq userJdoe.id
+                ).execute()
 
     fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-            (sqlClient update MariadbUsers
-                    set MariadbUsers.lastname eq newLastname
-                    where MariadbUsers.id `in` ids
-                    ).execute()
+        (sqlClient update MariadbUsers
+                set MariadbUsers.lastname eq newLastname
+                where MariadbUsers.id `in` ids
+                ).execute()
 
     fun updateAlias(newAlias: String?) =
-            (sqlClient update MariadbUsers
-                    set MariadbUsers.alias eq newAlias
-                    where MariadbUsers.id eq userBboss.id
-                    ).execute()
+        (sqlClient update MariadbUsers
+                set MariadbUsers.alias eq newAlias
+                where MariadbUsers.id eq userBboss.id
+                ).execute()
 
     fun updateWithJoin(newLastname: String, roleLabel: String) =
-            (sqlClient update MariadbUsers
-                    set MariadbUsers.lastname eq newLastname
-                    innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
-                    where MariadbRoles.label eq roleLabel
-                    ).execute()
+        (sqlClient update MariadbUsers
+                set MariadbUsers.lastname eq newLastname
+                innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
+                where MariadbRoles.label eq roleLabel
+                ).execute()
+
+    fun updateAndIncrementRoleId() =
+        (sqlClient update MariadbUsers
+                set MariadbUsers.roleId eq MariadbUsers.roleId plus 2
+                where MariadbUsers.id eq userJdoe.id
+                ).execute()
+
+    fun updateAndDecrementRoleId() =
+        (sqlClient update MariadbUsers
+                set MariadbUsers.roleId eq MariadbUsers.roleId minus 1
+                where MariadbUsers.id eq userBboss.id
+                ).execute()
 }

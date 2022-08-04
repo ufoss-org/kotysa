@@ -17,10 +17,12 @@ internal class SqlClientUpdateSpringR2dbc private constructor() : AbstractSqlCli
         override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             ReactorSqlClientDeleteOrUpdate.Where<T>,
-            ReactorSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
-        ReactorSqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            ReactorSqlClientDeleteOrUpdate.Update<T>, ReactorSqlClientDeleteOrUpdate.UpdateInt<T>>
+        (DbAccessType.R2DBC, Module.SPRING_R2DBC), ReactorSqlClientDeleteOrUpdate.Update<T>,
+        ReactorSqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }

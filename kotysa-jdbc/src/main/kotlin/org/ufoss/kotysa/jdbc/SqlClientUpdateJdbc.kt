@@ -14,10 +14,12 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
         override val tables: Tables,
         override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.JDBC, Module.JDBC),
-            SqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>>
+        (DbAccessType.JDBC, Module.JDBC), SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>,
+        Return<T> {
         override val where = Where(jdbcConnection, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: Update<T> by lazy {
             Update(jdbcConnection, properties)
         }

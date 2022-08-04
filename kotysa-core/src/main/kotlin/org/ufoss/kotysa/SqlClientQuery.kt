@@ -152,8 +152,8 @@ public abstract class SqlClientQuery protected constructor() {
         ): UpdateOpColumn<T, U, Boolean, BooleanColumnNotNull<*>, V>
         public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpIntColumn<T, U, Int, IntColumn<*>, V>
         public infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpIntColumn<T, U, Int?, IntColumn<*>, V>
-        public infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpColumn<T, U, Long, LongColumn<*>, V>
-        public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpColumn<T, U, Long?, LongColumn<*>, V>
+        public infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpIntColumn<T, U, Long, LongColumn<*>, V>
+        public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpIntColumn<T, U, Long?, LongColumn<*>, V>
         public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID, UuidColumn<*>, V>
         public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?, UuidColumn<*>, V>
         public infix fun set(

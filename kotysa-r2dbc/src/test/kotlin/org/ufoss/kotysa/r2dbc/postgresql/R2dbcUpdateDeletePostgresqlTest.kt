@@ -131,6 +131,30 @@ class R2dbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposito
                 .isEqualTo("Do")
         }
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 
@@ -176,5 +200,17 @@ class UserRepositoryJdbcPostgresqlUpdateDelete(private val sqlClient: R2dbcSqlCl
                 set PostgresqlUsers.lastname eq newLastname
                 innerJoin PostgresqlRoles on PostgresqlUsers.roleId eq PostgresqlRoles.id
                 where PostgresqlRoles.label eq roleLabel
+                ).execute()
+
+    suspend fun updateAndIncrementRoleId() =
+        (sqlClient update PostgresqlUsers
+                set PostgresqlUsers.roleId eq PostgresqlUsers.roleId plus 2
+                where PostgresqlUsers.id eq userJdoe.id
+                ).execute()
+
+    suspend fun updateAndDecrementRoleId() =
+        (sqlClient update PostgresqlUsers
+                set PostgresqlUsers.roleId eq PostgresqlUsers.roleId minus 1
+                where PostgresqlUsers.id eq userBboss.id
                 ).execute()
 }

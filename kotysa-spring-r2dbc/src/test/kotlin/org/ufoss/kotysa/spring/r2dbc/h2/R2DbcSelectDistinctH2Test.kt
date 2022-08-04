@@ -26,9 +26,7 @@ class R2DbcSelectDistinctH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectDist
 }
 
 
-class UserRepositoryH2SelectDistinct(
-    sqlClient: ReactorSqlClient,
-) : org.ufoss.kotysa.spring.r2dbc.h2.AbstractUserRepositoryH2(sqlClient) {
+class UserRepositoryH2SelectDistinct(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
 
     fun selectDistinctRoleLabels() =
             (sqlClient selectDistinct H2Roles.label

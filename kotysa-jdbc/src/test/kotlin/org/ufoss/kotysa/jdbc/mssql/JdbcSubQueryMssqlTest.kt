@@ -66,10 +66,35 @@ class JdbcSubQueryMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSubQu
                 roleGod.label,
             )
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 
-class UserRepositoryJdbcMssqlSubQuery(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient) {
+class UserRepositoryJdbcMssqlSubQuery(private val sqlClient: JdbcSqlClient) :
+    AbstractUserRepositoryJdbcMssql(sqlClient) {
 
     fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
         (sqlClient select MssqlUsers.firstname and {
@@ -150,4 +175,16 @@ class UserRepositoryJdbcMssqlSubQuery(private val sqlClient: JdbcSqlClient) : Ab
         } then true `else` false
                 andAsc MssqlRoles.label)
             .fetchAll()
+
+    fun updateAndIncrementRoleId() =
+        (sqlClient update MssqlUsers
+                set MssqlUsers.roleId eq MssqlUsers.roleId plus 2
+                where MssqlUsers.id eq userJdoe.id
+                ).execute()
+
+    fun updateAndDecrementRoleId() =
+        (sqlClient update MssqlUsers
+                set MssqlUsers.roleId eq MssqlUsers.roleId minus 1
+                where MssqlUsers.id eq userBboss.id
+                ).execute()
 }

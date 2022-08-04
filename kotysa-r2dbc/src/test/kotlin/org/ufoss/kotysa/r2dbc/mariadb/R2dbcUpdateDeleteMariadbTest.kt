@@ -131,6 +131,30 @@ class R2dbcUpdateDeleteMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbc
                 .isEqualTo(null)
         }
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() = runTest {
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 
@@ -176,5 +200,17 @@ class UserRepositoryJdbcMariadbUpdateDelete(private val sqlClient: R2dbcSqlClien
                 set MariadbUsers.lastname eq newLastname
                 innerJoin MariadbRoles on MariadbUsers.roleId eq MariadbRoles.id
                 where MariadbRoles.label eq roleLabel
+                ).execute()
+
+    suspend fun updateAndIncrementRoleId() =
+        (sqlClient update MariadbUsers
+                set MariadbUsers.roleId eq MariadbUsers.roleId plus 2
+                where MariadbUsers.id eq userJdoe.id
+                ).execute()
+
+    suspend fun updateAndDecrementRoleId() =
+        (sqlClient update MariadbUsers
+                set MariadbUsers.roleId eq MariadbUsers.roleId minus 1
+                where MariadbUsers.id eq userBboss.id
                 ).execute()
 }
