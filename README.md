@@ -1,6 +1,6 @@
 [![License: Unlicense](https://img.shields.io/github/license/ufoss-org/kotysa)](http://unlicense.org/)
 [![Maven Central](https://img.shields.io/maven-central/v/org.ufoss.kotysa/kotysa-core)](https://search.maven.org/artifact/org.ufoss.kotysa/kotysa-core)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.6.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.7.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 # Kotysa
 
@@ -76,7 +76,7 @@ val admins = (sqlClient selectFrom Users
 
 Contributions are welcome.
 
-* To compile Kotysa use a JDK 8.
+* Compile Kotysa with a JDK 8.
 * You need a local docker, like docker-ce : some tests use testcontainers to start real databases like PostgreSQL, MySQL...
 
 1. Clone this repo
