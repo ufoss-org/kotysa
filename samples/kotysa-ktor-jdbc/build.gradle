@@ -13,7 +13,8 @@ repositories {
 dependencies {
     implementation "io.ktor:ktor-server-core:$ktor_version"
     implementation "io.ktor:ktor-server-netty:$ktor_version"
-    implementation "io.ktor:ktor-serialization:$ktor_version"
+    implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
+    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
     implementation "ch.qos.logback:logback-classic:$logback_version"
     implementation "org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version" // kodein for ktor
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
@@ -30,6 +31,6 @@ test {
 }
 
 wrapper {
-    gradleVersion = '7.4.2'
+    gradleVersion = '7.5'
     distributionType = Wrapper.DistributionType.ALL
 }
