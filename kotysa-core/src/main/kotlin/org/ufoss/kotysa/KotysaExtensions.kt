@@ -20,19 +20,20 @@ public fun <T : Any> Tables.getTable(table: Table<T>): KotysaTable<T> =
 public fun <T : Any> Tables.getTable(tableClass: KClass<out T>): KotysaTable<T> =
     requireNotNull(this.allTables.values.first { kotysaTable -> kotysaTable.tableClass == tableClass }) as KotysaTable<T>
 
-public fun DefaultSqlClientCommon.Properties.dbValues(): List<Any> = with(this) {
+public fun DefaultSqlClientCommon.Properties.dbValues(): List<Any?> = with(this) {
     parameters
         .map { value ->
-            if (value is Set<*>) {
-                // create new Set with transformed values
-                mutableSetOf<Any?>().apply {
-                    value.forEach { dbVal ->
-                        add(tables.getDbValue(dbVal))
+            when (value) {
+                null -> null
+                is Set<*> ->
+                    // create new Set with transformed values
+                    mutableSetOf<Any?>().apply {
+                        value.forEach { dbVal ->
+                            add(tables.getDbValue(dbVal))
+                        }
                     }
-                }
-            } else {
-                tables.getDbValue(value)
-            } as Any
+                else -> tables.getDbValue(value)
+            }
         }
 }
 

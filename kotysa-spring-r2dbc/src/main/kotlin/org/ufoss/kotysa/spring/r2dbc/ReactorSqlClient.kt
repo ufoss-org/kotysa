@@ -244,7 +244,9 @@ public class ReactorSqlClientDeleteOrUpdate private constructor() {
     public interface DeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Where<Any>>,
         Return
 
-    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>>
+    public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>
+
+    public interface UpdateInt<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.UpdateInt<T, Update<T>, UpdateInt<T>>
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
 

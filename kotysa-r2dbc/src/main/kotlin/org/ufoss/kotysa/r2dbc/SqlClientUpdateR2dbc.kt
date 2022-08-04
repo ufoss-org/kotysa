@@ -18,10 +18,12 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
         override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             CoroutinesSqlClientDeleteOrUpdate.Where<T>,
-            CoroutinesSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.R2DBC),
-        CoroutinesSqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            CoroutinesSqlClientDeleteOrUpdate.Update<T>, CoroutinesSqlClientDeleteOrUpdate.UpdateInt<T>>
+        (DbAccessType.R2DBC, Module.R2DBC), CoroutinesSqlClientDeleteOrUpdate.Update<T>,
+        CoroutinesSqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
         override val where = Where(connectionFactory, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(connectionFactory, properties)
         }
@@ -52,20 +54,23 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
 
         override suspend fun execute(): Int = getR2dbcConnection(connectionFactory).execute { connection ->
             with(properties) {
-                require(setValues.isNotEmpty()) { "At least one value must be set in Update" }
+                require(updateClauses.isNotEmpty()) { "At least one value must be set in Update" }
 
                 val statement = connection.createStatement(updateTableSql())
                 // reset index
                 index = 0
 
-                // 1) add all values from set part
-                setValues.entries
-                    .forEach { entry ->
-                        val value = entry.value
+                // 1) add all values from update part
+                updateClauses
+                    .filterIsInstance<UpdateClauseValue<*>>()
+                    .forEach { updateClauseValue ->
+                        val value = parameters[0]
+                        // immediately remove this parameter
+                        parameters.removeFirst()
                         if (value == null) {
                             statement.bindNull(
                                 index++,
-                                ((entry.key as DbColumn<*, *>).entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
+                                ((updateClauseValue.column as DbColumn<*, *>).entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
                             )
                         } else {
                             statement.bind(index++, tables.getDbValue(value)!!)
@@ -75,7 +80,7 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
                 // 2) add all params
                 r2dbcBindParams(statement)
 
-                // reset index
+                // 3) reset index
                 index = 0
 
                 val result = statement.execute().awaitSingle()

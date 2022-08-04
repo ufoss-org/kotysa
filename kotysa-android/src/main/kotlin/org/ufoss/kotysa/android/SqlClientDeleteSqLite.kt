@@ -47,7 +47,7 @@ internal class SqlClientDeleteSqLite private constructor() : DefaultSqlClientDel
             val statement = client.compileStatement(deleteFromTableSql())
 
             // add all values from where part
-            bindWhereArgs(statement)
+            bindParameters(statement)
 
             statement.executeUpdateDelete()
         }

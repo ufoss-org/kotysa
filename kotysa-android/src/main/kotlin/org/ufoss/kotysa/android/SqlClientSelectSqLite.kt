@@ -556,7 +556,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
 
         private fun fetch(): Cursor = with(properties) {
             val sql = selectSql()
-            val selectionArgs = whereValues().toMutableList()
+            val selectionArgs = parameterValues().toMutableList()
             if (limit != null) {
                 selectionArgs.add(limit)
             }

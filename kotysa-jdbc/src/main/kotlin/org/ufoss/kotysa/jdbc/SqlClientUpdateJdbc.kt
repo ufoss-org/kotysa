@@ -14,10 +14,12 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
         override val tables: Tables,
         override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>>(DbAccessType.JDBC, Module.JDBC),
-            SqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>>
+        (DbAccessType.JDBC, Module.JDBC), SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>,
+        Return<T> {
         override val where = Where(jdbcConnection, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: Update<T> by lazy {
             Update(jdbcConnection, properties)
         }
@@ -46,18 +48,13 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
 
         override fun execute() = jdbcConnection.execute { connection ->
             with(properties) {
-                require(setValues.isNotEmpty()) { "At least one value must be set in Update" }
+                require(updateClauses.isNotEmpty()) { "At least one value must be set in Update" }
 
                 val statement = connection.prepareStatement(updateTableSql())
 
-                // 1) add all values from set part
-                setValues.values
-                    .map { value -> tables.getDbValue(value) }
-                    .forEach { dbValue -> statement.setObject(++index, dbValue) }
-
-                // 2) add all params
+                // 1) add all values from update and where part
                 jdbcBindParams(statement)
-                // 3) reset index
+                // 2) reset index
                 index = 0
 
                 statement.executeUpdate()

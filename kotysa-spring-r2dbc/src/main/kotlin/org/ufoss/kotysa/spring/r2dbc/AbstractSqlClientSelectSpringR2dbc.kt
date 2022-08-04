@@ -25,7 +25,7 @@ internal abstract class AbstractSqlClientSelectSpringR2dbc protected constructor
             // 1) add all values from where part
             executeSpec = dbValues()
                 .fold(executeSpec) { execSpec, value ->
-                    execSpec.bind("k${index++}", value)
+                    execSpec.bind("k${index++}", value!!)
                 }
 
             // 2) add limit and offset (order is different depending on DbType)

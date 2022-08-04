@@ -40,8 +40,9 @@ internal fun SQLiteStatement.bind(index: Int, value: Any?) {
                         bindString(index, value.toString())
                     }
                 }
+
                 else -> throw UnsupportedOperationException(
-                        "${value.javaClass.canonicalName} is not supported by Android SqLite"
+                    "${value.javaClass.canonicalName} is not supported by Android SqLite"
                 )
             }
         }
@@ -50,15 +51,13 @@ internal fun SQLiteStatement.bind(index: Int, value: Any?) {
     }
 }
 
-internal fun DefaultSqlClientCommon.Return.bindWhereArgs(statement: SQLiteStatement, idx: Int = 1) = with(properties) {
-    var index = idx
-    whereValues()
-            .forEach { whereValue -> statement.bind(index++, whereValue) }
-}
+internal fun DefaultSqlClientCommon.Properties.bindParameters(statement: SQLiteStatement) =
+    parameterValues()
+        .forEachIndexed { index, parameter -> statement.bind(index + 1, parameter) }
 
 internal fun Cursor.toRow() = RowImpl(SqLiteRow(this))
 
-internal fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(properties) {
+internal fun DefaultSqlClientCommon.Properties.parameterValues(): List<Any?> =
     parameters
         .flatMap { parameter ->
             if (parameter is Collection<*>) {
@@ -67,4 +66,3 @@ internal fun DefaultSqlClientCommon.Return.whereValues(): List<Any?> = with(prop
                 setOf(parameter)
             }
         }
-}

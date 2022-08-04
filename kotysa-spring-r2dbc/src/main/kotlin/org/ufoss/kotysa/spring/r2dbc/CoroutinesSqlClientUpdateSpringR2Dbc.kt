@@ -17,10 +17,12 @@ internal class CoroutinesSqlClientUpdateSpringR2Dbc private constructor() : Abst
             override val table: Table<T>,
     ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
             CoroutinesSqlClientDeleteOrUpdate.Where<T>,
-            CoroutinesSqlClientDeleteOrUpdate.Update<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
-            CoroutinesSqlClientDeleteOrUpdate.Update<T>, Return<T> {
+            CoroutinesSqlClientDeleteOrUpdate.Update<T>, CoroutinesSqlClientDeleteOrUpdate.UpdateInt<T>>
+        (DbAccessType.R2DBC, Module.SPRING_R2DBC), CoroutinesSqlClientDeleteOrUpdate.Update<T>,
+        CoroutinesSqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
+        override val updateInt = this
         override val fromTable: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }

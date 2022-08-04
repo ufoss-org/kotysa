@@ -139,6 +139,32 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
                     .isEqualTo("Do")
         }
     }
+
+    @Test
+    fun `Verify updateAndIncrementRoleId works`() {
+        val operator = client.transactionalOp()
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndIncrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleGod.id)
+        }
+    }
+
+    @Test
+    fun `Verify updateAndDecrementRoleId works`() {
+        val operator = client.transactionalOp()
+        operator.transactional<Unit> { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.updateAndDecrementRoleId())
+                .isEqualTo(1)
+            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
+                .extracting { user -> user?.roleId }
+                .isEqualTo(roleUser.id)
+        }
+    }
 }
 
 class UserRepositoryUpdateDelete(
@@ -186,4 +212,16 @@ class UserRepositoryUpdateDelete(
                     innerJoin SqliteRoles on SqliteUsers.roleId eq SqliteRoles.id
                     where SqliteRoles.label eq roleLabel
                     ).execute()
+
+    fun updateAndIncrementRoleId() =
+        (sqlClient update SqliteUsers
+                set SqliteUsers.roleId eq SqliteUsers.roleId plus 2
+                where SqliteUsers.id eq userJdoe.id
+                ).execute()
+
+    fun updateAndDecrementRoleId() =
+        (sqlClient update SqliteUsers
+                set SqliteUsers.roleId eq SqliteUsers.roleId minus 1
+                where SqliteUsers.id eq userBboss.id
+                ).execute()
 }
