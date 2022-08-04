@@ -169,6 +169,9 @@ task releaseBuild {
 
 release {
     buildTasks = ['releaseBuild']
+    git {
+        requireBranch.set('master')
+    }
 }
 
 // when version changes :
