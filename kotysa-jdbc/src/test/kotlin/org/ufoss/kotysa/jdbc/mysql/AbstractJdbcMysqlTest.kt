@@ -10,9 +10,9 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.jdbc.sqlClient
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource

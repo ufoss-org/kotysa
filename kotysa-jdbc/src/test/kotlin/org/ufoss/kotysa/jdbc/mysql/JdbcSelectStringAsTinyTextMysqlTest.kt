@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class JdbcSelectStringAsTinyTextMysqlTest : AbstractJdbcMysqlTest<StringAsTinyTextRepositoryMysqlSelect>() {

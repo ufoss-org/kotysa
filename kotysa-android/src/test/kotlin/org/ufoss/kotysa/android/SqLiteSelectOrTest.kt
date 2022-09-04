@@ -7,14 +7,14 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
 
 class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositorySelectOr(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectOr(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
@@ -26,7 +26,7 @@ class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
 
 class UserRepositorySelectOr(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+        tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectRolesByLabels(label1: String, label2: String) =

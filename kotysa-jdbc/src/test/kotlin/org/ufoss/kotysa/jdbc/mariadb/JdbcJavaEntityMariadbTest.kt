@@ -4,8 +4,8 @@
 
 package org.ufoss.kotysa.jdbc.mariadb
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.MariadbJavaUsers
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository

@@ -5,7 +5,7 @@ import org.h2.jdbcx.JdbcConnectionPool
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.tables
 

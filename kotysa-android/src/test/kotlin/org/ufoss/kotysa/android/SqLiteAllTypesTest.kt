@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.android.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
@@ -17,7 +17,7 @@ import java.time.LocalTime
 
 class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
 
-    override fun getRepository(sqLiteTables: Tables) = AllTypesRepository(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = AllTypesRepository(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -96,7 +96,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
     }
 }
 
-class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

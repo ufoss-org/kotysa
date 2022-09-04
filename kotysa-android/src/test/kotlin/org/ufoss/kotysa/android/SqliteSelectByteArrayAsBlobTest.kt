@@ -7,12 +7,12 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqliteSelectByteArrayAsBlobTest : AbstractSqLiteTest<ByteArrayRepositorySqliteSelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = ByteArrayRepositorySqliteSelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = ByteArrayRepositorySqliteSelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByByteArrayNotNull finds byteArrayWithNullable`() {
@@ -65,7 +65,7 @@ class SqliteSelectByteArrayAsBlobTest : AbstractSqLiteTest<ByteArrayRepositorySq
 }
 
 
-class ByteArrayRepositorySqliteSelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class ByteArrayRepositorySqliteSelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

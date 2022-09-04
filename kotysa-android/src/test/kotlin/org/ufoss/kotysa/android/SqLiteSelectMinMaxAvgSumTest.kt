@@ -7,12 +7,12 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = MinMaxAvgSumRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = MinMaxAvgSumRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
@@ -41,7 +41,7 @@ class SqLiteSelectMinMaxAvgSumTest : AbstractSqLiteTest<MinMaxAvgSumRepositorySe
 
 class MinMaxAvgSumRepositorySelect(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
+        tables: SqLiteTables,
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectCustomerMinAge() =

@@ -10,7 +10,7 @@ import java.util.stream.Stream
 /**
  * Sql Client, to be used with a blocking driver
  */
-public interface SqlClient {
+public sealed interface SqlClient {
 
     public infix fun <T : Any> insert(row: T)
     public fun <T : Any> insert(vararg rows: T)
@@ -57,6 +57,12 @@ public interface SqlClient {
     public infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
 
+public interface H2SqlClient : SqlClient
+public interface MysqlSqlClient : SqlClient
+public interface PostgresqlSqlClient : SqlClient
+public interface MssqlSqlClient : SqlClient
+public interface MariadbSqlClient : SqlClient
+public interface SqLiteSqlClient : SqlClient
 
 public class SqlClientSelect private constructor() : SqlClientQuery() {
 

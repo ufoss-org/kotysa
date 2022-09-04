@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.postgresql.util.PSQLException
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class JdbcSelectAliasPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositorySelectAlias>() {
