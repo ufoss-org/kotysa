@@ -264,12 +264,12 @@ internal sealed class SqlClientJdbc(
 
 internal class H2SqlClientJdbc internal constructor(
     dataSource: DataSource,
-    tables: Tables,
+    tables: H2Tables,
 ) : SqlClientJdbc(dataSource, tables), H2JdbcSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
-    override fun <T : Any> insertAndReturn(row: T): T = insertAndReturnProtected(row)
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> = insertAndReturnProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
@@ -297,12 +297,12 @@ internal class H2SqlClientJdbc internal constructor(
 
 internal class MysqlSqlClientJdbc internal constructor(
     dataSource: DataSource,
-    tables: Tables,
+    tables: MysqlTables,
 ) : SqlClientJdbc(dataSource, tables), MysqlJdbcSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
-    override fun <T : Any> insertAndReturn(row: T): T = insertAndReturnProtected(row)
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> = insertAndReturnProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
@@ -330,12 +330,12 @@ internal class MysqlSqlClientJdbc internal constructor(
 
 internal class PostgresqlSqlClientJdbc internal constructor(
     dataSource: DataSource,
-    tables: Tables,
+    tables: PostgresqlTables,
 ) : SqlClientJdbc(dataSource, tables), PostgresqlJdbcSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
-    override fun <T : Any> insertAndReturn(row: T): T = insertAndReturnProtected(row)
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> = insertAndReturnProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
@@ -363,12 +363,12 @@ internal class PostgresqlSqlClientJdbc internal constructor(
 
 internal class MssqlSqlClientJdbc internal constructor(
     dataSource: DataSource,
-    tables: Tables,
+    tables: MssqlTables,
 ) : SqlClientJdbc(dataSource, tables), MssqlJdbcSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
-    override fun <T : Any> insertAndReturn(row: T): T = insertAndReturnProtected(row)
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> = insertAndReturnProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
@@ -396,12 +396,12 @@ internal class MssqlSqlClientJdbc internal constructor(
 
 internal class MariadbSqlClientJdbc internal constructor(
     dataSource: DataSource,
-    tables: Tables,
+    tables: MariadbTables,
 ) : SqlClientJdbc(dataSource, tables), MariadbJdbcSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
-    override fun <T : Any> insertAndReturn(row: T): T = insertAndReturnProtected(row)
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> = insertAndReturnProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)

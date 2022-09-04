@@ -14,7 +14,7 @@ import java.math.BigDecimal
  */
 internal class SqlClientSqLite internal constructor(
     private val client: SQLiteOpenHelper,
-    override val tables: Tables,
+    override val tables: SqLiteTables,
 ) : SqLiteSqlClient, DefaultSqlClient {
 
     override val module = Module.SQLITE
