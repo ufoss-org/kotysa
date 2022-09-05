@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.SqliteKotlinxLocalDates
 import org.ufoss.kotysa.test.kotlinxLocalDateWithNullable
@@ -16,7 +16,7 @@ import org.ufoss.kotysa.test.kotlinxLocalDateWithoutNullable
 
 class SqLiteSelectKotlinxLocalDateTest : AbstractSqLiteTest<KotlinxLocalDateRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = KotlinxLocalDateRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = KotlinxLocalDateRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds kotlinxLocalDateWithNullable`() {
@@ -178,7 +178,7 @@ class SqLiteSelectKotlinxLocalDateTest : AbstractSqLiteTest<KotlinxLocalDateRepo
     }
 }
 
-class KotlinxLocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class KotlinxLocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

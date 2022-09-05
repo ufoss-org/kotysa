@@ -4,11 +4,11 @@
 
 package org.ufoss.kotysa.jdbc.transaction
 
-import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import java.sql.Connection
 import java.sql.Savepoint
 
-public class JdbcTransaction(internal val connection: Connection) : Transaction {
+internal class JdbcTransactionImpl internal constructor(internal val connection: Connection) : JdbcTransaction {
 
     private var rollbackOnly = false
     private var completed = false
@@ -23,13 +23,13 @@ public class JdbcTransaction(internal val connection: Connection) : Transaction 
 
     override fun isCompleted(): Boolean = completed
 
-    public fun createSavepoint(): Savepoint = connection.setSavepoint()
+    override fun createSavepoint(): Savepoint = connection.setSavepoint()
 
-    public fun rollbackToSavepoint(savepoint: Savepoint) {
+    override fun rollbackToSavepoint(savepoint: Savepoint) {
         connection.rollback(savepoint)
     }
 
-    public fun releaseSavepoint(savepoint: Savepoint) {
+    override fun releaseSavepoint(savepoint: Savepoint) {
         connection.releaseSavepoint(savepoint)
     }
     

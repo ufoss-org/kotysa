@@ -7,12 +7,12 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectGroupByTest : AbstractSqLiteTest<GroupByRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = GroupByRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = GroupByRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
@@ -24,7 +24,7 @@ class SqLiteSelectGroupByTest : AbstractSqLiteTest<GroupByRepositorySelect>() {
 
 class GroupByRepositorySelect(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
+        tables: SqLiteTables,
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectCountCustomerGroupByCountry() =

@@ -10,7 +10,7 @@ import java.math.BigDecimal
 /**
  * Coroutines Sql Client
  */
-public interface CoroutinesSqlClient {
+public sealed interface CoroutinesSqlClient {
 
     public suspend infix fun <T : Any> insert(row: T)
     public suspend fun <T : Any> insert(vararg rows: T)
@@ -57,6 +57,11 @@ public interface CoroutinesSqlClient {
     public suspend infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long = selectCountFrom(table).fetchOne()!!
 }
 
+public interface H2CoroutinesSqlClient : CoroutinesSqlClient
+public interface MysqlCoroutinesSqlClient : CoroutinesSqlClient
+public interface PostgresqlCoroutinesSqlClient : CoroutinesSqlClient
+public interface MssqlCoroutinesSqlClient : CoroutinesSqlClient
+public interface MariadbCoroutinesSqlClient : CoroutinesSqlClient
 
 public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() {
 

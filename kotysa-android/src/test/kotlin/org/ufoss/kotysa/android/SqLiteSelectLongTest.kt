@@ -7,7 +7,7 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
@@ -24,7 +24,7 @@ class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
             2
     )
 
-    override fun getRepository(sqLiteTables: Tables) = LongRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = LongRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByLongNotNull finds sqLiteIntegerWithNullable`() {
@@ -184,7 +184,7 @@ class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
     }
 }
 
-class LongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class LongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

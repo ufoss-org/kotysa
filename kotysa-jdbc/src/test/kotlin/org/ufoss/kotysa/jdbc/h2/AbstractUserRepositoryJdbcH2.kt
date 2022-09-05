@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepositoryJdbcH2(private val sqlClient: JdbcSqlClient) : Repository {

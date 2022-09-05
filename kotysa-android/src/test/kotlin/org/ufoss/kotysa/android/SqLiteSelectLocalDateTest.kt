@@ -7,13 +7,13 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 
 class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = LocalDateRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = LocalDateRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByLocalDateNotNull finds localDateWithNullable`() {
@@ -175,7 +175,7 @@ class SqLiteSelectLocalDateTest : AbstractSqLiteTest<LocalDateRepositorySelect>(
     }
 }
 
-class LocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class LocalDateRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

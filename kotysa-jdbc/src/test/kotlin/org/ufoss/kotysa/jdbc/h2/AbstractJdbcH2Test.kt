@@ -7,9 +7,9 @@ package org.ufoss.kotysa.jdbc.h2
 import org.h2.jdbcx.JdbcDataSource
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.jdbc.sqlClient
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.h2Tables
 import org.ufoss.kotysa.test.repositories.RepositoryTest

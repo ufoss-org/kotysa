@@ -10,13 +10,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositorySelectAlias(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectAlias(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet returns TheBoss firstname`() {
@@ -170,7 +170,7 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
 
 class UserRepositorySelectAlias(
     sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+    tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

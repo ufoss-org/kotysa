@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.sqLiteTables
 
@@ -38,7 +38,7 @@ abstract class AbstractSqLiteTest<T : Repository> {
         repository.delete()
     }
 
-    protected abstract fun getRepository(sqLiteTables: Tables): T
+    protected abstract fun getRepository(sqLiteTables: SqLiteTables): T
 
     protected val client: SQLiteDatabase get() = dbHelper.writableDatabase
 }

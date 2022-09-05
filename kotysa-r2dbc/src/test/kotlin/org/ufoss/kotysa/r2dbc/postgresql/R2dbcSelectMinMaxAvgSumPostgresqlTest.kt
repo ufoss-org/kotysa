@@ -7,7 +7,7 @@ package org.ufoss.kotysa.r2dbc.postgresql
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.PostgresqlCustomers
 
 class R2dbcSelectMinMaxAvgSumPostgresqlTest : AbstractR2dbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>() {

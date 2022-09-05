@@ -7,14 +7,14 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.android.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import java.time.*
 
 class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
 
-    override fun getRepository(sqLiteTables: Tables) = RepositorySqLitelInsert(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = RepositorySqLitelInsert(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -118,7 +118,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
     }
 }
 
-class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

@@ -10,11 +10,11 @@ import reactor.core.publisher.Mono
 import java.math.BigDecimal
 
 /**
- * Reactive (using Reactor Mono and Flux) Sql Client, to be used with R2DBC
+ * Reactive (using Reactor Mono and Flux) Sql Client, to be used with a R2DBC driver
  *
  * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbc
  */
-public interface ReactorSqlClient {
+public sealed interface ReactorSqlClient {
 
     public infix fun <T : Any> insert(row: T): Mono<Void>
     public fun <T : Any> insert(vararg rows: T): Mono<Void>
@@ -59,6 +59,12 @@ public interface ReactorSqlClient {
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T> = selectFrom(table).fetchAll()
     public infix fun <T : Any> selectCountAllFrom(table: Table<T>): Mono<Long> = selectCountFrom(table).fetchOne()
 }
+
+public interface H2ReactorSqlClient : ReactorSqlClient
+public interface MysqlReactorSqlClient : ReactorSqlClient
+public interface PostgresqlReactorSqlClient : ReactorSqlClient
+public interface MssqlReactorSqlClient : ReactorSqlClient
+public interface MariadbReactorSqlClient : ReactorSqlClient
 
 
 public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {

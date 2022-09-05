@@ -6,17 +6,18 @@ package org.ufoss.kotysa.r2dbc.transaction
 
 import io.r2dbc.spi.Connection
 import kotlinx.coroutines.reactive.awaitSingle
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.transaction.Transaction
 import kotlin.coroutines.AbstractCoroutineContextElement
 import kotlin.coroutines.CoroutineContext
 
-public class R2dbcTransaction(internal val connection: Connection) : Transaction,
-    AbstractCoroutineContextElement(R2dbcTransaction) {
+public class R2dbcTransactionImpl(internal val connection: Connection) : Transaction,
+    AbstractCoroutineContextElement(R2dbcTransactionImpl), R2dbcTransaction {
 
     /**
      * Key for [R2dbcTransaction] instance in the coroutine context.
      */
-    public companion object Key : CoroutineContext.Key<R2dbcTransaction>
+    public companion object Key : CoroutineContext.Key<R2dbcTransactionImpl>
 
     private var rollbackOnly = false
     private var completed = false
@@ -31,15 +32,15 @@ public class R2dbcTransaction(internal val connection: Connection) : Transaction
 
     override fun isCompleted(): Boolean = completed
 
-    public suspend fun createSavepoint(name: String) {
+    override suspend fun createSavepoint(name: String) {
         connection.createSavepoint(name).awaitSingle()
     }
 
-    public suspend fun rollbackToSavepoint(name: String) {
+    override suspend fun rollbackToSavepoint(name: String) {
         connection.rollbackTransactionToSavepoint(name).awaitSingle()
     }
 
-    public suspend fun releaseSavepoint(name: String) {
+    override suspend fun releaseSavepoint(name: String) {
         connection.releaseSavepoint(name).awaitSingle()
     }
     

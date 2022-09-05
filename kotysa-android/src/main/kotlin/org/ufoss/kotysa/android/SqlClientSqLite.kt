@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa.android
 
-import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import org.ufoss.kotysa.*
@@ -13,10 +12,10 @@ import java.math.BigDecimal
 /**
  * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
  */
-internal class SqlClientSqLite(
+internal class SqlClientSqLite internal constructor(
     private val client: SQLiteOpenHelper,
-    override val tables: Tables
-) : SqlClient, DefaultSqlClient {
+    override val tables: SqLiteTables,
+) : SqLiteSqlClient, DefaultSqlClient {
 
     override val module = Module.SQLITE
 
@@ -134,10 +133,3 @@ internal class SqlClientSqLite(
     ): SqlClientSelect.From<T> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectStarFromSubQuery(dsl)
 }
-
-/**
- * Create a [SqlClient] from a Android SqLite [SQLiteDatabase] with [Tables] mapping
- *
- * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
- */
-public fun SQLiteOpenHelper.sqlClient(tables: Tables): SqlClient = SqlClientSqLite(this, tables)

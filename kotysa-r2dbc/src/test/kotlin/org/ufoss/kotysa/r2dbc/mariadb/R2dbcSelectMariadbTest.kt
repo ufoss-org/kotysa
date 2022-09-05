@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelect>() {

@@ -7,13 +7,13 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.android.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 
 class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositoryUpdateDelete(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryUpdateDelete(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {
@@ -169,7 +169,7 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>() 
 
 class UserRepositoryUpdateDelete(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+        tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun deleteUserById(id: Int) =

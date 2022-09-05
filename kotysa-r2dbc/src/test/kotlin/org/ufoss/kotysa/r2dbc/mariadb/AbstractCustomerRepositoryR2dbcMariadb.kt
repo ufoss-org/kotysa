@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.r2dbc.mariadb
 
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractCustomerRepositoryR2dbcMariadb(private val sqlClient: R2dbcSqlClient) : Repository {

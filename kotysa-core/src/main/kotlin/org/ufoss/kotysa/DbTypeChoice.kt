@@ -22,39 +22,40 @@ public object DbTypeChoice {
      * Configure Functional Table Mapping support for H2
      * @sample org.ufoss.kotysa.sample.h2Tables
      */
-    public fun h2(vararg tables: H2Table<*>): Tables = fillTables(DbType.H2, *tables)
+    public fun h2(vararg tables: H2Table<*>): H2Tables = buildH2Tables(tables)
 
     /**
      * Configure Functional Table Mapping support for MySQL
      * @sample org.ufoss.kotysa.sample.mysqlTables
      */
-    public fun mysql(vararg tables: MysqlTable<*>): Tables = fillTables(DbType.MYSQL, *tables)
+    public fun mysql(vararg tables: MysqlTable<*>): MysqlTables = buildMysqlTables(tables)
 
     /**
      * Configure Functional Table Mapping support for PostgreSQL
      * @sample org.ufoss.kotysa.sample.postgresqlTables
      */
-    public fun postgresql(vararg tables: PostgresqlTable<*>): Tables = fillTables(DbType.POSTGRESQL, *tables)
+    public fun postgresql(vararg tables: PostgresqlTable<*>): PostgresqlTables = buildPostgresqlTables(tables)
 
     /**
      * Configure Functional Table Mapping support for Microsoft SQL Server
      * @sample org.ufoss.kotysa.sample.mssqlTables
      */
-    public fun mssql(vararg tables: MssqlTable<*>): Tables = fillTables(DbType.MSSQL, *tables)
+    public fun mssql(vararg tables: MssqlTable<*>): MssqlTables = buildMssqlTables(tables)
 
     /**
      * Configure Functional Table Mapping support for MariaDB
      * @sample org.ufoss.kotysa.sample.mariadbTables
      */
-    public fun mariadb(vararg tables: MariadbTable<*>): Tables = fillTables(DbType.MARIADB, *tables)
+    public fun mariadb(vararg tables: MariadbTable<*>): MariadbTables = buildMariadbTables(tables)
 
     /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
      */
-    public fun sqlite(vararg tables: SqLiteTable<*>): Tables = fillTables(DbType.SQLITE, *tables)
+    public fun sqlite(vararg tables: SqLiteTable<*>): SqLiteTables = buildSqLiteTables(tables)
 
-    private fun fillTables(dbType: DbType, vararg tables: AbstractTable<*>): Tables {
+    private fun fillTables(dbType: DbType, tables: Array<out AbstractTable<*>>)
+    : Pair<Map<Table<*>, KotysaTable<*>>, Map<Column<*, *>, KotysaColumn<*, *>>> {
         require(tables.isNotEmpty()) { "Tables must declare at least one table" }
 
         val allTables = mutableMapOf<Table<*>, KotysaTable<*>>()
@@ -81,7 +82,37 @@ public object DbTypeChoice {
             allTables[kotysaTable.table] = kotysaTable
             allColumns.putAll(kotysaTable.columns.associateBy { kotysaColumn -> kotysaColumn.column })
         }
-        return Tables(allTables, allColumns, dbType)
+        return Pair(allTables, allColumns)
+    }
+    
+    private fun buildH2Tables(tables: Array<out AbstractTable<*>>): H2Tables {
+        val pair = fillTables(DbType.H2, tables)
+        return H2Tables(pair.first, pair.second)
+    }
+
+    private fun buildMysqlTables(tables: Array<out AbstractTable<*>>): MysqlTables {
+        val pair = fillTables(DbType.MYSQL, tables)
+        return MysqlTables(pair.first, pair.second)
+    }
+
+    private fun buildPostgresqlTables(tables: Array<out AbstractTable<*>>): PostgresqlTables {
+        val pair = fillTables(DbType.POSTGRESQL, tables)
+        return PostgresqlTables(pair.first, pair.second)
+    }
+
+    private fun buildMssqlTables(tables: Array<out AbstractTable<*>>): MssqlTables {
+        val pair = fillTables(DbType.MSSQL, tables)
+        return MssqlTables(pair.first, pair.second)
+    }
+
+    private fun buildMariadbTables(tables: Array<out AbstractTable<*>>): MariadbTables {
+        val pair = fillTables(DbType.MARIADB, tables)
+        return MariadbTables(pair.first, pair.second)
+    }
+
+    private fun buildSqLiteTables(tables: Array<out AbstractTable<*>>): SqLiteTables {
+        val pair = fillTables(DbType.SQLITE, tables)
+        return SqLiteTables(pair.first, pair.second)
     }
 
     private fun initializeTable(table: AbstractTable<Any>, tableClass: KClass<Any>): KotysaTable<*> {
