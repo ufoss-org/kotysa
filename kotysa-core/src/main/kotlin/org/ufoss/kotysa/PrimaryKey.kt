@@ -5,8 +5,7 @@
 package org.ufoss.kotysa
 
 
-public class PrimaryKey<T : Any, U> internal constructor(
+public class PrimaryKey<T : Any> internal constructor(
         internal val name: String?,
-        public val columns: List<U>,
-) where U : DbColumn<T, *>,
-        U : ColumnNotNull<T, *>
+        public val columns: List<DbColumn<T, *>>,
+)

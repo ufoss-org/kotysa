@@ -153,8 +153,7 @@ public interface DefaultSqlClient {
     public fun <T : Any> lastInsertedQuery(row: T): String {
         val kotysaTable = tables.getTable(row::class)
 
-        @Suppress("UNCHECKED_CAST")
-        val pkColumns = kotysaTable.primaryKey.columns as List<DbColumn<T, *>>
+        val pkColumns = kotysaTable.primaryKey.columns
 
         val allTableColumnNames = kotysaTable.columns
             .joinToString { column -> column.name }

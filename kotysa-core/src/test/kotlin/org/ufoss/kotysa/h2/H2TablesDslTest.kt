@@ -15,7 +15,6 @@ import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
 
-
 class H2TablesDslTest {
 
     @Test
@@ -137,5 +136,25 @@ class H2TablesDslTest {
         assertThat(userTableFk.references.values)
             .hasSize(1)
             .containsExactly(H2Roles.id)
+    }
+
+    data class CompositePk(val name: String, val age: Int)
+
+    object CompositePks : H2Table<CompositePk>("users") {
+        val name = varchar(CompositePk::name)
+        val age = integer(CompositePk::age)
+
+        init {
+            primaryKey(name, age)
+        }
+    }
+    
+    @Test
+    fun `Test no ClassCastException on composite primary key #96`() {
+        val tables = tables().h2(CompositePks)
+        val compositePkTable = tables.allTables[CompositePks] ?: fail { "require mapped RoleEntity" }
+        assertThat(compositePkTable.primaryKey.name).isNull()
+        assertThat(compositePkTable.primaryKey.columns)
+            .containsExactly(CompositePks.name, CompositePks.age)
     }
 }

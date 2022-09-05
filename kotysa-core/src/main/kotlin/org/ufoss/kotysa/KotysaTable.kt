@@ -18,7 +18,7 @@ public interface KotysaTable<T : Any> {
      */
     public val name: String
     public val columns: List<KotysaColumn<T, *>>
-    public val primaryKey: PrimaryKey<T, *>
+    public val primaryKey: PrimaryKey<T>
     public val foreignKeys: Set<ForeignKey<T, *>>
 }
 
@@ -28,7 +28,7 @@ internal class KotysaTableImpl<T : Any> internal constructor(
         override val table: Table<T>,
         override val name: String,
         override val columns: List<KotysaColumn<T, *>>,
-        override val primaryKey: PrimaryKey<T, *>,
+        override val primaryKey: PrimaryKey<T>,
         override val foreignKeys: Set<ForeignKey<T, *>>,
 ) : KotysaTable<T> {
 
