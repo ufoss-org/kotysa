@@ -7,14 +7,14 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.SqliteUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
 
 class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositoryBooleanSelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryBooleanSelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
@@ -33,7 +33,7 @@ class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>(
 
 class UserRepositoryBooleanSelect(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+        tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectAllByIsAdminEq(value: Boolean) =

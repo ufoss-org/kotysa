@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.r2dbc.mysql
 
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractCustomerRepositoryR2dbcMysql(private val sqlClient: R2dbcSqlClient) : Repository {

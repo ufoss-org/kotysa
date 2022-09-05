@@ -10,7 +10,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*

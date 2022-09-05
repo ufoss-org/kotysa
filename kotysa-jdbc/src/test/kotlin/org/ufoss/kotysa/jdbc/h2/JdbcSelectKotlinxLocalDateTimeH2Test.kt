@@ -7,7 +7,7 @@ package org.ufoss.kotysa.jdbc.h2
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class JdbcSelectKotlinxLocalDateTimeH2Test : AbstractJdbcH2Test<KotlinxLocalDateTimeRepositoryH2Select>() {

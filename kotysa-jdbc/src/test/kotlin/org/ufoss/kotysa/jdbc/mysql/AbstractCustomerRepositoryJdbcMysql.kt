@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractCustomerRepositoryJdbcMysql(private val sqlClient: JdbcSqlClient) : Repository {

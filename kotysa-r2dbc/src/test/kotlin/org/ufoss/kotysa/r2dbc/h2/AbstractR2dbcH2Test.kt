@@ -9,9 +9,9 @@ import org.junit.jupiter.api.BeforeAll
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
 import io.r2dbc.spi.ConnectionFactories
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
-import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.h2Tables
 
 abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T, R2dbcTransaction> {

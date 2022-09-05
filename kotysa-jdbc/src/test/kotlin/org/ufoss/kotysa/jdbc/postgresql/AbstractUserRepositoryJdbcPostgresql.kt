@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepositoryJdbcPostgresql(private val sqlClient: JdbcSqlClient) : Repository {

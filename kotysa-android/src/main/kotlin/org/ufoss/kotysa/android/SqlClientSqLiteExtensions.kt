@@ -5,14 +5,25 @@
 package org.ufoss.kotysa.android
 
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.RowImpl
+import org.ufoss.kotysa.SqLiteSqlClient
+import org.ufoss.kotysa.SqLiteTables
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+
+/**
+ * Create a [SqLiteSqlClient] from a Android SqLite [SQLiteDatabase] with [SqLiteTables] mapping
+ *
+ * @sample org.ufoss.kotysa.android.sample.UserRepositorySqLite
+ */
+public fun SQLiteOpenHelper.sqlClient(tables: SqLiteTables): SqLiteSqlClient = SqlClientSqLite(this, tables)
 
 internal fun SQLiteStatement.bind(index: Int, value: Any?) {
     if (value != null) {

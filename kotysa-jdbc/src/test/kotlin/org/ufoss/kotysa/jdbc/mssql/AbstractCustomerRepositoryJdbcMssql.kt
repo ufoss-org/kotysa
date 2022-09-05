@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractCustomerRepositoryJdbcMssql(private val sqlClient: JdbcSqlClient) : Repository {

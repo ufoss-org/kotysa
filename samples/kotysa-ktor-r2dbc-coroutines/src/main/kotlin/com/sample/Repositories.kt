@@ -1,7 +1,7 @@
 package com.sample
 
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import java.util.*
 
 private val role_user_uuid = UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f")

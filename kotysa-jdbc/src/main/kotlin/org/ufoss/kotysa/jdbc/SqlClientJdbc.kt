@@ -6,8 +6,8 @@ package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.core.jdbc.toRow
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
-import org.ufoss.kotysa.transaction.TransactionalOp
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionImpl
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigDecimal
 import java.sql.Connection
@@ -15,22 +15,20 @@ import java.sql.PreparedStatement
 import java.sql.SQLException
 import javax.sql.DataSource
 
-public interface JdbcSqlClient : SqlClient, TransactionalOp<JdbcTransaction>
-
 /**
  * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
  */
-internal class SqlClientJdbc(
+internal sealed class SqlClientJdbc(
     private val dataSource: DataSource,
     override val tables: Tables,
-) : JdbcSqlClient, DefaultSqlClient {
-    private val threadLocal = ThreadLocal<JdbcTransaction>()
+) : DefaultSqlClient {
+    private val threadLocal = ThreadLocal<JdbcTransactionImpl>()
 
     override val module = Module.JDBC
-    private val currentTransaction: JdbcTransaction?
+    private val currentTransaction: JdbcTransactionImpl?
         get() = threadLocal.get()
 
-    override fun <T : Any> insert(row: T) {
+    protected fun <T : Any> insertProtected(row: T) {
         val table = tables.getTable(row::class)
 
         getJdbcConnection().execute { connection ->
@@ -44,7 +42,7 @@ internal class SqlClientJdbc(
         statement.execute()
     }
 
-    override fun <T : Any> insert(vararg rows: T) {
+    protected fun <T : Any> insertProtected(rows: Array<T>) {
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
 
@@ -53,7 +51,7 @@ internal class SqlClientJdbc(
         }
     }
 
-    override fun <T : Any> insertAndReturn(row: T): T {
+    protected fun <T : Any> insertAndReturnProtected(row: T): T {
         val table = tables.getTable(row::class)
 
         return getJdbcConnection().execute { connection ->
@@ -81,7 +79,7 @@ internal class SqlClientJdbc(
             ).builder(rs.toRow())
         }
 
-    override fun <T : Any> insertAndReturn(vararg rows: T): List<T> {
+    protected fun <T : Any> insertAndReturnProtected(rows: Array<T>): List<T> {
         val table = tables.getTable(rows[0]::class)
 
         return getJdbcConnection().execute { connection ->
@@ -135,11 +133,11 @@ internal class SqlClientJdbc(
         ).builder.invoke(rs.toRow())
     }
 
-    override fun <T : Any> createTable(table: Table<T>) {
+    protected fun <T : Any> createTableProtected(table: Table<T>) {
         createTable(table, false)
     }
 
-    override fun <T : Any> createTableIfNotExists(table: Table<T>) {
+    protected fun <T : Any> createTableIfNotExistsProtected(table: Table<T>) {
         createTable(table, true)
     }
 
@@ -151,59 +149,59 @@ internal class SqlClientJdbc(
         }
     }
 
-    override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+    protected fun <T : Any> deleteFromProtected(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
         SqlClientDeleteJdbc.FirstDelete(getJdbcConnection(), tables, table)
 
-    override fun <T : Any> update(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
+    protected fun <T : Any> updateProtected(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
         SqlClientUpdateJdbc.FirstUpdate(getJdbcConnection(), tables, table)
 
-    override fun <T : Any, U : Any> select(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(column)
 
-    override fun <T : Any> select(table: Table<T>): SqlClientSelect.FirstSelect<T> =
+    protected fun <T : Any> selectProtected(table: Table<T>): SqlClientSelect.FirstSelect<T> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(table)
 
-    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
+    protected fun <T : Any> selectAndBuildProtected(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectAndBuild(dsl)
 
-    override fun selectCount(): SqlClientSelect.Fromable<Long> =
+    protected fun selectCountProtected(): SqlClientSelect.Fromable<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCount<Any>(null)
 
-    override fun <T : Any> selectCount(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
+    protected fun <T : Any> selectCountProtected(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCount(column)
 
-    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectDistinctProtected(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectDistinct(column)
 
-    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectMin(column)
 
-    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectMax(column)
 
-    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
+    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectAvg(column)
 
-    override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
+    protected fun <T : Any> selectSumProtected(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectSum(column)
 
-    override fun <T : Any> select(
+    protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.FirstSelect<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(dsl)
 
-    override fun <T : Any> selectCaseWhenExists(
+    protected fun <T : Any> selectCaseWhenExistsProtected(
         dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCaseWhenExists(dsl)
 
-    override fun <T : Any> selectStarFrom(
+    protected fun <T : Any> selectStarFromProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.From<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectStarFromSubQuery(dsl)
 
-    override fun <T> transactional(block: (JdbcTransaction) -> T): T? {
+    protected fun <T> transactionalProtected(block: (JdbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val isOrigin = currentTransaction == null
-        val transaction = currentTransaction ?: JdbcTransaction(dataSource.connection).apply { threadLocal.set(this) }
+        val transaction = currentTransaction ?: JdbcTransactionImpl(dataSource.connection).apply { threadLocal.set(this) }
         var throwable: Throwable? = null
 
         // use transaction's Connection
@@ -264,9 +262,167 @@ internal class SqlClientJdbc(
     }
 }
 
-/**
- * Create a [JdbcSqlClient] from a JDBC [DataSource] with [Tables] mapping
- *
- * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
- */
-public fun DataSource.sqlClient(tables: Tables): JdbcSqlClient = SqlClientJdbc(this, tables)
+internal class H2SqlClientJdbc internal constructor(
+    dataSource: DataSource,
+    tables: H2Tables,
+) : SqlClientJdbc(dataSource, tables), H2JdbcSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class MysqlSqlClientJdbc internal constructor(
+    dataSource: DataSource,
+    tables: MysqlTables,
+) : SqlClientJdbc(dataSource, tables), MysqlJdbcSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class PostgresqlSqlClientJdbc internal constructor(
+    dataSource: DataSource,
+    tables: PostgresqlTables,
+) : SqlClientJdbc(dataSource, tables), PostgresqlJdbcSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class MssqlSqlClientJdbc internal constructor(
+    dataSource: DataSource,
+    tables: MssqlTables,
+) : SqlClientJdbc(dataSource, tables), MssqlJdbcSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class MariadbSqlClientJdbc internal constructor(
+    dataSource: DataSource,
+    tables: MariadbTables,
+) : SqlClientJdbc(dataSource, tables), MariadbJdbcSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
+}

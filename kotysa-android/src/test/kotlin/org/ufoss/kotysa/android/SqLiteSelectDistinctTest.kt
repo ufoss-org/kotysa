@@ -7,7 +7,7 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleGod
@@ -15,7 +15,7 @@ import org.ufoss.kotysa.test.roleUser
 
 class SqLiteSelectDistinctTest : AbstractSqLiteTest<UserRepositorySelectDistinct>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositorySelectDistinct(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectDistinct(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {
@@ -27,7 +27,7 @@ class SqLiteSelectDistinctTest : AbstractSqLiteTest<UserRepositorySelectDistinct
 
 class UserRepositorySelectDistinct(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+        tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectDistinctRoleLabels() =
