@@ -9,12 +9,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.ufoss.kotysa.NoResultException
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositoryStringSelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryStringSelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
@@ -164,7 +164,7 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>() 
 
 class UserRepositoryStringSelect(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+        tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =

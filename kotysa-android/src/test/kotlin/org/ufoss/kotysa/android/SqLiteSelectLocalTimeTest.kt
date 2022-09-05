@@ -7,13 +7,13 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 import java.time.LocalTime
 
 class SqLiteSelectLocalTimeTest : AbstractSqLiteTest<LocalTimeRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = LocalTimeRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = LocalTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByLocalTimeNotNull finds localTimeWithNullable`() {
@@ -175,7 +175,7 @@ class SqLiteSelectLocalTimeTest : AbstractSqLiteTest<LocalTimeRepositorySelect>(
     }
 }
 
-class LocalTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class LocalTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

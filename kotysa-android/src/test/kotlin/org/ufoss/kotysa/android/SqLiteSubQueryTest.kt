@@ -7,11 +7,11 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
-    override fun getRepository(sqLiteTables: Tables) = UserRepositorySqliteSubQuery(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySqliteSubQuery(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
@@ -72,7 +72,7 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
 
 class UserRepositorySqliteSubQuery(
     sqLiteOpenHelper: SQLiteOpenHelper,
-    tables: Tables
+    tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectRoleLabelFromUserIdSubQuery(userId: Int) =

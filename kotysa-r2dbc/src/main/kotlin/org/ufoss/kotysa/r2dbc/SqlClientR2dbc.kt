@@ -12,29 +12,26 @@ import kotlinx.coroutines.reactive.*
 import kotlinx.coroutines.withContext
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.core.r2dbc.toRow
-import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
-import org.ufoss.kotysa.transaction.CoroutinesTransactionalOp
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionImpl
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigDecimal
 import java.sql.SQLException
-import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.coroutines.coroutineContext
 import kotlin.reflect.KClass
 
-public interface R2dbcSqlClient : CoroutinesSqlClient, CoroutinesTransactionalOp<R2dbcTransaction>
 
 /**
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-internal class SqlClientR2dbc(
+internal sealed class SqlClientR2dbc(
     private val connectionFactory: ConnectionFactory,
-    override val tables: Tables
-) : R2dbcSqlClient, DefaultSqlClient {
+    override val tables: Tables,
+) : DefaultSqlClient {
 
     override val module = Module.R2DBC
 
-    override suspend fun <T : Any> insert(row: T) {
+    protected suspend fun <T : Any> insertProtected(row: T) {
         val table = tables.getTable(row::class)
 
         getR2dbcConnection(connectionFactory).execute { connection ->
@@ -45,7 +42,7 @@ internal class SqlClientR2dbc(
         }
     }
 
-    override suspend fun <T : Any> insert(vararg rows: T) {
+    protected suspend fun <T : Any> insertProtected(rows: Array<T>) {
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
 
@@ -65,7 +62,7 @@ internal class SqlClientR2dbc(
         }
     }
 
-    override suspend fun <T : Any> insertAndReturn(row: T): T {
+    protected suspend fun <T : Any> insertAndReturnProtected(row: T): T {
         val table = tables.getTable(row::class)
 
         return getR2dbcConnection(connectionFactory).execute { connection ->
@@ -97,7 +94,7 @@ internal class SqlClientR2dbc(
                 .first()
         }
 
-    override fun <T : Any> insertAndReturn(vararg rows: T): Flow<T> {
+    protected fun <T : Any> insertAndReturnProtected(rows: Array<T>): Flow<T> {
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
         return flow {
@@ -168,11 +165,11 @@ internal class SqlClientR2dbc(
             }.awaitSingle()
     }
 
-    override suspend fun <T : Any> createTable(table: Table<T>) {
+    protected suspend fun <T : Any> createTableProtected(table: Table<T>) {
         createTable(table, false)
     }
 
-    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) {
+    protected suspend fun <T : Any> createTableIfNotExistsProtected(table: Table<T>) {
         createTable(table, true)
     }
 
@@ -185,65 +182,68 @@ internal class SqlClientR2dbc(
         }
     }
 
-    override fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+    protected fun <T : Any> deleteFromProtected(table: Table<T>)
+    : CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
         SqlClientDeleteR2dbc.FirstDelete(connectionFactory, tables, table)
 
-    override fun <T : Any> update(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T> =
+    protected fun <T : Any> updateProtected(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T> =
         SqlClientUpdateR2dbc.FirstUpdate(connectionFactory, tables, table)
 
-    override fun <T : Any, U : Any> select(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(column)
 
-    override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
+    protected fun <T : Any> selectProtected(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(table)
 
-    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
+    protected fun <T : Any> selectAndBuildProtected(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectAndBuild(dsl)
 
-    override fun selectCount(): CoroutinesSqlClientSelect.Fromable<Long> =
+    protected fun selectCountProtected(): CoroutinesSqlClientSelect.Fromable<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectCount<Any>(null)
 
-    override fun <T : Any> selectCount(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+    protected fun <T : Any> selectCountProtected(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectCount(column)
 
-    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectDistinctProtected(column: Column<T, U>)
+    : CoroutinesSqlClientSelect.FirstSelect<U> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectDistinct(column)
 
-    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>)
+    : CoroutinesSqlClientSelect.FirstSelect<U> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectMin(column)
 
-    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectMax(column)
 
-    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>)
+    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>)
     : CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectAvg(column)
 
-    override fun <T : Any> selectSum(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+    protected fun <T : Any> selectSumProtected(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectSum(column)
 
-    override fun <T : Any> select(
+    protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): CoroutinesSqlClientSelect.FirstSelect<T> = SqlClientSelectR2dbc.Selectable(connectionFactory, tables).select(dsl)
 
-    override fun <T : Any> selectCaseWhenExists(
+    protected fun <T : Any> selectCaseWhenExistsProtected(
         dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ): CoroutinesSqlClientSelect.SelectCaseWhenExistsFirst<T> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectCaseWhenExists(dsl)
 
-    override fun <T : Any> selectStarFrom(
+    protected fun <T : Any> selectStarFromProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): CoroutinesSqlClientSelect.From<T> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectStarFromSubQuery(dsl)
 
-    override suspend fun <T> transactional(block: suspend (R2dbcTransaction) -> T): T? {
+    protected suspend fun <T> transactionalProtected(block: suspend (R2dbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
-        val currentTransaction = coroutineContext[R2dbcTransaction]
+        val currentTransaction = coroutineContext[R2dbcTransactionImpl]
         val isOrigin = currentTransaction == null
         var context = coroutineContext
         val transaction = currentTransaction
         // if new transaction : add it to coroutineContext
-            ?: R2dbcTransaction(connectionFactory.create().awaitSingle()).apply { context += this }
+            ?: R2dbcTransactionImpl(connectionFactory.create().awaitSingle()).apply { context += this }
         var throwable: Throwable? = null
 
         // use transaction's Connection
@@ -294,24 +294,175 @@ internal class SqlClientR2dbc(
     }
 }
 
-internal fun KClass<*>.toDbClass() =
-    when (this.qualifiedName) {
-        "kotlinx.datetime.LocalDate" -> LocalDate::class
-        "kotlinx.datetime.LocalDateTime" -> LocalDateTime::class
-        else -> this
-    }
+internal class H2SqlClientR2dbc internal constructor(
+    connectionFactory: ConnectionFactory,
+    tables: H2Tables,
+) : SqlClientR2dbc(connectionFactory, tables), H2R2dbcSqlClient {
+    override suspend fun <T : Any> insert(row: T) = insertProtected(row)
+    override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override suspend fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class MysqlSqlClientR2dbc internal constructor(
+    connectionFactory: ConnectionFactory,
+    tables: MysqlTables,
+) : SqlClientR2dbc(connectionFactory, tables), MysqlR2dbcSqlClient {
+    override suspend fun <T : Any> insert(row: T) = insertProtected(row)
+    override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override suspend fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class PostgresqlSqlClientR2dbc internal constructor(
+    connectionFactory: ConnectionFactory,
+    tables: PostgresqlTables,
+) : SqlClientR2dbc(connectionFactory, tables), PostgresqlR2dbcSqlClient {
+    override suspend fun <T : Any> insert(row: T) = insertProtected(row)
+    override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override suspend fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class MssqlSqlClientR2dbc internal constructor(
+    connectionFactory: ConnectionFactory,
+    tables: MssqlTables,
+) : SqlClientR2dbc(connectionFactory, tables), MssqlR2dbcSqlClient {
+    override suspend fun <T : Any> insert(row: T) = insertProtected(row)
+    override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override suspend fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class MariadbSqlClientR2dbc internal constructor(
+    connectionFactory: ConnectionFactory,
+    tables: MariadbTables,
+) : SqlClientR2dbc(connectionFactory, tables), MariadbR2dbcSqlClient {
+    override suspend fun <T : Any> insert(row: T) = insertProtected(row)
+    override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override suspend fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
+}
 
 internal suspend fun getR2dbcConnection(connectionFactory: ConnectionFactory): R2dbcConnection {
     // reuse currentTransaction's connection if any, else establish a new connection
-    val transaction = coroutineContext[R2dbcTransaction]
+    val transaction = coroutineContext[R2dbcTransactionImpl]
     val connection = transaction?.connection ?: connectionFactory.create().awaitSingle()
 
     return R2dbcConnection(connection, transaction != null)
 }
-
-/**
- * Create a [CoroutinesSqlClient] from a R2DBC [Connection] with [Tables] mapping
- *
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
- */
-public fun ConnectionFactory.sqlClient(tables: Tables): R2dbcSqlClient = SqlClientR2dbc(this, tables)

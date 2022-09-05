@@ -5,12 +5,12 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractCustomerRepository(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: SqLiteTables,
 ) : Repository {
 
     protected val sqlClient = sqLiteOpenHelper.sqlClient(tables)

@@ -10,12 +10,12 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = UserRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -163,7 +163,7 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>() {
 
 class UserRepositorySelect(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables
+        tables: SqLiteTables,
 ) : AbstractUserRepository(sqLiteOpenHelper, tables) {
 
     fun selectOneNonUnique() =

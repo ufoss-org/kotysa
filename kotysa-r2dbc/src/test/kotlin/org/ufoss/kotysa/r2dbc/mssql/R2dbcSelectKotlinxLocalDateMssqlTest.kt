@@ -10,7 +10,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.MssqlKotlinxLocalDates
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.kotlinxLocalDateWithNullable

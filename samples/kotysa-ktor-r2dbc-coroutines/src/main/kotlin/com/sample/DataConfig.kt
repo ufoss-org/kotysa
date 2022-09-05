@@ -7,7 +7,7 @@ import kotlinx.serialization.json.Json
 import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.tables
 

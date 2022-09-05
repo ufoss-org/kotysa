@@ -7,7 +7,7 @@ package org.ufoss.kotysa.jdbc.mssql
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalDate
 import java.time.LocalDateTime

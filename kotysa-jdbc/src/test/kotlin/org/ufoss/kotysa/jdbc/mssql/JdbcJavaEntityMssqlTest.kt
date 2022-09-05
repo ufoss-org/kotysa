@@ -4,8 +4,8 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.MssqlJavaUsers
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
@@ -18,5 +18,4 @@ class JdbcJavaEntityMssqlTest :
 }
 
 
-class JavaUserMssqlRepository(sqlClient: JdbcSqlClient) :
-    JavaUserRepository<MssqlJavaUsers>(sqlClient, MssqlJavaUsers)
+class JavaUserMssqlRepository(sqlClient: JdbcSqlClient) : JavaUserRepository<MssqlJavaUsers>(sqlClient, MssqlJavaUsers)

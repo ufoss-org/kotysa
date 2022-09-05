@@ -7,12 +7,12 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 
 class SqLiteSelectLimitOffsetTest : AbstractSqLiteTest<LimitOffsetRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = LimitOffsetRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = LimitOffsetRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
@@ -44,7 +44,7 @@ class SqLiteSelectLimitOffsetTest : AbstractSqLiteTest<LimitOffsetRepositorySele
 
 class LimitOffsetRepositorySelect(
         sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: Tables,
+        tables: SqLiteTables,
 ) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
 
     fun selectAllOrderByIdOffset() =

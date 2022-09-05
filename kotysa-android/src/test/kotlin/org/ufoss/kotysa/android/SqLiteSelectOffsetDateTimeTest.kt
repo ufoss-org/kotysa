@@ -7,14 +7,14 @@ package org.ufoss.kotysa.android
 import android.database.sqlite.SQLiteOpenHelper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.ufoss.kotysa.Tables
+import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.test.*
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 class SqLiteSelectOffsetDateTimeTest : AbstractSqLiteTest<OffsetDateTimeRepositorySelect>() {
 
-    override fun getRepository(sqLiteTables: Tables) = OffsetDateTimeRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = OffsetDateTimeRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {
@@ -435,7 +435,7 @@ class SqLiteSelectOffsetDateTimeTest : AbstractSqLiteTest<OffsetDateTimeReposito
     }
 }
 
-class OffsetDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: Tables) : Repository {
+class OffsetDateTimeRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
 
     private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
 

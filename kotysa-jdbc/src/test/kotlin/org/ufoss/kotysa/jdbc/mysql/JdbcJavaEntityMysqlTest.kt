@@ -4,8 +4,8 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.ufoss.kotysa.jdbc.JdbcSqlClient
-import org.ufoss.kotysa.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.MysqlJavaUsers
 import org.ufoss.kotysa.test.repositories.JavaEntityTest
 import org.ufoss.kotysa.test.repositories.JavaUserRepository
@@ -18,5 +18,4 @@ class JdbcJavaEntityMysqlTest :
 }
 
 
-class JavaUserMysqlRepository(sqlClient: JdbcSqlClient) :
-    JavaUserRepository<MysqlJavaUsers>(sqlClient, MysqlJavaUsers)
+class JavaUserMysqlRepository(sqlClient: JdbcSqlClient) : JavaUserRepository<MysqlJavaUsers>(sqlClient, MysqlJavaUsers)

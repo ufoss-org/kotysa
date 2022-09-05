@@ -12,27 +12,58 @@ import java.time.temporal.ChronoUnit
 /**
  * All Mapped Tables
  */
-public class Tables internal constructor(
-        public val allTables: Map<Table<*>, KotysaTable<*>>,
-        public val allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
-        public val dbType: DbType,
+public sealed class Tables protected constructor(
+    public val allTables: Map<Table<*>, KotysaTable<*>>,
+    public val allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+    public val dbType: DbType,
 ) {
     public fun <T> getDbValue(value: T): Any? =
-            if (value != null) {
-                @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
-                when (value!!::class.qualifiedName) {
-                    "kotlinx.datetime.LocalDate" -> (value as kotlinx.datetime.LocalDate).toJavaLocalDate()
-                    "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()
-                    "java.time.LocalTime" ->
-                        if (this.dbType == DbType.POSTGRESQL) {
-                            // PostgreSQL does not support nanoseconds
-                            (value as LocalTime).truncatedTo(ChronoUnit.SECONDS)
-                        } else {
-                            value
-                        }
-                    else -> value
-                }
-            } else {
-                null
+        if (value != null) {
+            @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
+            when (value!!::class.qualifiedName) {
+                "kotlinx.datetime.LocalDate" -> (value as kotlinx.datetime.LocalDate).toJavaLocalDate()
+                "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()
+                "java.time.LocalTime" ->
+                    if (this.dbType == DbType.POSTGRESQL) {
+                        // PostgreSQL does not support nanoseconds
+                        (value as LocalTime).truncatedTo(ChronoUnit.SECONDS)
+                    } else {
+                        value
+                    }
+
+                else -> value
             }
+        } else {
+            null
+        }
 }
+
+public class H2Tables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.H2)
+
+public class MysqlTables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.MYSQL)
+
+public class PostgresqlTables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.POSTGRESQL)
+
+public class MssqlTables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.MSSQL)
+
+public class MariadbTables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.MARIADB)
+
+public class SqLiteTables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.SQLITE)
