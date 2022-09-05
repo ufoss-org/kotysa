@@ -4,8 +4,8 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
-import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.H2JavaUsers
 import org.ufoss.kotysa.test.repositories.CoroutinesJavaEntityTest
 import org.ufoss.kotysa.test.repositories.CoroutinesJavaUserRepository

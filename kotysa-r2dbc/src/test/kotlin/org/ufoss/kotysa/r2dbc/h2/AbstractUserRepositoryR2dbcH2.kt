@@ -5,7 +5,7 @@
 package org.ufoss.kotysa.r2dbc.h2
 
 import kotlinx.coroutines.runBlocking
-import org.ufoss.kotysa.r2dbc.R2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class AbstractUserRepositoryR2dbcH2(private val sqlClient: R2dbcSqlClient) : Repository {
