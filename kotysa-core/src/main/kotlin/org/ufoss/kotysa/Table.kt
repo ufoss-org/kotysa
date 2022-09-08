@@ -34,6 +34,19 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
         return this
     }
 
+    /*protected fun <V : Any> foreignKey(
+            referencedTable: H2Table<V>,
+            vararg columns: DbColumn<T, *>,
+            fkName: String? = null
+    ) {
+        foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
+    }*/
+
+    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U =
+        this.also {
+            kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
+        }
+
     internal fun addColumn(column: DbColumn<T, *>) {
         require(!kotysaColumns.any { col -> col.entityGetter == column.entityGetter }) {
             "Trying to map property \"${column.entityGetter}\" to multiple columns"

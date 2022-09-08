@@ -5,8 +5,6 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.AbstractTable
-import org.ufoss.kotysa.DbColumn
-import org.ufoss.kotysa.ForeignKey
 import org.ufoss.kotysa.columns.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -23,19 +21,6 @@ import java.util.*
  * @param T Entity type associated with this table
  */
 public abstract class H2Table<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
-
-    /*protected fun <V : Any> foreignKey(
-            referencedTable: H2Table<V>,
-            vararg columns: DbColumn<T, *>,
-            fkName: String? = null
-    ) {
-        foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
-    }*/
-
-    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U =
-        this.also {
-            kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
-        }
 
     protected fun varchar(
         getter: (T) -> String,
