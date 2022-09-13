@@ -83,8 +83,7 @@ internal sealed class SqlClientSpringJdbc(
     }
 
     private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
+        val pkColumns = table.primaryKey.columns
 
         val parameters = MapSqlParameterSource()
         if (

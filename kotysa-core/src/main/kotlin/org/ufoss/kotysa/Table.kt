@@ -10,14 +10,13 @@ public interface Table<T : Any>
 public abstract class AbstractTable<T : Any>(internal val tableName: String?) : Table<T> {
     internal lateinit var kotysaName: String
     internal val kotysaColumns = mutableSetOf<DbColumn<T, *>>()
-    internal lateinit var kotysaPk: PrimaryKey<T, *>
+    internal lateinit var kotysaPk: PrimaryKey<T>
     internal val kotysaForeignKeys = mutableSetOf<ForeignKey<T, *>>()
 
-    protected fun <U> primaryKey(
-            vararg columns: U,
-            pkName: String? = null
-    ): PrimaryKey<T, *> where U : DbColumn<T, *>,
-                              U : ColumnNotNull<T, *> {
+    protected fun primaryKey(
+        vararg columns: DbColumn<T, *>,
+        pkName: String? = null,
+    ): PrimaryKey<T> {
         check(!::kotysaPk.isInitialized) {
             "Table must not declare more than one Primary Key"
         }

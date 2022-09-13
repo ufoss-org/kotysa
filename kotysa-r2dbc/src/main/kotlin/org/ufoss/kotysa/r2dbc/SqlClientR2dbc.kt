@@ -141,8 +141,7 @@ internal sealed class SqlClientR2dbc(
     }
 
     private suspend fun <T : Any> fetchLastInserted(connection: Connection, row: T, table: KotysaTable<T>): T {
-        @Suppress("UNCHECKED_CAST")
-        val pkColumns = table.primaryKey.columns as List<DbColumn<T, *>>
+        val pkColumns = table.primaryKey.columns
         val statement = connection.createStatement(lastInsertedSql(row))
 
         if (
