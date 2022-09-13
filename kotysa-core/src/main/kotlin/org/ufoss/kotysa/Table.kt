@@ -12,6 +12,7 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
     internal val kotysaColumns = mutableSetOf<DbColumn<T, *>>()
     internal lateinit var kotysaPk: PrimaryKey<T>
     internal val kotysaForeignKeys = mutableSetOf<ForeignKey<T, *>>()
+    internal val kotysaIndexes = mutableSetOf<Index<T>>()
 
     protected fun primaryKey(
         vararg columns: DbColumn<T, *>,
@@ -26,7 +27,7 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
     protected fun <U> U.primaryKey(pkName: String? = null)
             : U where U : DbColumn<T, *>,
                       U : ColumnNotNull<T, *> {
-        check(!::kotysaPk.isInitialized) {
+        check(!isPkInitialized()) {
             "Table must not declare more than one Primary Key"
         }
         kotysaPk = PrimaryKey(pkName, listOf(this))
@@ -44,6 +45,11 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
     protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U =
         this.also {
             kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
+        }
+
+    protected fun <U : DbColumn<T, *>> U.unique(indexName: String? = null): U =
+        this.also {
+            kotysaIndexes.add(Index(listOf(this), IndexType.UNIQUE, indexName))
         }
 
     internal fun addColumn(column: DbColumn<T, *>) {

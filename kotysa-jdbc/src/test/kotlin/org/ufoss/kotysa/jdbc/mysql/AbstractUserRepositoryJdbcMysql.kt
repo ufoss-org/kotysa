@@ -28,7 +28,7 @@ abstract class AbstractUserRepositoryJdbcMysql(private val sqlClient: JdbcSqlCli
         sqlClient createTableIfNotExists MysqlUserRoles
     }
 
-    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 

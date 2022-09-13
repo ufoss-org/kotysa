@@ -23,6 +23,7 @@ object H2Roles : H2Table<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
+        .unique()
 }
 
 object H2Users : H2Table<UserEntity>("users") {

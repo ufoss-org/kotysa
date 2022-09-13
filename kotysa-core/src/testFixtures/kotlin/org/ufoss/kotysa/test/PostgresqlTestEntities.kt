@@ -23,6 +23,7 @@ object PostgresqlRoles : PostgresqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
+        .unique()
 }
 
 object PostgresqlUsers : PostgresqlTable<UserEntity>("users") {

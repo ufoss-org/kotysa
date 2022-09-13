@@ -15,6 +15,7 @@ object SqliteRoles : SqLiteTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = text(RoleEntity::label)
+        .unique()
 }
 
 object SqliteUsers : SqLiteTable<UserEntity>("users") {

@@ -141,10 +141,23 @@ internal sealed class SqlClientJdbc(
     }
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
-        val createTableSql = createTableSql(table, ifNotExists)
+        val createTableResult = createTableSql(table, ifNotExists)
         getJdbcConnection().execute { connection ->
-            connection.prepareStatement(createTableSql)
-                .execute()
+            // 1) execute create table
+            connection.createStatement()
+                .execute(createTableResult.sql)
+            // 2) loop to execute create indexes
+            createTableResult.createIndexes.forEach { createIndexResult ->
+                try {
+                    connection.createStatement()
+                        .execute(createIndexResult.sql)
+                } catch (se: SQLException) {
+                    // if not exists : accept Index already exists error
+                    if (!ifNotExists || se.message?.contains(createIndexResult.name, true) != true) {
+                        throw se
+                    }
+                }
+            }
         }
     }
 

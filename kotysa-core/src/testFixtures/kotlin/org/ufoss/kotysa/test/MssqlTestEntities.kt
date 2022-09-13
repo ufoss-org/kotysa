@@ -18,6 +18,7 @@ object MssqlRoles : MssqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
+        .unique()
 }
 
 object MssqlUsers : MssqlTable<UserEntity>("users") {

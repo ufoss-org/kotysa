@@ -29,7 +29,7 @@ abstract class AbstractUserRepositoryJdbcPostgresql(private val sqlClient: JdbcS
     }
 
     private fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private fun insertUsers() {

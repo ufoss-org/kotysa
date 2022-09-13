@@ -19,6 +19,7 @@ object MysqlRoles : MysqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
+        .unique()
 }
 
 object MysqlUsers : MysqlTable<UserEntity>("users") {

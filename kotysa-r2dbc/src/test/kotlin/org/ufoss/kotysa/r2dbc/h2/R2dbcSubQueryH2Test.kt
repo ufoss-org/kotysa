@@ -60,11 +60,10 @@ class R2dbcSubQueryH2Test : AbstractR2dbcH2Test<UserRepositoryR2dbcH2SubQuery>()
     @Test
     fun `Verify selectOrderByCaseWhenExistsSubQuery returns results`() = runTest {
         assertThat(repository.selectOrderByCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
-            .hasSize(4)
+            .hasSize(3)
             .containsExactly(
                 roleAdmin.label,
                 roleUser.label,
-                roleGod.label,
                 roleGod.label,
             )
     }

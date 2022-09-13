@@ -33,7 +33,7 @@ abstract class AbstractUserRepositorySpringJdbcH2(client: JdbcOperations) : Repo
     }
 
     private fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private fun insertUsers() {

@@ -5,7 +5,8 @@
 package org.ufoss.kotysa
 
 
-public data class ForeignKey<T : Any, U : Any> internal constructor(
-    internal val references: Map<DbColumn<T, *>, DbColumn<U, *>>,
+public data class Index<T : Any> internal constructor(
+    internal val columns: List<DbColumn<T, *>>,
+    internal val type: IndexType?,
     internal val name: String?,
 )
