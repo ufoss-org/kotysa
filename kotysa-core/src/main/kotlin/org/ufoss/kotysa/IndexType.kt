@@ -4,7 +4,6 @@
 
 package org.ufoss.kotysa
 
-public class PrimaryKey<T : Any> internal constructor(
-    internal val name: String?,
-    public val columns: Set<DbColumn<T, *>>,
-)
+public enum class IndexType(internal val label: String) {
+    UNIQUE("UNIQUE")
+}

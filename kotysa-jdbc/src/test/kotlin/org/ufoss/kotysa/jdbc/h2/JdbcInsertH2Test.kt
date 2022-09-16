@@ -5,6 +5,8 @@
 package org.ufoss.kotysa.jdbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
@@ -114,6 +116,17 @@ class JdbcInsertH2Test : AbstractJdbcH2Test<RepositoryH2Insert>() {
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
+        assertThatThrownBy {
+            operator.transactional {
+                repository.insertDupCustomers()
+            }
+        }.isInstanceOf(JdbcSQLIntegrityConstraintViolationException::class.java)
+    }
 }
 
 
@@ -147,4 +160,6 @@ class RepositoryH2Insert(private val sqlClient: JdbcSqlClient) : Repository {
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn h2AllTypesNullableDefaultValue
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

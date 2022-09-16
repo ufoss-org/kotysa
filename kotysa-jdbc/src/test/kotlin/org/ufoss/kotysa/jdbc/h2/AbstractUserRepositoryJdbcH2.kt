@@ -29,7 +29,7 @@ abstract class AbstractUserRepositoryJdbcH2(private val sqlClient: JdbcSqlClient
     }
 
     private fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private fun insertUsers() {

@@ -32,7 +32,7 @@ abstract class AbstractUserRepositorySpringJdbcMariadb(client: JdbcOperations) :
         sqlClient createTableIfNotExists MariadbUserRoles
     }
 
-    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 

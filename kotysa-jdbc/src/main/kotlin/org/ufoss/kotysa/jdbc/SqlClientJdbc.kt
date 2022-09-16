@@ -111,11 +111,11 @@ internal sealed class SqlClientJdbc(
     private fun <T : Any> fetchLastInserted(connection: Connection, row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
         val statement = connection.prepareStatement(lastInsertedSql(row))
-
+        val pkFirstColumn = pkColumns.elementAt(0)
         if (
             pkColumns.size != 1 ||
-            !pkColumns[0].isAutoIncrement ||
-            pkColumns[0].entityGetter(row) != null
+            !pkFirstColumn.isAutoIncrement ||
+            pkFirstColumn.entityGetter(row) != null
         ) {
             // bind all PK values
             pkColumns
@@ -141,10 +141,23 @@ internal sealed class SqlClientJdbc(
     }
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
-        val createTableSql = createTableSql(table, ifNotExists)
+        val createTableResult = createTableSql(table, ifNotExists)
         getJdbcConnection().execute { connection ->
-            connection.prepareStatement(createTableSql)
-                .execute()
+            // 1) execute create table
+            connection.createStatement()
+                .execute(createTableResult.sql)
+            // 2) loop to execute create indexes
+            createTableResult.createIndexes.forEach { createIndexResult ->
+                try {
+                    connection.createStatement()
+                        .execute(createIndexResult.sql)
+                } catch (se: SQLException) {
+                    // if not exists : accept Index already exists error
+                    if (!ifNotExists || se.message?.contains(createIndexResult.name, true) != true) {
+                        throw se
+                    }
+                }
+            }
         }
     }
 

@@ -5,9 +5,11 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
@@ -125,6 +127,17 @@ class SpringJdbcInsertPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Reposito
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
+        assertThatThrownBy {
+            operator.transactional {
+                repository.insertDupCustomers()
+            }
+        }.isInstanceOf(DataIntegrityViolationException::class.java)
+    }
 }
 
 class RepositoryPostgresqlInsert(dbClient: JdbcOperations) : Repository {
@@ -159,4 +172,6 @@ class RepositoryPostgresqlInsert(dbClient: JdbcOperations) : Repository {
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn postgresqlAllTypesNullableDefaultValue
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

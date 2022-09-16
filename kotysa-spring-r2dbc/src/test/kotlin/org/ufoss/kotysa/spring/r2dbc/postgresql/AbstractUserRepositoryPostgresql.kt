@@ -30,7 +30,7 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: Reactor
                     .then(sqlClient createTableIfNotExists PostgresqlUsers)
                     .then(sqlClient createTableIfNotExists PostgresqlUserRoles)
 
-    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 

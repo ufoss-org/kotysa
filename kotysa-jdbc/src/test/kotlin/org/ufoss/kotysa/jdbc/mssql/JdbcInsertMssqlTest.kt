@@ -4,7 +4,9 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
+import com.microsoft.sqlserver.jdbc.SQLServerException
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
@@ -108,6 +110,17 @@ class JdbcInsertMssqlTest : AbstractJdbcMssqlTest<RepositoryMssqlInsert>() {
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
+        assertThatThrownBy {
+            operator.transactional {
+                repository.insertDupCustomers()
+            }
+        }.isInstanceOf(SQLServerException::class.java)
+    }
 }
 
 
@@ -141,4 +154,6 @@ class RepositoryMssqlInsert(private val sqlClient: JdbcSqlClient) : Repository {
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValue
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

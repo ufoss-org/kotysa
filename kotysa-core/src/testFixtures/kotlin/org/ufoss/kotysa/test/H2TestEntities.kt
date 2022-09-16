@@ -23,6 +23,7 @@ object H2Roles : H2Table<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
+        .unique()
 }
 
 object H2Users : H2Table<UserEntity>("users") {
@@ -34,6 +35,10 @@ object H2Users : H2Table<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(H2Roles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+    
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object H2UserRoles : H2Table<UserRoleEntity>("userRoles") {
@@ -394,6 +399,7 @@ object H2Customers : H2Table<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = varchar(CustomerEntity::name)
+        .unique()
     val country = varchar(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }

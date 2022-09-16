@@ -59,11 +59,10 @@ class SpringJdbcSubQueryH2Test : AbstractSpringJdbcH2Test<UserRepositoryJdbcH2Su
     @Test
     fun `Verify selectOrderByCaseWhenExistsSubQuery returns results`() {
         assertThat(repository.selectOrderByCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(4)
+            .hasSize(3)
             .containsExactly(
                 roleAdmin.label,
                 roleUser.label,
-                roleGod.label,
                 roleGod.label,
             )
     }

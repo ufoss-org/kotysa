@@ -4,10 +4,12 @@
 
 package org.ufoss.kotysa.spring.r2dbc
 
+import org.springframework.dao.NonTransientDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.core.r2dbc.toRow
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.onErrorResume
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
@@ -19,8 +21,26 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
 
     val client: DatabaseClient
 
-    fun <T : Any> executeCreateTable(table: Table<T>, ifNotExists: Boolean): DatabaseClient.GenericExecuteSpec =
-        client.sql(createTableSql(table, ifNotExists))
+    fun <T : Any> executeCreateTable(table: Table<T>, ifNotExists: Boolean): Mono<Void> {
+        val createTableResult = createTableSql(table, ifNotExists)
+        return client.sql(createTableResult.sql)
+            .then()
+            .then(
+                // 2) loop to execute create indexes
+                createTableResult.createIndexes.fold(Mono.empty()) { mono, createIndexResult ->
+                    mono.then(
+                        client.sql(createIndexResult.sql)
+                            .then()
+                            .onErrorResume(NonTransientDataAccessException::class) { ntdae ->
+                                if (!ifNotExists || ntdae.message?.contains(createIndexResult.name, true) != true) {
+                                    throw ntdae
+                                }
+                                Mono.empty()
+                            }
+                    )
+                }
+            )
+    }
 
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec =
         insertExecuteSpec(row, tables.getTable(row::class), insertSql(row))
@@ -86,11 +106,12 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
     // fixme 13/12/21 : does not work if set to private
     fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): Mono<T> {
         val pkColumns = table.primaryKey.columns
-
+        val pkFirstColumn = pkColumns.elementAt(0)
+        
         val executeSpec = if (
             pkColumns.size == 1 &&
-            pkColumns[0].isAutoIncrement &&
-            pkColumns[0].entityGetter(row) == null
+            pkFirstColumn.isAutoIncrement &&
+            pkFirstColumn.entityGetter(row) == null
         ) {
             client.sql(lastInsertedSql(row))
         } else {

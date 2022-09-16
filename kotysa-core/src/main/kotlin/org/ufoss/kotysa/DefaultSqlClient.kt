@@ -12,10 +12,79 @@ public interface DefaultSqlClient {
     public val tables: Tables
     public val module: Module
 
-    public fun createTableSql(table: Table<*>, ifNotExists: Boolean): String {
+    public fun createTableSql(table: Table<*>, ifNotExists: Boolean): CreateTableResult {
         val kotysaTable = tables.getTable(table)
 
-        val columns = kotysaTable.columns.joinToString { column ->
+        val columns = createTableColumns(kotysaTable)
+
+        val pk = kotysaTable.primaryKey
+        var primaryKey = if (pk.name != null) {
+            "CONSTRAINT ${pk.name} "
+        } else {
+            ""
+        }
+        primaryKey += "PRIMARY KEY (${pk.columns.joinToString { it.name }})"
+
+        val foreignKeys = createTableForeignKeys(kotysaTable)
+
+        var suffix = ""
+        val prefix = if (ifNotExists) {
+            if (DbType.MSSQL == tables.dbType) {
+                suffix = "\nEND"
+
+                """IF NOT EXISTS(SELECT name FROM sys.sysobjects WHERE Name = N'${kotysaTable.name}' AND xtype = N'U')
+                BEGIN
+                CREATE TABLE"""
+            } else {
+                "CREATE TABLE IF NOT EXISTS"
+            }
+        } else {
+            "CREATE TABLE"
+        }
+
+        val createTableSql = "$prefix ${kotysaTable.name} ($columns, $primaryKey$foreignKeys)$suffix"
+        logger.debug { "Exec SQL (${tables.dbType.name}) : $createTableSql" }
+
+        // create indexes
+        val createIndexes = kotysaTable.kotysaIndexes.map { index ->
+            val indexTypeLabel = index.type?.label ?: ""
+            val indexName = index.name
+                ?:
+                // build custom index name
+                index.columns
+                    .joinToString("_", "${kotysaTable.name}_", "_$indexTypeLabel") { column ->
+                        column.name
+                    }
+            val indexColumns = index.columns.joinToString { column -> column.name }
+            val createIndexSql = "CREATE $indexTypeLabel INDEX $indexName ON ${kotysaTable.name} ($indexColumns)"
+            logger.debug { "Exec SQL (${tables.dbType.name}) : $createIndexSql" }
+            CreateIndexResult(indexName, createIndexSql)
+        }
+
+        return CreateTableResult(createTableSql, createIndexes)
+    }
+
+    public fun createTableForeignKeys(kotysaTable: KotysaTable<out Any>): String =
+        if (kotysaTable.foreignKeys.isEmpty()) {
+            ""
+        } else {
+            kotysaTable.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
+                var foreignKeyStatement = if (foreignKey.name != null) {
+                    "CONSTRAINT ${foreignKey.name} "
+                } else {
+                    ""
+                }
+                val referencedTable = tables.allColumns[foreignKey.references.values.first()]?.table
+                    ?: error("Referenced table of column ${foreignKey.references.values.first()} is not mapped")
+                foreignKeyStatement += "FOREIGN KEY (${foreignKey.references.keys.joinToString { it.name }})" +
+                        " REFERENCES ${referencedTable.name}" +
+                        " (${foreignKey.references.values.joinToString { it.name }})"
+                foreignKeyStatement
+            }
+        }
+
+    public fun createTableColumns(kotysaTable: KotysaTable<out Any>): String =
+        kotysaTable.columns.joinToString { column ->
             if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
                 requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
             }
@@ -40,54 +109,6 @@ public interface DefaultSqlClient {
             }
             "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
         }
-
-        val pk = kotysaTable.primaryKey
-        var primaryKey = if (pk.name != null) {
-            "CONSTRAINT ${pk.name} "
-        } else {
-            ""
-        }
-        primaryKey += "PRIMARY KEY (${pk.columns.joinToString { it.name }})"
-
-        val foreignKeys =
-            if (kotysaTable.foreignKeys.isEmpty()) {
-                ""
-            } else {
-                kotysaTable.foreignKeys.joinToString(prefix = ", ") { foreignKey ->
-                    var foreignKeyStatement = if (foreignKey.name != null) {
-                        "CONSTRAINT ${foreignKey.name} "
-                    } else {
-                        ""
-                    }
-                    val referencedTable = tables.allColumns[foreignKey.references.values.first()]?.table
-                        ?: error("Referenced table of column ${foreignKey.references.values.first()} is not mapped")
-                    foreignKeyStatement += "FOREIGN KEY (${foreignKey.references.keys.joinToString { it.name }})" +
-                            " REFERENCES ${referencedTable.name}" +
-                            " (${foreignKey.references.values.joinToString { it.name }})"
-                    foreignKeyStatement
-                }
-            }
-
-        var suffix = ""
-        val prefix = if (ifNotExists) {
-            if (DbType.MSSQL == tables.dbType) {
-                suffix = """
-                END"""
-
-                """IF NOT EXISTS(SELECT name FROM sys.sysobjects WHERE Name = N'${kotysaTable.name}' AND xtype = N'U')
-                BEGIN
-                CREATE TABLE"""
-            } else {
-                "CREATE TABLE IF NOT EXISTS"
-            }
-        } else {
-            "CREATE TABLE"
-        }
-
-        val createTableSql = "$prefix ${kotysaTable.name} ($columns, $primaryKey$foreignKeys)$suffix"
-        logger.debug { "Exec SQL (${tables.dbType.name}) : $createTableSql" }
-        return createTableSql
-    }
 
     public fun <T : Any> insertSql(row: T, withReturn: Boolean = false): String {
         val insertSqlQuery = insertSqlQuery(row, withReturn)
@@ -158,17 +179,18 @@ public interface DefaultSqlClient {
         val allTableColumnNames = kotysaTable.columns
             .joinToString { column -> column.name }
 
+        val pkFirstColumn = pkColumns.elementAt(0)
         val wheres = if (
             pkColumns.size == 1 &&
-            pkColumns[0].isAutoIncrement &&
-            pkColumns[0].entityGetter(row) == null
+            pkFirstColumn.isAutoIncrement &&
+            pkFirstColumn.entityGetter(row) == null
         ) {
             val selected = if (tables.dbType == DbType.MYSQL) {
                 "(SELECT LAST_INSERT_ID())"
             } else {
                 "?"
             }
-            "${pkColumns[0].name} = $selected"
+            "${pkFirstColumn.name} = $selected"
         } else {
             val counter = Counter()
             pkColumns
@@ -184,6 +206,7 @@ public interface DefaultSqlClient {
         when {
             module == Module.SQLITE || module == Module.JDBC
                     || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
+
             module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++counter.index}"
             module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++counter.index}"
             else -> ":k${counter.index++}"

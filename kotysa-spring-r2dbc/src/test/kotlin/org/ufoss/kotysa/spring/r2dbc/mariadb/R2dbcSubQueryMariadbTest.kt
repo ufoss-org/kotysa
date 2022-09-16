@@ -68,11 +68,10 @@ class R2dbcSubQueryMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryR2dbcMar
     @Test
     fun `Verify selectOrderByCaseWhenExistsSubQuery returns results`() {
         assertThat(repository.selectOrderByCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)).toIterable())
-            .hasSize(4)
+            .hasSize(3)
             .containsExactly(
                 roleAdmin.label,
                 roleUser.label,
-                roleGod.label,
                 roleGod.label,
             )
     }

@@ -5,8 +5,6 @@
 package org.ufoss.kotysa.mysql
 
 import org.ufoss.kotysa.AbstractTable
-import org.ufoss.kotysa.DbColumn
-import org.ufoss.kotysa.ForeignKey
 import org.ufoss.kotysa.columns.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,20 +18,8 @@ import java.time.LocalTime
  * supported types follow : [MySQL Data types](https://dev.mysql.com/doc/refman/8.0/en/data-types.html)
  * @param T Entity type associated with this table
  */
-public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) : AbstractTable<T>(tableName) {
-
-    /*protected fun <V : Any> foreignKey(
-            referencedTable: MysqlTable<V>,
-            vararg columns: DbColumn<T, *>,
-            fkName: String? = null
-    ) {
-        foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
-    }*/
-
-    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U {
-        kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
-        return this
-    }
+public abstract class MysqlTable<T : Any> protected constructor(tableName: String? = null) :
+    AbstractTable<T>(tableName) {
 
     protected fun varchar(getter: (T) -> String, columnName: String? = null, size: Int = 255): StringDbVarcharColumnNotNull<T> =
             StringDbVarcharColumnNotNull(getter, columnName, size).also { addColumn(it) }

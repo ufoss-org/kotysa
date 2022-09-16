@@ -29,7 +29,7 @@ abstract class AbstractUserRepositoryR2dbcMysql(private val sqlClient: R2dbcSqlC
         sqlClient createTableIfNotExists MysqlUserRoles
     }
 
-    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+    private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 

@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.spring.jdbc
 
+import org.springframework.dao.NonTransientDataAccessException
 import org.springframework.jdbc.core.JdbcOperations
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
@@ -64,7 +65,8 @@ internal sealed class SqlClientSpringJdbc(
         }
     }
 
-    protected fun <T : Any> insertAndReturnProtected(rows: Array<out T>) = rows.map { row -> insertAndReturnProtected(row) }
+    protected fun <T : Any> insertAndReturnProtected(rows: Array<out T>) =
+        rows.map { row -> insertAndReturnProtected(row) }
 
     private fun <T : Any> paramSource(row: T, table: KotysaTable<T>): SqlParameterSource {
         val parameters = MapSqlParameterSource()
@@ -84,12 +86,13 @@ internal sealed class SqlClientSpringJdbc(
 
     private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
-
+        val pkFirstColumn = pkColumns.elementAt(0)
+        
         val parameters = MapSqlParameterSource()
         if (
             pkColumns.size != 1 ||
-            !pkColumns[0].isAutoIncrement ||
-            pkColumns[0].entityGetter(row) != null
+            !pkFirstColumn.isAutoIncrement ||
+            pkFirstColumn.entityGetter(row) != null
         ) {
             // bind all PK values
             pkColumns
@@ -117,8 +120,20 @@ internal sealed class SqlClientSpringJdbc(
     }
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
-        val createTableSql = createTableSql(table, ifNotExists)
-        client.execute(createTableSql)
+        val createTableResult = createTableSql(table, ifNotExists)
+        // 1) execute create table
+        client.execute(createTableResult.sql)
+        // 2) loop to execute create indexes
+        createTableResult.createIndexes.forEach { createIndexResult ->
+            try {
+                client.execute(createIndexResult.sql)
+            } catch (ntdae: NonTransientDataAccessException) {
+                // if not exists : accept Index already exists error
+                if (!ifNotExists || ntdae.message?.contains(createIndexResult.name, true) != true) {
+                    throw ntdae
+                }
+            }
+        }
     }
 
     protected fun <T : Any> deleteFromProtected(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =

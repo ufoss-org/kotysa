@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc
 
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactory
+import io.r2dbc.spi.R2dbcBadGrammarException
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.*
@@ -143,11 +144,11 @@ internal sealed class SqlClientR2dbc(
     private suspend fun <T : Any> fetchLastInserted(connection: Connection, row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
         val statement = connection.createStatement(lastInsertedSql(row))
-
+        val pkFirstColumn = pkColumns.elementAt(0)
         if (
             pkColumns.size != 1 ||
-            !pkColumns[0].isAutoIncrement ||
-            pkColumns[0].entityGetter(row) != null
+            !pkFirstColumn.isAutoIncrement ||
+            pkFirstColumn.entityGetter(row) != null
         ) {
             // bind all PK values
             pkColumns
@@ -174,11 +175,23 @@ internal sealed class SqlClientR2dbc(
     }
 
     private suspend fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
-        val createTableSql = createTableSql(table, ifNotExists)
+        val createTableResult = createTableSql(table, ifNotExists)
 
         getR2dbcConnection(connectionFactory).execute { connection ->
-            connection.createStatement(createTableSql)
+            connection.createStatement(createTableResult.sql)
                 .execute().awaitLast()
+            // 2) loop to execute create indexes
+            createTableResult.createIndexes.forEach { createIndexResult ->
+                try {
+                    connection.createStatement(createIndexResult.sql)
+                        .execute().awaitLast()
+                } catch (se: R2dbcBadGrammarException) {
+                    // if not exists : accept Index already exists error
+                    if (!ifNotExists || se.message?.contains(createIndexResult.name, true) != true) {
+                        throw se
+                    }
+                }
+            }
         }
     }
 
