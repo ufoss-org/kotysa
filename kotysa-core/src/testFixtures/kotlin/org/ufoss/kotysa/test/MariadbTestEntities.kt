@@ -31,6 +31,10 @@ object MariadbUsers : MariadbTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(MariadbRoles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object MariadbUserRoles : MariadbTable<UserRoleEntity>("userRoles") {

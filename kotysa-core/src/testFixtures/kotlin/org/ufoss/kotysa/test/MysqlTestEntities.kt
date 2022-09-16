@@ -30,6 +30,10 @@ object MysqlUsers : MysqlTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(MysqlRoles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object MysqlUserRoles : MysqlTable<UserRoleEntity>("userRoles") {

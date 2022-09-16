@@ -35,6 +35,10 @@ object PostgresqlUsers : PostgresqlTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(PostgresqlRoles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object PostgresqlUserRoles : PostgresqlTable<UserRoleEntity>("userRoles") {

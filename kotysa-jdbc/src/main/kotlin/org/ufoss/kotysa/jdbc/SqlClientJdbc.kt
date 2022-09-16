@@ -111,11 +111,11 @@ internal sealed class SqlClientJdbc(
     private fun <T : Any> fetchLastInserted(connection: Connection, row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
         val statement = connection.prepareStatement(lastInsertedSql(row))
-
+        val pkFirstColumn = pkColumns.elementAt(0)
         if (
             pkColumns.size != 1 ||
-            !pkColumns[0].isAutoIncrement ||
-            pkColumns[0].entityGetter(row) != null
+            !pkFirstColumn.isAutoIncrement ||
+            pkFirstColumn.entityGetter(row) != null
         ) {
             // bind all PK values
             pkColumns

@@ -179,17 +179,18 @@ public interface DefaultSqlClient {
         val allTableColumnNames = kotysaTable.columns
             .joinToString { column -> column.name }
 
+        val pkFirstColumn = pkColumns.elementAt(0)
         val wheres = if (
             pkColumns.size == 1 &&
-            pkColumns[0].isAutoIncrement &&
-            pkColumns[0].entityGetter(row) == null
+            pkFirstColumn.isAutoIncrement &&
+            pkFirstColumn.entityGetter(row) == null
         ) {
             val selected = if (tables.dbType == DbType.MYSQL) {
                 "(SELECT LAST_INSERT_ID())"
             } else {
                 "?"
             }
-            "${pkColumns[0].name} = $selected"
+            "${pkFirstColumn.name} = $selected"
         } else {
             val counter = Counter()
             pkColumns

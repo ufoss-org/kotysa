@@ -86,12 +86,13 @@ internal sealed class SqlClientSpringJdbc(
 
     private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
-
+        val pkFirstColumn = pkColumns.elementAt(0)
+        
         val parameters = MapSqlParameterSource()
         if (
             pkColumns.size != 1 ||
-            !pkColumns[0].isAutoIncrement ||
-            pkColumns[0].entityGetter(row) != null
+            !pkFirstColumn.isAutoIncrement ||
+            pkFirstColumn.entityGetter(row) != null
         ) {
             // bind all PK values
             pkColumns

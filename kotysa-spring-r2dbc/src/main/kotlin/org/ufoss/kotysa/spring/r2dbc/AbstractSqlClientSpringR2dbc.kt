@@ -106,11 +106,12 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
     // fixme 13/12/21 : does not work if set to private
     fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): Mono<T> {
         val pkColumns = table.primaryKey.columns
-
+        val pkFirstColumn = pkColumns.elementAt(0)
+        
         val executeSpec = if (
             pkColumns.size == 1 &&
-            pkColumns[0].isAutoIncrement &&
-            pkColumns[0].entityGetter(row) == null
+            pkFirstColumn.isAutoIncrement &&
+            pkFirstColumn.entityGetter(row) == null
         ) {
             client.sql(lastInsertedSql(row))
         } else {

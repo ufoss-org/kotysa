@@ -35,6 +35,10 @@ object H2Users : H2Table<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(H2Roles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+    
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object H2UserRoles : H2Table<UserRoleEntity>("userRoles") {

@@ -6,7 +6,7 @@ package org.ufoss.kotysa
 
 
 public data class Index<T : Any> internal constructor(
-    internal val columns: List<DbColumn<T, *>>,
+    internal val columns: Set<DbColumn<T, *>>,
     internal val type: IndexType?,
     internal val name: String?,
 )

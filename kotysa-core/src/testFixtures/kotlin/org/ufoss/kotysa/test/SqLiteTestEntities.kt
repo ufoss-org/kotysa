@@ -27,6 +27,10 @@ object SqliteUsers : SqLiteTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(SqliteRoles.id, "FK_users_roles")
     val alias = text(UserEntity::alias)
+
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object SqliteUserRoles : SqLiteTable<UserRoleEntity>("userRoles") {

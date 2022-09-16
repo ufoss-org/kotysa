@@ -100,7 +100,7 @@ class H2TablesDslTest {
     }
 
     @Test
-    fun `Test primary and foreign key`() {
+    fun `Test primary, foreign key and index`() {
         val tables = tables().h2(
             H2Roles,
             H2Users
@@ -127,13 +127,21 @@ class H2TablesDslTest {
                 tuple("roleId", SqlType.INT, false)
             )
         val userTablePk = userTable.primaryKey
-        assertThat(userTablePk.columns[0].entityGetter).isEqualTo(UserEntity::id)
+        assertThat(userTablePk.columns.elementAt(0).entityGetter).isEqualTo(UserEntity::id)
         assertThat(userTablePk.name).isEqualTo("PK_users")
         val userTableFk = userTable.foreignKeys.iterator().next()
         assertThat(userTableFk.name).isEqualTo("FK_users_roles")
         assertThat(userTableFk.references.values)
             .hasSize(1)
             .containsExactly(H2Roles.id)
+        
+        val index = userTable.kotysaIndexes.first()
+        assertThat(index.columns)
+            .hasSize(2)
+            .extracting("entityGetter")
+            .containsExactly(UserEntity::firstname, UserEntity::lastname)
+        assertThat(index.type).isNull()
+        assertThat(index.name).isEqualTo("full_name_index")
     }
 
     data class CompositePk(val name: String, val age: Int)
@@ -161,7 +169,7 @@ class H2TablesDslTest {
         val tables = tables().h2(H2Roles)
         val roleTable = tables.allTables[H2Roles] ?: fail { "require mapped RoleEntity" }
         val uniqueIndex = roleTable.kotysaIndexes.first()
-        assertThat(uniqueIndex.columns[0].entityGetter).isEqualTo(RoleEntity::label)
+        assertThat(uniqueIndex.columns.elementAt(0).entityGetter).isEqualTo(RoleEntity::label)
         assertThat(uniqueIndex.type).isEqualTo(IndexType.UNIQUE)
         assertThat(uniqueIndex.name).isNull()
     }
