@@ -7,10 +7,12 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
+import reactor.kotlin.test.verifyError
 import java.time.*
 import java.util.*
 
@@ -126,6 +128,14 @@ class R2DbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
                 true
             }.verifyComplete()
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        operator.transactional {
+            repository.insertDupCustomers()
+        }.test()
+            .verifyError<DataIntegrityViolationException>()
+    }
 }
 
 
@@ -161,4 +171,6 @@ class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn h2AllTypesNullableDefaultValue
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

@@ -4,10 +4,12 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
+import io.r2dbc.spi.R2dbcDataIntegrityViolationException
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
@@ -117,6 +119,19 @@ class R2dbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() = runTest {
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
+        assertThatThrownBy {
+            runBlocking {
+                operator.transactional {
+                    repository.insertDupCustomers()
+                }
+            }
+        }.isInstanceOf(R2dbcDataIntegrityViolationException::class.java)
+    }
 }
 
 class RepositoryPostgresqlInsert(private val sqlClient: R2dbcSqlClient) : Repository {
@@ -150,4 +165,6 @@ class RepositoryPostgresqlInsert(private val sqlClient: R2dbcSqlClient) : Reposi
 
     suspend fun insertAndReturnAllTypesDefaultValues() =
         sqlClient insertAndReturn postgresqlAllTypesNullableDefaultValue
+
+    suspend fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

@@ -167,6 +167,7 @@ object SqliteCustomers : SqLiteTable<CustomerEntity>("customer") {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = text(CustomerEntity::name)
+        .unique()
     val country = text(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }

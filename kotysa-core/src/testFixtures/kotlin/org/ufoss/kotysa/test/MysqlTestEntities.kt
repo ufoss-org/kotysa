@@ -14,7 +14,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-
 object MysqlRoles : MysqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
@@ -273,6 +272,7 @@ object MysqlCustomers : MysqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = varchar(CustomerEntity::name)
+        .unique()
     val country = varchar(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }

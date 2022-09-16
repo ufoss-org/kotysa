@@ -231,6 +231,7 @@ object MssqlCustomers : MssqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = varchar(CustomerEntity::name)
+        .unique()
     val country = varchar(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }

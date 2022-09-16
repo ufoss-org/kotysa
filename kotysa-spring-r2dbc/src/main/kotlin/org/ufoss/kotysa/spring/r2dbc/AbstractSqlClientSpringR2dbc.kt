@@ -9,8 +9,7 @@ import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.core.r2dbc.toRow
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.doOnError
-import reactor.kotlin.core.publisher.toFlux
+import reactor.kotlin.core.publisher.onErrorResume
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.reflect.KClass
@@ -26,20 +25,21 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
         val createTableResult = createTableSql(table, ifNotExists)
         return client.sql(createTableResult.sql)
             .then()
-            .flatMapMany {
+            .then(
                 // 2) loop to execute create indexes
-                createTableResult.createIndexes.toFlux()
-                    .flatMap { createIndexResult ->
+                createTableResult.createIndexes.fold(Mono.empty()) { mono, createIndexResult ->
+                    mono.then(
                         client.sql(createIndexResult.sql)
                             .then()
-                            .doOnError(NonTransientDataAccessException::class) { ntdae ->
+                            .onErrorResume(NonTransientDataAccessException::class) { ntdae ->
                                 if (!ifNotExists || ntdae.message?.contains(createIndexResult.name, true) != true) {
                                     throw ntdae
                                 }
+                                Mono.empty()
                             }
-                    }
-            }
-            .then()
+                    )
+                }
+            )
     }
 
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec =

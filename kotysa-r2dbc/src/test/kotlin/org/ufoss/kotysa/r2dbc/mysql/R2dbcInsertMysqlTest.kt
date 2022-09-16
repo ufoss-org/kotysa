@@ -4,10 +4,12 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
+import io.r2dbc.spi.R2dbcDataIntegrityViolationException
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
@@ -113,6 +115,19 @@ class R2dbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() = runTest {
+        assertThat(repository.selectAllCustomers().toList())
+            .isEmpty()
+        assertThatThrownBy {
+            runBlocking {
+                operator.transactional {
+                    repository.insertDupCustomers()
+                }
+            }
+        }.isInstanceOf(R2dbcDataIntegrityViolationException::class.java)
+    }
 }
 
 
@@ -146,4 +161,6 @@ class RepositoryMysqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     suspend fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTime
+
+    suspend fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }
