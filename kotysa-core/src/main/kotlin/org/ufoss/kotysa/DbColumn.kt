@@ -44,6 +44,4 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
     override fun hashCode(): Int {
         return entityGetter.hashCode()
     }
-
-
 }

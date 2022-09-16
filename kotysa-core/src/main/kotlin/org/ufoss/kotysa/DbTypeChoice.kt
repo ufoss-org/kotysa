@@ -134,12 +134,14 @@ public object DbTypeChoice {
                             }.name
 
             @Suppress("UNCHECKED_CAST")
-            val kotysaColumn = KotysaColumnImpl(column, column.entityGetter, column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType, column.isAutoIncrement,
-                    column.isNullable, column.defaultValue, column.size)
+            val kotysaColumn = KotysaColumnImpl(column, column.entityGetter,
+                column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType,
+                column.isAutoIncrement, column.isNullable, column.defaultValue, column.size)
             kotysaColumnsMap[column] = kotysaColumn
         }
 
-        val kotysaTable = KotysaTableImpl(tableClass, table, table.kotysaName, kotysaColumnsMap.values.toList(), table.kotysaPk, table.kotysaForeignKeys)
+        val kotysaTable = KotysaTableImpl(tableClass, table, table.kotysaName, kotysaColumnsMap.values.toList(),
+            table.kotysaPk, table.kotysaForeignKeys, table.kotysaIndexes)
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable

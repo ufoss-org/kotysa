@@ -4,7 +4,9 @@
 
 package org.ufoss.kotysa.android
 
+import android.database.sqlite.SQLiteConstraintException
 import android.database.sqlite.SQLiteOpenHelper
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
@@ -116,6 +118,18 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
+        val operator = client.transactionalOp()
+        assertThatThrownBy {
+            operator.transactional {
+                repository.insertDupCustomers()
+            }
+        }.isInstanceOf(SQLiteConstraintException::class.java)
+    }
 }
 
 class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
@@ -150,4 +164,6 @@ class RepositorySqLitelInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLite
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTime
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

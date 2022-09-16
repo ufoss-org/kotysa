@@ -20,16 +20,18 @@ public interface KotysaTable<T : Any> {
     public val columns: List<KotysaColumn<T, *>>
     public val primaryKey: PrimaryKey<T>
     public val foreignKeys: Set<ForeignKey<T, *>>
+    public val kotysaIndexes: Set<Index<T>>
 }
 
 
 internal class KotysaTableImpl<T : Any> internal constructor(
-        override val tableClass: KClass<T>,
-        override val table: Table<T>,
-        override val name: String,
-        override val columns: List<KotysaColumn<T, *>>,
-        override val primaryKey: PrimaryKey<T>,
-        override val foreignKeys: Set<ForeignKey<T, *>>,
+    override val tableClass: KClass<T>,
+    override val table: Table<T>,
+    override val name: String,
+    override val columns: List<KotysaColumn<T, *>>,
+    override val primaryKey: PrimaryKey<T>,
+    override val foreignKeys: Set<ForeignKey<T, *>>,
+    override val kotysaIndexes: Set<Index<T>>,
 ) : KotysaTable<T> {
 
     override fun equals(other: Any?): Boolean {

@@ -30,7 +30,7 @@ abstract class AbstractUserRepositoryMssql(protected val sqlClient: ReactorSqlCl
                     .then(sqlClient createTableIfNotExists MssqlUsers)
                     .then(sqlClient createTableIfNotExists MssqlUserRoles)
 
-    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+    private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
     private fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 

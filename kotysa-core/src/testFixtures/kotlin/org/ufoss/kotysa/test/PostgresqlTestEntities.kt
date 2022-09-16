@@ -23,6 +23,7 @@ object PostgresqlRoles : PostgresqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = varchar(RoleEntity::label)
+        .unique()
 }
 
 object PostgresqlUsers : PostgresqlTable<UserEntity>("users") {
@@ -34,6 +35,10 @@ object PostgresqlUsers : PostgresqlTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(PostgresqlRoles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
+
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object PostgresqlUserRoles : PostgresqlTable<UserRoleEntity>("userRoles") {
@@ -428,6 +433,7 @@ object PostgresqlCustomers : PostgresqlTable<CustomerEntity>() {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = varchar(CustomerEntity::name)
+        .unique()
     val country = varchar(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }

@@ -30,7 +30,7 @@ abstract class AbstractUserRepositoryR2dbcH2(private val sqlClient: R2dbcSqlClie
     }
 
     private suspend fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private suspend fun insertUsers() {

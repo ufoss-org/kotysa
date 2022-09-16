@@ -15,6 +15,7 @@ object SqliteRoles : SqLiteTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
     val label = text(RoleEntity::label)
+        .unique()
 }
 
 object SqliteUsers : SqLiteTable<UserEntity>("users") {
@@ -26,6 +27,10 @@ object SqliteUsers : SqLiteTable<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(SqliteRoles.id, "FK_users_roles")
     val alias = text(UserEntity::alias)
+
+    init {
+        index(setOf(firstname, lastname), indexName = "full_name_index")
+    }
 }
 
 object SqliteUserRoles : SqLiteTable<UserRoleEntity>("userRoles") {
@@ -166,6 +171,7 @@ object SqliteCustomers : SqLiteTable<CustomerEntity>("customer") {
     val id = integer(CustomerEntity::id)
         .primaryKey()
     val name = text(CustomerEntity::name)
+        .unique()
     val country = text(CustomerEntity::country)
     val age = integer(CustomerEntity::age)
 }

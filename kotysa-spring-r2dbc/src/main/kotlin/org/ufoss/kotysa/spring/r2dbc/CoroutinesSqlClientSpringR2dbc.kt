@@ -39,11 +39,11 @@ internal sealed class CoroutinesSqlClientSpringR2dbc(
             .map { row -> insertAndReturnProtected(row) }
 
     protected suspend fun <T : Any> createTableProtected(table: Table<T>) {
-        executeCreateTable(table, false).await()
+        executeCreateTable(table, false).awaitSingleOrNull()
     }
 
     protected suspend fun <T : Any> createTableIfNotExistsProtected(table: Table<T>) {
-        executeCreateTable(table, true).await()
+        executeCreateTable(table, true).awaitSingleOrNull()
     }
 
     protected fun <T : Any> deleteFromProtected(table: Table<T>)

@@ -30,7 +30,7 @@ abstract class AbstractUserRepositoryR2dbcPostgresql(private val sqlClient: R2db
     }
 
     private suspend fun insertRoles() {
-        sqlClient.insert(roleUser, roleAdmin, roleGod, roleGodBis)
+        sqlClient.insert(roleUser, roleAdmin, roleGod)
     }
 
     private suspend fun insertUsers() {

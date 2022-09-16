@@ -33,11 +33,9 @@ internal sealed class SqlClientSpringR2dbc(
             rows.toFlux()
                 .concatMap { row -> insertAndReturnProtected(row) }
 
-    protected fun <T : Any> createTableProtected(table: Table<T>) =
-            executeCreateTable(table, false).then()
+    protected fun <T : Any> createTableProtected(table: Table<T>) = executeCreateTable(table, false)
 
-    protected fun <T : Any> createTableIfNotExistsProtected(table: Table<T>) =
-            executeCreateTable(table, true).then()
+    protected fun <T : Any> createTableIfNotExistsProtected(table: Table<T>) = executeCreateTable(table, true)
 
     protected fun <T : Any> deleteFromProtected(table: Table<T>)
     : ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =

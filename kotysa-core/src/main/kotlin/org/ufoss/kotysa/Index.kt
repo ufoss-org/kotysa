@@ -4,7 +4,9 @@
 
 package org.ufoss.kotysa
 
-public class PrimaryKey<T : Any> internal constructor(
+
+public data class Index<T : Any> internal constructor(
+    internal val columns: Set<DbColumn<T, *>>,
+    internal val type: IndexType?,
     internal val name: String?,
-    public val columns: Set<DbColumn<T, *>>,
 )

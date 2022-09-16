@@ -5,10 +5,12 @@
 package org.ufoss.kotysa.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
+import java.sql.SQLIntegrityConstraintViolationException
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -110,6 +112,17 @@ class JdbcInsertMariadbTest : AbstractJdbcMariadbTest<RepositoryMariadbInsert>()
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        assertThat(repository.selectAllCustomers())
+            .isEmpty()
+        assertThatThrownBy {
+            operator.transactional {
+                repository.insertDupCustomers()
+            }
+        }.isInstanceOf(SQLIntegrityConstraintViolationException::class.java)
+    }
 }
 
 
@@ -143,4 +156,6 @@ class RepositoryMariadbInsert(private val sqlClient: JdbcSqlClient) : Repository
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTime
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

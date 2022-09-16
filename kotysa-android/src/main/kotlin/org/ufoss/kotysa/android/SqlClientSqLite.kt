@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.android
 
+import android.database.SQLException
 import android.database.sqlite.SQLiteOpenHelper
 import android.database.sqlite.SQLiteStatement
 import org.ufoss.kotysa.*
@@ -79,8 +80,20 @@ internal class SqlClientSqLite internal constructor(
     }
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
-        val createTableSql = createTableSql(table, ifNotExists)
-        client.writableDatabase.compileStatement(createTableSql).execute()
+        val createTableResult = createTableSql(table, ifNotExists)
+        // 1) execute create table
+        client.writableDatabase.execSQL(createTableResult.sql)
+        // 2) loop to execute create indexes
+        createTableResult.createIndexes.forEach { createIndexResult ->
+            try {
+                client.writableDatabase.execSQL(createIndexResult.sql)
+            } catch (se: SQLException) {
+                // if not exists : accept Index already exists error
+                if (!ifNotExists || se.message?.contains(createIndexResult.name, true) != true) {
+                    throw se
+                }
+            }
+        }
     }
 
     override fun <T : Any> deleteFrom(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =

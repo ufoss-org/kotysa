@@ -8,11 +8,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
+import reactor.kotlin.test.verifyError
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -131,6 +133,14 @@ class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
                 true
             }.verifyComplete()
     }
+
+    @Test
+    fun `Verify insertCustomer fails if duplicate name`() {
+        operator.transactional {
+            repository.insertDupCustomers()
+        }.test()
+            .verifyError<DataIntegrityViolationException>()
+    }
 }
 
 
@@ -166,4 +176,6 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
 
     fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValue
+
+    fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

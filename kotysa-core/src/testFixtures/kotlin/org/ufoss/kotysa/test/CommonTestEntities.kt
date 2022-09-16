@@ -28,7 +28,6 @@ data class RoleEntity(
 val roleUser = RoleEntity(1, "user")
 val roleAdmin = RoleEntity(2, "admin")
 val roleGod = RoleEntity(3, "god")
-val roleGodBis = RoleEntity(4, "god")
 
 
 data class UserEntity(
@@ -575,6 +574,7 @@ val customerUSA1 = CustomerEntity(2, "John", "USA", 21)
 val customerUSA2 = CustomerEntity(3, "Big Boss", "USA", 20)
 val customerJapan1 = CustomerEntity(4, "Seya", "USA", 20)
 val customerJapan2 = CustomerEntity(5, "Shun", "USA", 20)
+val customerFranceDup = CustomerEntity(6, "Jean", "France", 56)
 
 
 data class UserDto(
