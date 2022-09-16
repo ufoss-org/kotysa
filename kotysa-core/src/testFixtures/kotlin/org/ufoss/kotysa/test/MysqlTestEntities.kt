@@ -41,7 +41,10 @@ object MysqlUserRoles : MysqlTable<UserRoleEntity>("userRoles") {
         .foreignKey(MysqlUsers.id)
     val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(MysqlRoles.id)
-    val pk = primaryKey(userId, roleId)
+
+    init {
+        primaryKey(userId, roleId)
+    }
 }
 
 private fun LocalTime.roundToSecond(): LocalTime {

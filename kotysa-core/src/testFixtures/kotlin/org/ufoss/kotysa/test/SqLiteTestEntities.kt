@@ -38,7 +38,10 @@ object SqliteUserRoles : SqLiteTable<UserRoleEntity>("userRoles") {
         .foreignKey(SqliteUsers.id)
     val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(SqliteRoles.id)
-    val pk = primaryKey(userId, roleId)
+
+    init {
+        primaryKey(userId, roleId)
+    }
 }
 
 object SqliteAllTypesNotNullWithTimes : SqLiteTable<AllTypesNotNullWithTimeEntity>("all_types") {
