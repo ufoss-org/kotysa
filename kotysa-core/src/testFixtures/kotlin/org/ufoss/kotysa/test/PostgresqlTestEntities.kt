@@ -46,7 +46,10 @@ object PostgresqlUserRoles : PostgresqlTable<UserRoleEntity>("userRoles") {
         .foreignKey(PostgresqlUsers.id)
     val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(PostgresqlRoles.id)
-    val pk = primaryKey(userId, roleId)
+
+    init {
+        primaryKey(userId, roleId)
+    }
 }
 
 data class PostgresqlAllTypesNotNullEntity(

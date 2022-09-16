@@ -41,7 +41,10 @@ object MssqlUserRoles : MssqlTable<UserRoleEntity>("userRoles") {
         .foreignKey(MssqlUsers.id)
     val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(MssqlRoles.id)
-    val pk = primaryKey(userId, roleId)
+
+    init {
+        primaryKey(userId, roleId)
+    }
 }
 
 data class MssqlAllTypesNotNull(

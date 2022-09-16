@@ -46,7 +46,10 @@ object H2UserRoles : H2Table<UserRoleEntity>("userRoles") {
         .foreignKey(H2Users.id)
     val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(H2Roles.id)
-    val pk = primaryKey(userId, roleId)
+    
+    init {
+        primaryKey(userId, roleId)
+    }
 }
 
 data class H2AllTypesNotNullEntity(

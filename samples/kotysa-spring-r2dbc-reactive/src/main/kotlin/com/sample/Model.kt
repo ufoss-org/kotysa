@@ -44,6 +44,7 @@ object Users : H2Table<User>() {
     val lastname = varchar(User::lastname)
     val isAdmin = boolean(User::isAdmin)
     val roleId = uuid(User::roleId)
+        .foreignKey(Roles.id)
     val alias = varchar(User::alias)
     val creationTime = dateTime(User::creationTime)
 }
