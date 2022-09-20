@@ -1583,11 +1583,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                     Operation.IN ->
                                         when (this) {
                                             is WhereClauseValue ->
-                                                when (module) {
+                                                when {
                                                     // SQLITE, JDBC and R2DBC : must put as much params as collection size
-                                                    Module.SQLITE, Module.JDBC ->
+                                                    module == Module.SQLITE || module == Module.JDBC ->
                                                         "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
-                                                    Module.R2DBC ->
+                                                    module.isR2dbcOrVertxSqlClient() ->
                                                         when (tables.dbType) {
                                                             DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
                                                             DbType.H2, DbType.POSTGRESQL ->

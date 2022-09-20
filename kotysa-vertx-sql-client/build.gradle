@@ -3,33 +3,19 @@ dependencies {
 
     // import BOMs
     testImplementation platform("org.testcontainers:testcontainers-bom:$testcontainers_bom_version")
-    testImplementation platform("org.springframework.boot:spring-boot-dependencies:$spring_boot_version")
 
-    api "io.projectreactor.kotlin:reactor-kotlin-extensions:$reactor_kotlin_extension_version"
-
-    implementation "org.springframework:spring-r2dbc:$spring_core_version"
+    implementation "io.smallrye.reactive:smallrye-mutiny-vertx-sql-client:$mutiny_sqlclient_version"
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
-    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
-    compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
 
     testImplementation testFixtures(project(':kotysa-core'))
 
-    testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
-    testImplementation 'org.springframework:spring-r2dbc'
-    testImplementation 'io.projectreactor:reactor-test'
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_coroutines_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
+    testImplementation "io.smallrye.reactive:smallrye-mutiny-vertx-pg-client:$mutiny_sqlclient_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.testcontainers:testcontainers'
 
-    testRuntimeOnly 'io.r2dbc:r2dbc-h2'
-    testRuntimeOnly 'io.r2dbc:r2dbc-postgresql'
-    testRuntimeOnly 'dev.miku:r2dbc-mysql'
-    testRuntimeOnly 'io.r2dbc:r2dbc-mssql'
-    testRuntimeOnly 'org.mariadb:r2dbc-mariadb'
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
     // needed to start mysql testcontainer
@@ -53,15 +39,5 @@ compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
         jvmTarget = '1.8'
-    }
-}
-
-tasks.dokkaHtmlPartial.configure {
-    dokkaSourceSets {
-        configureEach {
-            externalDocumentationLink {
-                url = URL("https://docs.spring.io/spring-data/r2dbc/docs/1.4.x/api/")
-            }
-        }
     }
 }

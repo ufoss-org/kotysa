@@ -162,9 +162,9 @@ internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
 
 internal fun DefaultSqlClientCommon.Properties.variable() = when {
     module == Module.SQLITE || module == Module.JDBC
-            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
-    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
+            || module.isR2dbcOrVertxSqlClient() && tables.dbType == DbType.MYSQL -> "?"
+    module.isR2dbcOrVertxSqlClient() && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
+    module.isR2dbcOrVertxSqlClient() && tables.dbType == DbType.MSSQL -> "@p${++index}"
     else -> ":k${index++}"
 }
 
