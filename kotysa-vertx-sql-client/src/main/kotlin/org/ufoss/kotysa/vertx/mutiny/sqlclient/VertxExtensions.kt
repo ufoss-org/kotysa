@@ -11,7 +11,7 @@ import org.ufoss.kotysa.RowImpl
 
 public fun Row.toRow(): RowImpl = RowImpl(VertxRow(this))
 
-internal fun DefaultSqlClientCommon.Properties.vertxBindParams(tuple: Tuple = Tuple.tuple()) {
+internal fun DefaultSqlClientCommon.Properties.vertxBindParams(tuple: Tuple) {
     parameters
         .flatMap { parameter ->
             if (parameter is Collection<*>) {

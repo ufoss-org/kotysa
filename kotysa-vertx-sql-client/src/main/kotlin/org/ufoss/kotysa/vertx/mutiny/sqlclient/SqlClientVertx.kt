@@ -166,9 +166,9 @@ internal sealed class SqlClientVertx(
         }
     }
 
-//    protected fun <T : Any> deleteFromProtected(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-//        SqlClientDeleteJdbc.FirstDelete(pool, tables, table)
-//
+    protected fun <T : Any> deleteFromProtected(table: Table<T>): MutinySqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+        SqlClientDeleteVertx.FirstDelete(pool, tables, table)
+
 //    protected fun <T : Any> updateProtected(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
 //        SqlClientUpdateJdbc.FirstUpdate(pool, tables, table)
 
@@ -353,7 +353,7 @@ internal class PostgresqlSqlClientVertx internal constructor(
     override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
-    override fun <T : Any> deleteFrom(table: Table<T>) = TODO() // deleteFromProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
     override fun <T : Any> update(table: Table<T>) = TODO() // updateProtected(table)
     override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
     override fun <T : Any> select(table: Table<T>) = selectProtected(table)

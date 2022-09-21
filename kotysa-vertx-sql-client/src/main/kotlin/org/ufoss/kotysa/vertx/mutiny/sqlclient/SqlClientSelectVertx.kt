@@ -18,7 +18,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         private val pool: Pool,
         private val tables: Tables,
     ) : MutinySqlClientSelect.Selectable {
-        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.JDBC, Module.JDBC)
+        private fun <T : Any> properties() = Properties<T>(tables, DbAccessType.VERTX, Module.VERTX_SQL_CLIENT)
 
         override fun <T : Any> select(column: Column<*, T>): MutinySqlClientSelect.FirstSelect<T> =
             FirstSelect<T>(pool, properties()).apply { addSelectColumn(column) }

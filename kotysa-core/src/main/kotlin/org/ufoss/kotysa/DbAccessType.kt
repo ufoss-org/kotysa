@@ -5,5 +5,5 @@
 package org.ufoss.kotysa
 
 public enum class DbAccessType {
-    ANDROID, JDBC, R2DBC
+    ANDROID, JDBC, R2DBC, VERTX
 }
