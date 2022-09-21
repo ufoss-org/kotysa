@@ -373,7 +373,7 @@ internal class PostgresqlSqlClientVertx internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
-    override fun <T : Any> transactionalUni(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
+    override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
 }
 
