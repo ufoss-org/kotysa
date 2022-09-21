@@ -6,7 +6,6 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient
 
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
-import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor
 import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.mutiny.sqlclient.SqlConnection
 import io.vertx.mutiny.sqlclient.Tuple
@@ -239,6 +238,7 @@ internal sealed class SqlClientVertx(
                                     if (isOrigin) {
                                         context.put(VertxTransaction.ContextKey, vertxTransaction)
                                     }
+                                    // fixme one day : this is ugly
                                     Uni.createFrom().completionStage(uni.subscribe().asCompletionStage(context))
                                 }
                                 .onTermination().call { _, throwable, _ ->
@@ -280,14 +280,15 @@ internal sealed class SqlClientVertx(
                                 if (isOrigin) {
                                     context.put(VertxTransaction.ContextKey, vertxTransaction)
                                 }
-                                val b = BroadcastProcessor.create<T>()
-                                multi.toHotStream().subscribe().with(
-                                    context,
-                                    { item -> b.onNext(item) },
-                                    { throwable -> b.onError(throwable) },
-                                    { b.onComplete() }
-                                )
-                                b
+                                // fixme one day : this is ugly
+                                Multi.createFrom().emitter<T> { multiEmitter ->
+                                    multi.subscribe().with(
+                                        context,
+                                        { item -> multiEmitter.emit(item) },
+                                        { throwable -> multiEmitter.fail(throwable) },
+                                        { multiEmitter.complete() }
+                                    )
+                                }
                             }
                             .onTermination().call { throwable, _ ->
                                 // For original transaction only : commit or rollback, then close connection
