@@ -6,12 +6,14 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient
 
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
+import io.smallrye.mutiny.operators.multi.processors.BroadcastProcessor
 import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.mutiny.sqlclient.SqlConnection
 import io.vertx.mutiny.sqlclient.Tuple
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransaction
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransactionalOp
+import java.math.BigDecimal
 import java.sql.SQLException
 
 /**
@@ -166,91 +168,96 @@ internal sealed class SqlClientVertx(
     }
 
 //    protected fun <T : Any> deleteFromProtected(table: Table<T>): SqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-//        SqlClientDeleteJdbc.FirstDelete(getJdbcConnection(), tables, table)
+//        SqlClientDeleteJdbc.FirstDelete(pool, tables, table)
 //
 //    protected fun <T : Any> updateProtected(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-//        SqlClientUpdateJdbc.FirstUpdate(getJdbcConnection(), tables, table)
-//
-//    protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(column)
-//
-//    protected fun <T : Any> selectProtected(table: Table<T>): SqlClientSelect.FirstSelect<T> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(table)
-//
-//    protected fun <T : Any> selectAndBuildProtected(dsl: (ValueProvider) -> T): SqlClientSelect.Fromable<T> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectAndBuild(dsl)
-//
-//    protected fun selectCountProtected(): SqlClientSelect.Fromable<Long> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCount<Any>(null)
-//
-//    protected fun <T : Any> selectCountProtected(column: Column<*, T>): SqlClientSelect.FirstSelect<Long> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCount(column)
-//
-//    protected fun <T : Any, U : Any> selectDistinctProtected(column: Column<T, U>): SqlClientSelect.FirstSelect<U> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectDistinct(column)
-//
-//    protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectMin(column)
-//
-//    protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectMax(column)
-//
-//    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectAvg(column)
-//
-//    protected fun <T : Any> selectSumProtected(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectSum(column)
-//
-//    protected fun <T : Any> selectProtected(
-//        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-//    ): SqlClientSelect.FirstSelect<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).select(dsl)
-//
-//    protected fun <T : Any> selectCaseWhenExistsProtected(
-//        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
-//    ): SqlClientSelect.SelectCaseWhenExistsFirst<T> =
-//        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectCaseWhenExists(dsl)
-//
-//    protected fun <T : Any> selectStarFromProtected(
-//        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-//    ): SqlClientSelect.From<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectStarFromSubQuery(dsl)
+//        SqlClientUpdateJdbc.FirstUpdate(pool, tables, table)
+
+    protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): MutinySqlClientSelect.FirstSelect<U> =
+        SqlClientSelectVertx.Selectable(pool, tables).select(column)
+
+    protected fun <T : Any> selectProtected(table: Table<T>): MutinySqlClientSelect.FirstSelect<T> =
+        SqlClientSelectVertx.Selectable(pool, tables).select(table)
+
+    protected fun <T : Any> selectAndBuildProtected(dsl: (ValueProvider) -> T): MutinySqlClientSelect.Fromable<T> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectAndBuild(dsl)
+
+    protected fun selectCountProtected(): MutinySqlClientSelect.Fromable<Long> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectCount<Any>(null)
+
+    protected fun <T : Any> selectCountProtected(column: Column<*, T>): MutinySqlClientSelect.FirstSelect<Long> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectCount(column)
+
+    protected fun <T : Any, U : Any> selectDistinctProtected(column: Column<T, U>)
+            : MutinySqlClientSelect.FirstSelect<U> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectDistinct(column)
+
+    protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>)
+            : MutinySqlClientSelect.FirstSelect<U> = SqlClientSelectVertx.Selectable(pool, tables).selectMin(column)
+
+    protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>)
+            : MutinySqlClientSelect.FirstSelect<U> = SqlClientSelectVertx.Selectable(pool, tables).selectMax(column)
+
+    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>)
+            : MutinySqlClientSelect.FirstSelect<BigDecimal> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectAvg(column)
+
+    protected fun <T : Any> selectSumProtected(column: IntColumn<T>): MutinySqlClientSelect.FirstSelect<Long> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectSum(column)
+
+    protected fun <T : Any> selectProtected(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): MutinySqlClientSelect.FirstSelect<T> = SqlClientSelectVertx.Selectable(pool, tables).select(dsl)
+
+    protected fun <T : Any> selectCaseWhenExistsProtected(
+        dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ): MutinySqlClientSelect.SelectCaseWhenExistsFirst<T> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectCaseWhenExists(dsl)
+
+    protected fun <T : Any> selectStarFromProtected(
+        dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+    ): MutinySqlClientSelect.From<T> = SqlClientSelectVertx.Selectable(pool, tables).selectStarFromSubQuery(dsl)
 
     protected fun <T : Any> transactionalProtected(block: (VertxTransaction) -> Uni<T>): Uni<T> =
         // reuse currentTransaction if any, else create new transaction from new established connection
         Uni.createFrom().context { context ->
             var isOrigin = false
             if (context.contains(VertxTransaction.ContextKey)) {
-                isOrigin = true
                 val vertxTransaction: VertxTransaction = context[VertxTransaction.ContextKey]
                 Uni.createFrom().item(vertxTransaction)
             } else {
+                isOrigin = true
                 pool.connection
-                    .map { connection ->
-                        VertxTransaction(connection).apply {
-                            context.put(VertxTransaction.ContextKey, this)
-                        }
-                    }
-            }.flatMap { vertxTransaction ->
-                vertxTransaction.connection.begin()
-                    // invoke bloc
-                    .flatMap { transaction ->
-                        block(vertxTransaction)
-                            .onTermination().call { _, throwable, _ ->
-                                // For original transaction only : commit or rollback, then close connection
-                                if (isOrigin) {
-                                    if (vertxTransaction.isRollbackOnly() || throwable != null) {
-                                        transaction.rollback()
-                                    } else {
-                                        transaction.commit()
-                                    }.chain { ->
-                                        vertxTransaction.setCompleted()
-                                        vertxTransaction.connection.close()
-                                    }
-                                } else {
-                                    Uni.createFrom().voidItem()
-                                }
-                            }
-                    }
+                    .map { connection -> VertxTransaction(connection) }
             }
+                .flatMap { vertxTransaction ->
+                    vertxTransaction.connection.begin()
+                        // invoke bloc
+                        .flatMap { transaction ->
+                            block(vertxTransaction)
+                                .withContext { uni, context ->
+                                    if (isOrigin) {
+                                        context.put(VertxTransaction.ContextKey, vertxTransaction)
+                                    }
+                                    Uni.createFrom().completionStage(uni.subscribe().asCompletionStage(context))
+                                }
+                                .onTermination().call { _, throwable, _ ->
+                                    // For original transaction only : commit or rollback, then close connection
+                                    if (isOrigin) {
+                                        if (vertxTransaction.isRollbackOnly() || throwable != null) {
+                                            transaction.rollback()
+                                        } else {
+                                            transaction.commit()
+                                        }.chain { ->
+                                            vertxTransaction.setCompleted()
+                                            vertxTransaction.connection.close()
+                                        }
+                                    } else {
+                                        Uni.createFrom().voidItem()
+                                    }
+                                }
+                        }
+                }
         }
 
     protected fun <T : Any> transactionalProtected(block: (VertxTransaction) -> Multi<T>): Multi<T> =
@@ -258,23 +265,30 @@ internal sealed class SqlClientVertx(
         Multi.createFrom().context { context ->
             var isOrigin = false
             if (context.contains(VertxTransaction.ContextKey)) {
-                isOrigin = true
                 val vertxTransaction: VertxTransaction = context[VertxTransaction.ContextKey]
                 Uni.createFrom().item(vertxTransaction)
             } else {
+                isOrigin = true
                 pool.connection
-                    .map { connection ->
-                        VertxTransaction(connection).apply {
-                            context.put(VertxTransaction.ContextKey, this)
-                        }
-                    }
-            }.toMulti()
-                .flatMap { vertxTransaction ->
+                    .map { connection -> VertxTransaction(connection) }
+            }.onItem().transformToMulti { vertxTransaction ->
                 vertxTransaction.connection.begin()
-                    .toMulti()
                     // invoke bloc
-                    .flatMap { transaction ->
+                    .onItem().transformToMulti { transaction ->
                         block(vertxTransaction)
+                            .withContext { multi, context ->
+                                if (isOrigin) {
+                                    context.put(VertxTransaction.ContextKey, vertxTransaction)
+                                }
+                                val b = BroadcastProcessor.create<T>()
+                                multi.toHotStream().subscribe().with(
+                                    context,
+                                    { item -> b.onNext(item) },
+                                    { throwable -> b.onError(throwable) },
+                                    { b.onComplete() }
+                                )
+                                b
+                            }
                             .onTermination().call { throwable, _ ->
                                 // For original transaction only : commit or rollback, then close connection
                                 if (isOrigin) {
@@ -340,23 +354,23 @@ internal class PostgresqlSqlClientVertx internal constructor(
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = TODO() // deleteFromProtected(table)
     override fun <T : Any> update(table: Table<T>) = TODO() // updateProtected(table)
-    override fun <T : Any, U : Any> select(column: Column<T, U>) = TODO() // selectProtected(column)
-    override fun <T : Any> select(table: Table<T>) = TODO() // selectProtected(table)
-    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = TODO() // selectAndBuildProtected(dsl)
-    override fun selectCount() = TODO() // selectCountProtected()
-    override fun <T : Any> selectCount(column: Column<*, T>) = TODO() // selectCountProtected(column)
-    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = TODO() // selectDistinctProtected(column)
-    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = TODO() // selectMinProtected(column)
-    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = TODO() // selectMaxProtected(column)
-    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = TODO() // selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = TODO() // selectSumProtected(column)
-    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = TODO() // selectProtected(dsl)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
-        TODO() // selectCaseWhenExistsProtected(dsl)
+        selectCaseWhenExistsProtected(dsl)
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
-        TODO() // selectStarFromProtected(dsl)
+        selectStarFromProtected(dsl)
 
     override fun <T : Any> transactionalUni(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
@@ -433,10 +447,11 @@ internal fun getVertxConnection(pool: Pool) =
     Uni.createFrom().context { context ->
         if (context.contains(VertxTransaction.ContextKey)) {
             val vertxTransaction: VertxTransaction = context[VertxTransaction.ContextKey]
-            return@context Uni.createFrom().item(
+            Uni.createFrom().item(
                 VertxConnection(vertxTransaction.connection, true)
             )
+        } else {
+            pool.connection
+                .map { connection -> VertxConnection(connection, false) }
         }
-        pool.connection
-            .map { connection -> VertxConnection(connection, false) }
     }

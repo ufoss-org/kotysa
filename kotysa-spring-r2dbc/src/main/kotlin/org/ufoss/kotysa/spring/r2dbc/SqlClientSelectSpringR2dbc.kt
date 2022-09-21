@@ -527,20 +527,20 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
 
         override fun fetchOne(): Mono<T> =
             fetch().one()
-                .handle { opt, sink: SynchronousSink<T> ->
+                .handle { opt, sink ->
                     opt.ifPresent(sink::next)
                 }
                 .onErrorMap(IncorrectResultSizeDataAccessException::class.java) { NonUniqueResultException() }
 
         override fun fetchFirst(): Mono<T> =
             fetch().first()
-                .handle { opt, sink: SynchronousSink<T> ->
+                .handle { opt, sink ->
                     opt.ifPresent(sink::next)
                 }
 
         override fun fetchAll(): Flux<T> =
             fetch().all()
-                .handle { opt, sink: SynchronousSink<T> ->
+                .handle { opt, sink ->
                     opt.ifPresent(sink::next)
                 }
     }

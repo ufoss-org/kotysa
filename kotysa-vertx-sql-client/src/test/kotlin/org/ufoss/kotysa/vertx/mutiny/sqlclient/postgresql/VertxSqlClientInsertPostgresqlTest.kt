@@ -17,18 +17,18 @@ class VertxSqlClientInsertPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<
     override fun instantiateRepository(sqlClient: VertxSqlClient) =
         RepositoryPostgresqlInsert(sqlClient)
 
-//    @Test
-//    fun `Verify insertCustomer works correctly`() {
-//        val allCustomers = operator.transactional { transaction ->
-//            transaction.setRollbackOnly()
-//            repository.insertCustomer()
-//                .chain { -> repository.selectAllCustomers() }
-//        }.await().indefinitely()
-//        assertThat(allCustomers).containsExactly(customerFrance)
-//        assertThat(repository.selectAllCustomers().await().indefinitely())
-//            .isEmpty()
-//    }
-//
+    @Test
+    fun `Verify insertCustomer works correctly`() {
+        val allCustomers = operator.transactionalUni { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertCustomer()
+                .chain { -> repository.selectAllCustomers() }
+        }.await().indefinitely()
+        assertThat(allCustomers).containsExactly(customerFrance)
+        assertThat(repository.selectAllCustomers().await().indefinitely())
+            .isEmpty()
+    }
+
 //    @Test
 //    fun `Verify insertCustomers works correctly`() {
 //        operator.transactional { transaction ->
