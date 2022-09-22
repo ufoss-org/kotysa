@@ -21,7 +21,7 @@ internal fun DefaultSqlClientCommon.Properties.vertxBindParams(tuple: Tuple) {
             }
         }
         .forEach { parameter ->
-            val dbValue = tables.getDbValue(parameter)!!
+            val dbValue = tables.getDbValue(parameter)
             tuple.addValue(dbValue)
         }
 }

@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa.vertx.mutiny.sqlclient
 
+import io.vertx.core.buffer.Buffer
+import io.vertx.sqlclient.data.Numeric
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
 import org.ufoss.kotysa.Row
@@ -18,6 +20,8 @@ public class VertxRow(private val vertxRow: io.vertx.mutiny.sqlclient.Row) : Row
                     vertxRow.get(LocalDate::class.java, index)?.toKotlinLocalDate()
                 "kotlinx.datetime.LocalDateTime" ->
                     vertxRow.get(LocalDateTime::class.java, index)?.toKotlinLocalDateTime()
+                "[B" -> vertxRow.get(Buffer::class.java, index)?.bytes
+                "java.math.BigDecimal" -> vertxRow.get(Numeric::class.java, index)?.bigDecimalValue()
                 else -> vertxRow.get(clazz, index)
             } as T?
 }

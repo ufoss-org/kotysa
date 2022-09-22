@@ -13,7 +13,6 @@ import org.ufoss.kotysa.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransaction
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransactionalOp
 import java.math.BigDecimal
-import java.sql.SQLException
 
 /**
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
@@ -152,10 +151,10 @@ internal sealed class SqlClientVertx(
                                     connection.query(createIndexResult.sql)
                                         .execute()
                                         .onFailure { throwable ->
-                                            ifNotExists && throwable is SQLException
-                                                    && throwable.message?.contains(
-                                                createIndexResult.name, true
-                                            ) != true
+                                            ifNotExists &&
+                                                    throwable.message?.contains(
+                                                        createIndexResult.name, true
+                                                    ) == true
                                         }.recoverWithNull()
                                 }
                         ).discardItems()
@@ -169,8 +168,8 @@ internal sealed class SqlClientVertx(
     protected fun <T : Any> deleteFromProtected(table: Table<T>): MutinySqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
         SqlClientDeleteVertx.FirstDelete(pool, tables, table)
 
-//    protected fun <T : Any> updateProtected(table: Table<T>): SqlClientDeleteOrUpdate.Update<T> =
-//        SqlClientUpdateJdbc.FirstUpdate(pool, tables, table)
+    protected fun <T : Any> updateProtected(table: Table<T>): MutinySqlClientDeleteOrUpdate.Update<T> =
+        SqlClientUpdateVertx.FirstUpdate(pool, tables, table)
 
     protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): MutinySqlClientSelect.FirstSelect<U> =
         SqlClientSelectVertx.Selectable(pool, tables).select(column)
@@ -239,7 +238,13 @@ internal sealed class SqlClientVertx(
                                         context.put(VertxTransaction.ContextKey, vertxTransaction)
                                     }
                                     // fixme one day : this is ugly
-                                    Uni.createFrom().completionStage(uni.subscribe().asCompletionStage(context))
+                                    Uni.createFrom().emitter<T> { uniEmitter ->
+                                        uni.subscribe().with(
+                                            context,
+                                            { item -> uniEmitter.complete(item) },
+                                            { throwable -> uniEmitter.fail(throwable) }
+                                        )
+                                    }
                                 }
                                 .onTermination().call { _, throwable, _ ->
                                     // For original transaction only : commit or rollback, then close connection
@@ -354,7 +359,7 @@ internal class PostgresqlSqlClientVertx internal constructor(
     override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
     override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
     override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
-    override fun <T : Any> update(table: Table<T>) = TODO() // updateProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
     override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
     override fun <T : Any> select(table: Table<T>) = selectProtected(table)
     override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)

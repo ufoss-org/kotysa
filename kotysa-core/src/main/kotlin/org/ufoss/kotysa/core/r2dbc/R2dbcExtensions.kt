@@ -7,7 +7,6 @@ package org.ufoss.kotysa.core.r2dbc
 import io.r2dbc.spi.Row
 import io.r2dbc.spi.Statement
 import org.ufoss.kotysa.*
-import kotlin.reflect.KClass
 
 public fun Row.toRow(): RowImpl = RowImpl(R2dbcRow(this))
 

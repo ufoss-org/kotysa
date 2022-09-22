@@ -527,7 +527,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             fetch()
                 .map { results ->
                     if (results.isEmpty()) {
-                        throw NoResultException()
+                        null
                     } else if (results.size > 1) {
                         throw NonUniqueResultException()
                     } else {
@@ -539,7 +539,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             fetch()
                 .map { results ->
                     if (results.isEmpty()) {
-                        throw NoResultException()
+                        null
                     } else {
                         results.first()
                     }
