@@ -8,6 +8,7 @@ import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.mutiny.sqlclient.SqlConnection
+import io.vertx.mutiny.sqlclient.Transaction
 import io.vertx.mutiny.sqlclient.Tuple
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransaction
@@ -247,19 +248,7 @@ internal sealed class SqlClientVertx(
                                     }
                                 }
                                 .onTermination().call { _, throwable, _ ->
-                                    // For original transaction only : commit or rollback, then close connection
-                                    if (isOrigin) {
-                                        if (vertxTransaction.isRollbackOnly() || throwable != null) {
-                                            transaction.rollback()
-                                        } else {
-                                            transaction.commit()
-                                        }.chain { ->
-                                            vertxTransaction.setCompleted()
-                                            vertxTransaction.connection.close()
-                                        }
-                                    } else {
-                                        Uni.createFrom().voidItem()
-                                    }
+                                    finishTransaction(isOrigin, vertxTransaction, transaction, throwable)
                                 }
                         }
                 }
@@ -296,22 +285,30 @@ internal sealed class SqlClientVertx(
                                 }
                             }
                             .onTermination().call { throwable, _ ->
-                                // For original transaction only : commit or rollback, then close connection
-                                if (isOrigin) {
-                                    if (vertxTransaction.isRollbackOnly() || throwable != null) {
-                                        transaction.rollback()
-                                    } else {
-                                        transaction.commit()
-                                    }.chain { ->
-                                        vertxTransaction.setCompleted()
-                                        vertxTransaction.connection.close()
-                                    }
-                                } else {
-                                    Uni.createFrom().voidItem()
-                                }
+                                finishTransaction(isOrigin, vertxTransaction, transaction, throwable)
                             }
                     }
             }
+        }
+
+    private fun finishTransaction(
+        isOrigin: Boolean,
+        vertxTransaction: VertxTransaction,
+        transaction: Transaction,
+        throwable: Throwable?,
+    ) =
+        // For original transaction only : commit or rollback, then close connection
+        if (isOrigin) {
+            if (vertxTransaction.isRollbackOnly() || throwable != null) {
+                transaction.rollback()
+            } else {
+                transaction.commit()
+            }.chain { ->
+                vertxTransaction.setCompleted()
+                vertxTransaction.connection.close()
+            }
+        } else {
+            Uni.createFrom().voidItem()
         }
 }
 
