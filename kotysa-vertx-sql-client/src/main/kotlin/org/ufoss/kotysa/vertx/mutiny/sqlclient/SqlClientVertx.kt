@@ -97,7 +97,7 @@ internal sealed class SqlClientVertx(
                         || SqlType.BIGSERIAL == column.sqlType)
             }
             .fold(Tuple.tuple()) { tuple, column ->
-                tuple.addValue(tables.getDbValue(column.entityGetter(row)))
+                tuple.addValue(tables.getVertxDbValue(column.entityGetter(row)))
             }
 
     private fun <T : Any> fetchLastInserted(connection: SqlConnection, row: T, table: KotysaTable<T>): Uni<T> {
@@ -312,38 +312,39 @@ internal sealed class SqlClientVertx(
         }
 }
 
-//internal class MysqlSqlClientJdbc internal constructor(
-//    dataSource: DataSource,
-//    tables: MysqlTables,
-//) : SqlClientJdbc(dataSource, tables), MysqlJdbcSqlClient {
-//    override fun <T : Any> insert(row: T) = insertProtected(row)
-//    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
-//    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
-//    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
-//    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
-//    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
-//    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
-//    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
-//    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
-//    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
-//    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
-//    override fun selectCount() = selectCountProtected()
-//    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
-//    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
-//    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
-//    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
-//    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-//    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
-//    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
-//
-//    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
-//        selectCaseWhenExistsProtected(dsl)
-//
-//    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
-//        selectStarFromProtected(dsl)
-//
-//    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
-//}
+internal class MysqlSqlClientVertx internal constructor(
+    pool: Pool,
+    tables: MysqlTables,
+) : SqlClientVertx(pool, tables), MysqlVertxSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
+    override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
+}
 
 internal class PostgresqlSqlClientVertx internal constructor(
     pool: Pool,

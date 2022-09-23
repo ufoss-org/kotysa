@@ -7,12 +7,12 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient
 import io.vertx.mutiny.sqlclient.Pool
 import org.ufoss.kotysa.*
 
-///**
-// * Create a [MysqlJdbcSqlClient] from a Vertx [Pool] with [MysqlTables] mapping
-// *
-// * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
-// */
-//public fun Pool.sqlClient(tables: MysqlTables): MysqlJdbcSqlClient = MysqlSqlClientJdbc(this, tables)
+/**
+ * Create a [MysqlVertxSqlClient] from a Vertx [Pool] with [MysqlTables] mapping
+ *
+ * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
+ */
+public fun Pool.sqlClient(tables: MysqlTables): MysqlVertxSqlClient = MysqlSqlClientVertx(this, tables)
 
 /**
  * Create a [PostgresqlJdbcSqlClient] from a Vertx [Pool] with [PostgresqlTables] mapping
