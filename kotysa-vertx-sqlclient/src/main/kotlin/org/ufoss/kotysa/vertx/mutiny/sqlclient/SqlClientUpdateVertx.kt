@@ -50,7 +50,7 @@ internal class SqlClientUpdateVertx private constructor() : DefaultSqlClientDele
         override fun execute() = with(properties) {
             require(updateClauses.isNotEmpty()) { "At least one value must be set in Update" }
 
-            getVertxConnection(pool).executeUni { connection ->
+            pool.getVertxConnection().executeUni { connection ->
                 connection.preparedQuery(updateTableSql())
                     .execute(Tuple.tuple().apply(::vertxBindParams))
                     .map { rowSet -> rowSet.rowCount() }

@@ -26,7 +26,7 @@ internal sealed class SqlClientVertx(
     override val module = Module.VERTX_SQL_CLIENT
 
     protected fun <T : Any> insertProtected(row: T) =
-        getVertxConnection(pool).executeUni { connection ->
+        pool.getVertxConnection().executeUni { connection ->
             executeInsert(connection, row, tables.getTable(row::class))
         }
 
@@ -38,7 +38,7 @@ internal sealed class SqlClientVertx(
     protected fun <T : Any> insertProtected(rows: Array<T>): Uni<Void> {
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
-        return getVertxConnection(pool).executeUni { connection ->
+        return pool.getVertxConnection().executeUni { connection ->
             Uni.combine().all().unis<Void>(
                 rows.map { row ->
                     executeInsert(connection, row, table)
@@ -50,7 +50,7 @@ internal sealed class SqlClientVertx(
     protected fun <T : Any> insertAndReturnProtected(row: T): Uni<T> {
         val table = tables.getTable(row::class)
 
-        return getVertxConnection(pool).executeUni { connection ->
+        return pool.getVertxConnection().executeUni { connection ->
             executeInsertAndReturn(connection, row, table)
         }
     }
@@ -80,7 +80,7 @@ internal sealed class SqlClientVertx(
     protected fun <T : Any> insertAndReturnProtected(rows: Array<out T>): Multi<T> {
         val table = tables.getTable(rows[0]::class)
 
-        return getVertxConnection(pool).executeMulti { connection ->
+        return pool.getVertxConnection().executeMulti { connection ->
             Multi.createFrom().items(*rows)
                 .onItem().transformToUniAndConcatenate { row -> executeInsertAndReturn(connection, row, table) }
         }
@@ -139,7 +139,7 @@ internal sealed class SqlClientVertx(
 
     private fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean): Uni<Void> {
         val createTableResult = createTableSql(table, ifNotExists)
-        return getVertxConnection(pool).executeUni { connection ->
+        return pool.getVertxConnection().executeUni { connection ->
             // 1) execute create table
             connection.query(createTableResult.sql)
                 .execute()
@@ -221,7 +221,9 @@ internal sealed class SqlClientVertx(
         // reuse currentTransaction if any, else create new transaction from new established connection
         Uni.createFrom().context { context ->
             var isOrigin = false
-            if (context.contains(VertxTransaction.ContextKey)) {
+            if (context.contains(VertxTransaction.ContextKey)
+                && !context.get<VertxTransaction>(VertxTransaction.ContextKey).isCompleted()
+            ) {
                 val vertxTransaction: VertxTransaction = context[VertxTransaction.ContextKey]
                 Uni.createFrom().item(vertxTransaction)
             } else {
@@ -445,17 +447,3 @@ internal class PostgresqlSqlClientVertx internal constructor(
 //
 //    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 //}
-
-internal fun getVertxConnection(pool: Pool) =
-    // reuse currentTransaction's connection if any, else establish a new connection
-    Uni.createFrom().context { context ->
-        if (context.contains(VertxTransaction.ContextKey)) {
-            val vertxTransaction: VertxTransaction = context[VertxTransaction.ContextKey]
-            Uni.createFrom().item(
-                VertxConnection(vertxTransaction.connection, true)
-            )
-        } else {
-            pool.connection
-                .map { connection -> VertxConnection(connection, false) }
-        }
-    }

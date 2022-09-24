@@ -548,7 +548,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun fetchAll(): Uni<List<T>> = fetch()
 
         private fun fetch(): Uni<List<T>> =
-            getVertxConnection(pool).executeUni { connection ->
+            pool.getVertxConnection().executeUni { connection ->
                 connection.preparedQuery(selectSql())
                     .execute(buildTuple())
                     .map { rowSet ->

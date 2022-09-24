@@ -46,7 +46,7 @@ internal class SqlClientDeleteVertx private constructor() : DefaultSqlClientDele
         val pool: Pool
 
         override fun execute() = with(properties) {
-            getVertxConnection(pool).executeUni { connection ->
+            pool.getVertxConnection().executeUni { connection ->
                 connection.preparedQuery(deleteFromTableSql())
                     .execute(Tuple.tuple().apply(::vertxBindParams))
                     .map { rowSet -> rowSet.rowCount() }
