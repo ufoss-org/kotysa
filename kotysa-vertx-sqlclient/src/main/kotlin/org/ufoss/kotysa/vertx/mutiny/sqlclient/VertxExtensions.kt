@@ -33,7 +33,7 @@ internal fun DefaultSqlClientCommon.Properties.vertxBindParams(tuple: Tuple) {
 }
 
 internal fun <T> Tables.getVertxDbValue(value: T) =
-    if (value != null && value is ByteArray && dbType == DbType.MYSQL) {
+    if (value != null && value is ByteArray && (dbType == DbType.MYSQL || dbType == DbType.MARIADB)) {
         Buffer.buffer(value)
     } else {
         getDbValue(value)

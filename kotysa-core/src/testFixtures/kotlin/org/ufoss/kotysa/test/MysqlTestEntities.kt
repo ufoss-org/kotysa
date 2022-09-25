@@ -413,21 +413,21 @@ object MysqlTinyTexts : MysqlTable<StringAsTinyTextEntity>() {
     val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
 }
 
-object MysqlText : MysqlTable<StringAsTextEntity>() {
+object MysqlTexts : MysqlTable<StringAsTextEntity>() {
     val id = integer(StringAsTextEntity::id)
         .primaryKey()
     val stringNotNull = text(StringAsTextEntity::stringNotNull)
     val stringNullable = text(StringAsTextEntity::stringNullable)
 }
 
-object MysqlMediumText : MysqlTable<StringAsMediumTextEntity>() {
+object MysqlMediumTexts : MysqlTable<StringAsMediumTextEntity>() {
     val id = integer(StringAsMediumTextEntity::id)
         .primaryKey()
     val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
     val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
 }
 
-object MysqlLongText : MysqlTable<StringAsLongTextEntity>() {
+object MysqlLongTexts : MysqlTable<StringAsLongTextEntity>() {
     val id = integer(StringAsLongTextEntity::id)
         .primaryKey()
     val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
@@ -469,9 +469,9 @@ val mysqlTables = tables().mysql(
     MysqlJavaUsers,
     MysqlCustomers,
     MysqlTinyTexts,
-    MysqlText,
-    MysqlMediumText,
-    MysqlLongText,
+    MysqlTexts,
+    MysqlMediumTexts,
+    MysqlLongTexts,
     MysqlByteArrays,
     MysqlByteArrayAsBinarys,
 )
