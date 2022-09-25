@@ -8,7 +8,6 @@ import io.vertx.mutiny.pgclient.PgPool
 import io.vertx.sqlclient.SqlConnectOptions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.ufoss.kotysa.test.Repository
@@ -20,7 +19,6 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 
 @ExtendWith(PostgreSqlContainerExecutionHook::class)
 @ResourceLock(PostgreSqlContainerResource.ID)
-@Tag("jdbc-testcontainers")
 abstract class AbstractVertxSqlClientPostgresqlTest<T : Repository> : VertxRepositoryTest<T> {
     private lateinit var sqlClient: VertxSqlClient
 

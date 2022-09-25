@@ -27,10 +27,10 @@ public fun Pool.sqlClient(tables: PostgresqlTables): PostgresqlVertxSqlClient = 
 // * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
 // */
 //public fun Pool.sqlClient(tables: MssqlTables): MssqlJdbcSqlClient = MssqlSqlClientJdbc(this, tables)
-//
-///**
-// * Create a [MariadbJdbcSqlClient] from a Vertx [Pool] with [MariadbTables] mapping
-// *
-// * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
-// */
-//public fun Pool.sqlClient(tables: MariadbTables): MariadbJdbcSqlClient = MariadbSqlClientJdbc(this, tables)
+
+/**
+ * Create a [MariadbVertxSqlClient] from a Vertx [Pool] with [MariadbTables] mapping
+ *
+ * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
+ */
+public fun Pool.sqlClient(tables: MariadbTables): MariadbVertxSqlClient = MariadbSqlClientVertx(this, tables)

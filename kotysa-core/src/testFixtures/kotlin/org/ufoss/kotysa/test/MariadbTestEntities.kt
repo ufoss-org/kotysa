@@ -61,6 +61,92 @@ data class MariadbAllTypesNotNull(
     override val int: Int,
     override val long: Long,
     override val byteArray: ByteArray,
+) : AllTypesNotNullEntity(
+    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray
+) {
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MariadbAllTypesNotNull
+
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localDateTime1.truncatedTo(ChronoUnit.SECONDS)
+            != other.localDateTime1.truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (localDateTime2.truncatedTo(ChronoUnit.SECONDS)
+            != other.localDateTime2.truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (int != other.int) return false
+        if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = string.hashCode()
+        result = 31 * result + localDate.hashCode()
+        result = 31 * result + kotlinxLocalDate.hashCode()
+        result = 31 * result + localDateTime1.hashCode()
+        result = 31 * result + localDateTime2.hashCode()
+        result = 31 * result + kotlinxLocalDateTime1.hashCode()
+        result = 31 * result + kotlinxLocalDateTime2.hashCode()
+        result = 31 * result + int
+        result = 31 * result + long.hashCode()
+        result = 31 * result + byteArray.contentHashCode()
+        result = 31 * result + id
+        return result
+    }
+}
+
+val mariadbAllTypesNotNull = MariadbAllTypesNotNull(
+    1, "",
+    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
+    1L, byteArrayOf(0x2A)
+)
+
+object MariadbAllTypesNotNulls : MariadbTable<MariadbAllTypesNotNull>("all_types") {
+    val id = integer(MariadbAllTypesNotNull::id)
+        .primaryKey()
+    val string = varchar(MariadbAllTypesNotNull::string)
+    val boolean = boolean(MariadbAllTypesNotNull::boolean)
+    val localDate = date(MariadbAllTypesNotNull::localDate)
+    val kotlinxLocalDate = date(MariadbAllTypesNotNull::kotlinxLocalDate)
+    val localDateTime1 = dateTime(MariadbAllTypesNotNull::localDateTime1)
+    val localDateTime2 = dateTime(MariadbAllTypesNotNull::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(MariadbAllTypesNotNull::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(MariadbAllTypesNotNull::kotlinxLocalDateTime2)
+    val inte = integer(MariadbAllTypesNotNull::int)
+    val longe = bigInt(MariadbAllTypesNotNull::long)
+    val byteArray = binary(MariadbAllTypesNotNull::byteArray)
+}
+
+data class MariadbAllTypesNotNullWithTime(
+    override val id: Int,
+    override val string: String,
+    override val boolean: Boolean,
+    override val localDate: LocalDate,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+    override val localDateTime1: LocalDateTime,
+    override val localDateTime2: LocalDateTime,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+    override val int: Int,
+    override val long: Long,
+    override val byteArray: ByteArray,
     override val localTime: LocalTime,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
@@ -71,7 +157,7 @@ data class MariadbAllTypesNotNull(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as MariadbAllTypesNotNull
+        other as MariadbAllTypesNotNullWithTime
 
         if (string != other.string) return false
         if (localDate != other.localDate) return false
@@ -114,37 +200,36 @@ data class MariadbAllTypesNotNull(
     }
 }
 
-val mariadbAllTypesNotNull = MariadbAllTypesNotNull(
+val mariadbAllTypesNotNullWithTime = MariadbAllTypesNotNullWithTime(
     1, "",
     true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
     Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
     1L, byteArrayOf(0x2A), LocalTime.now()
 )
 
-object MariadbAllTypesNotNulls : MariadbTable<MariadbAllTypesNotNull>("all_types") {
-    val id = integer(AllTypesNotNullEntity::id)
+object MariadbAllTypesNotNullWithTimes : MariadbTable<MariadbAllTypesNotNullWithTime>("all_types_with_times") {
+    val id = integer(MariadbAllTypesNotNullWithTime::id)
         .primaryKey()
-    val string = varchar(AllTypesNotNullEntity::string)
-    val boolean = boolean(AllTypesNotNullEntity::boolean)
-    val localDate = date(AllTypesNotNullEntity::localDate)
-    val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNotNullWithTimeEntity::localTime) // todo test fractionalSecondsPart later
-    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
-    val localDateTime2 = dateTime(AllTypesNotNullEntity::localDateTime2)
-    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
-    val kotlinxLocalDateTime2 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime2)
-    val inte = integer(AllTypesNotNullEntity::int)
-    val longe = bigInt(AllTypesNotNullEntity::long)
-    val byteArray = binary(AllTypesNotNullEntity::byteArray)
+    val string = varchar(MariadbAllTypesNotNullWithTime::string)
+    val boolean = boolean(MariadbAllTypesNotNullWithTime::boolean)
+    val localDate = date(MariadbAllTypesNotNullWithTime::localDate)
+    val kotlinxLocalDate = date(MariadbAllTypesNotNullWithTime::kotlinxLocalDate)
+    val localTim = time(MariadbAllTypesNotNullWithTime::localTime) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(MariadbAllTypesNotNullWithTime::localDateTime1)
+    val localDateTime2 = dateTime(MariadbAllTypesNotNullWithTime::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(MariadbAllTypesNotNullWithTime::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(MariadbAllTypesNotNullWithTime::kotlinxLocalDateTime2)
+    val inte = integer(MariadbAllTypesNotNullWithTime::int)
+    val longe = bigInt(MariadbAllTypesNotNullWithTime::long)
+    val byteArray = binary(MariadbAllTypesNotNullWithTime::byteArray)
 }
 
-object MariadbAllTypesNullableWithTimes : MariadbTable<AllTypesNullableWithTimeEntity>("all_types_nullable") {
+object MariadbAllTypesNullables : MariadbTable<AllTypesNullableEntity>("all_types_nullable") {
     val id = integer(AllTypesNullableEntity::id)
         .primaryKey()
     val string = varchar(AllTypesNullableEntity::string)
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
-    val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = dateTime(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -154,7 +239,23 @@ object MariadbAllTypesNullableWithTimes : MariadbTable<AllTypesNullableWithTimeE
     val byteArray = binary(AllTypesNullableEntity::byteArray)
 }
 
-object MariadbAllTypesNullableDefaultValueWithTimes : MariadbTable<AllTypesNullableDefaultValueWithTimeEntity>() {
+object MariadbAllTypesNullableWithTimes : MariadbTable<AllTypesNullableWithTimeEntity>("all_types_nullable_with_times") {
+    val id = integer(AllTypesNullableWithTimeEntity::id)
+        .primaryKey()
+    val string = varchar(AllTypesNullableWithTimeEntity::string)
+    val localDate = date(AllTypesNullableWithTimeEntity::localDate)
+    val kotlinxLocalDate = date(AllTypesNullableWithTimeEntity::kotlinxLocalDate)
+    val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
+    val localDateTime1 = dateTime(AllTypesNullableWithTimeEntity::localDateTime1)
+    val localDateTime2 = dateTime(AllTypesNullableWithTimeEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNullableWithTimeEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = dateTime(AllTypesNullableWithTimeEntity::kotlinxLocalDateTime2)
+    val inte = integer(AllTypesNullableWithTimeEntity::int)
+    val longe = bigInt(AllTypesNullableWithTimeEntity::long)
+    val byteArray = binary(AllTypesNullableWithTimeEntity::byteArray)
+}
+
+object MariadbAllTypesNullableDefaultValues : MariadbTable<AllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
         .primaryKey()
     val string = varchar(AllTypesNullableDefaultValueEntity::string, defaultValue = "default")
@@ -165,10 +266,6 @@ object MariadbAllTypesNullableDefaultValueWithTimes : MariadbTable<AllTypesNulla
     val kotlinxLocalDate = date(
         AllTypesNullableDefaultValueEntity::kotlinxLocalDate,
         defaultValue = LocalDate(2019, 11, 6)
-    )
-    val localTim = time(
-        AllTypesNullableDefaultValueWithTimeEntity::localTime,
-        defaultValue = LocalTime.of(11, 25, 55, 123456789)
     )
     val localDateTime1 = dateTime(
         AllTypesNullableDefaultValueEntity::localDateTime1,
@@ -188,6 +285,42 @@ object MariadbAllTypesNullableDefaultValueWithTimes : MariadbTable<AllTypesNulla
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+}
+
+object MariadbAllTypesNullableDefaultValueWithTimes : MariadbTable<AllTypesNullableDefaultValueWithTimeEntity>() {
+    val id = integer(AllTypesNullableDefaultValueWithTimeEntity::id)
+        .primaryKey()
+    val string = varchar(AllTypesNullableDefaultValueWithTimeEntity::string, defaultValue = "default")
+    val localDate = date(
+        AllTypesNullableDefaultValueWithTimeEntity::localDate,
+        defaultValue = LocalDate.of(2019, 11, 4)
+    )
+    val kotlinxLocalDate = date(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalDate,
+        defaultValue = LocalDate(2019, 11, 6)
+    )
+    val localTim = time(
+        AllTypesNullableDefaultValueWithTimeEntity::localTime,
+        defaultValue = LocalTime.of(11, 25, 55, 123456789)
+    )
+    val localDateTime1 = dateTime(
+        AllTypesNullableDefaultValueWithTimeEntity::localDateTime1,
+        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+    )
+    val localDateTime2 = dateTime(
+        AllTypesNullableDefaultValueWithTimeEntity::localDateTime2,
+        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime1 = dateTime(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalDateTime1,
+        defaultValue = LocalDateTime(2018, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime2 = dateTime(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalDateTime2,
+        defaultValue = LocalDateTime(2019, 11, 4, 0, 0)
+    )
+    val inte = integer(AllTypesNullableDefaultValueWithTimeEntity::int, defaultValue = 42)
+    val longe = bigInt(AllTypesNullableDefaultValueWithTimeEntity::long, defaultValue = 84L)
 }
 
 object MariadbLocalDates : MariadbTable<LocalDateEntity>() {
@@ -217,13 +350,6 @@ object MariadbKotlinxLocalDateTimes : MariadbTable<KotlinxLocalDateTimeEntity>()
     val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
     val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
-
-// object MARIADB_OFFSET_DATE_TIME : MariadbTable<OffsetDateTimeEntity>() {
-//     val id = integer(OffsetDateTimeEntity::id)
-//             .primaryKey()
-//     val offsetDateTimeNotNull = timestamp(OffsetDateTimeEntity::offsetDateTimeNotNull)
-//     val offsetDateTimeNullable = timestamp(OffsetDateTimeEntity::offsetDateTimeNullable)
-// }
 
 object MariadbLocalTimes : MariadbTable<LocalTimeEntity>() {
     val id = integer(LocalTimeEntity::id)
@@ -320,13 +446,15 @@ val mariadbTables = tables().mariadb(
     MariadbUsers,
     MariadbUserRoles,
     MariadbAllTypesNotNulls,
+    MariadbAllTypesNullables,
+    MariadbAllTypesNullableDefaultValues,
+    MariadbAllTypesNotNullWithTimes,
     MariadbAllTypesNullableWithTimes,
     MariadbAllTypesNullableDefaultValueWithTimes,
     MariadbLocalDates,
     MariadbKotlinxLocalDates,
     MariadbLocalDateTimes,
     MariadbKotlinxLocalDateTimes,
-//                 MARIADB_OFFSET_DATE_TIME,
     MariadbLocalTimes,
     MariadbInts,
     MariadbLongs,

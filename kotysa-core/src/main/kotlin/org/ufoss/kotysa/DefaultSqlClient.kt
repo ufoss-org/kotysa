@@ -205,7 +205,8 @@ public interface DefaultSqlClient {
     public fun variable(counter: Counter): String =
         when {
             module == Module.SQLITE || module == Module.JDBC
-                    || module.isR2dbcOrVertxSqlClient() && tables.dbType == DbType.MYSQL -> "?"
+                    || (module == Module.R2DBC && tables.dbType == DbType.MYSQL)
+                    || (module == Module.VERTX_SQL_CLIENT && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MARIADB)) -> "?"
             module.isR2dbcOrVertxSqlClient() && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++counter.index}"
             module.isR2dbcOrVertxSqlClient() && tables.dbType == DbType.MSSQL -> "@p${++counter.index}"
             else -> ":k${counter.index++}"

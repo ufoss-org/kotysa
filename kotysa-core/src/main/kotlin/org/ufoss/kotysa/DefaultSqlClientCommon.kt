@@ -1459,7 +1459,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 val alias = if (fromClause.alias.isNullOrBlank()) {
                     ""
                 } else {
-                    when(tables.dbType) {
+                    when (tables.dbType) {
                         DbType.MSSQL, DbType.POSTGRESQL -> " AS ${fromClause.alias}"
                         else -> " AS `${fromClause.alias}`"
                     }
@@ -1478,7 +1478,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             val joinAlias = if (joinClause.alias.isNullOrBlank()) {
                                 ""
                             } else {
-                                when(tables.dbType) {
+                                when (tables.dbType) {
                                     DbType.MSSQL, DbType.POSTGRESQL -> " AS ${joinClause.alias}"
                                     else -> " AS `${joinClause.alias}`"
                                 }
@@ -1486,10 +1486,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
                             "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)}$joinAlias ON $ons"
                         }
+
                     is FromClauseSubQuery -> {
                         if (fromClause.selectStar
                             && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MSSQL)
-                            && alias.isBlank()) {
+                            && alias.isBlank()
+                        ) {
                             // alias is mandatory for MySql and MsSql
                             throw IllegalArgumentException("Alias is mandatory for MySql and MsSql")
                         }
@@ -1525,6 +1527,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 )
                                 "EXISTS (${result.sql(this@with)})"
                             }
+
                             else -> {
                                 val fieldName = if (this is WhereClauseWithColumn<*>) {
                                     column.getFieldName(availableColumns, tables.dbType)
@@ -1544,20 +1547,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 } else {
                                                     "$fieldName = ${variable()}"
                                                 }
+
                                             is WhereClauseColumn -> "$fieldName = ${
                                                 otherColumn.getFieldName(
                                                     availableColumns,
                                                     tables.dbType
                                                 )
                                             }"
+
                                             is WhereClauseSubQuery<*> -> {
                                                 val (_, result) = properties.executeSubQuery(
                                                     dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
                                                 )
                                                 "$fieldName = (${result.sql(this@with)})"
                                             }
+
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
+
                                     Operation.NOT_EQ ->
                                         when (this) {
                                             is WhereClauseValue ->
@@ -1566,16 +1573,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 } else {
                                                     "$fieldName <> ${variable()}"
                                                 }
+
                                             is WhereClauseColumn -> "$fieldName <> ${
                                                 otherColumn.getFieldName(
                                                     availableColumns,
                                                     tables.dbType
                                                 )
                                             }"
+
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
+
                                     Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
                                         "$fieldName LIKE ${variable()}"
+
                                     Operation.INF -> "$fieldName < ${variable()}"
                                     Operation.INF_OR_EQ -> "$fieldName <= ${variable()}"
                                     Operation.SUP -> "$fieldName > ${variable()}"
@@ -1587,18 +1598,26 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                     // SQLITE, JDBC and R2DBC : must put as much params as collection size
                                                     module == Module.SQLITE || module == Module.JDBC ->
                                                         "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+
                                                     module.isR2dbcOrVertxSqlClient() ->
-                                                        when (tables.dbType) {
-                                                            DbType.MYSQL -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
-                                                            DbType.H2, DbType.POSTGRESQL ->
-                                                                "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
-                                                            DbType.MSSQL ->
-                                                                "$fieldName IN (${(value as Collection<*>).joinToString { "@p${++index}" }})"
-                                                            else ->
-                                                                "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
+                                                        when {
+                                                            tables.dbType == DbType.MYSQL
+                                                                    || (tables.dbType == DbType.MARIADB && module == Module.VERTX_SQL_CLIENT)
+                                                            -> "$fieldName IN (${(value as Collection<*>).joinToString { "?" }})"
+
+                                                            tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL
+                                                            -> "$fieldName IN (${(value as Collection<*>).joinToString { "$${++index}" }})"
+
+                                                            tables.dbType == DbType.MSSQL
+                                                            -> "$fieldName IN (${(value as Collection<*>).joinToString { "@p${++index}" }})"
+
+                                                            else
+                                                            -> "$fieldName IN (${(value as Collection<*>).joinToString { ":k${index++}" }})"
                                                         }
+
                                                     else -> "$fieldName IN (:k${index++})"
                                                 }
+
                                             is WhereClauseColumn -> TODO()
                                             is WhereClauseSubQuery<*> -> {
                                                 val (_, result) = properties.executeSubQuery(
@@ -1606,6 +1625,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                                 )
                                                 "$fieldName IN (${result.sql(this@with)})"
                                             }
+
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
                                     /*Operation.IS ->
