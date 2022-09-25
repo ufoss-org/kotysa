@@ -5,13 +5,13 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient
 
 import io.smallrye.mutiny.Uni
-import io.vertx.mutiny.core.buffer.Buffer
+import io.vertx.core.buffer.Buffer
 import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.mutiny.sqlclient.Row
 import io.vertx.mutiny.sqlclient.Tuple
-import org.ufoss.kotysa.DbType
 import org.ufoss.kotysa.DefaultSqlClientCommon
 import org.ufoss.kotysa.RowImpl
+import org.ufoss.kotysa.SqlType
 import org.ufoss.kotysa.Tables
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransaction
 
@@ -27,23 +27,26 @@ internal fun DefaultSqlClientCommon.Properties.vertxBindParams(tuple: Tuple) {
             }
         }
         .forEach { parameter ->
-            val dbValue = tables.getVertxDbValue(parameter)
-            tuple.addValue(dbValue)
+            tuple.addDbValue(parameter, tables)
         }
 }
 
-internal fun <T> Tables.getVertxDbValue(value: T) =
-    if (value != null && value is ByteArray && (dbType == DbType.MYSQL || dbType == DbType.MARIADB)) {
-        Buffer.buffer(value)
+internal fun <T> Tuple.addDbValue(value: T, tables: Tables, sqlType: SqlType? = null) =
+    if (value != null && value is ByteArray) {
+        addValue(Buffer.buffer(value))
+    } else if (SqlType.BINARY == sqlType) {
+        // workaround for MSSQL https://progress-supportcommunity.force.com/s/article/Implicit-conversion-from-data-type-nvarchar-to-varbinary-max-is-not-allowed-error-with-SQL-Server-JDBC-driver
+        apply { delegate.addBuffer(null) }
     } else {
-        getDbValue(value)
+        addValue(tables.getDbValue(value))
     }
 
 internal fun Pool.getVertxConnection() =
     // reuse currentTransaction's connection if any, else establish a new connection
     Uni.createFrom().context { context ->
         if (context.contains(VertxTransaction.ContextKey)
-            && !context.get<VertxTransaction>(VertxTransaction.ContextKey).isCompleted()) {
+            && !context.get<VertxTransaction>(VertxTransaction.ContextKey).isCompleted()
+        ) {
             val vertxTransaction: VertxTransaction = context[VertxTransaction.ContextKey]
             Uni.createFrom().item(
                 VertxConnection(vertxTransaction.connection, true)

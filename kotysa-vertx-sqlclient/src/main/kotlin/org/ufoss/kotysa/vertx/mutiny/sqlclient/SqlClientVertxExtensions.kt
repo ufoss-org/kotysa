@@ -21,12 +21,12 @@ public fun Pool.sqlClient(tables: MysqlTables): MysqlVertxSqlClient = MysqlSqlCl
  */
 public fun Pool.sqlClient(tables: PostgresqlTables): PostgresqlVertxSqlClient = PostgresqlSqlClientVertx(this, tables)
 
-///**
-// * Create a [MssqlJdbcSqlClient] from a Vertx [Pool] with [MssqlTables] mapping
-// *
-// * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
-// */
-//public fun Pool.sqlClient(tables: MssqlTables): MssqlJdbcSqlClient = MssqlSqlClientJdbc(this, tables)
+/**
+ * Create a [MssqlVertxSqlClient] from a Vertx [Pool] with [MssqlTables] mapping
+ *
+ * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
+ */
+public fun Pool.sqlClient(tables: MssqlTables): MssqlVertxSqlClient = MssqlSqlClientVertx(this, tables)
 
 /**
  * Create a [MariadbVertxSqlClient] from a Vertx [Pool] with [MariadbTables] mapping

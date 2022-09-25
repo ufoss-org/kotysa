@@ -11,6 +11,7 @@ dependencies {
 
     testImplementation testFixtures(project(':kotysa-core'))
 
+    testImplementation "io.smallrye.reactive:smallrye-mutiny-vertx-mssql-client:$mutiny_sqlclient_version"
     testImplementation "io.smallrye.reactive:smallrye-mutiny-vertx-mysql-client:$mutiny_sqlclient_version"
     testImplementation "io.smallrye.reactive:smallrye-mutiny-vertx-pg-client:$mutiny_sqlclient_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
