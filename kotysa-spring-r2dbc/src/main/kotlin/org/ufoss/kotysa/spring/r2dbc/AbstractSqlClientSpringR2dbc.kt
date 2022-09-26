@@ -21,27 +21,6 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
 
     val client: DatabaseClient
 
-    fun <T : Any> executeCreateTable(table: Table<T>, ifNotExists: Boolean): Mono<Void> {
-        val createTableResult = createTableSql(table, ifNotExists)
-        return client.sql(createTableResult.sql)
-            .then()
-            .then(
-                // 2) loop to execute create indexes
-                createTableResult.createIndexes.fold(Mono.empty()) { mono, createIndexResult ->
-                    mono.then(
-                        client.sql(createIndexResult.sql)
-                            .then()
-                            .onErrorResume(NonTransientDataAccessException::class) { ntdae ->
-                                if (!ifNotExists || ntdae.message?.contains(createIndexResult.name, true) != true) {
-                                    throw ntdae
-                                }
-                                Mono.empty()
-                            }
-                    )
-                }
-            )
-    }
-
     fun <T : Any> executeInsert(row: T): DatabaseClient.GenericExecuteSpec =
         insertExecuteSpec(row, tables.getTable(row::class), insertSql(row))
 
@@ -131,6 +110,27 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
                     tables.dbType,
                 ).builder.invoke(r.toRow())
             }.one()
+    }
+
+    fun <T : Any> executeCreateTable(table: Table<T>, ifNotExists: Boolean): Mono<Void> {
+        val createTableResult = createTableSql(table, ifNotExists)
+        return client.sql(createTableResult.sql)
+            .then()
+            .then(
+                // 2) loop to execute create indexes
+                createTableResult.createIndexes.fold(Mono.empty()) { mono, createIndexResult ->
+                    mono.then(
+                        client.sql(createIndexResult.sql)
+                            .then()
+                            .onErrorResume(NonTransientDataAccessException::class) { ntdae ->
+                                if (!ifNotExists || ntdae.message?.contains(createIndexResult.name, true) != true) {
+                                    throw ntdae
+                                }
+                                Mono.empty()
+                            }
+                    )
+                }
+            )
     }
 }
 

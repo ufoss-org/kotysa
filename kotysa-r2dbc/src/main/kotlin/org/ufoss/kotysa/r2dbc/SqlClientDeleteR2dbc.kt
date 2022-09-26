@@ -47,7 +47,7 @@ internal class SqlClientDeleteR2dbc private constructor() : DefaultSqlClientDele
         
         val connectionFactory: ConnectionFactory
 
-        override suspend fun execute(): Int = getR2dbcConnection(connectionFactory).execute { connection ->
+        override suspend fun execute(): Int = connectionFactory.getR2dbcConnection().execute { connection ->
             with(properties) {
                 val statement = connection.createStatement(deleteFromTableSql())
                 // reset index

@@ -24,7 +24,7 @@ public sealed class Tables protected constructor(
                 "kotlinx.datetime.LocalDate" -> (value as kotlinx.datetime.LocalDate).toJavaLocalDate()
                 "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()
                 "java.time.LocalTime" ->
-                    if (this.dbType == DbType.POSTGRESQL) {
+                    if (dbType == DbType.POSTGRESQL) {
                         // PostgreSQL does not support nanoseconds
                         (value as LocalTime).truncatedTo(ChronoUnit.SECONDS)
                     } else {

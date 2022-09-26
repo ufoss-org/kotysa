@@ -35,7 +35,7 @@ internal sealed class SqlClientR2dbc(
     protected suspend fun <T : Any> insertProtected(row: T) {
         val table = tables.getTable(row::class)
 
-        getR2dbcConnection(connectionFactory).execute { connection ->
+        connectionFactory.getR2dbcConnection().execute { connection ->
             val statement = connection.createStatement(insertSql(row))
             setStatementParams(row, table, statement)
 
@@ -47,7 +47,7 @@ internal sealed class SqlClientR2dbc(
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
 
-        getR2dbcConnection(connectionFactory).execute { connection ->
+        connectionFactory.getR2dbcConnection().execute { connection ->
             val statement = connection.createStatement(insertSql(rows[0]))
             rows.forEachIndexed { index, row ->
                 setStatementParams(row, table, statement)
@@ -66,7 +66,7 @@ internal sealed class SqlClientR2dbc(
     protected suspend fun <T : Any> insertAndReturnProtected(row: T): T {
         val table = tables.getTable(row::class)
 
-        return getR2dbcConnection(connectionFactory).execute { connection ->
+        return connectionFactory.getR2dbcConnection().execute { connection ->
             executeInsertAndReturn(connection, row, table)
         }
     }
@@ -99,7 +99,7 @@ internal sealed class SqlClientR2dbc(
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
         val table = tables.getTable(rows[0]::class)
         return flow {
-            val r2dbcConnection = getR2dbcConnection(connectionFactory)
+            val r2dbcConnection = connectionFactory.getR2dbcConnection()
             try {
                 emitAll(rows.asFlow()
                     .map { row -> executeInsertAndReturn(r2dbcConnection.connection, row, table) }
@@ -177,7 +177,7 @@ internal sealed class SqlClientR2dbc(
     private suspend fun <T : Any> createTable(table: Table<T>, ifNotExists: Boolean) {
         val createTableResult = createTableSql(table, ifNotExists)
 
-        getR2dbcConnection(connectionFactory).execute { connection ->
+        connectionFactory.getR2dbcConnection().execute { connection ->
             connection.createStatement(createTableResult.sql)
                 .execute().awaitLast()
             // 2) loop to execute create indexes
@@ -254,9 +254,12 @@ internal sealed class SqlClientR2dbc(
         val currentTransaction = coroutineContext[R2dbcTransactionImpl]
         val isOrigin = currentTransaction == null
         var context = coroutineContext
-        val transaction = currentTransaction
-        // if new transaction : add it to coroutineContext
-            ?: R2dbcTransactionImpl(connectionFactory.create().awaitSingle()).apply { context += this }
+        val transaction = if (currentTransaction != null && !currentTransaction.isCompleted()) {
+            currentTransaction
+        } else {
+            // if new transaction : add it to coroutineContext
+            R2dbcTransactionImpl(connectionFactory.create().awaitSingle()).apply { context += this }
+        }
         var throwable: Throwable? = null
 
         // use transaction's Connection
@@ -470,12 +473,4 @@ internal class MariadbSqlClientR2dbc internal constructor(
         selectStarFromProtected(dsl)
 
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
-}
-
-internal suspend fun getR2dbcConnection(connectionFactory: ConnectionFactory): R2dbcConnection {
-    // reuse currentTransaction's connection if any, else establish a new connection
-    val transaction = coroutineContext[R2dbcTransactionImpl]
-    val connection = transaction?.connection ?: connectionFactory.create().awaitSingle()
-
-    return R2dbcConnection(connection, transaction != null)
 }
