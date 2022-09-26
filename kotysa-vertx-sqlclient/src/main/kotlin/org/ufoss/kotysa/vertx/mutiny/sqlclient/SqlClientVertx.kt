@@ -16,7 +16,7 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransactionalOp
 import java.math.BigDecimal
 
 /**
- * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
+ * @sample org.ufoss.kotysa.vertx.mutiny.sqlclient.sample.UserRepositoryVertx
  */
 internal sealed class SqlClientVertx(
     private val pool: Pool,
