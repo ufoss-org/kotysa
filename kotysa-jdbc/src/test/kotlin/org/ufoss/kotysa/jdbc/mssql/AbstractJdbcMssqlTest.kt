@@ -30,7 +30,7 @@ abstract class AbstractJdbcMssqlTest<T : Repository> : RepositoryTest<T, JdbcTra
         dataSource.url = "jdbc:sqlserver://${containerResource.host}:${containerResource.firstMappedPort}"
         dataSource.user = "SA"
         dataSource.setPassword("A_Str0ng_Required_Password")
-        dataSource.encrypt = false
+        dataSource.encrypt = java.lang.Boolean.toString(false)
         sqlClient = dataSource.sqlClient(mssqlTables)
         repository.init()
     }

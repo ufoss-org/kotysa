@@ -2,17 +2,17 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.spring.r2dbc.sample
+package org.ufoss.kotysa.vertx.mutiny.sqlclient.sample
 
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.h2.H2Table
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import io.vertx.mutiny.sqlclient.Pool
+import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.tables
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 import java.util.*
 
 
 @Suppress("UNUSED_VARIABLE")
-class UserRepositorySpringR2dbc(dbClient: DatabaseClient) {
+class UserRepositoryVertx(pool: Pool) {
 
     data class Role(
             val label: String,
@@ -28,13 +28,13 @@ class UserRepositorySpringR2dbc(dbClient: DatabaseClient) {
             val id: UUID = UUID.randomUUID()
     )
 
-    object Roles : H2Table<Role>("roles") {
+    object Roles : PostgresqlTable<Role>("roles") {
         val id = uuid(Role::id)
                 .primaryKey()
         val label = varchar(Role::label)
     }
 
-    object Users : H2Table<User>("users") {
+    object Users : PostgresqlTable<User>("users") {
         val id = uuid(User::id)
                 .primaryKey("PK_users")
         val firstname = varchar(User::firstname, "fname")
@@ -45,7 +45,7 @@ class UserRepositorySpringR2dbc(dbClient: DatabaseClient) {
         val alias = varchar(User::alias)
     }
 
-    private val tables = tables().h2(Roles, Users)
+    private val tables = tables().postgresql(Roles, Users)
 
     private val roleUser = Role("user")
     private val roleAdmin = Role("admin")
@@ -58,13 +58,13 @@ class UserRepositorySpringR2dbc(dbClient: DatabaseClient) {
             val role: String
     )
 
-    private val sqlClient = dbClient.sqlClient(tables)
+    private val sqlClient = pool.sqlClient(tables)
 
     @Suppress("ReactiveStreamsUnusedPublisher")
     fun simplifiedExample() {
         (sqlClient createTable Roles) // CREATE TABLE IF NOT EXISTS
-                .then(sqlClient deleteAllFrom Roles)
-                .then(sqlClient.insert(roleUser, roleAdmin))
+            .chain { -> sqlClient deleteAllFrom Roles }
+            .chain { -> sqlClient.insert(roleUser, roleAdmin) }
 
         val count = sqlClient selectCountAllFrom Users
 

@@ -12,7 +12,7 @@ import java.math.BigDecimal
 /**
  * Reactive (using Mutiny Uni and Multi) Sql Client, to be used with a Vertx driver
  *
- * @sample org.ufoss.kotysa.vertx.sql.client.sample.UserRepositoryVertxSqlClient
+ * @sample org.ufoss.kotysa.vertx.mutiny.sqlclient.sample.UserRepositoryVertx
  */
 public sealed interface MutinySqlClient {
     public infix fun <T : Any> insert(row: T): Uni<Void>
