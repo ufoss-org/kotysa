@@ -52,7 +52,7 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
         CoroutinesSqlClientDeleteOrUpdate.Return {
         val connectionFactory: ConnectionFactory
 
-        override suspend fun execute(): Int = getR2dbcConnection(connectionFactory).execute { connection ->
+        override suspend fun execute(): Int = connectionFactory.getR2dbcConnection().execute { connection ->
             with(properties) {
                 require(updateClauses.isNotEmpty()) { "At least one value must be set in Update" }
 

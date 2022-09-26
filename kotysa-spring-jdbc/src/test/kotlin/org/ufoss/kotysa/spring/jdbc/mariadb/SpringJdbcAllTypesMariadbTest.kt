@@ -32,7 +32,7 @@ class SpringJdbcAllTypesMariadbTest : AbstractSpringJdbcMariadbTest<AllTypesRepo
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
         assertThat(repository.selectAllAllTypesNotNull())
             .hasSize(1)
-            .containsExactly(mariadbAllTypesNotNull)
+            .containsExactly(mariadbAllTypesNotNullWithTime)
     }
 
     @Test
@@ -82,8 +82,8 @@ class SpringJdbcAllTypesMariadbTest : AbstractSpringJdbcMariadbTest<AllTypesRepo
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
-                    MariadbAllTypesNotNull(
-                        mariadbAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                    MariadbAllTypesNotNullWithTime(
+                        mariadbAllTypesNotNullWithTime.id, "new", false, newLocalDate, newKotlinxLocalDate,
                         newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
                         newLong, newByteArray, newLocalTime
                     )
@@ -98,7 +98,7 @@ class SpringJdbcAllTypesMariadbTest : AbstractSpringJdbcMariadbTest<AllTypesRepo
             repository.updateAllTypesNotNullColumn()
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(mariadbAllTypesNotNull)
+                .containsExactlyInAnyOrder(mariadbAllTypesNotNullWithTime)
         }
     }
 }
@@ -114,22 +114,22 @@ class AllTypesRepositoryMariadb(client: JdbcOperations) : Repository {
     }
 
     override fun delete() {
-        sqlClient deleteAllFrom MariadbAllTypesNotNulls
+        sqlClient deleteAllFrom MariadbAllTypesNotNullWithTimes
         sqlClient deleteAllFrom MariadbAllTypesNullableWithTimes
         sqlClient deleteAllFrom MariadbAllTypesNullableDefaultValueWithTimes
     }
 
     private fun createTables() {
-        sqlClient createTable MariadbAllTypesNotNulls
+        sqlClient createTable MariadbAllTypesNotNullWithTimes
         sqlClient createTable MariadbAllTypesNullableWithTimes
         sqlClient createTableIfNotExists MariadbAllTypesNullableDefaultValueWithTimes
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(mariadbAllTypesNotNull, allTypesNullableWithTime, allTypesNullableDefaultValueWithTime)
+        sqlClient.insert(mariadbAllTypesNotNullWithTime, allTypesNullableWithTime, allTypesNullableDefaultValueWithTime)
     }
 
-    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MariadbAllTypesNotNulls
+    fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MariadbAllTypesNotNullWithTimes
 
     fun selectAllAllTypesNullable() = sqlClient selectAllFrom MariadbAllTypesNullableWithTimes
 
@@ -140,36 +140,36 @@ class AllTypesRepositoryMariadb(client: JdbcOperations) : Repository {
         newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
     ) =
-        (sqlClient update MariadbAllTypesNotNulls
-                set MariadbAllTypesNotNulls.string eq newString
-                set MariadbAllTypesNotNulls.boolean eq newBoolean
-                set MariadbAllTypesNotNulls.localDate eq newLocalDate
-                set MariadbAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
-                set MariadbAllTypesNotNulls.localTim eq newLocalTime
-                set MariadbAllTypesNotNulls.localDateTime1 eq newLocalDateTime
-                set MariadbAllTypesNotNulls.localDateTime2 eq newLocalDateTime
-                set MariadbAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
-                set MariadbAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                set MariadbAllTypesNotNulls.inte eq newInt
-                set MariadbAllTypesNotNulls.longe eq newLong
-                set MariadbAllTypesNotNulls.byteArray eq newByteArray
-                where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+        (sqlClient update MariadbAllTypesNotNullWithTimes
+                set MariadbAllTypesNotNullWithTimes.string eq newString
+                set MariadbAllTypesNotNullWithTimes.boolean eq newBoolean
+                set MariadbAllTypesNotNullWithTimes.localDate eq newLocalDate
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalDate eq newKotlinxLocalDate
+                set MariadbAllTypesNotNullWithTimes.localTim eq newLocalTime
+                set MariadbAllTypesNotNullWithTimes.localDateTime1 eq newLocalDateTime
+                set MariadbAllTypesNotNullWithTimes.localDateTime2 eq newLocalDateTime
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
+                set MariadbAllTypesNotNullWithTimes.inte eq newInt
+                set MariadbAllTypesNotNullWithTimes.longe eq newLong
+                set MariadbAllTypesNotNullWithTimes.byteArray eq newByteArray
+                where MariadbAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
 
     fun updateAllTypesNotNullColumn() =
-        (sqlClient update MariadbAllTypesNotNulls
-                set MariadbAllTypesNotNulls.string eq MariadbAllTypesNotNulls.string
-                set MariadbAllTypesNotNulls.boolean eq MariadbAllTypesNotNulls.boolean
-                set MariadbAllTypesNotNulls.localDate eq MariadbAllTypesNotNulls.localDate
-                set MariadbAllTypesNotNulls.kotlinxLocalDate eq MariadbAllTypesNotNulls.kotlinxLocalDate
-                set MariadbAllTypesNotNulls.localTim eq MariadbAllTypesNotNulls.localTim
-                set MariadbAllTypesNotNulls.localDateTime1 eq MariadbAllTypesNotNulls.localDateTime1
-                set MariadbAllTypesNotNulls.localDateTime2 eq MariadbAllTypesNotNulls.localDateTime2
-                set MariadbAllTypesNotNulls.kotlinxLocalDateTime1 eq MariadbAllTypesNotNulls.kotlinxLocalDateTime1
-                set MariadbAllTypesNotNulls.kotlinxLocalDateTime2 eq MariadbAllTypesNotNulls.kotlinxLocalDateTime2
-                set MariadbAllTypesNotNulls.inte eq MariadbAllTypesNotNulls.inte
-                set MariadbAllTypesNotNulls.longe eq MariadbAllTypesNotNulls.longe
-                set MariadbAllTypesNotNulls.byteArray eq MariadbAllTypesNotNulls.byteArray
-                where MariadbAllTypesNotNulls.id eq allTypesNotNullWithTime.id
+        (sqlClient update MariadbAllTypesNotNullWithTimes
+                set MariadbAllTypesNotNullWithTimes.string eq MariadbAllTypesNotNullWithTimes.string
+                set MariadbAllTypesNotNullWithTimes.boolean eq MariadbAllTypesNotNullWithTimes.boolean
+                set MariadbAllTypesNotNullWithTimes.localDate eq MariadbAllTypesNotNullWithTimes.localDate
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalDate eq MariadbAllTypesNotNullWithTimes.kotlinxLocalDate
+                set MariadbAllTypesNotNullWithTimes.localTim eq MariadbAllTypesNotNullWithTimes.localTim
+                set MariadbAllTypesNotNullWithTimes.localDateTime1 eq MariadbAllTypesNotNullWithTimes.localDateTime1
+                set MariadbAllTypesNotNullWithTimes.localDateTime2 eq MariadbAllTypesNotNullWithTimes.localDateTime2
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime1
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime2 eq MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime2
+                set MariadbAllTypesNotNullWithTimes.inte eq MariadbAllTypesNotNullWithTimes.inte
+                set MariadbAllTypesNotNullWithTimes.longe eq MariadbAllTypesNotNullWithTimes.longe
+                set MariadbAllTypesNotNullWithTimes.byteArray eq MariadbAllTypesNotNullWithTimes.byteArray
+                where MariadbAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
 }

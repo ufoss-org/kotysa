@@ -595,7 +595,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
 
         private fun fetchAllNullable() =
             flow {
-                val r2dbcConnection = getR2dbcConnection(connectionFactory)
+                val r2dbcConnection = connectionFactory.getR2dbcConnection()
                 try {
                     val statement = r2dbcConnection.connection.createStatement(selectSql())
                     buildParameters(statement)

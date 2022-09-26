@@ -213,7 +213,12 @@ internal sealed class SqlClientJdbc(
     protected fun <T> transactionalProtected(block: (JdbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val isOrigin = currentTransaction == null
-        val transaction = currentTransaction ?: JdbcTransactionImpl(dataSource.connection).apply { threadLocal.set(this) }
+        var transaction = currentTransaction
+        transaction = if (transaction != null && !transaction.isCompleted()) {
+            transaction
+        } else {
+            JdbcTransactionImpl(dataSource.connection).apply { threadLocal.set(this) }
+        }
         var throwable: Throwable? = null
 
         // use transaction's Connection
@@ -268,7 +273,11 @@ internal sealed class SqlClientJdbc(
     private fun getJdbcConnection(): JdbcConnection {
         // reuse currentTransaction's connection if any, else establish a new connection
         val transaction = currentTransaction
-        val connection = transaction?.connection ?: dataSource.connection
+        val connection = if (transaction != null && !transaction.isCompleted()) {
+            transaction.connection
+        } else {
+            dataSource.connection
+        }
 
         return JdbcConnection(connection, transaction != null)
     }

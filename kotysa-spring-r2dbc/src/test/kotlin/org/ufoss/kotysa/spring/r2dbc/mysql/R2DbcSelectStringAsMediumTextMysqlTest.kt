@@ -180,64 +180,64 @@ class UserRepositoryMysqlSelectStringAsMediumText(dbClient: DatabaseClient) : Re
             .block()
     }
 
-    private fun createTables() = sqlClient createTable MysqlMediumText
+    private fun createTables() = sqlClient createTable MysqlMediumTexts
 
     private fun insertMediumTexts() = sqlClient.insert(stringAsMediumTextNotNull, stringAsMediumTextNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom MysqlMediumText
+    private fun deleteAll() = sqlClient deleteAllFrom MysqlMediumTexts
 
     fun selectFirstByStringNotNull(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNotNull eq value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNotNull eq value
                 ).fetchFirst()
 
     fun selectAllByStringNotNullNotEq(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNotNull notEq value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNotNull notEq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullIn(values: Sequence<String>) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNotNull `in` values
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNotNull `in` values
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullContains(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNotNull contains value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNotNull contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullStartsWith(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNotNull startsWith value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNotNull startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNotNullEndsWith(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNotNull endsWith value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNotNull endsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullable(value: String?) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNullable eq value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNullable eq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableNotEq(value: String?) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNullable notEq value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNullable notEq value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableContains(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNullable contains value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNullable contains value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableStartsWith(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNullable startsWith value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNullable startsWith value
                 ).fetchAll()
 
     fun selectAllByStringNotNullableEndsWith(value: String) =
-        (sqlClient selectFrom MysqlMediumText
-                where MysqlMediumText.stringNullable endsWith value
+        (sqlClient selectFrom MysqlMediumTexts
+                where MysqlMediumTexts.stringNullable endsWith value
                 ).fetchAll()
 }

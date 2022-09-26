@@ -32,6 +32,7 @@ public fun DefaultSqlClientCommon.Properties.dbValues(): List<Any?> = with(this)
                             add(tables.getDbValue(dbVal))
                         }
                     }
+
                 else -> tables.getDbValue(value)
             }
         }
@@ -54,7 +55,7 @@ internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, Ko
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T : Any, U: Any> Column<T, U>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<T, U> {
+internal fun <T : Any, U : Any> Column<T, U>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<T, U> {
     return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" } as KotysaColumn<T, U>
 }
 
@@ -73,7 +74,7 @@ public fun <T : Any> AbstractTable<T>.toField(
 internal fun Field<*>.getFieldName(dbType: DbType): String {
     var fieldName = fieldNames.joinToString()
     if (alias != null) {
-        val aliasPart = when(dbType) {
+        val aliasPart = when (dbType) {
             DbType.MSSQL, DbType.POSTGRESQL -> " AS $alias"
             else -> " AS `$alias`"
         }
@@ -117,7 +118,7 @@ internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
     }
     // update parent's properties with index value
     index = subQuery.properties.index
-    
+
     return SubQueryResult(subQuery.properties as DefaultSqlClientSelect.Properties<T>, result)
 }
 
@@ -128,6 +129,7 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
         DbType.SQLITE, DbType.MSSQL -> if (this) "1" else "0"
         else -> "$this"
     }
+
     is UUID -> "$this"
     is Int -> "$this"
     is Long -> "$this"
@@ -145,6 +147,7 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
                 kotlinxLocalDateTime.toString()
             }
         }
+
         else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
     }
 }
@@ -155,6 +158,7 @@ internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
     } else {
         this.dbValue(dbType)
     }
+
     is Int -> "$this"
     is Long -> "$this"
     else -> "'${this.dbValue(dbType)}'"
@@ -162,9 +166,14 @@ internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
 
 internal fun DefaultSqlClientCommon.Properties.variable() = when {
     module == Module.SQLITE || module == Module.JDBC
-            || module == Module.R2DBC && tables.dbType == DbType.MYSQL -> "?"
-    module == Module.R2DBC && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++index}"
-    module == Module.R2DBC && tables.dbType == DbType.MSSQL -> "@p${++index}"
+            || (module == Module.R2DBC && tables.dbType == DbType.MYSQL)
+            || (module == Module.VERTX_SQL_CLIENT && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MARIADB))
+    -> "?"
+
+    module.isR2dbcOrVertxSqlClient() && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL)
+    -> "$${++index}"
+
+    module.isR2dbcOrVertxSqlClient() && tables.dbType == DbType.MSSQL -> "@p${++index}"
     else -> ":k${index++}"
 }
 
@@ -172,12 +181,14 @@ internal fun DefaultSqlClientCommon.Properties.variable() = when {
 internal fun <T : Any, U : Any> Column<T, U>.getOrClone(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
 ): Column<T, U> =
-   if ((this as DbColumn<*, *>).tableAlias != null) {
+    if ((this as DbColumn<*, *>).tableAlias != null) {
         // make a clone to keep its tableAlias
         val clonedColumn = this.clone() as Column<T, U>
         val kotysaColumn = getKotysaColumn(availableColumns)
         // remove tableAlias on all columns
-        (kotysaColumn.table.table as AbstractTable<*>).kotysaColumns.forEach { tableColumn -> tableColumn.tableAlias = null }
+        (kotysaColumn.table.table as AbstractTable<*>).kotysaColumns.forEach { tableColumn ->
+            tableColumn.tableAlias = null
+        }
         clonedColumn
     } else {
         this

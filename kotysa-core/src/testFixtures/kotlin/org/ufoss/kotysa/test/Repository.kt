@@ -7,6 +7,5 @@ package org.ufoss.kotysa.test
 
 interface Repository {
     fun init()
-
     fun delete()
 }

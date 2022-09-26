@@ -5,9 +5,12 @@
 package org.ufoss.kotysa.r2dbc
 
 import io.r2dbc.spi.ConnectionFactory
+import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionImpl
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.coroutines.coroutineContext
 import kotlin.reflect.KClass
 
 /**
@@ -51,3 +54,15 @@ internal fun KClass<*>.toDbClass() =
         "kotlinx.datetime.LocalDateTime" -> LocalDateTime::class
         else -> this
     }
+
+internal suspend fun ConnectionFactory.getR2dbcConnection(): R2dbcConnection {
+    // reuse currentTransaction's connection if any, else establish a new connection
+    val transaction = coroutineContext[R2dbcTransactionImpl]
+    val connection = if (transaction != null && !transaction.isCompleted()) {
+        transaction.connection
+    } else {
+        create().awaitSingle()
+    }
+
+    return R2dbcConnection(connection, transaction != null)
+}
