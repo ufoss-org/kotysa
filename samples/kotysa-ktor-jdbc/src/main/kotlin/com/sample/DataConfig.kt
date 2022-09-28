@@ -15,9 +15,16 @@ fun Application.dataConfig() {
     }
     // init DB
     val roleRepository by closestDI().instance<RoleRepository>()
-    roleRepository.init()
     val userRepository by closestDI().instance<UserRepository>()
-    userRepository.init()
+
+    roleRepository.createTable()
+    userRepository.createTable()
+
+    userRepository.deleteAll()
+    roleRepository.deleteAll()
+
+    roleRepository.insert()
+    userRepository.insert()
 }
 
 private val h2Tables = tables().h2(Roles, Users)

@@ -1,34 +1,35 @@
 package com.sample
 
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.longs.shouldBeExactly
 import io.ktor.server.application.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.kodein.di.instance
 import org.kodein.di.ktor.closestDI
 
-class UserRepositoryTests {
+class UserRepositoryTests : StringSpec({
 
-    @Test
-    fun count() = kotysaTest {
-        val userRepository by closestDI().instance<UserRepository>()
-        assertThat(userRepository.count())
-            .isEqualTo(2)
-    }
-
-    @Test
-    fun selectWithJoin() = kotysaTest {
-        val userRepository by closestDI().instance<UserRepository>()
-        assertThat(userRepository.selectWithJoin().toList())
-            .hasSize(2)
-    }
-
-    private fun kotysaTest(test: suspend Application.() -> Unit) = testApplication {
-        application {
-            configureApp()
-            runTest { test() }
+    "count users" {
+        kotysaTest {
+            val userRepository by closestDI().instance<UserRepository>()
+            userRepository.count() shouldBeExactly 2
         }
+    }
+
+    "select users with join" {
+        kotysaTest {
+            val userRepository by closestDI().instance<UserRepository>()
+            userRepository.selectWithJoin().toList() shouldHaveSize 2
+        }
+    }
+})
+
+internal fun kotysaTest(test: suspend Application.() -> Unit) = testApplication {
+    application {
+        configureApp()
+        runTest { test() }
     }
 }

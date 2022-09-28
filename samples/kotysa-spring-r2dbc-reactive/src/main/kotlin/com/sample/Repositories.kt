@@ -34,10 +34,10 @@ class UserRepository(
 
     fun save(user: User) = (client insert user).transactional(operator)
 
-    fun init() {
-        (client createTableIfNotExists Users)
-            .then(deleteAll())
-            .then(save(User("John", "Doe", false, role_user_uuid, id = 123)))
+    fun createTable() = client createTableIfNotExists Users
+
+    fun insert() {
+        save(User("John", "Doe", false, role_user_uuid, id = 123))
             .then(save(User("Big", "Boss", true, role_admin_uuid, "TheBoss")))
             .block()
     }
@@ -49,10 +49,10 @@ class RoleRepository(private val client: ReactorSqlClient) {
 
     fun save(role: Role) = client insert role
 
-    fun init() {
-        (client createTableIfNotExists Roles)
-            .then(deleteAll())
-            .then(save(Role("user", role_user_uuid)))
+    fun createTable() = client createTableIfNotExists Roles
+
+    fun insert() {
+        save(Role("user", role_user_uuid))
             .then(save(Role("admin", role_admin_uuid)))
             .then(save(Role("god")))
             .block()

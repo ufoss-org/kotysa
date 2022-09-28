@@ -35,9 +35,11 @@ class UserRepository(
         client insert user
     }
 
-    fun init() {
+    fun createTable() {
         client createTableIfNotExists Users
-        deleteAll()
+    }
+
+    fun insert() {
         save(User("John", "Doe", false, role_user_uuid, id = 123))
         save(User("Big", "Boss", true, role_admin_uuid, "TheBoss"))
     }
@@ -48,10 +50,12 @@ class RoleRepository(private val client: SqlClient) {
     fun deleteAll() = client deleteAllFrom Roles
 
     fun save(role: Role) = client insert role
-
-    fun init() {
+    
+    fun createTable() {
         client createTableIfNotExists Roles
-        deleteAll()
+    }
+
+    fun insert() {
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))
         save(Role("god"))

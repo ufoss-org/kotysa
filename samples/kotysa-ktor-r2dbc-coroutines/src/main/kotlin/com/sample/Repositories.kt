@@ -29,10 +29,12 @@ class UserRepository(private val client: R2dbcSqlClient) {
     suspend fun save(user: User) = client.transactional {
         client insert user
     }
-
-    fun init() = runBlocking {
+    
+    suspend fun createTable() {
         client createTableIfNotExists Users
-        deleteAll()
+    }
+
+    suspend fun insert() {
         save(User("John", "Doe", false, role_user_uuid, id = 123))
         save(User("Big", "Boss", true, role_admin_uuid, "TheBoss"))
     }
@@ -43,9 +45,11 @@ class RoleRepository(private val client: R2dbcSqlClient) {
 
     suspend fun save(role: Role) = client insert role
 
-    fun init() = runBlocking {
+    suspend fun createTable() {
         client createTableIfNotExists Roles
-        deleteAll()
+    }
+
+    suspend fun insert() {
         save(Role("user", role_user_uuid))
         save(Role("admin", role_admin_uuid))
         save(Role("god"))
