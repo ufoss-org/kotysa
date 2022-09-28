@@ -54,17 +54,17 @@ If you want to learn more about building native executables, please consult http
 
 ## Provided Code
 
-### RESTEasy JAX-RS
+### RESTEasy Reactive
 
-Easily start your RESTful Web Services
+Easily start your Reactive RESTful Web Services
 
-[Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
 
 ## how this project was created
 
 By executing the following command
 ```
 quarkus create app com.sample:kotysa-quarkus-jdbc \
-    --extension=kotlin,resteasy-jackson,agroal,jdbc-h2 \
+    --extension=kotlin,resteasy-reactive-jackson,agroal,jdbc-h2 \
     --gradle
 ```
