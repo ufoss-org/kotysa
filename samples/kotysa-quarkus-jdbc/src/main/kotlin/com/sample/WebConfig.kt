@@ -2,7 +2,6 @@ package com.sample
 
 import javax.ws.rs.GET
 import javax.ws.rs.Path
-import org.jboss.resteasy.annotations.jaxrs.PathParam
 import javax.ws.rs.Produces
 
 @Path("/api/users")
@@ -14,5 +13,5 @@ class WebConfig(private val repository: UserRepository) {
 
     @GET
     @Path("{id}")
-    fun getSingle(@PathParam(value = "id") id: Int) = repository.findOne(id)
+    fun getSingle(id: Int) = repository.findOne(id)
 }
