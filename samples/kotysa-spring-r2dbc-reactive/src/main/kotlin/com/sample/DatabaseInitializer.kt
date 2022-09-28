@@ -10,7 +10,13 @@ class DatabaseInitializer(
 ) : CommandLineRunner {
 
     override fun run(vararg args: String) {
-        userRepository.init()
-        roleRepository.init()
+        roleRepository.createTable().block()
+        userRepository.createTable().block()
+
+        userRepository.deleteAll().block()
+        roleRepository.deleteAll().block()
+
+        roleRepository.insert()
+        userRepository.insert()
     }
 }

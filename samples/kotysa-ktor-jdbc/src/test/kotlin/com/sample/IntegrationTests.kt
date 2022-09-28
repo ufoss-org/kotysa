@@ -1,41 +1,48 @@
 package com.sample
 
+import io.kotest.assertions.ktor.client.shouldHaveStatus
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.ints.shouldBeExactly
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.testing.*
-import kotlinx.serialization.decodeFromString
-import org.assertj.core.api.Assertions.assertThat
-import kotlin.test.Test
 
+class IntegrationTests : StringSpec({
 
-class IntegrationTests {
-    private val json = DefaultJson
-
-    @Test
-    fun `Request HTTP API endpoint for listing all users`() = kotysaApiTest {
-        val response = client.get("/api/users")
-        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.parseBodyList<User>())
-            .hasSize(2)
+    "Request HTTP API endpoint for listing all users" {
+        kotysaApiTest {
+            val response = client.get("/api/users")
+            response shouldHaveStatus HttpStatusCode.OK
+            response.body<List<User>>() shouldHaveSize 2
+        }
     }
 
-    @Test
-    fun `Request HTTP API endpoint for getting one specified user`() = kotysaApiTest {
-        val response = client.get("/api/users/123")
-        assertThat(response.status).isEqualTo(HttpStatusCode.OK)
-        assertThat(response.parseBody<User>().id).isEqualTo(123)
+    "Request HTTP API endpoint for getting one specified user" {
+        kotysaApiTest {
+            val response = client.get("/api/users/123")
+            response shouldHaveStatus HttpStatusCode.OK
+            response.body<User>().id!! shouldBeExactly 123
+        }
     }
+})
 
-    private fun kotysaApiTest(test: suspend ApplicationTestBuilder.() -> Unit) = testApplication {
-        application { configureApp() }
-        test.invoke(this)
+internal fun kotysaApiTest(test: suspend ClientProvider.() -> Unit) = testApplication {
+    application {
+        configureApp()
     }
-
-    private suspend inline fun <reified T> HttpResponse.parseBody(): T =
-        json.decodeFromString(bodyAsText())
-
-    private suspend inline fun <reified T> HttpResponse.parseBodyList(): List<T> =
-        json.decodeFromString(bodyAsText())
+    // configure a custom HTTP client for tests with JSON support
+    val httpClient = createClient {
+        install(ContentNegotiation) {
+            json()
+        }
+    }
+    test.invoke(ClientProvider(httpClient))
 }
+
+@JvmInline
+internal value class ClientProvider(internal val client: HttpClient)

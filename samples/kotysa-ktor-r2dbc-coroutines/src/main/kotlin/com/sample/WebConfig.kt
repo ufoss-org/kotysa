@@ -1,15 +1,14 @@
 package com.sample
 
-import io.ktor.server.application.*
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
+import io.ktor.server.application.*
+import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.plugins.contentnegotiation.*
-import kotlinx.coroutines.Dispatchers
+import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
@@ -38,18 +37,16 @@ fun Application.webConfig() {
     }
 }
 
-// inspiration : https://github.com/Kotlin/kotlinx.serialization/blob/master/formats/json/jvmTest/src/kotlinx/serialization/features/JsonStreamFlowTest.kt
+// inspiration : https://github.com/Kotlin/kotlinx.serialization/blob/master/formats/json-tests/jvmTest/src/kotlinx/serialization/features/JsonLazySequenceTest.kt
 @OptIn(ExperimentalSerializationApi::class)
-private suspend inline fun <reified T> Flow<T>.writeToStream(os: OutputStream, json: Json) =
-    withContext(Dispatchers.IO) {
-        os.write("[".encodeToByteArray())
-        collectIndexed { index, value ->
-            withContext(Dispatchers.IO) {
-                if (index > 0) {
-                    os.write(",".encodeToByteArray())
-                }
-                json.encodeToStream(value, os)
-            }
+@Suppress("BlockingMethodInNonBlockingContext") // ktor already makes sure this executes in Dispatchers.IO context
+private suspend inline fun <reified T> Flow<T>.writeToStream(os: OutputStream, json: Json) {
+    os.write("[".encodeToByteArray())
+    collectIndexed { index, value ->
+        if (index > 0) {
+            os.write(",".encodeToByteArray())
         }
-        os.write("]".encodeToByteArray())
+        json.encodeToStream(value, os)
     }
+    os.write("]".encodeToByteArray())
+}

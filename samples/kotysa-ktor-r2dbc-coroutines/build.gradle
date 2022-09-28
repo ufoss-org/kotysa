@@ -11,21 +11,23 @@ repositories {
 }
 
 dependencies {
-    implementation "io.ktor:ktor-server-core:$ktor_version"
-    implementation "io.ktor:ktor-server-netty:$ktor_version"
-    implementation "io.ktor:ktor-server-content-negotiation:$ktor_version"
-    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktor_version"
-    implementation "ch.qos.logback:logback-classic:$logback_version"
-    implementation "org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version" // kodein for ktor
-    implementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
-    implementation "org.ufoss.kotysa:kotysa-r2dbc:$kotysa_version"
+    implementation(enforcedPlatform("io.ktor:ktor-bom:$ktor_version"))
+    implementation('io.ktor:ktor-server-core')
+    implementation('io.ktor:ktor-server-netty')
+    implementation('io.ktor:ktor-server-content-negotiation')
+    implementation('io.ktor:ktor-serialization-kotlinx-json')
+    implementation("ch.qos.logback:logback-classic:$logback_version")
+    implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version") // kodein for ktor
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
+    implementation("org.ufoss.kotysa:kotysa-r2dbc:$kotysa_version")
 
-    runtimeOnly "io.r2dbc:r2dbc-h2:$h2_version" // R2DBC driver for H2
+    runtimeOnly("io.r2dbc:r2dbc-h2:$h2_version") // R2DBC driver for H2
     
-    testImplementation "io.ktor:ktor-server-tests:$ktor_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
-    testImplementation "org.assertj:assertj-core:$assertj_version"
-    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
+    testImplementation('io.ktor:ktor-server-tests')
+    testImplementation('io.ktor:ktor-client-content-negotiation')
+    testImplementation("io.kotest:kotest-runner-junit5:$kotest_version")
+    testImplementation("io.kotest:kotest-assertions-core:$kotest_version")
+    testImplementation("io.kotest.extensions:kotest-assertions-ktor:$kotest_assertions_ktor_version")
 }
 
 compileKotlin {
@@ -46,6 +48,6 @@ test {
 }
 
 wrapper {
-    gradleVersion = '7.5'
+    gradleVersion = '7.5.1'
     distributionType = Wrapper.DistributionType.ALL
 }
