@@ -19,3 +19,11 @@ A sample project for a Ktor Netty application, that provides Coroutines support 
 ## kotysa-ktor-jdbc
 
 A sample project for a Ktor Netty application with a JDBC backend accessed via `kotysa-jdbc`.
+
+## kotysa-quarkus-vertx-sqlclient
+
+A sample project for a Quarkus Reactive Resteasy application with a Mutiny Vertx Sqlclient backend accessed via `kotysa-vertx-sqlclient`.
+
+## kotysa-quarkus-jdbc
+
+A sample project for a Quarkus Resteasy application with a JDBC backend accessed via `kotysa-jdbc`.
