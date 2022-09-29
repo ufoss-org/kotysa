@@ -44,6 +44,7 @@ object Roles : H2Table<Role>("roles") {
     val id = uuid(Role::id)
         .primaryKey()
     val label = varchar(Role::label)
+        .unique()
 }
 
 object Users : H2Table<User>("users") {
