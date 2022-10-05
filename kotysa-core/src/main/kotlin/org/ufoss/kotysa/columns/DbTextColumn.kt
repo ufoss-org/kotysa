@@ -115,3 +115,16 @@ public class LocalTimeDbTextColumnNullable<T : Any> internal constructor(
 ) : DbTextColumn<T, LocalTime>(), LocalTimeColumnNullable<T> {
     override val isNullable = defaultValue == null
 }
+
+public class KotlinxLocalTimeDbTextColumnNotNull<T : Any> internal constructor(
+    override val entityGetter: (T) -> kotlinx.datetime.LocalTime?,
+    override val columnName: String?,
+) : DbTextColumnNotNull<T, kotlinx.datetime.LocalTime>(), KotlinxLocalTimeColumnNotNull<T>
+
+public class KotlinxLocalTimeDbTextColumnNullable<T : Any> internal constructor(
+    override val entityGetter: (T) -> kotlinx.datetime.LocalTime?,
+    override val columnName: String?,
+    override val defaultValue: kotlinx.datetime.LocalTime?,
+) : DbTextColumn<T, kotlinx.datetime.LocalTime>(), KotlinxLocalTimeColumnNullable<T> {
+    override val isNullable = defaultValue == null
+}

@@ -52,6 +52,7 @@ object SqliteAllTypesNotNullWithTimes : SqLiteTable<AllTypesNotNullWithTimeEntit
     val localDate = text(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = text(AllTypesNotNullEntity::kotlinxLocalDate)
     val localTime = text(AllTypesNotNullWithTimeEntity::localTime)
+    val kotlinxLocalTime = text(AllTypesNotNullWithTimeEntity::kotlinxLocalTime)
     val localDateTime1 = text(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = text(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = text(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -68,6 +69,7 @@ object SqliteAllTypesNullableWithTimes : SqLiteTable<AllTypesNullableWithTimeEnt
     val localDate = text(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = text(AllTypesNullableEntity::kotlinxLocalDate)
     val localTime = text(AllTypesNullableWithTimeEntity::localTime)
+    val kotlinxLocalTime = text(AllTypesNullableWithTimeEntity::kotlinxLocalTime)
     val localDateTime1 = text(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = text(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = text(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -93,6 +95,10 @@ object SqliteAllTypesNullableDefaultValueWithTimes :
     val localTime = text(
         AllTypesNullableDefaultValueWithTimeEntity::localTime,
         defaultValue = LocalTime.of(11, 25, 55)
+    )
+    val kotlinxLocalTime = text(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalTime,
+        defaultValue = kotlinx.datetime.LocalTime(11, 25, 55)
     )
     val localDateTime1 = text(
         AllTypesNullableDefaultValueEntity::localDateTime1,
@@ -156,6 +162,13 @@ object SqliteLocalTimes : SqLiteTable<LocalTimeEntity>("local_time") {
     val localTimeNullable = text(LocalTimeEntity::localTimeNullable)
 }
 
+object SqliteKotlinxLocalTimes : SqLiteTable<KotlinxLocalTimeEntity>("local_time") {
+    val id = integer(KotlinxLocalTimeEntity::id)
+        .primaryKey()
+    val localTimeNotNull = text(KotlinxLocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = text(KotlinxLocalTimeEntity::localTimeNullable)
+}
+
 object SqliteInts : SqLiteTable<IntEntity>("ints") {
     val id = autoIncrementInteger(IntEntity::id)
         .primaryKey()
@@ -199,6 +212,7 @@ val sqLiteTables = tables().sqlite(
     SqliteKotlinxLocalDateTimes,
     SqliteOffsetDateTimes,
     SqliteLocalTimes,
+    SqliteKotlinxLocalTimes,
     SqliteInts,
     SqliteLongs,
     SqliteCustomers,

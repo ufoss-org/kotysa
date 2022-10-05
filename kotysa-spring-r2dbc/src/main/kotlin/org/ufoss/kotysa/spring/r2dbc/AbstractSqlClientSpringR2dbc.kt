@@ -10,8 +10,6 @@ import org.ufoss.kotysa.*
 import org.ufoss.kotysa.core.r2dbc.toRow
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.onErrorResume
-import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.reflect.KClass
 
 /**
@@ -133,10 +131,3 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
             )
     }
 }
-
-internal fun KClass<*>.toDbClass() =
-    when (this.qualifiedName) {
-        "kotlinx.datetime.LocalDate" -> LocalDate::class
-        "kotlinx.datetime.LocalDateTime" -> LocalDateTime::class
-        else -> this
-    }

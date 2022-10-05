@@ -4,19 +4,13 @@
 
 package org.ufoss.kotysa.test
 
-import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import org.ufoss.kotysa.h2.H2Table
-import org.ufoss.kotysa.h2.date
-import org.ufoss.kotysa.h2.dateTime
-import org.ufoss.kotysa.h2.timestamp
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
+import org.ufoss.kotysa.h2.*
 import org.ufoss.kotysa.tables
 import java.time.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import java.util.*
 
 object H2Roles : H2Table<RoleEntity>("roles") {
@@ -35,7 +29,7 @@ object H2Users : H2Table<UserEntity>("users") {
     val roleId = integer(UserEntity::roleId)
         .foreignKey(H2Roles.id, "FK_users_roles")
     val alias = varchar(UserEntity::alias)
-    
+
     init {
         index(setOf(firstname, lastname), indexName = "full_name_index")
     }
@@ -46,7 +40,7 @@ object H2UserRoles : H2Table<UserRoleEntity>("userRoles") {
         .foreignKey(H2Users.id)
     val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(H2Roles.id)
-    
+
     init {
         primaryKey(userId, roleId)
     }
@@ -59,6 +53,7 @@ data class H2AllTypesNotNullEntity(
     override val localDate: LocalDate,
     override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
     override val localTime: LocalTime,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime,
     override val localDateTime1: LocalDateTime,
     override val localDateTime2: LocalDateTime,
     override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
@@ -70,7 +65,7 @@ data class H2AllTypesNotNullEntity(
     val uuid: UUID,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray, localTime
+    kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -85,6 +80,7 @@ data class H2AllTypesNotNullEntity(
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (localTime != other.localTime) return false
+        if (kotlinxLocalTime != other.kotlinxLocalTime) return false
         if (localDateTime1 != other.localDateTime1) return false
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
@@ -106,6 +102,7 @@ data class H2AllTypesNotNullEntity(
         result = 31 * result + localDate.hashCode()
         result = 31 * result + kotlinxLocalDate.hashCode()
         result = 31 * result + localTime.hashCode()
+        result = 31 * result + kotlinxLocalTime.hashCode()
         result = 31 * result + localDateTime1.hashCode()
         result = 31 * result + localDateTime2.hashCode()
         result = 31 * result + kotlinxLocalDateTime1.hashCode()
@@ -120,13 +117,25 @@ data class H2AllTypesNotNullEntity(
 }
 
 val h2AllTypesNotNull = H2AllTypesNotNullEntity(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
-    LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, byteArrayOf(0x2A), OffsetDateTime.of(
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC).time,
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    1,
+    1L,
+    byteArrayOf(0x2A),
+    OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
-    ), UUID.randomUUID()
+    ),
+    UUID.randomUUID()
 )
 
 object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
@@ -137,6 +146,7 @@ object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val localDate = date(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNotNullWithTimeEntity::localTime, precision = 9)
+    val kotlinxLocalTim = time(AllTypesNotNullWithTimeEntity::kotlinxLocalTime, precision = 9)
     val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -154,6 +164,7 @@ data class H2AllTypesNullableEntity(
     override val localDate: LocalDate?,
     override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
     override val localTime: LocalTime?,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime?,
     override val localDateTime1: LocalDateTime?,
     override val localDateTime2: LocalDateTime?,
     override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
@@ -165,7 +176,7 @@ data class H2AllTypesNullableEntity(
     val uuid: UUID?,
 ) : AllTypesNullableWithTimeEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -179,6 +190,7 @@ data class H2AllTypesNullableEntity(
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (localTime != other.localTime) return false
+        if (kotlinxLocalTime != other.kotlinxLocalTime) return false
         if (localDateTime1 != other.localDateTime1) return false
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
@@ -202,6 +214,7 @@ data class H2AllTypesNullableEntity(
         result = 31 * result + (localDate?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
         result = 31 * result + (localDateTime1?.hashCode() ?: 0)
         result = 31 * result + (localDateTime2?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
@@ -216,7 +229,7 @@ data class H2AllTypesNullableEntity(
 }
 
 val h2AllTypesNullable = H2AllTypesNullableEntity(
-    1, null, null, null, null, null, null,
+    1, null, null, null, null, null, null, null,
     null, null, null, null, null, null, null
 )
 
@@ -227,6 +240,7 @@ object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullab
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
+    val kotlinxLocalTim = time(AllTypesNullableWithTimeEntity::kotlinxLocalTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -244,6 +258,7 @@ data class H2AllTypesNullableDefaultValueEntity(
     override val localDate: LocalDate? = null,
     override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
     override val localTime: LocalTime? = null,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime? = null,
     override val localDateTime1: LocalDateTime? = null,
     override val localDateTime2: LocalDateTime? = null,
     override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
@@ -254,7 +269,7 @@ data class H2AllTypesNullableDefaultValueEntity(
     val uuid: UUID? = null,
 ) : AllTypesNullableDefaultValueWithTimeEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime, kotlinxLocalTime
 )
 
 val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
@@ -274,6 +289,10 @@ object H2AllTypesNullableDefaultValues : H2Table<H2AllTypesNullableDefaultValueE
     val localTim = time(
         AllTypesNullableDefaultValueWithTimeEntity::localTime, precision = 9,
         defaultValue = LocalTime.of(11, 25, 55, 123456789)
+    )
+    val kotlinxLocalTim = time(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalTime, precision = 9,
+        defaultValue = kotlinx.datetime.LocalTime(11, 25, 55, 123456789)
     )
     val localDateTime1 = dateTime(
         AllTypesNullableDefaultValueEntity::localDateTime1,
@@ -359,6 +378,13 @@ object H2LocalTimes : H2Table<LocalTimeEntity>() {
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
+object H2KotlinxLocalTimes : H2Table<KotlinxLocalTimeEntity>() {
+    val id = integer(KotlinxLocalTimeEntity::id)
+        .primaryKey()
+    val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
+}
+
 object H2Ints : H2Table<IntEntity>() {
     val id = autoIncrementInteger(IntEntity::id)
         .primaryKey()
@@ -436,6 +462,7 @@ val h2Tables = tables().h2(
     H2KotlinxLocalDateTimeAsTimestamps,
     H2OffsetDateTimes,
     H2LocalTimes,
+    H2KotlinxLocalTimes,
     H2Ints,
     H2Longs,
     H2Uuids,

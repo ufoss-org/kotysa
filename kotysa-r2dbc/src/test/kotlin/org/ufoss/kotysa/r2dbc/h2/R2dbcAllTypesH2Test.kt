@@ -42,6 +42,7 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
                     LocalDate.of(2019, 11, 4),
                     kotlinx.datetime.LocalDate(2019, 11, 6),
                     LocalTime.of(11, 25, 55, 123456789),
+                    kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
                     LocalDateTime.of(2018, 11, 4, 0, 0),
                     LocalDateTime.of(2019, 11, 4, 0, 0),
                     kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
@@ -70,6 +71,7 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
+        val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
@@ -79,15 +81,15 @@ class R2dbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
                     H2AllTypesNotNullEntity(
                         h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
-                        newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                        newLocalTime, newKotlinxLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
                         newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
                     )
                 )
@@ -140,7 +142,8 @@ class AllTypesRepositoryH2(private val sqlClient: R2dbcSqlClient) : Repository {
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray,
         newOffsetDateTime: OffsetDateTime, newUuid: UUID
     ) =
@@ -150,6 +153,7 @@ class AllTypesRepositoryH2(private val sqlClient: R2dbcSqlClient) : Repository {
                 set H2AllTypesNotNulls.localDate eq newLocalDate
                 set H2AllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
                 set H2AllTypesNotNulls.localTim eq newLocalTime
+                set H2AllTypesNotNulls.kotlinxLocalTim eq newKotlinxLocalTime
                 set H2AllTypesNotNulls.localDateTime1 eq newLocalDateTime
                 set H2AllTypesNotNulls.localDateTime2 eq newLocalDateTime
                 set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
@@ -169,6 +173,7 @@ class AllTypesRepositoryH2(private val sqlClient: R2dbcSqlClient) : Repository {
                 set H2AllTypesNotNulls.localDate eq H2AllTypesNotNulls.localDate
                 set H2AllTypesNotNulls.kotlinxLocalDate eq H2AllTypesNotNulls.kotlinxLocalDate
                 set H2AllTypesNotNulls.localTim eq H2AllTypesNotNulls.localTim
+                set H2AllTypesNotNulls.kotlinxLocalTim eq H2AllTypesNotNulls.kotlinxLocalTim
                 set H2AllTypesNotNulls.localDateTime1 eq H2AllTypesNotNulls.localDateTime1
                 set H2AllTypesNotNulls.localDateTime2 eq H2AllTypesNotNulls.localDateTime2
                 set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq H2AllTypesNotNulls.kotlinxLocalDateTime1

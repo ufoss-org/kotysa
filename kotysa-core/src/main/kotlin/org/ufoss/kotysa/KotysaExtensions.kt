@@ -147,6 +147,7 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
                 kotlinxLocalDateTime.toString()
             }
         }
+        "kotlinx.datetime.LocalTime" -> this.toString()
 
         else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
     }

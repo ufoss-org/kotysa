@@ -6,9 +6,11 @@ package org.ufoss.kotysa.core.r2dbc
 
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toKotlinLocalTime
 import org.ufoss.kotysa.Row
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Suppress("UNCHECKED_CAST", "IMPLICIT_CAST_TO_ANY")
 public class R2dbcRow(private val r2bcRow: io.r2dbc.spi.Row) : Row {
@@ -18,6 +20,8 @@ public class R2dbcRow(private val r2bcRow: io.r2dbc.spi.Row) : Row {
                     r2bcRow.get(index, LocalDate::class.java)?.toKotlinLocalDate()
                 "kotlinx.datetime.LocalDateTime" ->
                     r2bcRow.get(index, LocalDateTime::class.java)?.toKotlinLocalDateTime()
+                "kotlinx.datetime.LocalTime" ->
+                    r2bcRow.get(index, LocalTime::class.java)?.toKotlinLocalTime()
                 else -> r2bcRow.get(index, clazz)
             } as T?
 }

@@ -10,6 +10,7 @@ import org.ufoss.kotysa.*
 import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionImpl
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 import kotlin.coroutines.coroutineContext
 import kotlin.reflect.KClass
 
@@ -52,6 +53,7 @@ internal fun KClass<*>.toDbClass() =
     when (this.qualifiedName) {
         "kotlinx.datetime.LocalDate" -> LocalDate::class
         "kotlinx.datetime.LocalDateTime" -> LocalDateTime::class
+        "kotlinx.datetime.LocalTime" -> LocalTime::class
         else -> this
     }
 

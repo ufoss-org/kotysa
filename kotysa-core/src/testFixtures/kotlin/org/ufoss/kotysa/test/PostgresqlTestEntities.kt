@@ -9,6 +9,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.postgresql.date
+import org.ufoss.kotysa.postgresql.time
 import org.ufoss.kotysa.postgresql.timestamp
 import org.ufoss.kotysa.tables
 import java.time.*
@@ -59,6 +60,7 @@ data class PostgresqlAllTypesNotNullEntity(
     override val localDate: LocalDate,
     override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
     override val localTime: LocalTime,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime,
     override val localDateTime1: LocalDateTime,
     override val localDateTime2: LocalDateTime,
     override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
@@ -70,7 +72,7 @@ data class PostgresqlAllTypesNotNullEntity(
     val uuid: UUID,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -84,6 +86,9 @@ data class PostgresqlAllTypesNotNullEntity(
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
         if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
         if (localDateTime1 != other.localDateTime1) return false
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
@@ -103,6 +108,7 @@ data class PostgresqlAllTypesNotNullEntity(
         result = 31 * result + kotlinxLocalDate.hashCode()
         result = 31 * result + offsetDateTime.hashCode()
         result = 31 * result + localTime.hashCode()
+        result = 31 * result + kotlinxLocalTime.hashCode()
         result = 31 * result + localDateTime1.hashCode()
         result = 31 * result + localDateTime2.hashCode()
         result = 31 * result + kotlinxLocalDateTime1.hashCode()
@@ -118,10 +124,10 @@ data class PostgresqlAllTypesNotNullEntity(
 
 val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(
     1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalTime.now(), LocalDateTime.now(),
-    LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A),
-    OffsetDateTime.of(
+    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC).time, LocalDateTime.now(), LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE,
+    Long.MAX_VALUE, byteArrayOf(0x2A), OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
     ), UUID.randomUUID()
@@ -135,6 +141,7 @@ object PostgresqlAllTypesNotNulls : PostgresqlTable<PostgresqlAllTypesNotNullEnt
     val localDate = date(AllTypesNotNullEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNotNullWithTimeEntity::localTime)
+    val kotlinxLocalTim = time(AllTypesNotNullWithTimeEntity::kotlinxLocalTime)
     val localDateTime1 = timestamp(AllTypesNotNullEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime1)
@@ -152,6 +159,7 @@ data class PostgresqlAllTypesNullableEntity(
     override val localDate: LocalDate?,
     override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
     override val localTime: LocalTime?,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime?,
     override val localDateTime1: LocalDateTime?,
     override val localDateTime2: LocalDateTime?,
     override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
@@ -163,7 +171,7 @@ data class PostgresqlAllTypesNullableEntity(
     val uuid: UUID?,
 ) : AllTypesNullableWithTimeEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -177,6 +185,7 @@ data class PostgresqlAllTypesNullableEntity(
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (localTime != other.localTime) return false
+        if (kotlinxLocalTime != other.kotlinxLocalTime) return false
         if (localDateTime1 != other.localDateTime1) return false
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
@@ -200,6 +209,7 @@ data class PostgresqlAllTypesNullableEntity(
         result = 31 * result + (localDate?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
         result = 31 * result + (localDateTime1?.hashCode() ?: 0)
         result = 31 * result + (localDateTime2?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
@@ -216,7 +226,7 @@ data class PostgresqlAllTypesNullableEntity(
 val postgresqlAllTypesNullable = PostgresqlAllTypesNullableEntity(
     1, null, null, null,
     null, null, null, null, null,
-    null, null, null, null, null
+    null, null, null, null, null, null
 )
 
 object PostgresqlAllTypesNullables : PostgresqlTable<PostgresqlAllTypesNullableEntity>("all_types_nullable") {
@@ -226,6 +236,7 @@ object PostgresqlAllTypesNullables : PostgresqlTable<PostgresqlAllTypesNullableE
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNullableWithTimeEntity::localTime)
+    val kotlinxLocalTim = time(AllTypesNullableWithTimeEntity::kotlinxLocalTime)
     val localDateTime1 = timestamp(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -243,6 +254,7 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
     override val localDate: LocalDate? = null,
     override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
     override val localTime: LocalTime? = null,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime? = null,
     override val localDateTime1: LocalDateTime? = null,
     override val localDateTime2: LocalDateTime? = null,
     override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
@@ -253,7 +265,7 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
     val uuid: UUID? = null,
 ) : AllTypesNullableDefaultValueWithTimeEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime
+    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime, kotlinxLocalTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -266,8 +278,17 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (localTime != null) {
-            if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime?.truncatedTo(ChronoUnit.SECONDS)) return false
+            if (localTime.truncatedTo(ChronoUnit.SECONDS)
+                != other.localTime?.truncatedTo(ChronoUnit.SECONDS)
+            ) return false
         } else if (other.localTime != null) {
+            return false
+        }
+        if (kotlinxLocalTime != null) {
+            if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+                != other.kotlinxLocalTime?.toJavaLocalTime()?.truncatedTo(ChronoUnit.SECONDS)
+            ) return false
+        } else if (other.kotlinxLocalTime != null) {
             return false
         }
         if (localDateTime1 != other.localDateTime1) return false
@@ -292,6 +313,7 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         result = 31 * result + (localDate?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
+        result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
         result = 31 * result + (localDateTime1?.hashCode() ?: 0)
         result = 31 * result + (localDateTime2?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
@@ -322,6 +344,10 @@ object PostgresqlAllTypesNullableDefaultValues : PostgresqlTable<PostgresqlAllTy
     val localTim = time(
         AllTypesNullableDefaultValueWithTimeEntity::localTime,
         defaultValue = LocalTime.of(11, 25, 55, 123456789)
+    )
+    val kotlinxLocalTim = time(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalTime,
+        defaultValue = kotlinx.datetime.LocalTime(11, 25, 55, 123456789)
     )
     val localDateTime1 = timestamp(
         AllTypesNullableDefaultValueEntity::localDateTime1,
@@ -391,6 +417,13 @@ object PostgresqlLocalTimes : PostgresqlTable<LocalTimeEntity>() {
         .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+}
+
+object PostgresqlKotlinxLocalTimes : PostgresqlTable<KotlinxLocalTimeEntity>() {
+    val id = integer(KotlinxLocalTimeEntity::id)
+        .primaryKey()
+    val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
 }
 
 object PostgresqlInts : PostgresqlTable<IntEntity>() {
@@ -468,6 +501,7 @@ val postgresqlTables = tables().postgresql(
     PostgresqlKotlinxLocalDateTimeAsTimestamps,
     PostgresqlOffsetDateTimes,
     PostgresqlLocalTimes,
+    PostgresqlKotlinxLocalTimes,
     PostgresqlInts,
     PostgresqlLongs,
     PostgresqlUuids,

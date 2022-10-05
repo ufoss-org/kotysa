@@ -16,7 +16,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-
 class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = AllTypesRepositoryMysql(sqlClient)
 
@@ -44,6 +43,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                     42,
                     84L,
                     LocalTime.of(11, 25, 55),
+                    LocalTime(11, 25, 55),
                 )
             )
     }
@@ -60,6 +60,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalTime = LocalTime.now()
+        val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
@@ -68,8 +69,8 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
@@ -77,7 +78,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
                     MysqlAllTypesNotNullWithTime(
                         mysqlAllTypesNotNullWithTime.id, "new", false, newLocalDate, newKotlinxLocalDate,
                         newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
-                        newLong, newByteArray, newLocalTime
+                        newLong, newByteArray, newLocalTime, newKotlinxLocalTime
                     )
                 )
         }
@@ -129,7 +130,8 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
     ) =
         (sqlClient update MysqlAllTypesNotNullWithTimes
@@ -138,6 +140,7 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MysqlAllTypesNotNullWithTimes.localDate eq newLocalDate
                 set MysqlAllTypesNotNullWithTimes.kotlinxLocalDate eq newKotlinxLocalDate
                 set MysqlAllTypesNotNullWithTimes.localTim eq newLocalTime
+                set MysqlAllTypesNotNullWithTimes.kotlinxLocalTim eq newKotlinxLocalTime
                 set MysqlAllTypesNotNullWithTimes.localDateTime1 eq newLocalDateTime
                 set MysqlAllTypesNotNullWithTimes.localDateTime2 eq newLocalDateTime
                 set MysqlAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
@@ -155,6 +158,7 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MysqlAllTypesNotNullWithTimes.localDate eq MysqlAllTypesNotNullWithTimes.localDate
                 set MysqlAllTypesNotNullWithTimes.kotlinxLocalDate eq MysqlAllTypesNotNullWithTimes.kotlinxLocalDate
                 set MysqlAllTypesNotNullWithTimes.localTim eq MysqlAllTypesNotNullWithTimes.localTim
+                set MysqlAllTypesNotNullWithTimes.kotlinxLocalTim eq MysqlAllTypesNotNullWithTimes.kotlinxLocalTim
                 set MysqlAllTypesNotNullWithTimes.localDateTime1 eq MysqlAllTypesNotNullWithTimes.localDateTime1
                 set MysqlAllTypesNotNullWithTimes.localDateTime2 eq MysqlAllTypesNotNullWithTimes.localDateTime2
                 set MysqlAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq MysqlAllTypesNotNullWithTimes.kotlinxLocalDateTime1
