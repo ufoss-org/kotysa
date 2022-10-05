@@ -9,7 +9,7 @@ The idiomatic way to write **Ko**tlin **ty**pe-**sa**fe SQL for JVM and Android
 ## Getting started
 
 <p align="center">
-<a href="https://ufoss.org/kotysa/kotysa.html">Full documentation</a>
+<a href="https://ufoss.org/kotysa/kotysa.html" target="_blank">Full documentation</a>
 </p>
 
 ## Basic example
