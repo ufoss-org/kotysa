@@ -6,6 +6,7 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient
 
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toKotlinLocalTime
 import org.ufoss.kotysa.Row
 import java.lang.ClassCastException
 
@@ -17,6 +18,8 @@ public class VertxRow(private val vertxRow: io.vertx.mutiny.sqlclient.Row) : Row
                     vertxRow.getLocalDate(index)?.toKotlinLocalDate()
                 "kotlinx.datetime.LocalDateTime" ->
                     vertxRow.getLocalDateTime(index)?.toKotlinLocalDateTime()
+                "kotlinx.datetime.LocalTime" ->
+                    vertxRow.getLocalTime(index)?.toKotlinLocalTime()
                 "[B" -> vertxRow.getBuffer(index)?.bytes
                 "java.math.BigDecimal" -> try {
                     vertxRow.getNumeric(index)?.bigDecimalValue()

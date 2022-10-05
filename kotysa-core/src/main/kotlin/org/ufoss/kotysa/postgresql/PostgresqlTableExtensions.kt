@@ -17,3 +17,9 @@ public fun <T : Any> PostgresqlTable<T>.timestamp(getter: (T) -> kotlinx.datetim
 
 public fun <T : Any> PostgresqlTable<T>.timestamp(getter: (T) -> kotlinx.datetime.LocalDateTime?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDateTime? = null, precision: Int? = null): KotlinxLocalDateTimeDbTimestampColumnNullable<T> =
     KotlinxLocalDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+
+public fun <T : Any> PostgresqlTable<T>.time(getter: (T) -> kotlinx.datetime.LocalTime, columnName: String? = null, precision: Int? = null): KotlinxLocalTimeDbTimeColumnNotNull<T> =
+    KotlinxLocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+
+public fun <T : Any> PostgresqlTable<T>.time(getter: (T) -> kotlinx.datetime.LocalTime?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalTime? = null, precision: Int? = null): KotlinxLocalTimeDbTimeColumnNullable<T> =
+    KotlinxLocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }

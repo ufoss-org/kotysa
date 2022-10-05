@@ -73,6 +73,7 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLitelInsert>() {
                         42,
                         84L,
                         LocalTime.of(11, 25, 55),
+                        kotlinx.datetime.LocalTime(11, 25, 55),
                     )
                 )
         }

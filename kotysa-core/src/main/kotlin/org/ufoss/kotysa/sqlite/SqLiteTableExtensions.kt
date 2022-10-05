@@ -4,10 +4,7 @@
 
 package org.ufoss.kotysa.sqlite
 
-import org.ufoss.kotysa.columns.KotlinxLocalDateDbTextColumnNotNull
-import org.ufoss.kotysa.columns.KotlinxLocalDateDbTextColumnNullable
-import org.ufoss.kotysa.columns.KotlinxLocalDateTimeDbTextColumnNotNull
-import org.ufoss.kotysa.columns.KotlinxLocalDateTimeDbTextColumnNullable
+import org.ufoss.kotysa.columns.*
 
 public fun <T : Any> SqLiteTable<T>.text(
     getter: (T) -> kotlinx.datetime.LocalDateTime, columnName: String? = null
@@ -28,3 +25,9 @@ public fun <T : Any> SqLiteTable<T>.text(
     getter: (T) -> kotlinx.datetime.LocalDate?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalDate? = null
 ): KotlinxLocalDateDbTextColumnNullable<T> =
     KotlinxLocalDateDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+public fun <T : Any> SqLiteTable<T>.text(getter: (T) -> kotlinx.datetime.LocalTime, columnName: String? = null): KotlinxLocalTimeDbTextColumnNotNull<T> =
+    KotlinxLocalTimeDbTextColumnNotNull(getter, columnName).also { addColumn(it) }
+
+public fun <T : Any> SqLiteTable<T>.text(getter: (T) -> kotlinx.datetime.LocalTime?, columnName: String? = null, defaultValue: kotlinx.datetime.LocalTime? = null): KotlinxLocalTimeDbTextColumnNullable<T> =
+    KotlinxLocalTimeDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }

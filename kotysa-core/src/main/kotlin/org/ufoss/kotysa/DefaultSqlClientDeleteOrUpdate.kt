@@ -121,6 +121,14 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         private val updateOpLocalTimeColumnNullable: UpdateOpColumn<T, W, LocalTime?, LocalTimeColumn<*>, X> by lazy {
             UpdateOpColumn(update, properties)
         }
+        private val updateOpKotlinxLocalTimeColumnNotNull
+                : UpdateOpColumn<T, W, kotlinx.datetime.LocalTime, KotlinxLocalTimeColumn<*>, X> by lazy {
+            UpdateOpColumn(update, properties)
+        }
+        private val updateOpKotlinxLocalTimeColumnNullable
+                : UpdateOpColumn<T, W, kotlinx.datetime.LocalTime?, KotlinxLocalTimeColumn<*>, X> by lazy {
+            UpdateOpColumn(update, properties)
+        }
         private val updateOpBooleanColumnNotNull: UpdateOpColumn<T, W, Boolean, BooleanColumnNotNull<*>, X> by lazy {
             UpdateOpColumn(update, properties)
         }
@@ -205,6 +213,14 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalTime?, LocalTimeColumn<*>, X> =
             updateOpLocalTimeColumnNullable.apply { this.column = localTimeColumnNullable }
 
+        override infix fun set(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<T>)
+                : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalTime, KotlinxLocalTimeColumn<*>, X> =
+            updateOpKotlinxLocalTimeColumnNotNull.apply { this.column = kotlinxLocalTimeColumnNotNull }
+
+        override infix fun set(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<T>)
+                : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalTime?, KotlinxLocalTimeColumn<*>, X> =
+            updateOpKotlinxLocalTimeColumnNullable.apply { this.column = kotlinxLocalTimeColumnNullable }
+        
         override infix fun set(booleanColumnNotNull: BooleanColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, Boolean, BooleanColumnNotNull<*>, X> =
             updateOpBooleanColumnNotNull.apply { this.column = booleanColumnNotNull }

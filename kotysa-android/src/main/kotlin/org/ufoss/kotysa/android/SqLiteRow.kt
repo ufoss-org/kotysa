@@ -45,6 +45,9 @@ internal class SqLiteRow internal constructor(private val sqLiteCursor: Cursor) 
                         "kotlinx.datetime.LocalDateTime" -> kotlinx.datetime.LocalDateTime.parse(
                                 sqLiteCursor.getString(index)
                         )
+                        "kotlinx.datetime.LocalTime" -> kotlinx.datetime.LocalTime.parse(
+                            sqLiteCursor.getString(index)
+                        )
                         else -> throw UnsupportedOperationException(
                                 "${clazz.canonicalName} is not supported by Android SqLite"
                         )

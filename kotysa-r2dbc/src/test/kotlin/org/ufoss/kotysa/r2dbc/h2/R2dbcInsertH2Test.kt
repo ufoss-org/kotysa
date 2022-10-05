@@ -66,6 +66,7 @@ class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
                         LocalDate.of(2019, 11, 4),
                         kotlinx.datetime.LocalDate(2019, 11, 6),
                         LocalTime.of(11, 25, 55, 123456789),
+                        kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         LocalDateTime.of(2019, 11, 4, 0, 0),
                         kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),

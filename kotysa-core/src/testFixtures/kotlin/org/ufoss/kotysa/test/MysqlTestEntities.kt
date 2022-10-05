@@ -8,6 +8,7 @@ import kotlinx.datetime.*
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.mysql.date
 import org.ufoss.kotysa.mysql.dateTime
+import org.ufoss.kotysa.mysql.time
 import org.ufoss.kotysa.tables
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -159,9 +160,10 @@ data class MysqlAllTypesNotNullWithTime(
     override val long: Long,
     override val byteArray: ByteArray,
     override val localTime: LocalTime,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray, localTime
+    kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -174,6 +176,8 @@ data class MysqlAllTypesNotNullWithTime(
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (localTime.roundToSecond() != other.localTime.roundToSecond()) return false
+        if (kotlinxLocalTime.toJavaLocalTime().roundToSecond()
+            != kotlinxLocalTime.toJavaLocalTime().roundToSecond()) return false
         if (localDateTime1.roundToSecond() != other.localDateTime1.roundToSecond()) return false
         if (localDateTime2.roundToSecond() != other.localDateTime2.roundToSecond()) return false
         if (kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
@@ -195,6 +199,7 @@ data class MysqlAllTypesNotNullWithTime(
         result = 31 * result + localDate.hashCode()
         result = 31 * result + kotlinxLocalDate.hashCode()
         result = 31 * result + localTime.hashCode()
+        result = 31 * result + kotlinxLocalTime.hashCode()
         result = 31 * result + localDateTime1.hashCode()
         result = 31 * result + localDateTime2.hashCode()
         result = 31 * result + kotlinxLocalDateTime1.hashCode()
@@ -211,7 +216,7 @@ val mysqlAllTypesNotNullWithTime = MysqlAllTypesNotNullWithTime(
     1, "",
     true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
     Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
-    1L, byteArrayOf(0x2A), LocalTime.now()
+    1L, byteArrayOf(0x2A), LocalTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC).time
 )
 
 object MysqlAllTypesNotNullWithTimes : MysqlTable<MysqlAllTypesNotNullWithTime>("all_types_with_times") {
@@ -222,6 +227,7 @@ object MysqlAllTypesNotNullWithTimes : MysqlTable<MysqlAllTypesNotNullWithTime>(
     val localDate = date(MysqlAllTypesNotNullWithTime::localDate)
     val kotlinxLocalDate = date(MysqlAllTypesNotNullWithTime::kotlinxLocalDate)
     val localTim = time(MysqlAllTypesNotNullWithTime::localTime) // todo test fractionalSecondsPart later
+    val kotlinxLocalTim = time(MysqlAllTypesNotNullWithTime::kotlinxLocalTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(MysqlAllTypesNotNullWithTime::localDateTime1)
     val localDateTime2 = dateTime(MysqlAllTypesNotNullWithTime::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(MysqlAllTypesNotNullWithTime::kotlinxLocalDateTime1)
@@ -253,6 +259,7 @@ object MysqlAllTypesNullableWithTimes : MysqlTable<AllTypesNullableWithTimeEntit
     val localDate = date(AllTypesNullableWithTimeEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableWithTimeEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
+    val kotlinxLocalTim = time(AllTypesNullableWithTimeEntity::kotlinxLocalTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableWithTimeEntity::localDateTime1)
     val localDateTime2 = dateTime(AllTypesNullableWithTimeEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableWithTimeEntity::kotlinxLocalDateTime1)
@@ -310,6 +317,10 @@ object MysqlAllTypesNullableDefaultValueWithTimes : MysqlTable<AllTypesNullableD
         AllTypesNullableDefaultValueWithTimeEntity::localTime,
         defaultValue = LocalTime.of(11, 25, 55, 123456789)
     )
+    val kotlinxLocalTim = time(
+        AllTypesNullableDefaultValueWithTimeEntity::kotlinxLocalTime,
+        defaultValue = LocalTime(11, 25, 55, 123456789)
+    )
     val localDateTime1 = dateTime(
         AllTypesNullableDefaultValueWithTimeEntity::localDateTime1,
         defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
@@ -363,6 +374,13 @@ object MysqlLocalTimes : MysqlTable<LocalTimeEntity>() {
         .primaryKey()
     val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
     val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+}
+
+object MysqlKotlinxLocalTimes : MysqlTable<KotlinxLocalTimeEntity>() {
+    val id = integer(KotlinxLocalTimeEntity::id)
+        .primaryKey()
+    val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
+    val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
 }
 
 object MysqlInts : MysqlTable<IntEntity>() {
@@ -463,6 +481,7 @@ val mysqlTables = tables().mysql(
     MysqlLocalDateTimes,
     MysqlKotlinxLocalDateTimes,
     MysqlLocalTimes,
+    MysqlKotlinxLocalTimes,
     MysqlInts,
     MysqlLongs,
     MysqlInheriteds,

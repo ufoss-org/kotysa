@@ -8,7 +8,6 @@ import org.ufoss.kotysa.AbstractTable
 import org.ufoss.kotysa.columns.*
 import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 /**
  * Represents a Microsoft SQL Server Table
@@ -87,21 +86,6 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
         precision: Int? = null
     ): LocalDateTimeDbDateTimeColumnNullable<T> =
         LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
-
-    protected fun time(
-        getter: (T) -> LocalTime,
-        columnName: String? = null,
-        precision: Int? = null
-    ): LocalTimeDbTimeColumnNotNull<T> =
-        LocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
-
-    protected fun time(
-        getter: (T) -> LocalTime?,
-        columnName: String? = null,
-        defaultValue: LocalTime? = null,
-        precision: Int? = null
-    ): LocalTimeDbTimeColumnNullable<T> =
-        LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
     protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
         ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }

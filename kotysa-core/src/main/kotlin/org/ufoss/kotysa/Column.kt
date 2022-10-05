@@ -65,6 +65,13 @@ public interface LocalTimeColumn<out T : Any> : Column<T, LocalTime>, MinMaxColu
 public interface LocalTimeColumnNotNull<out T : Any> : LocalTimeColumn<T>, ColumnNotNull<T, LocalTime>
 public interface LocalTimeColumnNullable<out T : Any> : LocalTimeColumn<T>, ColumnNullable<T, LocalTime>
 
+public interface KotlinxLocalTimeColumn<out T : Any> : Column<T, kotlinx.datetime.LocalTime>,
+        MinMaxColumn<T, kotlinx.datetime.LocalTime>
+public interface KotlinxLocalTimeColumnNotNull<out T : Any> :
+        KotlinxLocalTimeColumn<T>, ColumnNotNull<T, kotlinx.datetime.LocalTime>
+public interface KotlinxLocalTimeColumnNullable<out T : Any> :
+        KotlinxLocalTimeColumn<T>, ColumnNullable<T, kotlinx.datetime.LocalTime>
+
 public interface BooleanColumnNotNull<out T : Any> : ColumnNotNull<T, Boolean>
 
 public interface IntColumn<out T : Any> : Column<T, Int>, MinMaxColumn<T, Int>, NumericColumn<T, Int>

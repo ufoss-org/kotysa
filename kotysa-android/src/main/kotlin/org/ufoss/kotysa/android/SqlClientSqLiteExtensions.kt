@@ -51,6 +51,7 @@ internal fun SQLiteStatement.bind(index: Int, value: Any?) {
                         bindString(index, value.toString())
                     }
                 }
+                "kotlinx.datetime.LocalTime" -> bindString(index, value.toString())
 
                 else -> throw UnsupportedOperationException(
                     "${value.javaClass.canonicalName} is not supported by Android SqLite"

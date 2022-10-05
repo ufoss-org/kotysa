@@ -148,6 +148,12 @@ public abstract class SqlClientQuery protected constructor() {
             localTimeColumnNullable: LocalTimeColumnNullable<T>
         ): UpdateOpColumn<T, U, LocalTime?, LocalTimeColumn<*>, V>
         public infix fun set(
+            kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<T>
+        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalTime, KotlinxLocalTimeColumn<*>, V>
+        public infix fun set(
+            kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<T>
+        ): UpdateOpColumn<T, U, kotlinx.datetime.LocalTime?, KotlinxLocalTimeColumn<*>, V>
+        public infix fun set(
             booleanColumnNotNull: BooleanColumnNotNull<T>
         ): UpdateOpColumn<T, U, Boolean, BooleanColumnNotNull<*>, V>
         public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpIntColumn<T, U, Int, IntColumn<*>, V>
@@ -207,6 +213,10 @@ public abstract class SqlClientQuery protected constructor() {
                 WhereOpDateNotNull<U, T, LocalTime>
         public infix fun <U : Any> where(localTimeColumnNullable: LocalTimeColumnNullable<U>):
                 WhereOpDateNullable<U, T, LocalTime>
+        public infix fun <U : Any> where(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<U>):
+                WhereOpDateNotNull<U, T, kotlinx.datetime.LocalTime>
+        public infix fun <U : Any> where(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<U>):
+                WhereOpDateNullable<U, T, kotlinx.datetime.LocalTime>
         public infix fun <U : Any> where(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> where(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> where(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
@@ -330,6 +340,9 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface WhereOpLocalTimeNotNull<T : Any, U : Where<U>> : WhereOpDateNotNull<T, U, LocalTime>
 
+    public interface WhereOpKotlinxLocalTimeNotNull<T : Any, U : Where<U>>
+        : WhereOpDateNotNull<T, U, kotlinx.datetime.LocalTime>
+    
     public interface WhereOpDateNullable<T : Any, U : Where<U>, V : Any> :
         WhereOpDate<T, U, V>, WhereOpNullable<T, U, V>
 
@@ -346,6 +359,9 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereOpOffsetDateTimeNullable<T : Any, U : Where<U>> : WhereOpDateNullable<T, U, OffsetDateTime>
 
     public interface WhereOpLocalTimeNullable<T : Any, U : Where<U>> : WhereOpDateNullable<T, U, LocalTime>
+
+    public interface WhereOpKotlinxLocalTimeNullable<T : Any, U : Where<U>>
+        : WhereOpDateNullable<T, U, kotlinx.datetime.LocalTime>
 
     public interface WhereOpBooleanNotNull<T : Any, U : Where<U>> : WhereOp<U, Boolean> {
         public infix fun eq(value: Boolean): U
@@ -437,6 +453,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateNullable<U, T, OffsetDateTime>
         public infix fun <U : Any> and(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalTime>
         public infix fun <U : Any> and(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, LocalTime>
+        public infix fun <U : Any> and(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, kotlinx.datetime.LocalTime>
+        public infix fun <U : Any> and(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, kotlinx.datetime.LocalTime>
         public infix fun <U : Any> and(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> and(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> and(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
@@ -471,6 +489,10 @@ public abstract class SqlClientQuery protected constructor() {
                 WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
         public infix fun and(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
         public infix fun and(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
+        public infix fun and(kotlinxLocalTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalTime>):
+                WhereOpKotlinxLocalTimeNotNull<kotlinx.datetime.LocalTime, T>
+        public infix fun and(kotlinxLocalTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalTime?>):
+                WhereOpKotlinxLocalTimeNullable<kotlinx.datetime.LocalTime, T>
         public infix fun and(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
         public infix fun and(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
         public infix fun and(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
@@ -495,6 +517,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> or(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>): WhereOpDateNullable<U, T, OffsetDateTime>
         public infix fun <U : Any> or(localTimeColumnNotNull: LocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalTime>
         public infix fun <U : Any> or(localTimeColumnNullable: LocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, LocalTime>
+        public infix fun <U : Any> or(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, kotlinx.datetime.LocalTime>
+        public infix fun <U : Any> or(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<U>): WhereOpDateNullable<U, T, kotlinx.datetime.LocalTime>
         public infix fun <U : Any> or(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> or(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> or(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
@@ -530,6 +554,10 @@ public abstract class SqlClientQuery protected constructor() {
                 WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
         public infix fun or(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
         public infix fun or(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
+        public infix fun or(kotlinxLocalTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalTime>):
+                WhereOpKotlinxLocalTimeNotNull<kotlinx.datetime.LocalTime, T>
+        public infix fun or(kotlinxLocalTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalTime?>):
+                WhereOpKotlinxLocalTimeNullable<kotlinx.datetime.LocalTime, T>
         public infix fun or(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
         public infix fun or(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
         public infix fun or(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>

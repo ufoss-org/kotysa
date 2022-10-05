@@ -4,10 +4,7 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.DbColumn
-import org.ufoss.kotysa.LocalTimeColumnNotNull
-import org.ufoss.kotysa.LocalTimeColumnNullable
-import org.ufoss.kotysa.SqlType
+import org.ufoss.kotysa.*
 import java.time.LocalTime
 
 public sealed class DbTimeColumn<T : Any, U : Any> : DbColumn<T, U>() {
@@ -25,16 +22,31 @@ public sealed class DbTimeColumnNotNull<T : Any, U : Any> : DbTimeColumn<T, U>()
 }
 
 public class LocalTimeDbTimeColumnNotNull<T : Any> internal constructor(
-        override val entityGetter: (T) -> LocalTime?,
-        override val columnName: String?,
-        override val size: Int?,
+    override val entityGetter: (T) -> LocalTime?,
+    override val columnName: String?,
+    override val size: Int?,
 ) : DbTimeColumnNotNull<T, LocalTime>(), LocalTimeColumnNotNull<T>
 
 public class LocalTimeDbTimeColumnNullable<T : Any> internal constructor(
-        override val entityGetter: (T) -> LocalTime?,
-        override val columnName: String?,
-        override val defaultValue: LocalTime?,
-        override val size: Int?,
+    override val entityGetter: (T) -> LocalTime?,
+    override val columnName: String?,
+    override val defaultValue: LocalTime?,
+    override val size: Int?,
 ) : DbTimeColumn<T, LocalTime>(), LocalTimeColumnNullable<T> {
+    override val isNullable = defaultValue == null
+}
+
+public class KotlinxLocalTimeDbTimeColumnNotNull<T : Any> internal constructor(
+    override val entityGetter: (T) -> kotlinx.datetime.LocalTime?,
+    override val columnName: String?,
+    override val size: Int?,
+) : DbTimeColumnNotNull<T, kotlinx.datetime.LocalTime>(), KotlinxLocalTimeColumnNotNull<T>
+
+public class KotlinxLocalTimeDbTimeColumnNullable<T : Any> internal constructor(
+    override val entityGetter: (T) -> kotlinx.datetime.LocalTime?,
+    override val columnName: String?,
+    override val defaultValue: kotlinx.datetime.LocalTime?,
+    override val size: Int?,
+) : DbTimeColumn<T, kotlinx.datetime.LocalTime>(), KotlinxLocalTimeColumnNullable<T> {
     override val isNullable = defaultValue == null
 }

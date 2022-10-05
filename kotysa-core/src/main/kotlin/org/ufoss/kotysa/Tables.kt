@@ -6,6 +6,7 @@ package org.ufoss.kotysa
 
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toJavaLocalTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
@@ -17,20 +18,22 @@ public sealed class Tables protected constructor(
     public val allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
     public val dbType: DbType,
 ) {
+    private fun localTimeValue(value: LocalTime) =
+        if (dbType == DbType.POSTGRESQL) {
+            // PostgreSQL does not support nanoseconds
+            value.truncatedTo(ChronoUnit.SECONDS)
+        } else {
+            value
+        }
+
     public fun <T> getDbValue(value: T): Any? =
         if (value != null) {
             @Suppress("UNNECESSARY_NOT_NULL_ASSERTION")
             when (value!!::class.qualifiedName) {
                 "kotlinx.datetime.LocalDate" -> (value as kotlinx.datetime.LocalDate).toJavaLocalDate()
                 "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()
-                "java.time.LocalTime" ->
-                    if (dbType == DbType.POSTGRESQL) {
-                        // PostgreSQL does not support nanoseconds
-                        (value as LocalTime).truncatedTo(ChronoUnit.SECONDS)
-                    } else {
-                        value
-                    }
-
+                "java.time.LocalTime" -> localTimeValue(value as LocalTime)
+                "kotlinx.datetime.LocalTime" -> localTimeValue((value as kotlinx.datetime.LocalTime).toJavaLocalTime())
                 else -> value
             }
         } else {

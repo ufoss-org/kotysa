@@ -27,6 +27,7 @@ class H2TablesDslTest {
                 tuple("localDate", SqlType.DATE, false, false),
                 tuple("kotlinxLocalDate", SqlType.DATE, false, false),
                 tuple("localTim", SqlType.TIME, false, false),
+                tuple("kotlinxLocalTim", SqlType.TIME, false, false),
                 tuple("localDateTime1", SqlType.DATE_TIME, false, false),
                 tuple("localDateTime2", SqlType.TIMESTAMP, false, false),
                 tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, false),
@@ -50,6 +51,7 @@ class H2TablesDslTest {
                 tuple("localDate", SqlType.DATE, true, false),
                 tuple("kotlinxLocalDate", SqlType.DATE, true, false),
                 tuple("localTim", SqlType.TIME, true, false),
+                tuple("kotlinxLocalTim", SqlType.TIME, true, false),
                 tuple("localDateTime1", SqlType.DATE_TIME, true, false),
                 tuple("localDateTime2", SqlType.TIMESTAMP, true, false),
                 tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, true, false),
@@ -73,6 +75,7 @@ class H2TablesDslTest {
                 tuple("localDate", SqlType.DATE, false, LocalDate.of(2019, 11, 4)),
                 tuple("kotlinxLocalDate", SqlType.DATE, false, kotlinx.datetime.LocalDate(2019, 11, 6)),
                 tuple("localTim", SqlType.TIME, false, LocalTime.of(11, 25, 55, 123456789)),
+                tuple("kotlinxLocalTim", SqlType.TIME, false, kotlinx.datetime.LocalTime(11, 25, 55, 123456789)),
                 tuple("localDateTime1", SqlType.DATE_TIME, false, LocalDateTime.of(2018, 11, 4, 0, 0)),
                 tuple("localDateTime2", SqlType.TIMESTAMP, false, LocalDateTime.of(2019, 11, 4, 0, 0)),
                 tuple(

@@ -40,6 +40,7 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                     LocalDate.of(2019, 11, 4),
                     kotlinx.datetime.LocalDate(2019, 11, 6),
                     LocalTime.of(11, 25, 55, 123456789),
+                    kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
                     LocalDateTime.of(2018, 11, 4, 0, 0),
                     LocalDateTime.of(2019, 11, 4, 0, 0),
                     kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
@@ -68,6 +69,7 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
+        val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newUuid = UUID.randomUUID()
@@ -77,15 +79,15 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
                     PostgresqlAllTypesNotNullEntity(
                         postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
-                        newLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                        newLocalTime, newKotlinxLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
                         newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
                     )
                 )
@@ -138,7 +140,8 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
 
     suspend fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray,
         newOffsetDateTime: OffsetDateTime, newUuid: UUID
     ) =
@@ -148,6 +151,7 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
                 set PostgresqlAllTypesNotNulls.localDate eq newLocalDate
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
                 set PostgresqlAllTypesNotNulls.localTim eq newLocalTime
+                set PostgresqlAllTypesNotNulls.kotlinxLocalTim eq newKotlinxLocalTime
                 set PostgresqlAllTypesNotNulls.localDateTime1 eq newLocalDateTime
                 set PostgresqlAllTypesNotNulls.localDateTime2 eq newLocalDateTime
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
@@ -167,6 +171,7 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
                 set PostgresqlAllTypesNotNulls.localDate eq PostgresqlAllTypesNotNulls.localDate
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDate eq PostgresqlAllTypesNotNulls.kotlinxLocalDate
                 set PostgresqlAllTypesNotNulls.localTim eq PostgresqlAllTypesNotNulls.localTim
+                set PostgresqlAllTypesNotNulls.kotlinxLocalTim eq PostgresqlAllTypesNotNulls.kotlinxLocalTim
                 set PostgresqlAllTypesNotNulls.localDateTime1 eq PostgresqlAllTypesNotNulls.localDateTime1
                 set PostgresqlAllTypesNotNulls.localDateTime2 eq PostgresqlAllTypesNotNulls.localDateTime2
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1 eq PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1

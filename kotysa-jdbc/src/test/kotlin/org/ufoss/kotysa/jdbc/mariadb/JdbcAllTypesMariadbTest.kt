@@ -40,6 +40,7 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
                     42,
                     84L,
                     LocalTime.of(11, 25, 55),
+                    LocalTime(11, 25, 55),
                 )
             )
     }
@@ -56,6 +57,7 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
         val newLocalTime = LocalTime.now()
+        val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
@@ -64,8 +66,8 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
             )
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
@@ -73,7 +75,7 @@ class JdbcAllTypesMariadbTest : AbstractJdbcMariadbTest<AllTypesRepositoryMariad
                     MariadbAllTypesNotNullWithTime(
                         mariadbAllTypesNotNullWithTime.id, "new", false, newLocalDate,
                         newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime
+                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime, newKotlinxLocalTime
                     )
                 )
         }
@@ -125,7 +127,8 @@ class AllTypesRepositoryMariadb(private val sqlClient: JdbcSqlClient) : Reposito
 
     fun updateAllTypesNotNull(
         newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime, newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
     ) =
         (sqlClient update MariadbAllTypesNotNullWithTimes
@@ -134,6 +137,7 @@ class AllTypesRepositoryMariadb(private val sqlClient: JdbcSqlClient) : Reposito
                 set MariadbAllTypesNotNullWithTimes.localDate eq newLocalDate
                 set MariadbAllTypesNotNullWithTimes.kotlinxLocalDate eq newKotlinxLocalDate
                 set MariadbAllTypesNotNullWithTimes.localTim eq newLocalTime
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalTim eq newKotlinxLocalTime
                 set MariadbAllTypesNotNullWithTimes.localDateTime1 eq newLocalDateTime
                 set MariadbAllTypesNotNullWithTimes.localDateTime2 eq newLocalDateTime
                 set MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
@@ -151,6 +155,7 @@ class AllTypesRepositoryMariadb(private val sqlClient: JdbcSqlClient) : Reposito
                 set MariadbAllTypesNotNullWithTimes.localDate eq MariadbAllTypesNotNullWithTimes.localDate
                 set MariadbAllTypesNotNullWithTimes.kotlinxLocalDate eq MariadbAllTypesNotNullWithTimes.kotlinxLocalDate
                 set MariadbAllTypesNotNullWithTimes.localTim eq MariadbAllTypesNotNullWithTimes.localTim
+                set MariadbAllTypesNotNullWithTimes.kotlinxLocalTim eq MariadbAllTypesNotNullWithTimes.kotlinxLocalTim
                 set MariadbAllTypesNotNullWithTimes.localDateTime1 eq MariadbAllTypesNotNullWithTimes.localDateTime1
                 set MariadbAllTypesNotNullWithTimes.localDateTime2 eq MariadbAllTypesNotNullWithTimes.localDateTime2
                 set MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq MariadbAllTypesNotNullWithTimes.kotlinxLocalDateTime1

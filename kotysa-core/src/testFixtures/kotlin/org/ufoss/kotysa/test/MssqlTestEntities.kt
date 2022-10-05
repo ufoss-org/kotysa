@@ -13,7 +13,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-
 object MssqlRoles : MssqlTable<RoleEntity>("roles") {
     val id = integer(RoleEntity::id)
         .primaryKey()
