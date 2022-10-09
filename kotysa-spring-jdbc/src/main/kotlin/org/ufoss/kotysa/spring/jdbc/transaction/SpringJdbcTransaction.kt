@@ -5,9 +5,13 @@
 package org.ufoss.kotysa.spring.jdbc.transaction
 
 import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.transaction.Transaction
 
-public class SpringJdbcTransaction(private val transactionStatus: TransactionStatus) : Transaction {
+public class SpringJdbcTransaction(
+    private val transactionStatus: TransactionStatus,
+    private val template: TransactionTemplate,
+) : Transaction {
 
     override fun isNewTransaction(): Boolean = transactionStatus.isNewTransaction
 
@@ -34,4 +38,10 @@ public class SpringJdbcTransaction(private val transactionStatus: TransactionSta
     public fun releaseSavepoint(savepoint: Any) {
         transactionStatus.releaseSavepoint(savepoint)
     }
+    
+    public var readOnly: Boolean
+        get() = template.isReadOnly
+        set(value) {
+            template.isReadOnly = value
+        }
 }

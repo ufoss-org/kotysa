@@ -32,6 +32,12 @@ internal class JdbcTransactionImpl internal constructor(internal val connection:
     override fun releaseSavepoint(savepoint: Savepoint) {
         connection.releaseSavepoint(savepoint)
     }
+
+    override var readOnly: Boolean
+        get() = connection.isReadOnly
+        set(value) {
+            connection.isReadOnly = value
+        }
     
     internal fun setCompleted() {
         completed = true

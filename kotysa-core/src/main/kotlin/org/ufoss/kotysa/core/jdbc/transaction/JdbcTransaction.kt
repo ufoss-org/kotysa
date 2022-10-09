@@ -11,4 +11,6 @@ public interface JdbcTransaction : Transaction {
     public fun createSavepoint(): Savepoint
     public fun rollbackToSavepoint(savepoint: Savepoint)
     public fun releaseSavepoint(savepoint: Savepoint)
+
+    public var readOnly: Boolean
 }
