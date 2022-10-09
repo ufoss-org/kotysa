@@ -30,7 +30,7 @@ data class User(
         val firstname: String,
         val roleId: UUID,
         val alias: String? = null,
-        val id: UUID = UUID.randomUUID()
+        val id: Int? = null
 )
 ```
 
@@ -48,7 +48,7 @@ object Roles : H2Table<Role>("roles") {
 }
 
 object Users : H2Table<User>("users") {
-    val id = uuid(User::id)
+    val id = autoIncrementInteger(User::id)
         .primaryKey("PK_users")
     val firstname = varchar(User::firstname, "f_name")
     val roleId = uuid(User::roleId)
@@ -71,7 +71,7 @@ val admins = (sqlClient selectFrom Users
         ).fetchAll() // returns all admin users
 ```
 
-**No annotations, no code generation, no proxy, just regular Kotlin code ! No JPA, just pure SQL !**
+**No annotations, no code generation, no proxy, no additional plugin, just regular Kotlin code ! No JPA, just pure SQL !**
 
 ## Contributors
 
