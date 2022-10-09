@@ -11,6 +11,7 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.fu.kofu.application
 import org.springframework.fu.kofu.r2dbc.r2dbc
+import org.springframework.r2dbc.connection.ConnectionFactoryUtils
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.transaction.reactive.TransactionalOperator
 import org.ufoss.kotysa.spring.r2dbc.R2dbcRepositoryTest
