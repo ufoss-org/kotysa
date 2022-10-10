@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
@@ -19,6 +20,7 @@ import java.time.LocalTime
 class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = AllTypesRepositoryMysql(sqlClient)
 
+    @Tag("miku")
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() = runTest {
         assertThat(repository.selectAllAllTypesNotNull().toList())
@@ -26,6 +28,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
             .containsExactly(mysqlAllTypesNotNullWithTime)
     }
 
+    @Tag("miku")
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValue returns all AllTypesNullableDefaultValue`() = runTest {
         assertThat(repository.selectAllAllTypesNullableDefaultValue().toList())
@@ -55,6 +58,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
             .containsExactly(allTypesNullableWithTime)
     }
 
+    @Tag("miku")
     @Test
     fun `Verify updateAllTypesNotNull works`() = runTest {
         val newLocalDate = LocalDate.now()
@@ -84,6 +88,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         }
     }
 
+    @Tag("miku")
     @Test
     fun `Verify updateAllTypesNotNullColumn works`() = runTest {
         operator.transactional<Unit> { transaction ->

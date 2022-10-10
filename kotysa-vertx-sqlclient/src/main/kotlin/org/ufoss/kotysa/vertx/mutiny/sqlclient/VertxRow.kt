@@ -26,7 +26,7 @@ public class VertxRow(private val vertxRow: io.vertx.mutiny.sqlclient.Row) : Row
                 } catch (uoe: UnsupportedOperationException) {
                     vertxRow.getBigDecimal(index) // for MSSQL
                 }
-                // boolean is stored as Int
+                // boolean is stored as Int for MSSQL
                 "java.lang.Boolean" -> try {
                     vertxRow.getBoolean(index)
                 } catch (cce: ClassCastException) {

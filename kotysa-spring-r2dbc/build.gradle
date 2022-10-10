@@ -28,6 +28,7 @@ dependencies {
     testRuntimeOnly 'io.r2dbc:r2dbc-h2'
     testRuntimeOnly 'io.r2dbc:r2dbc-postgresql'
     testRuntimeOnly 'dev.miku:r2dbc-mysql'
+//    testRuntimeOnly "com.github.jasync-sql:jasync-r2dbc-mysql:$jasync_r2dbc_version"
     testRuntimeOnly 'io.r2dbc:r2dbc-mssql'
     testRuntimeOnly 'org.mariadb:r2dbc-mariadb'
     testRuntimeOnly 'org.testcontainers:postgresql'
@@ -53,6 +54,16 @@ compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
         jvmTarget = '1.8'
+    }
+}
+
+test {
+    useJUnitPlatform {
+        // for jasync
+//        excludeTags 'miku'
+
+        // for miku
+        excludeTags 'jasync'
     }
 }
 

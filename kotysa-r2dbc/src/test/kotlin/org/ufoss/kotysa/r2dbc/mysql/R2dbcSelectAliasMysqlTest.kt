@@ -4,11 +4,12 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
-import io.r2dbc.spi.R2dbcBadGrammarException
+import io.r2dbc.spi.R2dbcException
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
@@ -19,27 +20,27 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcR2dbcBadGrammarException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcR2dbcException`() {
         assertThatThrownBy { runTest {
             repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
         } }
-            .isInstanceOf(R2dbcBadGrammarException::class.java)
+            .isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcR2dbcBadGrammarException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcR2dbcException`() {
         assertThatThrownBy { runTest {
             repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
         } }
-            .isInstanceOf(R2dbcBadGrammarException::class.java)
+            .isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcR2dbcBadGrammarException`() {
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcR2dbcException`() {
         assertThatThrownBy { runTest {
             repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
         } }
-            .isInstanceOf(R2dbcBadGrammarException::class.java)
+            .isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
@@ -77,11 +78,11 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcR2dbcBadGrammarException`() {
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcR2dbcException`() {
         assertThatThrownBy { runTest {
             repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
         } }
-            .isInstanceOf(R2dbcBadGrammarException::class.java)
+            .isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
@@ -94,7 +95,7 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
     fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
         assertThatThrownBy { runTest {
             repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        } }.isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
@@ -103,11 +104,23 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
             .isEqualTo(userBboss.firstname)
     }
 
+    @Tag("miku")
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery returns results`() {
+    fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery throws IllegalArgumentException`() {
         assertThatThrownBy { runTest {
             repository.selectCaseWhenExistsSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList()
         } }.isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Tag("jasync")
+    @Test
+    fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery returns results`() = runTest {
+        assertThat(repository.selectCaseWhenExistsSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+            )
     }
 
     @Test
@@ -143,28 +156,28 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
         assertThatThrownBy { runTest {
             repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        } }.isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
         assertThatThrownBy { runTest {
             repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        } }.isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
         assertThatThrownBy { runTest {
             repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        } }.isInstanceOf(R2dbcException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
         assertThatThrownBy { runTest {
             repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        } }.isInstanceOf(R2dbcException::class.java)
     }
 }
 

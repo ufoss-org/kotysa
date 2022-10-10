@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.MysqlLocalTimes
@@ -16,6 +17,7 @@ import org.ufoss.kotysa.test.localTimeWithNullable
 import org.ufoss.kotysa.test.localTimeWithoutNullable
 import java.time.LocalTime
 
+@Tag("miku")
 class R2dbcSelectLocalTimeMysqlTest : AbstractR2dbcMysqlTest<LocalTimeRepositoryMysqlSelect>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = LocalTimeRepositoryMysqlSelect(sqlClient)
 
