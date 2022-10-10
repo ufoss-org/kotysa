@@ -7,6 +7,7 @@ package org.ufoss.kotysa.spring.r2dbc.mysql
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
 import org.ufoss.kotysa.test.*
@@ -55,12 +56,25 @@ class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSu
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
 
+    @Tag("miku")
     @Test
     fun `Verify selectCaseWhenExistsSubQuery throws IllegalArgumentException`() {
         Assertions.assertThatThrownBy {
             repository.selectCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)).blockLast()
         }
             .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Tag("jasync")
+    @Test
+    fun `Verify selectCaseWhenExistsSubQuery returns results`() {
+        assertThat(repository.selectCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)).toIterable())
+            .hasSize(3)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+                Pair(roleGod.label, false),
+            )
     }
 
     @Test

@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
@@ -46,7 +48,8 @@ class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSu
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
-
+    
+    @Tag("miku")
     @Test
     fun `Verify selectCaseWhenExistsSubQuery throws IllegalArgumentException`() {
         Assertions.assertThatThrownBy {
@@ -55,6 +58,18 @@ class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSu
             }
         }
             .isInstanceOf(IllegalArgumentException::class.java)
+    }
+
+    @Tag("jasync")
+    @Test
+    fun `Verify selectCaseWhenExistsSubQuery returns results`() = runTest {
+        assertThat(repository.selectCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
+            .hasSize(3)
+            .containsExactlyInAnyOrder(
+                Pair(roleAdmin.label, true),
+                Pair(roleUser.label, true),
+                Pair(roleGod.label, false),
+            )
     }
 
     @Test

@@ -4,13 +4,14 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
-import io.r2dbc.spi.R2dbcDataIntegrityViolationException
+import io.r2dbc.spi.R2dbcException
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Order
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
@@ -55,6 +56,7 @@ class R2dbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
         }
     }
 
+    @Tag("miku")
     @Test
     fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() = runTest {
         operator.transactional { transaction ->
@@ -127,7 +129,7 @@ class R2dbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
                     repository.insertDupCustomers()
                 }
             }
-        }.isInstanceOf(R2dbcDataIntegrityViolationException::class.java)
+        }.isInstanceOf(R2dbcException::class.java)
     }
 }
 

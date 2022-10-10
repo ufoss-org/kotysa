@@ -18,21 +18,22 @@ class MySqlContainerExecutionHook : ParameterResolver {
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
-                .getOrComputeIfAbsent("mySqlContainer") {
-                    val mysqlContainer = MySQLContainer("mysql:8.0.23")
-                            .withDatabaseName("db")
-                            .withUsername("mysql")
-                            .withPassword("test")
-                    mysqlContainer.start()
-                    println("MySQLContainer started")
+            .getOrComputeIfAbsent("mySqlContainer") {
+                val mysqlContainer = MySQLContainer("mysql:8.0.23")
+                    .withDatabaseName("db")
+                    .withUsername("mysql")
+                    .withPassword("test")
+                    .withCommand("mysqld --default-authentication-plugin=mysql_native_password")
+                mysqlContainer.start()
+                println("MySQLContainer started")
 
-                    MySqlContainerResource(mysqlContainer)
-                }
+                MySqlContainerResource(mysqlContainer)
+            }
     }
 }
 
 class MySqlContainerResource internal constructor(
-        private val dbContainer: MySQLContainer<*>
+    private val dbContainer: MySQLContainer<*>
 ) : TestContainersCloseableResource {
     companion object {
         const val ID = "MySqlContainerResource"

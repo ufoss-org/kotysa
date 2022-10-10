@@ -4,10 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc
 
-import io.r2dbc.spi.Connection
-import io.r2dbc.spi.ConnectionFactory
-import io.r2dbc.spi.R2dbcBadGrammarException
-import io.r2dbc.spi.Statement
+import io.r2dbc.spi.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.*
 import kotlinx.coroutines.withContext
@@ -185,10 +182,10 @@ internal sealed class SqlClientR2dbc(
                 try {
                     connection.createStatement(createIndexResult.sql)
                         .execute().awaitLast()
-                } catch (se: R2dbcBadGrammarException) {
+                } catch (r2dbcException: R2dbcException) {
                     // if not exists : accept Index already exists error
-                    if (!ifNotExists || se.message?.contains(createIndexResult.name, true) != true) {
-                        throw se
+                    if (!ifNotExists || r2dbcException.message?.contains(createIndexResult.name, true) != true) {
+                        throw r2dbcException
                     }
                 }
             }
