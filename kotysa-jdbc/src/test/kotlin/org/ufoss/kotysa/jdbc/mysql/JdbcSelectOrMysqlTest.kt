@@ -4,31 +4,18 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.MysqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MysqlUserRoles
+import org.ufoss.kotysa.test.MysqlUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
-class JdbcSelectOrMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectOr>() {
+class JdbcSelectOrMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectOr>(),
+    SelectOrTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectOr, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
 }
 
-
-class UserRepositoryJdbcMysqlSelectOr(private val sqlClient: JdbcSqlClient) :
-    AbstractUserRepositoryJdbcMysql(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom MysqlRoles
-                    where MysqlRoles.label eq label1
-                    or MysqlRoles.label eq label2
-                    ).fetchAll()
-}
+class UserRepositoryJdbcMysqlSelectOr(sqlClient: JdbcSqlClient) :
+    SelectOrRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles)

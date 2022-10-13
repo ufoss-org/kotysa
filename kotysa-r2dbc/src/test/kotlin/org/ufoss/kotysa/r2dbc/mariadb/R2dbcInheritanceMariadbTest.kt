@@ -35,7 +35,7 @@ class R2dbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbR
 
     @Test
     fun `Verify deleteById deletes inherited`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteById(MariadbInheriteds, "id"))
                 .isEqualTo(1)
@@ -74,17 +74,17 @@ class InheritanceMariadbRepository(private val sqlClient: R2dbcSqlClient) : Repo
                 where MariadbInheriteds.id eq id
                 ).fetchOne()
 
-    suspend fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
+    suspend fun <T : Entities<U>, U : Entity<String>> selectById(table: T, id: String) =
         (sqlClient selectFrom table
                 where table.id eq id
                 ).fetchOne()
 
-    suspend fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
+    suspend fun <T : Nameables<U>, U : Nameable> selectFirstByName(table: T, name: String) =
         (sqlClient selectFrom table
                 where table.name eq name
                 ).fetchFirst()
 
-    suspend fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
+    suspend fun <T : Entities<U>, U : Entity<String>> deleteById(table: T, id: String) =
         (sqlClient deleteFrom table
                 where table.id eq id
                 ).execute()

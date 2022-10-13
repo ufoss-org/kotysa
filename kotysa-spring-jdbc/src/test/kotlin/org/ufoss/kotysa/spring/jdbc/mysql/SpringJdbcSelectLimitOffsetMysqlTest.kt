@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetTest
 
-class SpringJdbcSelectLimitOffsetMysqlTest: AbstractSpringJdbcMysqlTest<LimitOffsetRepositoryMysqlSelect>() {
+class SpringJdbcSelectLimitOffsetMysqlTest : AbstractSpringJdbcMysqlTest<LimitOffsetRepositoryMysqlSelect>(),
+    SelectLimitOffsetTest<MysqlCustomers, LimitOffsetRepositoryMysqlSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,57 +25,7 @@ class SpringJdbcSelectLimitOffsetMysqlTest: AbstractSpringJdbcMysqlTest<LimitOff
     override val repository: LimitOffsetRepositoryMysqlSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
-        assertThat(repository.selectAllOrderByIdOffset())
-                .hasSize(1)
-                .containsExactly(customerUSA2)
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimit returns customerUSA2`() {
-        assertThat(repository.selectAllOrderByIdLimit())
-                .hasSize(1)
-                .containsExactly(customerFrance)
-    }
-
-    @Test
-    fun `Verify selectAllLimitOffset returns one result`() {
-        assertThat(repository.selectAllLimitOffset())
-                .hasSize(1)
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1`() {
-        assertThat(repository.selectAllOrderByIdLimitOffset())
-                .hasSize(2)
-                .containsExactly(customerUSA1, customerUSA2)
-    }
 }
 
-class LimitOffsetRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
-
-    fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom MysqlCustomers
-                    orderByAsc MysqlCustomers.id
-                    offset 2
-                    ).fetchAll()
-
-    fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom MysqlCustomers
-                    orderByAsc MysqlCustomers.id
-                    limit 1
-                    ).fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom MysqlCustomers
-                    limit 1 offset 1
-                    ).fetchAll()
-
-    fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom MysqlCustomers
-                    orderByAsc MysqlCustomers.id
-                    limit 2 offset 1
-                    ).fetchAll()
-}
+class LimitOffsetRepositoryMysqlSelect(client: JdbcOperations) :
+    SelectLimitOffsetRepository<MysqlCustomers>(client.sqlClient(mysqlTables), MysqlCustomers)

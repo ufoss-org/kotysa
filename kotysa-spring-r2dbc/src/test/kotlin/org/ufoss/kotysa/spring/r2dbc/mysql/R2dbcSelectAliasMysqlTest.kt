@@ -13,7 +13,7 @@ import org.springframework.r2dbc.BadSqlGrammarException
 import org.springframework.r2dbc.UncategorizedR2dbcException
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 

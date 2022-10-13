@@ -4,41 +4,35 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MssqlRoles
+import org.ufoss.kotysa.test.MssqlUserRoles
+import org.ufoss.kotysa.test.MssqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
-
-class SpringJdbcSelectOrMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMysqlSelectOr>() {
+class SpringJdbcSelectOrMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelectOr>(),
+    SelectOrTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositorySpringJdbcMssqlSelectOr, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySpringJdbcMysqlSelectOr>(resource)
+        context = startContext<UserRepositorySpringJdbcMssqlSelectOr>(resource)
     }
 
-    override val repository: UserRepositorySpringJdbcMysqlSelectOr by lazy {
+    override val repository: UserRepositorySpringJdbcMssqlSelectOr by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
 }
 
-
-class UserRepositorySpringJdbcMysqlSelectOr(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMssql(client) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom MssqlRoles
-                    where MssqlRoles.label eq label1
-                    or MssqlRoles.label eq label2
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcMssqlSelectOr(client: JdbcOperations) :
+    SelectOrRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        client.sqlClient(mssqlTables),
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )

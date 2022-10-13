@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class SpringJdbcSelectOrderByMysqlTest : AbstractSpringJdbcMysqlTest<OrderByRepositoryMysqlSelect>() {
+class SpringJdbcSelectOrderByMysqlTest : AbstractSpringJdbcMysqlTest<OrderByRepositoryMysqlSelect>(),
+    SelectOrderByTest<MysqlCustomers, OrderByRepositoryMysqlSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,31 +25,7 @@ class SpringJdbcSelectOrderByMysqlTest : AbstractSpringJdbcMysqlTest<OrderByRepo
     override val repository: OrderByRepositoryMysqlSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MysqlCustomers
-                    orderByAsc MysqlCustomers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MysqlCustomers
-                    orderByAsc MysqlCustomers.age andAsc MysqlCustomers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryMysqlSelect(client: JdbcOperations) :
+    SelectOrderByRepository<MysqlCustomers>(client.sqlClient(mysqlTables), MysqlCustomers)

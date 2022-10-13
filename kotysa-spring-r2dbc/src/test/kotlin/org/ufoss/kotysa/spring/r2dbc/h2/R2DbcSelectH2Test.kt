@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 

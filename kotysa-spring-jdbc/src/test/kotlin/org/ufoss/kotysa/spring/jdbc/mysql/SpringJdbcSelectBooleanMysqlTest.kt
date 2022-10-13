@@ -4,17 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
-
-class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectBoolean>() {
+class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectBoolean>(),
+    SelectBooleanTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositorySpringJdbcMysqlSelectBoolean,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -24,27 +28,12 @@ class SpringJdbcSelectBooleanMysqlTest : AbstractSpringJdbcMysqlTest<UserReposit
     override val repository: UserRepositorySpringJdbcMysqlSelectBoolean by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true))
-                .hasSize(1)
-                .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false))
-                .hasSize(1)
-                .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositorySpringJdbcMysqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MysqlUsers
-                    where MysqlUsers.isAdmin eq value
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcMysqlSelectBoolean(client: JdbcOperations) :
+    SelectBooleanRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        client.sqlClient(mysqlTables),
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    )

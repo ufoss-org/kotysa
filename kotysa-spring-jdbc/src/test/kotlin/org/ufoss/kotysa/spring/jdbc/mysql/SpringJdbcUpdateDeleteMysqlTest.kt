@@ -4,15 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
+import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.UpdateDeleteRepository
+import org.ufoss.kotysa.test.repositories.blocking.UpdateDeleteTest
 
-
-class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlUpdateDelete>() {
+class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlUpdateDelete>(),
+    UpdateDeleteTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositorySpringJdbcMysqlUpdateDelete,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -22,204 +28,12 @@ class SpringJdbcUpdateDeleteMysqlTest : AbstractSpringJdbcMysqlTest<UserReposito
     override val repository: UserRepositorySpringJdbcMysqlUpdateDelete by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify deleteAllFromUserRoles works correctly`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteAllFromUserRoles())
-                .isEqualTo(1)
-            assertThat(repository.countAllUserRoles())
-                .isEqualTo(0)
-        }
-        assertThat(repository.countAllUserRoles())
-            .isEqualTo(1)
-    }
-
-    @Test
-    fun `Verify deleteUserById works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteUserById(userJdoe.id))
-                .isEqualTo(1)
-            assertThat(repository.selectAllUsers())
-                .hasSize(1)
-                .containsOnly(userBboss)
-        }
-    }
-
-    @Test
-    fun `Verify deleteUserIn works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteUserIn(listOf(userJdoe.id, 9999999)))
-                .isEqualTo(1)
-            assertThat(repository.selectAllUsers())
-                .hasSize(1)
-        }
-    }
-
-    @Test
-    fun `Verify deleteUserIn no match`() {
-        assertThat(repository.deleteUserIn(listOf(99999, 9999999)))
-            .isEqualTo(0)
-        assertThat(repository.selectAllUsers())
-            .hasSize(2)
-    }
-
-    @Test
-    fun `Verify deleteUserWithJoin works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteUserWithJoin(roleUser.label))
-                .isEqualTo(1)
-            assertThat(repository.selectAllUsers())
-                .hasSize(1)
-                .containsOnly(userBboss)
-        }
-    }
-
-    @Test
-    fun `Verify updateLastname works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateLastname("Do"))
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        }
-    }
-
-    @Test
-    fun `Verify updateLastnameIn works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999)))
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        }
-    }
-
-    @Test
-    fun `Verify updateLastnameIn no match`() {
-        assertThat(repository.updateLastnameIn("Do", listOf(99999, 9999999)))
-            .isEqualTo(0)
-        assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-            .extracting { user -> user?.lastname }
-            .isEqualTo("Doe")
-    }
-
-    @Test
-    fun `Verify updateWithJoin works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateWithJoin("Do", roleUser.label))
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
-        }
-    }
-
-    @Test
-    fun `Verify updateAlias works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateAlias("TheBigBoss"))
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
-                .extracting { user -> user?.alias }
-                .isEqualTo("TheBigBoss")
-            assertThat(repository.updateAlias(null))
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
-                .extracting { user -> user?.alias }
-                .isEqualTo(null)
-        }
-    }
-
-    @Test
-    fun `Verify updateAndIncrementRoleId works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateAndIncrementRoleId())
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.roleId }
-                .isEqualTo(roleGod.id)
-        }
-    }
-
-    @Test
-    fun `Verify updateAndDecrementRoleId works`() {
-        operator.transactional<Unit> { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.updateAndDecrementRoleId())
-                .isEqualTo(1)
-            assertThat(repository.selectFirstByFirstname(userBboss.firstname))
-                .extracting { user -> user?.roleId }
-                .isEqualTo(roleUser.id)
-        }
-    }
 }
-
 
 class UserRepositorySpringJdbcMysqlUpdateDelete(client: JdbcOperations) :
-    AbstractUserRepositorySpringJdbcMysql(client) {
-
-    fun deleteUserById(id: Int) =
-        (sqlClient deleteFrom MysqlUsers
-                where MysqlUsers.id eq id
-                ).execute()
-
-    fun deleteUserIn(ids: Collection<Int>) =
-        (sqlClient deleteFrom MysqlUsers
-                where MysqlUsers.id `in` ids
-                ).execute()
-
-    fun deleteUserWithJoin(roleLabel: String) =
-        (sqlClient deleteFrom MysqlUsers
-                innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
-                where MysqlRoles.label eq roleLabel
-                ).execute()
-
-    fun updateLastname(newLastname: String) =
-        (sqlClient update MysqlUsers
-                set MysqlUsers.lastname eq newLastname
-                where MysqlUsers.id eq userJdoe.id
-                ).execute()
-
-    fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-        (sqlClient update MysqlUsers
-                set MysqlUsers.lastname eq newLastname
-                where MysqlUsers.id `in` ids
-                ).execute()
-
-    fun updateAlias(newAlias: String?) =
-        (sqlClient update MysqlUsers
-                set MysqlUsers.alias eq newAlias
-                where MysqlUsers.id eq userBboss.id
-                ).execute()
-
-    fun updateWithJoin(newLastname: String, roleLabel: String) =
-        (sqlClient update MysqlUsers
-                set MysqlUsers.lastname eq newLastname
-                innerJoin MysqlRoles on MysqlUsers.roleId eq MysqlRoles.id
-                where MysqlRoles.label eq roleLabel
-                ).execute()
-
-    fun updateAndIncrementRoleId() =
-        (sqlClient update MysqlUsers
-                set MysqlUsers.roleId eq MysqlUsers.roleId plus 2
-                where MysqlUsers.id eq userJdoe.id
-                ).execute()
-
-    fun updateAndDecrementRoleId() =
-        (sqlClient update MysqlUsers
-                set MysqlUsers.roleId eq MysqlUsers.roleId minus 1
-                where MysqlUsers.id eq userBboss.id
-                ).execute()
-}
+    UpdateDeleteRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        client.sqlClient(mysqlTables),
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    )

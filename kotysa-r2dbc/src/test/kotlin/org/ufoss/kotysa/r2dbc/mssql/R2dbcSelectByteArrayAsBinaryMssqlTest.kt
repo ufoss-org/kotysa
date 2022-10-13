@@ -78,37 +78,37 @@ class ByteArrayRepositoryMssqlSelect(private val sqlClient: R2dbcSqlClient) : Re
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MssqlByteArrayAsBinarys
+        sqlClient createTable MssqlByteArrayAsBinaries
     }
 
     private suspend fun insertByteArrays() {
         sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MssqlByteArrayAsBinarys
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MssqlByteArrayAsBinaries
 
     fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
-            (sqlClient selectFrom MssqlByteArrayAsBinarys
-                    where MssqlByteArrayAsBinarys.byteArrayNotNull eq byteArray
+            (sqlClient selectFrom MssqlByteArrayAsBinaries
+                    where MssqlByteArrayAsBinaries.byteArrayNotNull eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullNotEq(byteArray: ByteArray) =
-            (sqlClient selectFrom MssqlByteArrayAsBinarys
-                    where MssqlByteArrayAsBinarys.byteArrayNotNull notEq byteArray
+            (sqlClient selectFrom MssqlByteArrayAsBinaries
+                    where MssqlByteArrayAsBinaries.byteArrayNotNull notEq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullIn(values: Sequence<ByteArray>) =
-            (sqlClient selectFrom MssqlByteArrayAsBinarys
-                    where MssqlByteArrayAsBinarys.byteArrayNotNull `in` values
+            (sqlClient selectFrom MssqlByteArrayAsBinaries
+                    where MssqlByteArrayAsBinaries.byteArrayNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByByteArrayNullable(byteArray: ByteArray?) =
-            (sqlClient selectFrom MssqlByteArrayAsBinarys
-                    where MssqlByteArrayAsBinarys.byteArrayNullable eq byteArray
+            (sqlClient selectFrom MssqlByteArrayAsBinaries
+                    where MssqlByteArrayAsBinaries.byteArrayNullable eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNullableNotEq(byteArray: ByteArray?) =
-            (sqlClient selectFrom MssqlByteArrayAsBinarys
-                    where MssqlByteArrayAsBinarys.byteArrayNullable notEq byteArray
+            (sqlClient selectFrom MssqlByteArrayAsBinaries
+                    where MssqlByteArrayAsBinaries.byteArrayNullable notEq byteArray
                     ).fetchAll()
 }

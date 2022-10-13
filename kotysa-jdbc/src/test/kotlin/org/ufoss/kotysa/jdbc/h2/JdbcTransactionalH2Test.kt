@@ -7,6 +7,10 @@ package org.ufoss.kotysa.jdbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.test.H2Roles
+import org.ufoss.kotysa.test.H2UserRoles
+import org.ufoss.kotysa.test.H2Users
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Transactional>() {
@@ -23,5 +27,5 @@ class JdbcTransactionalH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Transacti
     }
 }
 
-
-class UserRepositoryJdbcH2Transactional(sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient)
+class UserRepositoryJdbcH2Transactional(sqlClient: JdbcSqlClient) :
+    AbstractUserRepository<H2Roles, H2Users, H2UserRoles>(sqlClient, H2Roles, H2Users, H2UserRoles)

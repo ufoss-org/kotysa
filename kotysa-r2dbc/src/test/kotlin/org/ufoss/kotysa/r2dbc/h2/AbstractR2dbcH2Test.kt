@@ -7,7 +7,7 @@ package org.ufoss.kotysa.r2dbc.h2
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.ufoss.kotysa.test.Repository
-import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesRepositoryTest
 import io.r2dbc.spi.ConnectionFactories
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
@@ -26,7 +26,7 @@ abstract class AbstractR2dbcH2Test<T : Repository> : CoroutinesRepositoryTest<T,
 
     protected abstract fun instantiateRepository(sqlClient: R2dbcSqlClient): T
 
-    override val operator by lazy {
+    override val coOperator by lazy {
         sqlClient
     }
 

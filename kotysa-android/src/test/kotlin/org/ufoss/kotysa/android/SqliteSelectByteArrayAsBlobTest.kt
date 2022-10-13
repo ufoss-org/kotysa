@@ -5,111 +5,53 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.blocking.SelectByteArrayRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectByteArrayTest
 
-class SqliteSelectByteArrayAsBlobTest : AbstractSqLiteTest<ByteArrayRepositorySqliteSelect>() {
+class SqliteSelectByteArrayAsBlobTest : AbstractSqLiteTest<ByteArrayRepositorySqliteSelect>(),
+    SelectByteArrayTest<SqliteByteArrays, ByteArrayRepositorySqliteSelect, AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = ByteArrayRepositorySqliteSelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllByByteArrayNotNull finds byteArrayWithNullable`() {
-        assertThat(repository.selectAllByByteArrayNotNull(byteArrayWithNullable.byteArrayNotNull))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(byteArrayWithNullable)
+    fun `Verify selectAllByByteArrayNotNull finds byteArrayWithNullable - Android`() {
+        `Verify selectAllByByteArrayNotNull finds byteArrayWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNotNullNotEq finds byteArrayWithoutNullable`() {
-        assertThat(repository.selectAllByByteArrayNotNullNotEq(byteArrayWithNullable.byteArrayNotNull))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(byteArrayWithoutNullable)
+    fun `Verify selectAllByByteArrayNotNullNotEq finds byteArrayWithoutNullable - Android`() {
+        `Verify selectAllByByteArrayNotNullNotEq finds byteArrayWithoutNullable`()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNotNullIn finds both`() {
-        val seq = sequenceOf(byteArrayWithNullable.byteArrayNotNull, byteArrayWithoutNullable.byteArrayNotNull)
-        assertThat(repository.selectAllByByteArrayNotNullIn(seq))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(byteArrayWithNullable, byteArrayWithoutNullable)
+    fun `Verify selectAllByByteArrayNotNullIn finds both - Android`() {
+        `Verify selectAllByByteArrayNotNullIn finds both`()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullable finds byteArrayWithNullable`() {
-        assertThat(repository.selectAllByByteArrayNullable(byteArrayWithNullable.byteArrayNullable))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(byteArrayWithNullable)
+    fun `Verify selectAllByByteArrayNullable finds byteArrayWithNullable - Android`() {
+        `Verify selectAllByByteArrayNullable finds byteArrayWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullable finds byteArrayWithoutNullable`() {
-        assertThat(repository.selectAllByByteArrayNullable(null))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(byteArrayWithoutNullable)
+    fun `Verify selectAllByByteArrayNullable finds byteArrayWithoutNullable - Android`() {
+        `Verify selectAllByByteArrayNullable finds byteArrayWithoutNullable`()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByByteArrayNullableNotEq(byteArrayWithNullable.byteArrayNullable))
-                .isEmpty()
+    fun `Verify selectAllByByteArrayNullableNotEq finds no results - Android`() {
+        `Verify selectAllByByteArrayNullableNotEq finds no results`()
     }
 
     @Test
-    fun `Verify selectAllByByteArrayNullableNotEq finds byteArrayWithNullable`() {
-        assertThat(repository.selectAllByByteArrayNullableNotEq(null))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(byteArrayWithNullable)
+    fun `Verify selectAllByByteArrayNullableNotEq finds byteArrayWithNullable - Android`() {
+        `Verify selectAllByByteArrayNullableNotEq finds byteArrayWithNullable`()
     }
 }
 
-
-class ByteArrayRepositorySqliteSelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
-
-    private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
-
-    override fun init() {
-        createTables()
-        insertByteArrays()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable SqliteByteArrays
-    }
-
-    private fun insertByteArrays() {
-        sqlClient.insert(byteArrayWithNullable, byteArrayWithoutNullable)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom SqliteByteArrays
-
-    fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
-            (sqlClient selectFrom SqliteByteArrays
-                    where SqliteByteArrays.byteArrayNotNull eq byteArray
-                    ).fetchAll()
-
-    fun selectAllByByteArrayNotNullNotEq(byteArray: ByteArray) =
-            (sqlClient selectFrom SqliteByteArrays
-                    where SqliteByteArrays.byteArrayNotNull notEq byteArray
-                    ).fetchAll()
-
-    fun selectAllByByteArrayNotNullIn(values: Sequence<ByteArray>) =
-            (sqlClient selectFrom SqliteByteArrays
-                    where SqliteByteArrays.byteArrayNotNull `in` values
-                    ).fetchAll()
-
-    fun selectAllByByteArrayNullable(byteArray: ByteArray?) =
-            (sqlClient selectFrom SqliteByteArrays
-                    where SqliteByteArrays.byteArrayNullable eq byteArray
-                    ).fetchAll()
-
-    fun selectAllByByteArrayNullableNotEq(byteArray: ByteArray?) =
-            (sqlClient selectFrom SqliteByteArrays
-                    where SqliteByteArrays.byteArrayNullable notEq byteArray
-                    ).fetchAll()
-}
+class ByteArrayRepositorySqliteSelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) :
+    SelectByteArrayRepository<SqliteByteArrays>(sqLiteOpenHelper.sqlClient(tables), SqliteByteArrays)

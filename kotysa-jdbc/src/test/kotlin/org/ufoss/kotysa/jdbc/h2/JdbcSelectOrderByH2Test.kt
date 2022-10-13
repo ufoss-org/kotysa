@@ -4,38 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.H2Customers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class JdbcSelectOrderByH2Test : AbstractJdbcH2Test<OrderByRepositoryH2Select>() {
+class JdbcSelectOrderByH2Test : AbstractJdbcH2Test<OrderByRepositoryH2Select>(),
+    SelectOrderByTest<H2Customers, OrderByRepositoryH2Select, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryH2Select(sqlClient)
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom H2Customers
-                    orderByAsc H2Customers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom H2Customers
-                    orderByAsc H2Customers.age andAsc H2Customers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryH2Select(sqlClient: JdbcSqlClient) : SelectOrderByRepository<H2Customers>(sqlClient, H2Customers)
+        

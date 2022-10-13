@@ -4,17 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.postgresqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
-
-class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectOr>() {
+class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectOr>(),
+    SelectOrTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositorySpringJdbcPostgresqlSelectOr,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -24,21 +28,12 @@ class SpringJdbcSelectOrPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRe
     override val repository: UserRepositorySpringJdbcPostgresqlSelectOr by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
 }
 
-
-class UserRepositorySpringJdbcPostgresqlSelectOr(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom PostgresqlRoles
-                    where PostgresqlRoles.label eq label1
-                    or PostgresqlRoles.label eq label2
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcPostgresqlSelectOr(client: JdbcOperations) :
+    SelectOrRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        client.sqlClient(postgresqlTables),
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

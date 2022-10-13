@@ -32,8 +32,8 @@ class H2TablesDslTest {
                 tuple("localDateTime2", SqlType.TIMESTAMP, false, false),
                 tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, false, false),
                 tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, false, false),
-                tuple("int", SqlType.INT, false, false),
-                tuple("long", SqlType.BIGINT, false, false),
+                tuple("inte", SqlType.INT, false, false),
+                tuple("longe", SqlType.BIGINT, false, false),
                 tuple("byteArray", SqlType.BINARY, false, false),
                 tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, false),
                 tuple("uuid", SqlType.UUID, false, false),
@@ -56,8 +56,8 @@ class H2TablesDslTest {
                 tuple("localDateTime2", SqlType.TIMESTAMP, true, false),
                 tuple("kotlinxLocalDateTime1", SqlType.DATE_TIME, true, false),
                 tuple("kotlinxLocalDateTime2", SqlType.TIMESTAMP, true, false),
-                tuple("int", SqlType.INT, true, false),
-                tuple("long", SqlType.BIGINT, true, false),
+                tuple("inte", SqlType.INT, true, false),
+                tuple("longe", SqlType.BIGINT, true, false),
                 tuple("byteArray", SqlType.BINARY, true, false),
                 tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, true, false),
                 tuple("uuid", SqlType.UUID, true, false),
@@ -90,8 +90,8 @@ class H2TablesDslTest {
                     false,
                     kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
                 ),
-                tuple("int", SqlType.INT, false, 42),
-                tuple("long", SqlType.BIGINT, false, 84L),
+                tuple("inte", SqlType.INT, false, 42),
+                tuple("longe", SqlType.BIGINT, false, 84L),
                 tuple(
                     "offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, OffsetDateTime.of(
                         2019, 11, 4, 0, 0, 0, 0,

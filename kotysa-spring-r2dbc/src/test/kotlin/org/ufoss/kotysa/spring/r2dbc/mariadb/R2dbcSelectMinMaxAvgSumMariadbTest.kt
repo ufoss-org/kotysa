@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.r2dbc.mariadb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
@@ -47,7 +47,7 @@ class R2dbcSelectMinMaxAvgSumMariadbTest : AbstractR2dbcMariadbTest<MinMaxAvgSum
     }
 }
 
-class MinMaxAvgSumRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractCustomerRepositoryMariadb(sqlClient) {
+class MinMaxAvgSumRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMariadb(sqlClient) {
 
     fun selectCustomerMinAge() =
             (sqlClient selectMin MariadbCustomers.age

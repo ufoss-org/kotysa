@@ -4,28 +4,24 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlRoles
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-class JdbcSelectDistinctPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectDistinct>() {
+class JdbcSelectDistinctPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectDistinct>(),
+    SelectDistinctTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles,
+            UserRepositoryJdbcPostgresqlSelectDistinct, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositoryJdbcPostgresqlSelectDistinct(private val sqlClient: JdbcSqlClient) :
-    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct PostgresqlRoles.label
-                    from PostgresqlRoles
-                    ).fetchAll()
-}
+class UserRepositoryJdbcPostgresqlSelectDistinct(sqlClient: JdbcSqlClient) :
+    SelectDistinctRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

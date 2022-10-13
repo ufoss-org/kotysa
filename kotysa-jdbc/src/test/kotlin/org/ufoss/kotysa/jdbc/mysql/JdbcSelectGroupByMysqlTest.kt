@@ -4,28 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MysqlCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class JdbcSelectGroupByMysqlTest : AbstractJdbcMysqlTest<GroupByRepositoryMysqlSelect>() {
+class JdbcSelectGroupByMysqlTest : AbstractJdbcMysqlTest<GroupByRepositoryMysqlSelect>(),
+    SelectGroupByTest<MysqlCustomers, GroupByRepositoryMysqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryMysqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryMysqlSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcMysql(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MysqlCustomers.id and MysqlCustomers.country
-                    from MysqlCustomers
-                    groupBy MysqlCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryMysqlSelect(sqlClient: JdbcSqlClient) :
+    SelectGroupByRepository<MysqlCustomers>(sqlClient, MysqlCustomers)

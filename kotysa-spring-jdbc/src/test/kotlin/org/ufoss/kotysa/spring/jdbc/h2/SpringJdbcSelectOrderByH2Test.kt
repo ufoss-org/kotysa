@@ -4,39 +4,19 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.H2Customers
+import org.ufoss.kotysa.test.h2Tables
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class SpringJdbcSelectOrderByH2Test : AbstractSpringJdbcH2Test<OrderByRepositoryH2Select>() {
+class SpringJdbcSelectOrderByH2Test : AbstractSpringJdbcH2Test<OrderByRepositoryH2Select>(),
+    SelectOrderByTest<H2Customers, OrderByRepositoryH2Select, SpringJdbcTransaction> {
     override val context = startContext<OrderByRepositoryH2Select>()
     override val repository = getContextRepository<OrderByRepositoryH2Select>()
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryH2Select(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcH2(client) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom H2Customers
-                    orderByAsc H2Customers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom H2Customers
-                    orderByAsc H2Customers.age andAsc H2Customers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryH2Select(client: JdbcOperations) :
+    SelectOrderByRepository<H2Customers>(client.sqlClient(h2Tables), H2Customers)

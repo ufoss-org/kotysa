@@ -5,152 +5,61 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
+import org.ufoss.kotysa.test.SqliteRoles
+import org.ufoss.kotysa.test.SqliteUserRoles
+import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.repositories.blocking.SubQueryRepository
+import org.ufoss.kotysa.test.repositories.blocking.SubQueryTest
 
-class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>() {
+class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>(),
+    SubQueryTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySqliteSubQuery, AndroidTransaction> {
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySqliteSubQuery(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {
-        assertThat(repository.selectRoleLabelFromUserIdSubQuery(userBboss.id))
-            .isEqualTo(Pair(userBboss.firstname, roleAdmin.label))
+    fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss - Android`() {
+        `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`()
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereExistsUserSubQuery returns User and Admin roles`() {
-        assertThat(repository.selectRoleLabelWhereExistsUserSubQuery(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(2)
-            .containsExactlyInAnyOrder(roleAdmin.label, roleUser.label)
+    fun `Verify selectRoleLabelWhereExistsUserSubQuery returns User and Admin roles - Android`() {
+        `Verify selectRoleLabelWhereExistsUserSubQuery returns User and Admin roles`()
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereEqUserSubQuery returns User role`() {
-        assertThat(repository.selectRoleLabelWhereEqUserSubQuery(userJdoe.id))
-            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    fun `Verify selectRoleLabelWhereEqUserSubQuery returns User role - Android`() {
+        `Verify selectRoleLabelWhereEqUserSubQuery returns User role`()
     }
 
     @Test
-    fun `Verify selectRoleLabelAndEqUserSubQuery returns User role`() {
-        assertThat(repository.selectRoleLabelAndEqUserSubQuery(userJdoe.id))
-            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    fun `Verify selectRoleLabelAndEqUserSubQuery returns User role - Android`() {
+        `Verify selectRoleLabelAndEqUserSubQuery returns User role`()
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
-        assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(2)
-            .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
+    fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles - Android`() {
+        `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`()
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQuery returns results`() {
-        assertThat(repository.selectCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(3)
-            .containsExactlyInAnyOrder(
-                Pair(roleAdmin.label, true),
-                Pair(roleUser.label, true),
-                Pair(roleGod.label, false),
-            )
+    fun `Verify selectCaseWhenExistsSubQuery returns results - Android`() {
+        `Verify selectCaseWhenExistsSubQuery returns results`()
     }
 
     @Test
-    fun `Verify selectOrderByCaseWhenExistsSubQuery returns results`() {
-        assertThat(repository.selectOrderByCaseWhenExistsSubQuery(listOf(userBboss.id, userJdoe.id)))
-            .hasSize(3)
-            .containsExactly(
-                roleAdmin.label,
-                roleUser.label,
-                roleGod.label,
-            )
+    fun `Verify selectOrderByCaseWhenExistsSubQuery returns results - Android`() {
+        `Verify selectOrderByCaseWhenExistsSubQuery returns results`()
     }
 }
-
 
 class UserRepositorySqliteSubQuery(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : AbstractUserRepository(sqLiteOpenHelper, tables) {
-
-    fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
-        (sqlClient select SqliteUsers.firstname and {
-            (this select SqliteRoles.label
-                    from SqliteRoles
-                    where SqliteRoles.id eq SqliteUsers.roleId
-                    and SqliteRoles.label eq roleAdmin.label)
-        }
-                from SqliteUsers
-                where SqliteUsers.id eq userId)
-            .fetchOne()
-
-    fun selectRoleLabelWhereExistsUserSubQuery(userIds: List<Int>) =
-        (sqlClient select SqliteRoles.label
-                from SqliteRoles
-                whereExists
-                {
-                    (this select SqliteUsers.id
-                            from SqliteUsers
-                            where SqliteUsers.roleId eq SqliteRoles.id
-                            and SqliteUsers.id `in` userIds)
-                })
-            .fetchAll()
-
-    fun selectRoleLabelWhereEqUserSubQuery(userId: Int) =
-        (sqlClient select SqliteRoles.label and SqliteRoles.id
-                from SqliteRoles
-                where SqliteRoles.id eq
-                {
-                    (this select SqliteUsers.roleId
-                            from SqliteUsers
-                            where SqliteUsers.id eq userId)
-                })
-            .fetchOne()
-
-    fun selectRoleLabelAndEqUserSubQuery(userId: Int) =
-        (sqlClient select SqliteRoles.label and SqliteRoles.id
-                from SqliteRoles
-                where SqliteRoles.id notEq 0
-                and SqliteRoles.id eq
-                {
-                    (this select SqliteUsers.roleId
-                            from SqliteUsers
-                            where SqliteUsers.id eq userId)
-                })
-            .fetchOne()
-
-    fun selectRoleLabelWhereInUserSubQuery(userIds: List<Int>) =
-        (sqlClient select SqliteRoles.label and SqliteRoles.id
-                from SqliteRoles
-                where SqliteRoles.id `in`
-                {
-                    (this select SqliteUsers.roleId
-                            from SqliteUsers
-                            where SqliteUsers.id `in` userIds)
-                })
-            .fetchAll()
-
-    fun selectCaseWhenExistsSubQuery(userIds: List<Int>) =
-        (sqlClient selectDistinct SqliteRoles.label
-                andCaseWhenExists {
-            (this select SqliteUsers.id
-                    from SqliteUsers
-                    where SqliteUsers.roleId eq SqliteRoles.id
-                    and SqliteUsers.id `in` userIds)
-        } then true `else` false
-                from SqliteRoles)
-            .fetchAll()
-
-    fun selectOrderByCaseWhenExistsSubQuery(userIds: List<Int>) =
-        (sqlClient select SqliteRoles.label
-                from SqliteRoles
-                orderByDescCaseWhenExists {
-            (this select SqliteUsers.id
-                    from SqliteUsers
-                    where SqliteUsers.roleId eq SqliteRoles.id
-                    and SqliteUsers.id `in` userIds)
-        } then true `else` false
-                andAsc SqliteRoles.label)
-            .fetchAll()
-}
+) : SubQueryRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+    sqLiteOpenHelper.sqlClient(tables),
+    SqliteRoles,
+    SqliteUsers,
+    SqliteUserRoles
+)

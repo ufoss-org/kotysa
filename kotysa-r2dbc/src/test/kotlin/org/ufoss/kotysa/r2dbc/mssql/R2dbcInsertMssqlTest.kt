@@ -14,8 +14,6 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Order(3)
 class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
@@ -25,7 +23,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
     fun `Verify insertCustomer works correctly`() = runTest {
         assertThat(repository.selectAllCustomers().toList())
             .isEmpty()
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers().toList())
@@ -37,7 +35,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 
     @Test
     fun `Verify insertCustomers works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomers()
             assertThat(repository.selectAllCustomers().toList())
@@ -47,7 +45,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 
     @Test
     fun `Verify insertAndReturnCustomers works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnCustomers().toList())
                 .containsExactly(customerUSA1, customerUSA2)
@@ -55,30 +53,8 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
     }
 
     @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() = runTest {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.insertAndReturnAllTypesDefaultValues())
-                .isEqualTo(
-                    AllTypesNullableDefaultValueEntity(
-                        allTypesNullableDefaultValueWithTime.id,
-                        "default",
-                        LocalDate.of(2019, 11, 4),
-                        kotlinx.datetime.LocalDate(2019, 11, 6),
-                        LocalDateTime.of(2018, 11, 4, 0, 0),
-                        LocalDateTime.of(2019, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                        42,
-                        84L
-                    )
-                )
-        }
-    }
-
-    @Test
     fun `Verify insertAndReturnInt auto-generated works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(intWithNullable)
             assertThat(inserted.intNotNull).isEqualTo(intWithNullable.intNotNull)
@@ -89,7 +65,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 
     @Test
     fun `Verify insertAndReturnInt not auto-generated works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(IntEntity(1, 2, 666))
             assertThat(inserted.intNotNull).isEqualTo(1)
@@ -100,7 +76,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 
     @Test
     fun `Verify insertAndReturnLongs works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             val longs = repository.insertAndReturnLongs().toList()
             var inserted = longs[0]
@@ -120,7 +96,7 @@ class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
             .isEmpty()
         assertThatThrownBy {
             runBlocking {
-                operator.transactional {
+                coOperator.transactional {
                     repository.insertDupCustomers()
                 }
             }
@@ -143,7 +119,6 @@ class RepositoryMssqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
         sqlClient createTableIfNotExists MssqlInts
         sqlClient createTableIfNotExists MssqlLongs
         sqlClient createTableIfNotExists MssqlCustomers
-        sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -157,8 +132,6 @@ class RepositoryMssqlInsert(private val sqlClient: R2dbcSqlClient) : Repository 
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    suspend fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValue
 
     suspend fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

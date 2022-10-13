@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.r2dbc.mariadb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
@@ -50,7 +50,7 @@ class R2dbcSelectLimitOffsetMariadbTest : AbstractR2dbcMariadbTest<LimitOffsetRe
     }
 }
 
-class LimitOffsetRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractCustomerRepositoryMariadb(sqlClient) {
+class LimitOffsetRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMariadb(sqlClient) {
 
     fun selectAllOrderByIdOffset() =
             (sqlClient selectFrom MariadbCustomers

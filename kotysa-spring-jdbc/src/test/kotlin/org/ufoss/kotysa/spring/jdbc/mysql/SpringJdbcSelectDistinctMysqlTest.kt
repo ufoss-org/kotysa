@@ -4,15 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
+import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-
-class SpringJdbcSelectDistinctMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectDistinct>() {
+class SpringJdbcSelectDistinctMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelectDistinct>(),
+    SelectDistinctTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositorySpringJdbcMysqlSelectDistinct,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -22,20 +28,12 @@ class SpringJdbcSelectDistinctMysqlTest : AbstractSpringJdbcMysqlTest<UserReposi
     override val repository: UserRepositorySpringJdbcMysqlSelectDistinct by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositorySpringJdbcMysqlSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMysql(client) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MysqlRoles.label
-                    from MysqlRoles
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcMysqlSelectDistinct(client: JdbcOperations) :
+    SelectDistinctRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        client.sqlClient(mysqlTables),
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    )

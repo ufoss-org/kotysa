@@ -4,39 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MssqlCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class JdbcSelectOrderByMssqlTest : AbstractJdbcMssqlTest<OrderByRepositoryMssqlSelect>() {
+class JdbcSelectOrderByMssqlTest : AbstractJdbcMssqlTest<OrderByRepositoryMssqlSelect>(),
+    SelectOrderByTest<MssqlCustomers, OrderByRepositoryMssqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryMssqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcMssql(sqlClient) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.age andAsc MssqlCustomers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryMssqlSelect(sqlClient: JdbcSqlClient) :
+    SelectOrderByRepository<MssqlCustomers>(sqlClient, MssqlCustomers)

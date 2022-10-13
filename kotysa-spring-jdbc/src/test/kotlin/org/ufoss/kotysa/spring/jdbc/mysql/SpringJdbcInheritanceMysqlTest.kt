@@ -4,16 +4,19 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlInheriteds
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.InheritanceRepository
+import org.ufoss.kotysa.test.repositories.blocking.InheritanceTest
 
-
-class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMysqlRepository>() {
+class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMysqlRepository>(),
+    InheritanceTest<MysqlInheriteds, InheritanceMysqlRepository, SpringJdbcTransaction> {
+    override val table = MysqlInheriteds
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,80 +26,7 @@ class SpringJdbcInheritanceMysqlTest : AbstractSpringJdbcMysqlTest<InheritanceMy
     override val repository: InheritanceMysqlRepository by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectInheritedById finds inherited`() {
-        assertThat(repository.selectInheritedById("id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(MysqlInheriteds, "id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(MysqlInheriteds, "name"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify deleteById deletes inherited`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteById(MysqlInheriteds, "id"))
-                    .isEqualTo(1)
-            assertThat(repository.selectAll())
-                    .isEmpty()
-        }
-    }
 }
 
-
-class InheritanceMysqlRepository(client: JdbcOperations) : Repository {
-
-    val sqlClient = client.sqlClient(mysqlTables)
-
-    override fun init() {
-        createTable()
-        insert()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTable() {
-        sqlClient createTable MysqlInheriteds
-    }
-
-    fun insert() {
-        sqlClient insert inherited
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom MysqlInheriteds
-
-    fun selectAll() = sqlClient selectAllFrom MysqlInheriteds
-
-    fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MysqlInheriteds
-                    where MysqlInheriteds.id eq id
-                    ).fetchOne()
-
-    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
-            (sqlClient selectFrom table
-                    where table.id eq id
-                    ).fetchOne()
-
-    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
-            (sqlClient selectFrom table
-                    where table.name eq name
-                    ).fetchFirst()
-
-    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
-            (sqlClient deleteFrom table
-                    where table.id eq id
-                    ).execute()
-}
+class InheritanceMysqlRepository(client: JdbcOperations) :
+    InheritanceRepository<MysqlInheriteds>(client.sqlClient(mysqlTables), MysqlInheriteds)

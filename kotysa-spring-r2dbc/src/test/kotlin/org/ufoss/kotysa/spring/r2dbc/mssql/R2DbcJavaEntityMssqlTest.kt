@@ -6,17 +6,17 @@ package org.ufoss.kotysa.spring.r2dbc.mssql
 
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.R2dbcJavaEntityTest
-import org.ufoss.kotysa.spring.r2dbc.R2dbcJavaUserRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorJavaEntityTest
+import org.ufoss.kotysa.test.repositories.reactor.ReactorJavaUserRepository
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.MssqlJavaUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
 
-
 class R2DbcJavaEntityMssqlTest :
         AbstractR2dbcMssqlTest<JavaUserMssqlRepository>(),
-    R2dbcJavaEntityTest<MssqlJavaUsers, JavaUserMssqlRepository> {
+    ReactorJavaEntityTest<MssqlJavaUsers, JavaUserMssqlRepository, ReactorTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -30,4 +30,4 @@ class R2DbcJavaEntityMssqlTest :
 
 
 class JavaUserMssqlRepository(client: DatabaseClient)
-    : R2dbcJavaUserRepository<MssqlJavaUsers>(client.sqlClient(mssqlTables), MssqlJavaUsers)
+    : ReactorJavaUserRepository<MssqlJavaUsers>(client.sqlClient(mssqlTables), MssqlJavaUsers)

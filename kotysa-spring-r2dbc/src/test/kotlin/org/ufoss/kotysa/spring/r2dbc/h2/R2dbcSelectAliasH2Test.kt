@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectAliasH2Test : AbstractR2dbcH2Test<UserRepositorySelectAlias>() {

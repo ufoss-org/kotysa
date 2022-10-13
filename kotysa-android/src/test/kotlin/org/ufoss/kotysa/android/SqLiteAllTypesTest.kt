@@ -96,6 +96,31 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                 .containsExactlyInAnyOrder(allTypesNotNullWithTime)
         }
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        val operator = client.transactionalOp()
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.insertAndReturnAllTypesDefaultValues())
+                .isEqualTo(
+                    AllTypesNullableDefaultValueWithTimeEntity(
+                        allTypesNullableDefaultValueWithTimeToInsert.id,
+                        "default",
+                        LocalDate.of(2019, 11, 4),
+                        LocalDate(2019, 11, 6),
+                        LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
+                        LocalDateTime(2018, 11, 4, 0, 0),
+                        LocalDateTime(2019, 11, 4, 0, 0),
+                        42,
+                        84L,
+                        LocalTime.of(11, 25, 55),
+                        LocalTime(11, 25, 55),
+                    )
+                )
+        }
+    }
 }
 
 class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
@@ -142,14 +167,14 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTable
                 set SqliteAllTypesNotNullWithTimes.boolean eq newBoolean
                 set SqliteAllTypesNotNullWithTimes.localDate eq newLocalDate
                 set SqliteAllTypesNotNullWithTimes.kotlinxLocalDate eq newKotlinxLocalDate
-                set SqliteAllTypesNotNullWithTimes.localTime eq newLocalTime
-                set SqliteAllTypesNotNullWithTimes.kotlinxLocalTime eq newKotlinxLocalTime
+                set SqliteAllTypesNotNullWithTimes.localTim eq newLocalTime
+                set SqliteAllTypesNotNullWithTimes.kotlinxLocalTim eq newKotlinxLocalTime
                 set SqliteAllTypesNotNullWithTimes.localDateTime1 eq newLocalDateTime
                 set SqliteAllTypesNotNullWithTimes.localDateTime2 eq newLocalDateTime
                 set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
                 set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                set SqliteAllTypesNotNullWithTimes.int eq newInt
-                set SqliteAllTypesNotNullWithTimes.long eq newLong
+                set SqliteAllTypesNotNullWithTimes.inte eq newInt
+                set SqliteAllTypesNotNullWithTimes.longe eq newLong
                 set SqliteAllTypesNotNullWithTimes.byteArray eq newByteArray
                 where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
@@ -160,15 +185,17 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTable
                 set SqliteAllTypesNotNullWithTimes.boolean eq SqliteAllTypesNotNullWithTimes.boolean
                 set SqliteAllTypesNotNullWithTimes.localDate eq SqliteAllTypesNotNullWithTimes.localDate
                 set SqliteAllTypesNotNullWithTimes.kotlinxLocalDate eq SqliteAllTypesNotNullWithTimes.kotlinxLocalDate
-                set SqliteAllTypesNotNullWithTimes.localTime eq SqliteAllTypesNotNullWithTimes.localTime
-                set SqliteAllTypesNotNullWithTimes.kotlinxLocalTime eq SqliteAllTypesNotNullWithTimes.kotlinxLocalTime
+                set SqliteAllTypesNotNullWithTimes.localTim eq SqliteAllTypesNotNullWithTimes.localTim
+                set SqliteAllTypesNotNullWithTimes.kotlinxLocalTim eq SqliteAllTypesNotNullWithTimes.kotlinxLocalTim
                 set SqliteAllTypesNotNullWithTimes.localDateTime1 eq SqliteAllTypesNotNullWithTimes.localDateTime1
                 set SqliteAllTypesNotNullWithTimes.localDateTime2 eq SqliteAllTypesNotNullWithTimes.localDateTime2
                 set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime1 eq SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime1
                 set SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime2 eq SqliteAllTypesNotNullWithTimes.kotlinxLocalDateTime2
-                set SqliteAllTypesNotNullWithTimes.int eq SqliteAllTypesNotNullWithTimes.int
-                set SqliteAllTypesNotNullWithTimes.long eq SqliteAllTypesNotNullWithTimes.long
+                set SqliteAllTypesNotNullWithTimes.inte eq SqliteAllTypesNotNullWithTimes.inte
+                set SqliteAllTypesNotNullWithTimes.longe eq SqliteAllTypesNotNullWithTimes.longe
                 set SqliteAllTypesNotNullWithTimes.byteArray eq SqliteAllTypesNotNullWithTimes.byteArray
                 where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTimeToInsert
 }

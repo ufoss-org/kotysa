@@ -4,15 +4,22 @@
 
 package org.ufoss.kotysa.spring.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MariadbRoles
+import org.ufoss.kotysa.test.MariadbUserRoles
+import org.ufoss.kotysa.test.MariadbUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mariadbTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-
-class SpringJdbcSelectDistinctMariadbTest : AbstractSpringJdbcMariadbTest<UserRepositorySpringJdbcMariadbSelectDistinct>() {
+class SpringJdbcSelectDistinctMariadbTest :
+    AbstractSpringJdbcMariadbTest<UserRepositorySpringJdbcMariadbSelectDistinct>(),
+    SelectDistinctTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositorySpringJdbcMariadbSelectDistinct,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -22,20 +29,12 @@ class SpringJdbcSelectDistinctMariadbTest : AbstractSpringJdbcMariadbTest<UserRe
     override val repository: UserRepositorySpringJdbcMariadbSelectDistinct by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositorySpringJdbcMariadbSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMariadb(client) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MariadbRoles.label
-                    from MariadbRoles
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcMariadbSelectDistinct(client: JdbcOperations) :
+    SelectDistinctRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        client.sqlClient(mariadbTables),
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    )

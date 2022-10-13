@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 

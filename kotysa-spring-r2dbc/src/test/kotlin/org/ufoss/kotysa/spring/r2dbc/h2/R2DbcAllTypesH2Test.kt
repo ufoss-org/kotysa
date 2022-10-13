@@ -11,7 +11,7 @@ import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.transaction.reactive.TransactionalOperator
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactional
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
@@ -108,6 +108,34 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
             .expectNext(h2AllTypesNotNull)
             .verifyComplete()
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnAllTypesDefaultValues()
+        }.test()
+            .expectNext(
+                H2AllTypesNullableDefaultValueEntity(
+                    h2AllTypesNullableDefaultValueToInsert.id,
+                    "default",
+                    LocalDate.of(2019, 11, 4),
+                    kotlinx.datetime.LocalDate(2019, 11, 6),
+                    LocalTime.of(11, 25, 55, 123456789),
+                    kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
+                    LocalDateTime.of(2018, 11, 4, 0, 0),
+                    LocalDateTime.of(2019, 11, 4, 0, 0),
+                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                    42,
+                    84L,
+                    OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
+                    UUID.fromString(defaultUuid),
+                )
+            )
+            .verifyComplete()
+    }
 }
 
 
@@ -166,8 +194,8 @@ class AllTypesRepositoryH2(
                 set H2AllTypesNotNulls.localDateTime2 eq newLocalDateTime
                 set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
                 set H2AllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                set H2AllTypesNotNulls.int eq newInt
-                set H2AllTypesNotNulls.long eq newLong
+                set H2AllTypesNotNulls.inte eq newInt
+                set H2AllTypesNotNulls.longe eq newLong
                 set H2AllTypesNotNulls.byteArray eq newByteArray
                 set H2AllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set H2AllTypesNotNulls.uuid eq newUuid
@@ -186,11 +214,13 @@ class AllTypesRepositoryH2(
                 set H2AllTypesNotNulls.localDateTime2 eq H2AllTypesNotNulls.localDateTime2
                 set H2AllTypesNotNulls.kotlinxLocalDateTime1 eq H2AllTypesNotNulls.kotlinxLocalDateTime1
                 set H2AllTypesNotNulls.kotlinxLocalDateTime2 eq H2AllTypesNotNulls.kotlinxLocalDateTime2
-                set H2AllTypesNotNulls.int eq H2AllTypesNotNulls.int
-                set H2AllTypesNotNulls.long eq H2AllTypesNotNulls.long
+                set H2AllTypesNotNulls.inte eq H2AllTypesNotNulls.inte
+                set H2AllTypesNotNulls.longe eq H2AllTypesNotNulls.longe
                 set H2AllTypesNotNulls.byteArray eq H2AllTypesNotNulls.byteArray
                 set H2AllTypesNotNulls.offsetDateTime eq H2AllTypesNotNulls.offsetDateTime
                 set H2AllTypesNotNulls.uuid eq H2AllTypesNotNulls.uuid
                 where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn h2AllTypesNullableDefaultValueToInsert
 }

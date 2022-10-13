@@ -6,16 +6,16 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.mssql
 
 import org.ufoss.kotysa.test.MssqlJavaUsers
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxJavaEntityTest
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxJavaUserRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyJavaEntityTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyJavaUserRepository
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientJavaEntityMssqlTest : AbstractVertxSqlClientMssqlTest<JavaUserMssqlRepository>(),
-    VertxJavaEntityTest<MssqlJavaUsers, JavaUserMssqlRepository> {
+    MutinyJavaEntityTest<MssqlJavaUsers, JavaUserMssqlRepository> {
 
     override fun instantiateRepository(sqlClient: VertxSqlClient) = JavaUserMssqlRepository(sqlClient)
 }
 
 
 class JavaUserMssqlRepository(sqlClient: MutinySqlClient) :
-    VertxJavaUserRepository<MssqlJavaUsers>(sqlClient, MssqlJavaUsers)
+    MutinyJavaUserRepository<MssqlJavaUsers>(sqlClient, MssqlJavaUsers)

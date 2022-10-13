@@ -8,8 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcTransactionalMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositoryJdbcMssqldbTransactional>() {
 
@@ -33,6 +35,10 @@ class SpringJdbcTransactionalMssqlTest : AbstractSpringJdbcMssqlTest<UserReposit
     }
 }
 
-
-class UserRepositoryJdbcMssqldbTransactional(sqlClient: JdbcOperations)
-    : AbstractUserRepositorySpringJdbcMssql(sqlClient)
+class UserRepositoryJdbcMssqldbTransactional(client: JdbcOperations) :
+    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        client.sqlClient(mssqlTables),
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )

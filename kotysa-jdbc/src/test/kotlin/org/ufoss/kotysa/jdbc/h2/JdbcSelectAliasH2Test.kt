@@ -4,14 +4,15 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.h2.jdbc.JdbcSQLSyntaxErrorException
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
@@ -161,7 +162,8 @@ class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
+    AbstractUserRepository<H2Roles, H2Users, H2UserRoles>(sqlClient, H2Roles, H2Users, H2UserRoles) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select H2Users.firstname `as` "fna"

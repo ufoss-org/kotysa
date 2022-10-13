@@ -15,32 +15,32 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-object MysqlRoles : MysqlTable<RoleEntity>("roles") {
-    val id = integer(RoleEntity::id)
+object MysqlRoles : MysqlTable<RoleEntity>("roles"), Roles {
+    override val id = integer(RoleEntity::id)
         .primaryKey()
-    val label = varchar(RoleEntity::label)
+    override val label = varchar(RoleEntity::label)
         .unique()
 }
 
-object MysqlUsers : MysqlTable<UserEntity>("users") {
-    val id = integer(UserEntity::id, "PK_users")
+object MysqlUsers : MysqlTable<UserEntity>("users"), Users {
+    override val id = integer(UserEntity::id, "PK_users")
         .primaryKey()
-    val firstname = varchar(UserEntity::firstname, "fname")
-    val lastname = varchar(UserEntity::lastname, "lname")
-    val isAdmin = boolean(UserEntity::isAdmin)
-    val roleId = integer(UserEntity::roleId)
+    override val firstname = varchar(UserEntity::firstname, "fname")
+    override val lastname = varchar(UserEntity::lastname, "lname")
+    override val isAdmin = boolean(UserEntity::isAdmin)
+    override val roleId = integer(UserEntity::roleId)
         .foreignKey(MysqlRoles.id, "FK_users_roles")
-    val alias = varchar(UserEntity::alias)
+    override val alias = varchar(UserEntity::alias)
 
     init {
         index(setOf(firstname, lastname), indexName = "full_name_index")
     }
 }
 
-object MysqlUserRoles : MysqlTable<UserRoleEntity>("userRoles") {
-    val userId = integer(UserRoleEntity::userId)
+object MysqlUserRoles : MysqlTable<UserRoleEntity>("userRoles"), UserRoles {
+    override val userId = integer(UserRoleEntity::userId)
         .foreignKey(MysqlUsers.id)
-    val roleId = integer(UserRoleEntity::roleId)
+    override val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(MysqlRoles.id)
 
     init {
@@ -252,7 +252,8 @@ object MysqlAllTypesNullables : MysqlTable<AllTypesNullableEntity>("all_types_nu
     val byteArray = binary(AllTypesNullableEntity::byteArray)
 }
 
-object MysqlAllTypesNullableWithTimes : MysqlTable<AllTypesNullableWithTimeEntity>("all_types_nullable_with_types") {
+object MysqlAllTypesNullableWithTimes :
+    MysqlTable<AllTypesNullableWithTimeEntity>("all_types_nullable_with_types") {
     val id = integer(AllTypesNullableWithTimeEntity::id)
         .primaryKey()
     val string = varchar(AllTypesNullableWithTimeEntity::string)
@@ -341,70 +342,70 @@ object MysqlAllTypesNullableDefaultValueWithTimes : MysqlTable<AllTypesNullableD
     val longe = bigInt(AllTypesNullableDefaultValueWithTimeEntity::long, defaultValue = 84L)
 }
 
-object MysqlLocalDates : MysqlTable<LocalDateEntity>() {
-    val id = integer(LocalDateEntity::id)
+object MysqlLocalDates : MysqlTable<LocalDateEntity>(), LocalDates {
+    override val id = integer(LocalDateEntity::id)
         .primaryKey()
-    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
-    val localDateNullable = date(LocalDateEntity::localDateNullable)
+    override val localDateNotNull = date(LocalDateEntity::localDateNotNull)
+    override val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object MysqlKotlinxLocalDates : MysqlTable<KotlinxLocalDateEntity>() {
-    val id = integer(KotlinxLocalDateEntity::id)
+object MysqlKotlinxLocalDates : MysqlTable<KotlinxLocalDateEntity>(), KotlinxLocalDates {
+    override val id = integer(KotlinxLocalDateEntity::id)
         .primaryKey()
-    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
-    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
+    override val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
+    override val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object MysqlLocalDateTimes : MysqlTable<LocalDateTimeEntity>() {
-    val id = integer(LocalDateTimeEntity::id)
+object MysqlLocalDateTimes : MysqlTable<LocalDateTimeEntity>(), LocalDateTimes {
+    override val id = integer(LocalDateTimeEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MysqlKotlinxLocalDateTimes : MysqlTable<KotlinxLocalDateTimeEntity>() {
-    val id = integer(KotlinxLocalDateTimeEntity::id)
+object MysqlKotlinxLocalDateTimes : MysqlTable<KotlinxLocalDateTimeEntity>(), KotlinxLocalDateTimes {
+    override val id = integer(KotlinxLocalDateTimeEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MysqlLocalTimes : MysqlTable<LocalTimeEntity>() {
-    val id = integer(LocalTimeEntity::id)
+object MysqlLocalTimes : MysqlTable<LocalTimeEntity>(), LocalTimes {
+    override val id = integer(LocalTimeEntity::id)
         .primaryKey()
-    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+    override val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
+    override val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
-object MysqlKotlinxLocalTimes : MysqlTable<KotlinxLocalTimeEntity>() {
-    val id = integer(KotlinxLocalTimeEntity::id)
+object MysqlKotlinxLocalTimes : MysqlTable<KotlinxLocalTimeEntity>(), KotlinxLocalTimes {
+    override val id = integer(KotlinxLocalTimeEntity::id)
         .primaryKey()
-    val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
+    override val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
+    override val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
 }
 
-object MysqlInts : MysqlTable<IntEntity>() {
-    val id = autoIncrementInteger(IntEntity::id)
+object MysqlInts : MysqlTable<IntEntity>(), Ints {
+    override val id = autoIncrementInteger(IntEntity::id)
         .primaryKey()
-    val intNotNull = integer(IntEntity::intNotNull)
-    val intNullable = integer(IntEntity::intNullable)
+    override val intNotNull = integer(IntEntity::intNotNull)
+    override val intNullable = integer(IntEntity::intNullable)
 }
 
-object MysqlLongs : MysqlTable<LongEntity>() {
-    val id = autoIncrementBigInt(LongEntity::id)
+object MysqlLongs : MysqlTable<LongEntity>(), Longs {
+    override val id = autoIncrementBigInt(LongEntity::id)
         .primaryKey()
-    val longNotNull = bigInt(LongEntity::longNotNull)
-    val longNullable = bigInt(LongEntity::longNullable)
+    override val longNotNull = bigInt(LongEntity::longNotNull)
+    override val longNullable = bigInt(LongEntity::longNullable)
 }
 
-object MysqlInheriteds : MysqlTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object MysqlInheriteds : MysqlTable<Inherited>(), Entities<Inherited>, Nameables<Inherited>, Inheriteds {
     override val id = varchar(Inherited::getId)
         .primaryKey()
     override val name = varchar(Inherited::name)
-    val firstname = varchar(Inherited::firstname)
+    override val firstname = varchar(Inherited::firstname)
 }
 
-object MysqlJavaUsers : MysqlTable<JavaUser>("java_users"), JAVA_USER {
+object MysqlJavaUsers : MysqlTable<JavaUser>("java_users"), JavaUsers {
     override val login = varchar(JavaUser::getLogin)
         .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -415,55 +416,55 @@ object MysqlJavaUsers : MysqlTable<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-object MysqlCustomers : MysqlTable<CustomerEntity>() {
-    val id = integer(CustomerEntity::id)
+object MysqlCustomers : MysqlTable<CustomerEntity>(), Customers {
+    override val id = integer(CustomerEntity::id)
         .primaryKey()
-    val name = varchar(CustomerEntity::name)
+    override val name = varchar(CustomerEntity::name)
         .unique()
-    val country = varchar(CustomerEntity::country)
-    val age = integer(CustomerEntity::age)
+    override val country = varchar(CustomerEntity::country)
+    override val age = integer(CustomerEntity::age)
 }
 
-object MysqlTinyTexts : MysqlTable<StringAsTinyTextEntity>() {
-    val id = integer(StringAsTinyTextEntity::id)
+object MysqlTinyTexts : MysqlTable<StringAsTinyTextEntity>(), TinyTexts {
+    override val id = integer(StringAsTinyTextEntity::id)
         .primaryKey()
-    val stringNotNull = tinyText(StringAsTinyTextEntity::stringNotNull)
-    val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
+    override val stringNotNull = tinyText(StringAsTinyTextEntity::stringNotNull)
+    override val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
 }
 
-object MysqlTexts : MysqlTable<StringAsTextEntity>() {
-    val id = integer(StringAsTextEntity::id)
+object MysqlTexts : MysqlTable<StringAsTextEntity>(), Texts {
+    override val id = integer(StringAsTextEntity::id)
         .primaryKey()
-    val stringNotNull = text(StringAsTextEntity::stringNotNull)
-    val stringNullable = text(StringAsTextEntity::stringNullable)
+    override val stringNotNull = text(StringAsTextEntity::stringNotNull)
+    override val stringNullable = text(StringAsTextEntity::stringNullable)
 }
 
-object MysqlMediumTexts : MysqlTable<StringAsMediumTextEntity>() {
-    val id = integer(StringAsMediumTextEntity::id)
+object MysqlMediumTexts : MysqlTable<StringAsMediumTextEntity>(), MediumTexts {
+    override val id = integer(StringAsMediumTextEntity::id)
         .primaryKey()
-    val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
-    val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
+    override val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
+    override val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
 }
 
-object MysqlLongTexts : MysqlTable<StringAsLongTextEntity>() {
-    val id = integer(StringAsLongTextEntity::id)
+object MysqlLongTexts : MysqlTable<StringAsLongTextEntity>(), LongTexts {
+    override val id = integer(StringAsLongTextEntity::id)
         .primaryKey()
-    val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
-    val stringNullable = longText(StringAsLongTextEntity::stringNullable)
+    override val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
+    override val stringNullable = longText(StringAsLongTextEntity::stringNullable)
 }
 
-object MysqlByteArrays : MysqlTable<ByteArrayEntity>() {
-    val id = integer(ByteArrayEntity::id)
+object MysqlByteArrays : MysqlTable<ByteArrayEntity>(), ByteArrays {
+    override val id = integer(ByteArrayEntity::id)
         .primaryKey()
-    val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
-    val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
+    override val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
+    override val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
 }
 
-object MysqlByteArrayAsBinarys : MysqlTable<ByteArrayAsBinaryEntity>() {
-    val id = integer(ByteArrayAsBinaryEntity::id)
+object MysqlByteArrayAsBinaries : MysqlTable<ByteArrayAsBinaryEntity>(), ByteArrayAsBinaries {
+    override val id = integer(ByteArrayAsBinaryEntity::id)
         .primaryKey()
-    val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
-    val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
+    override val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
+    override val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
 }
 
 val mysqlTables = tables().mysql(
@@ -492,5 +493,5 @@ val mysqlTables = tables().mysql(
     MysqlMediumTexts,
     MysqlLongTexts,
     MysqlByteArrays,
-    MysqlByteArrayAsBinarys,
+    MysqlByteArrayAsBinaries,
 )

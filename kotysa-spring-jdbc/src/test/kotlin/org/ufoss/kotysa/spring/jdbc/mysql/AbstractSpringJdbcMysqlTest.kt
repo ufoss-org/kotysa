@@ -23,7 +23,7 @@ import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.repositories.RepositoryTest
+import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 
 
 @ExtendWith(MySqlContainerExecutionHook::class)

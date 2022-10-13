@@ -4,66 +4,25 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MssqlCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetTest
 
-class JdbcSelectLimitOffsetMssqlTest : AbstractJdbcMssqlTest<LimitOffsetByRepositoryMssqlSelect>() {
+class JdbcSelectLimitOffsetMssqlTest : AbstractJdbcMssqlTest<LimitOffsetByRepositoryMssqlSelect>(),
+    SelectLimitOffsetTest<MssqlCustomers, LimitOffsetByRepositoryMssqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = LimitOffsetByRepositoryMssqlSelect(sqlClient)
 
     @Test
-    fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
-        assertThat(repository.selectAllOrderByIdOffset())
-                .hasSize(1)
-                .containsExactly(customerUSA2)
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimit returns customerUSA2`() {
-        assertThat(repository.selectAllOrderByIdLimit())
-                .hasSize(1)
-                .containsExactly(customerFrance)
-    }
-
-    @Test
-    fun `Verify selectAllLimitOffset throw exception`() {
-        assertThatThrownBy { repository.selectAllLimitOffset() }
-                .isInstanceOf(IllegalArgumentException::class.java)
-                .hasMessage("Mssql offset or limit must have order by")
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1`() {
-        assertThat(repository.selectAllOrderByIdLimitOffset())
-                .hasSize(2)
-                .containsExactly(customerUSA1, customerUSA2)
+    override fun `Verify selectAllLimitOffset returns one result`() {
+        assertThatThrownBy { super.`Verify selectAllLimitOffset returns one result`() }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("Mssql offset or limit must have order by")
     }
 }
 
-class LimitOffsetByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcMssql(sqlClient) {
-
-    fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.id
-                    offset 2
-                    ).fetchAll()
-
-    fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.id
-                    limit 1
-                    ).fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom MssqlCustomers
-                    limit 1 offset 1
-                    ).fetchAll()
-
-    fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.id
-                    limit 2 offset 1
-                    ).fetchAll()
-}
+class LimitOffsetByRepositoryMssqlSelect(sqlClient: JdbcSqlClient) :
+    SelectLimitOffsetRepository<MssqlCustomers>(sqlClient, MssqlCustomers)

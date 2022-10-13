@@ -5,31 +5,25 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
+import org.ufoss.kotysa.test.SqliteCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class SqLiteSelectGroupByTest : AbstractSqLiteTest<GroupByRepositorySelect>() {
+class SqLiteSelectGroupByTest : AbstractSqLiteTest<GroupByRepositorySelect>(),
+    SelectGroupByTest<SqliteCustomers, GroupByRepositorySelect, AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = GroupByRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
+    fun `Verify selectCountCustomerGroupByCountry counts and group - Android`() {
+        `Verify selectCountCustomerGroupByCountry counts and group`()
     }
 }
 
 class GroupByRepositorySelect(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: SqLiteTables,
-) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount SqliteCustomers.id and SqliteCustomers.country
-                    from SqliteCustomers
-                    groupBy SqliteCustomers.country
-                    ).fetchAll()
-}
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: SqLiteTables,
+) : SelectGroupByRepository<SqliteCustomers>(sqLiteOpenHelper.sqlClient(tables), SqliteCustomers)

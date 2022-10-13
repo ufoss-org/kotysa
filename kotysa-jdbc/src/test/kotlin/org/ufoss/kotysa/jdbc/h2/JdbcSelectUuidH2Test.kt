@@ -4,110 +4,15 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
-import java.util.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.H2Uuids
+import org.ufoss.kotysa.test.repositories.blocking.SelectUuidRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectUuidTest
 
-
-class JdbcSelectUuidH2Test : AbstractJdbcH2Test<UuidRepositoryH2Select>() {
+class JdbcSelectUuidH2Test : AbstractJdbcH2Test<UuidRepositoryH2Select>(),
+    SelectUuidTest<H2Uuids, UuidRepositoryH2Select, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UuidRepositoryH2Select(sqlClient)
-
-    @Test
-    fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {
-        assertThat(repository.selectAllByUuidIdNotNull(uuidWithNullable.uuidNotNull))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(uuidWithNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByUuidNotNullNotEq finds uuidWithoutNullable`() {
-        assertThat(repository.selectAllByUuidNotNullNotEq(uuidWithNullable.uuidNotNull))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(uuidWithoutNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByUuidNotNullIn finds both`() {
-        val seq = sequenceOf(uuidWithNullable.id, uuidWithoutNullable.id)
-        assertThat(repository.selectAllByUuidNotNullIn(seq))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(uuidWithNullable, uuidWithoutNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByUuidNullable finds uuidWithNullable`() {
-        assertThat(repository.selectAllByUuidNullable(uuidWithNullable.uuidNullable))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(uuidWithNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByUuidNullable finds uuidWithoutNullable`() {
-        assertThat(repository.selectAllByUuidNullable(null))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(uuidWithoutNullable)
-    }
-
-    @Test
-    fun `Verify selectAllByUuidNullableNotEq finds uuidWithoutNullable`() {
-        assertThat(repository.selectAllByUuidNullableNotEq(uuidWithNullable.uuidNullable))
-                .isEmpty()
-    }
-
-    @Test
-    fun `Verify selectAllByUuidNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByUuidNullableNotEq(null))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(uuidWithNullable)
-    }
 }
 
-
-class UuidRepositoryH2Select(private val sqlClient: JdbcSqlClient) : Repository {
-
-    override fun init() {
-        createTables()
-        insertUuids()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable H2Uuids
-    }
-
-    private fun insertUuids() {
-        sqlClient.insert(uuidWithNullable, uuidWithoutNullable)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom H2Uuids
-
-    fun selectAllByUuidIdNotNull(uuid: UUID) =
-            (sqlClient selectFrom H2Uuids
-                    where H2Uuids.uuidNotNull eq uuid
-                    ).fetchAll()
-
-    fun selectAllByUuidNotNullNotEq(uuid: UUID) =
-            (sqlClient selectFrom H2Uuids
-                    where H2Uuids.uuidNotNull notEq uuid
-                    ).fetchAll()
-
-    fun selectAllByUuidNotNullIn(uuids: Sequence<UUID>) =
-            (sqlClient selectFrom H2Uuids
-                    where H2Uuids.id `in` uuids
-                    ).fetchAll()
-
-    fun selectAllByUuidNullable(uuid: UUID?) =
-            (sqlClient selectFrom H2Uuids
-                    where H2Uuids.uuidNullable eq uuid
-                    ).fetchAll()
-
-    fun selectAllByUuidNullableNotEq(uuid: UUID?) =
-            (sqlClient selectFrom H2Uuids
-                    where H2Uuids.uuidNullable notEq uuid
-                    ).fetchAll()
-}
+class UuidRepositoryH2Select(sqlClient: JdbcSqlClient) : SelectUuidRepository<H2Uuids>(sqlClient, H2Uuids)

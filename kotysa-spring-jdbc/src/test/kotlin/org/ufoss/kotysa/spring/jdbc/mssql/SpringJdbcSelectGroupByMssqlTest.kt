@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MssqlCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class SpringJdbcSelectGroupByMssqlTest : AbstractSpringJdbcMssqlTest<GroupByRepositoryMssqlSelect>() {
+class SpringJdbcSelectGroupByMssqlTest : AbstractSpringJdbcMssqlTest<GroupByRepositoryMssqlSelect>(),
+    SelectGroupByTest<MssqlCustomers, GroupByRepositoryMssqlSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,20 +25,7 @@ class SpringJdbcSelectGroupByMssqlTest : AbstractSpringJdbcMssqlTest<GroupByRepo
     override val repository: GroupByRepositoryMssqlSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MssqlCustomers.id and MssqlCustomers.country
-                    from MssqlCustomers
-                    groupBy MssqlCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryMssqlSelect(client: JdbcOperations) :
+    SelectGroupByRepository<MssqlCustomers>(client.sqlClient(mssqlTables), MssqlCustomers)

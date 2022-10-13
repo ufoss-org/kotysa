@@ -9,8 +9,8 @@ import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.H2JavaUsers
 import org.ufoss.kotysa.test.h2Tables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
-import org.ufoss.kotysa.test.repositories.JavaUserRepository
+import org.ufoss.kotysa.test.repositories.blocking.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.blocking.JavaUserRepository
 
 
 class SpringJdbcJavaEntityH2Test :

@@ -7,8 +7,8 @@ package org.ufoss.kotysa.jdbc.postgresql
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlJavaUsers
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
-import org.ufoss.kotysa.test.repositories.JavaUserRepository
+import org.ufoss.kotysa.test.repositories.blocking.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.blocking.JavaUserRepository
 
 class JdbcJavaEntityPostgresqlTest : AbstractJdbcPostgresqlTest<JavaUserPostgresqlRepository>(),
     JavaEntityTest<PostgresqlJavaUsers, JavaUserPostgresqlRepository, JdbcTransaction> {

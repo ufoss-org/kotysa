@@ -102,6 +102,30 @@ class SpringJdbcAllTypesMariadbTest : AbstractSpringJdbcMariadbTest<AllTypesRepo
                 .containsExactlyInAnyOrder(mariadbAllTypesNotNullWithTime)
         }
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.insertAndReturnAllTypesDefaultValues())
+                .isEqualTo(
+                    AllTypesNullableDefaultValueWithTimeEntity(
+                        allTypesNullableDefaultValueWithTimeToInsert.id,
+                        "default",
+                        LocalDate.of(2019, 11, 4),
+                        LocalDate(2019, 11, 6),
+                        LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
+                        LocalDateTime(2018, 11, 4, 0, 0),
+                        LocalDateTime(2019, 11, 4, 0, 0),
+                        42,
+                        84L,
+                        LocalTime.of(11, 25, 55),
+                        LocalTime(11, 25, 55),
+                    )
+                )
+        }
+    }
 }
 
 
@@ -176,4 +200,6 @@ class AllTypesRepositoryMariadb(client: JdbcOperations) : Repository {
                 set MariadbAllTypesNotNullWithTimes.byteArray eq MariadbAllTypesNotNullWithTimes.byteArray
                 where MariadbAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTimeToInsert
 }

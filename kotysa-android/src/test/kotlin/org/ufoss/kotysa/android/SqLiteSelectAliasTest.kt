@@ -13,6 +13,7 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
 
@@ -171,7 +172,12 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
 class UserRepositorySelectAlias(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : AbstractUserRepository(sqLiteOpenHelper, tables) {
+) : AbstractUserRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+    sqLiteOpenHelper.sqlClient(tables),
+    SqliteRoles,
+    SqliteUsers,
+    SqliteUserRoles
+) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select SqliteUsers.firstname `as` "fn"

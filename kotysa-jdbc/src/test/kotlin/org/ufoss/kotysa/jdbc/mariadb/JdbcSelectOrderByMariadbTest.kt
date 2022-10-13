@@ -4,39 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MariadbCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class JdbcSelectOrderByMariadbTest : AbstractJdbcMariadbTest<OrderByRepositoryMariadbSelect>() {
+class JdbcSelectOrderByMariadbTest : AbstractJdbcMariadbTest<OrderByRepositoryMariadbSelect>(),
+    SelectOrderByTest<MariadbCustomers, OrderByRepositoryMariadbSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryMariadbSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MariadbCustomers
-                    orderByAsc MariadbCustomers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MariadbCustomers
-                    orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryMariadbSelect(sqlClient: JdbcSqlClient) :
+    SelectOrderByRepository<MariadbCustomers>(sqlClient, MariadbCustomers)

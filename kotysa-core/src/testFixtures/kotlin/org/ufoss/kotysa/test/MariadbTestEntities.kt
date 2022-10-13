@@ -15,32 +15,32 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
-object MariadbRoles : MariadbTable<RoleEntity>("roles") {
-    val id = integer(RoleEntity::id)
+object MariadbRoles : MariadbTable<RoleEntity>("roles"), Roles {
+    override val id = integer(RoleEntity::id)
         .primaryKey()
-    val label = varchar(RoleEntity::label)
+    override val label = varchar(RoleEntity::label)
         .unique()
 }
 
-object MariadbUsers : MariadbTable<UserEntity>("users") {
-    val id = integer(UserEntity::id, "PK_users")
+object MariadbUsers : MariadbTable<UserEntity>("users"), Users {
+    override val id = integer(UserEntity::id, "PK_users")
         .primaryKey()
-    val firstname = varchar(UserEntity::firstname, "fname")
-    val lastname = varchar(UserEntity::lastname, "lname")
-    val isAdmin = boolean(UserEntity::isAdmin)
-    val roleId = integer(UserEntity::roleId)
+    override val firstname = varchar(UserEntity::firstname, "fname")
+    override val lastname = varchar(UserEntity::lastname, "lname")
+    override val isAdmin = boolean(UserEntity::isAdmin)
+    override val roleId = integer(UserEntity::roleId)
         .foreignKey(MariadbRoles.id, "FK_users_roles")
-    val alias = varchar(UserEntity::alias)
+    override val alias = varchar(UserEntity::alias)
 
     init {
         index(setOf(firstname, lastname), indexName = "full_name_index")
     }
 }
 
-object MariadbUserRoles : MariadbTable<UserRoleEntity>("userRoles") {
-    val userId = integer(UserRoleEntity::userId)
+object MariadbUserRoles : MariadbTable<UserRoleEntity>("userRoles"), UserRoles {
+    override val userId = integer(UserRoleEntity::userId)
         .foreignKey(MariadbUsers.id)
-    val roleId = integer(UserRoleEntity::roleId)
+    override val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(MariadbRoles.id)
 
     init {
@@ -334,70 +334,70 @@ object MariadbAllTypesNullableDefaultValueWithTimes : MariadbTable<AllTypesNulla
     val longe = bigInt(AllTypesNullableDefaultValueWithTimeEntity::long, defaultValue = 84L)
 }
 
-object MariadbLocalDates : MariadbTable<LocalDateEntity>() {
-    val id = integer(LocalDateEntity::id)
+object MariadbLocalDates : MariadbTable<LocalDateEntity>(), LocalDates {
+    override val id = integer(LocalDateEntity::id)
         .primaryKey()
-    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
-    val localDateNullable = date(LocalDateEntity::localDateNullable)
+    override val localDateNotNull = date(LocalDateEntity::localDateNotNull)
+    override val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object MariadbKotlinxLocalDates : MariadbTable<KotlinxLocalDateEntity>() {
-    val id = integer(KotlinxLocalDateEntity::id)
+object MariadbKotlinxLocalDates : MariadbTable<KotlinxLocalDateEntity>(), KotlinxLocalDates {
+    override val id = integer(KotlinxLocalDateEntity::id)
         .primaryKey()
-    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
-    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
+    override val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
+    override val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object MariadbLocalDateTimes : MariadbTable<LocalDateTimeEntity>() {
-    val id = integer(LocalDateTimeEntity::id)
+object MariadbLocalDateTimes : MariadbTable<LocalDateTimeEntity>(), LocalDateTimes {
+    override val id = integer(LocalDateTimeEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MariadbKotlinxLocalDateTimes : MariadbTable<KotlinxLocalDateTimeEntity>() {
-    val id = integer(KotlinxLocalDateTimeEntity::id)
+object MariadbKotlinxLocalDateTimes : MariadbTable<KotlinxLocalDateTimeEntity>(), KotlinxLocalDateTimes {
+    override val id = integer(KotlinxLocalDateTimeEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object MariadbLocalTimes : MariadbTable<LocalTimeEntity>() {
-    val id = integer(LocalTimeEntity::id)
+object MariadbLocalTimes : MariadbTable<LocalTimeEntity>(), LocalTimes {
+    override val id = integer(LocalTimeEntity::id)
         .primaryKey()
-    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+    override val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
+    override val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
-object MariadbKotlinxLocalTimes : MariadbTable<KotlinxLocalTimeEntity>() {
-    val id = integer(KotlinxLocalTimeEntity::id)
+object MariadbKotlinxLocalTimes : MariadbTable<KotlinxLocalTimeEntity>(), KotlinxLocalTimes {
+    override val id = integer(KotlinxLocalTimeEntity::id)
         .primaryKey()
-    val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
+    override val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
+    override val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
 }
 
-object MariadbInts : MariadbTable<IntEntity>() {
-    val id = autoIncrementInteger(IntEntity::id)
+object MariadbInts : MariadbTable<IntEntity>(), Ints {
+    override val id = autoIncrementInteger(IntEntity::id)
         .primaryKey()
-    val intNotNull = integer(IntEntity::intNotNull)
-    val intNullable = integer(IntEntity::intNullable)
+    override val intNotNull = integer(IntEntity::intNotNull)
+    override val intNullable = integer(IntEntity::intNullable)
 }
 
-object MariadbLongs : MariadbTable<LongEntity>() {
-    val id = autoIncrementBigInt(LongEntity::id)
+object MariadbLongs : MariadbTable<LongEntity>(), Longs {
+    override val id = autoIncrementBigInt(LongEntity::id)
         .primaryKey()
-    val longNotNull = bigInt(LongEntity::longNotNull)
-    val longNullable = bigInt(LongEntity::longNullable)
+    override val longNotNull = bigInt(LongEntity::longNotNull)
+    override val longNullable = bigInt(LongEntity::longNullable)
 }
 
-object MariadbInheriteds : MariadbTable<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object MariadbInheriteds : MariadbTable<Inherited>(), Entities<Inherited>, Nameables<Inherited>, Inheriteds {
     override val id = varchar(Inherited::getId)
         .primaryKey()
     override val name = varchar(Inherited::name)
-    val firstname = varchar(Inherited::firstname)
+    override val firstname = varchar(Inherited::firstname)
 }
 
-object MariadbJavaUsers : MariadbTable<JavaUser>("java_users"), JAVA_USER {
+object MariadbJavaUsers : MariadbTable<JavaUser>("java_users"), JavaUsers {
     override val login = varchar(JavaUser::getLogin)
         .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -408,55 +408,55 @@ object MariadbJavaUsers : MariadbTable<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-object MariadbCustomers : MariadbTable<CustomerEntity>() {
-    val id = integer(CustomerEntity::id)
+object MariadbCustomers : MariadbTable<CustomerEntity>(), Customers {
+    override val id = integer(CustomerEntity::id)
         .primaryKey()
-    val name = varchar(CustomerEntity::name)
+    override val name = varchar(CustomerEntity::name)
         .unique()
-    val country = varchar(CustomerEntity::country)
-    val age = integer(CustomerEntity::age)
+    override val country = varchar(CustomerEntity::country)
+    override val age = integer(CustomerEntity::age)
 }
 
-object MariadbTinyTexts : MariadbTable<StringAsTinyTextEntity>() {
-    val id = integer(StringAsTinyTextEntity::id)
+object MariadbTinyTexts : MariadbTable<StringAsTinyTextEntity>(), TinyTexts {
+    override val id = integer(StringAsTinyTextEntity::id)
         .primaryKey()
-    val stringNotNull = tinyText(StringAsTinyTextEntity::stringNotNull)
-    val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
+    override val stringNotNull = tinyText(StringAsTinyTextEntity::stringNotNull)
+    override val stringNullable = tinyText(StringAsTinyTextEntity::stringNullable)
 }
 
-object MariadbTexts : MariadbTable<StringAsTextEntity>() {
-    val id = integer(StringAsTextEntity::id)
+object MariadbTexts : MariadbTable<StringAsTextEntity>(), Texts {
+    override val id = integer(StringAsTextEntity::id)
         .primaryKey()
-    val stringNotNull = text(StringAsTextEntity::stringNotNull)
-    val stringNullable = text(StringAsTextEntity::stringNullable)
+    override val stringNotNull = text(StringAsTextEntity::stringNotNull)
+    override val stringNullable = text(StringAsTextEntity::stringNullable)
 }
 
-object MariadbMediumTexts : MariadbTable<StringAsMediumTextEntity>() {
-    val id = integer(StringAsMediumTextEntity::id)
+object MariadbMediumTexts : MariadbTable<StringAsMediumTextEntity>(), MediumTexts {
+    override val id = integer(StringAsMediumTextEntity::id)
         .primaryKey()
-    val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
-    val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
+    override val stringNotNull = mediumText(StringAsMediumTextEntity::stringNotNull)
+    override val stringNullable = mediumText(StringAsMediumTextEntity::stringNullable)
 }
 
-object MariadbLongTexts : MariadbTable<StringAsLongTextEntity>() {
-    val id = integer(StringAsLongTextEntity::id)
+object MariadbLongTexts : MariadbTable<StringAsLongTextEntity>(), LongTexts {
+    override val id = integer(StringAsLongTextEntity::id)
         .primaryKey()
-    val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
-    val stringNullable = longText(StringAsLongTextEntity::stringNullable)
+    override val stringNotNull = longText(StringAsLongTextEntity::stringNotNull)
+    override val stringNullable = longText(StringAsLongTextEntity::stringNullable)
 }
 
-object MariadbByteArrays : MariadbTable<ByteArrayEntity>() {
-    val id = integer(ByteArrayEntity::id)
+object MariadbByteArrays : MariadbTable<ByteArrayEntity>(), ByteArrays {
+    override val id = integer(ByteArrayEntity::id)
         .primaryKey()
-    val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
-    val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
+    override val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
+    override val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
 }
 
-object MariadbByteArrayAsBinarys : MariadbTable<ByteArrayAsBinaryEntity>() {
-    val id = integer(ByteArrayAsBinaryEntity::id)
+object MariadbByteArrayAsBinaries : MariadbTable<ByteArrayAsBinaryEntity>(), ByteArrayAsBinaries {
+    override val id = integer(ByteArrayAsBinaryEntity::id)
         .primaryKey()
-    val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
-    val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
+    override val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
+    override val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
 }
 
 val mariadbTables = tables().mariadb(
@@ -485,5 +485,5 @@ val mariadbTables = tables().mariadb(
     MariadbMediumTexts,
     MariadbLongTexts,
     MariadbByteArrays,
-    MariadbByteArrayAsBinarys,
+    MariadbByteArrayAsBinaries,
 )

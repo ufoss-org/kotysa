@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Order(3)
 class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>() {
@@ -26,7 +23,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
     fun `Verify insertCustomer works correctly`() = runTest {
         assertThat(repository.selectAllCustomers().toList())
             .isEmpty()
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomer()
             assertThat(repository.selectAllCustomers().toList())
@@ -38,7 +35,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
 
     @Test
     fun `Verify insertCustomers works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.insertCustomers()
             assertThat(repository.selectAllCustomers().toList())
@@ -48,7 +45,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
 
     @Test
     fun `Verify insertAndReturnCustomers works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnCustomers().toList())
                 .containsExactly(customerUSA1, customerUSA2)
@@ -56,32 +53,8 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
     }
 
     @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() = runTest {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.insertAndReturnAllTypesDefaultValues())
-                .isEqualTo(
-                    AllTypesNullableDefaultValueWithTimeEntity(
-                        allTypesNullableDefaultValueWithTime.id,
-                        "default",
-                        LocalDate.of(2019, 11, 4),
-                        kotlinx.datetime.LocalDate(2019, 11, 6),
-                        LocalDateTime.of(2018, 11, 4, 0, 0),
-                        LocalDateTime.of(2019, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                        42,
-                        84L,
-                        LocalTime.of(11, 25, 55),
-                        kotlinx.datetime.LocalTime(11, 25, 55),
-                    )
-                )
-        }
-    }
-
-    @Test
     fun `Verify insertAndReturnInt auto-generated works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(intWithNullable)
             assertThat(inserted.intNotNull).isEqualTo(intWithNullable.intNotNull)
@@ -92,7 +65,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
 
     @Test
     fun `Verify insertAndReturnInt not auto-generated works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             val inserted = repository.insertAndReturnInt(IntEntity(1, 2, 666))
             assertThat(inserted.intNotNull).isEqualTo(1)
@@ -103,7 +76,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
 
     @Test
     fun `Verify insertAndReturnLongs works correctly`() = runTest {
-        operator.transactional { transaction ->
+        coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             val longs = repository.insertAndReturnLongs().toList()
             var inserted = longs[0]
@@ -123,7 +96,7 @@ class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
             .isEmpty()
         assertThatThrownBy {
             runBlocking {
-                operator.transactional {
+                coOperator.transactional {
                     repository.insertDupCustomers()
                 }
             }
@@ -146,7 +119,6 @@ class RepositoryMariadbInsert(private val sqlClient: R2dbcSqlClient) : Repositor
         sqlClient createTableIfNotExists MariadbInts
         sqlClient createTableIfNotExists MariadbLongs
         sqlClient createTableIfNotExists MariadbCustomers
-        sqlClient createTableIfNotExists MariadbAllTypesNullableDefaultValueWithTimes
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -160,8 +132,6 @@ class RepositoryMariadbInsert(private val sqlClient: R2dbcSqlClient) : Repositor
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    suspend fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTime
 
     suspend fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

@@ -4,28 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class JdbcSelectGroupByPostgresqlTest : AbstractJdbcPostgresqlTest<GroupByRepositoryPostgresqlSelect>() {
+class JdbcSelectGroupByPostgresqlTest : AbstractJdbcPostgresqlTest<GroupByRepositoryPostgresqlSelect>(),
+    SelectGroupByTest<PostgresqlCustomers, GroupByRepositoryPostgresqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryPostgresqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount PostgresqlCustomers.id and PostgresqlCustomers.country
-                    from PostgresqlCustomers
-                    groupBy PostgresqlCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryPostgresqlSelect(sqlClient: JdbcSqlClient) :
+    SelectGroupByRepository<PostgresqlCustomers>(sqlClient, PostgresqlCustomers)

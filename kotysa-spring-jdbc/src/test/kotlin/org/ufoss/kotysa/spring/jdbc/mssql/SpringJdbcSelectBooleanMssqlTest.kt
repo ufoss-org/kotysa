@@ -4,17 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MssqlRoles
+import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
-
-class SpringJdbcSelectBooleanMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelectBoolean>() {
+class SpringJdbcSelectBooleanMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelectBoolean>(),
+    SelectBooleanTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositorySpringJdbcMssqlSelectBoolean,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -24,27 +28,12 @@ class SpringJdbcSelectBooleanMssqlTest : AbstractSpringJdbcMssqlTest<UserReposit
     override val repository: UserRepositorySpringJdbcMssqlSelectBoolean by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true))
-                .hasSize(1)
-                .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false))
-                .hasSize(1)
-                .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositorySpringJdbcMssqlSelectBoolean(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMssql(client) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MssqlUsers
-                    where MssqlUsers.isAdmin eq value
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcMssqlSelectBoolean(client: JdbcOperations) :
+    SelectBooleanRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        client.sqlClient(mssqlTables),
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )

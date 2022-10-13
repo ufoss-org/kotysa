@@ -17,7 +17,7 @@ import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransactionalOp
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
-import org.ufoss.kotysa.test.repositories.RepositoryTest
+import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 
 
 abstract class AbstractSpringJdbcH2Test<T : Repository> : RepositoryTest<T, SpringJdbcTransaction> {
