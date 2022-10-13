@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
-import java.time.*
-import java.util.*
 
 @Order(3)
 class VertxSqlClientInsertMssqlTest : AbstractVertxSqlClientMssqlTest<RepositoryMssqlInsert>() {
@@ -50,29 +48,6 @@ class VertxSqlClientInsertMssqlTest : AbstractVertxSqlClientMssqlTest<Repository
             repository.insertAndReturnCustomers()
         }.collect().asList().await().indefinitely()
         assertThat(insertedCustomers).containsExactly(customerUSA1, customerUSA2)
-    }
-
-    @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        val allTypes = operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.insertAndReturnAllTypesDefaultValues()
-        }.await().indefinitely()
-
-        assertThat(allTypes).isEqualTo(
-            AllTypesNullableDefaultValueEntity(
-                1,
-                "default",
-                LocalDate.of(2019, 11, 4),
-                kotlinx.datetime.LocalDate(2019, 11, 6),
-                LocalDateTime.of(2018, 11, 4, 0, 0),
-                LocalDateTime.of(2019, 11, 4, 0, 0),
-                kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                42,
-                84L,
-            )
-        )
     }
 
     @Test
@@ -152,7 +127,6 @@ class RepositoryMssqlInsert(private val sqlClient: VertxSqlClient) : Repository 
         (sqlClient createTableIfNotExists MssqlInts)
             .chain { -> sqlClient createTableIfNotExists MssqlLongs }
             .chain { -> sqlClient createTableIfNotExists MssqlCustomers }
-            .chain { -> sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues }
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -165,8 +139,6 @@ class RepositoryMssqlInsert(private val sqlClient: VertxSqlClient) : Repository 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValue
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

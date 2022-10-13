@@ -11,8 +11,8 @@ import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MssqlJavaUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
-import org.ufoss.kotysa.test.repositories.JavaUserRepository
+import org.ufoss.kotysa.test.repositories.blocking.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.blocking.JavaUserRepository
 
 
 class SpringJdbcJavaEntityMssqlTest :

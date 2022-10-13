@@ -15,8 +15,6 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Order(3)
 class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
@@ -61,29 +59,6 @@ class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
             repository.insertAndReturnCustomers()
         }.test()
             .expectNext(customerUSA1, customerUSA2)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.insertAndReturnAllTypesDefaultValues()
-        }.test()
-            .expectNext(
-                AllTypesNullableDefaultValueEntity(
-                    allTypesNullableDefaultValueWithTime.id,
-                    "default",
-                    LocalDate.of(2019, 11, 4),
-                    kotlinx.datetime.LocalDate(2019, 11, 6),
-                    LocalDateTime.of(2018, 11, 4, 0, 0),
-                    LocalDateTime.of(2019, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                    42,
-                    84L
-                )
-            )
             .verifyComplete()
     }
 
@@ -161,7 +136,6 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
         (sqlClient createTableIfNotExists MssqlInts)
             .then(sqlClient createTableIfNotExists MssqlLongs)
             .then(sqlClient createTableIfNotExists MssqlCustomers)
-            .then(sqlClient createTableIfNotExists MssqlAllTypesNullableDefaultValues)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -174,8 +148,6 @@ class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValue
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

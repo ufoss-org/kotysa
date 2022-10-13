@@ -12,7 +12,7 @@ import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.h2Tables
-import org.ufoss.kotysa.test.repositories.RepositoryTest
+import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 
 abstract class AbstractJdbcH2Test<T : Repository> : RepositoryTest<T, JdbcTransaction> {
     private lateinit var sqlClient: JdbcSqlClient

@@ -4,13 +4,14 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 import java.sql.SQLSyntaxErrorException
 
 class JdbcSelectAliasMysqlTest : AbstractJdbcMysqlTest<UserRepositorySelectAlias>() {
@@ -161,7 +162,8 @@ class JdbcSelectAliasMysqlTest : AbstractJdbcMysqlTest<UserRepositorySelectAlias
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMysql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
+    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MysqlUsers.firstname `as` "fna"

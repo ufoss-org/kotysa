@@ -13,8 +13,6 @@ import org.ufoss.kotysa.spring.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
-import java.time.*
-import java.util.*
 
 @Order(3)
 class R2DbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
@@ -52,34 +50,6 @@ class R2DbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
             repository.insertAndReturnCustomers()
         }.test()
             .expectNext(customerUSA1, customerUSA2)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.insertAndReturnAllTypesDefaultValues()
-        }.test()
-            .expectNext(
-                H2AllTypesNullableDefaultValueEntity(
-                    1,
-                    "default",
-                    LocalDate.of(2019, 11, 4),
-                    kotlinx.datetime.LocalDate(2019, 11, 6),
-                    LocalTime.of(11, 25, 55, 123456789),
-                    kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
-                    LocalDateTime.of(2018, 11, 4, 0, 0),
-                    LocalDateTime.of(2019, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                    42,
-                    84L,
-                    OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
-                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
-                    UUID.fromString(defaultUuid),
-                )
-            )
             .verifyComplete()
     }
 
@@ -157,7 +127,6 @@ class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
         (sqlClient createTableIfNotExists H2Ints)
             .then(sqlClient createTableIfNotExists H2Longs)
             .then(sqlClient createTableIfNotExists H2Customers)
-            .then(sqlClient createTableIfNotExists H2AllTypesNullableDefaultValues)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -170,8 +139,6 @@ class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn h2AllTypesNullableDefaultValue
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

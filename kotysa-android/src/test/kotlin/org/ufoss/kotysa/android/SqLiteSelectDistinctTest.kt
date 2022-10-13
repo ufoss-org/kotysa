@@ -5,33 +5,32 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.SqliteUserRoles
+import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-class SqLiteSelectDistinctTest : AbstractSqLiteTest<UserRepositorySelectDistinct>() {
+class SqLiteSelectDistinctTest : AbstractSqLiteTest<UserRepositorySelectDistinct>(),
+    SelectDistinctTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySelectDistinct, AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectDistinct(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
+    fun `Verify selectDistinctRoleLabels finds no duplicates - Android`() {
+        `Verify selectDistinctRoleLabels finds no duplicates`()
     }
 }
 
 class UserRepositorySelectDistinct(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: SqLiteTables,
-) : AbstractUserRepository(sqLiteOpenHelper, tables) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct SqliteRoles.label
-                    from SqliteRoles
-                    ).fetchAll()
-}
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: SqLiteTables,
+) : SelectDistinctRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+    sqLiteOpenHelper.sqlClient(tables),
+    SqliteRoles,
+    SqliteUsers,
+    SqliteUserRoles
+)

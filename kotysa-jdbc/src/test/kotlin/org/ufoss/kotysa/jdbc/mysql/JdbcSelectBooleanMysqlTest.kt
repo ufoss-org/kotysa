@@ -4,36 +4,18 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
-class JdbcSelectBooleanMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>() {
+class JdbcSelectBooleanMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>(),
+    SelectBooleanTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectBoolean, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true))
-                .hasSize(1)
-                .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false))
-                .hasSize(1)
-                .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositoryJdbcMysqlSelectBoolean(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMysql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom MysqlUsers
-                    where MysqlUsers.isAdmin eq value
-                    ).fetchAll()
-}
+class UserRepositoryJdbcMysqlSelectBoolean(sqlClient: JdbcSqlClient) :
+    SelectBooleanRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles)

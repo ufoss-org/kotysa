@@ -4,16 +4,19 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MssqlInheriteds
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.repositories.blocking.InheritanceRepository
+import org.ufoss.kotysa.test.repositories.blocking.InheritanceTest
 
-
-class SpringJdbcInheritanceMssqlTest : AbstractSpringJdbcMssqlTest<InheritanceMssqlRepository>() {
+class SpringJdbcInheritanceMssqlTest : AbstractSpringJdbcMssqlTest<InheritanceMssqlRepository>(),
+    InheritanceTest<MssqlInheriteds, InheritanceMssqlRepository, SpringJdbcTransaction> {
+    override val table = MssqlInheriteds
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,80 +26,7 @@ class SpringJdbcInheritanceMssqlTest : AbstractSpringJdbcMssqlTest<InheritanceMs
     override val repository: InheritanceMssqlRepository by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectInheritedById finds inherited`() {
-        assertThat(repository.selectInheritedById("id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(MssqlInheriteds, "id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(MssqlInheriteds, "name"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify deleteById deletes inherited`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteById(MssqlInheriteds, "id"))
-                    .isEqualTo(1)
-            assertThat(repository.selectAll())
-                    .isEmpty()
-        }
-    }
 }
 
-
-class InheritanceMssqlRepository(client: JdbcOperations) : Repository {
-
-    val sqlClient = client.sqlClient(mssqlTables)
-
-    override fun init() {
-        createTable()
-        insert()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTable() {
-        sqlClient createTable MssqlInheriteds
-    }
-
-    fun insert() {
-        sqlClient insert inherited
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom MssqlInheriteds
-
-    fun selectAll() = sqlClient selectAllFrom MssqlInheriteds
-
-    fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MssqlInheriteds
-                    where MssqlInheriteds.id eq id
-                    ).fetchOne()
-
-    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
-            (sqlClient selectFrom table
-                    where table.id eq id
-                    ).fetchOne()
-
-    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
-            (sqlClient selectFrom table
-                    where table.name eq name
-                    ).fetchFirst()
-
-    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
-            (sqlClient deleteFrom table
-                    where table.id eq id
-                    ).execute()
-}
+class InheritanceMssqlRepository(client: JdbcOperations) :
+    InheritanceRepository<MssqlInheriteds>(client.sqlClient(mssqlTables), MssqlInheriteds)

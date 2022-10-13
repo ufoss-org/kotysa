@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.postgresqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class SpringJdbcSelectOrderByPostgresqlTest : AbstractSpringJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>() {
+class SpringJdbcSelectOrderByPostgresqlTest : AbstractSpringJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>(),
+    SelectOrderByTest<PostgresqlCustomers, OrderByRepositoryPostgresqlSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,32 +25,7 @@ class SpringJdbcSelectOrderByPostgresqlTest : AbstractSpringJdbcPostgresqlTest<O
     override val repository: OrderByRepositoryPostgresqlSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
 class OrderByRepositoryPostgresqlSelect(client: JdbcOperations) :
-        AbstractCustomerRepositorySpringJdbcPostgresql(client) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom PostgresqlCustomers
-                    orderByAsc PostgresqlCustomers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom PostgresqlCustomers
-                    orderByAsc PostgresqlCustomers.age andAsc PostgresqlCustomers.id
-                    ).fetchAll()
-}
+    SelectOrderByRepository<PostgresqlCustomers>(client.sqlClient(postgresqlTables), PostgresqlCustomers)

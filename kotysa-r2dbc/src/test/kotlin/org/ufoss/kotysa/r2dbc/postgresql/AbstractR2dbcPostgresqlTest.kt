@@ -19,7 +19,7 @@ import org.ufoss.kotysa.test.hooks.PostgreSqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.PostgreSqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlTables
-import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesRepositoryTest
 
 @ExtendWith(PostgreSqlContainerExecutionHook::class)
 @ResourceLock(PostgreSqlContainerResource.ID)
@@ -43,7 +43,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> : CoroutinesRepositor
 
     protected abstract fun instantiateRepository(sqlClient: R2dbcSqlClient): T
 
-    override val operator by lazy {
+    override val coOperator by lazy {
         sqlClient
     }
 

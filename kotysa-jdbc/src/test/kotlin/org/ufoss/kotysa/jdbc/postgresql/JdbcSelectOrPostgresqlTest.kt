@@ -4,31 +4,22 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
-class JdbcSelectOrPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectOr>() {
+class JdbcSelectOrPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectOr>(),
+    SelectOrTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSelectOr,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
 }
 
-
-class UserRepositoryJdbcPostgresqlSelectOr(private val sqlClient: JdbcSqlClient) :
-    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom PostgresqlRoles
-                    where PostgresqlRoles.label eq label1
-                    or PostgresqlRoles.label eq label2
-                    ).fetchAll()
-}
+class UserRepositoryJdbcPostgresqlSelectOr(sqlClient: JdbcSqlClient) :
+    SelectOrRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient, PostgresqlRoles,
+        PostgresqlUsers, PostgresqlUserRoles
+    )

@@ -70,7 +70,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         val newInt = 2
         val newLong = 2L
         val newByteArray = byteArrayOf(0x2B)
-        operator.transactional<Unit> { transaction ->
+        coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
@@ -91,12 +91,37 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
     @Tag("miku")
     @Test
     fun `Verify updateAllTypesNotNullColumn works`() = runTest {
-        operator.transactional<Unit> { transaction ->
+        coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNullColumn()
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mysqlAllTypesNotNullWithTime)
+        }
+    }
+
+    @Tag("miku")
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() = runTest {
+        coOperator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.insertAndReturnAllTypesDefaultValues())
+                .isEqualTo(
+                    AllTypesNullableDefaultValueWithTimeEntity(
+                        allTypesNullableDefaultValueWithTimeToInsert.id,
+                        "default",
+                        LocalDate.of(2019, 11, 4),
+                        LocalDate(2019, 11, 6),
+                        LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
+                        LocalDateTime(2018, 11, 4, 0, 0),
+                        LocalDateTime(2019, 11, 4, 0, 0),
+                        42,
+                        84L,
+                        LocalTime.of(11, 25, 55),
+                        LocalTime(11, 25, 55),
+                    )
+                )
         }
     }
 }
@@ -173,4 +198,7 @@ class AllTypesRepositoryMysql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MysqlAllTypesNotNullWithTimes.byteArray eq MysqlAllTypesNotNullWithTimes.byteArray
                 where MysqlAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    suspend fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn
+            allTypesNullableDefaultValueWithTimeToInsert
 }

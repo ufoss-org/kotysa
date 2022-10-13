@@ -4,27 +4,18 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.H2Roles
+import org.ufoss.kotysa.test.H2UserRoles
+import org.ufoss.kotysa.test.H2Users
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-class JdbcSelectDistinctH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectDistinct>() {
+class JdbcSelectDistinctH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2SelectDistinct>(),
+    SelectDistinctTest<H2Roles, H2Users, H2UserRoles, UserRepositoryJdbcH2SelectDistinct, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcH2SelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositoryJdbcH2SelectDistinct(private val sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcH2(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct H2Roles.label
-                    from H2Roles
-                    ).fetchAll()
-}
+class UserRepositoryJdbcH2SelectDistinct(sqlClient: JdbcSqlClient) :
+    SelectDistinctRepository<H2Roles, H2Users, H2UserRoles>(sqlClient, H2Roles, H2Users, H2UserRoles)

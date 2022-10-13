@@ -4,16 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
+import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasMariadbTest : AbstractSpringJdbcMariadbTest<UserRepositorySelectAlias>() {
 
@@ -171,7 +173,13 @@ class SpringJdbcSelectAliasMariadbTest : AbstractSpringJdbcMariadbTest<UserRepos
     }
 }
 
-class UserRepositorySelectAlias(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMariadb(client) {
+class UserRepositorySelectAlias(client: JdbcOperations) :
+    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        client.sqlClient(mariadbTables),
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MariadbUsers.firstname `as` "fna"

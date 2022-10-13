@@ -4,28 +4,22 @@
 
 package org.ufoss.kotysa.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MariadbRoles
+import org.ufoss.kotysa.test.MariadbUserRoles
+import org.ufoss.kotysa.test.MariadbUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-class JdbcSelectDistinctMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelectDistinct>() {
+class JdbcSelectDistinctMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbSelectDistinct>(),
+    SelectDistinctTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelectDistinct,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositoryJdbcMariadbSelectDistinct(private val sqlClient: JdbcSqlClient) :
-    AbstractUserRepositoryJdbcMariadb(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MariadbRoles.label
-                    from MariadbRoles
-                    ).fetchAll()
-}
+class UserRepositoryJdbcMariadbSelectDistinct(sqlClient: JdbcSqlClient) :
+    SelectDistinctRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        sqlClient, MariadbRoles, MariadbUsers,
+        MariadbUserRoles
+    )

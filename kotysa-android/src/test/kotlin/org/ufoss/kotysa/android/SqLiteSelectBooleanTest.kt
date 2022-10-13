@@ -5,39 +5,38 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
+import org.ufoss.kotysa.test.SqliteRoles
+import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
-class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>() {
+class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>(),
+    SelectBooleanTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositoryBooleanSelect,
+            AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryBooleanSelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true))
-                .hasSize(1)
-                .containsExactly(userBboss)
+    fun `Verify selectAllByIsAdminEq true finds Big Boss - Android`() {
+        `Verify selectAllByIsAdminEq true finds Big Boss`()
     }
 
     @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false))
-                .hasSize(1)
-                .containsExactly(userJdoe)
+    fun `Verify selectAllByIsAdminEq false finds John - Android`() {
+        `Verify selectAllByIsAdminEq false finds John`()
     }
 }
 
 class UserRepositoryBooleanSelect(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: SqLiteTables,
-) : AbstractUserRepository(sqLiteOpenHelper, tables) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom SqliteUsers
-                    where SqliteUsers.isAdmin eq value
-                    ).fetchAll()
-}
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: SqLiteTables,
+) : SelectBooleanRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+    sqLiteOpenHelper.sqlClient(tables),
+    SqliteRoles,
+    SqliteUsers,
+    SqliteUserRoles
+)

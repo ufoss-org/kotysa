@@ -4,28 +4,18 @@
 
 package org.ufoss.kotysa.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
+import org.ufoss.kotysa.test.MysqlUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-class JdbcSelectDistinctMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectDistinct>() {
+class JdbcSelectDistinctMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectDistinct>(),
+    SelectDistinctTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectDistinct, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositoryJdbcMysqlSelectDistinct(private val sqlClient: JdbcSqlClient) :
-    AbstractUserRepositoryJdbcMysql(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MysqlRoles.label
-                    from MysqlRoles
-                    ).fetchAll()
-}
+class UserRepositoryJdbcMysqlSelectDistinct(sqlClient: JdbcSqlClient) :
+    SelectDistinctRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles)

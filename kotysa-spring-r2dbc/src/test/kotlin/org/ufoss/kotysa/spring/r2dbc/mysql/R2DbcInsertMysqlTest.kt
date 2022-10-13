@@ -7,7 +7,6 @@ package org.ufoss.kotysa.spring.r2dbc.mysql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
-import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.r2dbc.UncategorizedR2dbcException
@@ -16,10 +15,6 @@ import org.ufoss.kotysa.spring.r2dbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
-import reactor.kotlin.test.verifyError
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Order(3)
 class R2DbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
@@ -64,32 +59,6 @@ class R2DbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
             repository.insertAndReturnCustomers()
         }.test()
             .expectNext(customerUSA1, customerUSA2)
-            .verifyComplete()
-    }
-
-    @Tag("miku")
-    @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.insertAndReturnAllTypesDefaultValues()
-        }.test()
-            .expectNext(
-                AllTypesNullableDefaultValueWithTimeEntity(
-                    allTypesNullableDefaultValueWithTime.id,
-                    "default",
-                    LocalDate.of(2019, 11, 4),
-                    kotlinx.datetime.LocalDate(2019, 11, 6),
-                    LocalDateTime.of(2018, 11, 4, 0, 0),
-                    LocalDateTime.of(2019, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                    42,
-                    84L,
-                    LocalTime.of(11, 25, 55),
-                    kotlinx.datetime.LocalTime(11, 25, 55),
-                )
-            )
             .verifyComplete()
     }
 
@@ -169,7 +138,6 @@ class RepositoryMysqlInsert(dbClient: DatabaseClient) : Repository {
         (sqlClient createTableIfNotExists MysqlInts)
             .then(sqlClient createTableIfNotExists MysqlLongs)
             .then(sqlClient createTableIfNotExists MysqlCustomers)
-            .then(sqlClient createTableIfNotExists MysqlAllTypesNullableDefaultValueWithTimes)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -182,8 +150,6 @@ class RepositoryMysqlInsert(dbClient: DatabaseClient) : Repository {
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTime
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

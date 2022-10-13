@@ -4,28 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MariadbCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class JdbcSelectGroupByMariadbTest : AbstractJdbcMariadbTest<GroupByRepositoryMariadbSelect>() {
+class JdbcSelectGroupByMariadbTest : AbstractJdbcMariadbTest<GroupByRepositoryMariadbSelect>(),
+    SelectGroupByTest<MariadbCustomers, GroupByRepositoryMariadbSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryMariadbSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryMariadbSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcMariadb(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MariadbCustomers.id and MariadbCustomers.country
-                    from MariadbCustomers
-                    groupBy MariadbCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryMariadbSelect(sqlClient: JdbcSqlClient) :
+    SelectGroupByRepository<MariadbCustomers>(sqlClient, MariadbCustomers)

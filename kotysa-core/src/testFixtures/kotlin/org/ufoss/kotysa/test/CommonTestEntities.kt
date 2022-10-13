@@ -7,10 +7,8 @@ package org.ufoss.kotysa.test
 import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import org.ufoss.kotysa.BooleanColumnNotNull
-import org.ufoss.kotysa.StringColumnNotNull
-import org.ufoss.kotysa.StringColumnNullable
-import org.ufoss.kotysa.Table
+import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.*
 import java.time.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -29,6 +27,10 @@ val roleUser = RoleEntity(1, "user")
 val roleAdmin = RoleEntity(2, "admin")
 val roleGod = RoleEntity(3, "god")
 
+interface Roles : Table<RoleEntity> {
+    val id: IntColumnNotNull<RoleEntity>
+    val label: StringColumnNotNull<RoleEntity>
+}
 
 data class UserEntity(
     val id: Int,
@@ -42,12 +44,26 @@ data class UserEntity(
 val userJdoe = UserEntity(1, "John", "Doe", false, roleUser.id)
 val userBboss = UserEntity(2, "Big", "Boss", true, roleAdmin.id, "TheBoss")
 
+interface Users : Table<UserEntity> {
+    val id: IntColumnNotNull<UserEntity>
+    val firstname: StringColumnNotNull<UserEntity>
+    val lastname: StringColumnNotNull<UserEntity>
+    val isAdmin: BooleanColumnNotNull<UserEntity>
+    val roleId: IntColumnNotNull<UserEntity>
+    val alias: StringColumnNullable<UserEntity>
+}
+
 data class UserRoleEntity(
     val userId: Int,
     val roleId: Int,
 )
 
 val userRoleBboss = UserRoleEntity(2, 2)
+
+interface UserRoles : Table<UserRoleEntity> {
+    val userId: IntColumnNotNull<UserRoleEntity>
+    val roleId: IntColumnNotNull<UserRoleEntity>
+}
 
 open class AllTypesNotNullEntity(
     open val id: Int,
@@ -322,7 +338,6 @@ val allTypesNullableWithTime = AllTypesNullableWithTimeEntity(
     null, null, null, null
 )
 
-
 open class AllTypesNullableDefaultValueEntity(
     open val id: Int,
     open val string: String? = null,
@@ -372,6 +387,7 @@ open class AllTypesNullableDefaultValueEntity(
 }
 
 val allTypesNullableDefaultValue = AllTypesNullableDefaultValueEntity(1)
+val allTypesNullableDefaultValueToInsert = AllTypesNullableDefaultValueEntity(2)
 
 open class AllTypesNullableDefaultValueWithTimeEntity(
     override val id: Int,
@@ -433,7 +449,7 @@ open class AllTypesNullableDefaultValueWithTimeEntity(
 }
 
 val allTypesNullableDefaultValueWithTime = AllTypesNullableDefaultValueWithTimeEntity(1)
-
+val allTypesNullableDefaultValueWithTimeToInsert = AllTypesNullableDefaultValueWithTimeEntity(2)
 
 data class LocalDateEntity(
     val id: Int,
@@ -443,6 +459,12 @@ data class LocalDateEntity(
 
 val localDateWithNullable = LocalDateEntity(1, LocalDate.of(2019, 11, 4), LocalDate.of(2018, 11, 4))
 val localDateWithoutNullable = LocalDateEntity(2, LocalDate.of(2019, 11, 6))
+
+interface LocalDates : Table<LocalDateEntity> {
+    val id: IntColumnNotNull<LocalDateEntity>
+    val localDateNotNull: LocalDateColumnNotNull<LocalDateEntity>
+    val localDateNullable: LocalDateColumnNullable<LocalDateEntity>
+}
 
 data class KotlinxLocalDateEntity(
     val id: Int,
@@ -456,6 +478,11 @@ val kotlinxLocalDateWithNullable = KotlinxLocalDateEntity(
 )
 val kotlinxLocalDateWithoutNullable = KotlinxLocalDateEntity(2, kotlinx.datetime.LocalDate(2019, 11, 6))
 
+interface KotlinxLocalDates : Table<KotlinxLocalDateEntity> {
+    val id: IntColumnNotNull<KotlinxLocalDateEntity>
+    val localDateNotNull: KotlinxLocalDateColumnNotNull<KotlinxLocalDateEntity>
+    val localDateNullable: KotlinxLocalDateColumnNullable<KotlinxLocalDateEntity>
+}
 
 data class LocalDateTimeEntity(
     val id: Int,
@@ -467,6 +494,11 @@ val localDateTimeWithNullable =
     LocalDateTimeEntity(1, LocalDateTime.of(2019, 11, 4, 0, 0), LocalDateTime.of(2018, 11, 4, 0, 0))
 val localDateTimeWithoutNullable = LocalDateTimeEntity(2, LocalDateTime.of(2019, 11, 6, 0, 0))
 
+interface LocalDateTimes : Table<LocalDateTimeEntity> {
+    val id: IntColumnNotNull<LocalDateTimeEntity>
+    val localDateTimeNotNull: LocalDateTimeColumnNotNull<LocalDateTimeEntity>
+    val localDateTimeNullable: LocalDateTimeColumnNullable<LocalDateTimeEntity>
+}
 
 data class LocalDateTimeAsTimestampEntity(
     val id: Int,
@@ -477,6 +509,12 @@ data class LocalDateTimeAsTimestampEntity(
 val localDateTimeAsTimestampWithNullable =
     LocalDateTimeAsTimestampEntity(1, LocalDateTime.of(2019, 11, 4, 0, 0), LocalDateTime.of(2018, 11, 4, 0, 0))
 val localDateTimeAsTimestampWithoutNullable = LocalDateTimeAsTimestampEntity(2, LocalDateTime.of(2019, 11, 6, 0, 0))
+
+interface LocalDateTimeAsTimestamps : Table<LocalDateTimeAsTimestampEntity> {
+    val id: IntColumnNotNull<LocalDateTimeAsTimestampEntity>
+    val localDateTimeNotNull: LocalDateTimeColumnNotNull<LocalDateTimeAsTimestampEntity>
+    val localDateTimeNullable: LocalDateTimeColumnNullable<LocalDateTimeAsTimestampEntity>
+}
 
 data class KotlinxLocalDateTimeEntity(
     val id: Int,
@@ -494,6 +532,12 @@ val kotlinxLocalDateTimeWithoutNullable = KotlinxLocalDateTimeEntity(
     kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)
 )
 
+interface KotlinxLocalDateTimes : Table<KotlinxLocalDateTimeEntity> {
+    val id: IntColumnNotNull<KotlinxLocalDateTimeEntity>
+    val localDateTimeNotNull: KotlinxLocalDateTimeColumnNotNull<KotlinxLocalDateTimeEntity>
+    val localDateTimeNullable: KotlinxLocalDateTimeColumnNullable<KotlinxLocalDateTimeEntity>
+}
+
 data class KotlinxLocalDateTimeAsTimestampEntity(
     val id: Int,
     val localDateTimeNotNull: kotlinx.datetime.LocalDateTime,
@@ -509,6 +553,12 @@ val kotlinxLocalDateTimeAsTimestampWithoutNullable = KotlinxLocalDateTimeAsTimes
     2,
     kotlinx.datetime.LocalDateTime(2019, 11, 6, 0, 0)
 )
+
+interface KotlinxLocalDateTimeAsTimestamps : Table<KotlinxLocalDateTimeAsTimestampEntity> {
+    val id: IntColumnNotNull<KotlinxLocalDateTimeAsTimestampEntity>
+    val localDateTimeNotNull: KotlinxLocalDateTimeColumnNotNull<KotlinxLocalDateTimeAsTimestampEntity>
+    val localDateTimeNullable: KotlinxLocalDateTimeColumnNullable<KotlinxLocalDateTimeAsTimestampEntity>
+}
 
 
 data class OffsetDateTimeEntity(
@@ -558,6 +608,12 @@ val offsetDateTimeWithoutNullable = OffsetDateTimeEntity(
     OffsetDateTime.of(2019, 11, 6, 0, 0, 0, 0, ZoneOffset.UTC)
 )
 
+interface OffsetDateTimes : Table<OffsetDateTimeEntity> {
+    val id: IntColumnNotNull<OffsetDateTimeEntity>
+    val offsetDateTimeNotNull: OffsetDateTimeColumnNotNull<OffsetDateTimeEntity>
+    val offsetDateTimeNullable: OffsetDateTimeColumnNullable<OffsetDateTimeEntity>
+}
+
 data class LocalTimeEntity(
     val id: Int,
     val localTimeNotNull: LocalTime,
@@ -566,6 +622,12 @@ data class LocalTimeEntity(
 
 val localTimeWithNullable = LocalTimeEntity(1, LocalTime.of(12, 4), LocalTime.of(11, 4))
 val localTimeWithoutNullable = LocalTimeEntity(2, LocalTime.of(12, 6))
+
+interface LocalTimes : Table<LocalTimeEntity> {
+    val id: IntColumnNotNull<LocalTimeEntity>
+    val localTimeNotNull: LocalTimeColumnNotNull<LocalTimeEntity>
+    val localTimeNullable: LocalTimeColumnNullable<LocalTimeEntity>
+}
 
 data class KotlinxLocalTimeEntity(
     val id: Int,
@@ -576,6 +638,11 @@ data class KotlinxLocalTimeEntity(
 val kotlinxLocalTimeWithNullable = KotlinxLocalTimeEntity(1, kotlinx.datetime.LocalTime(12, 4), kotlinx.datetime.LocalTime(11, 4))
 val kotlinxLocalTimeWithoutNullable = KotlinxLocalTimeEntity(2, kotlinx.datetime.LocalTime(12, 6))
 
+interface KotlinxLocalTimes : Table<KotlinxLocalTimeEntity> {
+    val id: IntColumnNotNull<KotlinxLocalTimeEntity>
+    val localTimeNotNull: KotlinxLocalTimeColumnNotNull<KotlinxLocalTimeEntity>
+    val localTimeNullable: KotlinxLocalTimeColumnNullable<KotlinxLocalTimeEntity>
+}
 
 data class IntEntity(
     val intNotNull: Int,
@@ -586,6 +653,11 @@ data class IntEntity(
 val intWithNullable = IntEntity(10, 6)
 val intWithoutNullable = IntEntity(12)
 
+interface Ints : Table<IntEntity> {
+    val id: IntColumnNotNull<IntEntity>
+    val intNotNull: IntColumnNotNull<IntEntity>
+    val intNullable: IntColumnNullable<IntEntity>
+}
 
 data class LongEntity(
     val longNotNull: Long,
@@ -596,6 +668,11 @@ data class LongEntity(
 val longWithNullable = LongEntity(10L, 6L)
 val longWithoutNullable = LongEntity(12L)
 
+interface Longs : Table<LongEntity> {
+    val id: LongColumnNotNull<LongEntity>
+    val longNotNull: LongColumnNotNull<LongEntity>
+    val longNullable: LongColumnNullable<LongEntity>
+}
 
 data class UuidEntity(
     val uuidNotNull: UUID,
@@ -605,6 +682,12 @@ data class UuidEntity(
 
 val uuidWithNullable = UuidEntity(UUID.randomUUID(), UUID.randomUUID())
 val uuidWithoutNullable = UuidEntity(UUID.randomUUID())
+
+interface Uuids : Table<UuidEntity> {
+    val id: UuidColumnNotNull<UuidEntity>
+    val uuidNotNull: UuidColumnNotNull<UuidEntity>
+    val uuidNullable: UuidColumnNullable<UuidEntity>
+}
 
 data class CustomerEntity(
     val id: Int,
@@ -620,29 +703,28 @@ val customerJapan1 = CustomerEntity(4, "Seya", "USA", 20)
 val customerJapan2 = CustomerEntity(5, "Shun", "USA", 20)
 val customerFranceDup = CustomerEntity(6, "Jean", "France", 56)
 
+interface Customers : Table<CustomerEntity> {
+    val id: IntColumnNotNull<CustomerEntity>
+    val name: StringColumnNotNull<CustomerEntity>
+    val country: StringColumnNotNull<CustomerEntity>
+    val age: IntColumnNotNull<CustomerEntity>
+}
 
 data class UserDto(
     val name: String,
     val alias: String?
 )
 
-
 data class UserWithRoleDto(
     val lastname: String,
     val role: String
 )
 
-// test inheritance
-val inherited = Inherited("id", "name", "firstname")
-
-
 interface Nameable {
     val name: String
 }
 
-
 interface DummyIntermediary : Nameable
-
 
 open class Inherited(
     private val id: String,
@@ -680,6 +762,23 @@ open class Inherited(
     }
 }
 
+interface Entities<T : Entity<String>> : Table<T> {
+    val id: StringColumnNotNull<T>
+}
+
+interface Nameables<T : Nameable> : Table<T> {
+    val name: StringColumnNotNull<T>
+}
+
+// test inheritance
+val inherited = Inherited("id", "name", "firstname")
+
+interface Inheriteds : Entities<Inherited>, Nameables<Inherited>, Table<Inherited> {
+    override val id: StringColumnNotNull<Inherited>
+    override val name: StringColumnNotNull<Inherited>
+    val firstname: StringColumnNullable<Inherited>
+}
+
 val javaJdoe = JavaUser().apply {
     login = "jdoe"
     firstname = "John"
@@ -697,15 +796,7 @@ val javaBboss = JavaUser().apply {
     alias3 = "TheBoss"
 }
 
-interface ENTITY<T : Entity<String>> : Table<T> {
-    val id: StringColumnNotNull<T>
-}
-
-interface NAMEABLE<T : Nameable> : Table<T> {
-    val name: StringColumnNotNull<T>
-}
-
-interface JAVA_USER : Table<JavaUser> {
+interface JavaUsers : Table<JavaUser> {
     val login: StringColumnNotNull<JavaUser>
     val firstname: StringColumnNotNull<JavaUser>
     val lastname: StringColumnNotNull<JavaUser>
@@ -724,6 +815,12 @@ data class StringAsTinyTextEntity(
 val stringAsTinyTextNotNull = StringAsTinyTextEntity(1, "abc", "def")
 val stringAsTinyTextNullable = StringAsTinyTextEntity(2, "ghi")
 
+interface TinyTexts : Table<StringAsTinyTextEntity> {
+    val id: IntDbIntColumnNotNull<StringAsTinyTextEntity>
+    val stringNotNull: StringDbTinyTextColumnNotNull<StringAsTinyTextEntity>
+    val stringNullable: StringDbTinyTextColumnNullable<StringAsTinyTextEntity>
+}
+
 data class StringAsTextEntity(
     val id: Int,
     val stringNotNull: String,
@@ -732,6 +829,12 @@ data class StringAsTextEntity(
 
 val stringAsTextNotNull = StringAsTextEntity(1, "abc", "def")
 val stringAsTextNullable = StringAsTextEntity(2, "ghi")
+
+interface Texts : Table<StringAsTextEntity> {
+    val id: IntDbIntColumnNotNull<StringAsTextEntity>
+    val stringNotNull: StringDbTextColumnNotNull<StringAsTextEntity>
+    val stringNullable: StringDbTextColumnNullable<StringAsTextEntity>
+}
 
 data class StringAsMediumTextEntity(
     val id: Int,
@@ -742,6 +845,12 @@ data class StringAsMediumTextEntity(
 val stringAsMediumTextNotNull = StringAsMediumTextEntity(1, "abc", "def")
 val stringAsMediumTextNullable = StringAsMediumTextEntity(2, "ghi")
 
+interface MediumTexts : Table<StringAsMediumTextEntity> {
+    val id: IntDbIntColumnNotNull<StringAsMediumTextEntity>
+    val stringNotNull: StringDbMediumTextColumnNotNull<StringAsMediumTextEntity>
+    val stringNullable: StringDbMediumTextColumnNullable<StringAsMediumTextEntity>
+}
+
 data class StringAsLongTextEntity(
     val id: Int,
     val stringNotNull: String,
@@ -750,6 +859,12 @@ data class StringAsLongTextEntity(
 
 val stringAsLongTextNotNull = StringAsLongTextEntity(1, "abc", "def")
 val stringAsLongTextNullable = StringAsLongTextEntity(2, "ghi")
+
+interface LongTexts : Table<StringAsLongTextEntity> {
+    val id: IntDbIntColumnNotNull<StringAsLongTextEntity>
+    val stringNotNull: StringDbLongTextColumnNotNull<StringAsLongTextEntity>
+    val stringNullable: StringDbLongTextColumnNullable<StringAsLongTextEntity>
+}
 
 data class ByteArrayEntity(
     val id: Int,
@@ -783,6 +898,12 @@ data class ByteArrayEntity(
 val byteArrayWithNullable = ByteArrayEntity(1, byteArrayOf(0x2A), byteArrayOf(0x2B))
 val byteArrayWithoutNullable = ByteArrayEntity(2, byteArrayOf(0x2C))
 
+interface ByteArrays : Table<ByteArrayEntity> {
+    val id: IntDbIntColumnNotNull<ByteArrayEntity>
+    val byteArrayNotNull: ByteArrayColumnNotNull<ByteArrayEntity>
+    val byteArrayNullable: ByteArrayColumnNullable<ByteArrayEntity>
+}
+
 data class ByteArrayAsBinaryEntity(
     val id: Int,
     val byteArrayNotNull: ByteArray,
@@ -814,3 +935,9 @@ data class ByteArrayAsBinaryEntity(
 
 val byteArrayBinaryWithNullable = ByteArrayAsBinaryEntity(1, byteArrayOf(0x2A), byteArrayOf(0x2B))
 val byteArrayBinaryWithoutNullable = ByteArrayAsBinaryEntity(2, byteArrayOf(0x2C))
+
+interface ByteArrayAsBinaries : Table<ByteArrayAsBinaryEntity> {
+    val id: IntDbIntColumnNotNull<ByteArrayAsBinaryEntity>
+    val byteArrayNotNull: ByteArrayColumnNotNull<ByteArrayAsBinaryEntity>
+    val byteArrayNullable: ByteArrayColumnNullable<ByteArrayAsBinaryEntity>
+}

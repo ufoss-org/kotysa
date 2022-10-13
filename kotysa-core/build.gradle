@@ -20,6 +20,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     compileOnly "io.r2dbc:r2dbc-spi:$r2dbc_version"
+    compileOnly "io.projectreactor:reactor-core:$reactor_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
     testFixturesImplementation "org.springframework:spring-core"
@@ -32,6 +33,8 @@ dependencies {
     testFixturesImplementation 'org.testcontainers:mariadb'
 
     testFixturesCompileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
+    testFixturesCompileOnly 'io.projectreactor:reactor-test'
+    testFixturesCompileOnly 'io.projectreactor.kotlin:reactor-kotlin-extensions'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"

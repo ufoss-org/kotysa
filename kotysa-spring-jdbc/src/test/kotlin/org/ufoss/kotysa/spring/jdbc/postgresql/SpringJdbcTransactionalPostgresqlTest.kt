@@ -8,8 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcTransactionalPostgresqlTest
     : AbstractSpringJdbcPostgresqlTest<UserRepositoryJdbcPostgresqldbTransactional>() {
@@ -34,6 +36,10 @@ class SpringJdbcTransactionalPostgresqlTest
     }
 }
 
-
-class UserRepositoryJdbcPostgresqldbTransactional(sqlClient: JdbcOperations)
-    : AbstractUserRepositorySpringJdbcPostgresql(sqlClient)
+class UserRepositoryJdbcPostgresqldbTransactional(client: JdbcOperations) :
+    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        client.sqlClient(postgresqlTables),
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

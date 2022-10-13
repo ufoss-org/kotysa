@@ -12,8 +12,10 @@ import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
+import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySelectAlias>() {
 
@@ -171,7 +173,13 @@ class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositor
     }
 }
 
-class UserRepositorySelectAlias(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMssql(client) {
+class UserRepositorySelectAlias(client: JdbcOperations) :
+    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        client.sqlClient(mssqlTables),
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MssqlUsers.firstname `as` "fna"

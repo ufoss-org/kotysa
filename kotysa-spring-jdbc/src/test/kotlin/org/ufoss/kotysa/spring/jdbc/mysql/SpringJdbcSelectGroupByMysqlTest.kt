@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MysqlCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class SpringJdbcSelectGroupByMysqlTest : AbstractSpringJdbcMysqlTest<GroupByRepositoryMysqlSelect>() {
+class SpringJdbcSelectGroupByMysqlTest : AbstractSpringJdbcMysqlTest<GroupByRepositoryMysqlSelect>(),
+    SelectGroupByTest<MysqlCustomers, GroupByRepositoryMysqlSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,20 +25,7 @@ class SpringJdbcSelectGroupByMysqlTest : AbstractSpringJdbcMysqlTest<GroupByRepo
     override val repository: GroupByRepositoryMysqlSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryMysqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMysql(client) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MysqlCustomers.id and MysqlCustomers.country
-                    from MysqlCustomers
-                    groupBy MysqlCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryMysqlSelect(client: JdbcOperations) :
+    SelectGroupByRepository<MysqlCustomers>(client.sqlClient(mysqlTables), MysqlCustomers)

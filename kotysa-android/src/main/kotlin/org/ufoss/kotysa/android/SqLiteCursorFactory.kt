@@ -50,6 +50,7 @@ internal class SqLiteCursorFactory(private val params: List<Any?>) : CursorFacto
                             query.bindString(index + 1, "$kotlinxLocalDateTime")
                         }
                     }
+                    "kotlinx.datetime.LocalTime" -> query.bindString(index + 1, "$param")
                     else -> throw RuntimeException("${param.javaClass.canonicalName} is not supported yet")
                 }
             }

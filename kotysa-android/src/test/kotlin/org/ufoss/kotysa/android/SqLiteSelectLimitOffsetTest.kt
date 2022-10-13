@@ -5,68 +5,40 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
+import org.ufoss.kotysa.test.SqliteCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetTest
 
-class SqLiteSelectLimitOffsetTest : AbstractSqLiteTest<LimitOffsetRepositorySelect>() {
+class SqLiteSelectLimitOffsetTest : AbstractSqLiteTest<LimitOffsetRepositorySelect>(),
+    SelectLimitOffsetTest<SqliteCustomers, LimitOffsetRepositorySelect, AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = LimitOffsetRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {
-        assertThat(repository.selectAllOrderByIdOffset())
-                .hasSize(1)
-                .containsExactly(customerUSA2)
+    fun `Verify selectAllOrderByIdOffset returns customerUSA2 - Android`() {
+        `Verify selectAllOrderByIdOffset returns customerUSA2`()
     }
 
     @Test
-    fun `Verify selectAllOrderByIdLimit returns customerUSA2`() {
-        assertThat(repository.selectAllOrderByIdLimit())
-                .hasSize(1)
-                .containsExactly(customerFrance)
+    fun `Verify selectAllOrderByIdLimit returns customerUSA2 - Android`() {
+        `Verify selectAllOrderByIdLimit returns customerUSA2`()
     }
 
     @Test
-    fun `Verify selectAllLimitOffset returns one result`() {
-        assertThat(repository.selectAllLimitOffset())
-                .hasSize(1)
+    fun `Verify selectAllLimitOffset returns one result - Android`() {
+        `Verify selectAllLimitOffset returns one result`()
     }
 
     @Test
-    fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1`() {
-        assertThat(repository.selectAllOrderByIdLimitOffset())
-                .hasSize(2)
-                .containsExactly(customerUSA1, customerUSA2)
+    fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1 - Android`() {
+        `Verify selectAllOrderByIdLimitOffset returns customerUSA1`()
     }
 }
 
 class LimitOffsetRepositorySelect(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: SqLiteTables,
-) : AbstractCustomerRepository(sqLiteOpenHelper, tables) {
-
-    fun selectAllOrderByIdOffset() =
-            (sqlClient selectFrom SqliteCustomers
-                    orderByAsc SqliteCustomers.id
-                    offset 2
-                    ).fetchAll()
-
-    fun selectAllOrderByIdLimit() =
-            (sqlClient selectFrom SqliteCustomers
-                    orderByAsc SqliteCustomers.id
-                    limit 1
-                    ).fetchAll()
-
-    fun selectAllLimitOffset() =
-            (sqlClient selectFrom SqliteCustomers
-                    limit 1 offset 1
-                    ).fetchAll()
-
-    fun selectAllOrderByIdLimitOffset() =
-            (sqlClient selectFrom SqliteCustomers
-                    orderByAsc SqliteCustomers.id
-                    limit 2 offset 1
-                    ).fetchAll()
-}
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: SqLiteTables,
+) : SelectLimitOffsetRepository<SqliteCustomers>(sqLiteOpenHelper.sqlClient(tables), SqliteCustomers)

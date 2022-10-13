@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MariadbCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mariadbTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class SpringJdbcSelectOrderByMariadbTest : AbstractSpringJdbcMariadbTest<OrderByRepositoryMariadbSelect>() {
+class SpringJdbcSelectOrderByMariadbTest : AbstractSpringJdbcMariadbTest<OrderByRepositoryMariadbSelect>(),
+    SelectOrderByTest<MariadbCustomers, OrderByRepositoryMariadbSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,31 +25,7 @@ class SpringJdbcSelectOrderByMariadbTest : AbstractSpringJdbcMariadbTest<OrderBy
     override val repository: OrderByRepositoryMariadbSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryMariadbSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMariadb(client) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MariadbCustomers
-                    orderByAsc MariadbCustomers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MariadbCustomers
-                    orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryMariadbSelect(client: JdbcOperations) :
+    SelectOrderByRepository<MariadbCustomers>(client.sqlClient(mariadbTables), MariadbCustomers)

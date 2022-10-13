@@ -4,16 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
+import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasPostgresqlTest : AbstractSpringJdbcPostgresqlTest<UserRepositorySelectAlias>() {
 
@@ -171,9 +173,13 @@ class SpringJdbcSelectAliasPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Use
     }
 }
 
-class UserRepositorySelectAlias(
-    client: JdbcOperations,
-) : AbstractUserRepositorySpringJdbcPostgresql(client) {
+class UserRepositorySelectAlias(client: JdbcOperations) :
+    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        client.sqlClient(postgresqlTables),
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select PostgresqlUsers.firstname `as` "fna"

@@ -7,8 +7,8 @@ package org.ufoss.kotysa.jdbc.mysql
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.MysqlJavaUsers
-import org.ufoss.kotysa.test.repositories.JavaEntityTest
-import org.ufoss.kotysa.test.repositories.JavaUserRepository
+import org.ufoss.kotysa.test.repositories.blocking.JavaEntityTest
+import org.ufoss.kotysa.test.repositories.blocking.JavaUserRepository
 
 class JdbcJavaEntityMysqlTest :
     AbstractJdbcMysqlTest<JavaUserMysqlRepository>(),

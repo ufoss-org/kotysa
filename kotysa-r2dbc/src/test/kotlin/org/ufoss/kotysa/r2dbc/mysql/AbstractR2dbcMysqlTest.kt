@@ -20,7 +20,7 @@ import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
 import org.ufoss.kotysa.test.hooks.MySqlContainerResource
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
-import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesRepositoryTest
 
 @ExtendWith(MySqlContainerExecutionHook::class)
 @ResourceLock(MySqlContainerResource.ID)
@@ -45,7 +45,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> : CoroutinesRepositoryTest
 
     protected abstract fun instantiateRepository(sqlClient: R2dbcSqlClient): T
 
-    override val operator by lazy {
+    override val coOperator by lazy {
         sqlClient
     }
 

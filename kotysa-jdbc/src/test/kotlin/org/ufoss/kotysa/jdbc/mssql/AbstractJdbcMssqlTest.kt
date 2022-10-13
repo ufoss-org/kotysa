@@ -16,7 +16,7 @@ import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.mssqlTables
-import org.ufoss.kotysa.test.repositories.RepositoryTest
+import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 
 @ExtendWith(MsSqlContainerExecutionHook::class)
 @ResourceLock(MsSqlContainerResource.ID)

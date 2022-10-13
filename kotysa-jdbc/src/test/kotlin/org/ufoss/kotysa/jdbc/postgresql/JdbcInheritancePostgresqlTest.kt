@@ -4,85 +4,17 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlInheriteds
+import org.ufoss.kotysa.test.repositories.blocking.InheritanceRepository
+import org.ufoss.kotysa.test.repositories.blocking.InheritanceTest
 
-class JdbcInheritancePostgresqlTest : AbstractJdbcPostgresqlTest<InheritancePostgresqlRepository>() {
+class JdbcInheritancePostgresqlTest : AbstractJdbcPostgresqlTest<InheritancePostgresqlRepository>(),
+    InheritanceTest<PostgresqlInheriteds, InheritancePostgresqlRepository, JdbcTransaction> {
+    override val table = PostgresqlInheriteds
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = InheritancePostgresqlRepository(sqlClient)
-
-    @Test
-    fun `Verify extension function selectById finds inherited`() {
-        assertThat(repository.selectById(PostgresqlInheriteds, "id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify selectInheritedById finds inherited`() {
-        assertThat(repository.selectInheritedById("id"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify selectFirstByName finds inherited`() {
-        assertThat(repository.selectFirstByName(PostgresqlInheriteds, "name"))
-                .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify deleteById deletes inherited`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteById(PostgresqlInheriteds, "id"))
-                    .isEqualTo(1)
-            assertThat(repository.selectAll())
-                    .isEmpty()
-        }
-    }
 }
 
-
-class InheritancePostgresqlRepository(private val sqlClient: JdbcSqlClient) : Repository {
-
-    override fun init() {
-        createTable()
-        insert()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTable() {
-        sqlClient createTable PostgresqlInheriteds
-    }
-
-    fun insert() {
-        sqlClient insert inherited
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom PostgresqlInheriteds
-
-    fun selectAll() = sqlClient selectAllFrom PostgresqlInheriteds
-
-    fun selectInheritedById(id: String) =
-            (sqlClient selectFrom PostgresqlInheriteds
-                    where PostgresqlInheriteds.id eq id
-                    ).fetchOne()
-
-    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
-            (sqlClient selectFrom table
-                    where table.id eq id
-                    ).fetchOne()
-
-    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
-            (sqlClient selectFrom table
-                    where table.name eq name
-                    ).fetchFirst()
-
-    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
-            (sqlClient deleteFrom table
-                    where table.id eq id
-                    ).execute()
-}
+class InheritancePostgresqlRepository(sqlClient: JdbcSqlClient) :
+    InheritanceRepository<PostgresqlInheriteds>(sqlClient, PostgresqlInheriteds)

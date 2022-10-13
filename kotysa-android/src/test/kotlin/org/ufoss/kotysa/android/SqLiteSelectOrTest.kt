@@ -5,33 +5,32 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.SqliteUserRoles
+import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
-class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>() {
+class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>(),
+    SelectOrTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySelectOr, AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectOr(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
+    fun `Verify selectRolesByLabels finds roleAdmin and roleGod - Android`() {
+        `Verify selectRolesByLabels finds roleAdmin and roleGod`()
     }
 }
 
 class UserRepositorySelectOr(
-        sqLiteOpenHelper: SQLiteOpenHelper,
-        tables: SqLiteTables,
-) : AbstractUserRepository(sqLiteOpenHelper, tables) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom SqliteRoles
-                    where SqliteRoles.label eq label1
-                    or SqliteRoles.label eq label2
-                    ).fetchAll()
-}
+    sqLiteOpenHelper: SQLiteOpenHelper,
+    tables: SqLiteTables,
+) : SelectOrRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+    sqLiteOpenHelper.sqlClient(tables),
+    SqliteRoles,
+    SqliteUsers,
+    SqliteUserRoles
+)

@@ -8,8 +8,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcTransactionalMariadbTest : AbstractSpringJdbcMariadbTest<UserRepositoryJdbcMariadbTransactional>() {
 
@@ -33,6 +35,10 @@ class SpringJdbcTransactionalMariadbTest : AbstractSpringJdbcMariadbTest<UserRep
     }
 }
 
-
-class UserRepositoryJdbcMariadbTransactional(sqlClient: JdbcOperations)
-    : AbstractUserRepositorySpringJdbcMariadb(sqlClient)
+class UserRepositoryJdbcMariadbTransactional(client: JdbcOperations) :
+    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        client.sqlClient(mariadbTables),
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    )

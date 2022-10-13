@@ -78,37 +78,37 @@ class ByteArrayRepositoryMysqlSelect(private val sqlClient: R2dbcSqlClient) : Re
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MysqlByteArrayAsBinarys
+        sqlClient createTable MysqlByteArrayAsBinaries
     }
 
     private suspend fun insertByteArrays() {
         sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlByteArrayAsBinarys
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MysqlByteArrayAsBinaries
 
     fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
-            (sqlClient selectFrom MysqlByteArrayAsBinarys
-                    where MysqlByteArrayAsBinarys.byteArrayNotNull eq byteArray
+            (sqlClient selectFrom MysqlByteArrayAsBinaries
+                    where MysqlByteArrayAsBinaries.byteArrayNotNull eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullNotEq(byteArray: ByteArray) =
-            (sqlClient selectFrom MysqlByteArrayAsBinarys
-                    where MysqlByteArrayAsBinarys.byteArrayNotNull notEq byteArray
+            (sqlClient selectFrom MysqlByteArrayAsBinaries
+                    where MysqlByteArrayAsBinaries.byteArrayNotNull notEq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullIn(values: Sequence<ByteArray>) =
-            (sqlClient selectFrom MysqlByteArrayAsBinarys
-                    where MysqlByteArrayAsBinarys.byteArrayNotNull `in` values
+            (sqlClient selectFrom MysqlByteArrayAsBinaries
+                    where MysqlByteArrayAsBinaries.byteArrayNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByByteArrayNullable(byteArray: ByteArray?) =
-            (sqlClient selectFrom MysqlByteArrayAsBinarys
-                    where MysqlByteArrayAsBinarys.byteArrayNullable eq byteArray
+            (sqlClient selectFrom MysqlByteArrayAsBinaries
+                    where MysqlByteArrayAsBinaries.byteArrayNullable eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNullableNotEq(byteArray: ByteArray?) =
-            (sqlClient selectFrom MysqlByteArrayAsBinarys
-                    where MysqlByteArrayAsBinarys.byteArrayNullable notEq byteArray
+            (sqlClient selectFrom MysqlByteArrayAsBinaries
+                    where MysqlByteArrayAsBinaries.byteArrayNullable notEq byteArray
                     ).fetchAll()
 }

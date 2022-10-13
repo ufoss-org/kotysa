@@ -4,31 +4,25 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.H2Roles
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.H2UserRoles
+import org.ufoss.kotysa.test.H2Users
+import org.ufoss.kotysa.test.h2Tables
+import org.ufoss.kotysa.test.repositories.blocking.SelectAndRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectAndTest
 
-
-class SpringJdbcSelectAndH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectAnd>() {
+class SpringJdbcSelectAndH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectAnd>(),
+    SelectAndTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2SelectAnd,
+            SpringJdbcTransaction> {
     override val context = startContext<UserRepositorySpringJdbcH2SelectAnd>()
     override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectAnd>()
-
-    @Test
-    fun `Verify selectRolesByLabels finds h2User`() {
-        assertThat(repository.selectRolesByLabels("u", "r"))
-                .hasSize(1)
-                .containsExactly(roleUser)
-    }
 }
 
-
-class UserRepositorySpringJdbcH2SelectAnd(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom H2Roles
-                    where H2Roles.label contains label1
-                    and H2Roles.label contains label2
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcH2SelectAnd(client: JdbcOperations) :
+    SelectAndRepository<H2Roles, H2Users, H2UserRoles>(
+        client.sqlClient(h2Tables),
+        H2Roles, H2Users, H2UserRoles
+    )

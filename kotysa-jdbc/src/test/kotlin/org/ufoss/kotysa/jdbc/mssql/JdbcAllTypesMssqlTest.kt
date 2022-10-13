@@ -86,6 +86,28 @@ class JdbcAllTypesMssqlTest : AbstractJdbcMssqlTest<AllTypesRepositoryMssql>() {
                 .containsExactlyInAnyOrder(mssqlAllTypesNotNull)
         }
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.insertAndReturnAllTypesDefaultValues())
+                .isEqualTo(
+                    AllTypesNullableDefaultValueEntity(
+                        allTypesNullableDefaultValueToInsert.id,
+                        "default",
+                        LocalDate.of(2019, 11, 4),
+                        LocalDate(2019, 11, 6),
+                        LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
+                        LocalDateTime(2018, 11, 4, 0, 0),
+                        LocalDateTime(2019, 11, 4, 0, 0),
+                        42,
+                        84L
+                    )
+                )
+        }
+    }
 }
 
 
@@ -155,4 +177,6 @@ class AllTypesRepositoryMssql(private val sqlClient: JdbcSqlClient) : Repository
                 set MssqlAllTypesNotNulls.byteArray eq MssqlAllTypesNotNulls.byteArray
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueToInsert
 }

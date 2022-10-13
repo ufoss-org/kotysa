@@ -13,32 +13,32 @@ import org.ufoss.kotysa.tables
 import java.time.*
 import java.util.*
 
-object H2Roles : H2Table<RoleEntity>("roles") {
-    val id = integer(RoleEntity::id)
+object H2Roles : H2Table<RoleEntity>("roles"), Roles {
+    override val id = integer(RoleEntity::id)
         .primaryKey()
-    val label = varchar(RoleEntity::label)
+    override val label = varchar(RoleEntity::label)
         .unique()
 }
 
-object H2Users : H2Table<UserEntity>("users") {
-    val id = integer(UserEntity::id)
+object H2Users : H2Table<UserEntity>("users"), Users {
+    override val id = integer(UserEntity::id)
         .primaryKey("PK_users")
-    val firstname = varchar(UserEntity::firstname, "fname")
-    val lastname = varchar(UserEntity::lastname, "lname")
-    val isAdmin = boolean(UserEntity::isAdmin)
-    val roleId = integer(UserEntity::roleId)
+    override val firstname = varchar(UserEntity::firstname, "fname")
+    override val lastname = varchar(UserEntity::lastname, "lname")
+    override val isAdmin = boolean(UserEntity::isAdmin)
+    override val roleId = integer(UserEntity::roleId)
         .foreignKey(H2Roles.id, "FK_users_roles")
-    val alias = varchar(UserEntity::alias)
+    override val alias = varchar(UserEntity::alias)
 
     init {
         index(setOf(firstname, lastname), indexName = "full_name_index")
     }
 }
 
-object H2UserRoles : H2Table<UserRoleEntity>("userRoles") {
-    val userId = integer(UserRoleEntity::userId)
+object H2UserRoles : H2Table<UserRoleEntity>("userRoles"), UserRoles {
+    override val userId = integer(UserRoleEntity::userId)
         .foreignKey(H2Users.id)
-    val roleId = integer(UserRoleEntity::roleId)
+    override val roleId = integer(UserRoleEntity::roleId)
         .foreignKey(H2Roles.id)
 
     init {
@@ -151,8 +151,8 @@ object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
-    val int = integer(AllTypesNotNullEntity::int)
-    val long = bigInt(AllTypesNotNullEntity::long)
+    val inte = integer(AllTypesNotNullEntity::int)
+    val longe = bigInt(AllTypesNotNullEntity::long)
     val byteArray = binary(AllTypesNotNullEntity::byteArray)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNotNullEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNotNullEntity::uuid)
@@ -245,8 +245,8 @@ object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullab
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
     val kotlinxLocalDateTime2 = timestamp(AllTypesNullableEntity::kotlinxLocalDateTime2)
-    val int = integer(AllTypesNullableEntity::int)
-    val long = bigInt(AllTypesNullableEntity::long)
+    val inte = integer(AllTypesNullableEntity::int)
+    val longe = bigInt(AllTypesNullableEntity::long)
     val byteArray = binary(AllTypesNullableEntity::byteArray)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNullableEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNullableEntity::uuid)
@@ -273,6 +273,7 @@ data class H2AllTypesNullableDefaultValueEntity(
 )
 
 val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
+val h2AllTypesNullableDefaultValueToInsert = H2AllTypesNullableDefaultValueEntity(2)
 
 object H2AllTypesNullableDefaultValues : H2Table<H2AllTypesNullableDefaultValueEntity>() {
     val id = integer(AllTypesNullableDefaultValueEntity::id)
@@ -310,8 +311,8 @@ object H2AllTypesNullableDefaultValues : H2Table<H2AllTypesNullableDefaultValueE
         AllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
         defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
     )
-    val int = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
-    val long = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
+    val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
     val offsetDateTime = timestampWithTimeZone(
         H2AllTypesNullableDefaultValueEntity::offsetDateTime,
         defaultValue = OffsetDateTime.of(
@@ -322,98 +323,99 @@ object H2AllTypesNullableDefaultValues : H2Table<H2AllTypesNullableDefaultValueE
     val uuid = uuid(H2AllTypesNullableDefaultValueEntity::uuid, defaultValue = UUID.fromString(defaultUuid))
 }
 
-object H2LocalDates : H2Table<LocalDateEntity>() {
-    val id = integer(LocalDateEntity::id)
+object H2LocalDates : H2Table<LocalDateEntity>(), LocalDates {
+    override val id = integer(LocalDateEntity::id)
         .primaryKey()
-    val localDateNotNull = date(LocalDateEntity::localDateNotNull)
-    val localDateNullable = date(LocalDateEntity::localDateNullable)
+    override val localDateNotNull = date(LocalDateEntity::localDateNotNull)
+    override val localDateNullable = date(LocalDateEntity::localDateNullable)
 }
 
-object H2KotlinxLocalDates : H2Table<KotlinxLocalDateEntity>() {
-    val id = integer(KotlinxLocalDateEntity::id)
+object H2KotlinxLocalDates : H2Table<KotlinxLocalDateEntity>(), KotlinxLocalDates {
+    override val id = integer(KotlinxLocalDateEntity::id)
         .primaryKey()
-    val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
-    val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
+    override val localDateNotNull = date(KotlinxLocalDateEntity::localDateNotNull)
+    override val localDateNullable = date(KotlinxLocalDateEntity::localDateNullable)
 }
 
-object H2LocalDateTimes : H2Table<LocalDateTimeEntity>() {
-    val id = integer(LocalDateTimeEntity::id)
+object H2LocalDateTimes : H2Table<LocalDateTimeEntity>(), LocalDateTimes {
+    override val id = integer(LocalDateTimeEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = dateTime(LocalDateTimeEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = dateTime(LocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2LocalDateTimeAsTimestamps : H2Table<LocalDateTimeAsTimestampEntity>() {
-    val id = integer(LocalDateTimeAsTimestampEntity::id)
+object H2LocalDateTimeAsTimestamps : H2Table<LocalDateTimeAsTimestampEntity>(), LocalDateTimeAsTimestamps {
+    override val id = integer(LocalDateTimeAsTimestampEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
-    val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = timestamp(LocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object H2KotlinxLocalDateTimes : H2Table<KotlinxLocalDateTimeEntity>() {
-    val id = integer(KotlinxLocalDateTimeEntity::id)
+object H2KotlinxLocalDateTimes : H2Table<KotlinxLocalDateTimeEntity>(), KotlinxLocalDateTimes {
+    override val id = integer(KotlinxLocalDateTimeEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
-    val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = dateTime(KotlinxLocalDateTimeEntity::localDateTimeNullable)
 }
 
-object H2KotlinxLocalDateTimeAsTimestamps : H2Table<KotlinxLocalDateTimeAsTimestampEntity>() {
-    val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
+object H2KotlinxLocalDateTimeAsTimestamps : H2Table<KotlinxLocalDateTimeAsTimestampEntity>(),
+    KotlinxLocalDateTimeAsTimestamps {
+    override val id = integer(KotlinxLocalDateTimeAsTimestampEntity::id)
         .primaryKey()
-    val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
-    val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
+    override val localDateTimeNotNull = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNotNull)
+    override val localDateTimeNullable = timestamp(KotlinxLocalDateTimeAsTimestampEntity::localDateTimeNullable)
 }
 
-object H2OffsetDateTimes : H2Table<OffsetDateTimeEntity>() {
-    val id = integer(OffsetDateTimeEntity::id)
+object H2OffsetDateTimes : H2Table<OffsetDateTimeEntity>(), OffsetDateTimes {
+    override val id = integer(OffsetDateTimeEntity::id)
         .primaryKey()
-    val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
-    val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
+    override val offsetDateTimeNotNull = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNotNull)
+    override val offsetDateTimeNullable = timestampWithTimeZone(OffsetDateTimeEntity::offsetDateTimeNullable)
 }
 
-object H2LocalTimes : H2Table<LocalTimeEntity>() {
-    val id = integer(LocalTimeEntity::id)
+object H2LocalTimes : H2Table<LocalTimeEntity>(), LocalTimes {
+    override val id = integer(LocalTimeEntity::id)
         .primaryKey()
-    val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
+    override val localTimeNotNull = time(LocalTimeEntity::localTimeNotNull)
+    override val localTimeNullable = time(LocalTimeEntity::localTimeNullable)
 }
 
-object H2KotlinxLocalTimes : H2Table<KotlinxLocalTimeEntity>() {
-    val id = integer(KotlinxLocalTimeEntity::id)
+object H2KotlinxLocalTimes : H2Table<KotlinxLocalTimeEntity>(), KotlinxLocalTimes {
+    override val id = integer(KotlinxLocalTimeEntity::id)
         .primaryKey()
-    val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
-    val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
+    override val localTimeNotNull = time(KotlinxLocalTimeEntity::localTimeNotNull)
+    override val localTimeNullable = time(KotlinxLocalTimeEntity::localTimeNullable)
 }
 
-object H2Ints : H2Table<IntEntity>() {
-    val id = autoIncrementInteger(IntEntity::id)
+object H2Ints : H2Table<IntEntity>(), Ints {
+    override val id = autoIncrementInteger(IntEntity::id)
         .primaryKey()
-    val intNotNull = integer(IntEntity::intNotNull)
-    val intNullable = integer(IntEntity::intNullable)
+    override val intNotNull = integer(IntEntity::intNotNull)
+    override val intNullable = integer(IntEntity::intNullable)
 }
 
-object H2Longs : H2Table<LongEntity>() {
-    val id = autoIncrementBigInt(LongEntity::id)
+object H2Longs : H2Table<LongEntity>(), Longs {
+    override val id = autoIncrementBigInt(LongEntity::id)
         .primaryKey()
-    val longNotNull = bigInt(LongEntity::longNotNull)
-    val longNullable = bigInt(LongEntity::longNullable)
+    override val longNotNull = bigInt(LongEntity::longNotNull)
+    override val longNullable = bigInt(LongEntity::longNullable)
 }
 
-object H2Uuids : H2Table<UuidEntity>() {
-    val id = uuid(UuidEntity::id)
+object H2Uuids : H2Table<UuidEntity>(), Uuids {
+    override val id = uuid(UuidEntity::id)
         .primaryKey()
-    val uuidNotNull = uuid(UuidEntity::uuidNotNull)
-    val uuidNullable = uuid(UuidEntity::uuidNullable)
+    override val uuidNotNull = uuid(UuidEntity::uuidNotNull)
+    override val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
-object H2Inheriteds : H2Table<Inherited>(), ENTITY<Inherited>, NAMEABLE<Inherited> {
+object H2Inheriteds : H2Table<Inherited>(), Entities<Inherited>, Nameables<Inherited>, Inheriteds {
     override val id = varchar(Inherited::getId)
         .primaryKey()
     override val name = varchar(Inherited::name)
-    val firstname = varchar(Inherited::firstname)
+    override val firstname = varchar(Inherited::firstname)
 }
 
-object H2JavaUsers : H2Table<JavaUser>("java_users"), JAVA_USER {
+object H2JavaUsers : H2Table<JavaUser>("java_users"), JavaUsers {
     override val login = varchar(JavaUser::getLogin)
         .primaryKey()
     override val firstname = varchar(JavaUser::getFirstname, "fname")
@@ -424,27 +426,27 @@ object H2JavaUsers : H2Table<JavaUser>("java_users"), JAVA_USER {
     override val alias3 = varchar(JavaUser::getAlias3 as (JavaUser) -> String?)
 }
 
-object H2Customers : H2Table<CustomerEntity>() {
-    val id = integer(CustomerEntity::id)
+object H2Customers : H2Table<CustomerEntity>(), Customers {
+    override val id = integer(CustomerEntity::id)
         .primaryKey()
-    val name = varchar(CustomerEntity::name)
+    override val name = varchar(CustomerEntity::name)
         .unique()
-    val country = varchar(CustomerEntity::country)
-    val age = integer(CustomerEntity::age)
+    override val country = varchar(CustomerEntity::country)
+    override val age = integer(CustomerEntity::age)
 }
 
-object H2ByteArrays : H2Table<ByteArrayEntity>() {
-    val id = integer(ByteArrayEntity::id)
+object H2ByteArrays : H2Table<ByteArrayEntity>(), ByteArrays {
+    override val id = integer(ByteArrayEntity::id)
         .primaryKey()
-    val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
-    val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
+    override val byteArrayNotNull = blob(ByteArrayEntity::byteArrayNotNull)
+    override val byteArrayNullable = blob(ByteArrayEntity::byteArrayNullable)
 }
 
-object H2ByteArrayAsBinarys : H2Table<ByteArrayAsBinaryEntity>() {
-    val id = integer(ByteArrayAsBinaryEntity::id)
+object H2ByteArrayAsBinaries : H2Table<ByteArrayAsBinaryEntity>(), ByteArrayAsBinaries {
+    override val id = integer(ByteArrayAsBinaryEntity::id)
         .primaryKey()
-    val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
-    val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
+    override val byteArrayNotNull = binary(ByteArrayAsBinaryEntity::byteArrayNotNull)
+    override val byteArrayNullable = binary(ByteArrayAsBinaryEntity::byteArrayNullable)
 }
 
 val h2Tables = tables().h2(
@@ -470,5 +472,5 @@ val h2Tables = tables().h2(
     H2JavaUsers,
     H2Customers,
     H2ByteArrays,
-    H2ByteArrayAsBinarys
+    H2ByteArrayAsBinaries
 )

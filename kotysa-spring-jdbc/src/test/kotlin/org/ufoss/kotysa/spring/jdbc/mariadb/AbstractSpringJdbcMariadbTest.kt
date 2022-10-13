@@ -21,7 +21,7 @@ import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransactionalOp
 import org.ufoss.kotysa.spring.jdbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
-import org.ufoss.kotysa.test.repositories.RepositoryTest
+import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 
 
 @ExtendWith(MariadbContainerExecutionHook::class)

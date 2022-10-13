@@ -18,7 +18,6 @@ import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.time.*
 import java.util.*
 
-
 class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTypesRepositoryPostgresql>() {
 
     @BeforeAll
@@ -113,6 +112,35 @@ class SpringJdbcAllTypesPostgresqlTest : AbstractSpringJdbcPostgresqlTest<AllTyp
                 .containsExactlyInAnyOrder(postgresqlAllTypesNotNull)
         }
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.insertAndReturnAllTypesDefaultValues())
+                .isEqualTo(
+                    PostgresqlAllTypesNullableDefaultValueEntity(
+                        postgresqlAllTypesNullableDefaultValueToInsert.id,
+                        "default",
+                        LocalDate.of(2019, 11, 4),
+                        kotlinx.datetime.LocalDate(2019, 11, 6),
+                        LocalTime.of(11, 25, 55, 123456789),
+                        kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
+                        LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                        42,
+                        84L,
+                        OffsetDateTime.of(
+                            2019, 11, 4, 0, 0, 0, 0,
+                            ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                        ),
+                        UUID.fromString(defaultUuid),
+                    )
+                )
+        }
+    }
 }
 
 
@@ -165,8 +193,8 @@ class AllTypesRepositoryPostgresql(client: JdbcOperations) : Repository {
                 set PostgresqlAllTypesNotNulls.localDateTime2 eq newLocalDateTime
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2 eq newKotlinxLocalDateTime
-                set PostgresqlAllTypesNotNulls.int eq newInt
-                set PostgresqlAllTypesNotNulls.long eq newLong
+                set PostgresqlAllTypesNotNulls.inte eq newInt
+                set PostgresqlAllTypesNotNulls.longe eq newLong
                 set PostgresqlAllTypesNotNulls.byteArray eq newByteArray
                 set PostgresqlAllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set PostgresqlAllTypesNotNulls.uuid eq newUuid
@@ -185,11 +213,14 @@ class AllTypesRepositoryPostgresql(client: JdbcOperations) : Repository {
                 set PostgresqlAllTypesNotNulls.localDateTime2 eq PostgresqlAllTypesNotNulls.localDateTime2
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1 eq PostgresqlAllTypesNotNulls.kotlinxLocalDateTime1
                 set PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2 eq PostgresqlAllTypesNotNulls.kotlinxLocalDateTime2
-                set PostgresqlAllTypesNotNulls.int eq PostgresqlAllTypesNotNulls.int
-                set PostgresqlAllTypesNotNulls.long eq PostgresqlAllTypesNotNulls.long
+                set PostgresqlAllTypesNotNulls.inte eq PostgresqlAllTypesNotNulls.inte
+                set PostgresqlAllTypesNotNulls.longe eq PostgresqlAllTypesNotNulls.longe
                 set PostgresqlAllTypesNotNulls.byteArray eq PostgresqlAllTypesNotNulls.byteArray
                 set PostgresqlAllTypesNotNulls.offsetDateTime eq PostgresqlAllTypesNotNulls.offsetDateTime
                 set PostgresqlAllTypesNotNulls.uuid eq PostgresqlAllTypesNotNulls.uuid
                 where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn
+            postgresqlAllTypesNullableDefaultValueToInsert
 }

@@ -4,27 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MssqlCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class JdbcSelectGroupByMssqlTest : AbstractJdbcMssqlTest<GroupByRepositoryMssqlSelect>() {
+class JdbcSelectGroupByMssqlTest : AbstractJdbcMssqlTest<GroupByRepositoryMssqlSelect>(),
+    SelectGroupByTest<MssqlCustomers, GroupByRepositoryMssqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryMssqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryMssqlSelect(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcMssql(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MssqlCustomers.id and MssqlCustomers.country
-                    from MssqlCustomers
-                    groupBy MssqlCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryMssqlSelect(sqlClient: JdbcSqlClient) :
+    SelectGroupByRepository<MssqlCustomers>(sqlClient, MssqlCustomers)

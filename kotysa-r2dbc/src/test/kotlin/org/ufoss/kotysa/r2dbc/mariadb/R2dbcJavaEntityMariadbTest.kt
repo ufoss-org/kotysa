@@ -7,8 +7,8 @@ package org.ufoss.kotysa.r2dbc.mariadb
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MariadbJavaUsers
-import org.ufoss.kotysa.test.repositories.CoroutinesJavaEntityTest
-import org.ufoss.kotysa.test.repositories.CoroutinesJavaUserRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesJavaEntityTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesJavaUserRepository
 
 class R2dbcJavaEntityMariadbTest :
     AbstractR2dbcMariadbTest<JavaUserMariadbRepository>(),

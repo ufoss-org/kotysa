@@ -4,14 +4,15 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.postgresql.util.PSQLException
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class JdbcSelectAliasPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
@@ -161,8 +162,13 @@ class JdbcSelectAliasPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryS
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: JdbcSqlClient)
-    : AbstractUserRepositoryJdbcPostgresql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
+    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select PostgresqlUsers.firstname `as` "fna"

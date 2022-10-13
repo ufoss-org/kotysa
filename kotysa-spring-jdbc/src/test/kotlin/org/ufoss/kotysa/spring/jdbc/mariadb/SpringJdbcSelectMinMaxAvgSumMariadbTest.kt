@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MariadbCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mariadbTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectMinMaxAvgSumRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectMinMaxAvgSumTest
 
-class SpringJdbcSelectMinMaxAvgSumMariadbTest : AbstractSpringJdbcMariadbTest<MinMaxAvgSumRepositoryMariadbSelect>() {
+class SpringJdbcSelectMinMaxAvgSumMariadbTest : AbstractSpringJdbcMariadbTest<MinMaxAvgSumRepositoryMariadbSelect>(),
+    SelectMinMaxAvgSumTest<MariadbCustomers, MinMaxAvgSumRepositoryMariadbSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,51 +25,7 @@ class SpringJdbcSelectMinMaxAvgSumMariadbTest : AbstractSpringJdbcMariadbTest<Mi
     override val repository: MinMaxAvgSumRepositoryMariadbSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCustomerMinAge returns 19`() {
-        assertThat(repository.selectCustomerMinAge())
-                .isEqualTo(19)
-    }
-
-    @Test
-    fun `Verify selectCustomerMaxAge returns 21`() {
-        assertThat(repository.selectCustomerMaxAge())
-                .isEqualTo(21)
-    }
-
-    @Test
-    fun `Verify selectCustomerAvgAge returns 20`() {
-        assertThat(repository.selectCustomerAvgAge())
-                .isEqualByComparingTo(20.toBigDecimal())
-    }
-
-    @Test
-    fun `Verify selectCustomerSumAge returns 60`() {
-        assertThat(repository.selectCustomerSumAge())
-                .isEqualTo(60)
-    }
 }
 
-class MinMaxAvgSumRepositoryMariadbSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMariadb(client) {
-
-    fun selectCustomerMinAge() =
-            (sqlClient selectMin MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
-
-    fun selectCustomerMaxAge() =
-            (sqlClient selectMax MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
-
-    fun selectCustomerAvgAge() =
-            (sqlClient selectAvg MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
-
-    fun selectCustomerSumAge() =
-            (sqlClient selectSum MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
-}
+class MinMaxAvgSumRepositoryMariadbSelect(client: JdbcOperations) :
+    SelectMinMaxAvgSumRepository<MariadbCustomers>(client.sqlClient(mariadbTables), MariadbCustomers)

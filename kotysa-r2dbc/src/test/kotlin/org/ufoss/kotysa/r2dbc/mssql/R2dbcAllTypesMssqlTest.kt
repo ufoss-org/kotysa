@@ -61,7 +61,7 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
         val newInt = 2
         val newLong = 2L
         val newByteArray = byteArrayOf(0x2B)
-        operator.transactional<Unit> { transaction ->
+        coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate,
@@ -81,12 +81,34 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
 
     @Test
     fun `Verify updateAllTypesNotNullColumn works`() = runTest {
-        operator.transactional<Unit> { transaction ->
+        coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNullColumn()
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(mssqlAllTypesNotNull)
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() = runTest {
+        coOperator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            assertThat(repository.insertAndReturnAllTypesDefaultValues())
+                .isEqualTo(
+                    AllTypesNullableDefaultValueEntity(
+                        allTypesNullableDefaultValueToInsert.id,
+                        "default",
+                        LocalDate.of(2019, 11, 4),
+                        kotlinx.datetime.LocalDate(2019, 11, 6),
+                        LocalDateTime.of(2018, 11, 4, 0, 0),
+                        LocalDateTime.of(2019, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                        42,
+                        84L
+                    )
+                )
         }
     }
 }
@@ -158,4 +180,6 @@ class AllTypesRepositoryMssql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MssqlAllTypesNotNulls.byteArray eq MssqlAllTypesNotNulls.byteArray
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    suspend fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueToInsert
 }

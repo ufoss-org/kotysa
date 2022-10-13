@@ -4,39 +4,16 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlCustomers
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
-class JdbcSelectOrderByPostgresqlTest : AbstractJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>() {
+class JdbcSelectOrderByPostgresqlTest : AbstractJdbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>(),
+    SelectOrderByTest<PostgresqlCustomers, OrderByRepositoryPostgresqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = OrderByRepositoryPostgresqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
-
-    @Test
-    fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
-        assertThat(repository.selectCustomerOrderByAgeAndIdAsc())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
-    }
 }
 
-class OrderByRepositoryPostgresqlSelect(private val sqlClient: JdbcSqlClient) :
-    AbstractCustomerRepositoryJdbcPostgresql(sqlClient) {
-
-    fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom PostgresqlCustomers
-                    orderByAsc PostgresqlCustomers.age
-                    ).fetchAll()
-
-    fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom PostgresqlCustomers
-                    orderByAsc PostgresqlCustomers.age andAsc PostgresqlCustomers.id
-                    ).fetchAll()
-}
+class OrderByRepositoryPostgresqlSelect(sqlClient: JdbcSqlClient) :
+    SelectOrderByRepository<PostgresqlCustomers>(sqlClient, PostgresqlCustomers)

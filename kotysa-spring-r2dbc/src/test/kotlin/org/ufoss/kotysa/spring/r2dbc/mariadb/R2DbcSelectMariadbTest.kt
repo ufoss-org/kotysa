@@ -9,7 +9,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
@@ -165,7 +165,7 @@ class R2DbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSel
 }
 
 
-class UserRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractUserRepositoryMariadb(sqlClient) {
+class UserRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
 
     fun selectOneNonUnique() =
         (sqlClient selectFrom MariadbUsers

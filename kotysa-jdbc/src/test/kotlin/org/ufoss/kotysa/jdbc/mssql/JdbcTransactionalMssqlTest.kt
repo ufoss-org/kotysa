@@ -7,6 +7,10 @@ package org.ufoss.kotysa.jdbc.mssql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.test.MssqlRoles
+import org.ufoss.kotysa.test.MssqlUserRoles
+import org.ufoss.kotysa.test.MssqlUsers
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlTransactional>() {
@@ -23,5 +27,5 @@ class JdbcTransactionalMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssql
     }
 }
 
-
-class UserRepositoryJdbcMssqlTransactional(sqlClient: JdbcSqlClient) : AbstractUserRepositoryJdbcMssql(sqlClient)
+class UserRepositoryJdbcMssqlTransactional(sqlClient: JdbcSqlClient) :
+    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(sqlClient, MssqlRoles, MssqlUsers, MssqlUserRoles)

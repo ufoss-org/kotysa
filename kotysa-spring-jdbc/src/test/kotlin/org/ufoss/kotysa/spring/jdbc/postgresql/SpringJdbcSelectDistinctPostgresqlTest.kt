@@ -4,16 +4,22 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlRoles
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
-
+import org.ufoss.kotysa.test.postgresqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
 class SpringJdbcSelectDistinctPostgresqlTest :
-        AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectDistinct>() {
+    AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectDistinct>(),
+    SelectDistinctTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositorySpringJdbcPostgresqlSelectDistinct,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -23,20 +29,12 @@ class SpringJdbcSelectDistinctPostgresqlTest :
     override val repository: UserRepositorySpringJdbcPostgresqlSelectDistinct by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositorySpringJdbcPostgresqlSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcPostgresql(client) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct PostgresqlRoles.label
-                    from PostgresqlRoles
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcPostgresqlSelectDistinct(client: JdbcOperations) :
+    SelectDistinctRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        client.sqlClient(postgresqlTables),
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

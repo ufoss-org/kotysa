@@ -4,27 +4,15 @@
 
 package org.ufoss.kotysa.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.H2Customers
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
-class JdbcSelectGroupByH2Test : AbstractJdbcH2Test<GroupByRepositoryH2Select>() {
+class JdbcSelectGroupByH2Test : AbstractJdbcH2Test<GroupByRepositoryH2Select>(),
+    SelectGroupByTest<H2Customers, GroupByRepositoryH2Select, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = GroupByRepositoryH2Select(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() {
-        assertThat(repository.selectCountCustomerGroupByCountry())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryH2Select(private val sqlClient: JdbcSqlClient) : AbstractCustomerRepositoryJdbcH2(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount H2Customers.id and H2Customers.country
-                    from H2Customers
-                    groupBy H2Customers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryH2Select(sqlClient: JdbcSqlClient) : SelectGroupByRepository<H2Customers>(sqlClient, H2Customers)

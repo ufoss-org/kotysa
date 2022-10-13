@@ -6,7 +6,7 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectByteArrayAsBinaryH2Test : AbstractR2dbcH2Test<ByteArrayRepositoryH2Select>() {
@@ -77,34 +77,34 @@ class ByteArrayRepositoryH2Select(private val sqlClient: ReactorSqlClient) : Rep
             .block()
     }
 
-    private fun createTables() = sqlClient createTable H2ByteArrayAsBinarys
+    private fun createTables() = sqlClient createTable H2ByteArrayAsBinaries
 
     private fun insertByteArrays() = sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
 
-    private fun deleteAll() = sqlClient deleteAllFrom H2ByteArrayAsBinarys
+    private fun deleteAll() = sqlClient deleteAllFrom H2ByteArrayAsBinaries
 
     fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNotNull eq byteArray
+            (sqlClient selectFrom H2ByteArrayAsBinaries
+                    where H2ByteArrayAsBinaries.byteArrayNotNull eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullNotEq(byteArray: ByteArray) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNotNull notEq byteArray
+            (sqlClient selectFrom H2ByteArrayAsBinaries
+                    where H2ByteArrayAsBinaries.byteArrayNotNull notEq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullIn(values: Sequence<ByteArray>) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNotNull `in` values
+            (sqlClient selectFrom H2ByteArrayAsBinaries
+                    where H2ByteArrayAsBinaries.byteArrayNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByByteArrayNullable(byteArray: ByteArray?) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNullable eq byteArray
+            (sqlClient selectFrom H2ByteArrayAsBinaries
+                    where H2ByteArrayAsBinaries.byteArrayNullable eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNullableNotEq(byteArray: ByteArray?) =
-            (sqlClient selectFrom H2ByteArrayAsBinarys
-                    where H2ByteArrayAsBinarys.byteArrayNullable notEq byteArray
+            (sqlClient selectFrom H2ByteArrayAsBinaries
+                    where H2ByteArrayAsBinaries.byteArrayNullable notEq byteArray
                     ).fetchAll()
 }

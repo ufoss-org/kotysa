@@ -4,35 +4,24 @@
 
 package org.ufoss.kotysa.jdbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.PostgresqlRoles
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
-class JdbcSelectBooleanPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectBoolean>() {
+class JdbcSelectBooleanPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectBoolean>(),
+    SelectBooleanTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSelectBoolean,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true))
-                .hasSize(1)
-                .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false))
-                .hasSize(1)
-                .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositoryJdbcPostgresqlSelectBoolean(private val sqlClient: JdbcSqlClient) :
-    AbstractUserRepositoryJdbcPostgresql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom PostgresqlUsers
-                    where PostgresqlUsers.isAdmin eq value
-                    ).fetchAll()
-}
+class UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient: JdbcSqlClient) :
+    SelectBooleanRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

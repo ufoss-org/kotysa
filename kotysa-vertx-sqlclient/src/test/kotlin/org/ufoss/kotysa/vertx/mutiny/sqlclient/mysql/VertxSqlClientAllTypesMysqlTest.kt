@@ -95,6 +95,29 @@ class VertxSqlClientAllTypesMysqlTest : AbstractVertxSqlClientMysqlTest<AllTypes
             .hasSize(1)
             .containsExactly(mysqlAllTypesNotNull)
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        val allTypes = operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnAllTypesDefaultValues()
+        }.await().indefinitely()
+
+        assertThat(allTypes).isEqualTo(
+            AllTypesNullableDefaultValueEntity(
+                allTypesNullableDefaultValueToInsert.id,
+                "default",
+                LocalDate.of(2019, 11, 4),
+                kotlinx.datetime.LocalDate(2019, 11, 6),
+                LocalDateTime.of(2018, 11, 4, 0, 0),
+                LocalDateTime.of(2019, 11, 4, 0, 0),
+                kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                42,
+                84L,
+            )
+        )
+    }
 }
 
 
@@ -164,4 +187,6 @@ class AllTypesRepositoryMysql(private val sqlClient: MutinySqlClient) : Reposito
                 set MysqlAllTypesNotNulls.byteArray eq MysqlAllTypesNotNulls.byteArray
                 where MysqlAllTypesNotNulls.id eq allTypesNotNull.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueToInsert
 }

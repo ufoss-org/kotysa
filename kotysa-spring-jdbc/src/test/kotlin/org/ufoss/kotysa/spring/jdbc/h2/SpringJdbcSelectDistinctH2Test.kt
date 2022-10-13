@@ -4,29 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.H2Roles
+import org.ufoss.kotysa.test.H2UserRoles
+import org.ufoss.kotysa.test.H2Users
+import org.ufoss.kotysa.test.h2Tables
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-
-class SpringJdbcSelectDistinctH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectDistinct>() {
+class SpringJdbcSelectDistinctH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectDistinct>(),
+    SelectDistinctTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2SelectDistinct, SpringJdbcTransaction> {
     override val context = startContext<UserRepositorySpringJdbcH2SelectDistinct>()
     override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectDistinct>()
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositorySpringJdbcH2SelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(client) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct H2Roles.label
-                    from H2Roles
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcH2SelectDistinct(client: JdbcOperations) :
+    SelectDistinctRepository<H2Roles, H2Users, H2UserRoles>(client.sqlClient(h2Tables), H2Roles, H2Users, H2UserRoles)

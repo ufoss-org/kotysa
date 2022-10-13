@@ -105,6 +105,31 @@ class R2DbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
             .expectNext(mariadbAllTypesNotNullWithTime)
             .verifyComplete()
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnAllTypesDefaultValues()
+        }.test()
+            .expectNext(
+                AllTypesNullableDefaultValueWithTimeEntity(
+                    allTypesNullableDefaultValueWithTimeToInsert.id,
+                    "default",
+                    LocalDate.of(2019, 11, 4),
+                    LocalDate(2019, 11, 6),
+                    LocalDateTime.of(2018, 11, 4, 0, 0),
+                    LocalDateTime.of(2019, 11, 4, 0, 0),
+                    LocalDateTime(2018, 11, 4, 0, 0),
+                    LocalDateTime(2019, 11, 4, 0, 0),
+                    42,
+                    84L,
+                    LocalTime.of(11, 25, 55),
+                    LocalTime(11, 25, 55),
+                )
+            )
+            .verifyComplete()
+    }
 }
 
 
@@ -179,4 +204,6 @@ class AllTypesRepositoryMariadb(dbClient: DatabaseClient) : Repository {
                 set MariadbAllTypesNotNullWithTimes.byteArray eq MariadbAllTypesNotNullWithTimes.byteArray
                 where MariadbAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTimeToInsert
 }

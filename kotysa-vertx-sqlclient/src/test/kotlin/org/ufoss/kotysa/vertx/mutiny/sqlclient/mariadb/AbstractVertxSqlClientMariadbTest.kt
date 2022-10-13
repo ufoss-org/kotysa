@@ -13,13 +13,13 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.mariadbTables
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxRepositoryTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyRepositoryTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
-abstract class AbstractVertxSqlClientMariadbTest<T : Repository> : VertxRepositoryTest<T> {
+abstract class AbstractVertxSqlClientMariadbTest<T : Repository> : MutinyRepositoryTest<T> {
     private lateinit var sqlClient: VertxSqlClient
 
     @BeforeAll

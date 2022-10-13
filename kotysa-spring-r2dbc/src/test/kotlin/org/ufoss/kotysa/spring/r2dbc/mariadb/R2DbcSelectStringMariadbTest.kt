@@ -7,7 +7,7 @@ package org.ufoss.kotysa.spring.r2dbc.mariadb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.MariadbUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.userBboss
@@ -172,7 +172,7 @@ class R2DbcSelectStringMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMari
 }
 
 
-class UserRepositoryMariadbSelectString(sqlClient: ReactorSqlClient) : org.ufoss.kotysa.spring.r2dbc.mariadb.AbstractUserRepositoryMariadb(sqlClient) {
+class UserRepositoryMariadbSelectString(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
             (sqlClient selectFrom MariadbUsers

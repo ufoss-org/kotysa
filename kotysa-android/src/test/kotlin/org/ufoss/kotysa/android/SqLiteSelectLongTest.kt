@@ -5,270 +5,133 @@
 package org.ufoss.kotysa.android
 
 import android.database.sqlite.SQLiteOpenHelper
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.android.transaction.AndroidTransaction
+import org.ufoss.kotysa.test.SqliteLongs
+import org.ufoss.kotysa.test.repositories.blocking.SelectLongRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectLongTest
 
-class SqLiteSelectLongTest : AbstractSqLiteTest<LongRepositorySelect>() {
+class SqLiteSelectLongTest : AbstractSqLiteTest<SelectLongRepositorySelect>(),
+    SelectLongTest<SqliteLongs, SelectLongRepositorySelect, AndroidTransaction> {
 
-    private val longWithNullable = LongEntity(
-            org.ufoss.kotysa.test.longWithNullable.longNotNull,
-            org.ufoss.kotysa.test.longWithNullable.longNullable,
-            1
-    )
-
-    private val longWithoutNullable = LongEntity(
-            org.ufoss.kotysa.test.longWithoutNullable.longNotNull,
-            org.ufoss.kotysa.test.longWithoutNullable.longNullable,
-            2
-    )
-
-    override fun getRepository(sqLiteTables: SqLiteTables) = LongRepositorySelect(dbHelper, sqLiteTables)
+    override fun getRepository(sqLiteTables: SqLiteTables) = SelectLongRepositorySelect(dbHelper, sqLiteTables)
 
     @Test
-    fun `Verify selectAllByLongNotNull finds sqLiteIntegerWithNullable`() {
-        assertThat(repository.selectAllByLongNotNull(10))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNotNull finds longWithNullable - Android`() {
+        `Verify selectAllByLongNotNull finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullNotEq finds sqLiteIntegerWithoutNullable`() {
-        assertThat(repository.selectAllByLongNotNullNotEq(10))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+    fun `Verify selectAllByLongNotNullNotEq finds longWithoutNullable - Android`() {
+        `Verify selectAllByLongNotNullNotEq finds longWithoutNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullIn finds both`() {
-        val seq = sequenceOf(longWithNullable.longNotNull, longWithoutNullable.longNotNull)
-        assertThat(repository.selectAllByLongNotNullIn(seq))
-                .hasSize(2)
-                .containsExactlyInAnyOrder(longWithNullable, longWithoutNullable)
+    fun `Verify selectAllByLongNotNullIn finds both - Android`() {
+        `Verify selectAllByLongNotNullIn finds both`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullInf finds sqLiteIntegerWithNullable`() {
-        assertThat(repository.selectAllByLongNotNullInf(11))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNotNullInf finds longWithNullable - Android`() {
+        `Verify selectAllByLongNotNullInf finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullInf finds no results when equals`() {
-        assertThat(repository.selectAllByLongNotNullInf(10))
-                .isEmpty()
+    fun `Verify selectAllByLongNotNullInf finds no results when equals - Android`() {
+        `Verify selectAllByLongNotNullInf finds no results when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullInfOrEq finds sqLiteIntegerWithNullable`() {
-        assertThat(repository.selectAllByLongNotNullInfOrEq(11))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNotNullInfOrEq finds longWithNullable - Android`() {
+        `Verify selectAllByLongNotNullInfOrEq finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullInfOrEq finds sqLiteIntegerWithNullable when equals`() {
-        assertThat(repository.selectAllByLongNotNullInfOrEq(10))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNotNullInfOrEq finds longWithNullable when equals - Android`() {
+        `Verify selectAllByLongNotNullInfOrEq finds longWithNullable when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullSup finds sqLiteIntegerWithoutNullable`() {
-        assertThat(repository.selectAllByLongNotNullSup(11))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+    fun `Verify selectAllByLongNotNullSup finds longWithoutNullable - Android`() {
+        `Verify selectAllByLongNotNullSup finds longWithoutNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullSup finds no results when equals`() {
-        assertThat(repository.selectAllByLongNotNullSup(12))
-                .isEmpty()
+    fun `Verify selectAllByLongNotNullSup finds no results when equals - Android`() {
+        `Verify selectAllByLongNotNullSup finds no results when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullSupOrEq finds sqLiteIntegerWithoutNullable`() {
-        assertThat(repository.selectAllByLongNotNullSupOrEq(11))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+    fun `Verify selectAllByLongNotNullSupOrEq finds longWithoutNullable - Android`() {
+        `Verify selectAllByLongNotNullSupOrEq finds longWithoutNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNotNullSupOrEq finds sqLiteIntegerWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLongNotNullSupOrEq(12))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+    fun `Verify selectAllByLongNotNullSupOrEq finds longWithoutNullable when equals - Android`() {
+        `Verify selectAllByLongNotNullSupOrEq finds longWithoutNullable when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullable finds h2UuidWithNullable`() {
-        assertThat(repository.selectAllByLongNullable(6))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullable finds longWithNullable - Android`() {
+        `Verify selectAllByLongNullable finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullable finds h2UuidWithoutNullable`() {
-        assertThat(repository.selectAllByLongNullable(null))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+    fun `Verify selectAllByLongNullable finds longWithoutNullable - Android`() {
+        `Verify selectAllByLongNullable finds longWithoutNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableNotEq finds h2UuidWithoutNullable`() {
-        assertThat(repository.selectAllByLongNullableNotEq(6))
-                .isEmpty()
+    fun `Verify selectAllByLongNullableNotEq finds no results - Android`() {
+        `Verify selectAllByLongNullableNotEq finds no results`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByLongNullableNotEq(null))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableNotEq finds longWithNullable - Android`() {
+        `Verify selectAllByLongNullableNotEq finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableInf finds sqLiteIntegerWithNullable`() {
-        assertThat(repository.selectAllByLongNullableInf(7))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableInf finds longWithNullable - Android`() {
+        `Verify selectAllByLongNullableInf finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableInf finds no results when equals`() {
-        assertThat(repository.selectAllByLongNullableInf(6))
-                .isEmpty()
+    fun `Verify selectAllByLongNullableInf finds no results when equals - Android`() {
+        `Verify selectAllByLongNullableInf finds no results when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableInfOrEq finds sqLiteIntegerWithNullable`() {
-        assertThat(repository.selectAllByLongNullableInfOrEq(7))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableInfOrEq finds longWithNullable - Android`() {
+        `Verify selectAllByLongNullableInfOrEq finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableInfOrEq finds sqLiteIntegerWithNullable when equals`() {
-        assertThat(repository.selectAllByLongNullableInfOrEq(6))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableInfOrEq finds longWithNullable when equals - Android`() {
+        `Verify selectAllByLongNullableInfOrEq finds longWithNullable when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableSup finds sqLiteIntegerWithoutNullable`() {
-        assertThat(repository.selectAllByLongNullableSup(5))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableSup finds longWithNullable - Android`() {
+        `Verify selectAllByLongNullableSup finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableSup finds no results when equals`() {
-        assertThat(repository.selectAllByLongNullableSup(6))
-                .isEmpty()
+    fun `Verify selectAllByLongNullableSup finds no results when equals - Android`() {
+        `Verify selectAllByLongNullableSup finds no results when equals`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableSupOrEq finds sqLiteIntegerWithoutNullable`() {
-        assertThat(repository.selectAllByLongNullableSupOrEq(5))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableSupOrEq finds longWithNullable - Android`() {
+        `Verify selectAllByLongNullableSupOrEq finds longWithNullable`()
     }
 
     @Test
-    fun `Verify selectAllByLongNullableSupOrEq finds sqLiteIntegerWithoutNullable when equals`() {
-        assertThat(repository.selectAllByLongNullableSupOrEq(6))
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+    fun `Verify selectAllByLongNullableSupOrEq finds longWithNullable when equals - Android`() {
+        `Verify selectAllByLongNullableSupOrEq finds longWithNullable when equals`()
     }
 }
 
-class LongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) : Repository {
-
-    private val sqlClient = sqLiteOpenHelper.sqlClient(tables)
-
-    override fun init() {
-        createTables()
-        insertLongs()
-    }
-
-    override fun delete() {
-        deleteAll()
-    }
-
-    private fun createTables() {
-        sqlClient createTable SqliteLongs
-    }
-
-    private fun insertLongs() {
-        sqlClient.insert(longWithNullable, longWithoutNullable)
-    }
-
-    private fun deleteAll() = sqlClient deleteAllFrom SqliteLongs
-
-    fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull eq long
-                    ).fetchAll()
-
-    fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull notEq long
-                    ).fetchAll()
-
-    fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull `in` values
-                    ).fetchAll()
-
-    fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull inf long
-                    ).fetchAll()
-
-    fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull infOrEq long
-                    ).fetchAll()
-
-    fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull sup long
-                    ).fetchAll()
-
-    fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNotNull supOrEq long
-                    ).fetchAll()
-
-    fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNullable eq long
-                    ).fetchAll()
-
-    fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNullable notEq long
-                    ).fetchAll()
-
-    fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNullable inf long
-                    ).fetchAll()
-
-    fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNullable infOrEq long
-                    ).fetchAll()
-
-    fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNullable sup long
-                    ).fetchAll()
-
-    fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom SqliteLongs
-                    where SqliteLongs.longNullable supOrEq long
-                    ).fetchAll()
-}
+class SelectLongRepositorySelect(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) :
+    SelectLongRepository<SqliteLongs>(sqLiteOpenHelper.sqlClient(tables), SqliteLongs)

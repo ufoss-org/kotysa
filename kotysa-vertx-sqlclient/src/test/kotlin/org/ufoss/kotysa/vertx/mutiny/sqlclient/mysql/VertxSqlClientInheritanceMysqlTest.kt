@@ -70,17 +70,17 @@ class InheritanceMysqlRepository(private val sqlClient: VertxSqlClient) : Reposi
                 where MysqlInheriteds.id eq id
                 ).fetchOne()
 
-    fun <T : ENTITY<U>, U : Entity<String>> selectById(table: T, id: String) =
+    fun <T : Entities<U>, U : Entity<String>> selectById(table: T, id: String) =
         (sqlClient selectFrom table
                 where table.id eq id
                 ).fetchOne()
 
-    fun <T : NAMEABLE<U>, U : Nameable> selectFirstByName(table: T, name: String) =
+    fun <T : Nameables<U>, U : Nameable> selectFirstByName(table: T, name: String) =
         (sqlClient selectFrom table
                 where table.name eq name
                 ).fetchFirst()
 
-    fun <T : ENTITY<U>, U : Entity<String>> deleteById(table: T, id: String) =
+    fun <T : Entities<U>, U : Entity<String>> deleteById(table: T, id: String) =
         (sqlClient deleteFrom table
                 where table.id eq id
                 ).execute()

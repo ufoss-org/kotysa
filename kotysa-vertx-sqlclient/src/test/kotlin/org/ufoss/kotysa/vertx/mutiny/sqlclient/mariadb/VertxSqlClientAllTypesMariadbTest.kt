@@ -95,6 +95,29 @@ class VertxSqlClientAllTypesMariadbTest : AbstractVertxSqlClientMariadbTest<AllT
             .hasSize(1)
             .containsExactly(mariadbAllTypesNotNull)
     }
+
+    @Test
+    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
+        val allTypes = operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnAllTypesDefaultValues()
+        }.await().indefinitely()
+
+        assertThat(allTypes).isEqualTo(
+            AllTypesNullableDefaultValueEntity(
+                allTypesNullableDefaultValueToInsert.id,
+                "default",
+                LocalDate.of(2019, 11, 4),
+                kotlinx.datetime.LocalDate(2019, 11, 6),
+                LocalDateTime.of(2018, 11, 4, 0, 0),
+                LocalDateTime.of(2019, 11, 4, 0, 0),
+                kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
+                kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                42,
+                84L,
+            )
+        )
+    }
 }
 
 
@@ -164,4 +187,6 @@ class AllTypesRepositoryMariadb(private val sqlClient: MutinySqlClient) : Reposi
                 set MariadbAllTypesNotNulls.byteArray eq MariadbAllTypesNotNulls.byteArray
                 where MariadbAllTypesNotNulls.id eq allTypesNotNull.id
                 ).execute()
+
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueToInsert
 }

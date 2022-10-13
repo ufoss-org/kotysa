@@ -4,14 +4,16 @@
 
 package org.ufoss.kotysa.spring.jdbc.h2
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
+import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasH2Test : AbstractSpringJdbcH2Test<UserRepositorySelectAlias>() {
     override val context = startContext<UserRepositorySelectAlias>()
@@ -162,7 +164,8 @@ class SpringJdbcSelectAliasH2Test : AbstractSpringJdbcH2Test<UserRepositorySelec
     }
 }
 
-class UserRepositorySelectAlias(dbClient: JdbcOperations) : AbstractUserRepositorySpringJdbcH2(dbClient) {
+class UserRepositorySelectAlias(client: JdbcOperations) :
+    AbstractUserRepository<H2Roles, H2Users, H2UserRoles>(client.sqlClient(h2Tables), H2Roles, H2Users, H2UserRoles) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select H2Users.firstname `as` "fna"

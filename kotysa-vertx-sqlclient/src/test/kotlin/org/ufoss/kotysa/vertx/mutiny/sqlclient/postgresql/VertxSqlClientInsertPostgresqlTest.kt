@@ -11,8 +11,6 @@ import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
-import java.time.*
-import java.util.*
 
 @Order(3)
 class VertxSqlClientInsertPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<RepositoryPostgresqlInsert>() {
@@ -50,36 +48,6 @@ class VertxSqlClientInsertPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<
             repository.insertAndReturnCustomers()
         }.collect().asList().await().indefinitely()
         assertThat(insertedCustomers).containsExactly(customerUSA1, customerUSA2)
-    }
-
-    @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        val allTypes = operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.insertAndReturnAllTypesDefaultValues()
-        }.await().indefinitely()
-
-        assertThat(allTypes).isEqualTo(
-            PostgresqlAllTypesNullableDefaultValueEntity(
-                1,
-                "default",
-                LocalDate.of(2019, 11, 4),
-                kotlinx.datetime.LocalDate(2019, 11, 6),
-                LocalTime.of(11, 25, 55, 123456789),
-                kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
-                LocalDateTime.of(2018, 11, 4, 0, 0),
-                LocalDateTime.of(2019, 11, 4, 0, 0),
-                kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                42,
-                84L,
-                OffsetDateTime.of(
-                    2019, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
-                ),
-                UUID.fromString(defaultUuid),
-            )
-        )
     }
 
     @Test
@@ -159,7 +127,6 @@ class RepositoryPostgresqlInsert(private val sqlClient: VertxSqlClient) : Reposi
         (sqlClient createTableIfNotExists PostgresqlInts)
             .chain { -> sqlClient createTableIfNotExists PostgresqlLongs }
             .chain { -> sqlClient createTableIfNotExists PostgresqlCustomers }
-            .chain { -> sqlClient createTableIfNotExists PostgresqlAllTypesNullableDefaultValues }
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -172,8 +139,6 @@ class RepositoryPostgresqlInsert(private val sqlClient: VertxSqlClient) : Reposi
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn postgresqlAllTypesNullableDefaultValue
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

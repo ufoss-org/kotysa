@@ -4,15 +4,21 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MssqlRoles
+import org.ufoss.kotysa.test.MssqlUserRoles
+import org.ufoss.kotysa.test.MssqlUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
-
-class SpringJdbcSelectDistinctMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelectDistinct>() {
+class SpringJdbcSelectDistinctMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelectDistinct>(),
+    SelectDistinctTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositorySpringJdbcMssqlSelectDistinct,
+            SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -22,20 +28,12 @@ class SpringJdbcSelectDistinctMssqlTest : AbstractSpringJdbcMssqlTest<UserReposi
     override val repository: UserRepositorySpringJdbcMssqlSelectDistinct by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositorySpringJdbcMssqlSelectDistinct(client: JdbcOperations) : AbstractUserRepositorySpringJdbcMssql(client) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MssqlRoles.label
-                    from MssqlRoles
-                    ).fetchAll()
-}
+class UserRepositorySpringJdbcMssqlSelectDistinct(client: JdbcOperations) :
+    SelectDistinctRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        client.sqlClient(mssqlTables),
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )

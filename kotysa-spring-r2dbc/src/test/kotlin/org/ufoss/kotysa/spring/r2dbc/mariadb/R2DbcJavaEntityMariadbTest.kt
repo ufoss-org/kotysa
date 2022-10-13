@@ -6,17 +6,17 @@ package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.junit.jupiter.api.BeforeAll
 import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.R2dbcJavaEntityTest
-import org.ufoss.kotysa.spring.r2dbc.R2dbcJavaUserRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorJavaEntityTest
+import org.ufoss.kotysa.test.repositories.reactor.ReactorJavaUserRepository
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.MariadbJavaUsers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mariadbTables
 
-
 class R2DbcJavaEntityMysqlTest :
         AbstractR2dbcMariadbTest<JavaUserMariadbRepository>(),
-    R2dbcJavaEntityTest<MariadbJavaUsers, JavaUserMariadbRepository> {
+    ReactorJavaEntityTest<MariadbJavaUsers, JavaUserMariadbRepository, ReactorTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -30,4 +30,4 @@ class R2DbcJavaEntityMysqlTest :
 
 
 class JavaUserMariadbRepository(client: DatabaseClient)
-    : R2dbcJavaUserRepository<MariadbJavaUsers>(client.sqlClient(mariadbTables), MariadbJavaUsers)
+    : ReactorJavaUserRepository<MariadbJavaUsers>(client.sqlClient(mariadbTables), MariadbJavaUsers)

@@ -7,8 +7,8 @@ package org.ufoss.kotysa.r2dbc.postgresql
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlJavaUsers
-import org.ufoss.kotysa.test.repositories.CoroutinesJavaEntityTest
-import org.ufoss.kotysa.test.repositories.CoroutinesJavaUserRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesJavaEntityTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesJavaUserRepository
 
 
 class R2dbcJavaEntityPostgresqlTest : AbstractR2dbcPostgresqlTest<JavaUserPostgresqlRepository>(),

@@ -17,7 +17,7 @@ import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.mariadbTables
-import org.ufoss.kotysa.test.repositories.CoroutinesRepositoryTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesRepositoryTest
 
 @ExtendWith(MariadbContainerExecutionHook::class)
 @ResourceLock(MariadbContainerResource.ID)
@@ -41,7 +41,7 @@ abstract class AbstractR2dbcMariadbTest<T : Repository> : CoroutinesRepositoryTe
 
     protected abstract fun instantiateRepository(sqlClient: R2dbcSqlClient): T
 
-    override val operator by lazy {
+    override val coOperator by lazy {
         sqlClient
     }
 

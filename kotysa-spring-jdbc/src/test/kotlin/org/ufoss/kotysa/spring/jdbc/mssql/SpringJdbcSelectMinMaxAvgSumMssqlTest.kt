@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.spring.jdbc.sqlClient
+import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
+import org.ufoss.kotysa.test.MssqlCustomers
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.repositories.blocking.SelectMinMaxAvgSumRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectMinMaxAvgSumTest
 
-class SpringJdbcSelectMinMaxAvgSumMssqlTest : AbstractSpringJdbcMssqlTest<MinMaxAvgSumRepositoryMssqlSelect>() {
+class SpringJdbcSelectMinMaxAvgSumMssqlTest : AbstractSpringJdbcMssqlTest<MinMaxAvgSumRepositoryMssqlSelect>(),
+    SelectMinMaxAvgSumTest<MssqlCustomers, MinMaxAvgSumRepositoryMssqlSelect, SpringJdbcTransaction> {
 
     @BeforeAll
     fun beforeAll(resource: TestContainersCloseableResource) {
@@ -21,51 +25,7 @@ class SpringJdbcSelectMinMaxAvgSumMssqlTest : AbstractSpringJdbcMssqlTest<MinMax
     override val repository: MinMaxAvgSumRepositoryMssqlSelect by lazy {
         getContextRepository()
     }
-
-    @Test
-    fun `Verify selectCustomerMinAge returns 19`() {
-        assertThat(repository.selectCustomerMinAge())
-                .isEqualTo(19)
-    }
-
-    @Test
-    fun `Verify selectCustomerMaxAge returns 21`() {
-        assertThat(repository.selectCustomerMaxAge())
-                .isEqualTo(21)
-    }
-
-    @Test
-    fun `Verify selectCustomerAvgAge returns 20`() {
-        assertThat(repository.selectCustomerAvgAge())
-                .isEqualByComparingTo(20.toBigDecimal())
-    }
-
-    @Test
-    fun `Verify selectCustomerSumAge returns 60`() {
-        assertThat(repository.selectCustomerSumAge())
-                .isEqualTo(60)
-    }
 }
 
-class MinMaxAvgSumRepositoryMssqlSelect(client: JdbcOperations) : AbstractCustomerRepositorySpringJdbcMssql(client) {
-
-    fun selectCustomerMinAge() =
-            (sqlClient selectMin MssqlCustomers.age
-                    from MssqlCustomers
-                    ).fetchOne()
-
-    fun selectCustomerMaxAge() =
-            (sqlClient selectMax MssqlCustomers.age
-                    from MssqlCustomers
-                    ).fetchOne()
-
-    fun selectCustomerAvgAge() =
-            (sqlClient selectAvg MssqlCustomers.age
-                    from MssqlCustomers
-                    ).fetchOne()
-
-    fun selectCustomerSumAge() =
-            (sqlClient selectSum MssqlCustomers.age
-                    from MssqlCustomers
-                    ).fetchOne()
-}
+class MinMaxAvgSumRepositoryMssqlSelect(client: JdbcOperations) :
+    SelectMinMaxAvgSumRepository<MssqlCustomers>(client.sqlClient(mssqlTables), MssqlCustomers)

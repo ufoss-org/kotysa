@@ -15,9 +15,6 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
 
 @Order(3)
 class R2DbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>() {
@@ -62,31 +59,6 @@ class R2DbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
             repository.insertAndReturnCustomers()
         }.test()
             .expectNext(customerUSA1, customerUSA2)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.insertAndReturnAllTypesDefaultValues()
-        }.test()
-            .expectNext(
-                AllTypesNullableDefaultValueWithTimeEntity(
-                    allTypesNullableDefaultValueWithTime.id,
-                    "default",
-                    LocalDate.of(2019, 11, 4),
-                    kotlinx.datetime.LocalDate(2019, 11, 6),
-                    LocalDateTime.of(2018, 11, 4, 0, 0),
-                    LocalDateTime.of(2019, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                    kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
-                    42,
-                    84L,
-                    LocalTime.of(11, 25, 55),
-                    kotlinx.datetime.LocalTime(11, 25, 55),
-                )
-            )
             .verifyComplete()
     }
 
@@ -164,7 +136,6 @@ class RepositoryMariadbInsert(dbClient: DatabaseClient) : Repository {
         (sqlClient createTableIfNotExists MariadbInts)
             .then(sqlClient createTableIfNotExists MariadbLongs)
             .then(sqlClient createTableIfNotExists MariadbCustomers)
-            .then(sqlClient createTableIfNotExists MariadbAllTypesNullableDefaultValueWithTimes)
 
     fun insertCustomer() = sqlClient insert customerFrance
 
@@ -177,8 +148,6 @@ class RepositoryMariadbInsert(dbClient: DatabaseClient) : Repository {
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
-
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTime
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

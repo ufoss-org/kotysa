@@ -78,37 +78,37 @@ class ByteArrayRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) : 
     }
 
     private suspend fun createTables() {
-        sqlClient createTable MariadbByteArrayAsBinarys
+        sqlClient createTable MariadbByteArrayAsBinaries
     }
 
     private suspend fun insertByteArrays() {
         sqlClient.insert(byteArrayBinaryWithNullable, byteArrayBinaryWithoutNullable)
     }
 
-    private suspend fun deleteAll() = sqlClient deleteAllFrom MariadbByteArrayAsBinarys
+    private suspend fun deleteAll() = sqlClient deleteAllFrom MariadbByteArrayAsBinaries
 
     fun selectAllByByteArrayNotNull(byteArray: ByteArray) =
-            (sqlClient selectFrom MariadbByteArrayAsBinarys
-                    where MariadbByteArrayAsBinarys.byteArrayNotNull eq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinaries
+                    where MariadbByteArrayAsBinaries.byteArrayNotNull eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullNotEq(byteArray: ByteArray) =
-            (sqlClient selectFrom MariadbByteArrayAsBinarys
-                    where MariadbByteArrayAsBinarys.byteArrayNotNull notEq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinaries
+                    where MariadbByteArrayAsBinaries.byteArrayNotNull notEq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNotNullIn(values: Sequence<ByteArray>) =
-            (sqlClient selectFrom MariadbByteArrayAsBinarys
-                    where MariadbByteArrayAsBinarys.byteArrayNotNull `in` values
+            (sqlClient selectFrom MariadbByteArrayAsBinaries
+                    where MariadbByteArrayAsBinaries.byteArrayNotNull `in` values
                     ).fetchAll()
 
     fun selectAllByByteArrayNullable(byteArray: ByteArray?) =
-            (sqlClient selectFrom MariadbByteArrayAsBinarys
-                    where MariadbByteArrayAsBinarys.byteArrayNullable eq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinaries
+                    where MariadbByteArrayAsBinaries.byteArrayNullable eq byteArray
                     ).fetchAll()
 
     fun selectAllByByteArrayNullableNotEq(byteArray: ByteArray?) =
-            (sqlClient selectFrom MariadbByteArrayAsBinarys
-                    where MariadbByteArrayAsBinarys.byteArrayNullable notEq byteArray
+            (sqlClient selectFrom MariadbByteArrayAsBinaries
+                    where MariadbByteArrayAsBinaries.byteArrayNullable notEq byteArray
                     ).fetchAll()
 }
