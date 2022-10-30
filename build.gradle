@@ -1,6 +1,7 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' apply false
     id 'org.jetbrains.dokka' apply false
+    id 'org.jetbrains.kotlinx.kover' apply false
     id 'net.researchgate.release'
 }
 
@@ -9,11 +10,12 @@ def ossrhPassword = project.hasProperty("ossrhPassword") ? project.property("oss
 
 subprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
-    apply plugin: 'jacoco'
+
+    apply plugin: 'org.jetbrains.dokka'
+    apply plugin: 'org.jetbrains.kotlinx.kover'
 
     // Regular java modules need 'java-library' plugin for proper publication
     apply plugin: 'java-library'
-    apply plugin: 'org.jetbrains.dokka'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
 
@@ -32,7 +34,7 @@ subprojects {
     }
 
     configurations {
-        all*.exclude module : 'spring-boot-starter-logging'
+        all*.exclude module: 'spring-boot-starter-logging'
     }
 
     compileJava {
@@ -65,21 +67,20 @@ subprojects {
         }
     }
 
-    jacoco {
-        toolVersion = '0.8.5'
-    }
-
-    tasks.withType(Test) {
-        jacoco.includeNoLocationClasses = true
-        jacoco.excludes = ['jdk.internal.*']
-    }
-
-    jacocoTestReport {
-        dependsOn(test)
-
-        reports {
-            html.required.set(true)
-            xml.required.set(true)
+    // Can't be applied to BOM
+    kover {
+        verify {
+            rule {
+                bound {
+                    if (project.name == "kotysa-core") {
+                        minValue = 13
+                    } else if (project.name == "kotysa-spring-r2dbc") {
+                        minValue = 51
+                    } else {
+                        minValue = 69
+                    }
+                }
+            }
         }
     }
 
