@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.R2dbcSqlClient
@@ -156,6 +157,7 @@ class R2dbcSelectStringAsTinyTextMariadbTest : AbstractR2dbcMariadbTest<StringAs
     }
 
     @Test
+    @Disabled
     fun `Verify selectAllByAliasEndsWith get stringAsTinyTextNotNull by searching ef`() = runTest {
         assertThat(repository.selectAllByStringNotNullableEndsWith("ef").toList())
             .hasSize(1)
