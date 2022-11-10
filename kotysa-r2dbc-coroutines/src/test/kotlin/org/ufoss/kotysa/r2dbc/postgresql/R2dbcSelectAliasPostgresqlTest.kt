@@ -11,13 +11,14 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositorySelectAlias>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcR2dbcBadGrammarException`() {

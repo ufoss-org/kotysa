@@ -50,7 +50,7 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
         table: KotysaTable<T>,
         sql: String,
     ): DatabaseClient.GenericExecuteSpec =
-        table.columns
+        table.dbColumns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
                 column.entityGetter(row) == null

@@ -6,6 +6,8 @@ package org.ufoss.kotysa.spring.r2dbc
 
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.publisher.toFlux
 import java.math.BigDecimal
@@ -64,6 +66,12 @@ internal sealed class SqlClientSpringR2dbc(
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAvg(column)
     protected fun <T : Any> selectSumProtected(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectSum(column)
+
+    protected fun selectTsRankCdProtected(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ): ReactorSqlClientSelect.FirstSelect<Float> =
+        SqlClientSelectSpringR2dbc.Selectable(client, tables).selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -172,6 +180,11 @@ internal class PostgresqlSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selectTsRankCd(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 }
 
 internal class MssqlSqlClientSpringR2dbc internal constructor(

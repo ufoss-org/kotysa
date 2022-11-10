@@ -4,7 +4,9 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.AbstractDbColumn
+
 public class PrimaryKey<T : Any> internal constructor(
     internal val name: String?,
-    public val columns: Set<DbColumn<T, *>>,
+    public val columns: Set<AbstractDbColumn<T, *>>,
 )

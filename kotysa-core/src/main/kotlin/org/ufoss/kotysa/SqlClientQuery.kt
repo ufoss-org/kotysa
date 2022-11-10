@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -20,6 +22,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Select
         public infix fun <T : Any> selectAvg(column: NumericColumn<*, T>): Select
         public infix fun selectSum(column: IntColumn<*>): Select
+        
+        // Postgresql specific
+        public fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
     }
 
     public interface Selectable : SelectableSingle {
@@ -56,6 +61,9 @@ public abstract class SqlClientQuery protected constructor() {
     public interface Fromable {
         public infix fun <T : Any> from(table: Table<T>): FromTable<T, *>
         public infix fun <T : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): From<*>
+        
+        // Postgresql specific
+        public infix fun from(tsquery: Tsquery): From<*>
     }
 
     public interface AndCaseWhenExists {
@@ -76,6 +84,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> andAvg(column: NumericColumn<*, T>): Andable
         public infix fun andSum(column: IntColumn<*>): Andable
 
+        // Postgresql specific
+        public fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
+
         /**
          * sub-query
          */
@@ -90,6 +101,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<*>
 
         public infix fun `as`(alias: String): T
+
+        // Postgresql specific
+        public infix fun and(tsquery: Tsquery): From<*>
     }
 
     public interface FromTable<T : Any, U : FromTable<T, U>> {
@@ -226,6 +240,11 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> where(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
         public infix fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
+        
+        // Postgresql specific
+        public infix fun <U : Any> where(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T>
+        public infix fun where(tsquery: Tsquery): WhereOpTsquery<T>
+        
         public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
         
         // Where with alias
@@ -438,6 +457,57 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereOpByteArrayNullable<T : Any, U : Where<U>> :
         WhereOpByteArray<T, U>, WhereOpNullable<T, U, ByteArray>
 
+    /**
+     * See https://www.postgresql.org/docs/current/functions-textsearch.html#TEXTSEARCH-FUNCTIONS-TABLE
+     * and https://www.postgresql.org/docs/current/textsearch-controls.html#TEXTSEARCH-PARSING-QUERIES
+     */
+    public interface WhereOpTsvectorNotNull<T : Where<T>> {
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * The words must be combined by valid tsquery operators.
+         * ```
+         * to_tsquery('english', 'The & Fat & Rats') → 'fat' & 'rat'
+         * ```
+         */
+        public infix fun toTsquery(value: String): T
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * Any punctuation in the string is ignored (it does not determine query operators).
+         * The resulting query matches documents containing all non-stopwords in the text.
+         * ```
+         * plainto_tsquery('english', 'The Fat Rats') → 'fat' & 'rat'
+         * ```
+         */
+        public infix fun plaintoTsquery(value: String): T
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * Any punctuation in the string is ignored (it does not determine query operators).
+         * The resulting query matches phrases containing all non-stopwords in the text.
+         * ```
+         * phraseto_tsquery('english', 'The Fat Rats') → 'fat' <-> 'rat'
+         * phraseto_tsquery('english', 'The Cat and Rats') → 'cat' <2> 'rat'
+         * ```
+         */
+        public infix fun phrasetoTsquery(value: String): T
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * Quoted word sequences are converted to phrase tests.
+         * The word “or” is understood as producing an OR operator, and a dash produces a NOT operator;
+         * other punctuation is ignored. This approximates the behavior of some common web search tools.
+         * ```
+         * websearch_to_tsquery('english', '"fat rat" or cat dog') → 'fat' <-> 'rat' | 'cat' & 'dog'
+         * ```
+         */
+        public infix fun websearchToTsquery(value: String): T
+    }
+
+    /**
+     * See https://www.postgresql.org/docs/15/textsearch-controls.html#TEXTSEARCH-RANKING
+     */
+    public interface WhereOpTsquery<T : Where<T>> {
+        public infix fun applyOn(tsvectorColumn: TsvectorColumn<*>): T
+    }
+
     public interface Where<T : Where<T>> {
         public infix fun <U : Any> and(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringNotNull<U, T>
         public infix fun <U : Any> and(stringColumnNullable: StringColumnNullable<U>): WhereOpStringNullable<U, T>
@@ -464,6 +534,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> and(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
         public infix fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
+        public infix fun <U : Any> and(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T>
+        public infix fun and(tsquery: Tsquery): WhereOpTsquery<T>
         public infix fun <U : Any> andExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
 
         // And with alias
@@ -528,7 +600,8 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> or(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
         public infix fun <U : Any> or(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
-        
+        public infix fun <U : Any> or(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T>
+        public infix fun or(tsquery: Tsquery): WhereOpTsquery<T>
         public infix fun <U : Any> orExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
 
         // Or with alias
@@ -626,5 +699,56 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> andDescCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
+    }
+    
+    // PostgreSQL specific
+    public interface ToTsquery {
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * The words must be combined by valid tsquery operators.
+         * ```
+         * to_tsquery('english', 'The & Fat & Rats') → 'fat' & 'rat'
+         * ```
+         */
+        public infix fun toTsquery(value: String): ToTsqueryPart2 = ToTsqueryPart2(value, Operation.TO_TSQUERY)
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * Any punctuation in the string is ignored (it does not determine query operators).
+         * The resulting query matches documents containing all non-stopwords in the text.
+         * ```
+         * plainto_tsquery('english', 'The Fat Rats') → 'fat' & 'rat'
+         * ```
+         */
+        public infix fun plaintoTsquery(value: String): ToTsqueryPart2 =
+            ToTsqueryPart2(value, Operation.PLAINTO_TSQUERY)
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * Any punctuation in the string is ignored (it does not determine query operators).
+         * The resulting query matches phrases containing all non-stopwords in the text.
+         * ```
+         * phraseto_tsquery('english', 'The Fat Rats') → 'fat' <-> 'rat'
+         * phraseto_tsquery('english', 'The Cat and Rats') → 'cat' <2> 'rat'
+         * ```
+         */
+        public infix fun phrasetoTsquery(value: String): ToTsqueryPart2 =
+            ToTsqueryPart2(value, Operation.PHRASETO_TSQUERY)
+        /**
+         * Converts text to a tsquery, normalizing words according to the specified or default configuration.
+         * Quoted word sequences are converted to phrase tests.
+         * The word “or” is understood as producing an OR operator, and a dash produces a NOT operator;
+         * other punctuation is ignored. This approximates the behavior of some common web search tools.
+         * ```
+         * websearch_to_tsquery('english', '"fat rat" or cat dog') → 'fat' <-> 'rat' | 'cat' & 'dog'
+         * ```
+         */
+        public infix fun websearchToTsquery(value: String): ToTsqueryPart2 =
+            ToTsqueryPart2(value, Operation.WEBSEARCH_TO_TSQUERY)
+    }
+    
+    public class ToTsqueryPart2 internal constructor(
+        private val value: String,
+        private val operation: Operation,
+    ) {
+        public infix fun `as`(alias: String): Tsquery = Tsquery(value, operation, alias)
     }
 }

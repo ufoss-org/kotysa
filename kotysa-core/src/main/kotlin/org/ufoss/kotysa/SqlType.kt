@@ -33,7 +33,11 @@ public enum class SqlType(internal val fullType: String) {
 
     UUID("UUID"),
 
+    // Binary
     BLOB("BLOB"),
     BINARY("BINARY"),
     BYTEA("BYTEA"),
+    
+    // Text search / full-text search
+    TSVECTOR("TSVECTOR"),
 }

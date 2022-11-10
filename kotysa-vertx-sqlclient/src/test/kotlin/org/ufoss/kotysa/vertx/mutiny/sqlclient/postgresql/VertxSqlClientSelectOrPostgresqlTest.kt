@@ -9,12 +9,13 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.roleAdmin
 import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 
 class VertxSqlClientSelectOrPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<UserRepositoryPostgresqlSelectOr>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryPostgresqlSelectOr(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = UserRepositoryPostgresqlSelectOr(sqlClient)
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {

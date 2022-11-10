@@ -7,6 +7,8 @@ package org.ufoss.kotysa.spring.r2dbc
 import org.springframework.dao.IncorrectResultSizeDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.math.BigDecimal
@@ -59,6 +61,12 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): ReactorSqlClientSelect.From<T> = FirstSelect<T>(client, properties()).selectStarFrom(dsl)
+
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): ReactorSqlClientSelect.FirstSelect<Float> =
+            FirstSelect<Float>(client, properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -94,6 +102,8 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): ReactorSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): ReactorSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -140,6 +150,13 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): ReactorSqlClientSelect.AndCaseWhenExistsSecond<T, U> = AndCaseWhenExistsSecond(client, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): ReactorSqlClientSelect.SecondSelect<T?, Float> =
+            SecondSelect(client, properties as Properties<Pair<T?, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): ReactorSqlClientSelect.FirstSelect<T> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -179,6 +196,8 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <V : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): ReactorSqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+
+        override fun from(tsquery: Tsquery): ReactorSqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
 
         override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -221,6 +240,13 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
         ): ReactorSqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(client, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): ReactorSqlClientSelect.ThirdSelect<T, U, Float> =
+            ThirdSelect(client, properties as Properties<Triple<T, U, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): ReactorSqlClientSelect.SecondSelect<T, U> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -260,6 +286,9 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <W : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): ReactorSqlClientSelect.From<Triple<T, U, V>> = addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+
+        override fun from(tsquery: Tsquery): ReactorSqlClientSelect.From<Triple<T, U, V>> =
+            addFromTsquery(tsquery, from)
 
         override fun <W : Any> and(column: Column<*, W>): ReactorSqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -309,6 +338,9 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
                 dsl
             )
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): ReactorSqlClientSelect.Select =
+            Select(client, properties as Properties<List<Any?>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): ReactorSqlClientSelect.ThirdSelect<T, U, V> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -347,6 +379,8 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): ReactorSqlClientSelect.From<List<Any?>> = addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
+        override fun from(tsquery: Tsquery): ReactorSqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
         override fun <V : Any> and(column: Column<*, V>): ReactorSqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -383,6 +417,9 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): ReactorSqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(client, properties, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): ReactorSqlClientSelect.Select =
+            Select(client, properties).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): ReactorSqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
@@ -400,6 +437,8 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): ReactorSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
+        override fun from(tsquery: Tsquery): ReactorSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
+
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
         }
@@ -415,7 +454,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         GroupBy<T>, OrderBy<T>, ReactorSqlClientSelect.LimitOffset<T> {
         override val fromTable = this
         override val from = this
-        
+
         override val where by lazy { Where(client, properties) }
         override val limitOffset by lazy { LimitOffset(client, properties) }
         override val groupByPart2 by lazy { GroupByPart2(client, properties) }
@@ -426,6 +465,8 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): ReactorSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun and(tsquery: Tsquery): ReactorSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): ReactorSqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }

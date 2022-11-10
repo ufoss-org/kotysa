@@ -11,8 +11,10 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.core.r2dbc.r2dbcBindParams
 import org.ufoss.kotysa.core.r2dbc.toRow
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 import java.util.*
 
@@ -65,6 +67,12 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): CoroutinesSqlClientSelect.From<T> = FirstSelect<T>(connectionFactory, properties()).selectStarFrom(dsl)
+
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): CoroutinesSqlClientSelect.FirstSelect<Float> =
+            FirstSelect<Float>(connectionFactory, properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -100,6 +108,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -150,6 +160,13 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         ): CoroutinesSqlClientSelect.AndCaseWhenExistsSecond<T, U> =
             AndCaseWhenExistsSecond(connectionFactory, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): CoroutinesSqlClientSelect.SecondSelect<T?, Float> =
+            SecondSelect(connectionFactory, properties as Properties<Pair<T?, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): CoroutinesSqlClientSelect.FirstSelect<T> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -189,6 +206,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun <V : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): CoroutinesSqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
 
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(connectionFactory, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -242,6 +261,13 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         ): CoroutinesSqlClientSelect.AndCaseWhenExistsThird<T, U, V> =
             AndCaseWhenExistsThird(connectionFactory, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): CoroutinesSqlClientSelect.ThirdSelect<T, U, Float> =
+            ThirdSelect(connectionFactory, properties as Properties<Triple<T, U, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): CoroutinesSqlClientSelect.SecondSelect<T, U> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -282,6 +308,9 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): CoroutinesSqlClientSelect.From<Triple<T, U, V>> =
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<Triple<T, U, V>> =
+            addFromTsquery(tsquery, from)
 
         override fun <W : Any> and(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
             Select(connectionFactory, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -324,6 +353,11 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         ): CoroutinesSqlClientSelect.AndCaseWhenExistsLast<W> =
             AndCaseWhenExistsLast(connectionFactory, properties as Properties<List<Any?>>, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery)
+                : CoroutinesSqlClientSelect.Select =
+            Select(connectionFactory, properties as Properties<List<Any?>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): CoroutinesSqlClientSelect.ThirdSelect<T, U, V> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -363,6 +397,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         ): CoroutinesSqlClientSelect.From<List<Any?>> =
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -400,6 +436,10 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         ): CoroutinesSqlClientSelect.AndCaseWhenExistsLast<T> =
             AndCaseWhenExistsLast(connectionFactory, properties, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery)
+                : CoroutinesSqlClientSelect.Select =
+            Select(connectionFactory, properties).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): CoroutinesSqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
@@ -417,6 +457,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
+
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
         }
@@ -432,7 +474,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         CoroutinesSqlClientSelect.LimitOffset<T> {
         override val fromTable = this
         override val from = this
-        
+
         override val where by lazy { Where(connectionFactory, properties) }
         override val limitOffset by lazy { LimitOffset(connectionFactory, properties) }
         override val groupByPart2 by lazy { GroupByPart2(connectionFactory, properties) }
@@ -443,6 +485,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun and(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): CoroutinesSqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
@@ -469,7 +513,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
     ) : DefaultSqlClientSelect.GroupByPart2<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
         CoroutinesSqlClientSelect.GroupByPart2<T>,
         DefaultSqlClientSelect.OrderBy<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
-        OrderBy<T>,  DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+        OrderBy<T>, DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(connectionFactory, properties) }
         override val orderByPart2 by lazy { OrderByPart2(connectionFactory, properties) }
         override val groupByPart2 = this

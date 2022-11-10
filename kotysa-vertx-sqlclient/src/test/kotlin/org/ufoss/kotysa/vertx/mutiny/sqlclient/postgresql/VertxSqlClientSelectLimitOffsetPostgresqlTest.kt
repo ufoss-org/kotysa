@@ -10,12 +10,13 @@ import org.ufoss.kotysa.test.PostgresqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
 import org.ufoss.kotysa.test.customerUSA2
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientSelectLimitOffsetPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<LimitOffsetRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = LimitOffsetRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = LimitOffsetRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllOrderByIdOffset returns customerUSA2`() {

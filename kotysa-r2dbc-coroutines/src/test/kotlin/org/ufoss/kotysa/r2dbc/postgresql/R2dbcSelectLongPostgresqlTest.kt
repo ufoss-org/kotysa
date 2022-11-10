@@ -10,12 +10,13 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 @Order(2)
 class R2dbcSelectLongPostgresqlTest : AbstractR2dbcPostgresqlTest<LongRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = LongRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = LongRepositoryPostgresqlSelect(sqlClient)
 
     private val longWithNullable = LongEntity(
         org.ufoss.kotysa.test.longWithNullable.longNotNull,

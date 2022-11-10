@@ -5,10 +5,9 @@
 package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.BooleanColumnNotNull
-import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.SqlType
 
-public sealed class DbBitColumn<T : Any, U : Any> : DbColumn<T, U>() {
+public sealed class DbBitColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No size
     final override val size = null
 

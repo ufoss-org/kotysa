@@ -70,7 +70,7 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
                         if (value == null) {
                             statement.bindNull(
                                 index++,
-                                ((updateClauseValue.column as DbColumn<*, *>).entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
+                                (updateClauseValue.column.entityGetter.toCallable().returnType.classifier as KClass<*>).toDbClass().java
                             )
                         } else {
                             statement.bind(index++, tables.getDbValue(value)!!)

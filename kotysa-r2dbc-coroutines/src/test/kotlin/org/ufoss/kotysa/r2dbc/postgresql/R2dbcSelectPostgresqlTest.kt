@@ -12,11 +12,12 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = UserRepositoryJdbcPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() = runTest {

@@ -1,5 +1,9 @@
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.AbstractColumn
+import org.ufoss.kotysa.columns.AbstractDbColumn
+import org.ufoss.kotysa.columns.TsvectorColumn
+
 public interface Table<T : Any>
 
 /**
@@ -9,13 +13,13 @@ public interface Table<T : Any>
  */
 public abstract class AbstractTable<T : Any>(internal val tableName: String?) : Table<T> {
     internal lateinit var kotysaName: String
-    internal val kotysaColumns = mutableSetOf<DbColumn<T, *>>()
+    internal val kotysaColumns = mutableSetOf<AbstractColumn<T, *>>()
     internal lateinit var kotysaPk: PrimaryKey<T>
     internal val kotysaForeignKeys = mutableSetOf<ForeignKey<T, *>>()
     internal val kotysaIndexes = mutableSetOf<Index<T>>()
 
     protected fun primaryKey(
-        columns: Set<DbColumn<T, *>>,
+        columns: Set<AbstractDbColumn<T, *>>,
         pkName: String? = null,
     ): PrimaryKey<T> {
         check(!::kotysaPk.isInitialized) {
@@ -24,10 +28,10 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
         return PrimaryKey(pkName, columns).also { primaryKey -> kotysaPk = primaryKey }
     }
 
-    protected fun primaryKey(vararg columns: DbColumn<T, *>): PrimaryKey<T> = primaryKey(columns.toSet())
+    protected fun primaryKey(vararg columns: AbstractDbColumn<T, *>): PrimaryKey<T> = primaryKey(columns.toSet())
 
     protected fun <U> U.primaryKey(pkName: String? = null)
-            : U where U : DbColumn<T, *>,
+            : U where U : AbstractDbColumn<T, *>,
                       U : ColumnNotNull<T, *> {
         check(!isPkInitialized()) {
             "Table must not declare more than one Primary Key"
@@ -44,27 +48,47 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
     }*/
 
-    protected fun <U : DbColumn<T, *>, V : Any> U.foreignKey(references: DbColumn<V, *>, fkName: String? = null): U =
+    protected fun <U : AbstractDbColumn<T, *>, V : Any> U.foreignKey(references: AbstractDbColumn<V, *>, fkName: String? = null): U =
         this.also {
             kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
         }
 
     protected fun index(
-        columns: Set<DbColumn<T, *>>,
+        columns: Set<AbstractDbColumn<T, *>>,
         type: IndexType? = null,
         indexName: String? = null,
     ): Index<T> = Index(columns, type, indexName).apply { kotysaIndexes.add(this) }
 
-    protected fun index(vararg columns: DbColumn<T, *>): Index<T> = index(columns.toSet())
+    protected fun index(vararg columns: AbstractDbColumn<T, *>): Index<T> = index(columns.toSet())
 
-    protected fun <U : DbColumn<T, *>> U.unique(indexName: String? = null): U =
+    protected fun <U : AbstractDbColumn<T, *>> U.unique(indexName: String? = null): U =
         this.also {
             kotysaIndexes.add(Index(setOf(this), IndexType.UNIQUE, indexName))
         }
 
-    internal fun addColumn(column: DbColumn<T, *>) {
-        require(!kotysaColumns.any { col -> col.entityGetter == column.entityGetter }) {
-            "Trying to map property \"${column.entityGetter}\" to multiple columns"
+    /**
+     * Creates a GIN index associated to a tsvector column
+     */
+    protected fun TsvectorColumn<T>.withGinIndex(indexName: String? = null): TsvectorColumn<T> =
+        this.also {
+            kotysaIndexes.add(Index(setOf(this), IndexType.GIN, indexName))
+        }
+
+    /**
+     * Creates a GIN index associated to a tsvector column
+     */
+    protected fun TsvectorColumn<T>.withGistIndex(indexName: String? = null): TsvectorColumn<T> =
+        this.also {
+            kotysaIndexes.add(Index(setOf(this), IndexType.GIST, indexName))
+        }
+
+    internal fun addColumn(column: AbstractColumn<T, *>) {
+        if (column is AbstractDbColumn<T, *>) {
+            require(!kotysaColumns
+                .filterIsInstance<AbstractDbColumn<T, *>>()
+                .any { col -> col.entityGetter == column.entityGetter }) {
+                "Trying to map property \"${column.entityGetter}\" to multiple columns"
+            }
         }
         kotysaColumns += column
     }

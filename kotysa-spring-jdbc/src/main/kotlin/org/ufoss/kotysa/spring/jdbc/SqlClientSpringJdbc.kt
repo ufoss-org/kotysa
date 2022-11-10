@@ -11,7 +11,9 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.core.namedparam.SqlParameterSource
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.core.jdbc.toRow
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 
 /**
@@ -70,7 +72,7 @@ internal sealed class SqlClientSpringJdbc(
 
     private fun <T : Any> paramSource(row: T, table: KotysaTable<T>): SqlParameterSource {
         val parameters = MapSqlParameterSource()
-        table.columns
+        table.dbColumns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
                 column.entityGetter(row) == null
@@ -87,7 +89,7 @@ internal sealed class SqlClientSpringJdbc(
     private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
         val pkFirstColumn = pkColumns.elementAt(0)
-        
+
         val parameters = MapSqlParameterSource()
         if (
             pkColumns.size != 1 ||
@@ -166,11 +168,19 @@ internal sealed class SqlClientSpringJdbc(
     protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U> =
         SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectMax(column)
 
-    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
+    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>)
+            : SqlClientSelect.FirstSelect<BigDecimal> =
         SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectAvg(column)
 
     protected fun <T : Any> selectSumProtected(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectSum(column)
+
+    protected fun selectTsRankCdProtected(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ): SqlClientSelect.FirstSelect<Float> =
+        SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables)
+            .selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -279,6 +289,11 @@ internal class PostgresqlSqlClientSpringJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selectTsRankCd(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 }
 
 internal class MssqlSqlClientSpringJdbc internal constructor(

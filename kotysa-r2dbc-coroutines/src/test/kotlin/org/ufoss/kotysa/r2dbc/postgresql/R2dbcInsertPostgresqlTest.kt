@@ -12,12 +12,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 @Order(3)
 class R2dbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgresqlInsert>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryPostgresqlInsert(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = RepositoryPostgresqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() = runTest {

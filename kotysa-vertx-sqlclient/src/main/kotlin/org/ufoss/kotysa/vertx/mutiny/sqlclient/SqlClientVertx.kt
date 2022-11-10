@@ -11,6 +11,8 @@ import io.vertx.mutiny.sqlclient.SqlConnection
 import io.vertx.mutiny.sqlclient.Transaction
 import io.vertx.mutiny.sqlclient.Tuple
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransaction
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction.VertxTransactionalOp
 import java.math.BigDecimal
@@ -87,7 +89,7 @@ internal sealed class SqlClientVertx(
     }
 
     private fun <T : Any> buildTuple(row: T, table: KotysaTable<T>) =
-        table.columns
+        table.dbColumns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
                 column.entityGetter(row) == null
@@ -204,6 +206,12 @@ internal sealed class SqlClientVertx(
 
     protected fun <T : Any> selectSumProtected(column: IntColumn<T>): MutinySqlClientSelect.FirstSelect<Long> =
         SqlClientSelectVertx.Selectable(pool, tables).selectSum(column)
+
+    protected fun selectTsRankCdProtected(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ): MutinySqlClientSelect.FirstSelect<Float> =
+        SqlClientSelectVertx.Selectable(pool, tables).selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -378,6 +386,11 @@ internal class PostgresqlSqlClientVertx internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selectTsRankCd(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 
     override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)

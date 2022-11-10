@@ -9,11 +9,12 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePostgresqlRepository>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = InheritancePostgresqlRepository(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = InheritancePostgresqlRepository(sqlClient)
 
     @Test
     fun `Verify extension function selectById finds inherited`() = runTest {

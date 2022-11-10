@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.PostgresqlTexts
 import org.ufoss.kotysa.test.Repository
@@ -18,7 +19,7 @@ import org.ufoss.kotysa.test.stringAsTextNotNull
 import org.ufoss.kotysa.test.stringAsTextNullable
 
 class R2dbcSelectStringAsTextPostgresqlTest : AbstractR2dbcPostgresqlTest<StringAsTextRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = StringAsTextRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = StringAsTextRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectFirstOrNullByStringNotNull finds stringAsTextNotNull`() = runTest {

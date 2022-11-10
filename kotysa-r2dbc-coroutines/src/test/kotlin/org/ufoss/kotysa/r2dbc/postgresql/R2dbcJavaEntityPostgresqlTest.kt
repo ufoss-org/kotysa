@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlJavaUsers
@@ -14,7 +15,7 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesJavaUserRepositor
 class R2dbcJavaEntityPostgresqlTest : AbstractR2dbcPostgresqlTest<JavaUserPostgresqlRepository>(),
     CoroutinesJavaEntityTest<PostgresqlJavaUsers, JavaUserPostgresqlRepository, R2dbcTransaction> {
 
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = JavaUserPostgresqlRepository(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = JavaUserPostgresqlRepository(sqlClient)
 }
 
 

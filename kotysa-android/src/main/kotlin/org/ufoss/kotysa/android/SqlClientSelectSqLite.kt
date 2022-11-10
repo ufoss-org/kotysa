@@ -7,6 +7,8 @@ package org.ufoss.kotysa.android
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 
 @Suppress("UNCHECKED_CAST")
@@ -57,6 +59,12 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.From<T> = FirstSelect<T>(client, properties()).selectStarFrom(dsl)
+
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): SqlClientSelect.FirstSelect<Float> =
+            throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -92,6 +100,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<T> =
+            throw UnsupportedOperationException("Only PostgreSQL supports tsquery")
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -138,6 +149,12 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.AndCaseWhenExistsSecond<T, U> = AndCaseWhenExistsSecond(client, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): SqlClientSelect.SecondSelect<T?, Float> =
+            throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
+
         override fun `as`(alias: String): SqlClientSelect.FirstSelect<T> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -176,6 +193,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<Pair<T, U>> =
+            throw UnsupportedOperationException("Only PostgreSQL supports tsquery")
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -218,6 +238,12 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(client, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): SqlClientSelect.ThirdSelect<T, U, Float> =
+            throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
+
         override fun `as`(alias: String): SqlClientSelect.SecondSelect<T, U> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -257,6 +283,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): SqlClientSelect.From<Triple<T, U, V>> =
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<Triple<T, U, V>> =
+            throw UnsupportedOperationException("Only PostgreSQL supports tsquery")
 
         override fun <W : Any> and(column: Column<*, W>): SqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -299,6 +328,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         ): SqlClientSelect.AndCaseWhenExistsLast<W> =
             AndCaseWhenExistsLast(client, properties as Properties<List<Any?>>, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SqlClientSelect.Select =
+            throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
+
         override fun `as`(alias: String): SqlClientSelect.ThirdSelect<T, U, V> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -337,6 +369,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         ): SqlClientSelect.From<List<Any?>> =
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<List<Any?>> =
+            throw UnsupportedOperationException("Only PostgreSQL supports tsquery")
+
         override fun <T : Any> and(column: Column<*, T>): SqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -370,6 +405,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(client, properties, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SqlClientSelect.Select =
+            throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
+
         override fun `as`(alias: String): SqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
@@ -386,6 +424,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<T> =
+            throw UnsupportedOperationException("Only PostgreSQL supports tsquery")
 
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
@@ -412,6 +453,9 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun and(tsquery: Tsquery): SqlClientSelect.From<T> =
+            throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
 
         override fun `as`(alias: String): SqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }

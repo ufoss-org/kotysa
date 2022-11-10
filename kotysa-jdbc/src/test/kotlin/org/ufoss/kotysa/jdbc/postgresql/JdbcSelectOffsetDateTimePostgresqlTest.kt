@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.jdbc.postgresql
 
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlOffsetDateTimes
 import org.ufoss.kotysa.test.repositories.blocking.SelectOffsetDateTimeRepository
@@ -12,7 +13,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectOffsetDateTimeTest
 
 class JdbcSelectOffsetDateTimePostgresqlTest : AbstractJdbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>(),
     SelectOffsetDateTimeTest<PostgresqlOffsetDateTimes, OffsetDateTimeRepositoryPostgresqlSelect, JdbcTransaction> {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
+        OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
 }
 
 class OffsetDateTimeRepositoryPostgresqlSelect(sqlClient: JdbcSqlClient) :

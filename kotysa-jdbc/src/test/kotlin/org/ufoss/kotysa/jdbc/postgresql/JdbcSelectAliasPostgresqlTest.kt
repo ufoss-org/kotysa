@@ -9,13 +9,14 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.postgresql.util.PSQLException
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class JdbcSelectAliasPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositorySelectAlias>() {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcPSQLException`() {

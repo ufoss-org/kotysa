@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.jdbc.postgresql
 
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlCustomers
 import org.ufoss.kotysa.test.repositories.blocking.SelectMinMaxAvgSumRepository
@@ -12,7 +13,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectMinMaxAvgSumTest
 
 class JdbcSelectMinMaxAvgSumH2Test : AbstractJdbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>(),
     SelectMinMaxAvgSumTest<PostgresqlCustomers, MinMaxAvgSumRepositoryPostgresqlSelect, JdbcTransaction> {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
+        MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
 }
 
 class MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient: JdbcSqlClient) :

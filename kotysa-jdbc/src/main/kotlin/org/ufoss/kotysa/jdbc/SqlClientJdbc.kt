@@ -5,9 +5,11 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.core.jdbc.toRow
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.jdbc.transaction.JdbcTransactionImpl
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigDecimal
 import java.sql.Connection
@@ -88,7 +90,7 @@ internal sealed class SqlClientJdbc(
     }
 
     private fun <T : Any> setStatementParams(row: T, table: KotysaTable<T>, statement: PreparedStatement) {
-        table.columns
+        table.dbColumns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
                 column.entityGetter(row) == null
@@ -196,6 +198,12 @@ internal sealed class SqlClientJdbc(
 
     protected fun <T : Any> selectSumProtected(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectSum(column)
+
+    protected fun selectTsRankCdProtected(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ): SqlClientSelect.FirstSelect<Float> =
+        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -378,6 +386,11 @@ internal class PostgresqlSqlClientJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selectTsRankCd(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 
     override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 }

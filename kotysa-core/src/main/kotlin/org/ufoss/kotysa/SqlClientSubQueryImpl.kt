@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 
 @Suppress("UNCHECKED_CAST")
@@ -45,10 +47,14 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun selectSum(column: IntColumn<*>): SqlClientSubQuery.FirstSelect<Long> =
             FirstSelect<Long>(properties()).apply { addLongSumColumn(column) }
 
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery,
+        ): SqlClientSubQuery.FirstSelect<Float> = FirstSelect<Float>(properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun <T : Any> select(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-        ): SqlClientSubQuery.FirstSelect<T> =
-            FirstSelect<T>(properties()).apply { addSelectSubQuery(dsl) }
+        ): SqlClientSubQuery.FirstSelect<T> = FirstSelect<T>(properties()).apply { addSelectSubQuery(dsl) }
 
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
@@ -90,6 +96,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSubQuery.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
+        override fun from(tsquery: Tsquery): SqlClientSubQuery.From<T> = addFromTsquery(tsquery, from)
+
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSubQuery.From<T> =
@@ -124,6 +132,12 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun andSum(column: IntColumn<*>): SqlClientSubQuery.SecondSelect<T?, Long> =
             SecondSelect(properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
+
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery,
+        ): SqlClientSubQuery.SecondSelect<T?, Float> =
+            SecondSelect(properties as Properties<Pair<T?, Float>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
 
         override fun <U : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -172,6 +186,9 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSubQuery.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
 
+        override fun from(tsquery: Tsquery): SqlClientSubQuery.From<Pair<T, U>> = addFromTsquery(tsquery, from)
+        
+
         override fun <V : Any> and(column: Column<*, V>): SqlClientSubQuery.ThirdSelect<T, U, V?> =
             ThirdSelect(properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
 
@@ -201,6 +218,12 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun andSum(column: IntColumn<*>): SqlClientSubQuery.ThirdSelect<T, U, Long> =
             ThirdSelect(properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
+
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery,
+        ): SqlClientSubQuery.ThirdSelect<T, U, Float> =
+            ThirdSelect(properties as Properties<Triple<T, U, Float>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
 
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
@@ -250,6 +273,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         ): SqlClientSubQuery.From<Triple<T, U, V>> =
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
 
+        override fun from(tsquery: Tsquery): SqlClientSubQuery.From<Triple<T, U, V>> = addFromTsquery(tsquery, from)
+
         override fun <W : Any> and(column: Column<*, W>): SqlClientSubQuery.Select =
             Select(properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
 
@@ -279,6 +304,12 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun andSum(column: IntColumn<*>): SqlClientSubQuery.Select =
             Select(properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
+
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery,
+        ): SqlClientSubQuery.Select =
+            Select(properties as Properties<List<Any?>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
 
         override fun <W : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
@@ -325,6 +356,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         ): SqlClientSubQuery.From<List<Any?>> =
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
+        override fun from(tsquery: Tsquery): SqlClientSubQuery.From<List<Any?>> = addFromTsquery(tsquery, from)
+
         override fun <T : Any> and(column: Column<*, T>): SqlClientSubQuery.Select =
             this.apply { addSelectColumn(column) }
 
@@ -350,6 +383,11 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         }
 
         override fun andSum(column: IntColumn<*>): SqlClientSubQuery.Select = this.apply { addLongSumColumn(column) }
+
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery,
+        ): SqlClientSubQuery.Select = this.apply { addTsRankCd(tsvectorColumn, tsquery) }
 
         override fun <T : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -381,6 +419,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSubQuery.From<T> =
             addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun and(tsquery: Tsquery): SqlClientSubQuery.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): SqlClientSubQuery.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }

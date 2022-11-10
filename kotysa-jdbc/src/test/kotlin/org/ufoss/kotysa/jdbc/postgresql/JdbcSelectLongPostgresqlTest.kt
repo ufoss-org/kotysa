@@ -6,6 +6,7 @@ package org.ufoss.kotysa.jdbc.postgresql
 
 import org.junit.jupiter.api.Order
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectLongRepository
@@ -14,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectLongTest
 @Order(2)
 class JdbcSelectLongPostgresqlTest : AbstractJdbcPostgresqlTest<SelectLongRepositoryPostgresqlSelect>(),
     SelectLongTest<PostgresqlLongs, SelectLongRepositoryPostgresqlSelect, JdbcTransaction> {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = SelectLongRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
+        SelectLongRepositoryPostgresqlSelect(sqlClient)
 }
 
 class SelectLongRepositoryPostgresqlSelect(sqlClient: JdbcSqlClient) :

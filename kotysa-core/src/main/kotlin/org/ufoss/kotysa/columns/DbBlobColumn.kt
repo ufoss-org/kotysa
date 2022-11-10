@@ -6,7 +6,7 @@ package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.*
 
-public sealed class DbBlobColumn<T : Any, U : Any> : DbColumn<T, U>() {
+public sealed class DbBlobColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No size
     final override val size = null
     // No auto-increment

@@ -5,6 +5,8 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 
 private val logger = Logger.of<DefaultSqlClientSelect>()
 
@@ -19,7 +21,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
         override val parameters: MutableList<Any?> = mutableListOf()
-        override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
+        override val fromClauses: MutableList<FromClause> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType> = mutableListOf()
         override var index: Int = 0
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
@@ -64,6 +66,17 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             }
             properties.select = buildSelect()
             return from.addFromSubQuery(result, selectStar)
+        }
+
+        /**
+         * 'select' phase is finished, start 'from' phase
+         */
+        protected fun <U : Any, V : From<V>> addFromTsquery(
+            tsquery: Tsquery,
+            from: FromWhereableSubQuery<T, U, *, V, *, *, *>,
+        ): V {
+            properties.select = buildSelect()
+            return from.addFromTsquery(tsquery)
         }
 
         private fun buildSelect(): (RowImpl) -> T? = with(properties) {
@@ -117,6 +130,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.selectedFields.add(LongSumField(properties, column.getOrClone(properties.tables.allColumns)))
         }
 
+        public fun addTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery) {
+            properties.selectedFields.add(
+                TsRankCdField(properties, tsvectorColumn.getOrClone(properties.tables.allColumns), tsquery))
+        }
+
         public fun <U : Any> addSelectSubQuery(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>) {
             val (subQueryProperties, result) = properties.executeSubQuery(dsl)
             properties.selectedFields.add(SubQueryField(result, subQueryProperties.select, properties))
@@ -165,6 +183,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
             from: FromWhereable<T, U, *, V, *, *, *, *>
         ): V = from.addFromSubQuery(properties.executeSubQuery(dsl))
+
+        protected fun <U : Any, V : From<V>> addFromTsquery(
+            tsquery: Tsquery,
+            from: FromWhereable<T, U, *, V, *, *, *, *>,
+        ): V = from.addFromTsquery(tsquery)
     }
 
     public abstract class FromWhereableSubQuery<T : Any, U : Any, V : FromTable<U, V>, W : From<W>, X : SqlClientQuery.Where<X>,
@@ -181,6 +204,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<A>,
             from: FromWhereableSubQuery<T, A, *, B, *, *, *>
         ): B = from.addFromSubQuery(properties.executeSubQuery(dsl))
+
+        protected fun <A : Any, B : From<B>> addFromTsquery(
+            tsquery: Tsquery,
+            from: FromWhereableSubQuery<T, A, *, B, *, *, *>,
+        ): B = from.addFromTsquery(tsquery)
 
         protected fun <A : From<A>> aliasLastFrom(
             alias: String
@@ -223,7 +251,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         WithProperties<T> {
         public val groupByPart2: U
 
-        override fun groupBy(column: Column<*, *>): U {
+        override fun groupBy(column: Column<Any, *>): U {
             properties.groupByClauses.add(column.getOrClone(properties.availableColumns))
             return groupByPart2
         }
@@ -238,7 +266,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         WithProperties<T> {
         public val groupByPart2: U
 
-        override fun and(column: Column<*, *>): U {
+        override fun and(column: Column<Any, *>): U {
             properties.groupByClauses.add(column.getOrClone(properties.availableColumns))
             return groupByPart2
         }
@@ -253,14 +281,14 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         WithProperties<T> {
         public val orderByPart2: U
 
-        override fun orderByAsc(column: Column<*, *>): U {
+        override fun orderByAsc(column: Column<Any, *>): U {
             properties.orderByClauses.add(
                 OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.ASC)
             )
             return orderByPart2
         }
 
-        override fun orderByDesc(column: Column<*, *>): U {
+        override fun orderByDesc(column: Column<Any, *>): U {
             properties.orderByClauses.add(
                 OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.DESC)
             )
@@ -303,14 +331,14 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         WithProperties<T> {
         public val orderByPart2: U
 
-        override fun andAsc(column: Column<*, *>): U {
+        override fun andAsc(column: Column<Any, *>): U {
             properties.orderByClauses.add(
                 OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.ASC)
             )
             return orderByPart2
         }
 
-        override fun andDesc(column: Column<*, *>): U {
+        override fun andDesc(column: Column<Any, *>): U {
             properties.orderByClauses.add(
                 OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.DESC)
             )
