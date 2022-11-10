@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.postgresql.ds.PGSimpleDataSource
-import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.jdbc.sqlClient
 import org.ufoss.kotysa.test.Repository
@@ -22,7 +22,7 @@ import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 @ResourceLock(PostgreSqlContainerResource.ID)
 @Tag("jdbc-testcontainers")
 abstract class AbstractJdbcPostgresqlTest<T : Repository> : RepositoryTest<T, JdbcTransaction> {
-    private lateinit var sqlClient: JdbcSqlClient
+    private lateinit var sqlClient: PostgresqlJdbcSqlClient
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
@@ -36,7 +36,7 @@ abstract class AbstractJdbcPostgresqlTest<T : Repository> : RepositoryTest<T, Jd
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(sqlClient: JdbcSqlClient): T
+    protected abstract fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient): T
 
     override val operator by lazy {
         sqlClient

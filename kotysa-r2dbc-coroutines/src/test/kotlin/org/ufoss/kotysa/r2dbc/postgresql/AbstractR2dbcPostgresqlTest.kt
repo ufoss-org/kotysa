@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
-import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.r2dbc.sqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.Repository
@@ -25,7 +25,7 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesRepositoryTest
 @ResourceLock(PostgreSqlContainerResource.ID)
 @Tag("r2dbc-testcontainers")
 abstract class AbstractR2dbcPostgresqlTest<T : Repository> : CoroutinesRepositoryTest<T, R2dbcTransaction> {
-    private lateinit var sqlClient: R2dbcSqlClient
+    private lateinit var sqlClient: PostgresqlR2dbcSqlClient
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
@@ -41,7 +41,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> : CoroutinesRepositor
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(sqlClient: R2dbcSqlClient): T
+    protected abstract fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient): T
 
     override val coOperator by lazy {
         sqlClient

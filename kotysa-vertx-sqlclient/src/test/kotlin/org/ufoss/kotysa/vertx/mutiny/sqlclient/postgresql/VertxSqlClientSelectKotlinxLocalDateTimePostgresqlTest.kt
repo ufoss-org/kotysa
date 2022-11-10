@@ -8,13 +8,14 @@ import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 
 class VertxSqlClientSelectKotlinxLocalDateTimePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) =
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) =
         KotlinxLocalDateTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test

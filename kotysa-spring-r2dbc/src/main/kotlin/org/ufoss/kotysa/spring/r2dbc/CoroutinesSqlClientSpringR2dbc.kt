@@ -11,14 +11,16 @@ import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.await
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 
 /**
  * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbcCoroutines
  */
 internal sealed class CoroutinesSqlClientSpringR2dbc(
-        override val client: DatabaseClient,
-        override val tables: Tables,
+    override val client: DatabaseClient,
+    override val tables: Tables,
 ) : AbstractSqlClientSpringR2dbc {
 
     override val module = Module.SPRING_R2DBC
@@ -47,32 +49,47 @@ internal sealed class CoroutinesSqlClientSpringR2dbc(
     }
 
     protected fun <T : Any> deleteFromProtected(table: Table<T>)
-    : CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
+            : CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
         CoroutinesSqlClientDeleteSpringR2Dbc.FirstDelete(client, tables, table)
 
     protected fun <T : Any> updateProtected(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T> =
         CoroutinesSqlClientUpdateSpringR2Dbc.FirstUpdate(client, tables, table)
 
     protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(column)
+
     protected fun <T : Any> selectProtected(table: Table<T>): CoroutinesSqlClientSelect.FirstSelect<T> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(table)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).select(table)
+
     protected fun <T : Any> selectAndBuildProtected(dsl: (ValueProvider) -> T): CoroutinesSqlClientSelect.Fromable<T> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAndBuild(dsl)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAndBuild(dsl)
+
     protected fun selectCountProtected(): CoroutinesSqlClientSelect.Fromable<Long> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount<Any>(null)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount<Any>(null)
+
     protected fun <T : Any> selectCountProtected(column: Column<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectCount(column)
+
     protected fun <T : Any, U : Any> selectDistinctProtected(column: Column<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectDistinct(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectDistinct(column)
+
     protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectMin(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectMin(column)
+
     protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<U> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectMax(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectMax(column)
+
     protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAvg(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectAvg(column)
+
     protected fun <T : Any> selectSumProtected(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
-            CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectSum(column)
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectSum(column)
+
+    protected fun selectTsRankCdProtected(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ): CoroutinesSqlClientSelect.FirstSelect<Float> =
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -181,6 +198,11 @@ internal class PostgresqlCoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selectTsRankCd(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 }
 
 internal class MssqlCoroutinesSqlClientSpringR2dbc internal constructor(

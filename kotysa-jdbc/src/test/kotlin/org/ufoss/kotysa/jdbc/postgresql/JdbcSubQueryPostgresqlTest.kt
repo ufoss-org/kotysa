@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.jdbc.postgresql
 
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
@@ -15,7 +16,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SubQueryTest
 class JdbcSubQueryPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlSubQuery>(),
     SubQueryTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSubQuery,
             JdbcTransaction> {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlSubQuery(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
+        UserRepositoryJdbcPostgresqlSubQuery(sqlClient)
 }
 
 class UserRepositoryJdbcPostgresqlSubQuery(sqlClient: JdbcSqlClient) :

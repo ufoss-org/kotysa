@@ -8,7 +8,7 @@ import org.ufoss.kotysa.*
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
-public sealed class DbTimestampColumn<T : Any, U : Any> : DbColumn<T, U>() {
+public sealed class DbTimestampColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
 

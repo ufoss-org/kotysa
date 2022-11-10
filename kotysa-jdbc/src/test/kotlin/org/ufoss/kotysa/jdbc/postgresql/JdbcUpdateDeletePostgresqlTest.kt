@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.jdbc.postgresql
 
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
@@ -14,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.UpdateDeleteTest
 
 class JdbcUpdateDeletePostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlUpdateDelete>(),
     UpdateDeleteTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlUpdateDelete, JdbcTransaction> {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlUpdateDelete(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
+        UserRepositoryJdbcPostgresqlUpdateDelete(sqlClient)
 }
 
 class UserRepositoryJdbcPostgresqlUpdateDelete(sqlClient: JdbcSqlClient) :

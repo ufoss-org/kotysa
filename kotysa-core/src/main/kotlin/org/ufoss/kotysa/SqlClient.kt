@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 import java.util.stream.Stream
 
@@ -43,6 +45,10 @@ public sealed interface SqlClient {
         dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.SelectCaseWhenExistsFirst<T>
 
+    // Postgresql specific
+    public fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SqlClientSelect.FirstSelect<Float> =
+        throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
+
     public infix fun <T : Any> selectStarFrom(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.From<T>
@@ -59,7 +65,7 @@ public sealed interface SqlClient {
 
 public interface H2SqlClient : SqlClient
 public interface MysqlSqlClient : SqlClient
-public interface PostgresqlSqlClient : SqlClient
+public interface PostgresqlSqlClient : SqlClient, SqlClientQuery.ToTsquery
 public interface MssqlSqlClient : SqlClient
 public interface MariadbSqlClient : SqlClient
 public interface SqLiteSqlClient : SqlClient
@@ -80,9 +86,13 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SelectCaseWhenExistsFirst<T>
+
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): From<T>
+
+        // Postgresql specific
+        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): FirstSelect<Float>
     }
 
     public interface SelectCaseWhenExistsFirst<T : Any> : SelectCaseWhenExists {
@@ -96,6 +106,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
     public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
         override fun <U : Any> from(table: Table<U>): FromTable<T, U>
         override fun <U : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
+
+        // Postgresql specific
+        override fun from(tsquery: Tsquery): From<T>
     }
 
     public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, Andable {
@@ -113,6 +126,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): AndCaseWhenExistsSecond<T, U>
+
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SecondSelect<T?, Float>
 
         override fun `as`(alias: String): FirstSelect<T>
     }
@@ -140,6 +156,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <V : Any> andCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>)
                 : AndCaseWhenExistsThird<T, U, V>
 
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): ThirdSelect<T, U, Float>
+
         override fun `as`(alias: String): SecondSelect<T, U>
     }
 
@@ -164,6 +183,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         override fun <W : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
         ): AndCaseWhenExistsLast<W>
+
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
 
         override fun `as`(alias: String): ThirdSelect<T, U, V>
     }
@@ -190,6 +212,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): AndCaseWhenExistsLast<T>
 
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
+
         override fun `as`(alias: String): Select
     }
 
@@ -197,6 +222,9 @@ public class SqlClientSelect private constructor() : SqlClientQuery() {
         LimitOffset<T>, Return<T> {
         override fun <U : Any> and(table: Table<U>): FromTable<T, U>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
+
+        // Postgresql specific
+        override fun and(tsquery: Tsquery): From<T>
     }
 
     public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,

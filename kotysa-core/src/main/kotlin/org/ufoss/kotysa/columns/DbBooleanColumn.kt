@@ -5,10 +5,9 @@
 package org.ufoss.kotysa.columns
 
 import org.ufoss.kotysa.BooleanColumnNotNull
-import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.SqlType
 
-public sealed class DbBooleanColumnNotNull<T : Any, U : Any> : DbColumn<T, U>() {
+public sealed class DbBooleanColumnNotNull<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // Not null
     final override val isNullable: Boolean = false
     final override val defaultValue: U? = null

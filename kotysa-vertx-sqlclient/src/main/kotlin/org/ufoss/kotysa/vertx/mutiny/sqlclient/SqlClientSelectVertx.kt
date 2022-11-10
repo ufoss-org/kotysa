@@ -8,6 +8,8 @@ import io.smallrye.mutiny.Uni
 import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.mutiny.sqlclient.Tuple
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 import java.util.*
 
@@ -59,6 +61,12 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): MutinySqlClientSelect.From<T> = FirstSelect<T>(pool, properties()).selectStarFrom(dsl)
+
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): MutinySqlClientSelect.FirstSelect<Float> =
+            FirstSelect<Float>(pool, properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -94,6 +102,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): MutinySqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -140,6 +150,13 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): MutinySqlClientSelect.AndCaseWhenExistsSecond<T, U> = AndCaseWhenExistsSecond(pool, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): MutinySqlClientSelect.SecondSelect<T?, Float> =
+            SecondSelect(pool, properties as Properties<Pair<T?, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): MutinySqlClientSelect.FirstSelect<T> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -178,6 +195,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <V : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): MutinySqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
 
         override fun <V : Any> and(column: Column<*, V>): MutinySqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(pool, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -223,6 +242,13 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
         ): MutinySqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(pool, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): MutinySqlClientSelect.ThirdSelect<T, U, Float> =
+            ThirdSelect(pool, properties as Properties<Triple<T, U, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): MutinySqlClientSelect.SecondSelect<T, U> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -263,6 +289,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): MutinySqlClientSelect.From<Triple<T, U, V>> =
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<Triple<T, U, V>> = addFromTsquery(tsquery, from)
 
         override fun <W : Any> and(column: Column<*, W>): MutinySqlClientSelect.Select =
             Select(pool, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -305,6 +333,9 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         ): MutinySqlClientSelect.AndCaseWhenExistsLast<W> =
             AndCaseWhenExistsLast(pool, properties as Properties<List<Any?>>, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): MutinySqlClientSelect.Select =
+            Select(pool, properties as Properties<List<Any?>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): MutinySqlClientSelect.ThirdSelect<T, U, V> =
             this.apply { aliasLastColumn(alias) }
     }
@@ -344,6 +375,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         ): MutinySqlClientSelect.From<List<Any?>> =
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
         override fun <T : Any> and(column: Column<*, T>): MutinySqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -379,6 +412,9 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): MutinySqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(pool, properties, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): MutinySqlClientSelect.Select =
+            Select(pool, properties).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): MutinySqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
@@ -395,6 +431,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): MutinySqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
@@ -423,6 +461,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): MutinySqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun and(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): MutinySqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }

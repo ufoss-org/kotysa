@@ -47,16 +47,23 @@ public interface DefaultSqlClient {
 
         // create indexes
         val createIndexes = kotysaTable.kotysaIndexes.map { index ->
-            val indexTypeLabel = index.type?.label ?: ""
-            val indexName = index.name
+            val indexTypeLabel = index.type?.name ?: ""
+            var indexName = index.name
                 ?:
                 // build custom index name
                 index.columns
-                    .joinToString("_", "${kotysaTable.name}_", "_$indexTypeLabel") { column ->
+                    .joinToString("_", "${kotysaTable.name}_") { column ->
                         column.name
                     }
+            if (indexTypeLabel.isNotEmpty()) {
+                indexName += "_$indexTypeLabel"
+            }
             val indexColumns = index.columns.joinToString { column -> column.name }
-            val createIndexSql = "CREATE $indexTypeLabel INDEX $indexName ON ${kotysaTable.name} ($indexColumns)"
+            val createIndexSql = when(index.type) {
+                IndexType.GIN, IndexType.GIST ->
+                    "CREATE INDEX $indexName ON ${kotysaTable.name} USING $indexTypeLabel ($indexColumns)"
+                else -> "CREATE $indexTypeLabel INDEX $indexName ON ${kotysaTable.name} ($indexColumns)"
+            }
             logger.debug { "Exec SQL (${tables.dbType.name}) : $createIndexSql" }
             CreateIndexResult(indexName, createIndexSql)
         }
@@ -83,32 +90,58 @@ public interface DefaultSqlClient {
             }
         }
 
-    public fun createTableColumns(kotysaTable: KotysaTable<out Any>): String =
-        kotysaTable.columns.joinToString { column ->
-            if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
-                requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
-            }
-            val size = if (column.size != null) "(${column.size})" else ""
-            val nullability = if (column.isNullable) "NULL" else "NOT NULL"
-            val autoIncrement = if (column.isAutoIncrement && DbType.SQLITE != tables.dbType) {
-                // SQLITE : The AUTOINCREMENT keyword imposes extra CPU, memory, disk space, and disk I/O overhead and should be avoided if not strictly needed.
-                // It is usually not needed -> https://sqlite.org/autoinc.html
-                // if this needs to be added later, sqlite syntax MUST be "column INTEGER PRIMARY KEY AUTOINCREMENT"
-                if (DbType.MSSQL == tables.dbType) {
-                    " IDENTITY"
-                } else {
-                    " AUTO_INCREMENT"
+    public fun createTableColumns(kotysaTable: KotysaTable<out Any>): String {
+        val createDbColumns = kotysaTable.dbColumns
+            .joinToString { column ->
+                if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
+                    requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
                 }
-            } else {
-                ""
+                val size = if (column.size != null) "(${column.size})" else ""
+                val nullability = if (column.isNullable) "NULL" else "NOT NULL"
+                val autoIncrement = if (column.isAutoIncrement && DbType.SQLITE != tables.dbType) {
+                    // SQLITE : The AUTOINCREMENT keyword imposes extra CPU, memory, disk space, and disk I/O overhead and should be avoided if not strictly needed.
+                    // It is usually not needed -> https://sqlite.org/autoinc.html
+                    // if this needs to be added later, sqlite syntax MUST be "column INTEGER PRIMARY KEY AUTOINCREMENT"
+                    if (DbType.MSSQL == tables.dbType) {
+                        " IDENTITY"
+                    } else {
+                        " AUTO_INCREMENT"
+                    }
+                } else {
+                    ""
+                }
+                val default = if (column.defaultValue != null) {
+                    " DEFAULT ${column.defaultValue.defaultValue(tables.dbType)}"
+                } else {
+                    ""
+                }
+                "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
             }
-            val default = if (column.defaultValue != null) {
-                " DEFAULT ${column.defaultValue.defaultValue(tables.dbType)}"
-            } else {
-                ""
-            }
-            "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
+
+        val otherColumns = kotysaTable.columns
+            .filterIsInstance<KotysaColumnTsvector<*, *>>()
+        val createOtherColumns = if (otherColumns.isEmpty()) {
+            ""
+        } else {
+            otherColumns
+                .joinToString(prefix = ", ") { column ->
+                    val columns = column.kotysaColumns
+                        .joinToString(" || ' ' || ") { col ->
+                            if (col.isNullable) {
+                                // Use coalesce to ensure that field will be indexed
+                                "coalesce(${col.name}, '')"
+                            } else {
+                                col.name
+                            }
+                        }
+                    // see https://www.postgresql.org/docs/current/textsearch-tables.html#TEXTSEARCH-TABLES-INDEX
+                    "${column.name} ${column.sqlType.fullType} GENERATED ALWAYS " +
+                            "AS(to_tsvector('${column.tsvectorType}', $columns)) STORED"
+                }
         }
+
+        return "$createDbColumns$createOtherColumns"
+    }
 
     public fun <T : Any> insertSql(row: T, withReturn: Boolean = false): String {
         val insertSqlQuery = insertSqlQuery(row, withReturn)
@@ -121,7 +154,7 @@ public interface DefaultSqlClient {
         val kotysaTable = tables.getTable(row::class)
         val columnNames = mutableSetOf<String>()
         val counter = Counter()
-        val values = kotysaTable.columns
+        val values = kotysaTable.dbColumns
             // filter out null values with default value or Serial types
             .filterNot { column ->
                 column.entityGetter(row) == null
@@ -138,7 +171,9 @@ public interface DefaultSqlClient {
         var suffix = ""
         // on MSSQL identity cannot be set a value, must activate IDENTITY_INSERT
         if (tables.dbType == DbType.MSSQL
-            && kotysaTable.columns.any { column -> column.isAutoIncrement && column.entityGetter(row) != null }
+            && kotysaTable.columns
+                .filterIsInstance<KotysaColumnDb<T, *>>()
+                .any { column -> column.isAutoIncrement && column.entityGetter(row) != null }
         ) {
             prefix = "SET IDENTITY_INSERT ${kotysaTable.name} ON\n"
             suffix = "\nSET IDENTITY_INSERT ${kotysaTable.name} OFF"
@@ -207,6 +242,7 @@ public interface DefaultSqlClient {
             module == Module.SQLITE || module == Module.JDBC
                     || (module == Module.R2DBC && tables.dbType == DbType.MYSQL)
                     || (module == Module.VERTX_SQL_CLIENT && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MARIADB)) -> "?"
+
             module.isR2dbcOrVertxSqlClient() && (tables.dbType == DbType.H2 || tables.dbType == DbType.POSTGRESQL) -> "$${++counter.index}"
             module.isR2dbcOrVertxSqlClient() && tables.dbType == DbType.MSSQL -> "@p${++counter.index}"
             else -> ":k${counter.index++}"

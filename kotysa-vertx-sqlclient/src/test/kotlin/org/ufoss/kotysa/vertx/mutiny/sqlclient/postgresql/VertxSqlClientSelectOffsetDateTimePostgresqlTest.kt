@@ -10,6 +10,7 @@ import org.ufoss.kotysa.test.PostgresqlOffsetDateTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.offsetDateTimeWithNullable
 import org.ufoss.kotysa.test.offsetDateTimeWithoutNullable
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -18,7 +19,7 @@ import java.time.ZoneOffset
 class VertxSqlClientSelectOffsetDateTimePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() {

@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.AbstractColumn
+import org.ufoss.kotysa.columns.AbstractDbColumn
+import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.mariadb.MariadbTable
 import org.ufoss.kotysa.mssql.MssqlTable
@@ -55,25 +58,25 @@ public object DbTypeChoice {
     public fun sqlite(vararg tables: SqLiteTable<*>): SqLiteTables = buildSqLiteTables(tables)
 
     private fun fillTables(dbType: DbType, tables: Array<out AbstractTable<*>>)
-    : Pair<Map<Table<*>, KotysaTable<*>>, Map<Column<*, *>, KotysaColumn<*, *>>> {
+            : Pair<Map<Table<*>, KotysaTable<*>>, Map<Column<*, *>, KotysaColumn<*, *>>> {
         require(tables.isNotEmpty()) { "Tables must declare at least one table" }
 
         val allTables = mutableMapOf<Table<*>, KotysaTable<*>>()
         val allColumns = mutableMapOf<Column<*, *>, KotysaColumn<*, *>>()
         for (table in tables) {
             val tableClass = requireNotNull(table::class.allSupertypes
-                    .firstOrNull { type ->
-                        when (dbType) {
-                            DbType.SQLITE -> SqLiteTable::class == type.classifier
-                            DbType.MYSQL -> MysqlTable::class == type.classifier
-                            DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
-                            DbType.H2 -> H2Table::class == type.classifier
-                            DbType.MSSQL -> MssqlTable::class == type.classifier
-                            DbType.MARIADB -> MariadbTable::class == type.classifier
-                        }
+                .firstOrNull { type ->
+                    when (dbType) {
+                        DbType.SQLITE -> SqLiteTable::class == type.classifier
+                        DbType.MYSQL -> MysqlTable::class == type.classifier
+                        DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
+                        DbType.H2 -> H2Table::class == type.classifier
+                        DbType.MSSQL -> MssqlTable::class == type.classifier
+                        DbType.MARIADB -> MariadbTable::class == type.classifier
                     }
+                }
             ) { "Table $table should be a subclass of the platform $dbType Table" }
-                    .arguments[0].type!!.classifier as KClass<*>
+                .arguments[0].type!!.classifier as KClass<*>
             check(!allTables.values.map { kotysaTable -> kotysaTable.tableClass }.contains(tableClass)) {
                 "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
             }
@@ -84,7 +87,7 @@ public object DbTypeChoice {
         }
         return Pair(allTables, allColumns)
     }
-    
+
     private fun buildH2Tables(tables: Array<out AbstractTable<*>>): H2Tables {
         val pair = fillTables(DbType.H2, tables)
         return H2Tables(pair.first, pair.second)
@@ -124,28 +127,58 @@ public object DbTypeChoice {
 
         // build KotysaColumns
         val kotysaColumnsMap = linkedMapOf<Column<Any, *>, KotysaColumn<Any, *>>()
-        table.kotysaColumns.forEach { column ->
-            // If the name of the column is null, use the 'Table mapping' property name
-            column.name = column.columnName
-                    ?: table::class.members
-                            .first { callable ->
-                                Column::class.java.isAssignableFrom((callable.returnType.classifier as KClass<*>).java)
-                                        && column == callable.call(table)
-                            }.name
+        // 1) all DbColumns
+        table.kotysaColumns
+            .filterIsInstance<AbstractDbColumn<Any, *>>()
+            .forEach { column ->
+                column.name = buildColumnName(column, table)
+                @Suppress("UNCHECKED_CAST")
+                val kotysaColumn = KotysaColumnDb(
+                    column, column.entityGetter,
+                    column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType,
+                    column.isAutoIncrement, column.isNullable, column.defaultValue, column.size
+                )
+                kotysaColumnsMap[column] = kotysaColumn
+            }
 
-            @Suppress("UNCHECKED_CAST")
-            val kotysaColumn = KotysaColumnImpl(column, column.entityGetter,
-                column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType,
-                column.isAutoIncrement, column.isNullable, column.defaultValue, column.size)
-            kotysaColumnsMap[column] = kotysaColumn
-        }
+        // all TsvectorColumns
+        table.kotysaColumns
+            .filterIsInstance<TsvectorColumn<Any>>()
+            .forEach { column ->
+                column.name = buildColumnName(column, table)
+                @Suppress("UNCHECKED_CAST")
+                val kotysaColumn = KotysaColumnTsvector(
+                    column,
+                    column.name,
+                    column.tsvectorType,
+                    column.columns.map { col ->
+                        kotysaColumnsMap[col] ?: throw IllegalArgumentException(
+                            "Column ${buildColumnName(col, table)} is not mapped"
+                        )
+                    }
+                )
+                kotysaColumnsMap[column] = kotysaColumn
+            }
 
-        val kotysaTable = KotysaTableImpl(tableClass, table, table.kotysaName, kotysaColumnsMap.values.toList(),
-            table.kotysaPk, table.kotysaForeignKeys, table.kotysaIndexes)
+        val kotysaTable = KotysaTableImpl(
+            tableClass, table, table.kotysaName, kotysaColumnsMap.values.toList(),
+            table.kotysaPk, table.kotysaForeignKeys, table.kotysaIndexes
+        )
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
     }
+
+    /**
+     * If the name of the column is null, use the 'Table mapping' property name
+     */
+    private fun buildColumnName(column: AbstractColumn<Any, *>, table: AbstractTable<Any>): String =
+        column.columnName
+            ?: table::class.members
+                .first { callable ->
+                    Column::class.java.isAssignableFrom((callable.returnType.classifier as KClass<*>).java)
+                            && column == callable.call(table)
+                }.name
 }
 
 /**

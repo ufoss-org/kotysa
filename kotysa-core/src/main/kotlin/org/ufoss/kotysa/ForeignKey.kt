@@ -4,8 +4,10 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.AbstractDbColumn
+
 
 public data class ForeignKey<T : Any, U : Any> internal constructor(
-    internal val references: Map<DbColumn<T, *>, DbColumn<U, *>>,
+    internal val references: Map<AbstractDbColumn<T, *>, AbstractDbColumn<U, *>>,
     internal val name: String?,
 )

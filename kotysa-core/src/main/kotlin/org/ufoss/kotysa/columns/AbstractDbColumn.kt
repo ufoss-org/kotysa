@@ -2,16 +2,19 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa
+package org.ufoss.kotysa.columns
+
+import org.ufoss.kotysa.Column
+import org.ufoss.kotysa.DbColumn
+import org.ufoss.kotysa.SqlType
 
 /**
- * Represents a Column
+ * Represents an abstract Column
  *
  * @param T Entity type associated with the table this column is in
- * @param U return type of associated getter to this column
+ * @param U Kotlin type associated to this column
  */
-public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column<T, U>, Cloneable {
-    public abstract val entityGetter: (T) -> U?
+public sealed class AbstractColumn<T : Any, U : Any> : Column<T, U>, Cloneable {
     internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
     public abstract val isAutoIncrement: Boolean
@@ -25,6 +28,20 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
     public override fun clone(): Any {
         return super.clone()
     }
+}
+
+/**
+ * Represents a Column
+ *
+ * @param T Entity type associated with the table this column is in
+ * @param U return type of associated getter to this column
+ */
+public abstract class AbstractDbColumn<T : Any, U : Any> internal constructor() : AbstractColumn<T, U>(),
+    DbColumn<T, U>, Cloneable {
+
+    public override fun clone(): Any {
+        return super<AbstractColumn>.clone()
+    }
 
     override fun toString(): String {
         return "DbColumn(entityGetter=$entityGetter)"
@@ -34,7 +51,7 @@ public abstract class DbColumn<T : Any, U : Any> internal constructor() : Column
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as DbColumn<*, *>
+        other as AbstractDbColumn<*, *>
 
         if (entityGetter != other.entityGetter) return false
 

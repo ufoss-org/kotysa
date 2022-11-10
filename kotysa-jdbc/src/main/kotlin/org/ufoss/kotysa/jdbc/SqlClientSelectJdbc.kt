@@ -5,8 +5,10 @@
 package org.ufoss.kotysa.jdbc
 
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.core.jdbc.jdbcBindParams
 import org.ufoss.kotysa.core.jdbc.toRow
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -60,6 +62,12 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.From<T> = FirstSelect<T>(jdbcConnection, properties()).selectStarFrom(dsl)
+
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): SqlClientSelect.FirstSelect<Float> =
+            FirstSelect<Float>(jdbcConnection, properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -95,6 +103,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -141,6 +151,13 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.AndCaseWhenExistsSecond<T, U> = AndCaseWhenExistsSecond(jdbcConnection, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): SqlClientSelect.SecondSelect<T?, Float> =
+            SecondSelect(jdbcConnection, properties as Properties<Pair<T?, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): SqlClientSelect.FirstSelect<T> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -179,6 +196,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun <V : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(jdbcConnection, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -224,6 +243,13 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(jdbcConnection, properties, dsl)
 
+        override fun andTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): SqlClientSelect.ThirdSelect<T, U, Float> =
+            ThirdSelect(jdbcConnection, properties as Properties<Triple<T, U, Float>>)
+                .apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): SqlClientSelect.SecondSelect<T, U> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -263,6 +289,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
         ): SqlClientSelect.From<Triple<T, U, V>> =
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<Triple<T, U, V>> = addFromTsquery(tsquery, from)
 
         override fun <W : Any> and(column: Column<*, W>): SqlClientSelect.Select =
             Select(jdbcConnection, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -305,6 +333,9 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         ): SqlClientSelect.AndCaseWhenExistsLast<W> =
             AndCaseWhenExistsLast(jdbcConnection, properties as Properties<List<Any?>>, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SqlClientSelect.Select =
+            Select(jdbcConnection, properties as Properties<List<Any?>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): SqlClientSelect.ThirdSelect<T, U, V> = this.apply { aliasLastColumn(alias) }
     }
 
@@ -343,6 +374,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         ): SqlClientSelect.From<List<Any?>> =
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
         override fun <T : Any> and(column: Column<*, T>): SqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -377,6 +410,9 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(jdbcConnection, properties, dsl)
 
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SqlClientSelect.Select =
+            Select(jdbcConnection, properties).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
         override fun `as`(alias: String): SqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
@@ -393,6 +429,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
+
+        override fun from(tsquery: Tsquery): SqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
@@ -420,6 +458,8 @@ internal class SqlClientSelectJdbc private constructor() : DefaultSqlClientSelec
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+
+        override fun and(tsquery: Tsquery): SqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun `as`(alias: String): SqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }

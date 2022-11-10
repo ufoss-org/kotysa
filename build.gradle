@@ -67,17 +67,16 @@ subprojects {
         }
     }
 
-    // Can't be applied to BOM
     kover {
         verify {
             rule {
                 bound {
                     if (project.name == "kotysa-core") {
-                        minValue = 13
+                        minValue = 12
                     } else if (project.name == "kotysa-spring-r2dbc") {
-                        minValue = 51
+                        minValue = 50
                     } else {
-                        minValue = 69
+                        minValue = 68
                     }
                 }
             }

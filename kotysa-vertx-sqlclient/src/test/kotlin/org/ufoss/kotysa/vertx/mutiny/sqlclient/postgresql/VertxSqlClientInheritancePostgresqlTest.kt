@@ -7,11 +7,12 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientInheritancePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<InheritancePostgresqlRepository>() {
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = InheritancePostgresqlRepository(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = InheritancePostgresqlRepository(sqlClient)
 
     @Test
     fun `Verify extension function selectById finds inherited`() {

@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -18,7 +20,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val tables: Tables
         public val module: Module
         public val parameters: MutableList<Any?>
-        public val fromClauses: MutableList<FromClause<*>>
+        public val fromClauses: MutableList<FromClause>
         public val whereClauses: MutableList<WhereClauseWithType>
 
         public val availableTables: MutableMap<Table<*>, KotysaTable<*>>
@@ -78,6 +80,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             availableColumns.putAll(result.subQueryProperties.availableColumns)
 
             properties.fromClauses.add(FromClauseSubQuery(result.result, selectStar))
+            from
+        }
+
+        internal fun addFromTsquery(tsquery: Tsquery): V = with(properties) {
+            properties.fromClauses.add(FromClauseTsquery(tsquery))
             from
         }
     }
@@ -211,6 +218,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.WHERE)
 
+        override fun <U : Any> where(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T> =
+            whereOpTsvectorColumnNotNull(tsvectorColumn, WhereClauseType.WHERE)
+
+        override fun where(tsquery: Tsquery): SqlClientQuery.WhereOpTsquery<T> =
+            whereOpTsquery(tsquery, WhereClauseType.WHERE)
+
         override fun <U : Any> whereExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.WHERE))
             return where
@@ -317,7 +330,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun <T : Any> addClauseColumn(
             column: Column<T, *>,
             operation: Operation,
-            otherColumn: Column<*, *>,
+            otherColumn: Column<Any, *>,
             whereClauseType: WhereClauseType
         ) {
             properties.whereClauses.add(
@@ -341,6 +354,19 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             properties.whereClauses.add(
                 WhereClauseWithType(
                     WhereClauseSubQueryWithColumn(column.getOrClone(properties.availableColumns), operation, dsl),
+                    whereClauseType,
+                )
+            )
+        }
+
+        public fun <T : Any> addClauseTsquery(
+            column: Column<T, *>,
+            tsquery: Tsquery,
+            whereClauseType: WhereClauseType,
+        ) {
+            properties.whereClauses.add(
+                WhereClauseWithType(
+                    WhereClauseTsqueryWithColumn(column.getOrClone(properties.availableColumns), tsquery),
                     whereClauseType,
                 )
             )
@@ -369,7 +395,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public fun <T> addClauseColumn(
             alias: QueryAlias<T>,
             operation: Operation,
-            otherColumn: Column<*, *>,
+            otherColumn: Column<Any, *>,
             whereClauseType: WhereClauseType
         ) {
             properties.whereClauses.add(
@@ -1163,6 +1189,36 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : AbstractWhereOpAliasNullable<ByteArray, T>(), WhereOpByteArrayAlias<ByteArray?, T>,
         WhereOpAliasNullable<ByteArray, T>, WhereOpByteArrayNullable<ByteArray, T>
 
+    public class WhereOpTsvectorColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: TsvectorColumn<T>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, String>(), WhereOpTsvectorNotNull<U> {
+
+        override fun toTsquery(value: String): U =
+            where.apply { addClauseValue(column, Operation.TO_TSQUERY, value, type) }
+
+        override fun plaintoTsquery(value: String): U =
+            where.apply { addClauseValue(column, Operation.PLAINTO_TSQUERY, value, type) }
+
+        override fun phrasetoTsquery(value: String): U =
+            where.apply { addClauseValue(column, Operation.PHRASETO_TSQUERY, value, type) }
+
+        override fun websearchToTsquery(value: String): U =
+            where.apply { addClauseValue(column, Operation.WEBSEARCH_TO_TSQUERY, value, type) }
+    }
+
+    public class WhereOpTsquery<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        private val tsquery: Tsquery,
+        private val type: WhereClauseType,
+    ) : Where<T>(), SqlClientQuery.WhereOpTsquery<T>, WhereColumnCommon {
+        override fun applyOn(tsvectorColumn: TsvectorColumn<*>): T =
+            where.apply { addClauseTsquery(tsvectorColumn, tsquery, type) }
+    }
+
     public abstract class Where<T : SqlClientQuery.Where<T>> internal constructor() : WithWhere<T>(),
         SqlClientQuery.Where<T>, WhereColumnCommon, WhereAliasCommon {
 
@@ -1213,7 +1269,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun <U : Any> and(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<U>): WhereOpDateColumnNullable<U, T, kotlinx.datetime.LocalTime> =
             whereOpKotlinxLocalTimeColumnNullable(kotlinxLocalTimeColumnNullable, WhereClauseType.AND)
-        
+
         override fun <U : Any> and(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanColumnNotNull<U, T> =
             whereOpBooleanColumnNotNull(booleanColumnNotNull, WhereClauseType.AND)
 
@@ -1240,6 +1296,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.AND)
+
+        override fun <U : Any> and(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T> =
+            whereOpTsvectorColumnNotNull(tsvectorColumn, WhereClauseType.AND)
+
+        override fun and(tsquery: Tsquery): SqlClientQuery.WhereOpTsquery<T> =
+            whereOpTsquery(tsquery, WhereClauseType.AND)
 
         override fun <U : Any> andExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.AND))
@@ -1304,7 +1366,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun and(kotlinxLocalTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalTime?>):
                 WhereOpKotlinxLocalTimeNullable<kotlinx.datetime.LocalTime, T> =
             whereOpKotlinxLocalTimeAliasNullable(kotlinxLocalTimeAliasNullable, WhereClauseType.AND)
-        
+
         override fun and(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T> =
             whereOpBooleanAliasNotNull(booleanAliasNotNull, WhereClauseType.AND)
 
@@ -1406,6 +1468,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun <U : Any> or(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.OR)
+
+        override fun <U : Any> or(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T> =
+            whereOpTsvectorColumnNotNull(tsvectorColumn, WhereClauseType.OR)
+
+        override fun or(tsquery: Tsquery): SqlClientQuery.WhereOpTsquery<T> =
+            whereOpTsquery(tsquery, WhereClauseType.OR)
 
         override fun <U : Any> orExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T {
             properties.whereClauses.add(WhereClauseWithType(WhereClauseExists(dsl), WhereClauseType.OR))
@@ -1518,7 +1586,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 }
                 when (fromClause) {
                     is FromClauseTable<*> ->
-                        "${fromClause.table.getFieldName(availableTables)}$alias  " + fromClause.joinClauses.joinToString { joinClause ->
+                        "${fromClause.table.getFieldName(availableTables)}$alias " + fromClause.joinClauses.joinToString { joinClause ->
                             val ons = joinClause.references.entries.joinToString("and ") { reference ->
                                 "${reference.key.getFieldName(availableColumns, tables.dbType)} = ${
                                     reference.value.getFieldName(
@@ -1539,7 +1607,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)}$joinAlias ON $ons"
                         }
 
-                    is FromClauseSubQuery -> {
+                    is FromClauseSubQuery<*> -> {
                         if (fromClause.selectStar
                             && (tables.dbType == DbType.MYSQL || tables.dbType == DbType.MSSQL)
                             && alias.isBlank()
@@ -1548,6 +1616,18 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                             throw IllegalArgumentException("Alias is mandatory for MySql and MsSql")
                         }
                         "( ${fromClause.result.sql(this@with)} )$alias"
+                    }
+                    
+                    is FromClauseTsquery -> with(fromClause.tsquery) {
+                        val function = when (operation) {
+                            Operation.TO_TSQUERY -> "to_tsquery"
+                            Operation.PLAINTO_TSQUERY -> "plainto_tsquery"
+                            Operation.PHRASETO_TSQUERY -> "phraseto_tsquery"
+                            Operation.WEBSEARCH_TO_TSQUERY -> "websearch_to_tsquery"
+                            else -> throw IllegalArgumentException("Only TO_TSQUERY, PLAINTO_TSQUERY," +
+                                    "PHRASETO_TSQUERY AND WEBSEARCH_TO_TSQUERY are supported in FromClauseTsquery")
+                        }
+                        "$function('$value')$alias"
                     }
                 }
             }
@@ -1579,17 +1659,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 )
                                 "EXISTS (${result.sql(this@with)})"
                             }
-
+                            is WhereClauseTsqueryWithColumn<*> -> {
+                                val fieldName = getFieldName(availableColumns, tables)
+                                "${tsquery.alias} @@ $fieldName"
+                            }
                             else -> {
-                                val fieldName = if (this is WhereClauseWithColumn<*>) {
-                                    column.getFieldName(availableColumns, tables.dbType)
-                                } else {
-                                    // alias
-                                    when (tables.dbType) {
-                                        DbType.MSSQL, DbType.POSTGRESQL -> (this as WhereClauseWithAlias<*>).alias.alias
-                                        else -> "`${(this as WhereClauseWithAlias<*>).alias.alias}`"
-                                    }
-                                }
+                                val fieldName = getFieldName(availableColumns, tables)
                                 when (operation) {
                                     Operation.EQ ->
                                         when (this) {
@@ -1680,6 +1755,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
                                         }
+
+                                    Operation.TO_TSQUERY -> "$fieldName @@ to_tsquery(${variable()})"
+                                    Operation.PLAINTO_TSQUERY -> "$fieldName @@ plainto_tsquery(${variable()})"
+                                    Operation.PHRASETO_TSQUERY -> "$fieldName @@ phraseto_tsquery(${variable()})"
+                                    Operation.WEBSEARCH_TO_TSQUERY -> "$fieldName @@ websearch_to_tsquery(${variable()})"
                                     /*Operation.IS ->
                                         if (DbType.SQLITE == tables.dbType) {
                                             "$fieldName IS ?"
@@ -1696,6 +1776,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             }
             return where.toString()
         }
+
+        private fun WhereClause.getFieldName(
+            availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>,
+            tables: Tables
+        ) = 
+            if (this is WhereClauseWithColumn<*>) {
+                column.getFieldName(availableColumns, tables.dbType)
+            } else {
+                // alias
+                when (tables.dbType) {
+                    DbType.MSSQL, DbType.POSTGRESQL -> (this as WhereClauseWithAlias<*>).alias.alias
+                    else -> "`${(this as WhereClauseWithAlias<*>).alias.alias}`"
+                }
+            }
     }
 
     public abstract class WithWhere<T : SqlClientQuery.Where<T>> internal constructor() : WithProperties {
@@ -1780,7 +1874,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             localTimeColumnNullable: KotlinxLocalTimeColumnNullable<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpDateColumnNullable(where, properties, localTimeColumnNullable, whereClauseType)
-        
+
         internal fun <U : Any> whereOpBooleanColumnNotNull(
             booleanColumnNotNull: BooleanColumnNotNull<U>,
             whereClauseType: WhereClauseType,
@@ -1825,6 +1919,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             byteArrayColumnNullable: ByteArrayColumnNullable<U>,
             whereClauseType: WhereClauseType,
         ) = WhereOpByteArrayColumnNullable(where, properties, byteArrayColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpTsvectorColumnNotNull(
+            tsvectorColumn: TsvectorColumn<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpTsvectorColumnNotNull(where, properties, tsvectorColumn, whereClauseType)
+
+        internal fun whereOpTsquery(
+            tsquery: Tsquery,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpTsquery(where, properties, tsquery, whereClauseType)
 
         internal fun whereOpStringAliasNotNull(
             stringAliasNotNull: QueryAlias<String>,
@@ -1880,7 +1984,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             kotlinxLocalTimeAliasNotNull,
             whereClauseType
         )
-        
+
         internal fun whereOpLocalDateTimeAliasNullable(
             localDateTimeAliasNotNull: QueryAlias<LocalDateTime?>,
             whereClauseType: WhereClauseType,
@@ -1925,7 +2029,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             kotlinxLocalTimeAliasNotNull,
             whereClauseType
         )
-        
+
         internal fun whereOpBooleanAliasNotNull(
             booleanAliasNotNull: QueryAlias<Boolean>,
             whereClauseType: WhereClauseType,

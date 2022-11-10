@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -103,7 +105,6 @@ internal class TableField<T : Any> internal constructor(
     override val fieldNames: List<String> =
         table.kotysaColumns.map { column -> column.getFieldName(availableColumns, dbType) }
 
-    @Suppress("UNCHECKED_CAST")
     override val builder: (RowImpl) -> T = { row ->
         val kotysaTable = table.getKotysaTable(availableTables)
         val associatedColumns = mutableListOf<KotysaColumn<*, *>>()
@@ -112,7 +113,8 @@ internal class TableField<T : Any> internal constructor(
             val args = mutableMapOf<KParameter, Any?>()
             parameters.forEach { param ->
                 // get the mapped property with same name
-                val column = kotysaTable.columns.firstOrNull { column ->
+                val column = kotysaTable.dbColumns
+                    .firstOrNull { column ->
                     var getterMatch = false
                     val getterName = column.entityGetter.toCallable().name
                     if (getterName.startsWith("get") && getterName.length > 3) {
@@ -142,7 +144,7 @@ internal class TableField<T : Any> internal constructor(
 
         // Then try to invoke var or setter for each unassociated getter
         if (associatedColumns.size < table.kotysaColumns.size) {
-            kotysaTable.columns
+            kotysaTable.dbColumns
                 .filter { column -> !associatedColumns.contains(column) }
                 .forEach { column ->
                     val getter = column.entityGetter
@@ -247,4 +249,16 @@ internal class FieldDsl<T : Any>(
         selectDsl.row = row
         dsl(selectDsl)
     }
+}
+
+internal class TsRankCdField internal constructor(
+    properties: DefaultSqlClientCommon.Properties,
+    tsvectorColumn: TsvectorColumn<*>,
+    tsquery: Tsquery,
+) : AbstractField<Float>(), FieldNotNull<Float> {
+    override val fieldNames: List<String> =
+        listOf("ts_rank_cd(${tsvectorColumn.getFieldName(properties.tables.allColumns, properties.tables.dbType)}," +
+                "${tsquery.alias})")
+
+    override val builder: (RowImpl) -> Float = { row -> row.getAndIncrement(Float::class.javaObjectType)!! }
 }

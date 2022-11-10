@@ -12,14 +12,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import java.time.*
 import java.util.*
 
 
 class VertxSqlClientAllTypesPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<AllTypesRepositoryPostgresql>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = AllTypesRepositoryPostgresql(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = AllTypesRepositoryPostgresql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

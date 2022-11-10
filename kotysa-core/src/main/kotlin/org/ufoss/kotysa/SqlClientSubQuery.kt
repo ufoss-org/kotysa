@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 
 public class SqlClientSubQuery private constructor() {
@@ -16,6 +18,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Fromable<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): Fromable<BigDecimal>
         override fun selectSum(column: IntColumn<*>): Fromable<Long>
+        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Fromable<Float>
     }
 
     public interface Scope : SingleScope, SqlClientQuery.Selectable {
@@ -27,6 +30,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
         override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
+        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): FirstSelect<Float>
         override fun <T : Any> selectCaseWhenExists(
             dsl: SingleScope.() -> Return<T>
         ): SelectCaseWhenExistsFirst<T>
@@ -46,6 +50,7 @@ public class SqlClientSubQuery private constructor() {
     public interface Fromable<T : Any> : SqlClientQuery.Select, SqlClientQuery.Fromable {
         override fun <U : Any> from(table: Table<U>): FromTable<T, U>
         override fun <U : Any> from(dsl: Scope.() -> Return<U>): From<T>
+        override fun from(tsquery: Tsquery): From<T>
 
         override fun `as`(alias: String): Fromable<T>
     }
@@ -59,6 +64,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
         override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SecondSelect<T?, Float>
         override fun <U : Any> and(dsl: Scope.() -> Return<U>)
                 : SecondSelect<T?, U?>
 
@@ -87,6 +93,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
         override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): ThirdSelect<T, U, Float>
         override fun <V : Any> and(dsl: Scope.() -> Return<V>)
                 : ThirdSelect<T, U, V?>
 
@@ -113,6 +120,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
         override fun andSum(column: IntColumn<*>): Select
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
         override fun <W : Any> and(dsl: Scope.() -> Return<W>): Select
         override fun <W : Any> andCaseWhenExists(
             dsl: SingleScope.() -> Return<W>
@@ -138,6 +146,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
         override fun andSum(column: IntColumn<*>): Select
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
         override fun <T : Any> and(dsl: Scope.() -> Return<T>): Select
         override fun <T : Any> andCaseWhenExists(
             dsl: SingleScope.() -> Return<T>
@@ -150,6 +159,7 @@ public class SqlClientSubQuery private constructor() {
         LimitOffset<T>, Return<T> {
         override fun <U : Any> and(table: Table<U>): FromTable<T, U>
         override fun <U : Any> and(dsl: Scope.() -> Return<U>): From<T>
+        override fun and(tsquery: Tsquery): From<T>
     }
 
     public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,

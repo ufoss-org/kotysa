@@ -5,16 +5,13 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 
 import org.ufoss.kotysa.test.PostgresqlKotlinxLocalTimes
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectKotlinxLocalTimeRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectKotlinxLocalTimeTest
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
 
 class VertxSqlClientSelectKotlinxLocalTimePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<KotlinxLocalTimePostgresqlRepository>(),
     MutinySelectKotlinxLocalTimeTest<PostgresqlKotlinxLocalTimes, KotlinxLocalTimePostgresqlRepository> {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = KotlinxLocalTimePostgresqlRepository(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = KotlinxLocalTimePostgresqlRepository(sqlClient)
 }
 
 class KotlinxLocalTimePostgresqlRepository(sqlClient: MutinySqlClient) :

@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.AbstractDbColumn
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
@@ -172,7 +173,8 @@ class H2TablesDslTest {
         val tables = tables().h2(H2Roles)
         val roleTable = tables.allTables[H2Roles] ?: fail { "require mapped RoleEntity" }
         val uniqueIndex = roleTable.kotysaIndexes.first()
-        assertThat(uniqueIndex.columns.elementAt(0).entityGetter).isEqualTo(RoleEntity::label)
+        assertThat((uniqueIndex.columns.elementAt(0) as AbstractDbColumn<*, *>).entityGetter)
+            .isEqualTo(RoleEntity::label)
         assertThat(uniqueIndex.type).isEqualTo(IndexType.UNIQUE)
         assertThat(uniqueIndex.name).isNull()
     }

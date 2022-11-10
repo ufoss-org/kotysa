@@ -7,6 +7,7 @@ package org.ufoss.kotysa.jdbc.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
@@ -14,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlTransactional>() {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcPostgresqlTransactional(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
+        UserRepositoryJdbcPostgresqlTransactional(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss inside readonly transaction`() {

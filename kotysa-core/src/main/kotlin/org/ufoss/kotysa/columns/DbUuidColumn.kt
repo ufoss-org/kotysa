@@ -4,13 +4,12 @@
 
 package org.ufoss.kotysa.columns
 
-import org.ufoss.kotysa.DbColumn
 import org.ufoss.kotysa.SqlType
 import org.ufoss.kotysa.UuidColumnNotNull
 import org.ufoss.kotysa.UuidColumnNullable
 import java.util.*
 
-public sealed class DbUuidColumn<T : Any, U : Any> : DbColumn<T, U>() {
+public sealed class DbUuidColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
     // No size

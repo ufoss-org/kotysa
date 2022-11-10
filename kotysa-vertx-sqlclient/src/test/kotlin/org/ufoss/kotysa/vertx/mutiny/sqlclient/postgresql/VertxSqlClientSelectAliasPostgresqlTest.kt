@@ -11,11 +11,12 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientSelectAliasPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<UserRepositorySelectAlias>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositorySelectAlias(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {

@@ -7,6 +7,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient
 import io.smallrye.mutiny.Multi
 import io.smallrye.mutiny.Uni
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.postgresql.Tsquery
 import java.math.BigDecimal
 
 /**
@@ -46,12 +48,18 @@ public sealed interface MutinySqlClient {
         dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ): MutinySqlClientSelect.SelectCaseWhenExistsFirst<T>
 
+    // Postgresql specific
+    public fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery)
+            : MutinySqlClientSelect.FirstSelect<Float> =
+        throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
+
     public infix fun <T : Any> selectStarFrom(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): MutinySqlClientSelect.From<T>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): MutinySqlClientSelect.FromTable<T, T> =
         select(table).from(table)
+
     public infix fun <T : Any> selectCountFrom(table: Table<T>): MutinySqlClientSelect.FromTable<Long, T> =
         selectCount().from(table)
 
@@ -60,7 +68,7 @@ public sealed interface MutinySqlClient {
 }
 
 public interface MysqlMutinySqlClient : MutinySqlClient
-public interface PostgresqlMutinySqlClient : MutinySqlClient
+public interface PostgresqlMutinySqlClient : MutinySqlClient, SqlClientQuery.ToTsquery
 public interface MssqlMutinySqlClient : MutinySqlClient
 public interface MariadbMutinySqlClient : MutinySqlClient
 
@@ -81,9 +89,13 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SelectCaseWhenExistsFirst<T>
+
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): From<T>
+
+        // Postgresql specific
+        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): FirstSelect<Float>
     }
 
     public interface SelectCaseWhenExistsFirst<T : Any> : SelectCaseWhenExists {
@@ -97,6 +109,9 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
     public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
         override fun <U : Any> from(table: Table<U>): FromTable<T, U>
         override fun <U : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
+
+        // Postgresql specific
+        override fun from(tsquery: Tsquery): From<T>
     }
 
     public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, Andable {
@@ -114,6 +129,9 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): AndCaseWhenExistsSecond<T, U>
+
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SecondSelect<T?, Float>
 
         override fun `as`(alias: String): FirstSelect<T>
     }
@@ -141,6 +159,9 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
         override fun <V : Any> andCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>)
                 : AndCaseWhenExistsThird<T, U, V>
 
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): ThirdSelect<T, U, Float>
+
         override fun `as`(alias: String): SecondSelect<T, U>
     }
 
@@ -165,6 +186,9 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
         override fun <W : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
         ): AndCaseWhenExistsLast<W>
+
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
 
         override fun `as`(alias: String): ThirdSelect<T, U, V>
     }
@@ -191,6 +215,9 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): AndCaseWhenExistsLast<T>
 
+        // Postgresql specific
+        override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
+
         override fun `as`(alias: String): Select
     }
 
@@ -198,6 +225,9 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
         LimitOffset<T>, Return<T> {
         override fun <U : Any> and(table: Table<U>): FromTable<T, U>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
+
+        // Postgresql specific
+        override fun and(tsquery: Tsquery): From<T>
     }
 
     public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
@@ -242,10 +272,12 @@ public class MutinySqlClientSelect private constructor() : SqlClientQuery() {
 
 public class MutinySqlClientDeleteOrUpdate private constructor() {
 
-    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Where<T>>,
+    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>,
+        SqlClientQuery.Whereable<Where<T>>,
         Return
 
-    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Where<Any>>,
+    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>,
+        SqlClientQuery.Whereable<Where<Any>>,
         Return
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>
