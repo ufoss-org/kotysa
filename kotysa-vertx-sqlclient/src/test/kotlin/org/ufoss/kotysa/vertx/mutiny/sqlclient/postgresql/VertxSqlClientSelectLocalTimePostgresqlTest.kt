@@ -10,6 +10,7 @@ import org.ufoss.kotysa.test.PostgresqlLocalTimes
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.localTimeWithNullable
 import org.ufoss.kotysa.test.localTimeWithoutNullable
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import java.time.LocalTime
 
@@ -17,7 +18,7 @@ import java.time.LocalTime
 class VertxSqlClientSelectLocalTimePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<LocalTimeRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = LocalTimeRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = LocalTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByLocalTimeNotNull finds localTimeWithNullable`() {

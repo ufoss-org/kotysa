@@ -26,7 +26,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         override val module: Module,
     ) : DefaultSqlClientCommon.Properties {
         override val parameters: MutableList<Any?> = mutableListOf()
-        override val fromClauses: MutableList<FromClause<*>> = mutableListOf()
+        override val fromClauses: MutableList<FromClause> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType> = mutableListOf()
 
         override val availableTables: MutableMap<Table<*>, KotysaTable<*>> = mutableMapOf()
@@ -275,7 +275,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         internal val update: U,
         internal val properties: Properties<T>,
     ) : SqlClientQuery.UpdateOpColumn<T, U, V, W, X> {
-        internal lateinit var column: Column<T, *>
+        internal lateinit var column: DbColumn<T, *>
 
         override fun eq(value: V): U = with(properties) {
             updateClauses.add(UpdateClauseValue(column))
@@ -295,7 +295,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         private val updateInt: X,
         private val properties: Properties<T>,
     ) : SqlClientQuery.UpdateOpIntColumn<T, U, V, W, X> {
-        internal lateinit var column: Column<T, *>
+        internal lateinit var column: DbColumn<T, *>
 
         override fun eq(value: V): U = with(properties) {
             updateClauses.add(UpdateClauseValue(column))
@@ -386,7 +386,7 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
          * Handle froms as EXISTS + nested SELECT
          */
         private fun joinsWithExists() = with(properties) {
-            val rootJoinClauses = (fromClauses[0] as FromClauseTable).joinClauses
+            val rootJoinClauses = (fromClauses[0] as FromClauseTable<*>).joinClauses
             if (fromClauses.size > 1 || rootJoinClauses.isNotEmpty()) {
                 // fixme handle other cases
                 if (rootJoinClauses.isNotEmpty()) {

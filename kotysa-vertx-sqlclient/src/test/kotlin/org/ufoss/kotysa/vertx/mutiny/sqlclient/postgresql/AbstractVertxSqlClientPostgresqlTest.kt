@@ -14,13 +14,13 @@ import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.postgresqlTables
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyRepositoryTest
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 
 @ExtendWith(PostgreSqlContainerExecutionHook::class)
 @ResourceLock(PostgreSqlContainerResource.ID)
 abstract class AbstractVertxSqlClientPostgresqlTest<T : Repository> : MutinyRepositoryTest<T> {
-    private lateinit var sqlClient: VertxSqlClient
+    private lateinit var sqlClient: PostgresqlVertxSqlClient
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
@@ -34,7 +34,7 @@ abstract class AbstractVertxSqlClientPostgresqlTest<T : Repository> : MutinyRepo
         repository.init()
     }
 
-    protected abstract fun instantiateRepository(sqlClient: VertxSqlClient): T
+    protected abstract fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient): T
 
     override val operator by lazy {
         sqlClient

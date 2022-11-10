@@ -21,6 +21,8 @@ public interface KotysaTable<T : Any> {
     public val primaryKey: PrimaryKey<T>
     public val foreignKeys: Set<ForeignKey<T, *>>
     public val kotysaIndexes: Set<Index<T>>
+    
+    public val dbColumns: List<KotysaColumnDb<T, *>> get() = columns.filterIsInstance<KotysaColumnDb<T, *>>()
 }
 
 

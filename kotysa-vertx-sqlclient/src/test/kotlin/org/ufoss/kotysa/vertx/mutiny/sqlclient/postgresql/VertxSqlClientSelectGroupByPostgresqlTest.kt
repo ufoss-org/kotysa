@@ -9,12 +9,13 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.PostgresqlCustomers
 import org.ufoss.kotysa.test.customerFrance
 import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientSelectGroupByPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<GroupByRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = GroupByRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = GroupByRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {

@@ -11,12 +11,13 @@ import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
+import org.ufoss.kotysa.PostgresqlJdbcSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.*
 import java.util.*
 
 class JdbcAllTypesPostgresqlTest : AbstractJdbcPostgresqlTest<AllTypesRepositoryPostgresql>() {
-    override fun instantiateRepository(sqlClient: JdbcSqlClient) = AllTypesRepositoryPostgresql(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) = AllTypesRepositoryPostgresql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

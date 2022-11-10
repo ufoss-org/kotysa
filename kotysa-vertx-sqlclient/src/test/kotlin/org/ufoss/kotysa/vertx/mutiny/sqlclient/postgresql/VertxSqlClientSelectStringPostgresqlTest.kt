@@ -9,13 +9,14 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.PostgresqlUsers
 import org.ufoss.kotysa.test.userBboss
 import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 
 class VertxSqlClientSelectStringPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<UserRepositoryPostgresqlSelectString>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryPostgresqlSelectString(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = UserRepositoryPostgresqlSelectString(sqlClient)
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

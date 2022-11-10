@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlKotlinxLocalTimes
@@ -14,7 +15,7 @@ class R2dbcSelectKotlinxLocalTimePostgresqlTest :
     AbstractR2dbcPostgresqlTest<KotlinxLocalTimeRepositoryPostgresqlSelect>(),
     CoroutinesSelectKotlinxLocalTimeTest<PostgresqlKotlinxLocalTimes, KotlinxLocalTimeRepositoryPostgresqlSelect,
             R2dbcTransaction> {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) =
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
         KotlinxLocalTimeRepositoryPostgresqlSelect(sqlClient)
 }
 

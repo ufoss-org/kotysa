@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.*
 import kotlinx.coroutines.withContext
 import org.ufoss.kotysa.*
+import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.core.r2dbc.toRow
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.postgresql.Tsquery
 import org.ufoss.kotysa.r2dbc.transaction.R2dbcTransactionImpl
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigDecimal
@@ -112,7 +114,7 @@ internal sealed class SqlClientR2dbc(
     }
 
     private fun <T : Any> setStatementParams(row: T, table: KotysaTable<T>, statement: Statement) {
-        table.columns
+        table.dbColumns
             // do nothing for null values with default or Serial type
             .filterNot { column ->
                 column.entityGetter(row) == null
@@ -231,6 +233,12 @@ internal sealed class SqlClientR2dbc(
 
     protected fun <T : Any> selectSumProtected(column: IntColumn<T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectSum(column)
+
+    protected fun selectTsRankCdProtected(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ): CoroutinesSqlClientSelect.FirstSelect<Float> =
+        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -402,6 +410,11 @@ internal class PostgresqlSqlClientR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selectTsRankCd(
+        tsvectorColumn: TsvectorColumn<*>,
+        tsquery: Tsquery,
+    ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
 }

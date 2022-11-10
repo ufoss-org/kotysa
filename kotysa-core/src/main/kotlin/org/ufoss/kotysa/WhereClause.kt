@@ -4,8 +4,12 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.postgresql.Tsquery
+
 public enum class Operation {
-    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IN, EXISTS
+    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IN, EXISTS,
+    // Postgresql specific tsquery
+    TO_TSQUERY, PLAINTO_TSQUERY, PHRASETO_TSQUERY, WEBSEARCH_TO_TSQUERY, APPLY_ON
 }
 
 internal sealed interface WhereClause {
@@ -73,6 +77,13 @@ internal class WhereClauseSubQueryWithAlias<T, U : Any> internal constructor(
     override val operation: Operation,
     override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
 ) : WhereClauseWithAlias<T>, WhereClauseSubQuery<U>
+
+internal class WhereClauseTsqueryWithColumn<T : Any> internal constructor(
+    override val column: Column<T, *>,
+    internal val tsquery: Tsquery,
+) : WhereClauseWithColumn<T> {
+    override val operation = Operation.APPLY_ON
+}
 
 public class WhereClauseWithType internal constructor(
     internal val whereClause: WhereClause,

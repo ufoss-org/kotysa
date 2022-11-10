@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.AbstractColumn
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -40,7 +41,7 @@ public fun DefaultSqlClientCommon.Properties.dbValues(): List<Any?> = with(this)
 
 @Suppress("UNCHECKED_CAST")
 public operator fun <T : Any, U : Any, V : Column<T, U>> V.get(alias: String): V =
-    (this as DbColumn<T, U>).clone().apply { (this as DbColumn<T, U>).alias = alias } as V
+    (this as AbstractColumn<T, U>).clone().apply { (this as AbstractColumn<T, U>).alias = alias } as V
 
 @Suppress("UNCHECKED_CAST")
 public operator fun <T : Any, U : Table<T>> U.get(alias: String): U {
@@ -55,7 +56,9 @@ internal fun <T : Any> Table<T>.getKotysaTable(availableTables: Map<Table<*>, Ko
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T : Any, U : Any> Column<T, U>.getKotysaColumn(availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>): KotysaColumn<T, U> {
+internal fun <T : Any, U : Any> Column<T, U>.getKotysaColumn(
+    availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>
+): KotysaColumn<T, U> {
     return requireNotNull(availableColumns[this]) { "Requested column \"$this\" is not mapped" } as KotysaColumn<T, U>
 }
 
@@ -87,7 +90,7 @@ internal fun Column<*, *>.getFieldName(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
     dbType: DbType,
 ): String {
-    if ((this as DbColumn<*, *>).alias != null) {
+    if ((this as AbstractColumn<*, *>).alias != null) {
         return when (dbType) {
             DbType.MSSQL, DbType.POSTGRESQL -> alias!!
             else -> "`${alias!!}`"
@@ -179,12 +182,12 @@ internal fun DefaultSqlClientCommon.Properties.variable() = when {
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T : Any, U : Any> Column<T, U>.getOrClone(
+internal fun <T : Any, U : Any, V: Column<T, U>> V.getOrClone(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
-): Column<T, U> =
-    if ((this as DbColumn<*, *>).tableAlias != null) {
+): V =
+    if ((this as AbstractColumn<*, *>).tableAlias != null) {
         // make a clone to keep its tableAlias
-        val clonedColumn = this.clone() as Column<T, U>
+        val clonedColumn = this.clone() as V
         val kotysaColumn = getKotysaColumn(availableColumns)
         // remove tableAlias on all columns
         (kotysaColumn.table.table as AbstractTable<*>).kotysaColumns.forEach { tableColumn ->

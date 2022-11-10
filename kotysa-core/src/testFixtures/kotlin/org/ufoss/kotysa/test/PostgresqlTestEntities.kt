@@ -7,10 +7,7 @@ package org.ufoss.kotysa.test
 import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import org.ufoss.kotysa.postgresql.PostgresqlTable
-import org.ufoss.kotysa.postgresql.date
-import org.ufoss.kotysa.postgresql.time
-import org.ufoss.kotysa.postgresql.timestamp
+import org.ufoss.kotysa.postgresql.*
 import org.ufoss.kotysa.tables
 import java.time.*
 import java.time.LocalDate
@@ -491,6 +488,27 @@ object PostgresqlByteArrayAsByteas : PostgresqlTable<ByteArrayAsBinaryEntity>(),
     override val byteArrayNullable = bytea(ByteArrayAsBinaryEntity::byteArrayNullable)
 }
 
+data class TsvectorEntity(
+    val id: Int,
+    val stringNotNull: String,
+    val stringNullable: String? = null
+)
+
+val tsVectorNotNull = TsvectorEntity(1, "Creating several", "tables")
+val tsVectorNullable = TsvectorEntity(2, "Tables are powerful")
+
+object PostgresqlTsvectors : PostgresqlTable<TsvectorEntity>() {
+    val id = integer(TsvectorEntity::id)
+        .primaryKey()
+    val stringNotNull = text(TsvectorEntity::stringNotNull)
+    val stringNullable = text(TsvectorEntity::stringNullable)
+
+    val textSearchable = tsvector(TsvectorType.english, stringNotNull)
+        .withGinIndex()
+    val textSearchableBoth = tsvector(TsvectorType.english, stringNotNull, stringNullable)
+        .withGistIndex()
+}
+
 val postgresqlTables = tables().postgresql(
     PostgresqlRoles,
     PostgresqlUsers,
@@ -513,4 +531,5 @@ val postgresqlTables = tables().postgresql(
     PostgresqlCustomers,
     PostgresqlTexts,
     PostgresqlByteArrayAsByteas,
+    PostgresqlTsvectors,
 )

@@ -147,4 +147,16 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
 
     protected fun bytea(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbByteaColumnNullable<T> =
         ByteArrayDbByteaColumnNullable(getter, columnName).also { addColumn(it) }
+
+    protected fun tsvector(tsvectorType: TsvectorType, vararg columns: AbstractDbColumn<T, *>,
+                           columnName: String? = null): TsvectorColumn<T> {
+        require(columns.isNotEmpty()) { "columns must contain at least one element" }
+        return TsvectorColumn(columnName, tsvectorType.name, columns).also { addColumn(it) }
+    }
+
+    protected fun tsvector(tsvectorType: String, vararg columns: AbstractDbColumn<T, *>,
+                           columnName: String? = null): TsvectorColumn<T> {
+        require(columns.isNotEmpty()) { "columns must contain at least one element" }
+        return TsvectorColumn(columnName, tsvectorType, columns).also { addColumn(it) }
+    }
 }

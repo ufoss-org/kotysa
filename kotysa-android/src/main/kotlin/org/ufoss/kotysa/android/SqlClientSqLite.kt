@@ -62,7 +62,7 @@ internal class SqlClientSqLite internal constructor(
     override fun <T : Any> insertAndReturn(vararg rows: T) = rows.map { row -> insertAndReturn(row) }
 
     private fun <T : Any> setInsertStatementParams(row: T, table: KotysaTable<T>, statement: SQLiteStatement) {
-        table.columns
+        table.dbColumns
             // do nothing for null values with default
             .filterNot { column ->
                 column.entityGetter(row) == null &&

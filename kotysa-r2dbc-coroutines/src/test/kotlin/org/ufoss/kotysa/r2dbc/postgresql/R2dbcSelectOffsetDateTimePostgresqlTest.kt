@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.PostgresqlOffsetDateTimes
 import org.ufoss.kotysa.test.Repository
@@ -20,7 +21,7 @@ import java.time.ZoneOffset
 
 class R2dbcSelectOffsetDateTimePostgresqlTest :
     AbstractR2dbcPostgresqlTest<OffsetDateTimeRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = OffsetDateTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByOffsetDateTimeNotNull finds offsetDateTimeWithNullable`() = runTest {

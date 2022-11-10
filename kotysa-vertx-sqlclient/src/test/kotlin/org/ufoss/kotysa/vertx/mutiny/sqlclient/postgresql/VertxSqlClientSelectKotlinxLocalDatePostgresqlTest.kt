@@ -11,13 +11,14 @@ import org.ufoss.kotysa.test.PostgresqlKotlinxLocalDates
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.kotlinxLocalDateWithNullable
 import org.ufoss.kotysa.test.kotlinxLocalDateWithoutNullable
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 
 class VertxSqlClientSelectKotlinxLocalDatePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<KotlinxLocalDateRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) =
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) =
         KotlinxLocalDateRepositoryPostgresqlSelect(sqlClient)
 
     @Test

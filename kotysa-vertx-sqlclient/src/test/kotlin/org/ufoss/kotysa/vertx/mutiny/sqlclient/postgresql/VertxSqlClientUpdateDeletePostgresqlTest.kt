@@ -7,12 +7,13 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientUpdateDeletePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<UserRepositoryPostgresqlUpdateDelete>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryPostgresqlUpdateDelete(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = UserRepositoryPostgresqlUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

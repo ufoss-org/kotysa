@@ -10,13 +10,14 @@ import org.ufoss.kotysa.test.PostgresqlUuids
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.uuidWithNullable
 import org.ufoss.kotysa.test.uuidWithoutNullable
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import java.util.*
 
 
 class VertxSqlClientSelectUuidPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<UuidRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UuidRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = UuidRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByUuidNotNull finds uuidWithNullable`() {

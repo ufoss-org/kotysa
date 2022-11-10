@@ -4,11 +4,13 @@
 
 package org.ufoss.kotysa
 
-public sealed interface FromClause<T : Any> {
+import org.ufoss.kotysa.postgresql.Tsquery
+
+public sealed interface FromClause {
     public var alias: String?
 }
 
-internal sealed class AbstractFromClause<T : Any> : FromClause<T> {
+internal sealed class AbstractFromClause<T : Any> : FromClause {
     final override var alias: String? = null
 }
 
@@ -22,3 +24,9 @@ internal class FromClauseSubQuery<T : Any> internal constructor(
     internal val result: SqlClientSubQuery.Return<T>,
     internal val selectStar: Boolean,
 ) : AbstractFromClause<T>()
+
+internal class FromClauseTsquery internal constructor(
+    internal val tsquery: Tsquery
+) : FromClause {
+    override var alias: String? = tsquery.alias
+}

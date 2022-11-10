@@ -7,12 +7,13 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientSelectByteArrayAsByteaPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<ByteArrayRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = ByteArrayRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = ByteArrayRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByByteArrayNotNull finds byteArrayBinaryWithNullable`() {

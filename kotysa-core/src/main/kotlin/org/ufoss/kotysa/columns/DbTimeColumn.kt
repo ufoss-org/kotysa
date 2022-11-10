@@ -7,7 +7,7 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 import java.time.LocalTime
 
-public sealed class DbTimeColumn<T : Any, U : Any> : DbColumn<T, U>() {
+public sealed class DbTimeColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
 

@@ -7,12 +7,13 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientSubQueryPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<UserRepositoryJdbcPostgresqlSubQuery>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryJdbcPostgresqlSubQuery(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = UserRepositoryJdbcPostgresqlSubQuery(sqlClient)
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {

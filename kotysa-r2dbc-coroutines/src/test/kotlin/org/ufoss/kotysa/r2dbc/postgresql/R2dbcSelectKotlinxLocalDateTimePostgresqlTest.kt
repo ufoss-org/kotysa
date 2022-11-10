@@ -10,12 +10,13 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectKotlinxLocalDateTimePostgresqlTest :
     AbstractR2dbcPostgresqlTest<KotlinxLocalDateTimeRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) =
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
         KotlinxLocalDateTimeRepositoryPostgresqlSelect(sqlClient)
 
     @Test

@@ -10,13 +10,14 @@ import org.ufoss.kotysa.test.PostgresqlTexts
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.stringAsTextNotNull
 import org.ufoss.kotysa.test.stringAsTextNullable
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 
 class VertxSqlClientSelectStringAsTextPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<UserRepositoryPostgresqlSelectStringAsText>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) =
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) =
         UserRepositoryPostgresqlSelectStringAsText(sqlClient)
 
     @Test

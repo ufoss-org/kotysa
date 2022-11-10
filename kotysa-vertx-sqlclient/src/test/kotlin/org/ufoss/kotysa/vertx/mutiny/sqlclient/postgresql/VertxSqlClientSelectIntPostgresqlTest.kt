@@ -8,12 +8,13 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 @Order(1)
 class VertxSqlClientSelectIntPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<IntRepositoryPostgresqlSelect>() {
 
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = IntRepositoryPostgresqlSelect(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlVertxSqlClient) = IntRepositoryPostgresqlSelect(sqlClient)
 
     private val intWithNullable = IntEntity(
         org.ufoss.kotysa.test.intWithNullable.intNotNull,

@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa
 
-public enum class IndexType(internal val label: String) {
-    UNIQUE("UNIQUE")
+public enum class IndexType {
+    UNIQUE,
+    // Postgresql specific
+    GIN, GIST
 }

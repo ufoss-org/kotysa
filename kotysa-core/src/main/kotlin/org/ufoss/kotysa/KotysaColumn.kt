@@ -18,26 +18,25 @@ public interface KotysaColumn<T : Any, U : Any> {
      * Table this column is in
      */
     public var table: KotysaTable<T>
-    public val entityGetter: (T) -> Any?
     public val columnClass: KClass<Any>
     public val name: String
     public val sqlType: SqlType
     public val isAutoIncrement: Boolean
     public val isNullable: Boolean
     public val defaultValue: Any?
-    public val size: Int ?
+    public val size: Int?
 }
 
-internal class KotysaColumnImpl<T : Any, U : Any> internal constructor(
+public class KotysaColumnDb<T : Any, U : Any> internal constructor(
         override val column: Column<T, U>,
-        override val entityGetter: (T) -> Any?,
+        public val entityGetter: (T) -> Any?,
         override val columnClass: KClass<Any>,
         override val name: String,
         override val sqlType: SqlType,
         override val isAutoIncrement: Boolean,
         override val isNullable: Boolean,
         override val defaultValue: Any?,
-        override val size: Int ?,
+        override val size: Int?,
 ) : KotysaColumn<T, U> {
 
     override lateinit var table: KotysaTable<T>
@@ -46,7 +45,40 @@ internal class KotysaColumnImpl<T : Any, U : Any> internal constructor(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as KotysaColumnImpl<*, *>
+        other as KotysaColumnDb<*, *>
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
+}
+
+internal class KotysaColumnTsvector<T : Any, U : Any> internal constructor(
+    override val column: Column<T, U>,
+    override val name: String,
+    internal val tsvectorType: String,
+    internal val kotysaColumns: List<KotysaColumn<T, *>>
+) : KotysaColumn<T, U> {
+
+    override lateinit var table: KotysaTable<T>
+
+    @Suppress("UNCHECKED_CAST")
+    override val columnClass: KClass<Any> = String::class as KClass<Any>
+    override val sqlType: SqlType = SqlType.TSVECTOR
+    override val isAutoIncrement: Boolean = false
+    override val isNullable: Boolean = false
+    override val defaultValue: Any? = null
+    override val size: Int? = null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as KotysaColumnTsvector<*, *>
 
         if (name != other.name) return false
 
