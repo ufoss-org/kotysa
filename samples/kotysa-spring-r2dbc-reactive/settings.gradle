@@ -1,8 +1,14 @@
 pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url 'https://repo.spring.io/release' }
+    }
+    
     plugins {
         id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
         id 'org.jetbrains.kotlin.plugin.spring' version "$kotlinVersion"
         id 'io.spring.dependency-management' version "$dependencyManagementPluginVersion"
         id 'org.springframework.boot' version "$springBootPluginVersion"
+        id 'org.springframework.experimental.aot' version "$springAotVersion"
     }
 }

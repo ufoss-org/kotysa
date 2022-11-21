@@ -3,17 +3,20 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring'
     id 'io.spring.dependency-management'
     id 'org.springframework.boot'
+    id 'org.springframework.experimental.aot'
 }
+
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/release' }
 }
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-webflux')
-    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
     implementation('org.springframework.data:spring-data-r2dbc')
-
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
     implementation("org.ufoss.kotysa:kotysa-spring-r2dbc:${kotysaVersion}")
 
     runtimeOnly('io.r2dbc:r2dbc-h2')
@@ -25,18 +28,20 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
-    }
-}
-
-compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
+        freeCompilerArgs = ['-Xjsr305=strict']
+        java.sourceCompatibility = JavaVersion.VERSION_11
     }
 }
 
 test {
     useJUnitPlatform()
+}
+
+bootBuildImage {
+    builder = "paketobuildpacks/builder:tiny"
+    environment = [
+            "BP_NATIVE_IMAGE" : "true"
+    ]
 }
 
 wrapper {

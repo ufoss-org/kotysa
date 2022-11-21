@@ -13,7 +13,7 @@ class UserRepositoryTests {
 
     @Test
     fun count() {
-        assertThat(repository.count().block())
+        assertThat(repository.count().block()!!)
             .isEqualTo(2)
     }
 

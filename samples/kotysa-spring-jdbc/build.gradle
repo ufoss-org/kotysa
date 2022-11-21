@@ -3,36 +3,44 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring'
     id 'io.spring.dependency-management'
     id 'org.springframework.boot'
+    id 'org.springframework.experimental.aot'
 }
+
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo.spring.io/release' }
 }
 
 dependencies {
     implementation('org.springframework.boot:spring-boot-starter-web')
     implementation('org.springframework.data:spring-data-jdbc')
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
     implementation("org.ufoss.kotysa:kotysa-spring-jdbc:${kotysaVersion}")
 
     runtimeOnly('com.h2database:h2')
-
-    testImplementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+    
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
     testImplementation('org.springframework.boot:spring-boot-starter-webflux')
 }
 
-compileKotlin {
-    kotlinOptions.freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
-}
-
-compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
+compileKotlin.kotlinOptions {
+    freeCompilerArgs = ['-Xjsr305=strict']
+    jvmTarget = JavaVersion.VERSION_11
 }
 
 test {
     useJUnitPlatform()
+}
+
+bootBuildImage {
+    builder = "paketobuildpacks/builder:tiny"
+    environment = [
+            "BP_NATIVE_IMAGE" : "true"
+    ]
 }
 
 wrapper {

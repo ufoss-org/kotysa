@@ -1,7 +1,7 @@
 package com.sample
 
 import org.springframework.stereotype.Repository
-import org.ufoss.kotysa.spring.r2dbc.ReactorSqlClient
+import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.SpringR2dbcReactorTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactional
 import java.util.*
