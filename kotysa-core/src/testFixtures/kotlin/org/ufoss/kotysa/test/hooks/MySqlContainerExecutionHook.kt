@@ -19,7 +19,7 @@ class MySqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
             .getOrComputeIfAbsent("mySqlContainer") {
-                val mysqlContainer = MySQLContainer("mysql:8.0.23")
+                val mysqlContainer = MySQLContainer("mysql:8.0.31-debian")
                     .withDatabaseName("db")
                     .withUsername("mysql")
                     .withPassword("test")
