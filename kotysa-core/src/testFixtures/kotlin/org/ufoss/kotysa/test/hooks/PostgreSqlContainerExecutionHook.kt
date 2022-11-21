@@ -19,7 +19,7 @@ class PostgreSqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
                 .getOrComputeIfAbsent("postgreSqlContainer") {
-                    val postgreSqlContainer = PostgreSQLContainer("postgres:13.2-alpine")
+                    val postgreSqlContainer = PostgreSQLContainer("postgres:15.1-alpine")
                     postgreSqlContainer
                             .withDatabaseName("db")
                             .withUsername("postgres")
