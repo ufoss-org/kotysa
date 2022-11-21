@@ -19,7 +19,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version") // kodein for ktor
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-    implementation("org.ufoss.kotysa:kotysa-r2dbc:$kotysa_version")
+    implementation("org.ufoss.kotysa:kotysa-r2dbc-coroutines:$kotysa_version")
 
     runtimeOnly("io.r2dbc:r2dbc-h2:$h2_version") // R2DBC driver for H2
     
