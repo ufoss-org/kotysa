@@ -503,7 +503,7 @@ object PostgresqlTsvectors : PostgresqlTable<TsvectorEntity>() {
     val stringNotNull = text(TsvectorEntity::stringNotNull)
     val stringNullable = text(TsvectorEntity::stringNullable)
 
-    val textSearchable = tsvector(TsvectorType.english, stringNotNull)
+    val textSearchable = tsvector(TsvectorType.english, "text_searchable", stringNotNull)
         .withGinIndex()
     val textSearchableBoth = tsvector(TsvectorType.english, stringNotNull, stringNullable)
         .withGistIndex()

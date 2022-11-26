@@ -42,7 +42,8 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
 
     protected fun text(
         getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null
-    ): StringDbTextColumnNullable<T> = StringDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    ): StringDbTextColumnNullable<T> =
+        StringDbTextColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun integer(getter: (T) -> Int, columnName: String? = null): IntDbIntColumnNotNull<T> =
         IntDbIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
@@ -54,20 +55,20 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
     ): IntDbIntColumnNullable<T> = IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
-            LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
+        LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
     protected fun bigInt(
-            getter: (T) -> Long?,
-            columnName: String? = null,
-            defaultValue: Long? = null
+        getter: (T) -> Long?,
+        columnName: String? = null,
+        defaultValue: Long? = null
     ): LongDbBigIntColumnNullable<T> =
-            LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+        LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun serial(getter: (T) -> Int?, columnName: String? = null): IntDbSerialColumnNotNull<T> =
-            IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
+        IntDbSerialColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun bigSerial(getter: (T) -> Long?, columnName: String? = null): LongDbBigSerialColumnNotNull<T> =
-            LongDbBigSerialColumnNotNull(getter, columnName).also { addColumn(it) }
+        LongDbBigSerialColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
         BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }
@@ -148,14 +149,24 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
     protected fun bytea(getter: (T) -> ByteArray?, columnName: String? = null): ByteArrayDbByteaColumnNullable<T> =
         ByteArrayDbByteaColumnNullable(getter, columnName).also { addColumn(it) }
 
-    protected fun tsvector(tsvectorType: TsvectorType, vararg columns: AbstractDbColumn<T, *>,
-                           columnName: String? = null): TsvectorColumn<T> {
+    protected fun tsvector(tsvectorType: TsvectorType, vararg columns: AbstractDbColumn<T, *>): TsvectorColumn<T> {
+        require(columns.isNotEmpty()) { "columns must contain at least one element" }
+        return TsvectorColumn(null, tsvectorType.name, columns).also { addColumn(it) }
+    }
+
+    protected fun tsvector(tsvectorType: TsvectorType, columnName: String, vararg columns: AbstractDbColumn<T, *>)
+            : TsvectorColumn<T> {
         require(columns.isNotEmpty()) { "columns must contain at least one element" }
         return TsvectorColumn(columnName, tsvectorType.name, columns).also { addColumn(it) }
     }
 
-    protected fun tsvector(tsvectorType: String, vararg columns: AbstractDbColumn<T, *>,
-                           columnName: String? = null): TsvectorColumn<T> {
+    protected fun tsvector(tsvectorType: String, vararg columns: AbstractDbColumn<T, *>): TsvectorColumn<T> {
+        require(columns.isNotEmpty()) { "columns must contain at least one element" }
+        return TsvectorColumn(null, tsvectorType, columns).also { addColumn(it) }
+    }
+
+    protected fun tsvector(tsvectorType: String, vararg columns: AbstractDbColumn<T, *>, columnName: String)
+            : TsvectorColumn<T> {
         require(columns.isNotEmpty()) { "columns must contain at least one element" }
         return TsvectorColumn(columnName, tsvectorType, columns).also { addColumn(it) }
     }
