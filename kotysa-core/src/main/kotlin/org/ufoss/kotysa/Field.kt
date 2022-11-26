@@ -103,7 +103,10 @@ internal class TableField<T : Any> internal constructor(
 ) : AbstractField<T>() {
 
     override val fieldNames: List<String> =
-        table.kotysaColumns.map { column -> column.getFieldName(availableColumns, dbType) }
+        table.kotysaColumns
+            // tsvector should not be fetched when querying a table
+            .filter { column -> column.sqlType != SqlType.TSVECTOR }
+            .map { column -> column.getFieldName(availableColumns, dbType) }
 
     override val builder: (RowImpl) -> T = { row ->
         val kotysaTable = table.getKotysaTable(availableTables)
