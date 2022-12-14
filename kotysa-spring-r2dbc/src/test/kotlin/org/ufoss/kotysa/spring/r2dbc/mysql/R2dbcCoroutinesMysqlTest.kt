@@ -81,8 +81,8 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
         assertThat(repository.selectAllMappedToDto().toList())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test
@@ -165,7 +165,7 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
 
     fun selectAllMappedToDto() =
             (sqlClient.selectAndBuild {
-                UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}",
+                UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
                         it[MysqlUsers.alias])
             }
                     from MysqlUsers

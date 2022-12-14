@@ -80,8 +80,8 @@ interface MutinyJavaEntityTest<T : JavaUsers, U : MutinyJavaUserRepository<T>> :
         assertThat(repository.selectAllMappedToDto().await().indefinitely())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test

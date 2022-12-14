@@ -40,8 +40,8 @@ class VertxSqlClientSelectMysqlTest : AbstractVertxSqlClientMysqlTest<UserReposi
         assertThat(repository.selectAllMappedToDto().await().indefinitely())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 
@@ -161,7 +161,8 @@ class UserRepositoryMysqlSelect(sqlClient: VertxSqlClient) : AbstractUserReposit
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.alias])
+            UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
+                it[MysqlUsers.alias])
         }
                 from MysqlUsers
                 ).fetchAll()

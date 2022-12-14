@@ -46,8 +46,8 @@ class R2dbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryJdbcH2Select>() {
         assertThat(repository.selectAllMappedToDto().toList())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 
@@ -172,7 +172,7 @@ class UserRepositoryJdbcH2Select(private val sqlClient: R2dbcSqlClient) : Abstra
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.alias])
+            UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.isAdmin]!!, it[H2Users.alias])
         }
                 from H2Users
                 ).fetchAll()

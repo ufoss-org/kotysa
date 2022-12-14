@@ -32,15 +32,17 @@ internal class FieldValueProvider<T : Any> internal constructor(
         return when (columnClass) {
             String::class -> ""
             LocalDateTime::class -> LocalDateTime.MAX
-            kotlinx.datetime.LocalDateTime::class -> kotlinx.datetime.LocalDateTime(2016, 2, 15, 16, 57, 0, 0)
             LocalDate::class -> LocalDate.MAX
-            kotlinx.datetime.LocalDate::class -> kotlinx.datetime.LocalDate(2016, 2, 15)
             OffsetDateTime::class -> OffsetDateTime.now()
             LocalTime::class -> LocalTime.MAX
             Boolean::class -> false
             UUID::class -> UUID.fromString("79e9eb45-2835-49c8-ad3b-c951b591bc7f")
             Int::class -> 42
-            else -> throw RuntimeException("$columnClass is not supported yet")
+            else -> when (columnClass.qualifiedName) {
+                "kotlinx.datetime.LocalDate" -> kotlinx.datetime.LocalDate(2016, 2, 15)
+                "kotlinx.datetime.LocalDateTime" -> kotlinx.datetime.LocalDateTime(2016, 2, 15, 16, 57, 0, 0)
+                else -> throw RuntimeException("$columnClass is not supported yet")
+            }
         } as U
     }
 

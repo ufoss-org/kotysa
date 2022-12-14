@@ -50,8 +50,8 @@ class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPost
         assertThat(repository.selectAllMappedToDto().toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 
@@ -173,7 +173,8 @@ class UserRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractUser
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}", it[PostgresqlUsers.alias])
+            UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}",
+                it[PostgresqlUsers.isAdmin]!!, it[PostgresqlUsers.alias])
         }
                 from PostgresqlUsers
                 ).fetchAll()

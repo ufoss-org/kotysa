@@ -45,8 +45,8 @@ class R2dbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelec
         assertThat(repository.selectAllMappedToDto().toList())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 
@@ -172,7 +172,8 @@ class UserRepositoryJdbcMysqlSelect(private val sqlClient: R2dbcSqlClient) :
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.alias])
+            UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
+                it[MysqlUsers.alias])
         }
                 from MysqlUsers
                 ).fetchAll()

@@ -81,8 +81,8 @@ class R2dbcCoroutinesMariadbTest : AbstractR2dbcMariadbTest<CoroutinesUserMariad
         assertThat(repository.selectAllMappedToDto().toList())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test
@@ -165,7 +165,7 @@ class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
 
     fun selectAllMappedToDto() =
             (sqlClient.selectAndBuild {
-                UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}",
+                UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.isAdmin]!!,
                         it[MariadbUsers.alias])
             }
                     from MariadbUsers

@@ -39,8 +39,8 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
         assertThat(repository.selectAllMappedToDto())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 

@@ -83,8 +83,8 @@ interface ReactorJavaEntityTest<T : JavaUsers, U : ReactorJavaUserRepository<T>,
         assertThat(repository.selectAllMappedToDto().toIterable())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test

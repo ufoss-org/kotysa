@@ -50,8 +50,8 @@ class R2DbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlSelect>()
         assertThat(repository.selectAllMappedToDto().toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 
@@ -173,7 +173,8 @@ class UserRepositoryMssqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.alias])
+            UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.isAdmin]!!,
+                it[MssqlUsers.alias])
         }
                 from MssqlUsers
                 ).fetchAll()

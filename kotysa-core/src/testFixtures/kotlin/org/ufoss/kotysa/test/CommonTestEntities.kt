@@ -712,6 +712,7 @@ interface Customers : Table<CustomerEntity> {
 
 data class UserDto(
     val name: String,
+    val isAdmin: Boolean,
     val alias: String?
 )
 

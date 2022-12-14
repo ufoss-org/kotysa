@@ -81,8 +81,8 @@ class R2dbcCoroutinesPostgresqlTest : AbstractR2dbcPostgresqlTest<CoroutinesUser
         assertThat(repository.selectAllMappedToDto().toList())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test
@@ -166,7 +166,7 @@ class CoroutinesUserPostgresqlRepository(dbClient: DatabaseClient) : Repository 
     fun selectAllMappedToDto() =
             (sqlClient.selectAndBuild {
                 UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}",
-                        it[PostgresqlUsers.alias])
+                    it[PostgresqlUsers.isAdmin]!!, it[PostgresqlUsers.alias])
             }
                     from PostgresqlUsers
                     ).fetchAll()

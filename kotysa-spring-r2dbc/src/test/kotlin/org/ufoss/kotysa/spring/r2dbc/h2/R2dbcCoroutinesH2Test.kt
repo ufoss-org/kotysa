@@ -71,8 +71,8 @@ class R2DbcCoroutinesH2Test : AbstractR2dbcH2Test<CoroutinesUserH2Repository>() 
         assertThat(repository.selectAllMappedToDto().toList())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test
@@ -153,7 +153,7 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
 
     fun selectAllMappedToDto() =
             (sqlClient.selectAndBuild {
-                UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}",
+                UserDto("${it[H2Users.firstname]} ${it[H2Users.lastname]}", it[H2Users.isAdmin]!!,
                         it[H2Users.alias])
             }
                     from H2Users

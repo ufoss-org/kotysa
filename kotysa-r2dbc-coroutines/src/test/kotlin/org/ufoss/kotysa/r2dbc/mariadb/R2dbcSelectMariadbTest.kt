@@ -45,8 +45,8 @@ class R2dbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariad
         assertThat(repository.selectAllMappedToDto().toList())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserDto("John Doe", null),
-                UserDto("Big Boss", "TheBoss")
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
             )
     }
 
@@ -172,7 +172,8 @@ class UserRepositoryJdbcMariadbSelect(private val sqlClient: R2dbcSqlClient) :
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.alias])
+            UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.isAdmin]!!,
+                it[MariadbUsers.alias])
         }
                 from MariadbUsers
                 ).fetchAll()

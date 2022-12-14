@@ -80,8 +80,8 @@ interface JavaEntityTest<T : JavaUsers, U : JavaUserRepository<T>, V : Transacti
         assertThat(repository.selectAllMappedToDto())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test

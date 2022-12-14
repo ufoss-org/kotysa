@@ -20,7 +20,8 @@ abstract class SelectRepository<T : Roles, U : Users, V : UserRoles>(
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[tableUsers.firstname]} ${it[tableUsers.lastname]}", it[tableUsers.alias])
+            UserDto("${it[tableUsers.firstname]} ${it[tableUsers.lastname]}", it[tableUsers.isAdmin]!!,
+                it[tableUsers.alias])
         }
                 from tableUsers
                 ).fetchAll()

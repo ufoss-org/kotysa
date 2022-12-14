@@ -55,7 +55,8 @@ abstract class CoroutinesJavaUserRepository<T : JavaUsers>(
                     ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient selectAndBuild { UserDto("${it[table.firstname]} ${it[table.lastname]}", it[table.alias1]) }
+            (sqlClient selectAndBuild { UserDto("${it[table.firstname]} ${it[table.lastname]}",
+                it[table.isAdmin]!!, it[table.alias1]) }
                     from table
                     ).fetchAll()
 }

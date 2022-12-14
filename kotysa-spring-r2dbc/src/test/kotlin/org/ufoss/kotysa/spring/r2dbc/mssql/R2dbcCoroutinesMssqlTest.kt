@@ -81,8 +81,8 @@ class R2dbcCoroutinesMssqlTest : AbstractR2dbcMssqlTest<CoroutinesUserMssqlRepos
         assertThat(repository.selectAllMappedToDto().toList())
                 .hasSize(2)
                 .containsExactlyInAnyOrder(
-                        UserDto("John Doe", null),
-                        UserDto("Big Boss", "TheBoss"))
+                        UserDto("John Doe", false, null),
+                        UserDto("Big Boss", true, "TheBoss"))
     }
 
     @Test
@@ -159,7 +159,7 @@ class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
 
     fun selectAllMappedToDto() =
             (sqlClient.selectAndBuild {
-                UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}",
+                UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.isAdmin]!!,
                         it[MssqlUsers.alias])
             }
                     from MssqlUsers
