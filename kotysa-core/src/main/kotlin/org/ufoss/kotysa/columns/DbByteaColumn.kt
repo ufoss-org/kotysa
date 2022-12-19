@@ -10,8 +10,9 @@ import org.ufoss.kotysa.*
  * Postgresql specific type bytea
  */
 public sealed class DbByteaColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
-    // No size
+    // No size nor decimals
     final override val size = null
+    final override val scale = null
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
     override val defaultValue: U? = null

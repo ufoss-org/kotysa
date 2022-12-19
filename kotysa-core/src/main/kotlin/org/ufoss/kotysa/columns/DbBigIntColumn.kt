@@ -7,8 +7,9 @@ package org.ufoss.kotysa.columns
 import org.ufoss.kotysa.*
 
 public sealed class DbBigIntColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
-    // No size
+    // No size nor decimals
     final override val size = null
+    final override val scale = null
 
     final override val sqlType = SqlType.BIGINT
 }

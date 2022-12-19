@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -43,6 +44,10 @@ class VertxSqlClientAllTypesMysqlTest : AbstractVertxSqlClientMysqlTest<AllTypes
                     kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L,
+                    42.42f,
+                    84.84,
+                    BigDecimal("4.2"),
+                    BigDecimal("4.3"),
                 )
             )
     }
@@ -62,12 +67,15 @@ class VertxSqlClientAllTypesMysqlTest : AbstractVertxSqlClientMysqlTest<AllTypes
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
+        val newBigDecimal = BigDecimal("3.3")
         val allAllTypesNotNull = operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal
             )
                 .onItem().invoke { n -> assertThat(n).isEqualTo(1) }
                 .chain { -> repository.selectAllAllTypesNotNull() }
@@ -76,9 +84,9 @@ class VertxSqlClientAllTypesMysqlTest : AbstractVertxSqlClientMysqlTest<AllTypes
             .hasSize(1)
             .containsExactly(
                 MysqlAllTypesNotNull(
-                    allTypesNotNull.id, "new", false,
-                    newLocalDate, newKotlinxLocalDate, newLocalDateTime, newLocalDateTime,
-                    newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                    allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
+                    newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray,
+                    newFloat, newDouble, newBigDecimal, newBigDecimal
                 )
             )
     }
@@ -115,6 +123,10 @@ class VertxSqlClientAllTypesMysqlTest : AbstractVertxSqlClientMysqlTest<AllTypes
                 kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                 42,
                 84L,
+                42.42f,
+                84.84,
+                BigDecimal("4.2"),
+                BigDecimal("4.3"),
             )
         )
     }
@@ -153,9 +165,18 @@ class AllTypesRepositoryMysql(private val sqlClient: MutinySqlClient) : Reposito
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MysqlAllTypesNullableDefaultValues
 
     fun updateAllTypesNotNull(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
+        newBigDecimal: BigDecimal,
     ) =
         (sqlClient update MysqlAllTypesNotNulls
                 set MysqlAllTypesNotNulls.string eq newString
@@ -169,6 +190,10 @@ class AllTypesRepositoryMysql(private val sqlClient: MutinySqlClient) : Reposito
                 set MysqlAllTypesNotNulls.inte eq newInt
                 set MysqlAllTypesNotNulls.longe eq newLong
                 set MysqlAllTypesNotNulls.byteArray eq newByteArray
+                set MysqlAllTypesNotNulls.floate eq newFloat
+                set MysqlAllTypesNotNulls.doublee eq newDouble
+                set MysqlAllTypesNotNulls.bigDecimal1 eq newBigDecimal
+                set MysqlAllTypesNotNulls.bigDecimal2 eq newBigDecimal
                 where MysqlAllTypesNotNulls.id eq allTypesNotNull.id
                 ).execute()
 
@@ -185,6 +210,10 @@ class AllTypesRepositoryMysql(private val sqlClient: MutinySqlClient) : Reposito
                 set MysqlAllTypesNotNulls.inte eq MysqlAllTypesNotNulls.inte
                 set MysqlAllTypesNotNulls.longe eq MysqlAllTypesNotNulls.longe
                 set MysqlAllTypesNotNulls.byteArray eq MysqlAllTypesNotNulls.byteArray
+                set MysqlAllTypesNotNulls.floate eq MysqlAllTypesNotNulls.floate
+                set MysqlAllTypesNotNulls.doublee eq MysqlAllTypesNotNulls.doublee
+                set MysqlAllTypesNotNulls.bigDecimal1 eq MysqlAllTypesNotNulls.bigDecimal1
+                set MysqlAllTypesNotNulls.bigDecimal2 eq MysqlAllTypesNotNulls.bigDecimal2
                 where MysqlAllTypesNotNulls.id eq allTypesNotNull.id
                 ).execute()
 

@@ -9,6 +9,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.columns.*
+import java.math.BigDecimal
 import java.time.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -65,7 +66,7 @@ interface UserRoles : Table<UserRoleEntity> {
     val roleId: IntColumnNotNull<UserRoleEntity>
 }
 
-open class AllTypesNotNullEntity(
+open class AllTypesNotNullBaseEntity(
     open val id: Int,
     open val string: String,
     open val boolean: Boolean,
@@ -78,13 +79,14 @@ open class AllTypesNotNullEntity(
     open val int: Int,
     open val long: Long,
     open val byteArray: ByteArray,
+    open val float: Float,
+    open val double: Double,
 ) {
-    // equals, hashcode and toString (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AllTypesNotNullEntity
+        other as AllTypesNotNullBaseEntity
 
         if (id != other.id) return false
         if (string != other.string) return false
@@ -98,6 +100,8 @@ open class AllTypesNotNullEntity(
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
 
         return true
     }
@@ -115,22 +119,71 @@ open class AllTypesNotNullEntity(
         result = 31 * result + int
         result = 31 * result + long.hashCode()
         result = 31 * result + byteArray.contentHashCode()
+        result = 31 * result + float.hashCode()
+        result = 31 * result + double.hashCode()
         return result
     }
+}
 
-    override fun toString(): String {
-        return "AllTypesNotNullEntity(id=$id, string='$string', boolean=$boolean, localDate=$localDate, " +
-                "kotlinxLocalDate=$kotlinxLocalDate, localDateTime1=$localDateTime1, localDateTime2=$localDateTime2, " +
-                "kotlinxLocalDateTime1=$kotlinxLocalDateTime1, kotlinxLocalDateTime2=$kotlinxLocalDateTime2, " +
-                "int=$int, long=$long, byteArray=${byteArray.contentToString()})"
+open class AllTypesNotNullEntity(
+    override val id: Int,
+    override val string: String,
+    override val boolean: Boolean,
+    override val localDate: LocalDate,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+    override val localDateTime1: LocalDateTime,
+    override val localDateTime2: LocalDateTime,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+    override val int: Int,
+    override val long: Long,
+    override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    open val bigDecimal1: BigDecimal,
+    open val bigDecimal2: BigDecimal,
+) : AllTypesNotNullBaseEntity(
+    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as AllTypesNotNullEntity
+
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + bigDecimal1.hashCode()
+        result = 31 * result + bigDecimal2.hashCode()
+        return result
     }
 }
 
 val allTypesNotNull = AllTypesNotNullEntity(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Int.MAX_VALUE, Long.MAX_VALUE, byteArrayOf(0x2A)
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    Float.MAX_VALUE,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
 )
 
 open class AllTypesNotNullWithTimeEntity(
@@ -146,11 +199,15 @@ open class AllTypesNotNullWithTimeEntity(
     override val int: Int,
     override val long: Long,
     override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
     open val localTime: LocalTime,
     open val kotlinxLocalTime: kotlinx.datetime.LocalTime,
 ) : AllTypesNotNullEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2
 ) {
     // equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
@@ -160,18 +217,6 @@ open class AllTypesNotNullWithTimeEntity(
 
         other as AllTypesNotNullWithTimeEntity
 
-        if (id != other.id) return false
-        if (string != other.string) return false
-        if (boolean != other.boolean) return false
-        if (localDate != other.localDate) return false
-        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (int != other.int) return false
-        if (long != other.long) return false
-        if (!byteArray.contentEquals(other.byteArray)) return false
         if (localTime != other.localTime) return false
         if (kotlinxLocalTime != other.kotlinxLocalTime) return false
 
@@ -180,18 +225,6 @@ open class AllTypesNotNullWithTimeEntity(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + id
-        result = 31 * result + string.hashCode()
-        result = 31 * result + boolean.hashCode()
-        result = 31 * result + localDate.hashCode()
-        result = 31 * result + kotlinxLocalDate.hashCode()
-        result = 31 * result + localDateTime1.hashCode()
-        result = 31 * result + localDateTime2.hashCode()
-        result = 31 * result + kotlinxLocalDateTime1.hashCode()
-        result = 31 * result + kotlinxLocalDateTime2.hashCode()
-        result = 31 * result + int
-        result = 31 * result + long.hashCode()
-        result = 31 * result + byteArray.contentHashCode()
         result = 31 * result + localTime.hashCode()
         result = 31 * result + kotlinxLocalTime.hashCode()
         return result
@@ -200,14 +233,27 @@ open class AllTypesNotNullWithTimeEntity(
 
 
 val allTypesNotNullWithTime = AllTypesNotNullWithTimeEntity(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE,
-    Long.MAX_VALUE, byteArrayOf(0x2A), LocalTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC).time
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    Float.MAX_VALUE,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
+    LocalTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC).time,
 )
 
-
-open class AllTypesNullableEntity(
+open class AllTypesNullableBaseEntity(
     open val id: Int,
     open val string: String?,
     open val localDate: LocalDate?,
@@ -219,13 +265,14 @@ open class AllTypesNullableEntity(
     open val int: Int?,
     open val long: Long?,
     open val byteArray: ByteArray?,
+    open val float: Float?,
+    open val double: Double?,
 ) {
-    // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AllTypesNullableEntity
+        other as AllTypesNullableBaseEntity
 
         if (id != other.id) return false
         if (string != other.string) return false
@@ -237,10 +284,9 @@ open class AllTypesNullableEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
-        if (byteArray != null) {
-            if (other.byteArray == null) return false
-            if (!byteArray.contentEquals(other.byteArray)) return false
-        } else if (other.byteArray != null) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
 
         return true
     }
@@ -257,14 +303,57 @@ open class AllTypesNullableEntity(
         result = 31 * result + (int ?: 0)
         result = 31 * result + (long?.hashCode() ?: 0)
         result = 31 * result + (byteArray?.contentHashCode() ?: 0)
+        result = 31 * result + (float?.hashCode() ?: 0)
+        result = 31 * result + (double?.hashCode() ?: 0)
+        return result
+    }
+}
+
+
+open class AllTypesNullableEntity(
+    override val id: Int,
+    override val string: String?,
+    override val localDate: LocalDate?,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
+    override val localDateTime1: LocalDateTime?,
+    override val localDateTime2: LocalDateTime?,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
+    override val int: Int?,
+    override val long: Long?,
+    override val byteArray: ByteArray?,
+    override val float: Float?,
+    override val double: Double?,
+    open val bigDecimal1: BigDecimal?,
+    open val bigDecimal2: BigDecimal?,
+) : AllTypesNullableBaseEntity(
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as AllTypesNullableEntity
+
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (bigDecimal1?.hashCode() ?: 0)
+        result = 31 * result + (bigDecimal2?.hashCode() ?: 0)
         return result
     }
 }
 
 val allTypesNullable = AllTypesNullableEntity(
-    1, null, null, null,
-    null, null, null, null, null,
-    null, null
+    1, null, null, null, null, null, null,
+    null, null, null, null, null, null, null, null
 )
 
 open class AllTypesNullableWithTimeEntity(
@@ -279,13 +368,17 @@ open class AllTypesNullableWithTimeEntity(
     override val int: Int?,
     override val long: Long?,
     override val byteArray: ByteArray?,
+    override val float: Float?,
+    override val double: Double?,
+    override val bigDecimal1: BigDecimal?,
+    override val bigDecimal2: BigDecimal?,
     open val localTime: LocalTime?,
     open val kotlinxLocalTime: kotlinx.datetime.LocalTime?,
 ) : AllTypesNullableEntity(
     id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2
 ) {
-    // equals and hashcode (this class is not a data class)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -293,20 +386,6 @@ open class AllTypesNullableWithTimeEntity(
 
         other as AllTypesNullableWithTimeEntity
 
-        if (id != other.id) return false
-        if (string != other.string) return false
-        if (localDate != other.localDate) return false
-        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (int != other.int) return false
-        if (long != other.long) return false
-        if (byteArray != null) {
-            if (other.byteArray == null) return false
-            if (!byteArray.contentEquals(other.byteArray)) return false
-        } else if (other.byteArray != null) return false
         if (localTime != other.localTime) return false
         if (kotlinxLocalTime != other.kotlinxLocalTime) return false
 
@@ -315,17 +394,6 @@ open class AllTypesNullableWithTimeEntity(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + id
-        result = 31 * result + (string?.hashCode() ?: 0)
-        result = 31 * result + (localDate?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (int ?: 0)
-        result = 31 * result + (long?.hashCode() ?: 0)
-        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
         return result
@@ -333,12 +401,12 @@ open class AllTypesNullableWithTimeEntity(
 }
 
 val allTypesNullableWithTime = AllTypesNullableWithTimeEntity(
-    1, null, null, null,
+    1, null, null, null, null, null,
     null, null, null, null, null,
-    null, null, null, null
+    null, null, null, null, null, null
 )
 
-open class AllTypesNullableDefaultValueEntity(
+open class AllTypesNullableDefaultValueBaseEntity(
     open val id: Int,
     open val string: String? = null,
     open val localDate: LocalDate? = null,
@@ -349,13 +417,14 @@ open class AllTypesNullableDefaultValueEntity(
     open val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
     open val int: Int? = null,
     open val long: Long? = null,
+    open val float: Float? = null,
+    open val double: Double? = null,
 ) {
-    // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as AllTypesNullableDefaultValueEntity
+        other as AllTypesNullableDefaultValueBaseEntity
 
         if (id != other.id) return false
         if (string != other.string) return false
@@ -367,6 +436,8 @@ open class AllTypesNullableDefaultValueEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
 
         return true
     }
@@ -382,6 +453,48 @@ open class AllTypesNullableDefaultValueEntity(
         result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
         result = 31 * result + (int ?: 0)
         result = 31 * result + (long?.hashCode() ?: 0)
+        result = 31 * result + (float?.hashCode() ?: 0)
+        result = 31 * result + (double?.hashCode() ?: 0)
+        return result
+    }
+}
+
+open class AllTypesNullableDefaultValueEntity(
+    override val id: Int,
+    override val string: String? = null,
+    override val localDate: LocalDate? = null,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
+    override val localDateTime1: LocalDateTime? = null,
+    override val localDateTime2: LocalDateTime? = null,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
+    override val int: Int? = null,
+    override val long: Long? = null,
+    override val float: Float? = null,
+    override val double: Double? = null,
+    open val bigDecimal1: BigDecimal? = null,
+    open val bigDecimal2: BigDecimal? = null,
+) : AllTypesNullableDefaultValueBaseEntity(
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, float, double
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as AllTypesNullableDefaultValueEntity
+
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (bigDecimal1?.hashCode() ?: 0)
+        result = 31 * result + (bigDecimal2?.hashCode() ?: 0)
         return result
     }
 }
@@ -400,13 +513,16 @@ open class AllTypesNullableDefaultValueWithTimeEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
     override val int: Int? = null,
     override val long: Long? = null,
+    override val float: Float? = null,
+    override val double: Double? = null,
+    override val bigDecimal1: BigDecimal? = null,
+    override val bigDecimal2: BigDecimal? = null,
     open val localTime: LocalTime? = null,
     open val kotlinxLocalTime: kotlinx.datetime.LocalTime? = null,
 ) : AllTypesNullableDefaultValueEntity(
-    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, float, double, bigDecimal1, bigDecimal2
 ) {
-    // just base equals and hashcode (this class is not a data class)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -414,16 +530,6 @@ open class AllTypesNullableDefaultValueWithTimeEntity(
 
         other as AllTypesNullableDefaultValueWithTimeEntity
 
-        if (id != other.id) return false
-        if (string != other.string) return false
-        if (localDate != other.localDate) return false
-        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (int != other.int) return false
-        if (long != other.long) return false
         if (localTime != other.localTime) return false
         if (kotlinxLocalTime != other.kotlinxLocalTime) return false
 
@@ -432,16 +538,6 @@ open class AllTypesNullableDefaultValueWithTimeEntity(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + id
-        result = 31 * result + (string?.hashCode() ?: 0)
-        result = 31 * result + (localDate?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (int ?: 0)
-        result = 31 * result + (long?.hashCode() ?: 0)
         result = 31 * result + (localTime?.hashCode() ?: 0)
         result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
         return result
@@ -635,7 +731,8 @@ data class KotlinxLocalTimeEntity(
     val localTimeNullable: kotlinx.datetime.LocalTime? = null
 )
 
-val kotlinxLocalTimeWithNullable = KotlinxLocalTimeEntity(1, kotlinx.datetime.LocalTime(12, 4), kotlinx.datetime.LocalTime(11, 4))
+val kotlinxLocalTimeWithNullable =
+    KotlinxLocalTimeEntity(1, kotlinx.datetime.LocalTime(12, 4), kotlinx.datetime.LocalTime(11, 4))
 val kotlinxLocalTimeWithoutNullable = KotlinxLocalTimeEntity(2, kotlinx.datetime.LocalTime(12, 6))
 
 interface KotlinxLocalTimes : Table<KotlinxLocalTimeEntity> {
@@ -687,6 +784,66 @@ interface Uuids : Table<UuidEntity> {
     val id: UuidColumnNotNull<UuidEntity>
     val uuidNotNull: UuidColumnNotNull<UuidEntity>
     val uuidNullable: UuidColumnNullable<UuidEntity>
+}
+
+data class FloatEntity(
+    val id: Int,
+    val floatNotNull: Float,
+    val floatNullable: Float? = null,
+)
+
+val floatWithNullable = FloatEntity(1, 1.1f, 2.2f)
+val floatWithoutNullable = FloatEntity(2, 1.3f)
+
+interface Floats : Table<FloatEntity> {
+    val id: IntColumnNotNull<FloatEntity>
+    val floatNotNull: FloatColumnNotNull<FloatEntity>
+    val floatNullable: FloatColumnNullable<FloatEntity>
+}
+
+data class DoubleEntity(
+    val id: Int,
+    val doubleNotNull: Double,
+    val doubleNullable: Double? = null,
+)
+
+val doubleWithNullable = DoubleEntity(1, 1.1, 2.2)
+val doubleWithoutNullable = DoubleEntity(2, 1.3)
+
+interface Doubles : Table<DoubleEntity> {
+    val id: IntColumnNotNull<DoubleEntity>
+    val doubleNotNull: DoubleColumnNotNull<DoubleEntity>
+    val doubleNullable: DoubleColumnNullable<DoubleEntity>
+}
+
+data class BigDecimalEntity(
+    val id: Int,
+    val bigDecimalNotNull: BigDecimal,
+    val bigDecimalNullable: BigDecimal? = null,
+)
+
+val bigDecimalWithNullable = BigDecimalEntity(1, BigDecimal("1.1"), BigDecimal("2.2"))
+val bigDecimalWithoutNullable = BigDecimalEntity(2, BigDecimal("1.3"))
+
+interface BigDecimals : Table<BigDecimalEntity> {
+    val id: IntColumnNotNull<BigDecimalEntity>
+    val bigDecimalNotNull: BigDecimalColumnNotNull<BigDecimalEntity>
+    val bigDecimalNullable: BigDecimalColumnNullable<BigDecimalEntity>
+}
+
+data class BigDecimalAsNumericEntity(
+    val id: Int,
+    val bigDecimalNotNull: BigDecimal,
+    val bigDecimalNullable: BigDecimal? = null,
+)
+
+val bigDecimalAsNumericWithNullable = BigDecimalAsNumericEntity(1, BigDecimal("1.1"), BigDecimal("2.2"))
+val bigDecimalAsNumericWithoutNullable = BigDecimalAsNumericEntity(2, BigDecimal("1.3"))
+
+interface BigDecimalAsNumerics : Table<BigDecimalAsNumericEntity> {
+    val id: IntColumnNotNull<BigDecimalAsNumericEntity>
+    val bigDecimalNotNull: BigDecimalColumnNotNull<BigDecimalAsNumericEntity>
+    val bigDecimalNullable: BigDecimalColumnNullable<BigDecimalAsNumericEntity>
 }
 
 data class CustomerEntity(

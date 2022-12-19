@@ -8,8 +8,9 @@ import org.ufoss.kotysa.BooleanColumnNotNull
 import org.ufoss.kotysa.SqlType
 
 public sealed class DbBitColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
-    // No size
+    // No size nor decimals
     final override val size = null
+    final override val scale = null
 
     final override val sqlType = SqlType.BIT
 }

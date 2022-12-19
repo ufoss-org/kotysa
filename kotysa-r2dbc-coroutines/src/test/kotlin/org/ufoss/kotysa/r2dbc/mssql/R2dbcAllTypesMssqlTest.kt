@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -40,7 +41,11 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
                     LocalDateTime(2018, 11, 4, 0, 0),
                     LocalDateTime(2019, 11, 4, 0, 0),
                     42,
-                    84L
+                    84L,
+                    42.42f,
+                    84.84,
+                    BigDecimal("4.2"),
+                    BigDecimal("4.3"),
                 )
             )
     }
@@ -60,20 +65,23 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
+        val newBigDecimal = BigDecimal("3.3")
         coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate,
-                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
+                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
                     MssqlAllTypesNotNull(
-                        allTypesNotNull.id, "new", false, newLocalDate,
-                        newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                        allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                        newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
+                        newLong, newByteArray, newFloat, newDouble, newBigDecimal, newBigDecimal
                     )
                 )
         }
@@ -100,13 +108,17 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
                         allTypesNullableDefaultValueToInsert.id,
                         "default",
                         LocalDate.of(2019, 11, 4),
-                        kotlinx.datetime.LocalDate(2019, 11, 6),
+                        LocalDate(2019, 11, 6),
                         LocalDateTime.of(2018, 11, 4, 0, 0),
                         LocalDateTime.of(2019, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
-                        kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
+                        LocalDateTime(2018, 11, 4, 0, 0),
+                        LocalDateTime(2019, 11, 4, 0, 0),
                         42,
-                        84L
+                        84L,
+                        42.42f,
+                        84.84,
+                        BigDecimal("4.2"),
+                        BigDecimal("4.3"),
                     )
                 )
         }
@@ -146,9 +158,18 @@ class AllTypesRepositoryMssql(private val sqlClient: R2dbcSqlClient) : Repositor
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MssqlAllTypesNullableDefaultValues
 
     suspend fun updateAllTypesNotNull(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
+        newBigDecimal: BigDecimal,
     ) =
         (sqlClient update MssqlAllTypesNotNulls
                 set MssqlAllTypesNotNulls.string eq newString
@@ -162,6 +183,10 @@ class AllTypesRepositoryMssql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MssqlAllTypesNotNulls.inte eq newInt
                 set MssqlAllTypesNotNulls.longe eq newLong
                 set MssqlAllTypesNotNulls.byteArray eq newByteArray
+                set MssqlAllTypesNotNulls.float eq newFloat
+                set MssqlAllTypesNotNulls.doublee eq newDouble
+                set MssqlAllTypesNotNulls.bigDecimal1 eq newBigDecimal
+                set MssqlAllTypesNotNulls.bigDecimal2 eq newBigDecimal
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 
@@ -178,6 +203,10 @@ class AllTypesRepositoryMssql(private val sqlClient: R2dbcSqlClient) : Repositor
                 set MssqlAllTypesNotNulls.inte eq MssqlAllTypesNotNulls.inte
                 set MssqlAllTypesNotNulls.longe eq MssqlAllTypesNotNulls.longe
                 set MssqlAllTypesNotNulls.byteArray eq MssqlAllTypesNotNulls.byteArray
+                set MssqlAllTypesNotNulls.float eq MssqlAllTypesNotNulls.float
+                set MssqlAllTypesNotNulls.doublee eq MssqlAllTypesNotNulls.doublee
+                set MssqlAllTypesNotNulls.bigDecimal1 eq MssqlAllTypesNotNulls.bigDecimal1
+                set MssqlAllTypesNotNulls.bigDecimal2 eq MssqlAllTypesNotNulls.bigDecimal2
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 

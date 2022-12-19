@@ -13,8 +13,9 @@ public sealed class DbBooleanColumnNotNull<T : Any, U : Any> : AbstractDbColumn<
     final override val defaultValue: U? = null
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
-    // No size
+    // No size nor decimals
     final override val size = null
+    final override val scale = null
 
     final override val sqlType: SqlType = SqlType.BOOLEAN
 }

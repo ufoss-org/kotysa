@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mssql
 
 import io.vertx.mutiny.mssqlclient.MSSQLPool
+import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.sqlclient.SqlConnectOptions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -21,6 +22,7 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 @ResourceLock(MsSqlContainerResource.ID)
 abstract class AbstractVertxSqlClientMssqlTest<T : Repository> : MutinyRepositoryTest<T> {
     private lateinit var sqlClient: VertxSqlClient
+    private lateinit var pool: Pool
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
@@ -28,9 +30,9 @@ abstract class AbstractVertxSqlClientMssqlTest<T : Repository> : MutinyRepositor
             .fromUri("sqlserver://${containerResource.host}:${containerResource.firstMappedPort}")
             .setUser("SA")
             .setPassword("A_Str0ng_Required_Password")
-        val client = MSSQLPool.pool(clientOptions)
+        pool = MSSQLPool.pool(clientOptions)
 
-        sqlClient = client.sqlClient(mssqlTables)
+        sqlClient = pool.sqlClient(mssqlTables)
         repository.init()
     }
 
@@ -47,5 +49,6 @@ abstract class AbstractVertxSqlClientMssqlTest<T : Repository> : MutinyRepositor
     @AfterAll
     fun afterAll() {
         repository.delete()
+        pool.closeAndAwait()
     }
 }

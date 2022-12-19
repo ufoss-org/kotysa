@@ -6,6 +6,7 @@ package org.ufoss.kotysa.mariadb
 
 import org.ufoss.kotysa.AbstractTable
 import org.ufoss.kotysa.columns.*
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -74,6 +75,62 @@ public abstract class MariadbTable<T : Any> protected constructor(tableName: Str
     protected fun autoIncrementBigInt(getter: (T) -> Long?, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
             LongDbBigIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
+    protected fun float(getter: (T) -> Float, columnName: String? = null, precision: Int? = null, scale: Int? = null)
+            : FloatDbFloatColumnNotNull<T> =
+        FloatDbFloatColumnNotNull(getter, columnName, precision, scale).also { addColumn(it) }
+
+    protected fun float(
+        getter: (T) -> Float?,
+        columnName: String? = null,
+        defaultValue: Float? = null,
+        precision: Int? = null,
+        scale: Int? = null,
+    ): FloatDbFloatColumnNullable<T> =
+        FloatDbFloatColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
+
+    protected fun doublePrecision(
+        getter: (T) -> Double,
+        columnName: String? = null,
+        precision: Int? = null,
+        scale: Int? = null,
+    ): DoubleDbDoublePrecisionColumnNotNull<T> =
+        DoubleDbDoublePrecisionColumnNotNull(getter, columnName, precision, scale).also { addColumn(it) }
+
+    protected fun doublePrecision(
+        getter: (T) -> Double?,
+        columnName: String? = null,
+        defaultValue: Double? = null,
+        precision: Int? = null,
+        scale: Int? = null,
+    ): DoubleDbDoublePrecisionColumnNullable<T> =
+        DoubleDbDoublePrecisionColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
+
+    protected fun numeric(getter: (T) -> BigDecimal, precision: Int, scale: Int, columnName: String? = null)
+            : BigDecimalDbNumericColumnNotNull<T> =
+        BigDecimalDbNumericColumnNotNull(getter, columnName, precision, scale).also { addColumn(it) }
+
+    protected fun numeric(
+        getter: (T) -> BigDecimal?,
+        precision: Int,
+        scale: Int,
+        columnName: String? = null,
+        defaultValue: BigDecimal? = null,
+    ): BigDecimalDbNumericColumnNullable<T> =
+        BigDecimalDbNumericColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
+
+    protected fun decimal(getter: (T) -> BigDecimal, precision: Int, scale: Int, columnName: String? = null)
+            : BigDecimalDbDecimalColumnNotNull<T> =
+        BigDecimalDbDecimalColumnNotNull(getter, columnName, precision, scale).also { addColumn(it) }
+
+    protected fun decimal(
+        getter: (T) -> BigDecimal?,
+        precision: Int,
+        scale: Int,
+        columnName: String? = null,
+        defaultValue: BigDecimal? = null,
+    ): BigDecimalDbDecimalColumnNullable<T> =
+        BigDecimalDbDecimalColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
+
     protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
             BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }
 
@@ -88,12 +145,6 @@ public abstract class MariadbTable<T : Any> protected constructor(tableName: Str
 
     protected fun dateTime(getter: (T) -> LocalDateTime?, columnName: String? = null, defaultValue: LocalDateTime? = null, precision: Int? = null): LocalDateTimeDbDateTimeColumnNullable<T> =
             LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
-
-//     protected fun timestamp(getter: (T) -> OffsetDateTime, columnName: String? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNotNull<T> =
-//             OffsetDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }
-//
-//     protected fun timestamp(getter: (T) -> OffsetDateTime?, columnName: String? = null, defaultValue: OffsetDateTime? = null, precision: Int? = null): OffsetDateTimeDbTimestampColumnNullable<T> =
-//             OffsetDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
     protected fun time(getter: (T) -> LocalTime, columnName: String? = null, precision: Int? = null): LocalTimeDbTimeColumnNotNull<T> =
             LocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }

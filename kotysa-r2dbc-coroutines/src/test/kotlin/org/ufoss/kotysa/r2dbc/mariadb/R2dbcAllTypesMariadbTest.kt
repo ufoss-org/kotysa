@@ -12,6 +12,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -43,6 +44,10 @@ class R2dbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
                     LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L,
+                    42.42f,
+                    84.84,
+                    BigDecimal("4.2"),
+                    BigDecimal("4.3"),
                     LocalTime.of(11, 25, 55),
                     LocalTime(11, 25, 55),
                 )
@@ -66,12 +71,16 @@ class R2dbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
+        val newBigDecimal = BigDecimal("3.3")
         coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
-                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble,
+                newBigDecimal
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
@@ -79,7 +88,8 @@ class R2dbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
                     MariadbAllTypesNotNullWithTime(
                         mariadbAllTypesNotNullWithTime.id, "new", false, newLocalDate,
                         newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime, newKotlinxLocalTime
+                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime, newKotlinxLocalTime,
+                        newFloat, newDouble, newBigDecimal, newBigDecimal
                     )
                 )
         }
@@ -113,6 +123,10 @@ class R2dbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
                         LocalDateTime(2019, 11, 4, 0, 0),
                         42,
                         84L,
+                        42.42f,
+                        84.84,
+                        BigDecimal("4.2"),
+                        BigDecimal("4.3"),
                         LocalTime.of(11, 25, 55),
                         LocalTime(11, 25, 55),
                     )
@@ -154,10 +168,20 @@ class AllTypesRepositoryMariadb(private val sqlClient: R2dbcSqlClient) : Reposit
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MariadbAllTypesNullableDefaultValueWithTimes
 
     suspend fun updateAllTypesNotNull(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
+        newBigDecimal: BigDecimal,
     ) =
         (sqlClient update MariadbAllTypesNotNullWithTimes
                 set MariadbAllTypesNotNullWithTimes.string eq newString
@@ -173,6 +197,10 @@ class AllTypesRepositoryMariadb(private val sqlClient: R2dbcSqlClient) : Reposit
                 set MariadbAllTypesNotNullWithTimes.inte eq newInt
                 set MariadbAllTypesNotNullWithTimes.longe eq newLong
                 set MariadbAllTypesNotNullWithTimes.byteArray eq newByteArray
+                set MariadbAllTypesNotNullWithTimes.floate eq newFloat
+                set MariadbAllTypesNotNullWithTimes.doublee eq newDouble
+                set MariadbAllTypesNotNullWithTimes.bigDecimal1 eq newBigDecimal
+                set MariadbAllTypesNotNullWithTimes.bigDecimal2 eq newBigDecimal
                 where MariadbAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
     
@@ -191,6 +219,10 @@ class AllTypesRepositoryMariadb(private val sqlClient: R2dbcSqlClient) : Reposit
                 set MariadbAllTypesNotNullWithTimes.inte eq MariadbAllTypesNotNullWithTimes.inte
                 set MariadbAllTypesNotNullWithTimes.longe eq MariadbAllTypesNotNullWithTimes.longe
                 set MariadbAllTypesNotNullWithTimes.byteArray eq MariadbAllTypesNotNullWithTimes.byteArray
+                set MariadbAllTypesNotNullWithTimes.floate eq MariadbAllTypesNotNullWithTimes.floate
+                set MariadbAllTypesNotNullWithTimes.doublee eq MariadbAllTypesNotNullWithTimes.doublee
+                set MariadbAllTypesNotNullWithTimes.bigDecimal1 eq MariadbAllTypesNotNullWithTimes.bigDecimal1
+                set MariadbAllTypesNotNullWithTimes.bigDecimal2 eq MariadbAllTypesNotNullWithTimes.bigDecimal2
                 where MariadbAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
                 ).execute()
 

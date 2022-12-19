@@ -93,6 +93,25 @@ public abstract class SqLiteTable<T : Any> protected constructor(tableName: Stri
     protected fun autoIncrementInteger(getter: (T) -> Long?, columnName: String? = null): LongDbIntColumnNotNull<T> =
             LongDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
+    protected fun real(getter: (T) -> Float, columnName: String? = null): FloatDbRealColumnNotNull<T> =
+        FloatDbRealColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun real(
+        getter: (T) -> Float?,
+        columnName: String? = null,
+        defaultValue: Float? = null
+    ): FloatDbRealColumnNullable<T> = FloatDbRealColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun real(getter: (T) -> Double, columnName: String? = null): DoubleDbRealColumnNotNull<T> =
+        DoubleDbRealColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun real(
+        getter: (T) -> Double?,
+        columnName: String? = null,
+        defaultValue: Double? = null
+    ): DoubleDbRealColumnNullable<T> =
+        DoubleDbRealColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
     protected fun integer(getter: (T) -> Boolean, columnName: String? = null): BooleanDbIntColumnNotNull<T> =
         BooleanDbIntColumnNotNull(getter, columnName).also { addColumn(it) }
 

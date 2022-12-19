@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa
 
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -85,6 +86,19 @@ public interface IntColumnNullable<out T : Any> : IntColumn<T>, ColumnNullable<T
 public interface LongColumn<out T : Any> : DbColumn<T, Long>, MinMaxColumn<T, Long>, NumericColumn<T, Long>
 public interface LongColumnNotNull<out T : Any> : LongColumn<T>, ColumnNotNull<T, Long>
 public interface LongColumnNullable<out T : Any> : LongColumn<T>, ColumnNullable<T, Long>
+
+public interface FloatColumn<out T : Any> : DbColumn<T, Float>, MinMaxColumn<T, Float>, NumericColumn<T, Float>
+public interface FloatColumnNotNull<out T : Any> : FloatColumn<T>, ColumnNotNull<T, Float>
+public interface FloatColumnNullable<out T : Any> : FloatColumn<T>, ColumnNullable<T, Float>
+
+public interface DoubleColumn<out T : Any> : DbColumn<T, Double>, MinMaxColumn<T, Double>, NumericColumn<T, Double>
+public interface DoubleColumnNotNull<out T : Any> : DoubleColumn<T>, ColumnNotNull<T, Double>
+public interface DoubleColumnNullable<out T : Any> : DoubleColumn<T>, ColumnNullable<T, Double>
+
+public interface BigDecimalColumn<out T : Any> : DbColumn<T, BigDecimal>, MinMaxColumn<T, BigDecimal>,
+        NumericColumn<T, BigDecimal>
+public interface BigDecimalColumnNotNull<out T : Any> : BigDecimalColumn<T>, ColumnNotNull<T, BigDecimal>
+public interface BigDecimalColumnNullable<out T : Any> : BigDecimalColumn<T>, ColumnNullable<T, BigDecimal>
 
 public interface UuidColumn<out T : Any> : DbColumn<T, UUID>
 public interface UuidColumnNotNull<out T : Any> : UuidColumn<T>, ColumnNotNull<T, UUID>

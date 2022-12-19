@@ -10,6 +10,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import org.ufoss.kotysa.h2.*
 import org.ufoss.kotysa.tables
+import java.math.BigDecimal
 import java.time.*
 import java.util.*
 
@@ -61,11 +62,15 @@ data class H2AllTypesNotNullEntity(
     override val int: Int,
     override val long: Long,
     override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
     val offsetDateTime: OffsetDateTime,
     val uuid: UUID,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -74,20 +79,6 @@ data class H2AllTypesNotNullEntity(
 
         other as H2AllTypesNotNullEntity
 
-        if (id != other.id) return false
-        if (string != other.string) return false
-        if (boolean != other.boolean) return false
-        if (localDate != other.localDate) return false
-        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTime != other.localTime) return false
-        if (kotlinxLocalTime != other.kotlinxLocalTime) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (int != other.int) return false
-        if (long != other.long) return false
-        if (!byteArray.contentEquals(other.byteArray)) return false
         if (offsetDateTime != other.offsetDateTime) return false
         if (uuid != other.uuid) return false
 
@@ -96,20 +87,6 @@ data class H2AllTypesNotNullEntity(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + id
-        result = 31 * result + string.hashCode()
-        result = 31 * result + boolean.hashCode()
-        result = 31 * result + localDate.hashCode()
-        result = 31 * result + kotlinxLocalDate.hashCode()
-        result = 31 * result + localTime.hashCode()
-        result = 31 * result + kotlinxLocalTime.hashCode()
-        result = 31 * result + localDateTime1.hashCode()
-        result = 31 * result + localDateTime2.hashCode()
-        result = 31 * result + kotlinxLocalDateTime1.hashCode()
-        result = 31 * result + kotlinxLocalDateTime2.hashCode()
-        result = 31 * result + int
-        result = 31 * result + long.hashCode()
-        result = 31 * result + byteArray.contentHashCode()
         result = 31 * result + offsetDateTime.hashCode()
         result = 31 * result + uuid.hashCode()
         return result
@@ -128,14 +105,18 @@ val h2AllTypesNotNull = H2AllTypesNotNullEntity(
     LocalDateTime.now(),
     Clock.System.now().toLocalDateTime(TimeZone.UTC),
     Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    1,
-    1L,
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
     byteArrayOf(0x2A),
+    Float.MAX_VALUE,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
     OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
     ),
-    UUID.randomUUID()
+    UUID.randomUUID(),
 )
 
 object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
@@ -154,6 +135,10 @@ object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val inte = integer(AllTypesNotNullEntity::int)
     val longe = bigInt(AllTypesNotNullEntity::long)
     val byteArray = binary(AllTypesNotNullEntity::byteArray)
+    val float = real(AllTypesNotNullEntity::float)
+    val double = doublePrecision(AllTypesNotNullEntity::double)
+    val bigDecimal1 = numeric(AllTypesNotNullEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNotNullEntity::bigDecimal2, 3, 1)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNotNullEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNotNullEntity::uuid)
 }
@@ -172,11 +157,15 @@ data class H2AllTypesNullableEntity(
     override val int: Int?,
     override val long: Long?,
     override val byteArray: ByteArray?,
+    override val float: Float?,
+    override val double: Double?,
+    override val bigDecimal1: BigDecimal?,
+    override val bigDecimal2: BigDecimal?,
     val offsetDateTime: OffsetDateTime?,
     val uuid: UUID?,
 ) : AllTypesNullableWithTimeEntity(
-    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -185,22 +174,6 @@ data class H2AllTypesNullableEntity(
 
         other as H2AllTypesNullableEntity
 
-        if (id != other.id) return false
-        if (string != other.string) return false
-        if (localDate != other.localDate) return false
-        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTime != other.localTime) return false
-        if (kotlinxLocalTime != other.kotlinxLocalTime) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (int != other.int) return false
-        if (long != other.long) return false
-        if (byteArray != null) {
-            if (other.byteArray == null) return false
-            if (!byteArray.contentEquals(other.byteArray)) return false
-        } else if (other.byteArray != null) return false
         if (offsetDateTime != other.offsetDateTime) return false
         if (uuid != other.uuid) return false
 
@@ -209,19 +182,6 @@ data class H2AllTypesNullableEntity(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + id
-        result = 31 * result + (string?.hashCode() ?: 0)
-        result = 31 * result + (localDate?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (localTime?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (int ?: 0)
-        result = 31 * result + (long?.hashCode() ?: 0)
-        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
         result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
         result = 31 * result + (uuid?.hashCode() ?: 0)
         return result
@@ -229,8 +189,9 @@ data class H2AllTypesNullableEntity(
 }
 
 val h2AllTypesNullable = H2AllTypesNullableEntity(
-    1, null, null, null, null, null, null, null,
-    null, null, null, null, null, null, null
+    1, null, null, null, null, null, null,
+    null, null, null, null, null, null, null,
+    null, null, null, null, null
 )
 
 object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullable") {
@@ -240,7 +201,8 @@ object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullab
     val localDate = date(AllTypesNullableEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
-    val kotlinxLocalTim = time(AllTypesNullableWithTimeEntity::kotlinxLocalTime) // todo test fractionalSecondsPart later
+    val kotlinxLocalTim =
+        time(AllTypesNullableWithTimeEntity::kotlinxLocalTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableEntity::localDateTime1)
     val localDateTime2 = timestamp(AllTypesNullableEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableEntity::kotlinxLocalDateTime1)
@@ -248,6 +210,10 @@ object H2AllTypesNullables : H2Table<H2AllTypesNullableEntity>("all_types_nullab
     val inte = integer(AllTypesNullableEntity::int)
     val longe = bigInt(AllTypesNullableEntity::long)
     val byteArray = binary(AllTypesNullableEntity::byteArray)
+    val float = real(AllTypesNullableEntity::float)
+    val double = doublePrecision(AllTypesNullableEntity::double)
+    val bigDecimal1 = numeric(AllTypesNullableEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNullableEntity::bigDecimal2, 3, 1)
     val offsetDateTime = timestampWithTimeZone(H2AllTypesNullableEntity::offsetDateTime)
     val uuid = uuid(H2AllTypesNullableEntity::uuid)
 }
@@ -265,12 +231,36 @@ data class H2AllTypesNullableDefaultValueEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
     override val int: Int? = null,
     override val long: Long? = null,
+    override val float: Float? = null,
+    override val double: Double? = null,
+    override val bigDecimal1: BigDecimal? = null,
+    override val bigDecimal2: BigDecimal? = null,
     val offsetDateTime: OffsetDateTime? = null,
     val uuid: UUID? = null,
 ) : AllTypesNullableDefaultValueWithTimeEntity(
-    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime, kotlinxLocalTime
-)
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as H2AllTypesNullableDefaultValueEntity
+
+        if (offsetDateTime != other.offsetDateTime) return false
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
+        return result
+    }
+}
 
 val h2AllTypesNullableDefaultValue = H2AllTypesNullableDefaultValueEntity(1)
 val h2AllTypesNullableDefaultValueToInsert = H2AllTypesNullableDefaultValueEntity(2)
@@ -313,6 +303,20 @@ object H2AllTypesNullableDefaultValues : H2Table<H2AllTypesNullableDefaultValueE
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val float = real(AllTypesNullableDefaultValueEntity::float, defaultValue = 42.42f)
+    val double = doublePrecision(AllTypesNullableDefaultValueEntity::double, defaultValue = 84.84)
+    val bigDecimal1 = numeric(
+        AllTypesNullableDefaultValueEntity::bigDecimal1,
+        3,
+        1,
+        defaultValue = BigDecimal("4.2")
+    )
+    val bigDecimal2 = decimal(
+        AllTypesNullableDefaultValueEntity::bigDecimal2,
+        3,
+        1,
+        defaultValue = BigDecimal("4.3")
+    )
     val offsetDateTime = timestampWithTimeZone(
         H2AllTypesNullableDefaultValueEntity::offsetDateTime,
         defaultValue = OffsetDateTime.of(
@@ -408,6 +412,34 @@ object H2Uuids : H2Table<UuidEntity>(), Uuids {
     override val uuidNullable = uuid(UuidEntity::uuidNullable)
 }
 
+object H2Floats : H2Table<FloatEntity>(), Floats {
+    override val id = integer(FloatEntity::id)
+        .primaryKey()
+    override val floatNotNull = real(FloatEntity::floatNotNull)
+    override val floatNullable = real(FloatEntity::floatNullable)
+}
+
+object H2Doubles : H2Table<DoubleEntity>(), Doubles {
+    override val id = integer(DoubleEntity::id)
+        .primaryKey()
+    override val doubleNotNull = doublePrecision(DoubleEntity::doubleNotNull)
+    override val doubleNullable = doublePrecision(DoubleEntity::doubleNullable)
+}
+
+object H2BigDecimals : H2Table<BigDecimalEntity>(), BigDecimals {
+    override val id = integer(BigDecimalEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = decimal(BigDecimalEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = decimal(BigDecimalEntity::bigDecimalNullable, 3, 1)
+}
+
+object H2BigDecimalAsNumerics : H2Table<BigDecimalAsNumericEntity>(), BigDecimalAsNumerics {
+    override val id = integer(BigDecimalAsNumericEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = numeric(BigDecimalAsNumericEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = numeric(BigDecimalAsNumericEntity::bigDecimalNullable, 3, 1)
+}
+
 object H2Inheriteds : H2Table<Inherited>(), Entities<Inherited>, Nameables<Inherited>, Inheriteds {
     override val id = varchar(Inherited::getId)
         .primaryKey()
@@ -472,5 +504,9 @@ val h2Tables = tables().h2(
     H2JavaUsers,
     H2Customers,
     H2ByteArrays,
-    H2ByteArrayAsBinaries
+    H2ByteArrayAsBinaries,
+    H2Floats,
+    H2Doubles,
+    H2BigDecimals,
+    H2BigDecimalAsNumerics,
 )

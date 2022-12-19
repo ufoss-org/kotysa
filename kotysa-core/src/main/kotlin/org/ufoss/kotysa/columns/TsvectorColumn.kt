@@ -14,12 +14,11 @@ public class TsvectorColumn<T : Any>(
     // Not null
     override val isNullable: Boolean = false
     override val defaultValue: String? = null
-
     // No auto-increment
     override val isAutoIncrement: Boolean = false
-
-    // No size
+    // No size nor decimals
     override val size = null
+    override val scale = null
 
     override val sqlType: SqlType = SqlType.TSVECTOR
 }

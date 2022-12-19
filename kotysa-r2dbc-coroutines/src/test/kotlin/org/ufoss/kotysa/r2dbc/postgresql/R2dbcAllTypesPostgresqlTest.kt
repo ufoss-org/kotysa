@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
+import java.math.BigDecimal
 import java.time.*
 import java.util.*
 
@@ -47,6 +48,10 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                     kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L,
+                    42.42f,
+                    84.84,
+                    BigDecimal("4.2"),
+                    BigDecimal("4.3"),
                     OffsetDateTime.of(
                         2019, 11, 4, 0, 0, 0, 0,
                         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
@@ -67,20 +72,24 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
     fun `Verify updateAllTypesNotNull works`() = runTest {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
-        val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
-        val newUuid = UUID.randomUUID()
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
+        val newBigDecimal = BigDecimal("3.3")
+        val newOffsetDateTime = OffsetDateTime.now()
+        val newUuid = UUID.randomUUID()
         coOperator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
-                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble,
+                newBigDecimal, newOffsetDateTime, newUuid
             )
             assertThat(repository.selectAllAllTypesNotNull().toList())
                 .hasSize(1)
@@ -88,7 +97,8 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                     PostgresqlAllTypesNotNullEntity(
                         postgresqlAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
                         newLocalTime, newKotlinxLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
+                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal,
+                        newBigDecimal, newOffsetDateTime, newUuid
                     )
                 )
         }
@@ -124,6 +134,10 @@ class R2dbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42,
                         84L,
+                        42.42f,
+                        84.84,
+                        BigDecimal("4.2"),
+                        BigDecimal("4.3"),
                         OffsetDateTime.of(
                             2019, 11, 4, 0, 0, 0, 0,
                             ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
@@ -168,11 +182,22 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom PostgresqlAllTypesNullableDefaultValues
 
     suspend fun updateAllTypesNotNull(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray,
-        newOffsetDateTime: OffsetDateTime, newUuid: UUID
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
+        newBigDecimal: BigDecimal,
+        newOffsetDateTime: OffsetDateTime,
+        newUuid: UUID,
     ) =
         (sqlClient update PostgresqlAllTypesNotNulls
                 set PostgresqlAllTypesNotNulls.string eq newString
@@ -188,6 +213,10 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
                 set PostgresqlAllTypesNotNulls.inte eq newInt
                 set PostgresqlAllTypesNotNulls.longe eq newLong
                 set PostgresqlAllTypesNotNulls.byteArray eq newByteArray
+                set PostgresqlAllTypesNotNulls.float eq newFloat
+                set PostgresqlAllTypesNotNulls.double eq newDouble
+                set PostgresqlAllTypesNotNulls.bigDecimal1 eq newBigDecimal
+                set PostgresqlAllTypesNotNulls.bigDecimal2 eq newBigDecimal
                 set PostgresqlAllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set PostgresqlAllTypesNotNulls.uuid eq newUuid
                 where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
@@ -208,6 +237,10 @@ class AllTypesRepositoryPostgresql(private val sqlClient: R2dbcSqlClient) : Repo
                 set PostgresqlAllTypesNotNulls.inte eq PostgresqlAllTypesNotNulls.inte
                 set PostgresqlAllTypesNotNulls.longe eq PostgresqlAllTypesNotNulls.longe
                 set PostgresqlAllTypesNotNulls.byteArray eq PostgresqlAllTypesNotNulls.byteArray
+                set PostgresqlAllTypesNotNulls.float eq PostgresqlAllTypesNotNulls.float
+                set PostgresqlAllTypesNotNulls.double eq PostgresqlAllTypesNotNulls.double
+                set PostgresqlAllTypesNotNulls.bigDecimal1 eq PostgresqlAllTypesNotNulls.bigDecimal1
+                set PostgresqlAllTypesNotNulls.bigDecimal2 eq PostgresqlAllTypesNotNulls.bigDecimal2
                 set PostgresqlAllTypesNotNulls.offsetDateTime eq PostgresqlAllTypesNotNulls.offsetDateTime
                 set PostgresqlAllTypesNotNulls.uuid eq PostgresqlAllTypesNotNulls.uuid
                 where PostgresqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id

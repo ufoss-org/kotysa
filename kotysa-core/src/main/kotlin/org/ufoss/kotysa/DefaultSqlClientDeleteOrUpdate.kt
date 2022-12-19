@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kolog.Logger
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -144,6 +145,24 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         private val updateOpLongColumnNullable: UpdateOpIntColumn<T, W, Long?, LongColumn<*>, X> by lazy {
             UpdateOpIntColumn(update, updateInt, properties)
         }
+        private val updateOpFloatColumnNotNull: UpdateOpIntColumn<T, W, Float, FloatColumn<*>, X> by lazy {
+            UpdateOpIntColumn(update, updateInt, properties)
+        }
+        private val updateOpFloatColumnNullable: UpdateOpIntColumn<T, W, Float?, FloatColumn<*>, X> by lazy {
+            UpdateOpIntColumn(update, updateInt, properties)
+        }
+        private val updateOpDoubleColumnNotNull: UpdateOpIntColumn<T, W, Double, DoubleColumn<*>, X> by lazy {
+            UpdateOpIntColumn(update, updateInt, properties)
+        }
+        private val updateOpDoubleColumnNullable: UpdateOpIntColumn<T, W, Double?, DoubleColumn<*>, X> by lazy {
+            UpdateOpIntColumn(update, updateInt, properties)
+        }
+        private val updateOpBigDecimalColumnNotNull: UpdateOpIntColumn<T, W, BigDecimal, BigDecimalColumn<*>, X> by lazy {
+            UpdateOpIntColumn(update, updateInt, properties)
+        }
+        private val updateOpBigDecimalColumnNullable: UpdateOpIntColumn<T, W, BigDecimal?, BigDecimalColumn<*>, X> by lazy {
+            UpdateOpIntColumn(update, updateInt, properties)
+        }
         private val updateOpUuidColumnNotNull: UpdateOpColumn<T, W, UUID, UuidColumn<*>, X> by lazy {
             UpdateOpColumn(update, properties)
         }
@@ -157,103 +176,127 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
             UpdateOpColumn(update, properties)
         }
 
-        override infix fun set(stringColumnNotNull: StringColumnNotNull<T>)
+        override fun set(stringColumnNotNull: StringColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, String, StringColumn<*>, X> =
             updateOpStringColumnNotNull.apply { this.column = stringColumnNotNull }
 
-        override infix fun set(stringColumnNullable: StringColumnNullable<T>)
+        override fun set(stringColumnNullable: StringColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, String?, StringColumn<*>, X> =
             updateOpStringColumnNullable.apply { this.column = stringColumnNullable }
 
-        override infix fun set(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>)
+        override fun set(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalDateTime, LocalDateTimeColumn<*>, X> =
             updateOpLocalDateTimeColumnNotNull.apply { this.column = localDateTimeColumnNotNull }
 
-        override infix fun set(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>)
+        override fun set(localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalDateTime?, LocalDateTimeColumn<*>, X> =
             updateOpLocalDateTimeColumnNullable.apply { this.column = localDateTimeColumnNullable }
 
-        override infix fun set(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>)
+        override fun set(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalDateTime, KotlinxLocalDateTimeColumn<*>, X> =
             updateOpKotlinxLocalDateTimeColumnNotNull.apply { this.column = kotlinxLocalDateTimeColumnNotNull }
 
-        override infix fun set(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>)
+        override fun set(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalDateTime?, KotlinxLocalDateTimeColumn<*>, X> =
             updateOpKotlinxLocalDateTimeColumnNullable.apply { this.column = kotlinxLocalDateTimeColumnNullable }
 
-        override infix fun set(localDateColumnNotNull: LocalDateColumnNotNull<T>)
+        override fun set(localDateColumnNotNull: LocalDateColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalDate, LocalDateColumn<*>, X> =
             updateOpLocalDateColumnNotNull.apply { this.column = localDateColumnNotNull }
 
-        override infix fun set(localDateColumnNullable: LocalDateColumnNullable<T>)
+        override fun set(localDateColumnNullable: LocalDateColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalDate?, LocalDateColumn<*>, X> =
             updateOpLocalDateColumnNullable.apply { this.column = localDateColumnNullable }
 
-        override infix fun set(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>)
+        override fun set(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalDate, KotlinxLocalDateColumn<*>, X> =
             updateOpKotlinxLocalDateColumnNotNull.apply { this.column = kotlinxLocalDateColumnNotNull }
 
-        override infix fun set(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>)
+        override fun set(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalDate?, KotlinxLocalDateColumn<*>, X> =
             updateOpKotlinxLocalDateColumnNullable.apply { this.column = kotlinxLocalDateColumnNullable }
 
-        override infix fun set(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>)
+        override fun set(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, OffsetDateTime, OffsetDateTimeColumn<*>, X> =
             updateOpOffsetDateTimeColumnNotNull.apply { this.column = offsetDateTimeColumnNotNull }
 
-        override infix fun set(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>)
+        override fun set(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, OffsetDateTime?, OffsetDateTimeColumn<*>, X> =
             updateOpOffsetDateTimeColumnNullable.apply { this.column = offsetDateTimeColumnNullable }
 
-        override infix fun set(localTimeColumnNotNull: LocalTimeColumnNotNull<T>)
+        override fun set(localTimeColumnNotNull: LocalTimeColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalTime, LocalTimeColumn<*>, X> =
             updateOpLocalTimeColumnNotNull.apply { this.column = localTimeColumnNotNull }
 
-        override infix fun set(localTimeColumnNullable: LocalTimeColumnNullable<T>)
+        override fun set(localTimeColumnNullable: LocalTimeColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, LocalTime?, LocalTimeColumn<*>, X> =
             updateOpLocalTimeColumnNullable.apply { this.column = localTimeColumnNullable }
 
-        override infix fun set(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<T>)
+        override fun set(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalTime, KotlinxLocalTimeColumn<*>, X> =
             updateOpKotlinxLocalTimeColumnNotNull.apply { this.column = kotlinxLocalTimeColumnNotNull }
 
-        override infix fun set(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<T>)
+        override fun set(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, kotlinx.datetime.LocalTime?, KotlinxLocalTimeColumn<*>, X> =
             updateOpKotlinxLocalTimeColumnNullable.apply { this.column = kotlinxLocalTimeColumnNullable }
         
-        override infix fun set(booleanColumnNotNull: BooleanColumnNotNull<T>)
+        override fun set(booleanColumnNotNull: BooleanColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, Boolean, BooleanColumnNotNull<*>, X> =
             updateOpBooleanColumnNotNull.apply { this.column = booleanColumnNotNull }
 
-        override infix fun set(intColumnNotNull: IntColumnNotNull<T>)
+        override fun set(intColumnNotNull: IntColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpIntColumn<T, W, Int, IntColumn<*>, X> =
             updateOpIntColumnNotNull.apply { this.column = intColumnNotNull }
 
-        override infix fun set(intColumnNullable: IntColumnNullable<T>)
+        override fun set(intColumnNullable: IntColumnNullable<T>)
                 : SqlClientQuery.UpdateOpIntColumn<T, W, Int?, IntColumn<*>, X> =
             updateOpIntColumnNullable.apply { this.column = intColumnNullable }
 
-        override infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>)
+        override fun set(longColumnNotNull: LongColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpIntColumn<T, W, Long, LongColumn<*>, X> =
-            updateOpLongColumnNotNull.apply { this.column = bigIntColumnNotNull }
+            updateOpLongColumnNotNull.apply { this.column = longColumnNotNull }
 
-        override infix fun set(bigIntColumnNullable: LongColumnNullable<T>)
+        override fun set(longColumnNullable: LongColumnNullable<T>)
                 : SqlClientQuery.UpdateOpIntColumn<T, W, Long?, LongColumn<*>, X> =
-            updateOpLongColumnNullable.apply { this.column = bigIntColumnNullable }
+            updateOpLongColumnNullable.apply { this.column = longColumnNullable }
 
-        override infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>)
+        override fun set(floatColumnNotNull: FloatColumnNotNull<T>)
+                : SqlClientQuery.UpdateOpIntColumn<T, W, Float, FloatColumn<*>, X> =
+            updateOpFloatColumnNotNull.apply { this.column = floatColumnNotNull }
+
+        override fun set(floatColumnNullable: FloatColumnNullable<T>)
+                : SqlClientQuery.UpdateOpIntColumn<T, W, Float?, FloatColumn<*>, X> =
+            updateOpFloatColumnNullable.apply { this.column = floatColumnNullable }
+
+        override fun set(doubleColumnNotNull: DoubleColumnNotNull<T>)
+                : SqlClientQuery.UpdateOpIntColumn<T, W, Double, DoubleColumn<*>, X> =
+            updateOpDoubleColumnNotNull.apply { this.column = doubleColumnNotNull }
+
+        override fun set(doubleColumnNullable: DoubleColumnNullable<T>)
+                : SqlClientQuery.UpdateOpIntColumn<T, W, Double?, DoubleColumn<*>, X> =
+            updateOpDoubleColumnNullable.apply { this.column = doubleColumnNullable }
+
+        override fun set(bigDecimalColumnNotNull: BigDecimalColumnNotNull<T>)
+                : SqlClientQuery.UpdateOpIntColumn<T, W, BigDecimal, BigDecimalColumn<*>, X> =
+            updateOpBigDecimalColumnNotNull.apply { this.column = bigDecimalColumnNotNull }
+
+        override fun set(bigDecimalColumnNullable: BigDecimalColumnNullable<T>)
+        : SqlClientQuery.UpdateOpIntColumn<T, W, BigDecimal?, BigDecimalColumn<*>, X> =
+            updateOpBigDecimalColumnNullable.apply { this.column = bigDecimalColumnNullable }
+
+        override fun set(uuidColumnNotNull: UuidColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, UUID, UuidColumn<*>, X> =
             updateOpUuidColumnNotNull.apply { this.column = uuidColumnNotNull }
 
-        override infix fun set(uuidColumnNullable: UuidColumnNullable<T>)
+        override fun set(uuidColumnNullable: UuidColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, UUID?, UuidColumn<*>, X> =
             updateOpUuidColumnNullable.apply { this.column = uuidColumnNullable }
 
-        override infix fun set(byteArrayColumnNotNull: ByteArrayColumnNotNull<T>)
+        override fun set(byteArrayColumnNotNull: ByteArrayColumnNotNull<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, ByteArray, ByteArrayColumn<*>, X> =
             updateOpByteArrayColumnNotNull.apply { this.column = byteArrayColumnNotNull }
 
-        override infix fun set(byteArrayColumnNullable: ByteArrayColumnNullable<T>)
+        override fun set(byteArrayColumnNullable: ByteArrayColumnNullable<T>)
                 : SqlClientQuery.UpdateOpColumn<T, W, ByteArray?, ByteArrayColumn<*>, X> =
             updateOpByteArrayColumnNullable.apply { this.column = byteArrayColumnNullable }
 

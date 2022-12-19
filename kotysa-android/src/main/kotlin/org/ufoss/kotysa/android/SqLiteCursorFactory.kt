@@ -31,8 +31,8 @@ internal class SqLiteCursorFactory(private val params: List<Any?>) : CursorFacto
                 is Short -> query.bindLong(index + 1, param.toLong())
                 is Int -> query.bindLong(index + 1, param.toLong())
                 is Long -> query.bindLong(index + 1, param)
-                is Float -> query.bindDouble(index, param.toDouble())
-                is Double -> query.bindDouble(index, param)
+                is Float -> query.bindDouble(index + 1, param.toDouble())
+                is Double -> query.bindDouble(index + 1, param)
                 is String -> query.bindString(index + 1, param)
                 is ByteArray -> query.bindBlob(index + 1, param)
                 // Dates are stored as String

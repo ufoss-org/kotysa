@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Tag
 import org.springframework.r2dbc.core.DatabaseClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
@@ -14,6 +15,7 @@ import org.ufoss.kotysa.test.mysqlTables
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalTimeRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalTimeTest
 
+@Tag("miku")
 class R2DbcSelectKotlinxLocalTimeMysqlTest : AbstractR2dbcMysqlTest<KotlinxLocalTimeMysqlRepository>(),
     ReactorSelectKotlinxLocalTimeTest<MysqlKotlinxLocalTimes, KotlinxLocalTimeMysqlRepository, ReactorTransaction> {
 
