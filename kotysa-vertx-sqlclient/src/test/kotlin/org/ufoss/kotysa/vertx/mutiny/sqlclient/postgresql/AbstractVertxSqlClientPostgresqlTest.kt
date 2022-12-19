@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 
 import io.vertx.mutiny.pgclient.PgPool
+import io.vertx.mutiny.sqlclient.Pool
 import io.vertx.sqlclient.SqlConnectOptions
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -21,6 +22,7 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 @ResourceLock(PostgreSqlContainerResource.ID)
 abstract class AbstractVertxSqlClientPostgresqlTest<T : Repository> : MutinyRepositoryTest<T> {
     private lateinit var sqlClient: PostgresqlVertxSqlClient
+    private lateinit var pool: Pool
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
@@ -28,9 +30,9 @@ abstract class AbstractVertxSqlClientPostgresqlTest<T : Repository> : MutinyRepo
             .fromUri("postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db")
             .setUser("postgres")
             .setPassword("test")
-        val client = PgPool.pool(clientOptions)
+        pool = PgPool.pool(clientOptions)
 
-        sqlClient = client.sqlClient(postgresqlTables)
+        sqlClient = pool.sqlClient(postgresqlTables)
         repository.init()
     }
 
@@ -47,5 +49,6 @@ abstract class AbstractVertxSqlClientPostgresqlTest<T : Repository> : MutinyRepo
     @AfterAll
     fun afterAll() {
         repository.delete()
+        pool.closeAndAwait()
     }
 }

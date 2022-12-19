@@ -6,6 +6,7 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.mariadb
 
 import io.vertx.mutiny.mysqlclient.MySQLPool
 import io.vertx.sqlclient.SqlConnectOptions
+import io.vertx.mutiny.sqlclient.Pool
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.extension.ExtendWith
@@ -21,6 +22,7 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 @ResourceLock(MariadbContainerResource.ID)
 abstract class AbstractVertxSqlClientMariadbTest<T : Repository> : MutinyRepositoryTest<T> {
     private lateinit var sqlClient: VertxSqlClient
+    private lateinit var pool: Pool
 
     @BeforeAll
     fun beforeAll(containerResource: TestContainersCloseableResource) {
@@ -28,9 +30,9 @@ abstract class AbstractVertxSqlClientMariadbTest<T : Repository> : MutinyReposit
             .fromUri("mariadb://${containerResource.host}:${containerResource.firstMappedPort}/db")
             .setUser("mariadb")
             .setPassword("test")
-        val client = MySQLPool.pool(clientOptions)
+        pool = MySQLPool.pool(clientOptions)
 
-        sqlClient = client.sqlClient(mariadbTables)
+        sqlClient = pool.sqlClient(mariadbTables)
         repository.init()
     }
 
@@ -47,5 +49,6 @@ abstract class AbstractVertxSqlClientMariadbTest<T : Repository> : MutinyReposit
     @AfterAll
     fun afterAll() {
         repository.delete()
+        pool.closeAndAwait()
     }
 }

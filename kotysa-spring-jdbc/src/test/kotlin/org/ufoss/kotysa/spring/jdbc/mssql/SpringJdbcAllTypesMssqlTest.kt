@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -48,7 +49,11 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
                     LocalDateTime(2018, 11, 4, 0, 0),
                     LocalDateTime(2019, 11, 4, 0, 0),
                     42,
-                    84L
+                    84L,
+                    42.42f,
+                    84.84,
+                    BigDecimal("4.2"),
+                    BigDecimal("4.3"),
                 )
             )
     }
@@ -68,12 +73,15 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
+        val newBigDecimal = BigDecimal("3.3")
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal
             )
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
@@ -81,7 +89,7 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
                     MssqlAllTypesNotNull(
                         allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
                         newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
-                        newLong, newByteArray
+                        newLong, newByteArray, newFloat, newDouble, newBigDecimal, newBigDecimal
                     )
                 )
         }
@@ -114,7 +122,11 @@ class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesReposito
                         LocalDateTime(2018, 11, 4, 0, 0),
                         LocalDateTime(2019, 11, 4, 0, 0),
                         42,
-                        84L
+                        84L,
+                        42.42f,
+                        84.84,
+                        BigDecimal("4.2"),
+                        BigDecimal("4.3"),
                     )
                 )
         }
@@ -154,9 +166,18 @@ class AllTypesRepositoryMssql(client: JdbcOperations) : Repository {
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom MssqlAllTypesNullableDefaultValues
 
     fun updateAllTypesNotNull(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
+        newBigDecimal: BigDecimal,
     ) =
         (sqlClient update MssqlAllTypesNotNulls
                 set MssqlAllTypesNotNulls.string eq newString
@@ -170,6 +191,10 @@ class AllTypesRepositoryMssql(client: JdbcOperations) : Repository {
                 set MssqlAllTypesNotNulls.inte eq newInt
                 set MssqlAllTypesNotNulls.longe eq newLong
                 set MssqlAllTypesNotNulls.byteArray eq newByteArray
+                set MssqlAllTypesNotNulls.float eq newFloat
+                set MssqlAllTypesNotNulls.doublee eq newDouble
+                set MssqlAllTypesNotNulls.bigDecimal1 eq newBigDecimal
+                set MssqlAllTypesNotNulls.bigDecimal2 eq newBigDecimal
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 
@@ -186,6 +211,10 @@ class AllTypesRepositoryMssql(client: JdbcOperations) : Repository {
                 set MssqlAllTypesNotNulls.inte eq MssqlAllTypesNotNulls.inte
                 set MssqlAllTypesNotNulls.longe eq MssqlAllTypesNotNulls.longe
                 set MssqlAllTypesNotNulls.byteArray eq MssqlAllTypesNotNulls.byteArray
+                set MssqlAllTypesNotNulls.float eq MssqlAllTypesNotNulls.float
+                set MssqlAllTypesNotNulls.doublee eq MssqlAllTypesNotNulls.doublee
+                set MssqlAllTypesNotNulls.bigDecimal1 eq MssqlAllTypesNotNulls.bigDecimal1
+                set MssqlAllTypesNotNulls.bigDecimal2 eq MssqlAllTypesNotNulls.bigDecimal2
                 where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 

@@ -134,9 +134,16 @@ public object DbTypeChoice {
                 column.name = buildColumnName(column, table)
                 @Suppress("UNCHECKED_CAST")
                 val kotysaColumn = KotysaColumnDb(
-                    column, column.entityGetter,
-                    column.entityGetter.toCallable().returnType.classifier as KClass<Any>, column.name, column.sqlType,
-                    column.isAutoIncrement, column.isNullable, column.defaultValue, column.size
+                    column,
+                    column.entityGetter,
+                    column.entityGetter.toCallable().returnType.classifier as KClass<Any>,
+                    column.name,
+                    column.sqlType,
+                    column.isAutoIncrement,
+                    column.isNullable,
+                    column.defaultValue,
+                    column.size,
+                    column.scale,
                 )
                 kotysaColumnsMap[column] = kotysaColumn
             }

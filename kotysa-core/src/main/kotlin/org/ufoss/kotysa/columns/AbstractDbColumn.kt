@@ -18,7 +18,10 @@ public sealed class AbstractColumn<T : Any, U : Any> : Column<T, U>, Cloneable {
     internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
     public abstract val isAutoIncrement: Boolean
+    // Can sore either size or precision
     internal abstract val size: Int?
+    // maximum number of decimal digits that can be stored to the right of the decimal point.
+    internal abstract val scale: Int?
     internal abstract val isNullable: Boolean
     internal abstract val defaultValue: U?
     internal lateinit var name: String

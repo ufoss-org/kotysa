@@ -11,6 +11,7 @@ import org.junit.jupiter.api.fail
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.columns.AbstractDbColumn
 import org.ufoss.kotysa.test.*
+import java.math.BigDecimal
 import java.time.*
 import java.util.*
 
@@ -36,6 +37,10 @@ class H2TablesDslTest {
                 tuple("inte", SqlType.INT, false, false),
                 tuple("longe", SqlType.BIGINT, false, false),
                 tuple("byteArray", SqlType.BINARY, false, false),
+                tuple("float", SqlType.REAL, false, false),
+                tuple("double", SqlType.DOUBLE_PRECISION, false, false),
+                tuple("bigDecimal1", SqlType.NUMERIC, false, false),
+                tuple("bigDecimal2", SqlType.DECIMAL, false, false),
                 tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, false),
                 tuple("uuid", SqlType.UUID, false, false),
             )
@@ -60,6 +65,10 @@ class H2TablesDslTest {
                 tuple("inte", SqlType.INT, true, false),
                 tuple("longe", SqlType.BIGINT, true, false),
                 tuple("byteArray", SqlType.BINARY, true, false),
+                tuple("float", SqlType.REAL, true, false),
+                tuple("double", SqlType.DOUBLE_PRECISION, true, false),
+                tuple("bigDecimal1", SqlType.NUMERIC, true, false),
+                tuple("bigDecimal2", SqlType.DECIMAL, true, false),
                 tuple("offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, true, false),
                 tuple("uuid", SqlType.UUID, true, false),
             )
@@ -93,6 +102,10 @@ class H2TablesDslTest {
                 ),
                 tuple("inte", SqlType.INT, false, 42),
                 tuple("longe", SqlType.BIGINT, false, 84L),
+                tuple("float", SqlType.REAL, false, 42.42f),
+                tuple("double", SqlType.DOUBLE_PRECISION, false, 84.84),
+                tuple("bigDecimal1", SqlType.NUMERIC, false, BigDecimal("4.2")),
+                tuple("bigDecimal2", SqlType.DECIMAL, false, BigDecimal("4.3")),
                 tuple(
                     "offsetDateTime", SqlType.TIMESTAMP_WITH_TIME_ZONE, false, OffsetDateTime.of(
                         2019, 11, 4, 0, 0, 0, 0,

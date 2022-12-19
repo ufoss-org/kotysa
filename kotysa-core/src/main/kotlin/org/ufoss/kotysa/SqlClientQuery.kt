@@ -6,6 +6,7 @@ package org.ufoss.kotysa
 
 import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.postgresql.Tsquery
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -22,7 +23,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Select
         public infix fun <T : Any> selectAvg(column: NumericColumn<*, T>): Select
         public infix fun selectSum(column: IntColumn<*>): Select
-        
+
         // Postgresql specific
         public fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
     }
@@ -61,7 +62,7 @@ public abstract class SqlClientQuery protected constructor() {
     public interface Fromable {
         public infix fun <T : Any> from(table: Table<T>): FromTable<T, *>
         public infix fun <T : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): From<*>
-        
+
         // Postgresql specific
         public infix fun from(tsquery: Tsquery): From<*>
     }
@@ -125,60 +126,83 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun set(
             stringColumnNullable: StringColumnNullable<T>
         ): UpdateOpColumn<T, U, String?, StringColumn<*>, V>
+
         public infix fun set(
             localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<T>
         ): UpdateOpColumn<T, U, LocalDateTime, LocalDateTimeColumn<*>, V>
+
         public infix fun set(
             localDateTimeColumnNullable: LocalDateTimeColumnNullable<T>
         ): UpdateOpColumn<T, U, LocalDateTime?, LocalDateTimeColumn<*>, V>
+
         public infix fun set(
             kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<T>
         ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime, KotlinxLocalDateTimeColumn<*>, V>
+
         public infix fun set(
             kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<T>
         ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDateTime?, KotlinxLocalDateTimeColumn<*>, V>
+
         public infix fun set(
             localDateColumnNotNull: LocalDateColumnNotNull<T>
         ): UpdateOpColumn<T, U, LocalDate, LocalDateColumn<*>, V>
+
         public infix fun set(
             localDateColumnNullable: LocalDateColumnNullable<T>
         ): UpdateOpColumn<T, U, LocalDate?, LocalDateColumn<*>, V>
+
         public infix fun set(
             kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<T>
         ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate, KotlinxLocalDateColumn<*>, V>
+
         public infix fun set(
             kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<T>
         ): UpdateOpColumn<T, U, kotlinx.datetime.LocalDate?, KotlinxLocalDateColumn<*>, V>
+
         public infix fun set(
             offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<T>
         ): UpdateOpColumn<T, U, OffsetDateTime, OffsetDateTimeColumn<*>, V>
+
         public infix fun set(
             offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<T>
         ): UpdateOpColumn<T, U, OffsetDateTime?, OffsetDateTimeColumn<*>, V>
+
         public infix fun set(
             localTimeColumnNotNull: LocalTimeColumnNotNull<T>
         ): UpdateOpColumn<T, U, LocalTime, LocalTimeColumn<*>, V>
+
         public infix fun set(
             localTimeColumnNullable: LocalTimeColumnNullable<T>
         ): UpdateOpColumn<T, U, LocalTime?, LocalTimeColumn<*>, V>
+
         public infix fun set(
             kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<T>
         ): UpdateOpColumn<T, U, kotlinx.datetime.LocalTime, KotlinxLocalTimeColumn<*>, V>
+
         public infix fun set(
             kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<T>
         ): UpdateOpColumn<T, U, kotlinx.datetime.LocalTime?, KotlinxLocalTimeColumn<*>, V>
+
         public infix fun set(
             booleanColumnNotNull: BooleanColumnNotNull<T>
         ): UpdateOpColumn<T, U, Boolean, BooleanColumnNotNull<*>, V>
+
         public infix fun set(intColumnNotNull: IntColumnNotNull<T>): UpdateOpIntColumn<T, U, Int, IntColumn<*>, V>
         public infix fun set(intColumnNullable: IntColumnNullable<T>): UpdateOpIntColumn<T, U, Int?, IntColumn<*>, V>
-        public infix fun set(bigIntColumnNotNull: LongColumnNotNull<T>): UpdateOpIntColumn<T, U, Long, LongColumn<*>, V>
-        public infix fun set(bigIntColumnNullable: LongColumnNullable<T>): UpdateOpIntColumn<T, U, Long?, LongColumn<*>, V>
+        public infix fun set(longColumnNotNull: LongColumnNotNull<T>): UpdateOpIntColumn<T, U, Long, LongColumn<*>, V>
+        public infix fun set(longColumnNullable: LongColumnNullable<T>): UpdateOpIntColumn<T, U, Long?, LongColumn<*>, V>
+        public infix fun set(floatColumnNotNull: FloatColumnNotNull<T>): UpdateOpIntColumn<T, U, Float, FloatColumn<*>, V>
+        public infix fun set(floatColumnNullable: FloatColumnNullable<T>): UpdateOpIntColumn<T, U, Float?, FloatColumn<*>, V>
+        public infix fun set(doubleColumnNotNull: DoubleColumnNotNull<T>): UpdateOpIntColumn<T, U, Double, DoubleColumn<*>, V>
+        public infix fun set(doubleColumnNullable: DoubleColumnNullable<T>): UpdateOpIntColumn<T, U, Double?, DoubleColumn<*>, V>
+        public infix fun set(bigDecimalColumnNotNull: BigDecimalColumnNotNull<T>): UpdateOpIntColumn<T, U, BigDecimal, BigDecimalColumn<*>, V>
+        public infix fun set(bigDecimalColumnNullable: BigDecimalColumnNullable<T>): UpdateOpIntColumn<T, U, BigDecimal?, BigDecimalColumn<*>, V>
         public infix fun set(uuidColumnNotNull: UuidColumnNotNull<T>): UpdateOpColumn<T, U, UUID, UuidColumn<*>, V>
         public infix fun set(uuidColumnNullable: UuidColumnNullable<T>): UpdateOpColumn<T, U, UUID?, UuidColumn<*>, V>
         public infix fun set(
             byteArrayColumnNotNull: ByteArrayColumnNotNull<T>
         ): UpdateOpColumn<T, U, ByteArray, ByteArrayColumn<*>, V>
+
         public infix fun set(
             byteArrayColumnNullable: ByteArrayColumnNullable<T>
         ): UpdateOpColumn<T, U, ByteArray?, ByteArrayColumn<*>, V>
@@ -205,32 +229,46 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> where(stringColumnNullable: StringColumnNullable<U>): WhereOpStringNullable<U, T>
         public infix fun <U : Any> where(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, LocalDateTime>
+
         public infix fun <U : Any> where(localDateTimeColumnNullable: LocalDateTimeColumnNullable<U>):
                 WhereOpDateNullable<U, T, LocalDateTime>
+
         public infix fun <U : Any> where(kotlinxLocalDateTimeColumnNotNull: KotlinxLocalDateTimeColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, kotlinx.datetime.LocalDateTime>
+
         public infix fun <U : Any> where(kotlinxLocalDateTimeColumnNullable: KotlinxLocalDateTimeColumnNullable<U>):
                 WhereOpDateNullable<U, T, kotlinx.datetime.LocalDateTime>
+
         public infix fun <U : Any> where(localDateColumnNotNull: LocalDateColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, LocalDate>
+
         public infix fun <U : Any> where(localDateColumnNullable: LocalDateColumnNullable<U>):
                 WhereOpDateNullable<U, T, LocalDate>
+
         public infix fun <U : Any> where(kotlinxLocalDateColumnNotNull: KotlinxLocalDateColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, kotlinx.datetime.LocalDate>
+
         public infix fun <U : Any> where(kotlinxLocalDateColumnNullable: KotlinxLocalDateColumnNullable<U>):
                 WhereOpDateNullable<U, T, kotlinx.datetime.LocalDate>
+
         public infix fun <U : Any> where(offsetDateTimeColumnNotNull: OffsetDateTimeColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, OffsetDateTime>
+
         public infix fun <U : Any> where(offsetDateTimeColumnNullable: OffsetDateTimeColumnNullable<U>):
                 WhereOpDateNullable<U, T, OffsetDateTime>
+
         public infix fun <U : Any> where(localTimeColumnNotNull: LocalTimeColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, LocalTime>
+
         public infix fun <U : Any> where(localTimeColumnNullable: LocalTimeColumnNullable<U>):
                 WhereOpDateNullable<U, T, LocalTime>
+
         public infix fun <U : Any> where(kotlinxLocalTimeColumnNotNull: KotlinxLocalTimeColumnNotNull<U>):
                 WhereOpDateNotNull<U, T, kotlinx.datetime.LocalTime>
+
         public infix fun <U : Any> where(kotlinxLocalTimeColumnNullable: KotlinxLocalTimeColumnNullable<U>):
                 WhereOpDateNullable<U, T, kotlinx.datetime.LocalTime>
+
         public infix fun <U : Any> where(booleanColumnNotNull: BooleanColumnNotNull<U>): WhereOpBooleanNotNull<U, T>
         public infix fun <U : Any> where(intColumnNotNull: IntColumnNotNull<U>): WhereOpIntNotNull<U, T>
         public infix fun <U : Any> where(intColumnNullable: IntColumnNullable<U>): WhereOpIntNullable<U, T>
@@ -240,34 +278,48 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> where(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
         public infix fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
-        
+        public infix fun <U : Any> where(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T>
+        public infix fun <U : Any> where(floatColumnNullable: FloatColumnNullable<U>): WhereOpFloatNullable<U, T>
+        public infix fun <U : Any> where(doubleColumnNotNull: DoubleColumnNotNull<U>): WhereOpDoubleNotNull<U, T>
+        public infix fun <U : Any> where(doubleColumnNullable: DoubleColumnNullable<U>): WhereOpDoubleNullable<U, T>
+        public infix fun <U : Any> where(bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>): WhereOpBigDecimalNotNull<U, T>
+        public infix fun <U : Any> where(bigDecimalColumnNullable: BigDecimalColumnNullable<U>): WhereOpBigDecimalNullable<U, T>
+
         // Postgresql specific
         public infix fun <U : Any> where(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T>
         public infix fun where(tsquery: Tsquery): WhereOpTsquery<T>
-        
+
         public infix fun <U : Any> whereExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
-        
+
         // Where with alias
         public infix fun where(stringAliasNotNull: QueryAlias<String>): WhereOpStringNotNull<String, T>
         public infix fun where(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T>
         public infix fun where(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
                 WhereOpLocalDateTimeNotNull<LocalDateTime, T>
+
         public infix fun where(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
                 WhereOpLocalDateTimeNullable<LocalDateTime, T>
+
         public infix fun where(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
                 WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
+
         public infix fun where(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
                 WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
+
         public infix fun where(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T>
         public infix fun where(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T>
         public infix fun where(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
                 WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
+
         public infix fun where(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
                 WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
+
         public infix fun where(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
                 WhereOpOffsetDateTimeNotNull<OffsetDateTime, T>
+
         public infix fun where(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
                 WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
+
         public infix fun where(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
         public infix fun where(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
         public infix fun where(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
@@ -279,6 +331,12 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun where(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
         public infix fun where(byteArrayAliasNotNull: QueryAlias<ByteArray>): WhereOpByteArrayNotNull<ByteArray, T>
         public infix fun where(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T>
+        public infix fun where(floatAliasNotNull: QueryAlias<Float>): WhereOpFloatNotNull<Float, T>
+        public infix fun where(floatAliasNullable: QueryAlias<Float?>): WhereOpFloatNullable<Float, T>
+        public infix fun where(doubleAliasNotNull: QueryAlias<Double>): WhereOpDoubleNotNull<Double, T>
+        public infix fun where(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T>
+        public infix fun where(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T>
+        public infix fun where(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T>
     }
 
     public interface WhereInOp<T : Any, U : Where<U>, V : Any> {
@@ -286,7 +344,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun `in`(values: Sequence<V>): U = this.`in`(values.toSet())
         public infix fun `in`(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>): U
     }
-    
+
     public interface WhereOp<T : Where<T>, U : Any> {
         public infix fun eq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
         public infix fun notEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
@@ -311,7 +369,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun contains(otherStringColumn: StringColumn<*>): U
         public infix fun startsWith(otherStringColumn: StringColumn<*>): U
         public infix fun endsWith(otherStringColumn: StringColumn<*>): U
-        
+
         public infix fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
         public infix fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
         public infix fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
@@ -328,7 +386,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun after(value: V): U
         public infix fun beforeOrEq(value: V): U
         public infix fun afterOrEq(value: V): U
-        
+
         public infix fun eq(otherDateColumn: Column<*, V>): U
         public infix fun notEq(otherDateColumn: Column<*, V>): U
         public infix fun before(otherDateColumn: Column<*, V>): U
@@ -361,7 +419,7 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface WhereOpKotlinxLocalTimeNotNull<T : Any, U : Where<U>>
         : WhereOpDateNotNull<T, U, kotlinx.datetime.LocalTime>
-    
+
     public interface WhereOpDateNullable<T : Any, U : Where<U>, V : Any> :
         WhereOpDate<T, U, V>, WhereOpNullable<T, U, V>
 
@@ -398,7 +456,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun sup(otherIntColumn: IntColumn<*>): U
         public infix fun infOrEq(otherIntColumn: IntColumn<*>): U
         public infix fun supOrEq(otherIntColumn: IntColumn<*>): U
-        
+
         public infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
         public infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
         public infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Int>): U
@@ -435,6 +493,78 @@ public abstract class SqlClientQuery protected constructor() {
     public interface WhereOpLongNullable<T : Any, U : Where<U>> :
         WhereOpLong<T, U>, WhereOpNullable<T, U, Long>
 
+    public interface WhereOpFloat<T : Any, U : Where<U>> : WhereOp<U, Float>, WhereInOp<T, U, Float> {
+        public infix fun inf(value: Float): U
+        public infix fun sup(value: Float): U
+        public infix fun infOrEq(value: Float): U
+        public infix fun supOrEq(value: Float): U
+        public infix fun eq(otherFloatColumn: FloatColumn<*>): U
+        public infix fun notEq(otherFloatColumn: FloatColumn<*>): U
+        public infix fun inf(otherFloatColumn: FloatColumn<*>): U
+        public infix fun sup(otherFloatColumn: FloatColumn<*>): U
+        public infix fun infOrEq(otherFloatColumn: FloatColumn<*>): U
+        public infix fun supOrEq(otherFloatColumn: FloatColumn<*>): U
+
+        public infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U
+        public infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U
+        public infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U
+        public infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U
+    }
+
+    public interface WhereOpFloatNotNull<T : Any, U : Where<U>> :
+        WhereOpFloat<T, U>, WhereOpNotNull<T, U, Float>
+
+    public interface WhereOpFloatNullable<T : Any, U : Where<U>> :
+        WhereOpFloat<T, U>, WhereOpNullable<T, U, Float>
+
+    public interface WhereOpDouble<T : Any, U : Where<U>> : WhereOp<U, Double>, WhereInOp<T, U, Double> {
+        public infix fun inf(value: Double): U
+        public infix fun sup(value: Double): U
+        public infix fun infOrEq(value: Double): U
+        public infix fun supOrEq(value: Double): U
+        public infix fun eq(otherDoubleColumn: DoubleColumn<*>): U
+        public infix fun notEq(otherDoubleColumn: DoubleColumn<*>): U
+        public infix fun inf(otherDoubleColumn: DoubleColumn<*>): U
+        public infix fun sup(otherDoubleColumn: DoubleColumn<*>): U
+        public infix fun infOrEq(otherDoubleColumn: DoubleColumn<*>): U
+        public infix fun supOrEq(otherDoubleColumn: DoubleColumn<*>): U
+
+        public infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U
+        public infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U
+        public infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U
+        public infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U
+    }
+
+    public interface WhereOpDoubleNotNull<T : Any, U : Where<U>> :
+        WhereOpDouble<T, U>, WhereOpNotNull<T, U, Double>
+
+    public interface WhereOpDoubleNullable<T : Any, U : Where<U>> :
+        WhereOpDouble<T, U>, WhereOpNullable<T, U, Double>
+
+    public interface WhereOpBigDecimal<T : Any, U : Where<U>> : WhereOp<U, BigDecimal>, WhereInOp<T, U, BigDecimal> {
+        public infix fun inf(value: BigDecimal): U
+        public infix fun sup(value: BigDecimal): U
+        public infix fun infOrEq(value: BigDecimal): U
+        public infix fun supOrEq(value: BigDecimal): U
+        public infix fun eq(otherBigDecimalColumn: BigDecimalColumn<*>): U
+        public infix fun notEq(otherBigDecimalColumn: BigDecimalColumn<*>): U
+        public infix fun inf(otherBigDecimalColumn: BigDecimalColumn<*>): U
+        public infix fun sup(otherBigDecimalColumn: BigDecimalColumn<*>): U
+        public infix fun infOrEq(otherBigDecimalColumn: BigDecimalColumn<*>): U
+        public infix fun supOrEq(otherBigDecimalColumn: BigDecimalColumn<*>): U
+
+        public infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U
+        public infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U
+        public infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U
+        public infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U
+    }
+
+    public interface WhereOpBigDecimalNotNull<T : Any, U : Where<U>> :
+        WhereOpBigDecimal<T, U>, WhereOpNotNull<T, U, BigDecimal>
+
+    public interface WhereOpBigDecimalNullable<T : Any, U : Where<U>> :
+        WhereOpBigDecimal<T, U>, WhereOpNullable<T, U, BigDecimal>
+
     public interface WhereOpUuid<T : Any, U : Where<U>> : WhereOp<U, UUID>, WhereInOp<T, U, UUID> {
         public infix fun eq(otherUuidColumn: UuidColumn<*>): U
         public infix fun notEq(otherUuidColumn: UuidColumn<*>): U
@@ -470,6 +600,7 @@ public abstract class SqlClientQuery protected constructor() {
          * ```
          */
         public infix fun toTsquery(value: String): T
+
         /**
          * Converts text to a tsquery, normalizing words according to the specified or default configuration.
          * Any punctuation in the string is ignored (it does not determine query operators).
@@ -479,6 +610,7 @@ public abstract class SqlClientQuery protected constructor() {
          * ```
          */
         public infix fun plaintoTsquery(value: String): T
+
         /**
          * Converts text to a tsquery, normalizing words according to the specified or default configuration.
          * Any punctuation in the string is ignored (it does not determine query operators).
@@ -489,6 +621,7 @@ public abstract class SqlClientQuery protected constructor() {
          * ```
          */
         public infix fun phrasetoTsquery(value: String): T
+
         /**
          * Converts text to a tsquery, normalizing words according to the specified or default configuration.
          * Quoted word sequences are converted to phrase tests.
@@ -533,7 +666,15 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> and(uuidColumnNotNull: UuidColumnNotNull<U>): WhereOpUuidNotNull<U, T>
         public infix fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> and(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
-        public infix fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
+        public infix fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>)
+                : WhereOpByteArrayNullable<U, T>
+
+        public infix fun <U : Any> and(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T>
+        public infix fun <U : Any> and(floatColumnNullable: FloatColumnNullable<U>): WhereOpFloatNullable<U, T>
+        public infix fun <U : Any> and(doubleColumnNotNull: DoubleColumnNotNull<U>): WhereOpDoubleNotNull<U, T>
+        public infix fun <U : Any> and(doubleColumnNullable: DoubleColumnNullable<U>): WhereOpDoubleNullable<U, T>
+        public infix fun <U : Any> and(bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>): WhereOpBigDecimalNotNull<U, T>
+        public infix fun <U : Any> and(bigDecimalColumnNullable: BigDecimalColumnNullable<U>): WhereOpBigDecimalNullable<U, T>
         public infix fun <U : Any> and(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T>
         public infix fun and(tsquery: Tsquery): WhereOpTsquery<T>
         public infix fun <U : Any> andExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
@@ -543,28 +684,38 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T>
         public infix fun and(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
                 WhereOpLocalDateTimeNotNull<LocalDateTime, T>
+
         public infix fun and(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
                 WhereOpLocalDateTimeNullable<LocalDateTime, T>
+
         public infix fun and(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
                 WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
+
         public infix fun and(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
                 WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
+
         public infix fun and(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T>
         public infix fun and(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T>
         public infix fun and(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
                 WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
+
         public infix fun and(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
                 WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
+
         public infix fun and(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
                 WhereOpOffsetDateTimeNotNull<OffsetDateTime, T>
+
         public infix fun and(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
                 WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
+
         public infix fun and(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
         public infix fun and(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
         public infix fun and(kotlinxLocalTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalTime>):
                 WhereOpKotlinxLocalTimeNotNull<kotlinx.datetime.LocalTime, T>
+
         public infix fun and(kotlinxLocalTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalTime?>):
                 WhereOpKotlinxLocalTimeNullable<kotlinx.datetime.LocalTime, T>
+
         public infix fun and(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
         public infix fun and(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
         public infix fun and(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
@@ -574,6 +725,12 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
         public infix fun and(byteArrayAliasNotNull: QueryAlias<ByteArray>): WhereOpByteArrayNotNull<ByteArray, T>
         public infix fun and(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T>
+        public infix fun and(floatAliasNotNull: QueryAlias<Float>): WhereOpFloatNotNull<Float, T>
+        public infix fun and(floatAliasNullable: QueryAlias<Float?>): WhereOpFloatNullable<Float, T>
+        public infix fun and(doubleAliasNotNull: QueryAlias<Double>): WhereOpDoubleNotNull<Double, T>
+        public infix fun and(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T>
+        public infix fun and(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T>
+        public infix fun and(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T>
 
         public infix fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringNotNull<U, T>
         public infix fun <U : Any> or(stringColumnNullable: StringColumnNullable<U>): WhereOpStringNullable<U, T>
@@ -600,6 +757,12 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> or(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidNullable<U, T>
         public infix fun <U : Any> or(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayNotNull<U, T>
         public infix fun <U : Any> or(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayNullable<U, T>
+        public infix fun <U : Any> or(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T>
+        public infix fun <U : Any> or(floatColumnNullable: FloatColumnNullable<U>): WhereOpFloatNullable<U, T>
+        public infix fun <U : Any> or(doubleColumnNotNull: DoubleColumnNotNull<U>): WhereOpDoubleNotNull<U, T>
+        public infix fun <U : Any> or(doubleColumnNullable: DoubleColumnNullable<U>): WhereOpDoubleNullable<U, T>
+        public infix fun <U : Any> or(bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>): WhereOpBigDecimalNotNull<U, T>
+        public infix fun <U : Any> or(bigDecimalColumnNullable: BigDecimalColumnNullable<U>): WhereOpBigDecimalNullable<U, T>
         public infix fun <U : Any> or(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T>
         public infix fun or(tsquery: Tsquery): WhereOpTsquery<T>
         public infix fun <U : Any> orExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>): T
@@ -609,28 +772,38 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun or(stringAliasNullable: QueryAlias<String?>): WhereOpStringNullable<String, T>
         public infix fun or(localDateTimeAliasNotNull: QueryAlias<LocalDateTime>):
                 WhereOpLocalDateTimeNotNull<LocalDateTime, T>
+
         public infix fun or(localDateTimeAliasNullable: QueryAlias<LocalDateTime?>):
                 WhereOpLocalDateTimeNullable<LocalDateTime, T>
+
         public infix fun or(kotlinxLocalDateTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalDateTime>):
                 WhereOpKotlinxLocalDateTimeNotNull<kotlinx.datetime.LocalDateTime, T>
+
         public infix fun or(kotlinxLocalDateTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalDateTime?>):
                 WhereOpKotlinxLocalDateTimeNullable<kotlinx.datetime.LocalDateTime, T>
+
         public infix fun or(localDateAliasNotNull: QueryAlias<LocalDate>): WhereOpLocalDateNotNull<LocalDate, T>
         public infix fun or(localDateAliasNullable: QueryAlias<LocalDate?>): WhereOpLocalDateNullable<LocalDate, T>
         public infix fun or(kotlinxLocalDateAliasNotNull: QueryAlias<kotlinx.datetime.LocalDate>):
                 WhereOpKotlinxLocalDateNotNull<kotlinx.datetime.LocalDate, T>
+
         public infix fun or(kotlinxLocalDateAliasNullable: QueryAlias<kotlinx.datetime.LocalDate?>):
                 WhereOpKotlinxLocalDateNullable<kotlinx.datetime.LocalDate, T>
+
         public infix fun or(offsetDateTimeAliasNotNull: QueryAlias<OffsetDateTime>):
                 WhereOpOffsetDateTimeNotNull<OffsetDateTime, T>
+
         public infix fun or(offsetDateTimeAliasNullable: QueryAlias<OffsetDateTime?>):
                 WhereOpOffsetDateTimeNullable<OffsetDateTime, T>
+
         public infix fun or(localTimeAliasNotNull: QueryAlias<LocalTime>): WhereOpLocalTimeNotNull<LocalTime, T>
         public infix fun or(localTimeAliasNullable: QueryAlias<LocalTime?>): WhereOpLocalTimeNullable<LocalTime, T>
         public infix fun or(kotlinxLocalTimeAliasNotNull: QueryAlias<kotlinx.datetime.LocalTime>):
                 WhereOpKotlinxLocalTimeNotNull<kotlinx.datetime.LocalTime, T>
+
         public infix fun or(kotlinxLocalTimeAliasNullable: QueryAlias<kotlinx.datetime.LocalTime?>):
                 WhereOpKotlinxLocalTimeNullable<kotlinx.datetime.LocalTime, T>
+
         public infix fun or(booleanAliasNotNull: QueryAlias<Boolean>): WhereOpBooleanNotNull<Boolean, T>
         public infix fun or(intAliasNotNull: QueryAlias<Int>): WhereOpIntNotNull<Int, T>
         public infix fun or(intAliasNullable: QueryAlias<Int?>): WhereOpIntNullable<Int, T>
@@ -640,6 +813,12 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun or(uuidAliasNullable: QueryAlias<UUID?>): WhereOpUuidNullable<UUID, T>
         public infix fun or(byteArrayAliasNotNull: QueryAlias<ByteArray>): WhereOpByteArrayNotNull<ByteArray, T>
         public infix fun or(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T>
+        public infix fun or(floatAliasNotNull: QueryAlias<Float>): WhereOpFloatNotNull<Float, T>
+        public infix fun or(floatAliasNullable: QueryAlias<Float?>): WhereOpFloatNullable<Float, T>
+        public infix fun or(doubleAliasNotNull: QueryAlias<Double>): WhereOpDoubleNotNull<Double, T>
+        public infix fun or(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T>
+        public infix fun or(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T>
+        public infix fun or(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T>
     }
 
     public interface LimitOffset<T : LimitOffset<T>> {
@@ -655,7 +834,7 @@ public abstract class SqlClientQuery protected constructor() {
     public interface GroupByPart2<T : GroupByPart2<T>> {
         public infix fun and(column: Column<*, *>): T
         public infix fun and(alias: QueryAlias<*>): T
-        
+
         // todo HAVING https://www.dofactory.com/sql/having
     }
 
@@ -670,7 +849,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun <U : Any> orderByAscCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
-        
+
         public infix fun <U : Any> orderByDescCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
@@ -700,7 +879,7 @@ public abstract class SqlClientQuery protected constructor() {
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         ): OrderByCaseWhenExists<U, T>
     }
-    
+
     // PostgreSQL specific
     public interface ToTsquery {
         /**
@@ -711,6 +890,7 @@ public abstract class SqlClientQuery protected constructor() {
          * ```
          */
         public infix fun toTsquery(value: String): ToTsqueryPart2 = ToTsqueryPart2(value, Operation.TO_TSQUERY)
+
         /**
          * Converts text to a tsquery, normalizing words according to the specified or default configuration.
          * Any punctuation in the string is ignored (it does not determine query operators).
@@ -721,6 +901,7 @@ public abstract class SqlClientQuery protected constructor() {
          */
         public infix fun plaintoTsquery(value: String): ToTsqueryPart2 =
             ToTsqueryPart2(value, Operation.PLAINTO_TSQUERY)
+
         /**
          * Converts text to a tsquery, normalizing words according to the specified or default configuration.
          * Any punctuation in the string is ignored (it does not determine query operators).
@@ -732,6 +913,7 @@ public abstract class SqlClientQuery protected constructor() {
          */
         public infix fun phrasetoTsquery(value: String): ToTsqueryPart2 =
             ToTsqueryPart2(value, Operation.PHRASETO_TSQUERY)
+
         /**
          * Converts text to a tsquery, normalizing words according to the specified or default configuration.
          * Quoted word sequences are converted to phrase tests.
@@ -744,7 +926,7 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun websearchToTsquery(value: String): ToTsqueryPart2 =
             ToTsqueryPart2(value, Operation.WEBSEARCH_TO_TSQUERY)
     }
-    
+
     public class ToTsqueryPart2 internal constructor(
         private val value: String,
         private val operation: Operation,

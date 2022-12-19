@@ -13,8 +13,9 @@ import java.time.OffsetDateTime
 public sealed class DbTextColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
-    // No size
+    // No size nor decimals
     final override val size = null
+    final override val scale = null
 
     final override val sqlType = SqlType.TEXT
 }

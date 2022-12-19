@@ -6,6 +6,7 @@ package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.AbstractTable
 import org.ufoss.kotysa.columns.*
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -59,6 +60,53 @@ public abstract class H2Table<T : Any> protected constructor(tableName: String? 
 
     protected fun autoIncrementBigInt(getter: (T) -> Long?, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
         LongDbBigIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
+
+    protected fun real(getter: (T) -> Float, columnName: String? = null): FloatDbRealColumnNotNull<T> =
+        FloatDbRealColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun real(
+        getter: (T) -> Float?,
+        columnName: String? = null,
+        defaultValue: Float? = null
+    ): FloatDbRealColumnNullable<T> = FloatDbRealColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
+    protected fun doublePrecision(getter: (T) -> Double, columnName: String? = null)
+            : DoubleDbDoublePrecisionColumnNotNull<T> =
+        DoubleDbDoublePrecisionColumnNotNull(getter, columnName, null, null).also { addColumn(it) }
+
+    protected fun doublePrecision(
+        getter: (T) -> Double?,
+        columnName: String? = null,
+        defaultValue: Double? = null
+    ): DoubleDbDoublePrecisionColumnNullable<T> =
+        DoubleDbDoublePrecisionColumnNullable(getter, columnName, defaultValue, null, null)
+            .also { addColumn(it) }
+
+    protected fun numeric(getter: (T) -> BigDecimal, precision: Int, scale: Int, columnName: String? = null)
+            : BigDecimalDbNumericColumnNotNull<T> =
+        BigDecimalDbNumericColumnNotNull(getter, columnName, precision, scale).also { addColumn(it) }
+
+    protected fun numeric(
+        getter: (T) -> BigDecimal?,
+        precision: Int,
+        scale: Int,
+        columnName: String? = null,
+        defaultValue: BigDecimal? = null,
+    ): BigDecimalDbNumericColumnNullable<T> =
+        BigDecimalDbNumericColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
+
+    protected fun decimal(getter: (T) -> BigDecimal, precision: Int, scale: Int, columnName: String? = null)
+            : BigDecimalDbDecimalColumnNotNull<T> =
+        BigDecimalDbDecimalColumnNotNull(getter, columnName, precision, scale).also { addColumn(it) }
+
+    protected fun decimal(
+        getter: (T) -> BigDecimal?,
+        precision: Int,
+        scale: Int,
+        columnName: String? = null,
+        defaultValue: BigDecimal? = null,
+    ): BigDecimalDbDecimalColumnNullable<T> =
+        BigDecimalDbDecimalColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
 
     protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
         BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }

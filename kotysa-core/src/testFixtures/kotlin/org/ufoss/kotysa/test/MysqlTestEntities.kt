@@ -10,6 +10,7 @@ import org.ufoss.kotysa.mysql.date
 import org.ufoss.kotysa.mysql.dateTime
 import org.ufoss.kotysa.mysql.time
 import org.ufoss.kotysa.tables
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -77,9 +78,13 @@ data class MysqlAllTypesNotNull(
     override val int: Int,
     override val long: Long,
     override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
 ) : AllTypesNotNullEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -88,6 +93,7 @@ data class MysqlAllTypesNotNull(
 
         other as MysqlAllTypesNotNull
 
+        if (id != other.id) return false
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
@@ -102,32 +108,36 @@ data class MysqlAllTypesNotNull(
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
-        if (id != other.id) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = string.hashCode()
-        result = 31 * result + localDate.hashCode()
-        result = 31 * result + kotlinxLocalDate.hashCode()
-        result = 31 * result + localDateTime1.hashCode()
-        result = 31 * result + localDateTime2.hashCode()
-        result = 31 * result + kotlinxLocalDateTime1.hashCode()
-        result = 31 * result + kotlinxLocalDateTime2.hashCode()
-        result = 31 * result + int
-        result = 31 * result + long.hashCode()
-        result = 31 * result + byteArray.contentHashCode()
-        result = 31 * result + id
-        return result
+        return super.hashCode()
     }
 }
 
 val mysqlAllTypesNotNull = MysqlAllTypesNotNull(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
-    1L, byteArrayOf(0x2A)
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    6666.75f,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
 )
 
 object MysqlAllTypesNotNulls : MysqlTable<MysqlAllTypesNotNull>("all_types") {
@@ -144,6 +154,10 @@ object MysqlAllTypesNotNulls : MysqlTable<MysqlAllTypesNotNull>("all_types") {
     val inte = integer(MysqlAllTypesNotNull::int)
     val longe = bigInt(MysqlAllTypesNotNull::long)
     val byteArray = binary(MysqlAllTypesNotNull::byteArray)
+    val floate = float(MysqlAllTypesNotNull::float)
+    val doublee = doublePrecision(MysqlAllTypesNotNull::double)
+    val bigDecimal1 = numeric(MysqlAllTypesNotNull::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(MysqlAllTypesNotNull::bigDecimal2, 3, 1)
 }
 
 data class MysqlAllTypesNotNullWithTime(
@@ -161,9 +175,13 @@ data class MysqlAllTypesNotNullWithTime(
     override val byteArray: ByteArray,
     override val localTime: LocalTime,
     override val kotlinxLocalTime: kotlinx.datetime.LocalTime,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
 ) : AllTypesNotNullWithTimeEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -172,12 +190,14 @@ data class MysqlAllTypesNotNullWithTime(
 
         other as MysqlAllTypesNotNullWithTime
 
+        if (id != other.id) return false
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
         if (localTime.roundToSecond() != other.localTime.roundToSecond()) return false
         if (kotlinxLocalTime.toJavaLocalTime().roundToSecond()
-            != kotlinxLocalTime.toJavaLocalTime().roundToSecond()) return false
+            != kotlinxLocalTime.toJavaLocalTime().roundToSecond()
+        ) return false
         if (localDateTime1.roundToSecond() != other.localDateTime1.roundToSecond()) return false
         if (localDateTime2.roundToSecond() != other.localDateTime2.roundToSecond()) return false
         if (kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
@@ -189,34 +209,38 @@ data class MysqlAllTypesNotNullWithTime(
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
-        if (id != other.id) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = string.hashCode()
-        result = 31 * result + localDate.hashCode()
-        result = 31 * result + kotlinxLocalDate.hashCode()
-        result = 31 * result + localTime.hashCode()
-        result = 31 * result + kotlinxLocalTime.hashCode()
-        result = 31 * result + localDateTime1.hashCode()
-        result = 31 * result + localDateTime2.hashCode()
-        result = 31 * result + kotlinxLocalDateTime1.hashCode()
-        result = 31 * result + kotlinxLocalDateTime2.hashCode()
-        result = 31 * result + int
-        result = 31 * result + long.hashCode()
-        result = 31 * result + byteArray.contentHashCode()
-        result = 31 * result + id
-        return result
+        return super.hashCode()
     }
 }
 
 val mysqlAllTypesNotNullWithTime = MysqlAllTypesNotNullWithTime(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(), LocalDateTime.now(),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), 1,
-    1L, byteArrayOf(0x2A), LocalTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC).time
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    LocalTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC).time,
+    6666.75f,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
 )
 
 object MysqlAllTypesNotNullWithTimes : MysqlTable<MysqlAllTypesNotNullWithTime>("all_types_with_times") {
@@ -235,6 +259,10 @@ object MysqlAllTypesNotNullWithTimes : MysqlTable<MysqlAllTypesNotNullWithTime>(
     val inte = integer(MysqlAllTypesNotNullWithTime::int)
     val longe = bigInt(MysqlAllTypesNotNullWithTime::long)
     val byteArray = binary(MysqlAllTypesNotNullWithTime::byteArray)
+    val floate = float(MysqlAllTypesNotNullWithTime::float)
+    val doublee = doublePrecision(MysqlAllTypesNotNullWithTime::double)
+    val bigDecimal1 = numeric(MysqlAllTypesNotNullWithTime::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(MysqlAllTypesNotNullWithTime::bigDecimal2, 3, 1)
 }
 
 object MysqlAllTypesNullables : MysqlTable<AllTypesNullableEntity>("all_types_nullable") {
@@ -250,6 +278,10 @@ object MysqlAllTypesNullables : MysqlTable<AllTypesNullableEntity>("all_types_nu
     val inte = integer(AllTypesNullableEntity::int)
     val longe = bigInt(AllTypesNullableEntity::long)
     val byteArray = binary(AllTypesNullableEntity::byteArray)
+    val floate = float(AllTypesNullableEntity::float)
+    val doublee = doublePrecision(AllTypesNullableEntity::double)
+    val bigDecimal1 = numeric(AllTypesNullableEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNullableEntity::bigDecimal2, 3, 1)
 }
 
 object MysqlAllTypesNullableWithTimes :
@@ -260,7 +292,8 @@ object MysqlAllTypesNullableWithTimes :
     val localDate = date(AllTypesNullableWithTimeEntity::localDate)
     val kotlinxLocalDate = date(AllTypesNullableWithTimeEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNullableWithTimeEntity::localTime) // todo test fractionalSecondsPart later
-    val kotlinxLocalTim = time(AllTypesNullableWithTimeEntity::kotlinxLocalTime) // todo test fractionalSecondsPart later
+    val kotlinxLocalTim =
+        time(AllTypesNullableWithTimeEntity::kotlinxLocalTime) // todo test fractionalSecondsPart later
     val localDateTime1 = dateTime(AllTypesNullableWithTimeEntity::localDateTime1)
     val localDateTime2 = dateTime(AllTypesNullableWithTimeEntity::localDateTime2)
     val kotlinxLocalDateTime1 = dateTime(AllTypesNullableWithTimeEntity::kotlinxLocalDateTime1)
@@ -268,6 +301,10 @@ object MysqlAllTypesNullableWithTimes :
     val inte = integer(AllTypesNullableWithTimeEntity::int)
     val longe = bigInt(AllTypesNullableWithTimeEntity::long)
     val byteArray = binary(AllTypesNullableWithTimeEntity::byteArray)
+    val floate = float(AllTypesNullableWithTimeEntity::float)
+    val doublee = doublePrecision(AllTypesNullableWithTimeEntity::double)
+    val bigDecimal1 = numeric(AllTypesNullableWithTimeEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNullableWithTimeEntity::bigDecimal2, 3, 1)
 }
 
 object MysqlAllTypesNullableDefaultValues : MysqlTable<AllTypesNullableDefaultValueEntity>() {
@@ -300,6 +337,20 @@ object MysqlAllTypesNullableDefaultValues : MysqlTable<AllTypesNullableDefaultVa
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val floate = float(AllTypesNullableDefaultValueEntity::float, defaultValue = 42.42f)
+    val doublee = doublePrecision(AllTypesNullableDefaultValueEntity::double, defaultValue = 84.84)
+    val bigDecimal1 = numeric(
+        AllTypesNullableDefaultValueEntity::bigDecimal1,
+        3,
+        1,
+        defaultValue = BigDecimal("4.2")
+    )
+    val bigDecimal2 = decimal(
+        AllTypesNullableDefaultValueEntity::bigDecimal2,
+        3,
+        1,
+        defaultValue = BigDecimal("4.3")
+    )
 }
 
 object MysqlAllTypesNullableDefaultValueWithTimes : MysqlTable<AllTypesNullableDefaultValueWithTimeEntity>() {
@@ -340,6 +391,20 @@ object MysqlAllTypesNullableDefaultValueWithTimes : MysqlTable<AllTypesNullableD
     )
     val inte = integer(AllTypesNullableDefaultValueWithTimeEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueWithTimeEntity::long, defaultValue = 84L)
+    val floate = float(AllTypesNullableDefaultValueWithTimeEntity::float, defaultValue = 42.42f)
+    val doublee = doublePrecision(AllTypesNullableDefaultValueWithTimeEntity::double, defaultValue = 84.84)
+    val bigDecimal1 = numeric(
+        AllTypesNullableDefaultValueWithTimeEntity::bigDecimal1,
+        3,
+        1,
+        defaultValue = BigDecimal("4.2")
+    )
+    val bigDecimal2 = decimal(
+        AllTypesNullableDefaultValueWithTimeEntity::bigDecimal2,
+        3,
+        1,
+        defaultValue = BigDecimal("4.3")
+    )
 }
 
 object MysqlLocalDates : MysqlTable<LocalDateEntity>(), LocalDates {
@@ -396,6 +461,34 @@ object MysqlLongs : MysqlTable<LongEntity>(), Longs {
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object MysqlFloats : MysqlTable<FloatEntity>(), Floats {
+    override val id = integer(FloatEntity::id)
+        .primaryKey()
+    override val floatNotNull = float(FloatEntity::floatNotNull, precision = 3, scale = 1)
+    override val floatNullable = float(FloatEntity::floatNullable, precision = 3, scale = 1)
+}
+
+object MysqlDoubles : MysqlTable<DoubleEntity>(), Doubles {
+    override val id = integer(DoubleEntity::id)
+        .primaryKey()
+    override val doubleNotNull = doublePrecision(DoubleEntity::doubleNotNull)
+    override val doubleNullable = doublePrecision(DoubleEntity::doubleNullable)
+}
+
+object MysqlBigDecimals : MysqlTable<BigDecimalEntity>(), BigDecimals {
+    override val id = integer(BigDecimalEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = decimal(BigDecimalEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = decimal(BigDecimalEntity::bigDecimalNullable, 3, 1)
+}
+
+object MysqlBigDecimalAsNumerics : MysqlTable<BigDecimalAsNumericEntity>(), BigDecimalAsNumerics {
+    override val id = integer(BigDecimalAsNumericEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = numeric(BigDecimalAsNumericEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = numeric(BigDecimalAsNumericEntity::bigDecimalNullable, 3, 1)
 }
 
 object MysqlInheriteds : MysqlTable<Inherited>(), Entities<Inherited>, Nameables<Inherited>, Inheriteds {
@@ -494,4 +587,8 @@ val mysqlTables = tables().mysql(
     MysqlLongTexts,
     MysqlByteArrays,
     MysqlByteArrayAsBinaries,
+    MysqlFloats,
+    MysqlDoubles,
+    MysqlBigDecimals,
+    MysqlBigDecimalAsNumerics,
 )

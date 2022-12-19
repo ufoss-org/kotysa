@@ -6,6 +6,7 @@ package org.ufoss.kotysa
 
 import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.postgresql.Tsquery
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -212,11 +213,31 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> where(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.WHERE)
 
-        override fun <U : Any> where(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayColumnNotNull<U, T> =
+        override fun <U : Any> where(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>)
+        : WhereOpByteArrayColumnNotNull<U, T> =
             whereOpByteArrayColumnNotNull(byteArrayColumnNotNull, WhereClauseType.WHERE)
 
-        override fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
+        override fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>)
+        : WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.WHERE)
+
+        override fun <U : Any> where(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T> =
+            whereOpFloatColumnNotNull(floatColumnNotNull, WhereClauseType.WHERE)
+
+        override fun <U : Any> where(floatColumnNullable: FloatColumnNullable<U>): WhereOpFloatNullable<U, T> =
+            whereOpFloatColumnNullable(floatColumnNullable, WhereClauseType.WHERE)
+
+        override fun <U : Any> where(doubleColumnNotNull: DoubleColumnNotNull<U>): WhereOpDoubleNotNull<U, T> =
+            whereOpDoubleColumnNotNull(doubleColumnNotNull, WhereClauseType.WHERE)
+
+        override fun <U : Any> where(doubleColumnNullable: DoubleColumnNullable<U>): WhereOpDoubleNullable<U, T> =
+            whereOpDoubleColumnNullable(doubleColumnNullable, WhereClauseType.WHERE)
+
+        override fun <U : Any> where(bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>): WhereOpBigDecimalNotNull<U, T> =
+            whereOpBigDecimalColumnNotNull(bigDecimalColumnNotNull, WhereClauseType.WHERE)
+
+        override fun <U : Any> where(bigDecimalColumnNullable: BigDecimalColumnNullable<U>): WhereOpBigDecimalNullable<U, T> =
+            whereOpBigDecimalColumnNullable(bigDecimalColumnNullable, WhereClauseType.WHERE)
 
         override fun <U : Any> where(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T> =
             whereOpTsvectorColumnNotNull(tsvectorColumn, WhereClauseType.WHERE)
@@ -306,6 +327,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun where(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T> =
             whereOpByteArrayAliasNullable(byteArrayAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(floatAliasNotNull: QueryAlias<Float>): WhereOpFloatNotNull<Float, T> =
+            whereOpFloatAliasNotNull(floatAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(floatAliasNullable: QueryAlias<Float?>): WhereOpFloatNullable<Float, T> =
+            whereOpFloatAliasNullable(floatAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(doubleAliasNotNull: QueryAlias<Double>): WhereOpDoubleNotNull<Double, T> =
+            whereOpDoubleAliasNotNull(doubleAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T> =
+            whereOpDoubleAliasNullable(doubleAliasNullable, WhereClauseType.WHERE)
+
+        override fun where(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T> =
+            whereOpBigDecimalAliasNotNull(bigDecimalAliasNotNull, WhereClauseType.WHERE)
+
+        override fun where(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T> =
+            whereOpBigDecimalAliasNullable(bigDecimalAliasNullable, WhereClauseType.WHERE)
     }
 
     public interface WhereColumnCommon : WithProperties {
@@ -1089,6 +1128,348 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : AbstractWhereOpAliasNullable<Long, T>(), WhereOpLongAlias<Long?, T>,
         WhereOpAliasNullable<Long, T>, WhereOpLongNullable<Long, T>
 
+    public interface WhereOpFloatColumn<T : Any, U : SqlClientQuery.Where<U>> :
+        WhereOpColumn<T, U, Float>, WhereInOpColumn<T, U, Float>, WhereOpFloat<T, U> {
+        override infix fun inf(value: Float): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
+        override infix fun sup(value: Float): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Float): U =
+            where.apply { addClauseValue(column, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: Float): U =
+            where.apply { addClauseValue(column, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.EQ, otherFloatColumn, type) }
+
+        override infix fun notEq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.NOT_EQ, otherFloatColumn, type) }
+
+        override infix fun inf(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.INF, otherFloatColumn, type) }
+
+        override infix fun sup(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.SUP, otherFloatColumn, type) }
+
+        override infix fun infOrEq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.INF_OR_EQ, otherFloatColumn, type) }
+
+        override infix fun supOrEq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherFloatColumn, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
+    }
+
+    public interface WhereOpFloatAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereOpAlias<T, U, Float>, WhereInOpAlias<T, U, Float>, WhereOpFloat<Float, U> {
+        override infix fun inf(value: Float): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
+        override infix fun sup(value: Float): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Float): U =
+            where.apply { addClauseValue(alias, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: Float): U =
+            where.apply { addClauseValue(alias, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherFloatColumn, type) }
+
+        override infix fun notEq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherFloatColumn, type) }
+
+        override infix fun inf(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF, otherFloatColumn, type) }
+
+        override infix fun sup(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP, otherFloatColumn, type) }
+
+        override infix fun infOrEq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF_OR_EQ, otherFloatColumn, type) }
+
+        override infix fun supOrEq(otherFloatColumn: FloatColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherFloatColumn, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Float>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
+    }
+
+    public class WhereOpFloatColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: Column<T, Float>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, Float>(), WhereOpFloatColumn<T, U>,
+        WhereOpColumnNotNull<T, U, Float>, WhereOpFloatNotNull<T, U>
+
+    public class WhereOpFloatAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Float>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<Float, T>(), WhereOpFloatAlias<Float, T>,
+        WhereOpAliasNotNull<Float, T>, WhereOpFloatNotNull<Float, T>
+
+    public class WhereOpFloatColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: Column<T, Float>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, Float>(), WhereOpFloatColumn<T, U>,
+        WhereOpColumnNullable<T, U, Float>, WhereOpFloatNullable<T, U>
+
+    public class WhereOpFloatAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Float?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<Float, T>(), WhereOpFloatAlias<Float?, T>,
+        WhereOpAliasNullable<Float, T>, WhereOpFloatNullable<Float, T>
+
+    public interface WhereOpDoubleColumn<T : Any, U : SqlClientQuery.Where<U>> :
+        WhereOpColumn<T, U, Double>, WhereInOpColumn<T, U, Double>, WhereOpDouble<T, U> {
+        override infix fun inf(value: Double): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
+        override infix fun sup(value: Double): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Double): U =
+            where.apply { addClauseValue(column, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: Double): U =
+            where.apply { addClauseValue(column, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.EQ, otherDoubleColumn, type) }
+
+        override infix fun notEq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.NOT_EQ, otherDoubleColumn, type) }
+
+        override infix fun inf(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.INF, otherDoubleColumn, type) }
+
+        override infix fun sup(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.SUP, otherDoubleColumn, type) }
+
+        override infix fun infOrEq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.INF_OR_EQ, otherDoubleColumn, type) }
+
+        override infix fun supOrEq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherDoubleColumn, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
+    }
+
+    public interface WhereOpDoubleAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereOpAlias<T, U, Double>, WhereInOpAlias<T, U, Double>, WhereOpDouble<Double, U> {
+        override infix fun inf(value: Double): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
+        override infix fun sup(value: Double): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: Double): U =
+            where.apply { addClauseValue(alias, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: Double): U =
+            where.apply { addClauseValue(alias, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherDoubleColumn, type) }
+
+        override infix fun notEq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherDoubleColumn, type) }
+
+        override infix fun inf(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF, otherDoubleColumn, type) }
+
+        override infix fun sup(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP, otherDoubleColumn, type) }
+
+        override infix fun infOrEq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF_OR_EQ, otherDoubleColumn, type) }
+
+        override infix fun supOrEq(otherDoubleColumn: DoubleColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherDoubleColumn, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Double>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
+    }
+
+    public class WhereOpDoubleColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: Column<T, Double>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, Double>(), WhereOpDoubleColumn<T, U>,
+        WhereOpColumnNotNull<T, U, Double>, WhereOpDoubleNotNull<T, U>
+
+    public class WhereOpDoubleAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Double>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<Double, T>(), WhereOpDoubleAlias<Double, T>,
+        WhereOpAliasNotNull<Double, T>, WhereOpDoubleNotNull<Double, T>
+
+    public class WhereOpDoubleColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: Column<T, Double>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, Double>(), WhereOpDoubleColumn<T, U>,
+        WhereOpColumnNullable<T, U, Double>, WhereOpDoubleNullable<T, U>
+
+    public class WhereOpDoubleAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<Double?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<Double, T>(), WhereOpDoubleAlias<Double?, T>,
+        WhereOpAliasNullable<Double, T>, WhereOpDoubleNullable<Double, T>
+
+    public interface WhereOpBigDecimalColumn<T : Any, U : SqlClientQuery.Where<U>> :
+        WhereOpColumn<T, U, BigDecimal>, WhereInOpColumn<T, U, BigDecimal>, WhereOpBigDecimal<T, U> {
+        override infix fun inf(value: BigDecimal): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
+        override infix fun sup(value: BigDecimal): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: BigDecimal): U =
+            where.apply { addClauseValue(column, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: BigDecimal): U =
+            where.apply { addClauseValue(column, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.EQ, otherBigDecimalColumn, type) }
+
+        override infix fun notEq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.NOT_EQ, otherBigDecimalColumn, type) }
+
+        override infix fun inf(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.INF, otherBigDecimalColumn, type) }
+
+        override infix fun sup(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.SUP, otherBigDecimalColumn, type) }
+
+        override infix fun infOrEq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.INF_OR_EQ, otherBigDecimalColumn, type) }
+
+        override infix fun supOrEq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.SUP_OR_EQ, otherBigDecimalColumn, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(column, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(column, Operation.SUP_OR_EQ, dsl, type) }
+    }
+
+    public interface WhereOpBigDecimalAlias<T, U : SqlClientQuery.Where<U>> :
+        WhereOpAlias<T, U, BigDecimal>, WhereInOpAlias<T, U, BigDecimal>, WhereOpBigDecimal<BigDecimal, U> {
+        override infix fun inf(value: BigDecimal): U = where.apply { addClauseValue(alias, Operation.INF, value, type) }
+        override infix fun sup(value: BigDecimal): U = where.apply { addClauseValue(alias, Operation.SUP, value, type) }
+        override infix fun infOrEq(value: BigDecimal): U =
+            where.apply { addClauseValue(alias, Operation.INF_OR_EQ, value, type) }
+
+        override infix fun supOrEq(value: BigDecimal): U =
+            where.apply { addClauseValue(alias, Operation.SUP_OR_EQ, value, type) }
+
+        override infix fun eq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.EQ, otherBigDecimalColumn, type) }
+
+        override infix fun notEq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.NOT_EQ, otherBigDecimalColumn, type) }
+
+        override infix fun inf(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF, otherBigDecimalColumn, type) }
+
+        override infix fun sup(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP, otherBigDecimalColumn, type) }
+
+        override infix fun infOrEq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.INF_OR_EQ, otherBigDecimalColumn, type) }
+
+        override infix fun supOrEq(otherBigDecimalColumn: BigDecimalColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.SUP_OR_EQ, otherBigDecimalColumn, type) }
+
+        override infix fun inf(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF, dsl, type) }
+
+        override infix fun sup(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP, dsl, type) }
+
+        override infix fun infOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(alias, Operation.INF_OR_EQ, dsl, type) }
+
+        override infix fun supOrEq(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<BigDecimal>): U =
+            where.apply { addClauseSubQuery(alias, Operation.SUP_OR_EQ, dsl, type) }
+    }
+
+    public class WhereOpBigDecimalColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: Column<T, BigDecimal>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, BigDecimal>(), WhereOpBigDecimalColumn<T, U>,
+        WhereOpColumnNotNull<T, U, BigDecimal>, WhereOpBigDecimalNotNull<T, U>
+
+    public class WhereOpBigDecimalAliasNotNull<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<BigDecimal>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNotNull<BigDecimal, T>(), WhereOpBigDecimalAlias<BigDecimal, T>,
+        WhereOpAliasNotNull<BigDecimal, T>, WhereOpBigDecimalNotNull<BigDecimal, T>
+
+    public class WhereOpBigDecimalColumnNullable<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
+        override val where: U,
+        override val properties: Properties,
+        override val column: Column<T, BigDecimal>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpColumn<T, U, BigDecimal>(), WhereOpBigDecimalColumn<T, U>,
+        WhereOpColumnNullable<T, U, BigDecimal>, WhereOpBigDecimalNullable<T, U>
+
+    public class WhereOpBigDecimalAliasNullable<T : SqlClientQuery.Where<T>> internal constructor(
+        override val where: T,
+        override val properties: Properties,
+        override val alias: QueryAlias<BigDecimal?>,
+        override val type: WhereClauseType,
+    ) : AbstractWhereOpAliasNullable<BigDecimal, T>(), WhereOpBigDecimalAlias<BigDecimal?, T>,
+        WhereOpAliasNullable<BigDecimal, T>, WhereOpBigDecimalNullable<BigDecimal, T>
+
     public interface WhereOpUuidColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereOpColumn<T, U, UUID>, WhereInOpColumn<T, U, UUID>, WhereOpUuid<T, U> {
         override infix fun eq(otherUuidColumn: UuidColumn<*>): U =
@@ -1291,11 +1672,31 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun <U : Any> and(uuidColumnNullable: UuidColumnNullable<U>): WhereOpUuidColumnNullable<U, T> =
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.AND)
 
-        override fun <U : Any> and(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>): WhereOpByteArrayColumnNotNull<U, T> =
+        override fun <U : Any> and(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>)
+        : WhereOpByteArrayColumnNotNull<U, T> =
             whereOpByteArrayColumnNotNull(byteArrayColumnNotNull, WhereClauseType.AND)
 
-        override fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
+        override fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>)
+        : WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.AND)
+
+        override fun <U : Any> and(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T> =
+            whereOpFloatColumnNotNull(floatColumnNotNull, WhereClauseType.AND)
+
+        override fun <U : Any> and(floatColumnNullable: FloatColumnNullable<U>): WhereOpFloatNullable<U, T> =
+            whereOpFloatColumnNullable(floatColumnNullable, WhereClauseType.AND)
+
+        override fun <U : Any> and(doubleColumnNotNull: DoubleColumnNotNull<U>): WhereOpDoubleNotNull<U, T> =
+            whereOpDoubleColumnNotNull(doubleColumnNotNull, WhereClauseType.AND)
+
+        override fun <U : Any> and(doubleColumnNullable: DoubleColumnNullable<U>): WhereOpDoubleNullable<U, T> =
+            whereOpDoubleColumnNullable(doubleColumnNullable, WhereClauseType.AND)
+
+        override fun <U : Any> and(bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>): WhereOpBigDecimalNotNull<U, T> =
+            whereOpBigDecimalColumnNotNull(bigDecimalColumnNotNull, WhereClauseType.AND)
+
+        override fun <U : Any> and(bigDecimalColumnNullable: BigDecimalColumnNullable<U>): WhereOpBigDecimalNullable<U, T> =
+            whereOpBigDecimalColumnNullable(bigDecimalColumnNullable, WhereClauseType.AND)
 
         override fun <U : Any> and(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T> =
             whereOpTsvectorColumnNotNull(tsvectorColumn, WhereClauseType.AND)
@@ -1394,6 +1795,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override fun and(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T> =
             whereOpByteArrayAliasNullable(byteArrayAliasNullable, WhereClauseType.AND)
 
+        override fun and(floatAliasNotNull: QueryAlias<Float>): WhereOpFloatNotNull<Float, T> =
+            whereOpFloatAliasNotNull(floatAliasNotNull, WhereClauseType.AND)
+
+        override fun and(floatAliasNullable: QueryAlias<Float?>): WhereOpFloatNullable<Float, T> =
+            whereOpFloatAliasNullable(floatAliasNullable, WhereClauseType.AND)
+
+        override fun and(doubleAliasNotNull: QueryAlias<Double>): WhereOpDoubleNotNull<Double, T> =
+            whereOpDoubleAliasNotNull(doubleAliasNotNull, WhereClauseType.AND)
+
+        override fun and(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T> =
+            whereOpDoubleAliasNullable(doubleAliasNullable, WhereClauseType.AND)
+
+        override fun and(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T> =
+            whereOpBigDecimalAliasNotNull(bigDecimalAliasNotNull, WhereClauseType.AND)
+
+        override fun and(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T> =
+            whereOpBigDecimalAliasNullable(bigDecimalAliasNullable, WhereClauseType.AND)
+
         override fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringColumnNotNull<U, T> =
             whereOpStringColumnNotNull(stringColumnNotNull, WhereClauseType.OR)
 
@@ -1468,6 +1887,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun <U : Any> or(byteArrayColumnNullable: ByteArrayColumnNullable<U>): WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.OR)
+
+        override fun <U : Any> or(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T> =
+            whereOpFloatColumnNotNull(floatColumnNotNull, WhereClauseType.OR)
+
+        override fun <U : Any> or(floatColumnNullable: FloatColumnNullable<U>): WhereOpFloatNullable<U, T> =
+            whereOpFloatColumnNullable(floatColumnNullable, WhereClauseType.OR)
+
+        override fun <U : Any> or(doubleColumnNotNull: DoubleColumnNotNull<U>): WhereOpDoubleNotNull<U, T> =
+            whereOpDoubleColumnNotNull(doubleColumnNotNull, WhereClauseType.OR)
+
+        override fun <U : Any> or(doubleColumnNullable: DoubleColumnNullable<U>): WhereOpDoubleNullable<U, T> =
+            whereOpDoubleColumnNullable(doubleColumnNullable, WhereClauseType.OR)
+
+        override fun <U : Any> or(bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>): WhereOpBigDecimalNotNull<U, T> =
+            whereOpBigDecimalColumnNotNull(bigDecimalColumnNotNull, WhereClauseType.OR)
+
+        override fun <U : Any> or(bigDecimalColumnNullable: BigDecimalColumnNullable<U>): WhereOpBigDecimalNullable<U, T> =
+            whereOpBigDecimalColumnNullable(bigDecimalColumnNullable, WhereClauseType.OR)
 
         override fun <U : Any> or(tsvectorColumn: TsvectorColumn<U>): WhereOpTsvectorNotNull<T> =
             whereOpTsvectorColumnNotNull(tsvectorColumn, WhereClauseType.OR)
@@ -1565,6 +2002,24 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
         override fun or(byteArrayAliasNullable: QueryAlias<ByteArray?>): WhereOpByteArrayNullable<ByteArray, T> =
             whereOpByteArrayAliasNullable(byteArrayAliasNullable, WhereClauseType.OR)
+
+        override fun or(floatAliasNotNull: QueryAlias<Float>): WhereOpFloatNotNull<Float, T> =
+            whereOpFloatAliasNotNull(floatAliasNotNull, WhereClauseType.OR)
+
+        override fun or(floatAliasNullable: QueryAlias<Float?>): WhereOpFloatNullable<Float, T> =
+            whereOpFloatAliasNullable(floatAliasNullable, WhereClauseType.OR)
+
+        override fun or(doubleAliasNotNull: QueryAlias<Double>): WhereOpDoubleNotNull<Double, T> =
+            whereOpDoubleAliasNotNull(doubleAliasNotNull, WhereClauseType.OR)
+
+        override fun or(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T> =
+            whereOpDoubleAliasNullable(doubleAliasNullable, WhereClauseType.OR)
+
+        override fun or(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T> =
+            whereOpBigDecimalAliasNotNull(bigDecimalAliasNotNull, WhereClauseType.OR)
+
+        override fun or(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T> =
+            whereOpBigDecimalAliasNullable(bigDecimalAliasNullable, WhereClauseType.OR)
     }
 
     public interface Return : WithProperties {
@@ -1920,6 +2375,36 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             whereClauseType: WhereClauseType,
         ) = WhereOpByteArrayColumnNullable(where, properties, byteArrayColumnNullable, whereClauseType)
 
+        internal fun <U : Any> whereOpFloatColumnNotNull(
+            floatColumnNotNull: FloatColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpFloatColumnNotNull(where, properties, floatColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpFloatColumnNullable(
+            floatColumnNullable: FloatColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpFloatColumnNullable(where, properties, floatColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpDoubleColumnNotNull(
+            doubleColumnNotNull: DoubleColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDoubleColumnNotNull(where, properties, doubleColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpDoubleColumnNullable(
+            doubleColumnNullable: DoubleColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDoubleColumnNullable(where, properties, doubleColumnNullable, whereClauseType)
+
+        internal fun <U : Any> whereOpBigDecimalColumnNotNull(
+            bigDecimalColumnNotNull: BigDecimalColumnNotNull<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpBigDecimalColumnNotNull(where, properties, bigDecimalColumnNotNull, whereClauseType)
+
+        internal fun <U : Any> whereOpBigDecimalColumnNullable(
+            bigDecimalColumnNullable: BigDecimalColumnNullable<U>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpBigDecimalColumnNullable(where, properties, bigDecimalColumnNullable, whereClauseType)
+
         internal fun <U : Any> whereOpTsvectorColumnNotNull(
             tsvectorColumn: TsvectorColumn<U>,
             whereClauseType: WhereClauseType,
@@ -2074,6 +2559,36 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             byteArrayAliasNullable: QueryAlias<ByteArray?>,
             whereClauseType: WhereClauseType,
         ) = WhereOpByteArrayAliasNullable(where, properties, byteArrayAliasNullable, whereClauseType)
+
+        internal fun whereOpFloatAliasNotNull(
+            floatAliasNotNull: QueryAlias<Float>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpFloatAliasNotNull(where, properties, floatAliasNotNull, whereClauseType)
+
+        internal fun whereOpFloatAliasNullable(
+            floatAliasNullable: QueryAlias<Float?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpFloatAliasNullable(where, properties, floatAliasNullable, whereClauseType)
+
+        internal fun whereOpDoubleAliasNotNull(
+            doubleAliasNotNull: QueryAlias<Double>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDoubleAliasNotNull(where, properties, doubleAliasNotNull, whereClauseType)
+
+        internal fun whereOpDoubleAliasNullable(
+            doubleAliasNullable: QueryAlias<Double?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpDoubleAliasNullable(where, properties, doubleAliasNullable, whereClauseType)
+
+        internal fun whereOpBigDecimalAliasNotNull(
+            bigDecimalAliasNotNull: QueryAlias<BigDecimal>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpBigDecimalAliasNotNull(where, properties, bigDecimalAliasNotNull, whereClauseType)
+
+        internal fun whereOpBigDecimalAliasNullable(
+            bigDecimalAliasNullable: QueryAlias<BigDecimal?>,
+            whereClauseType: WhereClauseType,
+        ) = WhereOpBigDecimalAliasNullable(where, properties, bigDecimalAliasNullable, whereClauseType)
     }
 }
 

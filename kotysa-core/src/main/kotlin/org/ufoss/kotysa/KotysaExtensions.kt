@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kotysa.columns.AbstractColumn
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -127,21 +128,17 @@ internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
 
 internal fun Any?.dbValue(dbType: DbType): String = when (this) {
     null -> "null"
-    is String -> "$this"
+    is String, is UUID, is Int, is Long, is Float, is Double, is BigDecimal -> "$this"
     is Boolean -> when (dbType) {
         DbType.SQLITE, DbType.MSSQL -> if (this) "1" else "0"
         else -> "$this"
     }
-
-    is UUID -> "$this"
-    is Int -> "$this"
-    is Long -> "$this"
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
     is OffsetDateTime -> this.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)
     else -> when (this::class.qualifiedName) {
-        "kotlinx.datetime.LocalDate" -> this.toString()
+        "kotlinx.datetime.LocalDate", "kotlinx.datetime.LocalTime" -> this.toString()
         "kotlinx.datetime.LocalDateTime" -> {
             val kotlinxLocalDateTime = this as kotlinx.datetime.LocalDateTime
             if (kotlinxLocalDateTime.second == 0 && kotlinxLocalDateTime.nanosecond == 0) {
@@ -150,7 +147,6 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
                 kotlinxLocalDateTime.toString()
             }
         }
-        "kotlinx.datetime.LocalTime" -> this.toString()
 
         else -> throw RuntimeException("${this.javaClass.canonicalName} is not supported yet")
     }

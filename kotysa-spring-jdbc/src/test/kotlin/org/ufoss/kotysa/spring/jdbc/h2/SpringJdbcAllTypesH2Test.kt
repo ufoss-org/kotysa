@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
+import java.math.BigDecimal
 import java.time.*
 import java.util.*
 
@@ -45,6 +46,10 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                     kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L,
+                    42.42f,
+                    84.84,
+                    BigDecimal("4.2"),
+                    BigDecimal("4.3"),
                     OffsetDateTime.of(
                         2019, 11, 4, 0, 0, 0, 0,
                         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
@@ -65,20 +70,24 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
     fun `Verify updateAllTypesNotNull works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
-        val newOffsetDateTime = OffsetDateTime.now()
         val newLocalTime = LocalTime.now()
         val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
-        val newUuid = UUID.randomUUID()
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
+        val newBigDecimal = BigDecimal("3.3")
+        val newOffsetDateTime = OffsetDateTime.now()
+        val newUuid = UUID.randomUUID()
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
-                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble,
+                newBigDecimal, newOffsetDateTime, newUuid
             )
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
@@ -86,7 +95,8 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                     H2AllTypesNotNullEntity(
                         h2AllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
                         newLocalTime, newKotlinxLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newOffsetDateTime, newUuid
+                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal,
+                        newBigDecimal, newOffsetDateTime, newUuid
                     )
                 )
         }
@@ -122,6 +132,10 @@ class SpringJdbcAllTypesH2Test : AbstractSpringJdbcH2Test<AllTypesRepositoryH2>(
                         kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0),
                         42,
                         84L,
+                        42.42f,
+                        84.84,
+                        BigDecimal("4.2"),
+                        BigDecimal("4.3"),
                         OffsetDateTime.of(
                             2019, 11, 4, 0, 0, 0, 0,
                             ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
@@ -166,11 +180,22 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom H2AllTypesNullableDefaultValues
 
     fun updateAllTypesNotNull(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray,
-        newOffsetDateTime: OffsetDateTime, newUuid: UUID
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
+        newBigDecimal: BigDecimal,
+        newOffsetDateTime: OffsetDateTime,
+        newUuid: UUID,
     ) =
         (sqlClient update H2AllTypesNotNulls
                 set H2AllTypesNotNulls.string eq newString
@@ -186,6 +211,10 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
                 set H2AllTypesNotNulls.inte eq newInt
                 set H2AllTypesNotNulls.longe eq newLong
                 set H2AllTypesNotNulls.byteArray eq newByteArray
+                set H2AllTypesNotNulls.float eq newFloat
+                set H2AllTypesNotNulls.double eq newDouble
+                set H2AllTypesNotNulls.bigDecimal1 eq newBigDecimal
+                set H2AllTypesNotNulls.bigDecimal2 eq newBigDecimal
                 set H2AllTypesNotNulls.offsetDateTime eq newOffsetDateTime
                 set H2AllTypesNotNulls.uuid eq newUuid
                 where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id
@@ -206,6 +235,10 @@ class AllTypesRepositoryH2(client: JdbcOperations) : Repository {
                 set H2AllTypesNotNulls.inte eq H2AllTypesNotNulls.inte
                 set H2AllTypesNotNulls.longe eq H2AllTypesNotNulls.longe
                 set H2AllTypesNotNulls.byteArray eq H2AllTypesNotNulls.byteArray
+                set H2AllTypesNotNulls.float eq H2AllTypesNotNulls.float
+                set H2AllTypesNotNulls.double eq H2AllTypesNotNulls.double
+                set H2AllTypesNotNulls.bigDecimal1 eq H2AllTypesNotNulls.bigDecimal1
+                set H2AllTypesNotNulls.bigDecimal2 eq H2AllTypesNotNulls.bigDecimal2
                 set H2AllTypesNotNulls.offsetDateTime eq H2AllTypesNotNulls.offsetDateTime
                 set H2AllTypesNotNulls.uuid eq H2AllTypesNotNulls.uuid
                 where H2AllTypesNotNulls.id eq allTypesNotNullWithTime.id

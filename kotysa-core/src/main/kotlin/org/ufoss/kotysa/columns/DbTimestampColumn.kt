@@ -11,6 +11,8 @@ import java.time.OffsetDateTime
 public sealed class DbTimestampColumn<T : Any, U : Any> : AbstractDbColumn<T, U>() {
     // No auto-increment
     final override val isAutoIncrement: Boolean = false
+    // No decimals
+    final override val scale = null
 
     final override val sqlType = SqlType.TIMESTAMP
 }

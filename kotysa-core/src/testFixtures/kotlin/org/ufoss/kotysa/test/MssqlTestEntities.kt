@@ -9,6 +9,7 @@ import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.mssql.date
 import org.ufoss.kotysa.mssql.dateTime
 import org.ufoss.kotysa.tables
+import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -59,16 +60,23 @@ data class MssqlAllTypesNotNull(
     override val int: Int,
     override val long: Long,
     override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
 ) : AllTypesNotNullEntity(
     id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
-    kotlinxLocalDateTime2, int, long, byteArray
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2
 ) {
+
+    // Must override equals for LocalDateTime truncation
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as MssqlAllTypesNotNull
 
+        if (id != other.id) return false
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
@@ -83,31 +91,34 @@ data class MssqlAllTypesNotNull(
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
-        if (id != other.id) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = string.hashCode()
-        result = 31 * result + localDate.hashCode()
-        result = 31 * result + kotlinxLocalDate.hashCode()
-        result = 31 * result + localDateTime1.hashCode()
-        result = 31 * result + localDateTime2.hashCode()
-        result = 31 * result + kotlinxLocalDateTime1.hashCode()
-        result = 31 * result + kotlinxLocalDateTime2.hashCode()
-        result = 31 * result + int
-        result = 31 * result + long.hashCode()
-        result = 31 * result + byteArray.contentHashCode()
-        result = 31 * result + id
-        return result
+        return super.hashCode()
     }
 }
 
 val mssqlAllTypesNotNull = MssqlAllTypesNotNull(
-    1, "", true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalDateTime.now(),
-    LocalDateTime.now(), Clock.System.now().toLocalDateTime(TimeZone.UTC),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), 1, 1L, byteArrayOf(0x2A)
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    Float.MAX_VALUE,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
 )
 
 object MssqlAllTypesNotNulls : MssqlTable<MssqlAllTypesNotNull>("all_types") {
@@ -124,6 +135,10 @@ object MssqlAllTypesNotNulls : MssqlTable<MssqlAllTypesNotNull>("all_types") {
     val inte = integer(AllTypesNotNullEntity::int)
     val longe = bigInt(AllTypesNotNullEntity::long)
     val byteArray = binary(AllTypesNotNullEntity::byteArray)
+    val float = real(AllTypesNotNullEntity::float)
+    val doublee = float(AllTypesNotNullEntity::double)
+    val bigDecimal1 = numeric(AllTypesNotNullEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNotNullEntity::bigDecimal2, 3, 1)
 }
 
 object MssqlAllTypesNullables : MssqlTable<AllTypesNullableEntity>("all_types_nullable") {
@@ -139,6 +154,10 @@ object MssqlAllTypesNullables : MssqlTable<AllTypesNullableEntity>("all_types_nu
     val inte = integer(AllTypesNullableEntity::int)
     val longe = bigInt(AllTypesNullableEntity::long)
     val byteArray = binary(AllTypesNullableEntity::byteArray)
+    val float = real(AllTypesNullableEntity::float)
+    val doublee = float(AllTypesNullableEntity::double)
+    val bigDecimal1 = numeric(AllTypesNullableEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNullableEntity::bigDecimal2, 3, 1)
 }
 
 object MssqlAllTypesNullableDefaultValues : MssqlTable<AllTypesNullableDefaultValueEntity>() {
@@ -171,6 +190,20 @@ object MssqlAllTypesNullableDefaultValues : MssqlTable<AllTypesNullableDefaultVa
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val float = real(AllTypesNullableDefaultValueEntity::float, defaultValue = 42.42f)
+    val doublee = float(AllTypesNullableDefaultValueEntity::double, defaultValue = 84.84)
+    val bigDecimal1 = numeric(
+        AllTypesNullableDefaultValueEntity::bigDecimal1,
+        3,
+        1,
+        defaultValue = BigDecimal("4.2")
+    )
+    val bigDecimal2 = decimal(
+        AllTypesNullableDefaultValueEntity::bigDecimal2,
+        3,
+        1,
+        defaultValue = BigDecimal("4.3")
+    )
 }
 
 object MssqlLocalDates : MssqlTable<LocalDateEntity>(), LocalDates {
@@ -213,6 +246,34 @@ object MssqlLongs : MssqlTable<LongEntity>(), Longs {
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object MssqlFloats : MssqlTable<FloatEntity>(), Floats {
+    override val id = integer(FloatEntity::id)
+        .primaryKey()
+    override val floatNotNull = real(FloatEntity::floatNotNull)
+    override val floatNullable = real(FloatEntity::floatNullable)
+}
+
+object MssqlDoubles : MssqlTable<DoubleEntity>(), Doubles {
+    override val id = integer(DoubleEntity::id)
+        .primaryKey()
+    override val doubleNotNull = float(DoubleEntity::doubleNotNull)
+    override val doubleNullable = float(DoubleEntity::doubleNullable)
+}
+
+object MssqlBigDecimals : MssqlTable<BigDecimalEntity>(), BigDecimals {
+    override val id = integer(BigDecimalEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = decimal(BigDecimalEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = decimal(BigDecimalEntity::bigDecimalNullable, 3, 1)
+}
+
+object MssqlBigDecimalAsNumerics : MssqlTable<BigDecimalAsNumericEntity>(), BigDecimalAsNumerics {
+    override val id = integer(BigDecimalAsNumericEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = numeric(BigDecimalAsNumericEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = numeric(BigDecimalAsNumericEntity::bigDecimalNullable, 3, 1)
 }
 
 object MssqlInheriteds : MssqlTable<Inherited>(), Entities<Inherited>, Nameables<Inherited>, Inheriteds {
@@ -266,4 +327,8 @@ val mssqlTables = tables().mssql(
     MssqlJavaUsers,
     MssqlCustomers,
     MssqlByteArrayAsBinaries,
+    MssqlFloats,
+    MssqlDoubles,
+    MssqlBigDecimals,
+    MssqlBigDecimalAsNumerics,
 )

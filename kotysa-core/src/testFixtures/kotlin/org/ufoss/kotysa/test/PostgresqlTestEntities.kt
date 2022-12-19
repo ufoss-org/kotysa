@@ -9,6 +9,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import org.ufoss.kotysa.postgresql.*
 import org.ufoss.kotysa.tables
+import java.math.BigDecimal
 import java.time.*
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -65,11 +66,15 @@ data class PostgresqlAllTypesNotNullEntity(
     override val int: Int,
     override val long: Long,
     override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
     val offsetDateTime: OffsetDateTime,
     val uuid: UUID,
 ) : AllTypesNotNullWithTimeEntity(
-    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
+    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -78,10 +83,10 @@ data class PostgresqlAllTypesNotNullEntity(
 
         other as PostgresqlAllTypesNotNullEntity
 
+        if (id != other.id) return false
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
         if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime.truncatedTo(ChronoUnit.SECONDS)) return false
         if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
             != other.kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
@@ -90,44 +95,51 @@ data class PostgresqlAllTypesNotNullEntity(
         if (localDateTime2 != other.localDateTime2) return false
         if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (uuid != other.uuid) return false
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
-        if (id != other.id) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
+        if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
+        if (uuid != other.uuid) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = string.hashCode()
-        result = 31 * result + localDate.hashCode()
-        result = 31 * result + kotlinxLocalDate.hashCode()
+        var result = super.hashCode()
         result = 31 * result + offsetDateTime.hashCode()
-        result = 31 * result + localTime.hashCode()
-        result = 31 * result + kotlinxLocalTime.hashCode()
-        result = 31 * result + localDateTime1.hashCode()
-        result = 31 * result + localDateTime2.hashCode()
-        result = 31 * result + kotlinxLocalDateTime1.hashCode()
-        result = 31 * result + kotlinxLocalDateTime2.hashCode()
         result = 31 * result + uuid.hashCode()
-        result = 31 * result + int
-        result = 31 * result + long.hashCode()
-        result = 31 * result + byteArray.contentHashCode()
-        result = 31 * result + id.hashCode()
         return result
     }
 }
 
 val postgresqlAllTypesNotNull = PostgresqlAllTypesNotNullEntity(
-    1, "",
-    true, LocalDate.now(), Clock.System.todayIn(TimeZone.UTC), LocalTime.now(),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC).time, LocalDateTime.now(), LocalDateTime.now(),
-    Clock.System.now().toLocalDateTime(TimeZone.UTC), Clock.System.now().toLocalDateTime(TimeZone.UTC), Int.MAX_VALUE,
-    Long.MAX_VALUE, byteArrayOf(0x2A), OffsetDateTime.of(
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC).time,
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    Float.MAX_VALUE,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
+    OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
         ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
-    ), UUID.randomUUID()
+    ),
+    UUID.randomUUID(),
 )
 
 object PostgresqlAllTypesNotNulls : PostgresqlTable<PostgresqlAllTypesNotNullEntity>("all_types") {
@@ -146,6 +158,10 @@ object PostgresqlAllTypesNotNulls : PostgresqlTable<PostgresqlAllTypesNotNullEnt
     val inte = integer(AllTypesNotNullEntity::int)
     val longe = bigInt(AllTypesNotNullEntity::long)
     val byteArray = bytea(AllTypesNotNullEntity::byteArray)
+    val float = real(AllTypesNotNullEntity::float)
+    val double = doublePrecision(AllTypesNotNullEntity::double)
+    val bigDecimal1 = numeric(AllTypesNotNullEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNotNullEntity::bigDecimal2, 3, 1)
     val offsetDateTime = timestampWithTimeZone(PostgresqlAllTypesNotNullEntity::offsetDateTime)
     val uuid = uuid(PostgresqlAllTypesNotNullEntity::uuid)
 }
@@ -164,35 +180,22 @@ data class PostgresqlAllTypesNullableEntity(
     override val int: Int?,
     override val long: Long?,
     override val byteArray: ByteArray?,
+    override val float: Float?,
+    override val double: Double?,
+    override val bigDecimal1: BigDecimal?,
+    override val bigDecimal2: BigDecimal?,
     val offsetDateTime: OffsetDateTime?,
     val uuid: UUID?,
 ) : AllTypesNullableWithTimeEntity(
-    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, byteArray, localTime, kotlinxLocalTime
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-        if (!super.equals(other)) return false
 
         other as PostgresqlAllTypesNullableEntity
 
-        if (id != other.id) return false
-        if (string != other.string) return false
-        if (localDate != other.localDate) return false
-        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTime != other.localTime) return false
-        if (kotlinxLocalTime != other.kotlinxLocalTime) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
-        if (int != other.int) return false
-        if (long != other.long) return false
-        if (byteArray != null) {
-            if (other.byteArray == null) return false
-            if (!byteArray.contentEquals(other.byteArray)) return false
-        } else if (other.byteArray != null) return false
         if (offsetDateTime != other.offsetDateTime) return false
         if (uuid != other.uuid) return false
 
@@ -201,19 +204,6 @@ data class PostgresqlAllTypesNullableEntity(
 
     override fun hashCode(): Int {
         var result = super.hashCode()
-        result = 31 * result + id
-        result = 31 * result + (string?.hashCode() ?: 0)
-        result = 31 * result + (localDate?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (localTime?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (int ?: 0)
-        result = 31 * result + (long?.hashCode() ?: 0)
-        result = 31 * result + (byteArray?.contentHashCode() ?: 0)
         result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
         result = 31 * result + (uuid?.hashCode() ?: 0)
         return result
@@ -221,8 +211,8 @@ data class PostgresqlAllTypesNullableEntity(
 }
 
 val postgresqlAllTypesNullable = PostgresqlAllTypesNullableEntity(
-    1, null, null, null,
-    null, null, null, null, null,
+    1, null, null, null, null, null, null,
+    null, null, null, null, null, null,
     null, null, null, null, null, null
 )
 
@@ -241,6 +231,10 @@ object PostgresqlAllTypesNullables : PostgresqlTable<PostgresqlAllTypesNullableE
     val inte = integer(AllTypesNullableEntity::int)
     val longe = bigInt(AllTypesNullableEntity::long)
     val byteArray = bytea(AllTypesNullableEntity::byteArray)
+    val float = real(AllTypesNullableEntity::float)
+    val double = doublePrecision(AllTypesNullableEntity::double)
+    val bigDecimal1 = numeric(AllTypesNullableEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(AllTypesNullableEntity::bigDecimal2, 3, 1)
     val offsetDateTime = timestampWithTimeZone(PostgresqlAllTypesNullableEntity::offsetDateTime)
     val uuid = uuid(PostgresqlAllTypesNullableEntity::uuid)
 }
@@ -258,11 +252,15 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
     override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
     override val int: Int? = null,
     override val long: Long? = null,
+    override val float: Float? = null,
+    override val double: Double? = null,
+    override val bigDecimal1: BigDecimal? = null,
+    override val bigDecimal2: BigDecimal? = null,
     val offsetDateTime: OffsetDateTime? = null,
     val uuid: UUID? = null,
 ) : AllTypesNullableDefaultValueWithTimeEntity(
-    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2,
-    kotlinxLocalDateTime1, kotlinxLocalDateTime2, int, long, localTime, kotlinxLocalTime
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -271,6 +269,7 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
 
         other as PostgresqlAllTypesNullableDefaultValueEntity
 
+        if (id != other.id) return false
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
@@ -294,32 +293,22 @@ data class PostgresqlAllTypesNullableDefaultValueEntity(
         if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
         if (int != other.int) return false
         if (long != other.long) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
         if (offsetDateTime != null) {
             if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
         } else if (other.offsetDateTime != null) {
             return false
         }
         if (uuid != other.uuid) return false
-        if (id != other.id) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = string?.hashCode() ?: 0
-        result = 31 * result + (localDate?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDate?.hashCode() ?: 0)
-        result = 31 * result + (localTime?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalTime?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (localDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime1?.hashCode() ?: 0)
-        result = 31 * result + (kotlinxLocalDateTime2?.hashCode() ?: 0)
-        result = 31 * result + (int ?: 0)
-        result = 31 * result + (long?.hashCode() ?: 0)
+        var result = super.hashCode()
         result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
         result = 31 * result + (uuid?.hashCode() ?: 0)
-        result = 31 * result + id.hashCode()
         return result
     }
 }
@@ -365,6 +354,20 @@ object PostgresqlAllTypesNullableDefaultValues : PostgresqlTable<PostgresqlAllTy
     )
     val inte = integer(AllTypesNullableDefaultValueEntity::int, defaultValue = 42)
     val longe = bigInt(AllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val float = real(AllTypesNullableDefaultValueEntity::float, defaultValue = 42.42f)
+    val double = doublePrecision(AllTypesNullableDefaultValueEntity::double, defaultValue = 84.84)
+    val bigDecimal1 = numeric(
+        AllTypesNullableDefaultValueEntity::bigDecimal1,
+        3,
+        1,
+        defaultValue = BigDecimal("4.2")
+    )
+    val bigDecimal2 = decimal(
+        AllTypesNullableDefaultValueEntity::bigDecimal2,
+        3,
+        1,
+        defaultValue = BigDecimal("4.3")
+    )
     val offsetDateTime = timestampWithTimeZone(
         PostgresqlAllTypesNullableDefaultValueEntity::offsetDateTime,
         defaultValue = OffsetDateTime.of(
@@ -438,6 +441,34 @@ object PostgresqlLongs : PostgresqlTable<LongEntity>(), Longs {
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object PostgresqlFloats : PostgresqlTable<FloatEntity>(), Floats {
+    override val id = integer(FloatEntity::id)
+        .primaryKey()
+    override val floatNotNull = real(FloatEntity::floatNotNull)
+    override val floatNullable = real(FloatEntity::floatNullable)
+}
+
+object PostgresqlDoubles : PostgresqlTable<DoubleEntity>(), Doubles {
+    override val id = integer(DoubleEntity::id)
+        .primaryKey()
+    override val doubleNotNull = doublePrecision(DoubleEntity::doubleNotNull)
+    override val doubleNullable = doublePrecision(DoubleEntity::doubleNullable)
+}
+
+object PostgresqlBigDecimals : PostgresqlTable<BigDecimalEntity>(), BigDecimals {
+    override val id = integer(BigDecimalEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = decimal(BigDecimalEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = decimal(BigDecimalEntity::bigDecimalNullable, 3, 1)
+}
+
+object PostgresqlBigDecimalAsNumerics : PostgresqlTable<BigDecimalAsNumericEntity>(), BigDecimalAsNumerics {
+    override val id = integer(BigDecimalAsNumericEntity::id)
+        .primaryKey()
+    override val bigDecimalNotNull = numeric(BigDecimalAsNumericEntity::bigDecimalNotNull, 3, 1)
+    override val bigDecimalNullable = numeric(BigDecimalAsNumericEntity::bigDecimalNullable, 3, 1)
 }
 
 object PostgresqlUuids : PostgresqlTable<UuidEntity>(), Uuids {
@@ -532,4 +563,8 @@ val postgresqlTables = tables().postgresql(
     PostgresqlTexts,
     PostgresqlByteArrayAsByteas,
     PostgresqlTsvectors,
+    PostgresqlFloats,
+    PostgresqlDoubles,
+    PostgresqlBigDecimals,
+    PostgresqlBigDecimalAsNumerics,
 )

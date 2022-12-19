@@ -23,14 +23,14 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
         assertThat(repository.selectAllAllTypesNotNull())
             .hasSize(1)
-            .containsExactly(allTypesNotNullWithTime)
+            .containsExactly(sqliteAllTypesNotNullWithTime)
     }
 
     @Test
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() {
         assertThat(repository.selectAllAllTypesNullable())
             .hasSize(1)
-            .containsExactly(allTypesNullableWithTime)
+            .containsExactly(sqliteAllTypesNullableWithTime)
     }
 
     @Test
@@ -38,8 +38,8 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         assertThat(repository.selectAllAllTypesNullableDefaultValue())
             .hasSize(1)
             .containsExactly(
-                AllTypesNullableDefaultValueWithTimeEntity(
-                    allTypesNullableDefaultValueWithTime.id,
+                SqliteAllTypesNullableDefaultValueWithTimeEntity(
+                    sqliteAllTypesNullableDefaultValueWithTime.id,
                     "default",
                     LocalDate.of(2019, 11, 4),
                     LocalDate(2019, 11, 6),
@@ -49,6 +49,8 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                     LocalDateTime(2019, 11, 4, 0, 0),
                     42,
                     84L,
+                    42.42f,
+                    84.84,
                     LocalTime.of(11, 25, 55),
                     LocalTime(11, 25, 55),
                 )
@@ -65,21 +67,23 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
         val newLong = 2L
+        val newFloat = 2.2f
+        val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
         val operator = client.transactionalOp()
         operator.transactional<Unit> { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNullValue(
                 "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
-                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble
             )
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
                 .containsExactlyInAnyOrder(
-                    AllTypesNotNullWithTimeEntity(
-                        allTypesNotNullWithTime.id, "new", false, newLocalDate,
-                        newKotlinxLocalDate, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
-                        newKotlinxLocalDateTime, newInt, newLong, newByteArray, newLocalTime, newKotlinxLocalTime
+                    SqliteAllTypesNotNullWithTimeEntity(
+                        sqliteAllTypesNotNullWithTime.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                        newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt,
+                        newLong, newByteArray, newFloat, newDouble, newLocalTime, newKotlinxLocalTime
                     )
                 )
         }
@@ -93,7 +97,7 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
             repository.updateAllTypesNotNullColumn()
             assertThat(repository.selectAllAllTypesNotNull())
                 .hasSize(1)
-                .containsExactlyInAnyOrder(allTypesNotNullWithTime)
+                .containsExactlyInAnyOrder(sqliteAllTypesNotNullWithTime)
         }
     }
 
@@ -104,8 +108,8 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
             transaction.setRollbackOnly()
             assertThat(repository.insertAndReturnAllTypesDefaultValues())
                 .isEqualTo(
-                    AllTypesNullableDefaultValueWithTimeEntity(
-                        allTypesNullableDefaultValueWithTimeToInsert.id,
+                    SqliteAllTypesNullableDefaultValueWithTimeEntity(
+                        sqliteAllTypesNullableDefaultValueWithTimeToInsert.id,
                         "default",
                         LocalDate.of(2019, 11, 4),
                         LocalDate(2019, 11, 6),
@@ -115,6 +119,8 @@ class SqLiteAllTypesTest : AbstractSqLiteTest<AllTypesRepository>() {
                         LocalDateTime(2019, 11, 4, 0, 0),
                         42,
                         84L,
+                        42.42f,
+                        84.84,
                         LocalTime.of(11, 25, 55),
                         LocalTime(11, 25, 55),
                     )
@@ -145,9 +151,9 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTable
     }
 
     private fun insertAllTypes() {
-        sqlClient.insert(allTypesNotNullWithTime)
-        sqlClient.insert(allTypesNullableWithTime)
-        sqlClient.insert(allTypesNullableDefaultValueWithTime)
+        sqlClient.insert(sqliteAllTypesNotNullWithTime)
+        sqlClient.insert(sqliteAllTypesNullableWithTime)
+        sqlClient.insert(sqliteAllTypesNullableDefaultValueWithTime)
     }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom SqliteAllTypesNotNullWithTimes
@@ -157,10 +163,19 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTable
     fun selectAllAllTypesNullableDefaultValue() = sqlClient selectAllFrom SqliteAllTypesNullableDefaultValueWithTimes
 
     fun updateAllTypesNotNullValue(
-        newString: String, newBoolean: Boolean, newLocalDate: LocalDate,
-        newKotlinxLocalDate: kotlinx.datetime.LocalDate, newLocalTime: LocalTime,
-        newKotlinxLocalTime: kotlinx.datetime.LocalTime, newLocalDateTime: LocalDateTime,
-        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime, newInt: Int, newLong: Long, newByteArray: ByteArray
+        newString: String,
+        newBoolean: Boolean,
+        newLocalDate: LocalDate,
+        newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime,
+        newLocalDateTime: LocalDateTime,
+        newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
+        newInt: Int,
+        newLong: Long,
+        newByteArray: ByteArray,
+        newFloat: Float,
+        newDouble: Double,
     ) =
         (sqlClient update SqliteAllTypesNotNullWithTimes
                 set SqliteAllTypesNotNullWithTimes.string eq newString
@@ -176,7 +191,9 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTable
                 set SqliteAllTypesNotNullWithTimes.inte eq newInt
                 set SqliteAllTypesNotNullWithTimes.longe eq newLong
                 set SqliteAllTypesNotNullWithTimes.byteArray eq newByteArray
-                where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
+                set SqliteAllTypesNotNullWithTimes.float eq newFloat
+                set SqliteAllTypesNotNullWithTimes.double eq newDouble
+                where SqliteAllTypesNotNullWithTimes.id eq sqliteAllTypesNotNullWithTime.id
                 ).execute()
 
     fun updateAllTypesNotNullColumn() =
@@ -194,8 +211,10 @@ class AllTypesRepository(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTable
                 set SqliteAllTypesNotNullWithTimes.inte eq SqliteAllTypesNotNullWithTimes.inte
                 set SqliteAllTypesNotNullWithTimes.longe eq SqliteAllTypesNotNullWithTimes.longe
                 set SqliteAllTypesNotNullWithTimes.byteArray eq SqliteAllTypesNotNullWithTimes.byteArray
-                where SqliteAllTypesNotNullWithTimes.id eq allTypesNotNullWithTime.id
+                set SqliteAllTypesNotNullWithTimes.float eq SqliteAllTypesNotNullWithTimes.float
+                set SqliteAllTypesNotNullWithTimes.double eq SqliteAllTypesNotNullWithTimes.double
+                where SqliteAllTypesNotNullWithTimes.id eq sqliteAllTypesNotNullWithTime.id
                 ).execute()
 
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueWithTimeToInsert
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn sqliteAllTypesNullableDefaultValueWithTimeToInsert
 }

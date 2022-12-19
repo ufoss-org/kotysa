@@ -96,7 +96,14 @@ public interface DefaultSqlClient {
                 if (tables.dbType == DbType.MYSQL && column.sqlType == SqlType.VARCHAR) {
                     requireNotNull(column.size) { "Column ${column.name} : Varchar size is required in MySQL" }
                 }
-                val size = if (column.size != null) "(${column.size})" else ""
+                var parameters = ""
+                if (column.size != null) {
+                    parameters = "(${column.size}"
+                    if (column.decimals != null) {
+                        parameters += ",${column.decimals}"
+                    }
+                    parameters += ")"
+                }
                 val nullability = if (column.isNullable) "NULL" else "NOT NULL"
                 val autoIncrement = if (column.isAutoIncrement && DbType.SQLITE != tables.dbType) {
                     // SQLITE : The AUTOINCREMENT keyword imposes extra CPU, memory, disk space, and disk I/O overhead and should be avoided if not strictly needed.
@@ -115,7 +122,7 @@ public interface DefaultSqlClient {
                 } else {
                     ""
                 }
-                "${column.name} ${column.sqlType.fullType}$size $nullability$autoIncrement$default"
+                "${column.name} ${column.sqlType.fullType}$parameters $nullability$autoIncrement$default"
             }
 
         val otherColumns = kotysaTable.columns

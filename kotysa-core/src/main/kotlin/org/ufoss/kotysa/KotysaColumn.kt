@@ -4,10 +4,11 @@
 
 package org.ufoss.kotysa
 
+import org.ufoss.kotysa.columns.AbstractDbColumn
 import kotlin.reflect.KClass
 
 /**
- * One database Table's Column model mapped by entity's [entityGetter]
+ * One database Table's Column model
  *
  * @param T Entity type associated with the table this column is in
  * @param U return type of associated getter to this column
@@ -25,18 +26,20 @@ public interface KotysaColumn<T : Any, U : Any> {
     public val isNullable: Boolean
     public val defaultValue: Any?
     public val size: Int?
+    public val decimals: Int?
 }
 
 public class KotysaColumnDb<T : Any, U : Any> internal constructor(
-        override val column: Column<T, U>,
-        public val entityGetter: (T) -> Any?,
-        override val columnClass: KClass<Any>,
-        override val name: String,
-        override val sqlType: SqlType,
-        override val isAutoIncrement: Boolean,
-        override val isNullable: Boolean,
-        override val defaultValue: Any?,
-        override val size: Int?,
+    override val column: AbstractDbColumn<T, U>,
+    public val entityGetter: (T) -> Any?,
+    override val columnClass: KClass<Any>,
+    override val name: String,
+    override val sqlType: SqlType,
+    override val isAutoIncrement: Boolean,
+    override val isNullable: Boolean,
+    override val defaultValue: Any?,
+    override val size: Int?,
+    override val decimals: Int?,
 ) : KotysaColumn<T, U> {
 
     override lateinit var table: KotysaTable<T>
@@ -73,6 +76,7 @@ internal class KotysaColumnTsvector<T : Any, U : Any> internal constructor(
     override val isNullable: Boolean = false
     override val defaultValue: Any? = null
     override val size: Int? = null
+    override val decimals: Int? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
