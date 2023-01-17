@@ -14,3 +14,4 @@ public interface MysqlJdbcSqlClient : MysqlSqlClient, JdbcSqlClient
 public interface PostgresqlJdbcSqlClient : PostgresqlSqlClient, JdbcSqlClient
 public interface MssqlJdbcSqlClient : MssqlSqlClient, JdbcSqlClient
 public interface MariadbJdbcSqlClient : MariadbSqlClient, JdbcSqlClient
+public interface OracleJdbcSqlClient : MariadbSqlClient, JdbcSqlClient

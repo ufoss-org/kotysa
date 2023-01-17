@@ -68,6 +68,7 @@ public interface MysqlSqlClient : SqlClient
 public interface PostgresqlSqlClient : SqlClient, SqlClientQuery.ToTsquery
 public interface MssqlSqlClient : SqlClient
 public interface MariadbSqlClient : SqlClient
+public interface OracleSqlClient : SqlClient
 public interface SqLiteSqlClient : SqlClient
 
 public class SqlClientSelect private constructor() : SqlClientQuery() {

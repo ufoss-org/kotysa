@@ -4,39 +4,19 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MariadbRoles
+import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
-class R2dbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectBoolean>() {
+
+class R2dbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectBoolean>(),
+    CoroutinesSelectBooleanTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelectBoolean, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(true).toList())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(false).toList())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositoryJdbcMariadbSelectBoolean(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcMariadb(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MariadbUsers
-                where MariadbUsers.isAdmin eq value
-                ).fetchAll()
-}
+class UserRepositoryJdbcMariadbSelectBoolean(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectBooleanRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(sqlClient, MariadbRoles, MariadbUsers, MariadbUserRoles)

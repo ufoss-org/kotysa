@@ -4,70 +4,16 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MariadbCustomers
-import org.ufoss.kotysa.test.customerFrance
-import org.ufoss.kotysa.test.customerUSA1
-import org.ufoss.kotysa.test.customerUSA2
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLimitOffsetRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLimitOffsetTest
 
-class R2dbcSelectLimitOffsetMariadbTest : AbstractR2dbcMariadbTest<LimitOffsetRepositoryMariadbSelect>() {
+class R2dbcSelectLimitOffsetMariadbTest : AbstractR2dbcMariadbTest<LimitOffsetRepositoryMariadbSelect>(),
+    CoroutinesSelectLimitOffsetTest<MariadbCustomers, LimitOffsetRepositoryMariadbSelect, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = LimitOffsetRepositoryMariadbSelect(sqlClient)
-
-    @Test
-    fun `Verify selectAllOrderByIdOffset returns customerUSA2`() = runTest {
-        assertThat(repository.selectAllOrderByIdOffset().toList())
-            .hasSize(1)
-            .containsExactly(customerUSA2)
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimit returns customerUSA2`() = runTest {
-        assertThat(repository.selectAllOrderByIdLimit().toList())
-            .hasSize(1)
-            .containsExactly(customerFrance)
-    }
-
-    @Test
-    fun `Verify selectAllLimitOffset returns one result`() = runTest {
-        assertThat(repository.selectAllLimitOffset().toList())
-            .hasSize(1)
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1`() = runTest {
-        assertThat(repository.selectAllOrderByIdLimitOffset().toList())
-            .hasSize(2)
-            .containsExactly(customerUSA1, customerUSA2)
-    }
 }
 
-class LimitOffsetRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) :
-    AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
-
-    fun selectAllOrderByIdOffset() =
-        (sqlClient selectFrom MariadbCustomers
-                orderByAsc MariadbCustomers.id
-                offset 2
-                ).fetchAll()
-
-    fun selectAllOrderByIdLimit() =
-        (sqlClient selectFrom MariadbCustomers
-                orderByAsc MariadbCustomers.id
-                limit 1
-                ).fetchAll()
-
-    fun selectAllLimitOffset() =
-        (sqlClient selectFrom MariadbCustomers
-                limit 1 offset 1
-                ).fetchAll()
-
-    fun selectAllOrderByIdLimitOffset() =
-        (sqlClient selectFrom MariadbCustomers
-                orderByAsc MariadbCustomers.id
-                limit 2 offset 1
-                ).fetchAll()
-}
+class LimitOffsetRepositoryMariadbSelect(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectLimitOffsetRepository<MariadbCustomers>(sqlClient, MariadbCustomers)

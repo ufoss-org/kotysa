@@ -605,7 +605,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             vertxBindParams(tuple)
 
             // 2) add limit and offset (order is different depending on DbType)
-            if (DbType.MSSQL == tables.dbType) {
+            if (DbType.MSSQL == tables.dbType || DbType.ORACLE == tables.dbType) {
                 offsetParam(tuple)
                 limitParam(tuple)
             } else {

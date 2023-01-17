@@ -20,7 +20,6 @@ import java.sql.SQLException
 import kotlin.coroutines.coroutineContext
 import kotlin.reflect.KClass
 
-
 /**
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
@@ -44,6 +43,12 @@ internal sealed class SqlClientR2dbc(
 
     protected suspend fun <T : Any> insertProtected(rows: Array<T>) {
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
+        // fixme try to remove this if later, for now it is needed, see R2dbcInsertOracleTest.insertDupCustomers
+        if (tables.dbType == DbType.ORACLE) {
+            rows.forEach { row -> insertProtected(row) }
+            return
+        }
+        
         val table = tables.getTable(rows[0]::class)
 
         connectionFactory.getR2dbcConnection().execute { connection ->
@@ -81,6 +86,7 @@ internal sealed class SqlClientR2dbc(
             // other DB types have RETURNING style features
             val statement = connection.createStatement(insertSql(row, true))
             setStatementParams(row, table, statement)
+            setOracleReturnGeneratedValues(table, statement)
             statement.execute().asFlow()
                 .mapNotNull { r ->
                     r.map { row, _ ->
@@ -93,6 +99,19 @@ internal sealed class SqlClientR2dbc(
                 }
                 .first()
         }
+
+    private fun <T : Any> setOracleReturnGeneratedValues(
+        kotysaTable: KotysaTable<T>,
+        statement: Statement
+    ) {
+        if (tables.dbType != DbType.ORACLE) {
+            return
+        }
+        val allTableColumnNames = kotysaTable.columns
+            .map { column -> column.name }
+            .toTypedArray()
+        statement.returnGeneratedValues(*allTableColumnNames)
+    }
 
     protected fun <T : Any> insertAndReturnProtected(rows: Array<T>): Flow<T> {
         require(rows.isNotEmpty()) { "rows must contain at least one element" }
@@ -178,7 +197,7 @@ internal sealed class SqlClientR2dbc(
 
         connectionFactory.getR2dbcConnection().execute { connection ->
             connection.createStatement(createTableResult.sql)
-                .execute().awaitLast()
+                .execute().awaitFirstOrNull()
             // 2) loop to execute create indexes
             createTableResult.createIndexes.forEach { createIndexResult ->
                 try {
@@ -456,6 +475,39 @@ internal class MariadbSqlClientR2dbc internal constructor(
     connectionFactory: ConnectionFactory,
     tables: MariadbTables,
 ) : SqlClientR2dbc(connectionFactory, tables), MariadbR2dbcSqlClient {
+    override suspend fun <T : Any> insert(row: T) = insertProtected(row)
+    override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override suspend fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override suspend fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class OracleSqlClientR2dbc internal constructor(
+    connectionFactory: ConnectionFactory,
+    tables: OracleTables,
+) : SqlClientR2dbc(connectionFactory, tables), OracleR2dbcSqlClient {
     override suspend fun <T : Any> insert(row: T) = insertProtected(row)
     override suspend fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
     override suspend fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)

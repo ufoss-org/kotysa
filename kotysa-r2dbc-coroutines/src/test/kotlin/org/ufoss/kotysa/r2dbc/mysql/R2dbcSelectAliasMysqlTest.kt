@@ -15,12 +15,13 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
 
 class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcR2dbcException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws R2dbcException`() {
         assertThatThrownBy { runTest {
             repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
         } }
@@ -181,7 +182,13 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: R2dbcSqlClient) : AbstractUserRepositoryR2dbcMysql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
+    AbstractCoroutinesUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MysqlUsers.firstname `as` "fna"

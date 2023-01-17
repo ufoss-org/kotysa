@@ -6,6 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.mssql
 
 import org.ufoss.kotysa.test.MssqlFloats
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatTest
 
 class VertxSqlClientSelectFloatMssqlTest : AbstractVertxSqlClientMssqlTest<SelectFloatMssqlRepository>(),
     MutinySelectFloatTest<MssqlFloats, SelectFloatMssqlRepository> {

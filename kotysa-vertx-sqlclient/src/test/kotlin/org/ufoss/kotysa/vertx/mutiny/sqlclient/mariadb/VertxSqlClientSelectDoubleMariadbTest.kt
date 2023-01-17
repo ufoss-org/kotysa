@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mariadb
 
 import org.ufoss.kotysa.test.MariadbDoubles
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectDoubleRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectDoubleTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectDoubleRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectDoubleTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 

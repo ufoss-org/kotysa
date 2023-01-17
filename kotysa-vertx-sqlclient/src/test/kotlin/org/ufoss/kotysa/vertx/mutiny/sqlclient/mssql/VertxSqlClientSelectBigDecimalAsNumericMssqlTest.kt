@@ -6,6 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.mssql
 
 import org.ufoss.kotysa.test.MssqlBigDecimalAsNumerics
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBigDecimalAsNumericRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBigDecimalAsNumericTest
 
 class VertxSqlClientSelectBigDecimalAsNumericMssqlTest : AbstractVertxSqlClientMssqlTest<SelectBigDecimalAsNumericMssqlRepository>(),
     MutinySelectBigDecimalAsNumericTest<MssqlBigDecimalAsNumerics, SelectBigDecimalAsNumericMssqlRepository> {

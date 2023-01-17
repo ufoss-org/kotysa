@@ -5,33 +5,19 @@
 package org.ufoss.kotysa.r2dbc.mssql
 
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MssqlCustomers
-import org.ufoss.kotysa.test.customerFrance
-import org.ufoss.kotysa.test.customerUSA1
-import org.ufoss.kotysa.test.customerUSA2
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLimitOffsetRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLimitOffsetTest
 
-class R2dbcSelectLimitOffsetMssqlTest : AbstractR2dbcMssqlTest<LimitOffsetByRepositoryMssqlSelect>() {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = LimitOffsetByRepositoryMssqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectAllOrderByIdOffset returns customerUSA2`() = runTest {
-        assertThat(repository.selectAllOrderByIdOffset().toList())
-            .hasSize(1)
-            .containsExactly(customerUSA2)
-    }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimit returns customerUSA2`() = runTest {
-        assertThat(repository.selectAllOrderByIdLimit().toList())
-            .hasSize(1)
-            .containsExactly(customerFrance)
-    }
+class R2dbcSelectLimitOffsetMssqlTest : AbstractR2dbcMssqlTest<LimitOffsetRepositoryMssqlSelect>(),
+    CoroutinesSelectLimitOffsetTest<MssqlCustomers, LimitOffsetRepositoryMssqlSelect, R2dbcTransaction> {
+    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = LimitOffsetRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllLimitOffset throw exception`() {
@@ -43,38 +29,10 @@ class R2dbcSelectLimitOffsetMssqlTest : AbstractR2dbcMssqlTest<LimitOffsetByRepo
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("Mssql offset or limit must have order by")
     }
-
-    @Test
-    fun `Verify selectAllOrderByIdLimitOffset returns customerUSA1`() = runTest {
-        assertThat(repository.selectAllOrderByIdLimitOffset().toList())
-            .hasSize(2)
-            .containsExactly(customerUSA1, customerUSA2)
-    }
+    
+    @Ignore
+    override fun `Verify selectAllLimitOffset returns one result`() {}
 }
 
-class LimitOffsetByRepositoryMssqlSelect(private val sqlClient: R2dbcSqlClient) :
-    AbstractCustomerRepositoryR2dbcMssql(sqlClient) {
-
-    fun selectAllOrderByIdOffset() =
-        (sqlClient selectFrom MssqlCustomers
-                orderByAsc MssqlCustomers.id
-                offset 2
-                ).fetchAll()
-
-    fun selectAllOrderByIdLimit() =
-        (sqlClient selectFrom MssqlCustomers
-                orderByAsc MssqlCustomers.id
-                limit 1
-                ).fetchAll()
-
-    fun selectAllLimitOffset() =
-        (sqlClient selectFrom MssqlCustomers
-                limit 1 offset 1
-                ).fetchAll()
-
-    fun selectAllOrderByIdLimitOffset() =
-        (sqlClient selectFrom MssqlCustomers
-                orderByAsc MssqlCustomers.id
-                limit 2 offset 1
-                ).fetchAll()
-}
+class LimitOffsetRepositoryMssqlSelect(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectLimitOffsetRepository<MssqlCustomers>(sqlClient, MssqlCustomers)

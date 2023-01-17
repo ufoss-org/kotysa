@@ -13,78 +13,78 @@ import org.ufoss.kotysa.test.javaJdoe
 import org.ufoss.kotysa.transaction.Transaction
 import reactor.kotlin.test.test
 
-// TODO move all tests following this model
 interface ReactorJavaEntityTest<T : JavaUsers, U : ReactorJavaUserRepository<T>, V : Transaction> :
     ReactorRepositoryTest<U, V> {
 
     @Test
     fun `Verify selectAll returns all users`() {
         assertThat(repository.selectAll().toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(javaJdoe, javaBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(javaJdoe, javaBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {
         assertThat(repository.selectFirstByFirstname("John").block())
-                .isEqualTo(javaJdoe)
+            .isEqualTo(javaJdoe)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds no Unknown`() {
         assertThat(repository.selectFirstByFirstname("Unknown").block())
-                .isNull()
+            .isNull()
     }
 
     @Test
     fun `Verify selectByAlias1 finds TheBoss`() {
         assertThat(repository.selectByAlias1("TheBoss").toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(javaBboss)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(javaBboss)
     }
 
     @Test
     fun `Verify selectByAlias2 finds TheBoss`() {
         assertThat(repository.selectByAlias2("TheBoss").toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(javaBboss)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(javaBboss)
     }
 
     @Test
     fun `Verify selectByAlias3 finds TheBoss`() {
         assertThat(repository.selectByAlias3("TheBoss").toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(javaBboss)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(javaBboss)
     }
 
     @Test
     fun `Verify selectByAlias1 with null alias finds John`() {
         assertThat(repository.selectByAlias1(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(javaJdoe)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(javaJdoe)
     }
 
     @Test
     fun `Verify selectAllByAlias2 with null alias finds John`() {
         assertThat(repository.selectByAlias2(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(javaJdoe)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(javaJdoe)
     }
 
     @Test
     fun `Verify selectByAlias3 with null alias finds John`() {
         assertThat(repository.selectByAlias3(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(javaJdoe)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(javaJdoe)
     }
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() {
         assertThat(repository.selectAllMappedToDto().toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserDto("John Doe", false, null),
-                        UserDto("Big Boss", true, "TheBoss"))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
+            )
     }
 
     @Test
@@ -92,9 +92,9 @@ interface ReactorJavaEntityTest<T : JavaUsers, U : ReactorJavaUserRepository<T>,
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteAll()
-                    .doOnNext { n -> assertThat(n).isEqualTo(2) }
-                    .thenMany(repository.selectAll())
+                .doOnNext { n -> assertThat(n).isEqualTo(2) }
+                .thenMany(repository.selectAll())
         }.test()
-                .verifyComplete()
+            .verifyComplete()
     }
 }

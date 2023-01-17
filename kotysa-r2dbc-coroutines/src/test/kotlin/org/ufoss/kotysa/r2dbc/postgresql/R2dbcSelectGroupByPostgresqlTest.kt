@@ -4,33 +4,18 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlCustomers
-import org.ufoss.kotysa.test.customerFrance
-import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectGroupByTest
 
-class R2dbcSelectGroupByPostgresqlTest : AbstractR2dbcPostgresqlTest<GroupByRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = GroupByRepositoryPostgresqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() = runTest {
-        assertThat(repository.selectCountCustomerGroupByCountry().toList())
-            .hasSize(2)
-            .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
+class R2dbcSelectGroupByPostgresqlTest : AbstractR2dbcPostgresqlTest<GroupByRepositoryPostgresqlSelect>(),
+    CoroutinesSelectGroupByTest<PostgresqlCustomers, GroupByRepositoryPostgresqlSelect, R2dbcTransaction> {
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
+        GroupByRepositoryPostgresqlSelect(sqlClient)
 }
 
-class GroupByRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlClient) :
-    AbstractCustomerRepositoryR2dbcPostgresql(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-        (sqlClient selectCount PostgresqlCustomers.id and PostgresqlCustomers.country
-                from PostgresqlCustomers
-                groupBy PostgresqlCustomers.country
-                ).fetchAll()
-}
+class GroupByRepositoryPostgresqlSelect(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectGroupByRepository<PostgresqlCustomers>(sqlClient, PostgresqlCustomers)

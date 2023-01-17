@@ -91,7 +91,7 @@ internal sealed class SqlClientSpringR2dbc(
 
 internal class H2SqlClientSpringR2dbc internal constructor(
     client: DatabaseClient,
-    tables: Tables,
+    tables: H2Tables,
 ) : SqlClientSpringR2dbc(client, tables), H2ReactorSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
@@ -122,7 +122,7 @@ internal class H2SqlClientSpringR2dbc internal constructor(
 
 internal class MysqlSqlClientSpringR2dbc internal constructor(
     client: DatabaseClient,
-    tables: Tables,
+    tables: MysqlTables,
 ) : SqlClientSpringR2dbc(client, tables), MysqlReactorSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
@@ -153,7 +153,7 @@ internal class MysqlSqlClientSpringR2dbc internal constructor(
 
 internal class PostgresqlSqlClientSpringR2dbc internal constructor(
     client: DatabaseClient,
-    tables: Tables,
+    tables: PostgresqlTables,
 ) : SqlClientSpringR2dbc(client, tables), PostgresqlReactorSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
@@ -189,7 +189,7 @@ internal class PostgresqlSqlClientSpringR2dbc internal constructor(
 
 internal class MssqlSqlClientSpringR2dbc internal constructor(
     client: DatabaseClient,
-    tables: Tables,
+    tables: MssqlTables,
 ) : SqlClientSpringR2dbc(client, tables), MssqlReactorSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
@@ -220,8 +220,39 @@ internal class MssqlSqlClientSpringR2dbc internal constructor(
 
 internal class MariadbSqlClientSpringR2dbc internal constructor(
     client: DatabaseClient,
-    tables: Tables,
+    tables: MariadbTables,
 ) : SqlClientSpringR2dbc(client, tables), MariadbReactorSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+}
+
+internal class OracleSqlClientSpringR2dbc internal constructor(
+    client: DatabaseClient,
+    tables: OracleTables,
+) : SqlClientSpringR2dbc(client, tables), OracleReactorSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
     override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)

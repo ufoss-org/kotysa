@@ -11,6 +11,7 @@ import org.ufoss.kotysa.h2.H2Table
 import org.ufoss.kotysa.mariadb.MariadbTable
 import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.mysql.MysqlTable
+import org.ufoss.kotysa.oracle.OracleTable
 import org.ufoss.kotysa.postgresql.PostgresqlTable
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import kotlin.reflect.KClass
@@ -52,6 +53,12 @@ public object DbTypeChoice {
     public fun mariadb(vararg tables: MariadbTable<*>): MariadbTables = buildMariadbTables(tables)
 
     /**
+     * Configure Functional Table Mapping support for Oracle
+     * @sample org.ufoss.kotysa.sample.oracleTables
+     */
+    public fun oracle(vararg tables: OracleTable<*>): OracleTables = buildOracleTables(tables)
+
+    /**
      * Configure Functional Table Mapping support for SqLite
      * @sample org.ufoss.kotysa.sample.sqLiteTables
      */
@@ -73,6 +80,7 @@ public object DbTypeChoice {
                         DbType.H2 -> H2Table::class == type.classifier
                         DbType.MSSQL -> MssqlTable::class == type.classifier
                         DbType.MARIADB -> MariadbTable::class == type.classifier
+                        DbType.ORACLE -> OracleTable::class == type.classifier
                     }
                 }
             ) { "Table $table should be a subclass of the platform $dbType Table" }
@@ -113,6 +121,11 @@ public object DbTypeChoice {
         return MariadbTables(pair.first, pair.second)
     }
 
+    private fun buildOracleTables(tables: Array<out AbstractTable<*>>): OracleTables {
+        val pair = fillTables(DbType.ORACLE, tables)
+        return OracleTables(pair.first, pair.second)
+    }
+
     private fun buildSqLiteTables(tables: Array<out AbstractTable<*>>): SqLiteTables {
         val pair = fillTables(DbType.SQLITE, tables)
         return SqLiteTables(pair.first, pair.second)
@@ -144,6 +157,7 @@ public object DbTypeChoice {
                     column.defaultValue,
                     column.size,
                     column.scale,
+                    column.identity,
                 )
                 kotysaColumnsMap[column] = kotysaColumn
             }

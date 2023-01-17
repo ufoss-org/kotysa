@@ -6,8 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.mariadb
 
 import org.ufoss.kotysa.test.MariadbJavaUsers
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyJavaEntityTest
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyJavaUserRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyJavaEntityTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyJavaUserRepository
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
 class VertxSqlClientJavaEntityMariadbTest : AbstractVertxSqlClientMariadbTest<JavaUserMariadbRepository>(),

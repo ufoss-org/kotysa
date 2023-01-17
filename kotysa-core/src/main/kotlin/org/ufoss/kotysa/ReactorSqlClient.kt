@@ -71,6 +71,7 @@ public interface MysqlReactorSqlClient : ReactorSqlClient
 public interface PostgresqlReactorSqlClient : ReactorSqlClient, SqlClientQuery.ToTsquery
 public interface MssqlReactorSqlClient : ReactorSqlClient
 public interface MariadbReactorSqlClient : ReactorSqlClient
+public interface OracleReactorSqlClient : ReactorSqlClient
 
 
 public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {

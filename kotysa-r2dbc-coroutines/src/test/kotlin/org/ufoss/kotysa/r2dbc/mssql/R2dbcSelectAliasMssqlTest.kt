@@ -15,6 +15,7 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
 
 class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
@@ -172,7 +173,13 @@ class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAli
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: R2dbcSqlClient) : AbstractUserRepositoryR2dbcMssql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
+    AbstractCoroutinesUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MssqlUsers.firstname `as` "fna"

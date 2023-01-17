@@ -4,39 +4,19 @@
 
 package org.ufoss.kotysa.r2dbc.mysql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
-class R2dbcSelectBooleanMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>() {
+
+class R2dbcSelectBooleanMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>(),
+    CoroutinesSelectBooleanTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectBoolean, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMysqlSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(true).toList())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(false).toList())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositoryJdbcMysqlSelectBoolean(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcMysql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MysqlUsers
-                where MysqlUsers.isAdmin eq value
-                ).fetchAll()
-}
+class UserRepositoryJdbcMysqlSelectBoolean(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectBooleanRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles)

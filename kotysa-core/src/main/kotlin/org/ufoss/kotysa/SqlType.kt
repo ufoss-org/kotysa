@@ -10,6 +10,7 @@ package org.ufoss.kotysa
 public enum class SqlType(internal val fullType: String) {
     // text
     VARCHAR("VARCHAR"),
+    VARCHAR2("VARCHAR2"),
     TINYTEXT("TINYTEXT"),
     TEXT("TEXT"),
     MEDIUMTEXT("MEDIUMTEXT"),
@@ -17,6 +18,8 @@ public enum class SqlType(internal val fullType: String) {
 
     // numbers
     BIT("BIT"),
+    BINARY_FLOAT("BINARY_FLOAT"),
+    BINARY_DOUBLE("BINARY_DOUBLE"),
     INT("INTEGER"),
     BIGINT("BIGINT"),
     SERIAL("SERIAL"),
@@ -26,6 +29,7 @@ public enum class SqlType(internal val fullType: String) {
     REAL("REAL"),
     DECIMAL("DECIMAL"),
     NUMERIC("NUMERIC"),
+    NUMBER("NUMBER"),
 
     // date
     TIMESTAMP("TIMESTAMP"),
@@ -42,6 +46,7 @@ public enum class SqlType(internal val fullType: String) {
     BLOB("BLOB"),
     BINARY("BINARY"),
     BYTEA("BYTEA"),
+    RAW("RAW"),
     
     // Text search / full-text search
     TSVECTOR("TSVECTOR"),

@@ -7,38 +7,45 @@ package org.ufoss.kotysa.r2dbc.mariadb
 import io.r2dbc.spi.R2dbcBadGrammarException
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.get
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
 
 class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcR2dbcBadGrammarException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
-        } }
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws R2dbcBadGrammarException`() {
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
+            }
+        }
             .isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcR2dbcBadGrammarException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
+            }
+        }
             .isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcR2dbcBadGrammarException`() {
-        assertThatThrownBy { runTest {
-            repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
+            }
+        }
             .isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
@@ -78,9 +85,11 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcR2dbcBadGrammarException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
+            }
+        }
             .isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
@@ -92,9 +101,11 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
+            }
+        }.isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
     @Test
@@ -125,7 +136,9 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() = runTest {
-        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
+        assertThat(
+            repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList()
+        )
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
@@ -144,34 +157,48 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
+            }
+        }.isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
+            }
+        }.isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
+            }
+        }.isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
-        } }.isInstanceOf(R2dbcBadGrammarException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
+            }
+        }.isInstanceOf(R2dbcBadGrammarException::class.java)
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: R2dbcSqlClient) : AbstractUserRepositoryR2dbcMariadb(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
+    AbstractCoroutinesUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MariadbUsers.firstname `as` "fna"

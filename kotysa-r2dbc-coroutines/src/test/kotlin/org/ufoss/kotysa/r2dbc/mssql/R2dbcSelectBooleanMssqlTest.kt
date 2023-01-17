@@ -4,39 +4,19 @@
 
 package org.ufoss.kotysa.r2dbc.mssql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MssqlRoles
+import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
-class R2dbcSelectBooleanMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelectBoolean>() {
+
+class R2dbcSelectBooleanMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelectBoolean>(),
+    CoroutinesSelectBooleanTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryJdbcMssqlSelectBoolean, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMssqlSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(true).toList())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(false).toList())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
 }
 
-
-class UserRepositoryJdbcMssqlSelectBoolean(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcMssql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MssqlUsers
-                where MssqlUsers.isAdmin eq value
-                ).fetchAll()
-}
+class UserRepositoryJdbcMssqlSelectBoolean(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectBooleanRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(sqlClient, MssqlRoles, MssqlUsers, MssqlUserRoles)

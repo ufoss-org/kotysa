@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.mssql
 
-import org.ufoss.kotysa.AbstractTable
+import org.ufoss.kotysa.AbstractCommonTable
 import org.ufoss.kotysa.columns.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -20,7 +20,7 @@ import java.time.LocalDateTime
  * @param T Entity type associated with this table
  */
 public abstract class MssqlTable<T : Any> protected constructor(tableName: String? = null) :
-    AbstractTable<T>(tableName) {
+    AbstractCommonTable<T>(tableName) {
 
     protected fun varchar(
         getter: (T) -> String,
@@ -44,10 +44,7 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
         defaultValue: Int? = null
     ): IntDbIntColumnNullable<T> =
         IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
-
-    protected fun identityInteger(getter: (T) -> Int?, columnName: String? = null): IntDbIntColumnNotNull<T> =
-        IntDbIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
-
+    
     protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
         LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
@@ -57,9 +54,6 @@ public abstract class MssqlTable<T : Any> protected constructor(tableName: Strin
         defaultValue: Long? = null
     ): LongDbBigIntColumnNullable<T> =
         LongDbBigIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
-
-    protected fun identityBigInt(getter: (T) -> Long?, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
-        LongDbBigIntColumnNotNull(getter, columnName, true).also { addColumn(it) }
 
     protected fun real(getter: (T) -> Float, columnName: String? = null): FloatDbRealColumnNotNull<T> =
         FloatDbRealColumnNotNull(getter, columnName).also { addColumn(it) }

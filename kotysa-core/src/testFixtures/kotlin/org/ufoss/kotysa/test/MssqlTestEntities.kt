@@ -235,14 +235,14 @@ object MssqlKotlinxLocalDateTimes : MssqlTable<KotlinxLocalDateTimeEntity>(), Ko
 }
 
 object MssqlInts : MssqlTable<IntEntity>(), Ints {
-    override val id = identityInteger(IntEntity::id)
+    override val id = integer(IntEntity::id).identity()
         .primaryKey()
     override val intNotNull = integer(IntEntity::intNotNull)
     override val intNullable = integer(IntEntity::intNullable)
 }
 
 object MssqlLongs : MssqlTable<LongEntity>(), Longs {
-    override val id = identityBigInt(LongEntity::id)
+    override val id = bigInt(LongEntity::id).identity()
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)

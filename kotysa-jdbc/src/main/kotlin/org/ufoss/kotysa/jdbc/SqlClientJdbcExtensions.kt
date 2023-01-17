@@ -41,3 +41,10 @@ public fun DataSource.sqlClient(tables: MssqlTables): MssqlJdbcSqlClient = Mssql
  * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
  */
 public fun DataSource.sqlClient(tables: MariadbTables): MariadbJdbcSqlClient = MariadbSqlClientJdbc(this, tables)
+
+/**
+ * Create a [OracleJdbcSqlClient] from a JDBC [DataSource] with [OracleTables] mapping
+ *
+ * @sample org.ufoss.kotysa.jdbc.sample.UserRepositoryJdbc
+ */
+public fun DataSource.sqlClient(tables: OracleTables): OracleJdbcSqlClient = OracleSqlClientJdbc(this, tables)

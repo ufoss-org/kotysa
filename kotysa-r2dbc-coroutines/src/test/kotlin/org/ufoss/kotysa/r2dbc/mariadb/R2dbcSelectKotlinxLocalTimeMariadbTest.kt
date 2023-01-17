@@ -11,8 +11,7 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectKotlinxLoca
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectKotlinxLocalTimeTest
 
 class R2dbcSelectKotlinxLocalTimeMariadbTest : AbstractR2dbcMariadbTest<KotlinxLocalTimeRepositoryMariadbSelect>(),
-    CoroutinesSelectKotlinxLocalTimeTest<MariadbKotlinxLocalTimes, KotlinxLocalTimeRepositoryMariadbSelect,
-            R2dbcTransaction> {
+    CoroutinesSelectKotlinxLocalTimeTest<MariadbKotlinxLocalTimes, KotlinxLocalTimeRepositoryMariadbSelect, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = KotlinxLocalTimeRepositoryMariadbSelect(sqlClient)
 }
 

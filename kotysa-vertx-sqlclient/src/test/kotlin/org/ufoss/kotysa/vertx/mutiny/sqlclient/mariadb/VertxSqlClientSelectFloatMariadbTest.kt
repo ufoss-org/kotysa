@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mariadb
 
 import org.ufoss.kotysa.test.MariadbFloats
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectFloatRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectFloatTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 

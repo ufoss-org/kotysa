@@ -4,40 +4,26 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.PostgresqlRoles
+import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
-class R2dbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectBoolean>() {
-    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient)
 
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(true).toList())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() = runTest {
-        assertThat(repository.selectAllByIsAdminEq(false).toList())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
+class R2dbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectBoolean>(),
+    CoroutinesSelectBooleanTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSelectBoolean, R2dbcTransaction> {
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
+        UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient)
 }
 
-
-class UserRepositoryJdbcPostgresqlSelectBoolean(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcPostgresql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom PostgresqlUsers
-                where PostgresqlUsers.isAdmin eq value
-                ).fetchAll()
-}
+class UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectBooleanRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

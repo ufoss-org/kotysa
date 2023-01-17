@@ -6,6 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 
 import org.ufoss.kotysa.test.PostgresqlJavaUsers
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyJavaEntityTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyJavaUserRepository
 
 class VertxSqlClientJavaEntityPostgresqlTest : AbstractVertxSqlClientPostgresqlTest<JavaUserPostgresqlRepository>(),
     MutinyJavaEntityTest<PostgresqlJavaUsers, JavaUserPostgresqlRepository> {

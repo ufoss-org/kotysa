@@ -4,33 +4,19 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.H2Roles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.H2UserRoles
+import org.ufoss.kotysa.test.H2Users
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctTest
 
-class R2dbcSelectDistinctH2Test : AbstractR2dbcH2Test<UserRepositoryJdbcH2SelectDistinct>() {
+class R2dbcSelectDistinctH2Test : AbstractR2dbcH2Test<UserRepositoryJdbcH2SelectDistinct>(),
+    CoroutinesSelectDistinctTest<H2Roles, H2Users, H2UserRoles, UserRepositoryJdbcH2SelectDistinct, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcH2SelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() = runTest {
-        assertThat(repository.selectDistinctRoleLabels().toList())
-            .hasSize(3)
-            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
 
-class UserRepositoryJdbcH2SelectDistinct(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcH2(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct H2Roles.label
-                from H2Roles
-                ).fetchAll()
-}
+class UserRepositoryJdbcH2SelectDistinct(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectDistinctRepository<H2Roles, H2Users, H2UserRoles>(sqlClient, H2Roles, H2Users, H2UserRoles)

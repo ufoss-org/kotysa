@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mysql
 
 import org.ufoss.kotysa.test.MysqlFloats
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectFloatRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectFloatTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 

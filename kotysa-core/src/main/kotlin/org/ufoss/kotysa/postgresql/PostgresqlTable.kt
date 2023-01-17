@@ -5,6 +5,8 @@
 package org.ufoss.kotysa.postgresql
 
 import org.ufoss.kotysa.AbstractTable
+import org.ufoss.kotysa.Index
+import org.ufoss.kotysa.IndexType
 import org.ufoss.kotysa.columns.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -218,4 +220,20 @@ public abstract class PostgresqlTable<T : Any> protected constructor(tableName: 
         require(columns.isNotEmpty()) { "columns must contain at least one element" }
         return TsvectorColumn(columnName, tsvectorType, columns).also { addColumn(it) }
     }
+
+    /**
+     * Creates a GIN index associated to a tsvector column
+     */
+    protected fun TsvectorColumn<T>.withGinIndex(indexName: String? = null): TsvectorColumn<T> =
+        this.also {
+            kotysaIndexes.add(Index(setOf(this), IndexType.GIN, indexName))
+        }
+
+    /**
+     * Creates a GIN index associated to a tsvector column
+     */
+    protected fun TsvectorColumn<T>.withGistIndex(indexName: String? = null): TsvectorColumn<T> =
+        this.also {
+            kotysaIndexes.add(Index(setOf(this), IndexType.GIST, indexName))
+        }
 }

@@ -4,33 +4,24 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MariadbRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MariadbUserRoles
+import org.ufoss.kotysa.test.MariadbUsers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectOrRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectOrTest
 
-class R2dbcSelectOrMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectOr>() {
+class R2dbcSelectOrMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectOr>(),
+    CoroutinesSelectOrTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelectOr,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() = runTest {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
 }
 
-
-class UserRepositoryJdbcMariadbSelectOr(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcMariadb(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-            (sqlClient selectFrom MariadbRoles
-                    where MariadbRoles.label eq label1
-                    or MariadbRoles.label eq label2
-                    ).fetchAll()
-}
+class UserRepositoryJdbcMariadbSelectOr(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectOrRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    )

@@ -19,35 +19,48 @@ import kotlin.reflect.KClass
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-public fun ConnectionFactory.sqlClient(tables: H2Tables): H2R2dbcSqlClient = H2SqlClientR2dbc(this, tables)
+public fun ConnectionFactory.sqlClient(tables: H2Tables): H2R2dbcSqlClient =
+    H2SqlClientR2dbc(this, tables)
 
 /**
  * Create a [MysqlR2dbcSqlClient] from a R2DBC [ConnectionFactory] with [MysqlTables] mapping
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-public fun ConnectionFactory.sqlClient(tables: MysqlTables): MysqlR2dbcSqlClient = MysqlSqlClientR2dbc(this, tables)
+public fun ConnectionFactory.sqlClient(tables: MysqlTables): MysqlR2dbcSqlClient =
+    MysqlSqlClientR2dbc(this, tables)
 
 /**
  * Create a [PostgresqlR2dbcSqlClient] from a R2DBC [ConnectionFactory] with [PostgresqlTables] mapping
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-public fun ConnectionFactory.sqlClient(tables: PostgresqlTables): PostgresqlR2dbcSqlClient = PostgresqlSqlClientR2dbc(this, tables)
+public fun ConnectionFactory.sqlClient(tables: PostgresqlTables): PostgresqlR2dbcSqlClient =
+    PostgresqlSqlClientR2dbc(this, tables)
 
 /**
  * Create a [MssqlR2dbcSqlClient] from a R2DBC [ConnectionFactory] with [MssqlTables] mapping
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-public fun ConnectionFactory.sqlClient(tables: MssqlTables): MssqlR2dbcSqlClient = MssqlSqlClientR2dbc(this, tables)
+public fun ConnectionFactory.sqlClient(tables: MssqlTables): MssqlR2dbcSqlClient =
+    MssqlSqlClientR2dbc(this, tables)
 
 /**
  * Create a [MariadbR2dbcSqlClient] from a R2DBC [ConnectionFactory] with [MariadbTables] mapping
  *
  * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
  */
-public fun ConnectionFactory.sqlClient(tables: MariadbTables): MariadbR2dbcSqlClient = MariadbSqlClientR2dbc(this, tables)
+public fun ConnectionFactory.sqlClient(tables: MariadbTables): MariadbR2dbcSqlClient =
+    MariadbSqlClientR2dbc(this, tables)
+
+/**
+ * Create a [OracleR2dbcSqlClient] from a R2DBC [ConnectionFactory] with [OracleTables] mapping
+ *
+ * @sample org.ufoss.kotysa.r2dbc.sample.UserRepositoryR2dbc
+ */
+public fun ConnectionFactory.sqlClient(tables: OracleTables): OracleR2dbcSqlClient =
+    OracleSqlClientR2dbc(this, tables)
 
 internal fun KClass<*>.toDbClass() =
     when (this.qualifiedName) {

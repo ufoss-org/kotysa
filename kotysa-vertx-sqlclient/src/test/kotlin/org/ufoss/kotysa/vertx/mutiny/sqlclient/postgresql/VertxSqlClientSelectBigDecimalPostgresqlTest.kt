@@ -6,6 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 
 import org.ufoss.kotysa.test.PostgresqlBigDecimals
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBigDecimalRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBigDecimalTest
 
 class VertxSqlClientSelectBigDecimalPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<BigDecimalPostgresqlRepository>(),

@@ -11,3 +11,4 @@ public interface MysqlVertxSqlClient : MysqlMutinySqlClient, VertxSqlClient
 public interface PostgresqlVertxSqlClient : PostgresqlMutinySqlClient, VertxSqlClient
 public interface MssqlVertxSqlClient : MssqlMutinySqlClient, VertxSqlClient
 public interface MariadbVertxSqlClient : MariadbMutinySqlClient, VertxSqlClient
+public interface OracleVertxSqlClient : OracleMutinySqlClient, VertxSqlClient

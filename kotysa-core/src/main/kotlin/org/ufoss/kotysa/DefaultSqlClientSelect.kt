@@ -382,7 +382,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             }
 
             // order is not the same depending on DbType
-            val limitOffset = if (DbType.MSSQL == tables.dbType) {
+            val limitOffset = if (DbType.MSSQL == tables.dbType || DbType.ORACLE == tables.dbType) {
                 "${offset()} ${limit()}"
             } else {
                 "${limit()} ${offset()}"
@@ -424,7 +424,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             when (columnOrAlias) {
                 is Column<*, *> -> columnOrAlias.getFieldName(properties.availableColumns, properties.tables.dbType)
                 is QueryAlias<*> -> when (properties.tables.dbType) {
-                    DbType.MSSQL, DbType.POSTGRESQL -> columnOrAlias.alias
+                    DbType.MSSQL, DbType.POSTGRESQL, DbType.ORACLE -> columnOrAlias.alias
                     else -> "`${columnOrAlias.alias}`"
                 }
             }
@@ -432,7 +432,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         private fun offset(): String = with(properties) {
             if (offset != null) {
                 when (tables.dbType) {
-                    DbType.MSSQL -> "OFFSET ${variable()} ROWS"
+                    DbType.MSSQL, DbType.ORACLE -> "OFFSET ${variable()} ROWS"
                     else -> "OFFSET ${variable()}"
                 }
             } else {
@@ -443,7 +443,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         private fun limit(): String = with(properties) {
             if (limit != null) {
                 when (tables.dbType) {
-                    DbType.MSSQL -> "FETCH NEXT ${variable()} ROWS ONLY"
+                    DbType.MSSQL, DbType.ORACLE -> "FETCH NEXT ${variable()} ROWS ONLY"
                     else -> "LIMIT ${variable()}"
                 }
             } else {

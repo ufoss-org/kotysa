@@ -34,3 +34,10 @@ public fun Pool.sqlClient(tables: MssqlTables): MssqlVertxSqlClient = MssqlSqlCl
  * @sample org.ufoss.kotysa.vertx.mutiny.sqlclient.sample.UserRepositoryVertx
  */
 public fun Pool.sqlClient(tables: MariadbTables): MariadbVertxSqlClient = MariadbSqlClientVertx(this, tables)
+
+/**
+ * Create a [OracleVertxSqlClient] from a Vertx [Pool] with [OracleTables] mapping
+ *
+ * @sample org.ufoss.kotysa.vertx.mutiny.sqlclient.sample.UserRepositoryVertx
+ */
+public fun Pool.sqlClient(tables: OracleTables): OracleVertxSqlClient = OracleSqlClientVertx(this, tables)

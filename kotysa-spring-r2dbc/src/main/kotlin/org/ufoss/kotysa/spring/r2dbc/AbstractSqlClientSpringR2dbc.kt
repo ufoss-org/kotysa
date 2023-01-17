@@ -24,7 +24,7 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
 
     fun <T : Any> executeInsertAndReturn(row: T): Mono<T> {
         val table = tables.getTable(row::class)
-        val executeSpec = insertExecuteSpec(row, table, insertSql(row, true))
+        var executeSpec = insertExecuteSpec(row, table, insertSql(row, true))
 
         return if (tables.dbType == DbType.MYSQL) {
             // For MySQL : insert, then fetch created tuple
@@ -33,6 +33,7 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
                 .then(fetchLastInserted(row, table))
         } else {
             // other DB types have RETURNING style features
+            executeSpec = setOracleReturnGeneratedValues(table, executeSpec)
             executeSpec
                 .map { r ->
                     (table.table as AbstractTable<T>).toField(
@@ -42,6 +43,19 @@ internal interface AbstractSqlClientSpringR2dbc : DefaultSqlClient {
                     ).builder.invoke(r.toRow())
                 }.one()
         }
+    }
+
+    private fun <T : Any> setOracleReturnGeneratedValues(
+        kotysaTable: KotysaTable<T>,
+        executeSpec: DatabaseClient.GenericExecuteSpec
+    ): DatabaseClient.GenericExecuteSpec {
+        if (tables.dbType != DbType.ORACLE) {
+            return executeSpec
+        }
+        val allTableColumnNames = kotysaTable.columns
+            .map { column -> column.name }
+            .toTypedArray()
+        return executeSpec.filter { statement, _ -> statement.returnGeneratedValues(*allTableColumnNames).execute() }
     }
 
     // fixme 13/12/21 : does not work if set to private

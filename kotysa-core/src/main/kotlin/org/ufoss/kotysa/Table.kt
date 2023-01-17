@@ -1,8 +1,6 @@
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.columns.AbstractColumn
-import org.ufoss.kotysa.columns.AbstractDbColumn
-import org.ufoss.kotysa.columns.TsvectorColumn
+import org.ufoss.kotysa.columns.*
 
 public interface Table<T : Any>
 
@@ -11,7 +9,7 @@ public interface Table<T : Any>
  *
  * @param T Entity type associated with this table
  */
-public abstract class AbstractTable<T : Any>(internal val tableName: String?) : Table<T> {
+public abstract class AbstractTable<T : Any> internal constructor(internal val tableName: String?) : Table<T> {
     internal lateinit var kotysaName: String
     internal val kotysaColumns = mutableSetOf<AbstractColumn<T, *>>()
     internal lateinit var kotysaPk: PrimaryKey<T>
@@ -48,7 +46,10 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
         foreignKeys.add(ForeignKey(referencedTable, columns.toList(), fkName))
     }*/
 
-    protected fun <U : AbstractDbColumn<T, *>, V : Any> U.foreignKey(references: AbstractDbColumn<V, *>, fkName: String? = null): U =
+    protected fun <U : AbstractDbColumn<T, *>, V : Any> U.foreignKey(
+        references: AbstractDbColumn<V, *>,
+        fkName: String? = null,
+    ): U =
         this.also {
             kotysaForeignKeys.add(ForeignKey(mapOf(this to references), fkName))
         }
@@ -66,22 +67,6 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
             kotysaIndexes.add(Index(setOf(this), IndexType.UNIQUE, indexName))
         }
 
-    /**
-     * Creates a GIN index associated to a tsvector column
-     */
-    protected fun TsvectorColumn<T>.withGinIndex(indexName: String? = null): TsvectorColumn<T> =
-        this.also {
-            kotysaIndexes.add(Index(setOf(this), IndexType.GIN, indexName))
-        }
-
-    /**
-     * Creates a GIN index associated to a tsvector column
-     */
-    protected fun TsvectorColumn<T>.withGistIndex(indexName: String? = null): TsvectorColumn<T> =
-        this.also {
-            kotysaIndexes.add(Index(setOf(this), IndexType.GIST, indexName))
-        }
-
     internal fun addColumn(column: AbstractColumn<T, *>) {
         if (column is AbstractDbColumn<T, *>) {
             require(!kotysaColumns
@@ -94,4 +79,29 @@ public abstract class AbstractTable<T : Any>(internal val tableName: String?) : 
     }
 
     internal fun isPkInitialized() = ::kotysaPk.isInitialized
+}
+
+/**
+ * Represents a Table
+ *
+ * @param T Entity type associated with this table
+ */
+public abstract class AbstractCommonTable<T : Any> internal constructor(tableName: String?) :
+    AbstractTable<T>(tableName) {
+    protected fun <U> U.identity(): IntDbIdentityColumnNotNull<T>
+            where U : AbstractDbColumn<T, Int>,
+                  U : IntColumnNullable<T> =
+        IntDbIdentityColumnNotNull(this, Identity()).also { addIdentityColumn(this, it) }
+
+    protected fun <U> U.identity(): LongDbIdentityColumnNotNull<T>
+            where U : AbstractDbColumn<T, Long>,
+                  U : LongColumnNullable<T> =
+        LongDbIdentityColumnNotNull(this, Identity()).also { addIdentityColumn(this, it) }
+
+    private fun addIdentityColumn(oldColumn: AbstractColumn<T, *>, identityColumn: AbstractColumn<T, *>) {
+        // 1) remove previous column
+        kotysaColumns.remove(oldColumn)
+        // 1) add identity column
+        addColumn(identityColumn)
+    }
 }

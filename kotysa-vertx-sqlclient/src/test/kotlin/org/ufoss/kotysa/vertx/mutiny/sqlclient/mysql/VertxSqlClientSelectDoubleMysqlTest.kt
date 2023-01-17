@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mysql
 
 import org.ufoss.kotysa.test.MysqlDoubles
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectDoubleRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectDoubleTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectDoubleRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectDoubleTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 

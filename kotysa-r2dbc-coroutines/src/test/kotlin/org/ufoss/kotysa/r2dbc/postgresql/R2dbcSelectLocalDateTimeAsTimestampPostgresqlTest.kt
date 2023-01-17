@@ -1,0 +1,28 @@
+/*
+ * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
+ */
+
+package org.ufoss.kotysa.r2dbc.postgresql
+
+import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
+import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.PostgresqlLocalDateTimeAsTimestamps
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLocalDateTimeAsTimestampRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLocalDateTimeAsTimestampTest
+
+
+class R2dbcSelectLocalDateTimeAsTimestampPostgresqlTest :
+    AbstractR2dbcPostgresqlTest<LocalDateTimeAsTimestampRepositoryPostgresqlSelect>(),
+    CoroutinesSelectLocalDateTimeAsTimestampTest<PostgresqlLocalDateTimeAsTimestamps,
+            LocalDateTimeAsTimestampRepositoryPostgresqlSelect,
+            R2dbcTransaction> {
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
+        LocalDateTimeAsTimestampRepositoryPostgresqlSelect(sqlClient)
+}
+
+class LocalDateTimeAsTimestampRepositoryPostgresqlSelect(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectLocalDateTimeAsTimestampRepository<PostgresqlLocalDateTimeAsTimestamps>(
+        sqlClient,
+        PostgresqlLocalDateTimeAsTimestamps,
+    )
