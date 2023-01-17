@@ -4,35 +4,26 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctTest
 
-class R2dbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectDistinct>() {
+class R2dbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectDistinct>(),
+    CoroutinesSelectDistinctTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSelectDistinct, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
         UserRepositoryJdbcPostgresqlSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() = runTest {
-        assertThat(repository.selectDistinctRoleLabels().toList())
-            .hasSize(3)
-            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
 
-class UserRepositoryJdbcPostgresqlSelectDistinct(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcPostgresql(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct PostgresqlRoles.label
-                from PostgresqlRoles
-                ).fetchAll()
-}
+class UserRepositoryJdbcPostgresqlSelectDistinct(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectDistinctRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

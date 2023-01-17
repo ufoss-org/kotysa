@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mariadb
 
 import org.ufoss.kotysa.test.MariadbKotlinxLocalTimes
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectKotlinxLocalTimeRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectKotlinxLocalTimeTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectKotlinxLocalTimeRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectKotlinxLocalTimeTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 

@@ -6,6 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 
 import org.ufoss.kotysa.test.PostgresqlFloats
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectFloatTest
 
 class VertxSqlClientSelectFloatPostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<FloatPostgresqlRepository>(),

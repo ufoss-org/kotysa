@@ -44,6 +44,13 @@ public fun JdbcOperations.sqlClient(tables: MssqlTables): MssqlSqlClient = Mssql
  */
 public fun JdbcOperations.sqlClient(tables: MariadbTables): MariadbSqlClient = MariadbSqlClientSpringJdbc(this, tables)
 
+/**
+ * Create a [OracleSqlClient] from a Spring [JdbcOperations] with [OracleTables] mapping
+ *
+ * @sample org.ufoss.kotysa.spring.jdbc.sample.UserRepositorySpringJdbc
+ */
+public fun JdbcOperations.sqlClient(tables: OracleTables): OracleSqlClient = OracleSqlClientSpringJdbc(this, tables)
+
 internal fun DefaultSqlClientCommon.Properties.springJdbcBindParams(
     parameters: MapSqlParameterSource
 ) {

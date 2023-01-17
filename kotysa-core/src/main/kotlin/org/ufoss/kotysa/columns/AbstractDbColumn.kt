@@ -15,9 +15,10 @@ import org.ufoss.kotysa.SqlType
  * @param U Kotlin type associated to this column
  */
 public sealed class AbstractColumn<T : Any, U : Any> : Column<T, U>, Cloneable {
+    public abstract val isAutoIncrement: Boolean
     internal abstract val columnName: String?
     internal abstract val sqlType: SqlType
-    public abstract val isAutoIncrement: Boolean
+    internal open val identity: Identity? = null
     // Can sore either size or precision
     internal abstract val size: Int?
     // maximum number of decimal digits that can be stored to the right of the decimal point.

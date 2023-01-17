@@ -44,4 +44,13 @@ public fun DatabaseClient.coSqlClient(tables: MssqlTables): MssqlCoroutinesSqlCl
  *
  * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbcCoroutines
  */
-public fun DatabaseClient.coSqlClient(tables: MariadbTables): MariadbCoroutinesSqlClient = MariadbCoroutinesSqlClientSpringR2dbc(this, tables)
+public fun DatabaseClient.coSqlClient(tables: MariadbTables): MariadbCoroutinesSqlClient =
+    MariadbCoroutinesSqlClientSpringR2dbc(this, tables)
+
+/**
+ * Create a [OracleCoroutinesSqlClient] from a Spring [DatabaseClient] with [OracleTables] mapping
+ *
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbcCoroutines
+ */
+public fun DatabaseClient.coSqlClient(tables: OracleTables): OracleCoroutinesSqlClient =
+    OracleCoroutinesSqlClientSpringR2dbc(this, tables)

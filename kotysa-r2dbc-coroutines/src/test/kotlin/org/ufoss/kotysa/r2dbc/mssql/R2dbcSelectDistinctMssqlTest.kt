@@ -4,33 +4,24 @@
 
 package org.ufoss.kotysa.r2dbc.mssql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MssqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MssqlUserRoles
+import org.ufoss.kotysa.test.MssqlUsers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctTest
 
-class R2dbcSelectDistinctMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelectDistinct>() {
+class R2dbcSelectDistinctMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryJdbcMssqlSelectDistinct>(),
+    CoroutinesSelectDistinctTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryJdbcMssqlSelectDistinct,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMssqlSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() = runTest {
-        assertThat(repository.selectDistinctRoleLabels().toList())
-            .hasSize(3)
-            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositoryJdbcMssqlSelectDistinct(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcMssql(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct MssqlRoles.label
-                from MssqlRoles
-                ).fetchAll()
-}
+class UserRepositoryJdbcMssqlSelectDistinct(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectDistinctRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )

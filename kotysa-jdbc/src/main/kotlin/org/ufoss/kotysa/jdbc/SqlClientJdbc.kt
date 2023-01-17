@@ -13,7 +13,6 @@ import org.ufoss.kotysa.postgresql.Tsquery
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigDecimal
 import java.sql.Connection
-import java.sql.PreparedStatement
 import java.sql.SQLException
 import javax.sql.DataSource
 
@@ -71,7 +70,8 @@ internal sealed class SqlClientJdbc(
         } else {
             // other DB types have RETURNING style features
             val statement = connection.prepareStatement(insertSql(row, true))
-            setStatementParams(row, table, statement)
+            val index = setStatementParams(row, table, statement)
+            setOracleReturnParameter(table, index, statement)
             val rs = statement.executeQuery()
             rs.next()
             (table.table as AbstractTable<T>).toField(
@@ -87,27 +87,6 @@ internal sealed class SqlClientJdbc(
         return getJdbcConnection().execute { connection ->
             rows.map { row -> executeInsertAndReturn(connection, row, table) }
         }
-    }
-
-    private fun <T : Any> setStatementParams(row: T, table: KotysaTable<T>, statement: PreparedStatement) {
-        table.dbColumns
-            // do nothing for null values with default or Serial type
-            .filterNot { column ->
-                column.entityGetter(row) == null
-                        && (column.defaultValue != null
-                        || column.isAutoIncrement
-                        || SqlType.SERIAL == column.sqlType
-                        || SqlType.BIGSERIAL == column.sqlType)
-            }
-            .forEachIndexed { index, column -> 
-                val dbValue = tables.getDbValue(column.entityGetter(row))
-                // workaround for MSSQL https://progress-supportcommunity.force.com/s/article/Implicit-conversion-from-data-type-nvarchar-to-varbinary-max-is-not-allowed-error-with-SQL-Server-JDBC-driver
-                if (SqlType.BINARY == column.sqlType) {
-                    statement.setObject(index + 1, dbValue, java.sql.Types.VARBINARY)
-                } else {
-                    statement.setObject(index + 1, dbValue)
-                }
-            }
     }
 
     private fun <T : Any> fetchLastInserted(connection: Connection, row: T, table: KotysaTable<T>): T {
@@ -155,7 +134,11 @@ internal sealed class SqlClientJdbc(
                         .execute(createIndexResult.sql)
                 } catch (se: SQLException) {
                     // if not exists : accept Index already exists error
-                    if (!ifNotExists || se.message?.contains(createIndexResult.name, true) != true) {
+                    if (!ifNotExists
+                        || (se.message?.contains(createIndexResult.name, true) != true
+                                // For Oracle, the name is not mentioned 'ORA-00955: name is already used by an existing object'
+                                && se.message?.contains("ORA-00955", true) != true)
+                    ) {
                         throw se
                     }
                 }
@@ -432,6 +415,39 @@ internal class MariadbSqlClientJdbc internal constructor(
     dataSource: DataSource,
     tables: MariadbTables,
 ) : SqlClientJdbc(dataSource, tables), MariadbJdbcSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+
+    override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
+}
+
+internal class OracleSqlClientJdbc internal constructor(
+    dataSource: DataSource,
+    tables: OracleTables,
+) : SqlClientJdbc(dataSource, tables), OracleJdbcSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
     override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)

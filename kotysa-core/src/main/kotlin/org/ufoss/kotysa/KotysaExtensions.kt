@@ -79,7 +79,7 @@ internal fun Field<*>.getFieldName(dbType: DbType): String {
     var fieldName = fieldNames.joinToString()
     if (alias != null) {
         val aliasPart = when (dbType) {
-            DbType.MSSQL, DbType.POSTGRESQL -> " AS $alias"
+            DbType.MSSQL, DbType.POSTGRESQL, DbType.ORACLE -> " AS $alias"
             else -> " AS `$alias`"
         }
         fieldName += aliasPart
@@ -93,7 +93,7 @@ internal fun Column<*, *>.getFieldName(
 ): String {
     if ((this as AbstractColumn<*, *>).alias != null) {
         return when (dbType) {
-            DbType.MSSQL, DbType.POSTGRESQL -> alias!!
+            DbType.MSSQL, DbType.POSTGRESQL, DbType.ORACLE -> alias!!
             else -> "`${alias!!}`"
         }
     }
@@ -126,13 +126,60 @@ internal fun <T : Any> DefaultSqlClientCommon.Properties.executeSubQuery(
     return SubQueryResult(subQuery.properties as DefaultSqlClientSelect.Properties<T>, result)
 }
 
-internal fun Any?.dbValue(dbType: DbType): String = when (this) {
-    null -> "null"
-    is String, is UUID, is Int, is Long, is Float, is Double, is BigDecimal -> "$this"
+internal fun Any?.defaultValue(dbType: DbType): String =
+    if (this == null) {
+        "'null'"
+    } else if (dbType == DbType.ORACLE) {
+        this.defaultValueOracle(dbType)
+    } else {
+        this.defaultValueNonOracle(dbType)
+    }
+
+private fun Any.defaultValueNonOracle(dbType: DbType) = when (this) {
+    is Boolean -> if (DbType.SQLITE == dbType) {
+        if (this) "'1'" else "'0'"
+    } else {
+        this.dbValue(dbType)
+    }
+
+    is Int, is Long -> "$this"
+    else -> "'${this.dbValue(dbType)}'"
+}
+
+private fun Any.defaultValueOracle(dbType: DbType) = when (this) {
+    is Boolean -> this.dbValue(dbType)
+    is Int, is Long -> "$this"
+    is LocalDate -> "date '${this.dbValue(dbType)}'"
+    is LocalDateTime -> "timestamp '${this.dbValue(dbType).replace('T', ' ')}'"
+    is OffsetDateTime -> "timestamp '${formatOracleTimestampWithTimeZone(this.dbValue(dbType))}'"
+    else -> when (this::class.qualifiedName) {
+        "kotlinx.datetime.LocalDate" -> "date '${this.dbValue(dbType)}'"
+        "kotlinx.datetime.LocalDateTime" -> "timestamp '${this.dbValue(dbType).replace('T', ' ')}'"
+        else -> "'${this.dbValue(dbType)}'"
+    }
+}
+
+private fun formatOracleTimestampWithTimeZone(offsetDateTime: String): String {
+    var formatted = offsetDateTime
+        .replace('T', ' ')
+        .replace("+", " +")
+    val lastCaretIndex = formatted.lastIndexOf('-')
+    if (lastCaretIndex > 7) {
+        formatted = formatted.substring(0, lastCaretIndex) + " -" + formatted.substring(lastCaretIndex + 1)
+    }
+    if (formatted.substringAfter(" +", "").length == 8) {
+        return formatted.substring(0, formatted.length - 3)
+    }
+    return formatted
+}
+
+private fun Any.dbValue(dbType: DbType): String = when (this) {
+    is String, is UUID, is Float, is Double, is BigDecimal -> "$this"
     is Boolean -> when (dbType) {
-        DbType.SQLITE, DbType.MSSQL -> if (this) "1" else "0"
+        DbType.MSSQL, DbType.ORACLE -> if (this) "1" else "0"
         else -> "$this"
     }
+
     is LocalDate -> this.format(DateTimeFormatter.ISO_LOCAL_DATE)
     is LocalDateTime -> this.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
     is LocalTime -> this.format(DateTimeFormatter.ISO_LOCAL_TIME)
@@ -152,18 +199,6 @@ internal fun Any?.dbValue(dbType: DbType): String = when (this) {
     }
 }
 
-internal fun Any?.defaultValue(dbType: DbType): String = when (this) {
-    is Boolean -> if (DbType.SQLITE == dbType) {
-        if (this) "'1'" else "'0'"
-    } else {
-        this.dbValue(dbType)
-    }
-
-    is Int -> "$this"
-    is Long -> "$this"
-    else -> "'${this.dbValue(dbType)}'"
-}
-
 internal fun DefaultSqlClientCommon.Properties.variable() = when {
     module == Module.SQLITE || module == Module.JDBC
             || (module == Module.R2DBC && tables.dbType == DbType.MYSQL)
@@ -178,7 +213,7 @@ internal fun DefaultSqlClientCommon.Properties.variable() = when {
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T : Any, U : Any, V: Column<T, U>> V.getOrClone(
+internal fun <T : Any, U : Any, V : Column<T, U>> V.getOrClone(
     availableColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
 ): V =
     if ((this as AbstractColumn<*, *>).tableAlias != null) {

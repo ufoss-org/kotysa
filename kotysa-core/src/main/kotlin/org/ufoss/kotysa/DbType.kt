@@ -8,5 +8,5 @@ package org.ufoss.kotysa
  * Supported Databases
  */
 public enum class DbType {
-    H2, SQLITE, POSTGRESQL, MYSQL, MSSQL, MARIADB
+    H2, SQLITE, POSTGRESQL, MYSQL, MSSQL, MARIADB, ORACLE
 }

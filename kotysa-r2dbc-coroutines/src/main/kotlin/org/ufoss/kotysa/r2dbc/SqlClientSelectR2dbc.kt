@@ -664,7 +664,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 r2dbcBindParams(statement)
 
                 // 2) add limit and offset (order is different depending on DbType)
-                if (DbType.MSSQL == tables.dbType) {
+                if (DbType.MSSQL == tables.dbType || DbType.ORACLE == tables.dbType) {
                     offsetParam(statement)
                     limitParam(statement)
                 } else {

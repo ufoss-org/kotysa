@@ -6,6 +6,8 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.postgresql
 
 import org.ufoss.kotysa.test.PostgresqlKotlinxLocalTimes
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.*
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectKotlinxLocalTimeRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectKotlinxLocalTimeTest
 
 class VertxSqlClientSelectKotlinxLocalTimePostgresqlTest :
     AbstractVertxSqlClientPostgresqlTest<KotlinxLocalTimePostgresqlRepository>(),

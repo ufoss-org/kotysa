@@ -69,6 +69,7 @@ public interface MysqlCoroutinesSqlClient : CoroutinesSqlClient
 public interface PostgresqlCoroutinesSqlClient : CoroutinesSqlClient, SqlClientQuery.ToTsquery
 public interface MssqlCoroutinesSqlClient : CoroutinesSqlClient
 public interface MariadbCoroutinesSqlClient : CoroutinesSqlClient
+public interface OracleCoroutinesSqlClient : CoroutinesSqlClient
 
 public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() {
 

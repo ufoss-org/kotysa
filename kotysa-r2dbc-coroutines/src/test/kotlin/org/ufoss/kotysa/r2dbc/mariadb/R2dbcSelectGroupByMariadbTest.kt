@@ -4,30 +4,16 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MariadbCustomers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectGroupByTest
 
-class R2dbcSelectGroupByMariadbTest : AbstractR2dbcMariadbTest<GroupByRepositoryMariadbSelect>() {
+class R2dbcSelectGroupByMariadbTest : AbstractR2dbcMariadbTest<GroupByRepositoryMariadbSelect>(),
+    CoroutinesSelectGroupByTest<MariadbCustomers, GroupByRepositoryMariadbSelect, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = GroupByRepositoryMariadbSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() = runTest {
-        assertThat(repository.selectCountCustomerGroupByCountry().toList())
-                .hasSize(2)
-                .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryMariadbSelect(private val sqlClient: R2dbcSqlClient) :
-    AbstractCustomerRepositoryR2dbcMariadb(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-            (sqlClient selectCount MariadbCustomers.id and MariadbCustomers.country
-                    from MariadbCustomers
-                    groupBy MariadbCustomers.country
-                    ).fetchAll()
-}
+class GroupByRepositoryMariadbSelect(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectGroupByRepository<MariadbCustomers>(sqlClient, MariadbCustomers)

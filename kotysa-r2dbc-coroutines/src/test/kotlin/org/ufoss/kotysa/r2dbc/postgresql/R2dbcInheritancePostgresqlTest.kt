@@ -4,89 +4,18 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.PostgresqlInheriteds
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInheritanceRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInheritanceTest
 
-class R2dbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePostgresqlRepository>() {
+class R2dbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePostgresqlRepository>(),
+    CoroutinesInheritanceTest<PostgresqlInheriteds, InheritancePostgresqlRepository, R2dbcTransaction> {
+    override val table = PostgresqlInheriteds
     override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = InheritancePostgresqlRepository(sqlClient)
-
-    @Test
-    fun `Verify extension function selectById finds inherited`() = runTest {
-        assertThat(repository.selectById(PostgresqlInheriteds, "id"))
-            .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify selectInheritedById finds inherited`() = runTest {
-        assertThat(repository.selectInheritedById("id"))
-            .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify selectFirstByName finds inherited`() = runTest {
-        assertThat(repository.selectFirstByName(PostgresqlInheriteds, "name"))
-            .isEqualTo(inherited)
-    }
-
-    @Test
-    fun `Verify deleteById deletes inherited`() = runTest {
-        coOperator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            assertThat(repository.deleteById(PostgresqlInheriteds, "id"))
-                .isEqualTo(1)
-            assertThat(repository.selectAll().toList())
-                .isEmpty()
-        }
-    }
 }
 
-
-class InheritancePostgresqlRepository(private val sqlClient: R2dbcSqlClient) : Repository {
-
-    override fun init() = runBlocking {
-        createTable()
-        insert()
-    }
-
-    override fun delete() = runBlocking<Unit> {
-        deleteAll()
-    }
-
-    private suspend fun createTable() {
-        sqlClient createTable PostgresqlInheriteds
-    }
-
-    suspend fun insert() {
-        sqlClient insert inherited
-    }
-
-    private suspend fun deleteAll() = sqlClient deleteAllFrom PostgresqlInheriteds
-
-    fun selectAll() = sqlClient selectAllFrom PostgresqlInheriteds
-
-    suspend fun selectInheritedById(id: String) =
-        (sqlClient selectFrom PostgresqlInheriteds
-                where PostgresqlInheriteds.id eq id
-                ).fetchOne()
-
-    suspend fun <T : Entities<U>, U : Entity<String>> selectById(table: T, id: String) =
-        (sqlClient selectFrom table
-                where table.id eq id
-                ).fetchOne()
-
-    suspend fun <T : Nameables<U>, U : Nameable> selectFirstByName(table: T, name: String) =
-        (sqlClient selectFrom table
-                where table.name eq name
-                ).fetchFirst()
-
-    suspend fun <T : Entities<U>, U : Entity<String>> deleteById(table: T, id: String) =
-        (sqlClient deleteFrom table
-                where table.id eq id
-                ).execute()
-}
+class InheritancePostgresqlRepository(sqlClient: R2dbcSqlClient) :
+    CoroutinesInheritanceRepository<PostgresqlInheriteds>(sqlClient, PostgresqlInheriteds)

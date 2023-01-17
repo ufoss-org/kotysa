@@ -71,6 +71,7 @@ public interface MysqlMutinySqlClient : MutinySqlClient
 public interface PostgresqlMutinySqlClient : MutinySqlClient, SqlClientQuery.ToTsquery
 public interface MssqlMutinySqlClient : MutinySqlClient
 public interface MariadbMutinySqlClient : MutinySqlClient
+public interface OracleMutinySqlClient : MutinySqlClient
 
 
 public class MutinySqlClientSelect private constructor() : SqlClientQuery() {

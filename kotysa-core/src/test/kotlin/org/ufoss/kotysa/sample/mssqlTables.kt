@@ -8,16 +8,16 @@ import org.ufoss.kotysa.mssql.MssqlTable
 import org.ufoss.kotysa.tables
 
 data class MssqlUser(
-        val firstname: String,
-        val lastname: String,
-        val isAdmin: Boolean,
-        val alias: String? = null,
-        val id: Int?
+    val firstname: String,
+    val lastname: String,
+    val isAdmin: Boolean,
+    val alias: String? = null,
+    val id: Int?
 )
 
 object MssqlUsers : MssqlTable<MssqlUser>() {
-    val id = identityInteger(MssqlUser::id)
-            .primaryKey()
+    val id = integer(MssqlUser::id).identity()
+        .primaryKey()
     val firstname = varchar(MssqlUser::firstname, "fname")
     val lastname = varchar(MssqlUser::lastname, "lname")
     val isAdmin = bit(MssqlUser::isAdmin)

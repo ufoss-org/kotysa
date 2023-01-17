@@ -14,6 +14,7 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
 
 class R2dbcSelectAliasH2Test : AbstractR2dbcH2Test<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositorySelectAlias(sqlClient)
@@ -192,7 +193,8 @@ class R2dbcSelectAliasH2Test : AbstractR2dbcH2Test<UserRepositorySelectAlias>() 
     }
 }
 
-class UserRepositorySelectAlias(private val sqlClient: R2dbcSqlClient) : AbstractUserRepositoryR2dbcH2(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
+    AbstractCoroutinesUserRepository<H2Roles, H2Users, H2UserRoles>(sqlClient, H2Roles, H2Users, H2UserRoles) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select H2Users.firstname `as` "fna"

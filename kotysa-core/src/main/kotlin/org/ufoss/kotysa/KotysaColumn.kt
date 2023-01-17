@@ -5,6 +5,7 @@
 package org.ufoss.kotysa
 
 import org.ufoss.kotysa.columns.AbstractDbColumn
+import org.ufoss.kotysa.columns.Identity
 import kotlin.reflect.KClass
 
 /**
@@ -23,6 +24,7 @@ public interface KotysaColumn<T : Any, U : Any> {
     public val name: String
     public val sqlType: SqlType
     public val isAutoIncrement: Boolean
+    public val identity: Identity?
     public val isNullable: Boolean
     public val defaultValue: Any?
     public val size: Int?
@@ -40,6 +42,7 @@ public class KotysaColumnDb<T : Any, U : Any> internal constructor(
     override val defaultValue: Any?,
     override val size: Int?,
     override val decimals: Int?,
+    override val identity: Identity?,
 ) : KotysaColumn<T, U> {
 
     override lateinit var table: KotysaTable<T>
@@ -77,6 +80,7 @@ internal class KotysaColumnTsvector<T : Any, U : Any> internal constructor(
     override val defaultValue: Any? = null
     override val size: Int? = null
     override val decimals: Int? = null
+    override val identity: Identity? = null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

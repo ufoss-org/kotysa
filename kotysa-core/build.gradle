@@ -21,6 +21,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     compileOnly "io.r2dbc:r2dbc-spi:$r2dbc_version"
     compileOnly "io.projectreactor:reactor-core:$reactor_version"
+    compileOnly "com.oracle.database.jdbc:ojdbc8:$oracle_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
     testFixturesImplementation "org.springframework:spring-core"
@@ -31,6 +32,7 @@ dependencies {
     testFixturesImplementation 'org.testcontainers:mysql'
     testFixturesImplementation 'org.testcontainers:mssqlserver'
     testFixturesImplementation 'org.testcontainers:mariadb'
+    testFixturesImplementation 'org.testcontainers:oracle-xe'
 
     testFixturesCompileOnly "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"
     testFixturesCompileOnly 'io.projectreactor:reactor-test'

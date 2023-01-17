@@ -1057,7 +1057,7 @@ val byteArrayWithNullable = ByteArrayEntity(1, byteArrayOf(0x2A), byteArrayOf(0x
 val byteArrayWithoutNullable = ByteArrayEntity(2, byteArrayOf(0x2C))
 
 interface ByteArrays : Table<ByteArrayEntity> {
-    val id: IntDbIntColumnNotNull<ByteArrayEntity>
+    val id: IntColumnNotNull<ByteArrayEntity>
     val byteArrayNotNull: ByteArrayColumnNotNull<ByteArrayEntity>
     val byteArrayNullable: ByteArrayColumnNullable<ByteArrayEntity>
 }

@@ -66,6 +66,11 @@ public class MariadbTables(
     allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
 ) : Tables(allTables, allColumns, DbType.MARIADB)
 
+public class OracleTables(
+    allTables: Map<Table<*>, KotysaTable<*>>,
+    allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,
+) : Tables(allTables, allColumns, DbType.ORACLE)
+
 public class SqLiteTables(
     allTables: Map<Table<*>, KotysaTable<*>>,
     allColumns: Map<Column<*, *>, KotysaColumn<*, *>>,

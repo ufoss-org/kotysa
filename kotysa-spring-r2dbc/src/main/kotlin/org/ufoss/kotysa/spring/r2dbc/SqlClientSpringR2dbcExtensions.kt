@@ -45,3 +45,11 @@ public fun DatabaseClient.sqlClient(tables: MssqlTables): MssqlReactorSqlClient 
  */
 public fun DatabaseClient.sqlClient(tables: MariadbTables): MariadbReactorSqlClient =
     MariadbSqlClientSpringR2dbc(this, tables)
+
+/**
+ * Create a [OracleReactorSqlClient] from a Spring [DatabaseClient] with [OracleTables] mapping
+ *
+ * @sample org.ufoss.kotysa.spring.r2dbc.sample.UserRepositorySpringR2dbc
+ */
+public fun DatabaseClient.sqlClient(tables: OracleTables): OracleReactorSqlClient =
+    OracleSqlClientSpringR2dbc(this, tables)

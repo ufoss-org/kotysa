@@ -4,34 +4,26 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectOrRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectOrTest
 
-class R2dbcSelectOrPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectOr>() {
-    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = UserRepositoryJdbcPostgresqlSelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() = runTest {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toList())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
+class R2dbcSelectOrPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectOr>(),
+    CoroutinesSelectOrTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSelectOr,
+            R2dbcTransaction> {
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
+        UserRepositoryJdbcPostgresqlSelectOr(sqlClient)
 }
 
-
-class UserRepositoryJdbcPostgresqlSelectOr(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcPostgresql(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-        (sqlClient selectFrom PostgresqlRoles
-                where PostgresqlRoles.label eq label1
-                or PostgresqlRoles.label eq label2
-                ).fetchAll()
-}
+class UserRepositoryJdbcPostgresqlSelectOr(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectOrRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

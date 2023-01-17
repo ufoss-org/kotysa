@@ -4,31 +4,16 @@
 
 package org.ufoss.kotysa.r2dbc.h2
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.H2Customers
-import org.ufoss.kotysa.test.customerFrance
-import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectGroupByRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectGroupByTest
 
-class R2dbcSelectGroupByH2Test : AbstractR2dbcH2Test<GroupByRepositoryH2Select>() {
+class R2dbcSelectGroupByH2Test : AbstractR2dbcH2Test<GroupByRepositoryH2Select>(),
+    CoroutinesSelectGroupByTest<H2Customers, GroupByRepositoryH2Select, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = GroupByRepositoryH2Select(sqlClient)
-
-    @Test
-    fun `Verify selectCountCustomerGroupByCountry counts and group`() = runTest {
-        assertThat(repository.selectCountCustomerGroupByCountry().toList())
-            .hasSize(2)
-            .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
-    }
 }
 
-class GroupByRepositoryH2Select(private val sqlClient: R2dbcSqlClient) : AbstractCustomerRepositoryR2dbcH2(sqlClient) {
-
-    fun selectCountCustomerGroupByCountry() =
-        (sqlClient selectCount H2Customers.id and H2Customers.country
-                from H2Customers
-                groupBy H2Customers.country
-                ).fetchAll()
-}
+class GroupByRepositoryH2Select(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectGroupByRepository<H2Customers>(sqlClient, H2Customers)

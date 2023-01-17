@@ -14,7 +14,7 @@ import org.junit.jupiter.api.parallel.ResourceLock
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.postgresqlTables
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinyRepositoryTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyRepositoryTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.PostgresqlVertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.sqlClient
 

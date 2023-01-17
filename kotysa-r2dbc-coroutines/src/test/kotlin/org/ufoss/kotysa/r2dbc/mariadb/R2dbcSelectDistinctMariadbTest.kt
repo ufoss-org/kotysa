@@ -4,30 +4,24 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MariadbRoles
+import org.ufoss.kotysa.test.MariadbUserRoles
+import org.ufoss.kotysa.test.MariadbUsers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctTest
 
-class R2dbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectDistinct>() {
+class R2dbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectDistinct>(),
+    CoroutinesSelectDistinctTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelectDistinct,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() = runTest {
-        assertThat(repository.selectDistinctRoleLabels().toList())
-                .hasSize(3)
-                .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
 }
 
-
-class UserRepositoryJdbcMariadbSelectDistinct(private val sqlClient: R2dbcSqlClient) :
-    AbstractUserRepositoryR2dbcMariadb(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-            (sqlClient selectDistinct MariadbRoles.label
-                    from MariadbRoles
-                    ).fetchAll()
-}
+class UserRepositoryJdbcMariadbSelectDistinct(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectDistinctRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    )

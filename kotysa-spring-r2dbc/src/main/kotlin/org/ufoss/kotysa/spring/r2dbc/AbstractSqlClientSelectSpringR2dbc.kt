@@ -29,7 +29,7 @@ internal abstract class AbstractSqlClientSelectSpringR2dbc protected constructor
                 }
 
             // 2) add limit and offset (order is different depending on DbType)
-            if (DbType.MSSQL == tables.dbType) {
+            if (DbType.MSSQL == tables.dbType || DbType.ORACLE == tables.dbType) {
                 executeSpec = bindOffset(executeSpec)
                 executeSpec = bindLimit(executeSpec)
             } else {

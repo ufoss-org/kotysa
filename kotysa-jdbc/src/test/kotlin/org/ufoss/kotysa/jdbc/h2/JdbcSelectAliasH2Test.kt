@@ -82,7 +82,7 @@ class JdbcSelectAliasH2Test : AbstractJdbcH2Test<UserRepositorySelectAlias>() {
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
         }.isInstanceOf(JdbcSQLSyntaxErrorException::class.java)

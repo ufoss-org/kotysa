@@ -13,7 +13,8 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectKotlinxLoca
 
 @Tag("miku")
 class R2dbcSelectKotlinxLocalTimeMysqlTest : AbstractR2dbcMysqlTest<KotlinxLocalTimeRepositoryMysqlSelect>(),
-    CoroutinesSelectKotlinxLocalTimeTest<MysqlKotlinxLocalTimes, KotlinxLocalTimeRepositoryMysqlSelect, R2dbcTransaction> {
+    CoroutinesSelectKotlinxLocalTimeTest<MysqlKotlinxLocalTimes, KotlinxLocalTimeRepositoryMysqlSelect,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = KotlinxLocalTimeRepositoryMysqlSelect(sqlClient)
 }
 

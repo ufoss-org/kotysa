@@ -31,6 +31,8 @@ dependencies {
 //    testRuntimeOnly "com.github.jasync-sql:jasync-r2dbc-mysql:$jasync_r2dbc_version"
     testRuntimeOnly 'io.r2dbc:r2dbc-mssql'
     testRuntimeOnly 'org.mariadb:r2dbc-mariadb'
+    testRuntimeOnly "com.oracle.database.r2dbc:oracle-r2dbc:$r2dbc_oracle_version"
+    
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
     // needed to start mysql testcontainer
@@ -40,7 +42,16 @@ dependencies {
     testRuntimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
     // needed to start mariadb testcontainer
     testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    testRuntimeOnly 'org.testcontainers:oracle-xe'
+    // needed to start oracle-xe testcontainer
+    testRuntimeOnly "com.oracle.database.jdbc:ojdbc11:$oracle_version"
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
 }
 
 compileKotlin {

@@ -4,61 +4,18 @@
 
 package org.ufoss.kotysa.r2dbc.postgresql
 
-import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
+import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.PostgresqlCustomers
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectMinMaxAvgSumRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectMinMaxAvgSumTest
 
-class R2dbcSelectMinMaxAvgSumPostgresqlTest : AbstractR2dbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>() {
-    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) = MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCustomerMinAge returns 19`() = runTest {
-        assertThat(repository.selectCustomerMinAge())
-            .isEqualTo(19)
-    }
-
-    @Test
-    fun `Verify selectCustomerMaxAge returns 21`() = runTest {
-        assertThat(repository.selectCustomerMaxAge())
-            .isEqualTo(21)
-    }
-
-    @Test
-    fun `Verify selectCustomerAvgAge returns 20`() = runTest {
-        assertThat(repository.selectCustomerAvgAge())
-            .isEqualByComparingTo(20.toBigDecimal())
-    }
-
-    @Test
-    fun `Verify selectCustomerSumAge returns 60`() = runTest {
-        assertThat(repository.selectCustomerSumAge())
-            .isEqualTo(60)
-    }
+class R2dbcSelectMinMaxAvgSumPostgresqlTest : AbstractR2dbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>(),
+    CoroutinesSelectMinMaxAvgSumTest<PostgresqlCustomers, MinMaxAvgSumRepositoryPostgresqlSelect, R2dbcTransaction> {
+    override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
+        MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
 }
 
-class MinMaxAvgSumRepositoryPostgresqlSelect(private val sqlClient: R2dbcSqlClient) :
-    AbstractCustomerRepositoryR2dbcPostgresql(sqlClient) {
-
-    suspend fun selectCustomerMinAge() =
-        (sqlClient selectMin PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-
-    suspend fun selectCustomerMaxAge() =
-        (sqlClient selectMax PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-
-    suspend fun selectCustomerAvgAge() =
-        (sqlClient selectAvg PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-
-    suspend fun selectCustomerSumAge() =
-        (sqlClient selectSum PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-}
+class MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient: R2dbcSqlClient) :
+    CoroutinesSelectMinMaxAvgSumRepository<PostgresqlCustomers>(sqlClient, PostgresqlCustomers)

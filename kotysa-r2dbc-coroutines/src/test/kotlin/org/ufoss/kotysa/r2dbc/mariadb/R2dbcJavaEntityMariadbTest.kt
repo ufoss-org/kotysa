@@ -17,6 +17,5 @@ class R2dbcJavaEntityMariadbTest :
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = JavaUserMariadbRepository(sqlClient)
 }
 
-
 class JavaUserMariadbRepository(sqlClient: R2dbcSqlClient) :
     CoroutinesJavaUserRepository<MariadbJavaUsers>(sqlClient, MariadbJavaUsers)

@@ -47,23 +47,39 @@ internal sealed class SqlClientSpringJdbc(
 
     protected fun <T : Any> insertAndReturnProtected(row: T): T {
         val table = tables.getTable(row::class)
-        val paramSource = paramSource(row, table)
-        return if (tables.dbType == DbType.MYSQL) {
-            // For MySQL : insert, then fetch created tuple
-            namedParameterJdbcOperations.update(insertSql(row), paramSource)
-            fetchLastInserted(row, table)
-        } else {
+        return when (tables.dbType) {
+            DbType.MYSQL -> {
+                // For MySQL : insert, then fetch created tuple
+                namedParameterJdbcOperations.update(insertSql(row), paramSource(row, table))
+                fetchLastInserted(row, table)
+            }
             // other DB types have RETURNING style features
-            namedParameterJdbcOperations.queryForObject(
-                insertSql(row, true),
-                paramSource,
-            ) { rs, _ ->
-                (table.table as AbstractTable<T>).toField(
-                    tables.allColumns,
-                    tables.allTables,
-                    tables.dbType,
-                ).builder.invoke(rs.toRow())
-            }!!
+            DbType.ORACLE -> {
+                client.execute(insertSql(row, true)) { statement ->
+                    val index = setStatementParams(row, table, statement)
+                    setOracleReturnParameter(table, index, statement)
+                    val rs = statement.executeQuery()
+                    rs.next()
+                    (table.table as AbstractTable<T>).toField(
+                        tables.allColumns,
+                        tables.allTables,
+                        tables.dbType,
+                    ).builder(rs.toRow())
+                }!!
+            }
+
+            else -> {
+                namedParameterJdbcOperations.queryForObject(
+                    insertSql(row, true),
+                    paramSource(row, table),
+                ) { rs, _ ->
+                    (table.table as AbstractTable<T>).toField(
+                        tables.allColumns,
+                        tables.allTables,
+                        tables.dbType,
+                    ).builder.invoke(rs.toRow())
+                }!!
+            }
         }
     }
 
@@ -331,6 +347,37 @@ internal class MariadbSqlClientSpringJdbc internal constructor(
     client: JdbcOperations,
     tables: MariadbTables,
 ) : SqlClientSpringJdbc(client, tables), MariadbSqlClient {
+    override fun <T : Any> insert(row: T) = insertProtected(row)
+    override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
+    override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)
+    override fun <T : Any> insertAndReturn(vararg rows: T) = insertAndReturnProtected(rows)
+    override fun <T : Any> createTable(table: Table<T>) = createTableProtected(table)
+    override fun <T : Any> createTableIfNotExists(table: Table<T>) = createTableIfNotExistsProtected(table)
+    override fun <T : Any> deleteFrom(table: Table<T>) = deleteFromProtected(table)
+    override fun <T : Any> update(table: Table<T>) = updateProtected(table)
+    override fun <T : Any, U : Any> select(column: Column<T, U>) = selectProtected(column)
+    override fun <T : Any> select(table: Table<T>) = selectProtected(table)
+    override fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T) = selectAndBuildProtected(dsl)
+    override fun selectCount() = selectCountProtected()
+    override fun <T : Any> selectCount(column: Column<*, T>) = selectCountProtected(column)
+    override fun <T : Any, U : Any> selectDistinct(column: Column<T, U>) = selectDistinctProtected(column)
+    override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
+    override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
+    override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
+    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
+
+    override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
+        selectCaseWhenExistsProtected(dsl)
+
+    override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
+        selectStarFromProtected(dsl)
+}
+
+internal class OracleSqlClientSpringJdbc internal constructor(
+    client: JdbcOperations,
+    tables: OracleTables,
+) : SqlClientSpringJdbc(client, tables), OracleSqlClient {
     override fun <T : Any> insert(row: T) = insertProtected(row)
     override fun <T : Any> insert(vararg rows: T) = insertProtected(rows)
     override fun <T : Any> insertAndReturn(row: T) = insertAndReturnProtected(row)

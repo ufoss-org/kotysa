@@ -14,3 +14,4 @@ public interface MysqlR2dbcSqlClient : MysqlCoroutinesSqlClient, R2dbcSqlClient
 public interface PostgresqlR2dbcSqlClient : PostgresqlCoroutinesSqlClient, R2dbcSqlClient
 public interface MssqlR2dbcSqlClient : MssqlCoroutinesSqlClient, R2dbcSqlClient
 public interface MariadbR2dbcSqlClient : MariadbCoroutinesSqlClient, R2dbcSqlClient
+public interface OracleR2dbcSqlClient : OracleCoroutinesSqlClient, R2dbcSqlClient

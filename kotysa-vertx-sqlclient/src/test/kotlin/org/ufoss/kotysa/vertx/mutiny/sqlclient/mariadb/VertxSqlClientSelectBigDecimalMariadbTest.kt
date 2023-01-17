@@ -5,8 +5,8 @@
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.mariadb
 
 import org.ufoss.kotysa.test.MariadbBigDecimals
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectBigDecimalRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySelectBigDecimalTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBigDecimalRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBigDecimalTest
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 
