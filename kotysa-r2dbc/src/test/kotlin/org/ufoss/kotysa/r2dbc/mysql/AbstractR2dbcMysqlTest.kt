@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.MySqlContainerExecutionHook
@@ -39,7 +39,7 @@ abstract class AbstractR2dbcMysqlTest<T : Repository> : CoroutinesRepositoryTest
             .option(ConnectionFactoryOptions.USER, "mysql")
             .option(ConnectionFactoryOptions.PASSWORD, "test")
             .build()
-        sqlClient = ConnectionFactories.get(options).sqlClient(mysqlTables)
+        sqlClient = ConnectionFactories.get(options).coSqlClient(mysqlTables)
         repository.init()
     }
 

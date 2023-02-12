@@ -13,7 +13,7 @@ include 'kotysa-core'
 
 include 'kotysa-android'
 include 'kotysa-jdbc'
-include 'kotysa-r2dbc-coroutines'
+include 'kotysa-r2dbc'
 include 'kotysa-spring-jdbc'
 include 'kotysa-spring-r2dbc'
 include 'kotysa-vertx-sqlclient'
