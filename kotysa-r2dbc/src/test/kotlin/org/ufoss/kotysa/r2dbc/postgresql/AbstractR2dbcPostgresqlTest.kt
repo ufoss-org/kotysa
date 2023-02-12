@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.PostgreSqlContainerExecutionHook
@@ -37,7 +37,7 @@ abstract class AbstractR2dbcPostgresqlTest<T : Repository> : CoroutinesRepositor
             .option(ConnectionFactoryOptions.USER, "postgres")
             .option(ConnectionFactoryOptions.PASSWORD, "test")
             .build()
-        sqlClient = ConnectionFactories.get(options).sqlClient(postgresqlTables)
+        sqlClient = ConnectionFactories.get(options).coSqlClient(postgresqlTables)
         repository.init()
     }
 

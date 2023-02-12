@@ -6,7 +6,7 @@ package org.ufoss.kotysa.r2dbc.sample
 
 import io.r2dbc.spi.ConnectionFactory
 import org.ufoss.kotysa.h2.H2Table
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.tables
 import java.util.*
 
@@ -57,7 +57,7 @@ class UserRepositoryR2dbc(connectionFactory: ConnectionFactory) {
             val role: String
     )
 
-    private val sqlClient = connectionFactory.sqlClient(tables)
+    private val sqlClient = connectionFactory.coSqlClient(tables)
 
     suspend fun simplifiedExample() = sqlClient.apply {
         sqlClient createTable Roles

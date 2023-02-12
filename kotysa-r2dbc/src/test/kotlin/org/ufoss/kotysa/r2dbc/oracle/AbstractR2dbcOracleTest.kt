@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.OracleContainerExecutionHook
@@ -37,7 +37,7 @@ abstract class AbstractR2dbcOracleTest<T : Repository> : CoroutinesRepositoryTes
             .option(ConnectionFactoryOptions.USER, "test")
             .option(ConnectionFactoryOptions.PASSWORD, "test")
             .build()
-        sqlClient = ConnectionFactories.get(options).sqlClient(oracleTables)
+        sqlClient = ConnectionFactories.get(options).coSqlClient(oracleTables)
         repository.init()
     }
 
