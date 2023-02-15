@@ -21,6 +21,6 @@ dependencies {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-Xexplicit-api=strict', '-Xinline-classes']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }

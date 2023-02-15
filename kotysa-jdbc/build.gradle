@@ -16,7 +16,7 @@ dependencies {
     testImplementation "com.microsoft.sqlserver:mssql-jdbc:$mssql_version"
     testImplementation "org.mariadb.jdbc:mariadb-java-client:$mariadb_version"
     testImplementation "org.postgresql:postgresql:$postgresql_version"
-    testImplementation "com.oracle.database.jdbc:ojdbc8:$oracle_version"
+    testImplementation "com.oracle.database.jdbc:ojdbc11:$oracle_version"
 
     testRuntimeOnly 'org.testcontainers:postgresql'
     testRuntimeOnly 'org.testcontainers:mysql'
@@ -28,13 +28,13 @@ dependencies {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility', '-Xexplicit-api=strict']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }
 
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }

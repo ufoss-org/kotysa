@@ -356,14 +356,16 @@ object OracleOffsetDateTimes : OracleTable<OffsetDateTimeEntity>(), OffsetDateTi
 }
 
 object OracleInts : OracleTable<IntEntity>(), Ints {
-    override val id = number(IntEntity::id).identity()
+    override val id = number(IntEntity::id)
+        .identity()
         .primaryKey()
     override val intNotNull = number(IntEntity::intNotNull)
     override val intNullable = number(IntEntity::intNullable)
 }
 
 object OracleLongs : OracleTable<LongEntity>(), Longs {
-    override val id = number(LongEntity::id).identity()
+    override val id = number(LongEntity::id)
+        .identity()
         .primaryKey()
     override val longNotNull = number(LongEntity::longNotNull)
     override val longNullable = number(LongEntity::longNullable)
