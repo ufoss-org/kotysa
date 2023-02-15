@@ -1,6 +1,6 @@
 [![License: Unlicense](https://img.shields.io/github/license/ufoss-org/kotysa)](http://unlicense.org/)
 [![Maven Central](https://img.shields.io/maven-central/v/org.ufoss.kotysa/kotysa-core)](https://search.maven.org/artifact/org.ufoss.kotysa/kotysa-core)
-[![Kotlin](https://img.shields.io/badge/kotlin-1.7.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.8.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
 
 # Kotysa
 
@@ -10,7 +10,7 @@
 - Kotysa supports various database engines : PostgreSQL, MySQL, Microsoft SQL Server, MariaDB, Oracle, H2
 - Kotysa supports SqLite on Android
 
-[Read the docs to learn more](https://ufoss.org/kotysa/kotysa.html).
+See the [project website](https://ufoss.org/kotysa/kotysa.html) for documentation and APIs.
 
 ## Basic example
 

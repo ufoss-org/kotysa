@@ -49,7 +49,7 @@ compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility', '-Xexplicit-api=strict',
                             '-opt-in=kotlin.RequiresOptIn']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }
 
@@ -57,7 +57,7 @@ compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility',
                             '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi', '-opt-in=kotlin.RequiresOptIn']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }
 

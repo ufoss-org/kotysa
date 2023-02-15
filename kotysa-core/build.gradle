@@ -21,7 +21,7 @@ dependencies {
     compileOnly "org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version"
     compileOnly "io.r2dbc:r2dbc-spi:$r2dbc_version"
     compileOnly "io.projectreactor:reactor-core:$reactor_version"
-    compileOnly "com.oracle.database.jdbc:ojdbc8:$oracle_version"
+    compileOnly "com.oracle.database.jdbc:ojdbc11:$oracle_version"
 
     testFixturesImplementation "com.google.code.findbugs:jsr305:$jsr305_version"
     testFixturesImplementation "org.springframework:spring-core"
@@ -47,7 +47,7 @@ dependencies {
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-Xexplicit-api=strict']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }
 
@@ -55,6 +55,6 @@ compileTestFixturesKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
                             '-opt-in=kotlin.RequiresOptIn']
-        jvmTarget = '1.8'
+        jvmTarget = '11'
     }
 }

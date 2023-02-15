@@ -36,9 +36,9 @@ subprojects {
     configurations {
         all*.exclude module: 'spring-boot-starter-logging'
     }
-
-    compileJava {
-        sourceCompatibility = 1.8
+    
+    kotlin {
+        jvmToolchain(11)
     }
 
     compileKotlin {
@@ -46,10 +46,6 @@ subprojects {
             freeCompilerArgs = ['-Xjvm-default=all-compatibility', '-Xexplicit-api=strict']
             allWarningsAsErrors = true
         }
-    }
-
-    compileTestJava {
-        sourceCompatibility = 1.8
     }
 
     compileTestKotlin {
@@ -177,6 +173,6 @@ release {
 // when version changes :
 // -> execute ./gradlew wrapper, then delete .gradle directory, then execute ./gradlew wrapper again
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.0.1'
     distributionType = Wrapper.DistributionType.ALL
 }
