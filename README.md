@@ -7,10 +7,10 @@
 > A light ORM that offers the idiomatic way to write **Ko**tlin **ty**pe-**sa**fe SQL for JVM and Android
 
 - Kotysa supports various drivers : JDBC, R2DBC, Vertx sqlclient
-- Kotysa supports various database engines : PostgreSQL, MySQL, Microsoft SQL Server, MariaDB, H2
+- Kotysa supports various database engines : PostgreSQL, MySQL, Microsoft SQL Server, MariaDB, Oracle, H2
 - Kotysa supports SqLite on Android
 
-[Read the Docs to Learn More](https://ufoss.org/kotysa/kotysa.html).
+[Read the docs to learn more](https://ufoss.org/kotysa/kotysa.html).
 
 ## Basic example
 
