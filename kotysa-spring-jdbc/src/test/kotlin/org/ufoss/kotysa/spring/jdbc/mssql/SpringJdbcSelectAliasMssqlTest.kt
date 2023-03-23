@@ -4,46 +4,38 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySelectAlias>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySelectAlias>(resource)
-    }
-
-    override val repository: UserRepositorySelectAlias by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositorySelectAlias(jdbcOperations)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname) }
-            .isInstanceOf(UncategorizedSQLException::class.java)
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname) }
-            .isInstanceOf(UncategorizedSQLException::class.java)
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(UncategorizedSQLException::class.java)
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
@@ -83,7 +75,7 @@ class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositor
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(UncategorizedSQLException::class.java)
+            .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test

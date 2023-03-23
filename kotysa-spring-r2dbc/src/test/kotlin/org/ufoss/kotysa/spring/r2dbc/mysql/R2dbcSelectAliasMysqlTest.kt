@@ -4,29 +4,19 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
 import org.springframework.r2dbc.UncategorizedR2dbcException
-import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.get
-import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAlias>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySelectAlias>(resource)
-    }
-
-    override val repository: UserRepositorySelectAlias by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {

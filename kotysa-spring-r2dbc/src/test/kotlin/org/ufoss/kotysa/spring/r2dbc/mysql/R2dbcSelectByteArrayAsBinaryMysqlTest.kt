@@ -5,23 +5,15 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 class R2dbcSelectByteArrayAsBinaryMysqlTest : AbstractR2dbcMysqlTest<ByteArrayRepositoryMysqlSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<ByteArrayRepositoryMysqlSelect>(resource)
-    }
-
-    override val repository: ByteArrayRepositoryMysqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        ByteArrayRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllByByteArrayNotNull finds byteArrayBinaryWithNullable`() {
@@ -32,7 +24,9 @@ class R2dbcSelectByteArrayAsBinaryMysqlTest : AbstractR2dbcMysqlTest<ByteArrayRe
 
     @Test
     fun `Verify selectAllByByteArrayNotNullNotEq finds byteArrayWithoutNullable`() {
-        assertThat(repository.selectAllByByteArrayNotNullNotEq(byteArrayBinaryWithNullable.byteArrayNotNull).toIterable())
+        assertThat(
+            repository.selectAllByByteArrayNotNullNotEq(byteArrayBinaryWithNullable.byteArrayNotNull).toIterable()
+        )
             .hasSize(1)
             .containsExactlyInAnyOrder(byteArrayBinaryWithoutNullable)
     }
@@ -61,7 +55,9 @@ class R2dbcSelectByteArrayAsBinaryMysqlTest : AbstractR2dbcMysqlTest<ByteArrayRe
 
     @Test
     fun `Verify selectAllByByteArrayNullableNotEq finds no results`() {
-        assertThat(repository.selectAllByByteArrayNullableNotEq(byteArrayBinaryWithNullable.byteArrayNullable).toIterable())
+        assertThat(
+            repository.selectAllByByteArrayNullableNotEq(byteArrayBinaryWithNullable.byteArrayNullable).toIterable()
+        )
             .isEmpty()
     }
 
@@ -74,9 +70,7 @@ class R2dbcSelectByteArrayAsBinaryMysqlTest : AbstractR2dbcMysqlTest<ByteArrayRe
 }
 
 
-class ByteArrayRepositoryMysqlSelect(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class ByteArrayRepositoryMysqlSelect(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

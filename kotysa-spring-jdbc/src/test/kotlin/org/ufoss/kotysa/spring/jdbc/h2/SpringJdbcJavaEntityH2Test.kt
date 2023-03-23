@@ -16,9 +16,7 @@ import org.ufoss.kotysa.test.repositories.blocking.JavaUserRepository
 class SpringJdbcJavaEntityH2Test :
     AbstractSpringJdbcH2Test<JavaUserH2Repository>(),
     JavaEntityTest<H2JavaUsers, JavaUserH2Repository, SpringJdbcTransaction> {
-
-    override val context = startContext<JavaUserH2Repository>()
-    override val repository = getContextRepository<JavaUserH2Repository>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = JavaUserH2Repository(jdbcOperations)
 }
 
 

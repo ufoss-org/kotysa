@@ -6,38 +6,38 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.H2CoroutinesSqlClient
+import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 
 
 class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
-    override val context = startContext<InheritanceH2Repository>()
-    override val repository = getContextRepository<InheritanceH2Repository>()
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        InheritanceH2Repository(sqlClient)
 
     @Test
     fun `Verify extension function selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
         assertThat(repository.selectById(H2Inheriteds, "id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
         assertThat(repository.selectFirstByName(H2Inheriteds, "name").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
@@ -45,27 +45,25 @@ class R2DbcInheritanceH2Test : AbstractR2dbcH2Test<InheritanceH2Repository>() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteById(H2Inheriteds, "id")
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.selectAll())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAll())
         }.test()
-                .verifyComplete()
+            .verifyComplete()
     }
 }
 
 
-class InheritanceH2Repository(dbClient: DatabaseClient) : Repository {
-
-    val sqlClient = dbClient.sqlClient(h2Tables)
+class InheritanceH2Repository(private val sqlClient: H2ReactorSqlClient) : Repository {
 
     override fun init() {
         createTable()
-                .then(insert())
-                .block()
+            .then(insert())
+            .block()
     }
 
     override fun delete() {
         deleteAll()
-                .block()
+            .block()
     }
 
     private fun createTable() = sqlClient createTable H2Inheriteds

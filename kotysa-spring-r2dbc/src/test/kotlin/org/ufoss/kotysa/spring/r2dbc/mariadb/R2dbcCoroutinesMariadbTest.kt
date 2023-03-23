@@ -8,44 +8,36 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2dbcCoroutinesMariadbTest : AbstractR2dbcMariadbTest<CoroutinesUserMariadbRepository>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<CoroutinesUserMariadbRepository>(resource)
-    }
-
-    override val repository: CoroutinesUserMariadbRepository by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        CoroutinesUserMariadbRepository(coSqlClient)
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
         assertThat(repository.selectAllUsers().toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(userJdoe, userBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("John"))
-                .isEqualTo(userJdoe)
+            .isEqualTo(userJdoe)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("Unknown"))
-                .isNull()
+            .isNull()
     }
 
     @Test
@@ -65,24 +57,25 @@ class R2dbcCoroutinesMariadbTest : AbstractR2dbcMariadbTest<CoroutinesUserMariad
     @Test
     fun `Verify selectByAlias finds TheBoss`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias("TheBoss").toList())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(userBboss)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias(null).toList())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(userJdoe)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() = runBlocking<Unit> {
         assertThat(repository.selectAllMappedToDto().toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserDto("John Doe", false, null),
-                        UserDto("Big Boss", true, "TheBoss"))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
+            )
     }
 
     @Test
@@ -90,33 +83,31 @@ class R2dbcCoroutinesMariadbTest : AbstractR2dbcMariadbTest<CoroutinesUserMariad
         coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
-                    .isEqualTo(2)
+                .isEqualTo(2)
             assertThat(repository.selectAllUsers().toList())
-                    .isEmpty()
+                .isEmpty()
         }
     }
 
     @Test
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
-                .isEqualTo(1)
+            .isEqualTo(1)
         assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
+            .extracting { user -> user?.lastname }
+            .isEqualTo("Do")
         repository.updateLastname(userJdoe.lastname)
     }
 
     @Test
     fun `Verify selectAllLimitOffset returns 1 user`() = runBlocking<Unit> {
         assertThat(repository.selectAllLimitOffset().toList())
-                .hasSize(1)
+            .hasSize(1)
     }
 }
 
 
-class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.coSqlClient(mariadbTables)
+class CoroutinesUserMariadbRepository(private val sqlClient: MariadbCoroutinesSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
@@ -145,40 +136,42 @@ class CoroutinesUserMariadbRepository(dbClient: DatabaseClient) : Repository {
     fun selectAllUsers() = sqlClient selectAllFrom MariadbUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MariadbUsers
-                    where MariadbUsers.firstname eq firstname
-                    ).fetchFirstOrNull()
+        (sqlClient selectFrom MariadbUsers
+                where MariadbUsers.firstname eq firstname
+                ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MariadbUsers
-                    where MariadbUsers.firstname eq firstname
-                    ).fetchFirst()
+        (sqlClient selectFrom MariadbUsers
+                where MariadbUsers.firstname eq firstname
+                ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom MariadbUsers
-                    ).fetchOne()
+        (sqlClient selectFrom MariadbUsers
+                ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MariadbUsers
-                    where MariadbUsers.alias eq alias
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbUsers
+                where MariadbUsers.alias eq alias
+                ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.selectAndBuild {
-                UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.isAdmin]!!,
-                        it[MariadbUsers.alias])
-            }
-                    from MariadbUsers
-                    ).fetchAll()
+        (sqlClient.selectAndBuild {
+            UserDto(
+                "${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.isAdmin]!!,
+                it[MariadbUsers.alias]
+            )
+        }
+                from MariadbUsers
+                ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update MariadbUsers
-                    set MariadbUsers.lastname eq newLastname
-                    where MariadbUsers.id eq userJdoe.id
-                    ).execute()
+        (sqlClient update MariadbUsers
+                set MariadbUsers.lastname eq newLastname
+                where MariadbUsers.id eq userJdoe.id
+                ).execute()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MariadbUsers
-                    limit 1 offset 1
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbUsers
+                limit 1 offset 1
+                ).fetchAll()
 }

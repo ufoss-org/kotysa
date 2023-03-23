@@ -5,24 +5,19 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
+import org.ufoss.kotysa.test.MysqlLongTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsLongTextNotNull
+import org.ufoss.kotysa.test.stringAsLongTextNullable
 
 
 class R2DbcSelectStringAsLongTextMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectStringAsLongText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMysqlSelectStringAsLongText>(resource)
-    }
-
-    override val repository: UserRepositoryMysqlSelectStringAsLongText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositoryMysqlSelectStringAsLongText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsLongTextNotNull`() {
@@ -165,9 +160,7 @@ class R2DbcSelectStringAsLongTextMysqlTest : AbstractR2dbcMysqlTest<UserReposito
 }
 
 
-class UserRepositoryMysqlSelectStringAsLongText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class UserRepositoryMysqlSelectStringAsLongText(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

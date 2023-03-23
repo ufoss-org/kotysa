@@ -6,25 +6,19 @@ package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMariadbSelect>(resource)
-    }
-
-    override val repository: UserRepositoryMariadbSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        UserRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -173,8 +167,10 @@ class UserRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : AbstractUserRep
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.isAdmin]!!,
-                it[MariadbUsers.alias])
+            UserDto(
+                "${it[MariadbUsers.firstname]} ${it[MariadbUsers.lastname]}", it[MariadbUsers.isAdmin]!!,
+                it[MariadbUsers.alias]
+            )
         }
                 from MariadbUsers
                 ).fetchAll()

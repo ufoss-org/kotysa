@@ -5,36 +5,34 @@
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.userBboss
+import org.ufoss.kotysa.test.userJdoe
 
 
 class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectBoolean>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryPostgresqlSelectBoolean>(resource)
-    }
-
-    override val repository: UserRepositoryPostgresqlSelectBoolean by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = UserRepositoryPostgresqlSelectBoolean(sqlClient)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
         assertThat(repository.selectAllByIsAdminEq(true).toIterable())
-                .hasSize(1)
-                .containsExactly(userBboss)
+            .hasSize(1)
+            .containsExactly(userBboss)
     }
 
     @Test
     fun `Verify selectAllByIsAdminEq false finds John`() {
         assertThat(repository.selectAllByIsAdminEq(false).toIterable())
-                .hasSize(1)
-                .containsExactly(userJdoe)
+            .hasSize(1)
+            .containsExactly(userJdoe)
     }
 }
 
@@ -42,7 +40,7 @@ class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposit
 class UserRepositoryPostgresqlSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectAllByIsAdminEq(value: Boolean) =
-            (sqlClient selectFrom PostgresqlUsers
-                    where PostgresqlUsers.isAdmin eq value
-                    ).fetchAll()
+        (sqlClient selectFrom PostgresqlUsers
+                where PostgresqlUsers.isAdmin eq value
+                ).fetchAll()
 }

@@ -4,27 +4,17 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
-import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.get
-import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelectAlias>() {
-    
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySelectAlias>(resource)
-    }
 
-    override val repository: UserRepositorySelectAlias by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {
@@ -133,8 +123,9 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() {
-        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id))
-            .toIterable()
+        assertThat(
+            repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id))
+                .toIterable()
         )
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))

@@ -16,8 +16,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectStringTest
 
 class SpringJdbcSelectStringH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectString>(),
     SelectStringTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2SelectString, SpringJdbcTransaction> {
-    override val context = startContext<UserRepositorySpringJdbcH2SelectString>()
-    override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectString>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcH2SelectString(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcH2SelectString(client: JdbcOperations) :

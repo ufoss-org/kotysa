@@ -4,27 +4,21 @@
 
 package org.ufoss.kotysa.spring.r2dbc.oracle
 
-import org.junit.jupiter.api.BeforeAll
+import org.ufoss.kotysa.OracleCoroutinesSqlClient
+import org.ufoss.kotysa.OracleReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.OracleRoles
 import org.ufoss.kotysa.test.OracleUserRoles
 import org.ufoss.kotysa.test.OracleUsers
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryTest
 
 class JdbcSubQueryOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSubQuery>(),
     ReactorSubQueryTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSubQuery,
             ReactorTransaction> {
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryJdbcOracleSubQuery>(resource)
-    }
-
-    override val repository: UserRepositoryJdbcOracleSubQuery by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
+        UserRepositoryJdbcOracleSubQuery(sqlClient)
 }
 
 class UserRepositoryJdbcOracleSubQuery(sqlClient: ReactorSqlClient) :

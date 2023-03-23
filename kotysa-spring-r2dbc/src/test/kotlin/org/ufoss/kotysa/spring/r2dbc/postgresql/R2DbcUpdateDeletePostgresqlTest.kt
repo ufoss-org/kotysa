@@ -5,24 +5,20 @@
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcUpdateDeletePostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlUpdateDelete>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryPostgresqlUpdateDelete>(resource)
-    }
-
-    override val repository: UserRepositoryPostgresqlUpdateDelete by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = UserRepositoryPostgresqlUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

@@ -5,47 +5,44 @@
 package org.ufoss.kotysa.spring.r2dbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.MssqlCustomers
+import org.ufoss.kotysa.test.customerFrance
+import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.test.customerUSA2
 
 class R2dbcSelectOrderByMssqlTest : AbstractR2dbcMssqlTest<OrderByRepositoryMssqlSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<OrderByRepositoryMssqlSelect>(resource)
-    }
-
-    override val repository: OrderByRepositoryMssqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
+        OrderByRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
         assertThat(repository.selectCustomerOrderByAgeAsc().toIterable())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 
     @Test
     fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
         assertThat(repository.selectCustomerOrderByAgeAndIdAsc().toIterable())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 }
 
 class OrderByRepositoryMssqlSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMssql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.age
-                    ).fetchAll()
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.age
+                ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MssqlCustomers
-                    orderByAsc MssqlCustomers.age andAsc MssqlCustomers.id
-                    ).fetchAll()
+        (sqlClient selectFrom MssqlCustomers
+                orderByAsc MssqlCustomers.age andAsc MssqlCustomers.id
+                ).fetchAll()
 }

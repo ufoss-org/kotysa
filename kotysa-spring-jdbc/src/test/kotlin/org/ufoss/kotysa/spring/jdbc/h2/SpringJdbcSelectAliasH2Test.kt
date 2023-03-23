@@ -16,8 +16,7 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasH2Test : AbstractSpringJdbcH2Test<UserRepositorySelectAlias>() {
-    override val context = startContext<UserRepositorySelectAlias>()
-    override val repository = getContextRepository<UserRepositorySelectAlias>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositorySelectAlias(jdbcOperations)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcInvalidDataAccessApiUsageException`() {

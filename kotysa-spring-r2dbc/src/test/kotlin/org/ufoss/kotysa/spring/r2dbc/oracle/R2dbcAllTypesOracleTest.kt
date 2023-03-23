@@ -9,11 +9,11 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.OracleCoroutinesSqlClient
+import org.ufoss.kotysa.OracleReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -22,14 +22,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 class JdbcAllTypesOracleTest : AbstractR2dbcOracleTest<ReactorAllTypesRepositoryOracle>() {
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<ReactorAllTypesRepositoryOracle>(resource)
-    }
-
-    override val repository: ReactorAllTypesRepositoryOracle by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
+        ReactorAllTypesRepositoryOracle(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

@@ -4,12 +4,10 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MysqlTinyTexts
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectStringAsTinyTextRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectStringAsTinyTextTest
@@ -17,14 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectStringAsTinyTextTest
 class SpringJdbcSelectStringAsTinyTextMysqlTest : AbstractSpringJdbcMysqlTest<StringAsTinyTextRepositoryMysqlSelect>(),
     SelectStringAsTinyTextTest<MysqlTinyTexts, StringAsTinyTextRepositoryMysqlSelect, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<StringAsTinyTextRepositoryMysqlSelect>(resource)
-    }
-
-    override val repository: StringAsTinyTextRepositoryMysqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        StringAsTinyTextRepositoryMysqlSelect(jdbcOperations)
 }
 
 class StringAsTinyTextRepositoryMysqlSelect(client: JdbcOperations) :

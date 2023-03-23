@@ -16,8 +16,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
 class SpringJdbcSelectDistinctH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectDistinct>(),
     SelectDistinctTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2SelectDistinct, SpringJdbcTransaction> {
-    override val context = startContext<UserRepositorySpringJdbcH2SelectDistinct>()
-    override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectDistinct>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcH2SelectDistinct(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcH2SelectDistinct(client: JdbcOperations) :

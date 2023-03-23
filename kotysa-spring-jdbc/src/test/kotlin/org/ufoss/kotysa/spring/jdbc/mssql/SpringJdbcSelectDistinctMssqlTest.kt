@@ -4,14 +4,12 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
@@ -20,14 +18,8 @@ class SpringJdbcSelectDistinctMssqlTest : AbstractSpringJdbcMssqlTest<UserReposi
     SelectDistinctTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositorySpringJdbcMssqlSelectDistinct,
             SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySpringJdbcMssqlSelectDistinct>(resource)
-    }
-
-    override val repository: UserRepositorySpringJdbcMssqlSelectDistinct by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcMssqlSelectDistinct(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcMssqlSelectDistinct(client: JdbcOperations) :

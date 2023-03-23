@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectUuidTest
 
 class SpringJdbcSelectUuidH2Test : AbstractSpringJdbcH2Test<UuidRepositoryH2Select>(),
     SelectUuidTest<H2Uuids, UuidRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<UuidRepositoryH2Select>()
-    override val repository = getContextRepository<UuidRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UuidRepositoryH2Select(jdbcOperations)
 }
 
 class UuidRepositoryH2Select(client: JdbcOperations) :

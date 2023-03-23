@@ -6,12 +6,10 @@ package org.ufoss.kotysa.spring.r2dbc.mssql
 
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -19,14 +17,8 @@ import java.time.LocalDateTime
 
 class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<AllTypesRepositoryMssql>(resource)
-    }
-
-    override val repository: AllTypesRepositoryMssql by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
+        AllTypesRepositoryMssql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -138,9 +130,7 @@ class R2dbcAllTypesMssqlTest : AbstractR2dbcMssqlTest<AllTypesRepositoryMssql>()
 }
 
 
-class AllTypesRepositoryMssql(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mssqlTables)
+class AllTypesRepositoryMssql(private val sqlClient: MssqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

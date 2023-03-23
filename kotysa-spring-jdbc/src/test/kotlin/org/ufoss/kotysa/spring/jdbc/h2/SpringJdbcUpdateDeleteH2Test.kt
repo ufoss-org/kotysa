@@ -16,8 +16,8 @@ import org.ufoss.kotysa.test.repositories.blocking.UpdateDeleteTest
 
 class SpringJdbcUpdateDeleteH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2UpdateDelete>(),
     UpdateDeleteTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2UpdateDelete, SpringJdbcTransaction> {
-    override val context = startContext<UserRepositorySpringJdbcH2UpdateDelete>()
-    override val repository = getContextRepository<UserRepositorySpringJdbcH2UpdateDelete>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcH2UpdateDelete(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcH2UpdateDelete(client: JdbcOperations) :

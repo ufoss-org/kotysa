@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectByteArrayTest
 
 class SpringJdbcSelectByteArrayAsBlobH2Test : AbstractSpringJdbcH2Test<ByteArrayRepositoryH2Select>(),
     SelectByteArrayTest<H2ByteArrays, ByteArrayRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<ByteArrayRepositoryH2Select>()
-    override val repository = getContextRepository<ByteArrayRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = ByteArrayRepositoryH2Select(jdbcOperations)
 }
 
 class ByteArrayRepositoryH2Select(client: JdbcOperations) :

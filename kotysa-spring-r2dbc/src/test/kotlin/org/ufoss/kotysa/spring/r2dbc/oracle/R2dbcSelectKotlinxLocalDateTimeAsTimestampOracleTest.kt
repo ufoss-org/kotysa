@@ -4,11 +4,11 @@
 
 package org.ufoss.kotysa.spring.r2dbc.oracle
 
-import org.junit.jupiter.api.BeforeAll
+import org.ufoss.kotysa.OracleCoroutinesSqlClient
+import org.ufoss.kotysa.OracleReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.OracleKotlinxLocalDateTimeAsTimestamps
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalDateTimeAsTimestampRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalDateTimeAsTimestampTest
 
@@ -16,14 +16,8 @@ class JdbcSelectKotlinxLocalDateTimeAsTimestampOracleTest :
     AbstractR2dbcOracleTest<KotlinxLocalDateTimeAsTimestampRepositoryOracleSelect>(),
     ReactorSelectKotlinxLocalDateTimeAsTimestampTest<OracleKotlinxLocalDateTimeAsTimestamps,
             KotlinxLocalDateTimeAsTimestampRepositoryOracleSelect, ReactorTransaction> {
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<KotlinxLocalDateTimeAsTimestampRepositoryOracleSelect>(resource)
-    }
-
-    override val repository: KotlinxLocalDateTimeAsTimestampRepositoryOracleSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
+        KotlinxLocalDateTimeAsTimestampRepositoryOracleSelect(sqlClient)
 }
 
 class KotlinxLocalDateTimeAsTimestampRepositoryOracleSelect(sqlClient: ReactorSqlClient) :

@@ -16,8 +16,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SubQueryTest
 
 class SpringJdbcSubQueryH2Test : AbstractSpringJdbcH2Test<UserRepositoryJdbcH2SubQuery>(),
     SubQueryTest<H2Roles, H2Users, H2UserRoles, UserRepositoryJdbcH2SubQuery, SpringJdbcTransaction> {
-    override val context = startContext<UserRepositoryJdbcH2SubQuery>()
-    override val repository = getContextRepository<UserRepositoryJdbcH2SubQuery>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositoryJdbcH2SubQuery(jdbcOperations)
 }
 
 class UserRepositoryJdbcH2SubQuery(client: JdbcOperations) :

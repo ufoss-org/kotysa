@@ -6,25 +6,19 @@ package org.ufoss.kotysa.spring.r2dbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcSelectMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMssqlSelect>(resource)
-    }
-
-    override val repository: UserRepositoryMssqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
+        UserRepositoryMssqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -173,8 +167,10 @@ class UserRepositoryMssqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.isAdmin]!!,
-                it[MssqlUsers.alias])
+            UserDto(
+                "${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.isAdmin]!!,
+                it[MssqlUsers.alias]
+            )
         }
                 from MssqlUsers
                 ).fetchAll()

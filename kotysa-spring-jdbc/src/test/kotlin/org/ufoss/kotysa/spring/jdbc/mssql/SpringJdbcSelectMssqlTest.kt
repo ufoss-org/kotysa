@@ -4,14 +4,12 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectTest
@@ -19,14 +17,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectTest
 class SpringJdbcSelectMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelect>(),
     SelectTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositorySpringJdbcMssqlSelect, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySpringJdbcMssqlSelect>(resource)
-    }
-
-    override val repository: UserRepositorySpringJdbcMssqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcMssqlSelect(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcMssqlSelect(client: JdbcOperations) :

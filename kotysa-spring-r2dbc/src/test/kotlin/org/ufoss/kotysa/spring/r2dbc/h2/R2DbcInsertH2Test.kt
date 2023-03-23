@@ -8,16 +8,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.H2CoroutinesSqlClient
+import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
 
 @Order(3)
 class R2DbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
-    override val context = startContext<RepositoryH2Insert>()
-    override val repository = getContextRepository<RepositoryH2Insert>()
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        RepositoryH2Insert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -110,9 +110,7 @@ class R2DbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>() {
 }
 
 
-class RepositoryH2Insert(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(h2Tables)
+class RepositoryH2Insert(private val sqlClient: H2ReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

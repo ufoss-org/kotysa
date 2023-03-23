@@ -5,42 +5,36 @@
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePostgresqlRepository>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<InheritancePostgresqlRepository>(resource)
-    }
-
-    override val repository: InheritancePostgresqlRepository by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = InheritancePostgresqlRepository(sqlClient)
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
         assertThat(repository.selectById(PostgresqlInheriteds, "id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
         assertThat(repository.selectFirstByName(PostgresqlInheriteds, "name").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
@@ -48,27 +42,25 @@ class R2DbcInheritancePostgresqlTest : AbstractR2dbcPostgresqlTest<InheritancePo
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteById(PostgresqlInheriteds, "id")
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.selectAll())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAll())
         }.test()
-                .verifyComplete()
+            .verifyComplete()
     }
 }
 
 
-class InheritancePostgresqlRepository(dbClient: DatabaseClient) : Repository {
-
-    val sqlClient = dbClient.sqlClient(postgresqlTables)
+class InheritancePostgresqlRepository(private val sqlClient: PostgresqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTable()
-                .then(insert())
-                .block()
+            .then(insert())
+            .block()
     }
 
     override fun delete() {
         deleteAll()
-                .block()
+            .block()
     }
 
     private fun createTable() = sqlClient createTable PostgresqlInheriteds
@@ -80,22 +72,22 @@ class InheritancePostgresqlRepository(dbClient: DatabaseClient) : Repository {
     fun selectAll() = sqlClient selectAllFrom PostgresqlInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom PostgresqlInheriteds
-                    where PostgresqlInheriteds.id eq id
-                    ).fetchOne()
+        (sqlClient selectFrom PostgresqlInheriteds
+                where PostgresqlInheriteds.id eq id
+                ).fetchOne()
 
     fun <T : Entities<U>, U : Entity<String>> selectById(table: T, id: String) =
-            (sqlClient selectFrom table
-                    where table.id eq id
-                    ).fetchOne()
+        (sqlClient selectFrom table
+                where table.id eq id
+                ).fetchOne()
 
     fun <T : Nameables<U>, U : Nameable> selectFirstByName(table: T, name: String) =
-            (sqlClient selectFrom table
-                    where table.name eq name
-                    ).fetchFirst()
+        (sqlClient selectFrom table
+                where table.name eq name
+                ).fetchFirst()
 
     fun <T : Entities<U>, U : Entity<String>> deleteById(table: T, id: String) =
-            (sqlClient deleteFrom table
-                    where table.id eq id
-                    ).execute()
+        (sqlClient deleteFrom table
+                where table.id eq id
+                ).execute()
 }

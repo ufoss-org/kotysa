@@ -4,36 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
-import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.math.BigDecimal
 import java.time.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
-import java.time.ZoneOffset
 import java.util.*
 
 
 class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesRepositoryPostgresql>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<AllTypesRepositoryPostgresql>(resource)
-    }
-
-    override val repository: AllTypesRepositoryPostgresql by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = AllTypesRepositoryPostgresql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -153,8 +144,10 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
                     84.84,
                     BigDecimal("4.2"),
                     BigDecimal("4.3"),
-                    OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
-                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
+                    OffsetDateTime.of(
+                        2019, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ),
                     UUID.fromString(defaultUuid),
                 )
             )
@@ -163,9 +156,7 @@ class R2DbcAllTypesPostgresqlTest : AbstractR2dbcPostgresqlTest<AllTypesReposito
 }
 
 
-class AllTypesRepositoryPostgresql(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(postgresqlTables)
+class AllTypesRepositoryPostgresql(private val sqlClient: PostgresqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

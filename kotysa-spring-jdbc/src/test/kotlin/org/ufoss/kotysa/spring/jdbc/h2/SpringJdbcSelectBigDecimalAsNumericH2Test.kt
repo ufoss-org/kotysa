@@ -14,8 +14,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectBigDecimalAsNumericTest
 
 class SpringJdbcSelectBigDecimalAsNumericH2Test : AbstractSpringJdbcH2Test<BigDecimalAsNumericRepositoryH2Select>(),
     SelectBigDecimalAsNumericTest<H2BigDecimalAsNumerics, BigDecimalAsNumericRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<BigDecimalAsNumericRepositoryH2Select>()
-    override val repository = getContextRepository<BigDecimalAsNumericRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        BigDecimalAsNumericRepositoryH2Select(jdbcOperations)
 }
 
 class BigDecimalAsNumericRepositoryH2Select(client: JdbcOperations) :

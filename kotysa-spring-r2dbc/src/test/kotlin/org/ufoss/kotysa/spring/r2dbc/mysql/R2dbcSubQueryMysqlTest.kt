@@ -6,23 +6,17 @@ package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSubQuery>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryR2dbcMysqlSubQuery>(resource)
-    }
-
-    override val repository: UserRepositoryR2dbcMysqlSubQuery by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositoryR2dbcMysqlSubQuery(sqlClient)
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {

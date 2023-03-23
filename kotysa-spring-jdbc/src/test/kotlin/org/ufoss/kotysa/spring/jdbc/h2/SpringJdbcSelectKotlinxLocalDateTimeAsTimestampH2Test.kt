@@ -16,8 +16,8 @@ class SpringJdbcSelectKotlinxLocalDateTimeAsTimestampH2Test :
     AbstractSpringJdbcH2Test<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>(),
     SelectKotlinxLocalDateTimeAsTimestampTest<H2KotlinxLocalDateTimeAsTimestamps,
             KotlinxLocalDateTimeAsTimestampRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>()
-    override val repository = getContextRepository<KotlinxLocalDateTimeAsTimestampRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        KotlinxLocalDateTimeAsTimestampRepositoryH2Select(jdbcOperations)
 }
 
 class KotlinxLocalDateTimeAsTimestampRepositoryH2Select(client: JdbcOperations) :

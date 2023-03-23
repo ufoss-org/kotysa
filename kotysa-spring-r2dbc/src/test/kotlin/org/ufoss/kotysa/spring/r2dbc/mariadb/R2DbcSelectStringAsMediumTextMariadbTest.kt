@@ -5,24 +5,20 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
+import org.ufoss.kotysa.test.MariadbMediumTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsMediumTextNotNull
+import org.ufoss.kotysa.test.stringAsMediumTextNullable
 
 
-class R2DbcSelectStringAsMediumTextMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelectStringAsMediumText>() {
+class R2DbcSelectStringAsMediumTextMariadbTest :
+    AbstractR2dbcMariadbTest<UserRepositoryMariadbSelectStringAsMediumText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMariadbSelectStringAsMediumText>(resource)
-    }
-
-    override val repository: UserRepositoryMariadbSelectStringAsMediumText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        UserRepositoryMariadbSelectStringAsMediumText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsMediumTextNotNull`() {
@@ -165,9 +161,7 @@ class R2DbcSelectStringAsMediumTextMariadbTest : AbstractR2dbcMariadbTest<UserRe
 }
 
 
-class UserRepositoryMariadbSelectStringAsMediumText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mariadbTables)
+class UserRepositoryMariadbSelectStringAsMediumText(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

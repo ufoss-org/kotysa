@@ -4,14 +4,12 @@
 
 package org.ufoss.kotysa.spring.jdbc.mssql
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mssqlTables
 import org.ufoss.kotysa.test.repositories.blocking.SubQueryRepository
 import org.ufoss.kotysa.test.repositories.blocking.SubQueryTest
@@ -19,14 +17,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SubQueryTest
 class SpringJdbcSubQueryMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositoryJdbcMssqlSubQuery>(),
     SubQueryTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryJdbcMssqlSubQuery, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryJdbcMssqlSubQuery>(resource)
-    }
-
-    override val repository: UserRepositoryJdbcMssqlSubQuery by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositoryJdbcMssqlSubQuery(jdbcOperations)
 }
 
 class UserRepositoryJdbcMssqlSubQuery(client: JdbcOperations) :

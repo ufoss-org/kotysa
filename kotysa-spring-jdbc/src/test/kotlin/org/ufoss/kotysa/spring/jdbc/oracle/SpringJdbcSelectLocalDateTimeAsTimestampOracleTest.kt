@@ -4,12 +4,10 @@
 
 package org.ufoss.kotysa.spring.jdbc.oracle
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.OracleLocalDateTimeAsTimestamps
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.oracleTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectLocalDateTimeAsTimestampRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectLocalDateTimeAsTimestampTest
@@ -19,14 +17,8 @@ class SpringJdbcSelectLocalDateTimeAsTimestampOracleTest :
     SelectLocalDateTimeAsTimestampTest<OracleLocalDateTimeAsTimestamps,
             LocalDateTimeAsTimestampRepositoryOracleSelect, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<LocalDateTimeAsTimestampRepositoryOracleSelect>(resource)
-    }
-
-    override val repository: LocalDateTimeAsTimestampRepositoryOracleSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        LocalDateTimeAsTimestampRepositoryOracleSelect(jdbcOperations)
 }
 
 class LocalDateTimeAsTimestampRepositoryOracleSelect(client: JdbcOperations) :

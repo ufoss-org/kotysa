@@ -6,13 +6,11 @@ package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -21,14 +19,8 @@ import java.time.LocalTime
 
 class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<AllTypesRepositoryMysql>(resource)
-    }
-
-    override val repository: AllTypesRepositoryMysql by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        AllTypesRepositoryMysql(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -261,9 +253,7 @@ class R2DbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
 }
 
 
-class AllTypesRepositoryMysql(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class AllTypesRepositoryMysql(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

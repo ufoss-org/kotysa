@@ -6,14 +6,16 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.H2CoroutinesSqlClient
+import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 
 
 class R2DbcUpdateDeleteH2Test : AbstractR2dbcH2Test<UserRepositoryH2UpdateDelete>() {
-    override val context = startContext<UserRepositoryH2UpdateDelete>()
-    override val repository = getContextRepository<UserRepositoryH2UpdateDelete>()
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        UserRepositoryH2UpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

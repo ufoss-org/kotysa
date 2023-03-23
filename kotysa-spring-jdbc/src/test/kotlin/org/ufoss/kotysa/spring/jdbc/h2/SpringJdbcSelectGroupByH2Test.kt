@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectGroupByTest
 
 class SpringJdbcSelectGroupByH2Test : AbstractSpringJdbcH2Test<GroupByRepositoryH2Select>(),
     SelectGroupByTest<H2Customers, GroupByRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<GroupByRepositoryH2Select>()
-    override val repository = getContextRepository<GroupByRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = GroupByRepositoryH2Select(jdbcOperations)
 }
 
 class GroupByRepositoryH2Select(client: JdbcOperations) :

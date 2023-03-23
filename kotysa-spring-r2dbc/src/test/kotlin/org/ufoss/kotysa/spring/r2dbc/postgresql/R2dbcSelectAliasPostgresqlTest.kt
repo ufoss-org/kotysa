@@ -4,27 +4,22 @@
 
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositorySelectAlias>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySelectAlias>(resource)
-    }
-
-    override val repository: UserRepositorySelectAlias by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {
@@ -181,7 +176,7 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
     }
 }
 
-class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: PostgresqlReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select PostgresqlUsers.firstname `as` "fna"

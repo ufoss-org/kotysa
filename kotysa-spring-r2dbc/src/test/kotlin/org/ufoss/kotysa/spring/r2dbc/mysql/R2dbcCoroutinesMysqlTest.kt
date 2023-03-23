@@ -8,44 +8,36 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepository>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<CoroutinesUserMysqlRepository>(resource)
-    }
-
-    override val repository: CoroutinesUserMysqlRepository by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        CoroutinesUserMysqlRepository(coSqlClient)
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
         assertThat(repository.selectAllUsers().toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(userJdoe, userBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("John"))
-                .isEqualTo(userJdoe)
+            .isEqualTo(userJdoe)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("Unknown"))
-                .isNull()
+            .isNull()
     }
 
     @Test
@@ -65,24 +57,25 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
     @Test
     fun `Verify selectByAlias finds TheBoss`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias("TheBoss").toList())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(userBboss)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias(null).toList())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(userJdoe)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() = runBlocking<Unit> {
         assertThat(repository.selectAllMappedToDto().toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserDto("John Doe", false, null),
-                        UserDto("Big Boss", true, "TheBoss"))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
+            )
     }
 
     @Test
@@ -90,33 +83,31 @@ class R2dbcCoroutinesMysqlTest : AbstractR2dbcMysqlTest<CoroutinesUserMysqlRepos
         coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
-                    .isEqualTo(2)
+                .isEqualTo(2)
             assertThat(repository.selectAllUsers().toList())
-                    .isEmpty()
+                .isEmpty()
         }
     }
 
     @Test
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
-                .isEqualTo(1)
+            .isEqualTo(1)
         assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
+            .extracting { user -> user?.lastname }
+            .isEqualTo("Do")
         repository.updateLastname(userJdoe.lastname)
     }
 
     @Test
     fun `Verify selectAllLimitOffset returns 1 user`() = runBlocking<Unit> {
         assertThat(repository.selectAllLimitOffset().toList())
-                .hasSize(1)
+            .hasSize(1)
     }
 }
 
 
-class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.coSqlClient(mysqlTables)
+class CoroutinesUserMysqlRepository(private val sqlClient: MysqlCoroutinesSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
@@ -145,40 +136,42 @@ class CoroutinesUserMysqlRepository(dbClient: DatabaseClient) : Repository {
     fun selectAllUsers() = sqlClient selectAllFrom MysqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MysqlUsers
-                    where MysqlUsers.firstname eq firstname
-                    ).fetchFirstOrNull()
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname eq firstname
+                ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MysqlUsers
-                    where MysqlUsers.firstname eq firstname
-                    ).fetchFirst()
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.firstname eq firstname
+                ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom MysqlUsers
-                    ).fetchOne()
+        (sqlClient selectFrom MysqlUsers
+                ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MysqlUsers
-                    where MysqlUsers.alias eq alias
-                    ).fetchAll()
+        (sqlClient selectFrom MysqlUsers
+                where MysqlUsers.alias eq alias
+                ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.selectAndBuild {
-                UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
-                        it[MysqlUsers.alias])
-            }
-                    from MysqlUsers
-                    ).fetchAll()
+        (sqlClient.selectAndBuild {
+            UserDto(
+                "${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
+                it[MysqlUsers.alias]
+            )
+        }
+                from MysqlUsers
+                ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update MysqlUsers
-                    set MysqlUsers.lastname eq newLastname
-                    where MysqlUsers.id eq userJdoe.id
-                    ).execute()
+        (sqlClient update MysqlUsers
+                set MysqlUsers.lastname eq newLastname
+                where MysqlUsers.id eq userJdoe.id
+                ).execute()
 
     fun selectAllLimitOffset() =
-            (sqlClient selectFrom MysqlUsers
-                    limit 1 offset 1
-                    ).fetchAll()
+        (sqlClient selectFrom MysqlUsers
+                limit 1 offset 1
+                ).fetchAll()
 }

@@ -15,8 +15,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectLongTest
 @Order(2)
 class SpringJdbcSelectLongH2Test : AbstractSpringJdbcH2Test<SelectLongRepositoryH2Select>(),
     SelectLongTest<H2Longs, SelectLongRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<SelectLongRepositoryH2Select>()
-    override val repository = getContextRepository<SelectLongRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = SelectLongRepositoryH2Select(jdbcOperations)
 }
 
 class SelectLongRepositoryH2Select(client: JdbcOperations) : SelectLongRepository<H2Longs>(client.sqlClient(h2Tables), H2Longs)

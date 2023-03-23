@@ -6,25 +6,19 @@ package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMysqlSelect>(resource)
-    }
-
-    override val repository: UserRepositoryMysqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositoryMysqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -173,8 +167,10 @@ class UserRepositoryMysqlSelect(sqlClient: ReactorSqlClient) : AbstractUserRepos
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
-                it[MysqlUsers.alias])
+            UserDto(
+                "${it[MysqlUsers.firstname]} ${it[MysqlUsers.lastname]}", it[MysqlUsers.isAdmin]!!,
+                it[MysqlUsers.alias]
+            )
         }
                 from MysqlUsers
                 ).fetchAll()

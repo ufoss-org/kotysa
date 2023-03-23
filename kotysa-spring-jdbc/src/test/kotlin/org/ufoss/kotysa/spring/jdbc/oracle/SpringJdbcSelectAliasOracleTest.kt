@@ -6,7 +6,6 @@ package org.ufoss.kotysa.spring.jdbc.oracle
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
@@ -14,19 +13,11 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasOracleTest : AbstractSpringJdbcOracleTest<UserRepositorySelectAlias>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySelectAlias>(resource)
-    }
-
-    override val repository: UserRepositorySelectAlias by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositorySelectAlias(jdbcOperations)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {
@@ -70,14 +61,14 @@ class SpringJdbcSelectAliasOracleTest : AbstractSpringJdbcOracleTest<UserReposit
     fun `Verify selectCountCustomerGroupByCountryGet counts and group`() {
         assertThat(repository.selectCountUserGroupByCountryGet())
             .hasSize(2)
-            .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
+            .containsExactlyInAnyOrder(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
     }
 
     @Test
     fun `Verify selectCountCustomerGroupByCountryAlias counts and group`() {
         assertThat(repository.selectCountUserGroupByCountryAlias())
             .hasSize(2)
-            .containsExactly(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
+            .containsExactlyInAnyOrder(Pair(1, userJdoe.roleId), Pair(1, userBboss.roleId))
     }
 
     @Test
