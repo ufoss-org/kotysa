@@ -14,8 +14,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectKotlinxLocalTimeTest
 
 class SpringJdbcSelectKotlinxLocalTimeH2Test : AbstractSpringJdbcH2Test<KotlinxLocalTimeRepositoryH2Select>(),
     SelectKotlinxLocalTimeTest<H2KotlinxLocalTimes, KotlinxLocalTimeRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<KotlinxLocalTimeRepositoryH2Select>()
-    override val repository = getContextRepository<KotlinxLocalTimeRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        KotlinxLocalTimeRepositoryH2Select(jdbcOperations)
 }
 
 class KotlinxLocalTimeRepositoryH2Select(client: JdbcOperations) :

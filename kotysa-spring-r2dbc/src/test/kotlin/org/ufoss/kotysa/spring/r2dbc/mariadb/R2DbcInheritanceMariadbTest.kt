@@ -5,42 +5,34 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbRepository>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<InheritanceMariadbRepository>(resource)
-    }
-
-    override val repository: InheritanceMariadbRepository by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        InheritanceMariadbRepository(sqlClient)
 
     @Test
     fun `Verify extension function selectById finds inherited`() {
         assertThat(repository.selectById(MariadbInheriteds, "id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectInheritedById finds inherited`() {
         assertThat(repository.selectInheritedById("id").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
     fun `Verify selectFirstByName finds inherited`() {
         assertThat(repository.selectFirstByName(MariadbInheriteds, "name").block())
-                .isEqualTo(inherited)
+            .isEqualTo(inherited)
     }
 
     @Test
@@ -48,27 +40,25 @@ class R2DbcInheritanceMariadbTest : AbstractR2dbcMariadbTest<InheritanceMariadbR
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.deleteById(MariadbInheriteds, "id")
-                    .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                    .thenMany(repository.selectAll())
+                .doOnNext { n -> assertThat(n).isEqualTo(1) }
+                .thenMany(repository.selectAll())
         }.test()
-                .verifyComplete()
+            .verifyComplete()
     }
 }
 
 
-class InheritanceMariadbRepository(dbClient: DatabaseClient) : Repository {
-
-    val sqlClient = dbClient.sqlClient(mariadbTables)
+class InheritanceMariadbRepository(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTable()
-                .then(insert())
-                .block()
+            .then(insert())
+            .block()
     }
 
     override fun delete() {
         deleteAll()
-                .block()
+            .block()
     }
 
     private fun createTable() = sqlClient createTable MariadbInheriteds
@@ -80,22 +70,22 @@ class InheritanceMariadbRepository(dbClient: DatabaseClient) : Repository {
     fun selectAll() = sqlClient selectAllFrom MariadbInheriteds
 
     fun selectInheritedById(id: String) =
-            (sqlClient selectFrom MariadbInheriteds
-                    where MariadbInheriteds.id eq id
-                    ).fetchOne()
+        (sqlClient selectFrom MariadbInheriteds
+                where MariadbInheriteds.id eq id
+                ).fetchOne()
 
     fun <T : Entities<U>, U : Entity<String>> selectById(table: T, id: String) =
-            (sqlClient selectFrom table
-                    where table.id eq id
-                    ).fetchOne()
+        (sqlClient selectFrom table
+                where table.id eq id
+                ).fetchOne()
 
     fun <T : Nameables<U>, U : Nameable> selectFirstByName(table: T, name: String) =
-            (sqlClient selectFrom table
-                    where table.name eq name
-                    ).fetchFirst()
+        (sqlClient selectFrom table
+                where table.name eq name
+                ).fetchFirst()
 
     fun <T : Entities<U>, U : Entity<String>> deleteById(table: T, id: String) =
-            (sqlClient deleteFrom table
-                    where table.id eq id
-                    ).execute()
+        (sqlClient deleteFrom table
+                where table.id eq id
+                ).execute()
 }

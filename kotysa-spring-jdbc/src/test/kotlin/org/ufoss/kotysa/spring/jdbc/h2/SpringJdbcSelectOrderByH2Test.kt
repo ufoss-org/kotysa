@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectOrderByTest
 
 class SpringJdbcSelectOrderByH2Test : AbstractSpringJdbcH2Test<OrderByRepositoryH2Select>(),
     SelectOrderByTest<H2Customers, OrderByRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<OrderByRepositoryH2Select>()
-    override val repository = getContextRepository<OrderByRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = OrderByRepositoryH2Select(jdbcOperations)
 }
 
 class OrderByRepositoryH2Select(client: JdbcOperations) :

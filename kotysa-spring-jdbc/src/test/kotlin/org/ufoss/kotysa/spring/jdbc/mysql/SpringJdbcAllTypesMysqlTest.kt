@@ -6,12 +6,10 @@ package org.ufoss.kotysa.spring.jdbc.mysql
 
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,14 +18,7 @@ import java.time.LocalTime
 
 class SpringJdbcAllTypesMysqlTest : AbstractSpringJdbcMysqlTest<AllTypesRepositoryMysql>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<AllTypesRepositoryMysql>(resource)
-    }
-
-    override val repository: AllTypesRepositoryMysql by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = AllTypesRepositoryMysql(jdbcOperations)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

@@ -5,22 +5,16 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 class R2dbcSubQueryMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryR2dbcMariadbSubQuery>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryR2dbcMariadbSubQuery>(resource)
-    }
-
-    override val repository: UserRepositoryR2dbcMariadbSubQuery by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        UserRepositoryR2dbcMariadbSubQuery(sqlClient)
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {

@@ -5,28 +5,20 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.r2dbc.UncategorizedR2dbcException
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 @Order(3)
 class R2DbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<RepositoryMysqlInsert>(resource)
-    }
-
-    override val repository: RepositoryMysqlInsert by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        RepositoryMysqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -121,9 +113,7 @@ class R2DbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>() {
 }
 
 
-class RepositoryMysqlInsert(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class RepositoryMysqlInsert(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

@@ -5,23 +5,17 @@
 package org.ufoss.kotysa.spring.r2dbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 class R2DbcUpdateDeleteMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlUpdateDelete>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMssqlUpdateDelete>(resource)
-    }
-
-    override val repository: UserRepositoryMssqlUpdateDelete by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
+        UserRepositoryMssqlUpdateDelete(sqlClient)
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

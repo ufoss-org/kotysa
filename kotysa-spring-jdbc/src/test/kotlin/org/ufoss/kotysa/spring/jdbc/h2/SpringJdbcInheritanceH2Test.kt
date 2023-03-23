@@ -15,8 +15,7 @@ import org.ufoss.kotysa.test.repositories.blocking.InheritanceTest
 class SpringJdbcInheritanceH2Test : AbstractSpringJdbcH2Test<InheritanceH2Repository>(),
     InheritanceTest<H2Inheriteds, InheritanceH2Repository, SpringJdbcTransaction> {
     override val table = H2Inheriteds
-    override val context = startContext<InheritanceH2Repository>()
-    override val repository = getContextRepository<InheritanceH2Repository>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = InheritanceH2Repository(jdbcOperations)
 }
 
 class InheritanceH2Repository(client: JdbcOperations) :

@@ -5,28 +5,22 @@
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
 
 @Order(3)
 class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgresqlInsert>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<RepositoryPostgresqlInsert>(resource)
-    }
-
-    override val repository: RepositoryPostgresqlInsert by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = RepositoryPostgresqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -119,9 +113,7 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<RepositoryPostgres
 }
 
 
-class RepositoryPostgresqlInsert(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(postgresqlTables)
+class RepositoryPostgresqlInsert(private val sqlClient: PostgresqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

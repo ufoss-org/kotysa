@@ -4,13 +4,11 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.repositories.blocking.SelectLongRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectLongTest
 
@@ -18,14 +16,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectLongTest
 class SpringJdbcSelectLongMysqlTest : AbstractSpringJdbcMysqlTest<SelectLongRepositoryMysqlSelect>(),
     SelectLongTest<MysqlLongs, SelectLongRepositoryMysqlSelect, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<SelectLongRepositoryMysqlSelect>(resource)
-    }
-
-    override val repository: SelectLongRepositoryMysqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = SelectLongRepositoryMysqlSelect(jdbcOperations)
 }
 
 class SelectLongRepositoryMysqlSelect(client: JdbcOperations) :

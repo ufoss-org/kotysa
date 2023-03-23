@@ -4,12 +4,10 @@
 
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.PostgresqlLocalDateTimeAsTimestamps
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.postgresqlTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectLocalDateTimeAsTimestampRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectLocalDateTimeAsTimestampTest
@@ -19,14 +17,8 @@ class SpringJdbcSelectLocalDateTimeAsTimestampPostgresqlTest :
     SelectLocalDateTimeAsTimestampTest<PostgresqlLocalDateTimeAsTimestamps,
             LocalDateTimeAsTimestampRepositoryPostgresqlSelect, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<LocalDateTimeAsTimestampRepositoryPostgresqlSelect>(resource)
-    }
-
-    override val repository: LocalDateTimeAsTimestampRepositoryPostgresqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        LocalDateTimeAsTimestampRepositoryPostgresqlSelect(jdbcOperations)
 }
 
 class LocalDateTimeAsTimestampRepositoryPostgresqlSelect(client: JdbcOperations) :

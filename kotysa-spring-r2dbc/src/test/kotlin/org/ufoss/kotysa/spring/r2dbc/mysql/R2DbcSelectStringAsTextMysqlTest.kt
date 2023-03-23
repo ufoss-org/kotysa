@@ -5,24 +5,19 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
+import org.ufoss.kotysa.test.MysqlTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsTextNotNull
+import org.ufoss.kotysa.test.stringAsTextNullable
 
 
 class R2DbcSelectStringAsTextMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectStringAsText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMysqlSelectStringAsText>(resource)
-    }
-
-    override val repository: UserRepositoryMysqlSelectStringAsText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositoryMysqlSelectStringAsText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsTextNotNull`() {
@@ -165,9 +160,7 @@ class R2DbcSelectStringAsTextMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMy
 }
 
 
-class UserRepositoryMysqlSelectStringAsText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class UserRepositoryMysqlSelectStringAsText(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

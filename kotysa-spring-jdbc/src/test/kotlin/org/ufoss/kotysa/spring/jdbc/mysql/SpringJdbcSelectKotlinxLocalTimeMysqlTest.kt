@@ -4,12 +4,10 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.MysqlKotlinxLocalTimes
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.mysqlTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectKotlinxLocalTimeRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectKotlinxLocalTimeTest
@@ -17,14 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectKotlinxLocalTimeTest
 class SpringJdbcSelectKotlinxLocalTimeMysqlTest : AbstractSpringJdbcMysqlTest<KotlinxLocalTimeRepositoryMysqlSelect>(),
     SelectKotlinxLocalTimeTest<MysqlKotlinxLocalTimes, KotlinxLocalTimeRepositoryMysqlSelect, SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<KotlinxLocalTimeRepositoryMysqlSelect>(resource)
-    }
-
-    override val repository: KotlinxLocalTimeRepositoryMysqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        KotlinxLocalTimeRepositoryMysqlSelect(jdbcOperations)
 }
 
 class KotlinxLocalTimeRepositoryMysqlSelect(client: JdbcOperations) :

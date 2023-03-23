@@ -4,17 +4,21 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mssql
 
+import io.r2dbc.spi.ConnectionFactories
+import io.r2dbc.spi.ConnectionFactoryOptions
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.springframework.beans.factory.getBean
-import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.fu.kofu.application
-import org.springframework.fu.kofu.r2dbc.r2dbc
+import org.springframework.context.support.GenericApplicationContext
+import org.springframework.context.support.beans
+import org.springframework.r2dbc.connection.R2dbcTransactionManager
 import org.springframework.r2dbc.core.DatabaseClient
+import org.springframework.transaction.ReactiveTransactionManager
 import org.springframework.transaction.reactive.TransactionalOperator
-import org.ufoss.kotysa.test.repositories.reactor.ReactorRepositoryTest
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.spring.r2dbc.sqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.*
@@ -22,40 +26,55 @@ import org.ufoss.kotysa.test.Repository
 import org.ufoss.kotysa.test.hooks.*
 import org.ufoss.kotysa.test.mssqlTables
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesRepositoryTest
+import org.ufoss.kotysa.test.repositories.reactor.ReactorRepositoryTest
 
 @ExtendWith(MsSqlContainerExecutionHook::class)
 @ResourceLock(MsSqlContainerResource.ID)
 abstract class AbstractR2dbcMssqlTest<T : Repository> : ReactorRepositoryTest<T, ReactorTransaction>,
     CoroutinesRepositoryTest<T, ReactorTransaction> {
-    
-    protected lateinit var context: ConfigurableApplicationContext
+    private lateinit var context: GenericApplicationContext
 
-    protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
-        application {
-            beans {
-                bean<U>()
-                bean { ref<DatabaseClient>().sqlClient(mssqlTables) }
-                bean { ref<DatabaseClient>().coSqlClient(mssqlTables) }
+    @BeforeAll
+    fun beforeAll(containerResource: TestContainersCloseableResource) {
+        val options = ConnectionFactoryOptions.builder()
+            .option(ConnectionFactoryOptions.DRIVER, "sqlserver")
+            .option(ConnectionFactoryOptions.HOST, containerResource.host)
+            .option(ConnectionFactoryOptions.PORT, containerResource.firstMappedPort)
+            .option(ConnectionFactoryOptions.USER, "SA")
+            .option(ConnectionFactoryOptions.PASSWORD, "A_Str0ng_Required_Password")
+            .build()
+        val connectionFactory = ConnectionFactories.get(options)
+        val beans = beans {
+            bean { DatabaseClient.create(connectionFactory) }
+            bean {
+                R2dbcTransactionManager(connectionFactory)
             }
-            listener<ApplicationReadyEvent> {
-                ref<U>().init()
-            }
-            r2dbc {
-                url = "r2dbc:sqlserver://${containerResource.host}:${containerResource.firstMappedPort}"
-                username = "SA"
-                password = "A_Str0ng_Required_Password"
-                transactional = true
-            }
-        }.run()
+        }
+        context = GenericApplicationContext().apply {
+            beans.initialize(this)
+            refresh()
+        }
+        repository.init()
+    }
 
-    protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
+    protected abstract fun instantiateRepository(
+        sqlClient: MssqlReactorSqlClient,
+        coSqlClient: MssqlCoroutinesSqlClient
+    ): T
+
+    override val repository: T by lazy {
+        val databaseClient = context.getBean<DatabaseClient>()
+        instantiateRepository(databaseClient.sqlClient(mssqlTables), databaseClient.coSqlClient(mssqlTables))
+    }
 
     override val operator: SpringR2dbcReactorTransactionalOp by lazy {
-        context.getBean<TransactionalOperator>().transactionalOp()
+        val transactionManager = context.getBean<ReactiveTransactionManager>()
+        TransactionalOperator.create(transactionManager).transactionalOp()
     }
 
     override val coOperator: SpringR2dbcCoroutinesTransactionalOp by lazy {
-        context.getBean<TransactionalOperator>().coTransactionalOp()
+        val transactionManager = context.getBean<ReactiveTransactionManager>()
+        TransactionalOperator.create(transactionManager).coTransactionalOp()
     }
 
     @AfterAll

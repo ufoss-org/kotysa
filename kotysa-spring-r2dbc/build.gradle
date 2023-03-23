@@ -16,8 +16,7 @@ dependencies {
 
     testImplementation testFixtures(project(':kotysa-core'))
 
-    testImplementation "org.springframework.fu:spring-fu-kofu:$spring_fu_version"
-    testImplementation 'org.springframework:spring-r2dbc'
+    testImplementation 'org.springframework:spring-context'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$kotlinx_coroutines_version"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinx_coroutines_version"

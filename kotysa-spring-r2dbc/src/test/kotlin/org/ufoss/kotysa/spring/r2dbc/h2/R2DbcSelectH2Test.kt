@@ -7,6 +7,8 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.H2CoroutinesSqlClient
+import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
@@ -14,8 +16,8 @@ import reactor.kotlin.test.test
 
 
 class R2DbcSelectH2Test : AbstractR2dbcH2Test<UserRepositoryH2Select>() {
-    override val context = startContext<UserRepositoryH2Select>()
-    override val repository = getContextRepository<UserRepositoryH2Select>()
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        UserRepositoryH2Select(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {

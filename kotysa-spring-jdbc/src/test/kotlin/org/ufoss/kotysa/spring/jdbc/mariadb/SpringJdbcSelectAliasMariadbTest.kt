@@ -6,7 +6,6 @@ package org.ufoss.kotysa.spring.jdbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
@@ -14,19 +13,11 @@ import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcSelectAliasMariadbTest : AbstractSpringJdbcMariadbTest<UserRepositorySelectAlias>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySelectAlias>(resource)
-    }
-
-    override val repository: UserRepositorySelectAlias by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositorySelectAlias(jdbcOperations)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {

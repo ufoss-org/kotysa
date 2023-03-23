@@ -8,14 +8,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
-import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.get
-import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
 
 class R2dbcSelectAliasH2Test : AbstractR2dbcH2Test<UserRepositorySelectAlias>() {
-    override val context = startContext<UserRepositorySelectAlias>()
-    override val repository = getContextRepository<UserRepositorySelectAlias>()
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws BadSqlGrammarException`() {

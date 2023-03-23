@@ -5,24 +5,19 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
+import org.ufoss.kotysa.test.MysqlTinyTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsTinyTextNotNull
+import org.ufoss.kotysa.test.stringAsTinyTextNullable
 
 
 class R2DbcSelectStringAsTinyTextMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectStringAsTinyText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMysqlSelectStringAsTinyText>(resource)
-    }
-
-    override val repository: UserRepositoryMysqlSelectStringAsTinyText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositoryMysqlSelectStringAsTinyText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsTinyTextNotNull`() {
@@ -165,9 +160,7 @@ class R2DbcSelectStringAsTinyTextMysqlTest : AbstractR2dbcMysqlTest<UserReposito
 }
 
 
-class UserRepositoryMysqlSelectStringAsTinyText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class UserRepositoryMysqlSelectStringAsTinyText(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

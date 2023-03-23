@@ -5,47 +5,44 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.MariadbCustomers
+import org.ufoss.kotysa.test.customerFrance
+import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.test.customerUSA2
 
 class R2dbcSelectOrderByMariadbTest : AbstractR2dbcMariadbTest<OrderByRepositoryMariadbSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<OrderByRepositoryMariadbSelect>(resource)
-    }
-
-    override val repository: OrderByRepositoryMariadbSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        OrderByRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
         assertThat(repository.selectCustomerOrderByAgeAsc().toIterable())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 
     @Test
     fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
         assertThat(repository.selectCustomerOrderByAgeAndIdAsc().toIterable())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 }
 
 class OrderByRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMariadb(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom MariadbCustomers
-                    orderByAsc MariadbCustomers.age
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.age
+                ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom MariadbCustomers
-                    orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbCustomers
+                orderByAsc MariadbCustomers.age andAsc MariadbCustomers.id
+                ).fetchAll()
 }

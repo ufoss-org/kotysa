@@ -6,12 +6,10 @@ package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -20,14 +18,8 @@ import java.time.LocalTime
 
 class R2DbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMariadb>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<AllTypesRepositoryMariadb>(resource)
-    }
-
-    override val repository: AllTypesRepositoryMariadb by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        AllTypesRepositoryMariadb(sqlClient)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -147,9 +139,7 @@ class R2DbcAllTypesMariadbTest : AbstractR2dbcMariadbTest<AllTypesRepositoryMari
 }
 
 
-class AllTypesRepositoryMariadb(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mariadbTables)
+class AllTypesRepositoryMariadb(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

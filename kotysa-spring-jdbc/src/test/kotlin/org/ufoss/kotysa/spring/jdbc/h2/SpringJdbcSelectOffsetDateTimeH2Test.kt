@@ -14,8 +14,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectOffsetDateTimeTest
 
 class SpringJdbcSelectOffsetDateTimeH2Test : AbstractSpringJdbcH2Test<OffsetDateTimeRepositoryH2Select>(),
     SelectOffsetDateTimeTest<H2OffsetDateTimes, OffsetDateTimeRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<OffsetDateTimeRepositoryH2Select>()
-    override val repository = getContextRepository<OffsetDateTimeRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        OffsetDateTimeRepositoryH2Select(jdbcOperations)
 }
 
 class OffsetDateTimeRepositoryH2Select(client: JdbcOperations) :

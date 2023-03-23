@@ -6,26 +6,17 @@ package org.ufoss.kotysa.spring.jdbc.mssql
 
 import kotlinx.datetime.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class SpringJdbcAllTypesMssqlTest : AbstractSpringJdbcMssqlTest<AllTypesRepositoryMssql>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<AllTypesRepositoryMssql>(resource)
-    }
-
-    override val repository: AllTypesRepositoryMssql by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = AllTypesRepositoryMssql(jdbcOperations)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {

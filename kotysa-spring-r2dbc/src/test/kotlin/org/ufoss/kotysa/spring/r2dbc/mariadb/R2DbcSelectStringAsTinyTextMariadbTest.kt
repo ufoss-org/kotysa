@@ -5,24 +5,19 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
+import org.ufoss.kotysa.test.MariadbTinyTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsTinyTextNotNull
+import org.ufoss.kotysa.test.stringAsTinyTextNullable
 
 
 class R2DbcSelectStringAsTinyTextMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelectStringAsTinyText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMariadbSelectStringAsTinyText>(resource)
-    }
-
-    override val repository: UserRepositoryMariadbSelectStringAsTinyText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        UserRepositoryMariadbSelectStringAsTinyText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsTinyTextNotNull`() {
@@ -165,9 +160,7 @@ class R2DbcSelectStringAsTinyTextMariadbTest : AbstractR2dbcMariadbTest<UserRepo
 }
 
 
-class UserRepositoryMariadbSelectStringAsTinyText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mariadbTables)
+class UserRepositoryMariadbSelectStringAsTinyText(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

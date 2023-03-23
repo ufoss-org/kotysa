@@ -5,67 +5,61 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.MariadbCustomers
 
 class R2dbcSelectMinMaxAvgSumMariadbTest : AbstractR2dbcMariadbTest<MinMaxAvgSumRepositoryMariadbSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<MinMaxAvgSumRepositoryMariadbSelect>(resource)
-    }
-
-    override val repository: MinMaxAvgSumRepositoryMariadbSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        MinMaxAvgSumRepositoryMariadbSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerMinAge returns 19`() {
         assertThat(repository.selectCustomerMinAge().block())
-                .isEqualTo(19)
+            .isEqualTo(19)
     }
 
     @Test
     fun `Verify selectCustomerMaxAge returns 21`() {
         assertThat(repository.selectCustomerMaxAge().block())
-                .isEqualTo(21)
+            .isEqualTo(21)
     }
 
     @Test
     fun `Verify selectCustomerAvgAge returns 20`() {
         assertThat(repository.selectCustomerAvgAge().block())
-                .isEqualByComparingTo(20.toBigDecimal())
+            .isEqualByComparingTo(20.toBigDecimal())
     }
 
     @Test
     fun `Verify selectCustomerSumAge returns 60`() {
         assertThat(repository.selectCustomerSumAge().block())
-                .isEqualTo(60)
+            .isEqualTo(60)
     }
 }
 
 class MinMaxAvgSumRepositoryMariadbSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryMariadb(sqlClient) {
 
     fun selectCustomerMinAge() =
-            (sqlClient selectMin MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
+        (sqlClient selectMin MariadbCustomers.age
+                from MariadbCustomers
+                ).fetchOne()
 
     fun selectCustomerMaxAge() =
-            (sqlClient selectMax MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
+        (sqlClient selectMax MariadbCustomers.age
+                from MariadbCustomers
+                ).fetchOne()
 
     fun selectCustomerAvgAge() =
-            (sqlClient selectAvg MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
+        (sqlClient selectAvg MariadbCustomers.age
+                from MariadbCustomers
+                ).fetchOne()
 
     fun selectCustomerSumAge() =
-            (sqlClient selectSum MariadbCustomers.age
-                    from MariadbCustomers
-                    ).fetchOne()
+        (sqlClient selectSum MariadbCustomers.age
+                from MariadbCustomers
+                ).fetchOne()
 }

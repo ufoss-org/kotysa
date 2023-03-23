@@ -5,28 +5,20 @@
 package org.ufoss.kotysa.spring.r2dbc.mssql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
 
 @Order(3)
 class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<RepositoryMssqlInsert>(resource)
-    }
-
-    override val repository: RepositoryMssqlInsert by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
+        RepositoryMssqlInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -119,9 +111,7 @@ class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>() {
 }
 
 
-class RepositoryMssqlInsert(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mssqlTables)
+class RepositoryMssqlInsert(private val sqlClient: MssqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

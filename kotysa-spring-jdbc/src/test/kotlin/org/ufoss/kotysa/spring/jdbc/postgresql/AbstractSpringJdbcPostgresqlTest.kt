@@ -5,15 +5,17 @@
 package org.ufoss.kotysa.spring.jdbc.postgresql
 
 import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.parallel.ResourceLock
+import org.postgresql.ds.PGSimpleDataSource
 import org.springframework.beans.factory.getBean
-import org.springframework.boot.context.event.ApplicationReadyEvent
-import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.fu.kofu.application
-import org.springframework.fu.kofu.jdbc.DataSourceType
-import org.springframework.fu.kofu.jdbc.jdbc
+import org.springframework.context.support.GenericApplicationContext
+import org.springframework.context.support.beans
+import org.springframework.jdbc.core.JdbcOperations
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.support.TransactionTemplate
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
@@ -27,24 +29,36 @@ import org.ufoss.kotysa.test.repositories.blocking.RepositoryTest
 @ResourceLock(PostgreSqlContainerResource.ID)
 @Tag("spring-jdbc-testcontainers")
 abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : RepositoryTest<T, SpringJdbcTransaction> {
-    protected lateinit var context: ConfigurableApplicationContext
+    private lateinit var context: GenericApplicationContext
 
-    protected inline fun <reified U : Repository> startContext(containerResource: TestContainersCloseableResource) =
-        application {
-            beans {
-                bean<U>()
+    @BeforeAll
+    fun beforeAll(containerResource: TestContainersCloseableResource) {
+        val dataSource = PGSimpleDataSource()
+        dataSource.setUrl(
+            "jdbc:postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db"
+        )
+        dataSource.user = "postgres"
+        dataSource.password = "test"
+        val beans = beans {
+            bean {
+                JdbcTemplate(dataSource)
             }
-            listener<ApplicationReadyEvent> {
-                ref<U>().init()
+            bean {
+                DataSourceTransactionManager(dataSource)
             }
-            jdbc(DataSourceType.Hikari) {
-                url = "jdbc:postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db"
-                username = "postgres"
-                password = "test"
-            }
-        }.run()
+        }
+        context = GenericApplicationContext().apply {
+            beans.initialize(this)
+            refresh()
+        }
+        repository.init()
+    }
 
-    protected inline fun <reified U : Repository> getContextRepository() = context.getBean<U>()
+    protected abstract fun instantiateRepository(jdbcOperations: JdbcOperations): T
+
+    override val repository: T by lazy {
+        instantiateRepository(context.getBean())
+    }
 
     override val operator: SpringJdbcTransactionalOp by lazy {
         val transactionManager = context.getBean<PlatformTransactionManager>()
@@ -52,8 +66,8 @@ abstract class AbstractSpringJdbcPostgresqlTest<T : Repository> : RepositoryTest
     }
 
     @AfterAll
-    fun afterAll() = context.run {
+    fun afterAll() {
         repository.delete()
-        close()
+        context.close()
     }
 }

@@ -5,281 +5,271 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 @Order(2)
 class R2DbcSelectLongMariadbTest : AbstractR2dbcMariadbTest<LongRepositoryMariadbSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<LongRepositoryMariadbSelect>(resource)
-    }
-
-    override val repository: LongRepositoryMariadbSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        LongRepositoryMariadbSelect(sqlClient)
 
     private val longWithNullable = LongEntity(
-            org.ufoss.kotysa.test.longWithNullable.longNotNull,
-            org.ufoss.kotysa.test.longWithNullable.longNullable,
-            1
+        org.ufoss.kotysa.test.longWithNullable.longNotNull,
+        org.ufoss.kotysa.test.longWithNullable.longNullable,
+        1
     )
 
     private val longWithoutNullable = LongEntity(
-            org.ufoss.kotysa.test.longWithoutNullable.longNotNull,
-            org.ufoss.kotysa.test.longWithoutNullable.longNullable,
-            2
+        org.ufoss.kotysa.test.longWithoutNullable.longNotNull,
+        org.ufoss.kotysa.test.longWithoutNullable.longNullable,
+        2
     )
 
     @Test
     fun `Verify selectAllByLongNotNull finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByLongNotNull(10).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullNotEq finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByLongNotNullNotEq(10).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullIn finds both`() {
         val seq = sequenceOf(longWithNullable.longNotNull, longWithoutNullable.longNotNull)
         assertThat(repository.selectAllByLongNotNullIn(seq).toIterable())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(longWithNullable, longWithoutNullable)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(longWithNullable, longWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullInf finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByLongNotNullInf(11).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullInf finds no results when equals`() {
         assertThat(repository.selectAllByLongNotNullInf(10).toIterable())
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLongNotNullInfOrEq finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByLongNotNullInfOrEq(11).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullInfOrEq finds sqLiteIntegerWithNullable when equals`() {
         assertThat(repository.selectAllByLongNotNullInfOrEq(10).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullSup finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByLongNotNullSup(11).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullSup finds no results when equals`() {
         assertThat(repository.selectAllByLongNotNullSup(12).toIterable())
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLongNotNullSupOrEq finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByLongNotNullSupOrEq(11).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNotNullSupOrEq finds sqLiteIntegerWithoutNullable when equals`() {
         assertThat(repository.selectAllByLongNotNullSupOrEq(12).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullable finds h2UuidWithNullable`() {
         assertThat(repository.selectAllByLongNullable(6).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullable finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByLongNullable(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithoutNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithoutNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableNotEq finds h2UuidWithoutNullable`() {
         assertThat(repository.selectAllByLongNullableNotEq(6).toIterable())
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLongNullableNotEq finds no results`() {
         assertThat(repository.selectAllByLongNullableNotEq(null).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableInf finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByLongNullableInf(7).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableInf finds no results when equals`() {
         assertThat(repository.selectAllByLongNullableInf(6).toIterable())
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLongNullableInfOrEq finds sqLiteIntegerWithNullable`() {
         assertThat(repository.selectAllByLongNullableInfOrEq(7).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableInfOrEq finds sqLiteIntegerWithNullable when equals`() {
         assertThat(repository.selectAllByLongNullableInfOrEq(6).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableSup finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByLongNullableSup(5).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableSup finds no results when equals`() {
         assertThat(repository.selectAllByLongNullableSup(6).toIterable())
-                .isEmpty()
+            .isEmpty()
     }
 
     @Test
     fun `Verify selectAllByLongNullableSupOrEq finds sqLiteIntegerWithoutNullable`() {
         assertThat(repository.selectAllByLongNullableSupOrEq(5).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 
     @Test
     fun `Verify selectAllByLongNullableSupOrEq finds sqLiteIntegerWithoutNullable when equals`() {
         assertThat(repository.selectAllByLongNullableSupOrEq(6).toIterable())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(longWithNullable)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(longWithNullable)
     }
 }
 
 
-class LongRepositoryMariadbSelect(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mariadbTables)
+class LongRepositoryMariadbSelect(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()
-                .then(insertLongs().then())
-                .block()
+            .then(insertLongs().then())
+            .block()
     }
 
     override fun delete() {
         deleteAll()
-                .block()
+            .block()
     }
 
     private fun createTables() = sqlClient createTable MariadbLongs
 
     private fun insertLongs() =
-            sqlClient.insert(longWithNullable, longWithoutNullable)
+        sqlClient.insert(longWithNullable, longWithoutNullable)
 
     private fun deleteAll() = sqlClient deleteAllFrom MariadbLongs
 
     fun selectAllByLongNotNull(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull eq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull eq long
+                ).fetchAll()
 
     fun selectAllByLongNotNullNotEq(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull notEq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull notEq long
+                ).fetchAll()
 
     fun selectAllByLongNotNullIn(values: Sequence<Long>) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull `in` values
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull `in` values
+                ).fetchAll()
 
     fun selectAllByLongNotNullInf(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull inf long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull inf long
+                ).fetchAll()
 
     fun selectAllByLongNotNullInfOrEq(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull infOrEq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull infOrEq long
+                ).fetchAll()
 
     fun selectAllByLongNotNullSup(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull sup long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull sup long
+                ).fetchAll()
 
     fun selectAllByLongNotNullSupOrEq(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNotNull supOrEq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNotNull supOrEq long
+                ).fetchAll()
 
     fun selectAllByLongNullable(long: Long?) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNullable eq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNullable eq long
+                ).fetchAll()
 
     fun selectAllByLongNullableNotEq(long: Long?) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNullable notEq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNullable notEq long
+                ).fetchAll()
 
     fun selectAllByLongNullableInf(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNullable inf long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNullable inf long
+                ).fetchAll()
 
     fun selectAllByLongNullableInfOrEq(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNullable infOrEq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNullable infOrEq long
+                ).fetchAll()
 
     fun selectAllByLongNullableSup(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNullable sup long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNullable sup long
+                ).fetchAll()
 
     fun selectAllByLongNullableSupOrEq(long: Long) =
-            (sqlClient selectFrom MariadbLongs
-                    where MariadbLongs.longNullable supOrEq long
-                    ).fetchAll()
+        (sqlClient selectFrom MariadbLongs
+                where MariadbLongs.longNullable supOrEq long
+                ).fetchAll()
 }

@@ -5,24 +5,22 @@
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
+import org.ufoss.kotysa.test.PostgresqlTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsTextNotNull
+import org.ufoss.kotysa.test.stringAsTextNullable
 
 
-class R2DbcSelectStringAsTextPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectStringAsText>() {
+class R2DbcSelectStringAsTextPostgresqlTest :
+    AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectStringAsText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryPostgresqlSelectStringAsText>(resource)
-    }
-
-    override val repository: UserRepositoryPostgresqlSelectStringAsText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = UserRepositoryPostgresqlSelectStringAsText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsTextNotNull`() {
@@ -165,9 +163,7 @@ class R2DbcSelectStringAsTextPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRe
 }
 
 
-class UserRepositoryPostgresqlSelectStringAsText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(postgresqlTables)
+class UserRepositoryPostgresqlSelectStringAsText(private val sqlClient: PostgresqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

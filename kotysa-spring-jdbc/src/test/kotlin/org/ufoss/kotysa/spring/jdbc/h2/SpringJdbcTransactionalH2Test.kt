@@ -12,8 +12,8 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
 class SpringJdbcTransactionalH2Test : AbstractSpringJdbcH2Test<UserRepositoryJdbcH2Transactional>() {
-    override val context = startContext<UserRepositoryJdbcH2Transactional>()
-    override val repository = getContextRepository<UserRepositoryJdbcH2Transactional>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositoryJdbcH2Transactional(jdbcOperations)
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss inside readonly transaction`() {

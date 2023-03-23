@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectFloatTest
 
 class SpringJdbcSelectFloatH2Test : AbstractSpringJdbcH2Test<FloatRepositoryH2Select>(),
     SelectFloatTest<H2Floats, FloatRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<FloatRepositoryH2Select>()
-    override val repository = getContextRepository<FloatRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = FloatRepositoryH2Select(jdbcOperations)
 }
 
 class FloatRepositoryH2Select(client: JdbcOperations) :

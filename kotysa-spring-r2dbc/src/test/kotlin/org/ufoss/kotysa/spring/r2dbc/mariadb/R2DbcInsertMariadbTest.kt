@@ -5,28 +5,20 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Order
 import org.junit.jupiter.api.Test
 import org.springframework.dao.DataIntegrityViolationException
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 import reactor.kotlin.test.verifyError
 
 @Order(3)
 class R2DbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<RepositoryMariadbInsert>(resource)
-    }
-
-    override val repository: RepositoryMariadbInsert by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        RepositoryMariadbInsert(sqlClient)
 
     @Test
     fun `Verify insertCustomer works correctly`() {
@@ -119,9 +111,7 @@ class R2DbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>
 }
 
 
-class RepositoryMariadbInsert(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mariadbTables)
+class RepositoryMariadbInsert(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

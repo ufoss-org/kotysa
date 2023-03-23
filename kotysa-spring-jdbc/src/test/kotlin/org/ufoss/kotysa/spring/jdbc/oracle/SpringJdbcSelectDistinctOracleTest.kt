@@ -4,14 +4,12 @@
 
 package org.ufoss.kotysa.spring.jdbc.oracle
 
-import org.junit.jupiter.api.BeforeAll
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
 import org.ufoss.kotysa.test.OracleRoles
 import org.ufoss.kotysa.test.OracleUserRoles
 import org.ufoss.kotysa.test.OracleUsers
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import org.ufoss.kotysa.test.oracleTables
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
@@ -20,14 +18,8 @@ class SpringJdbcSelectDistinctOracleTest : AbstractSpringJdbcOracleTest<UserRepo
     SelectDistinctTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositorySpringJdbcOracleSelectDistinct,
             SpringJdbcTransaction> {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositorySpringJdbcOracleSelectDistinct>(resource)
-    }
-
-    override val repository: UserRepositorySpringJdbcOracleSelectDistinct by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcOracleSelectDistinct(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcOracleSelectDistinct(client: JdbcOperations) :

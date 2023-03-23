@@ -6,12 +6,14 @@ package org.ufoss.kotysa.spring.r2dbc.h2
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.H2CoroutinesSqlClient
+import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
 class R2dbcSubQueryH2Test : AbstractR2dbcH2Test<UserRepositoryR2dbcH2SubQuery>() {
-    override val context = startContext<UserRepositoryR2dbcH2SubQuery>()
-    override val repository = getContextRepository<UserRepositoryR2dbcH2SubQuery>()
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        UserRepositoryR2dbcH2SubQuery(sqlClient)
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {

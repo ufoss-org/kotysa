@@ -16,8 +16,8 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
 class SpringJdbcSelectBooleanH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectBoolean>(),
     SelectBooleanTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2SelectBoolean, SpringJdbcTransaction> {
-    override val context = startContext<UserRepositorySpringJdbcH2SelectBoolean>()
-    override val repository = getContextRepository<UserRepositorySpringJdbcH2SelectBoolean>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) =
+        UserRepositorySpringJdbcH2SelectBoolean(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcH2SelectBoolean(client: JdbcOperations) :

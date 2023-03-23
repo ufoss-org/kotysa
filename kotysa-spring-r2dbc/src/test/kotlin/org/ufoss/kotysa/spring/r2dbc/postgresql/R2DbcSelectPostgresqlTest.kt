@@ -6,25 +6,21 @@ package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 import reactor.kotlin.test.test
 
 
 class R2DbcSelectPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryPostgresqlSelect>(resource)
-    }
-
-    override val repository: UserRepositoryPostgresqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = UserRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -173,8 +169,10 @@ class UserRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractUser
 
     fun selectAllMappedToDto() =
         (sqlClient selectAndBuild {
-            UserDto("${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}",
-                it[PostgresqlUsers.isAdmin]!!, it[PostgresqlUsers.alias])
+            UserDto(
+                "${it[PostgresqlUsers.firstname]} ${it[PostgresqlUsers.lastname]}",
+                it[PostgresqlUsers.isAdmin]!!, it[PostgresqlUsers.alias]
+            )
         }
                 from PostgresqlUsers
                 ).fetchAll()

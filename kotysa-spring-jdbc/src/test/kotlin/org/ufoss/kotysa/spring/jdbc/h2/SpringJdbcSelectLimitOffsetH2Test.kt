@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectLimitOffsetTest
 
 class SpringJdbcSelectLimitOffsetH2Test : AbstractSpringJdbcH2Test<LimitOffsetRepositoryH2Select>(),
     SelectLimitOffsetTest<H2Customers, LimitOffsetRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<LimitOffsetRepositoryH2Select>()
-    override val repository = getContextRepository<LimitOffsetRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = LimitOffsetRepositoryH2Select(jdbcOperations)
 }
 
 class LimitOffsetRepositoryH2Select(client: JdbcOperations) :

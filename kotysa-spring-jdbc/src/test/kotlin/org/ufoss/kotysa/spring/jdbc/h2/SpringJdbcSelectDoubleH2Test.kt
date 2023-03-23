@@ -14,8 +14,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectDoubleTest
 
 class SpringJdbcSelectDoubleH2Test : AbstractSpringJdbcH2Test<DoubleRepositoryH2Select>(),
     SelectDoubleTest<H2Doubles, DoubleRepositoryH2Select, SpringJdbcTransaction> {
-    override val context = startContext<DoubleRepositoryH2Select>()
-    override val repository = getContextRepository<DoubleRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = DoubleRepositoryH2Select(jdbcOperations)
 }
 
 class DoubleRepositoryH2Select(client: JdbcOperations) :

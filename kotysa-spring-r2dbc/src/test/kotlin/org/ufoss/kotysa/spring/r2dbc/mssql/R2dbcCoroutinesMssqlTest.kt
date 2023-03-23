@@ -8,44 +8,36 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
+import org.ufoss.kotysa.MssqlCoroutinesSqlClient
+import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.NonUniqueResultException
-import org.ufoss.kotysa.spring.r2dbc.coSqlClient
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
 
 
 class R2dbcCoroutinesMssqlTest : AbstractR2dbcMssqlTest<CoroutinesUserMssqlRepository>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<CoroutinesUserMssqlRepository>(resource)
-    }
-
-    override val repository: CoroutinesUserMssqlRepository by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
+        CoroutinesUserMssqlRepository(coSqlClient)
 
     @Test
     fun `Verify selectAll returns all users`() = runBlocking<Unit> {
         assertThat(repository.selectAllUsers().toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(userJdoe, userBboss)
+            .hasSize(2)
+            .containsExactlyInAnyOrder(userJdoe, userBboss)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("John"))
-                .isEqualTo(userJdoe)
+            .isEqualTo(userJdoe)
     }
 
     @Test
     fun `Verify selectFirstByFirstname finds no Unknown`() = runBlocking<Unit> {
         assertThat(repository.selectFirstByFirstname("Unknown"))
-                .isNull()
+            .isNull()
     }
 
     @Test
@@ -65,24 +57,25 @@ class R2dbcCoroutinesMssqlTest : AbstractR2dbcMssqlTest<CoroutinesUserMssqlRepos
     @Test
     fun `Verify selectByAlias finds TheBoss`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias("TheBoss").toList())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(userBboss)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test
     fun `Verify selectByAlias with null alias finds John`() = runBlocking<Unit> {
         assertThat(repository.selectByAlias(null).toList())
-                .hasSize(1)
-                .containsExactlyInAnyOrder(userJdoe)
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userJdoe)
     }
 
     @Test
     fun `Verify selectAllMappedToDto does the mapping`() = runBlocking<Unit> {
         assertThat(repository.selectAllMappedToDto().toList())
-                .hasSize(2)
-                .containsExactlyInAnyOrder(
-                        UserDto("John Doe", false, null),
-                        UserDto("Big Boss", true, "TheBoss"))
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserDto("John Doe", false, null),
+                UserDto("Big Boss", true, "TheBoss")
+            )
     }
 
     @Test
@@ -90,27 +83,25 @@ class R2dbcCoroutinesMssqlTest : AbstractR2dbcMssqlTest<CoroutinesUserMssqlRepos
         coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
             assertThat(repository.deleteAllFromUsers())
-                    .isEqualTo(2)
+                .isEqualTo(2)
             assertThat(repository.selectAllUsers().toList())
-                    .isEmpty()
+                .isEmpty()
         }
     }
 
     @Test
     fun `Verify updateLastname works`() = runBlocking<Unit> {
         assertThat(repository.updateLastname("Do"))
-                .isEqualTo(1)
+            .isEqualTo(1)
         assertThat(repository.selectFirstByFirstname(userJdoe.firstname))
-                .extracting { user -> user?.lastname }
-                .isEqualTo("Do")
+            .extracting { user -> user?.lastname }
+            .isEqualTo("Do")
         repository.updateLastname(userJdoe.lastname)
     }
 }
 
 
-class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.coSqlClient(mssqlTables)
+class CoroutinesUserMssqlRepository(private val sqlClient: MssqlCoroutinesSqlClient) : Repository {
 
     override fun init() = runBlocking {
         createTables()
@@ -139,35 +130,37 @@ class CoroutinesUserMssqlRepository(dbClient: DatabaseClient) : Repository {
     fun selectAllUsers() = sqlClient selectAllFrom MssqlUsers
 
     suspend fun selectFirstByFirstname(firstname: String) =
-            (sqlClient selectFrom MssqlUsers
-                    where MssqlUsers.firstname eq firstname
-                    ).fetchFirstOrNull()
+        (sqlClient selectFrom MssqlUsers
+                where MssqlUsers.firstname eq firstname
+                ).fetchFirstOrNull()
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
-            (sqlClient selectFrom MssqlUsers
-                    where MssqlUsers.firstname eq firstname
-                    ).fetchFirst()
+        (sqlClient selectFrom MssqlUsers
+                where MssqlUsers.firstname eq firstname
+                ).fetchFirst()
 
     suspend fun selectOneNonUnique() =
-            (sqlClient selectFrom MssqlUsers
-                    ).fetchOne()
+        (sqlClient selectFrom MssqlUsers
+                ).fetchOne()
 
     fun selectByAlias(alias: String?) =
-            (sqlClient selectFrom MssqlUsers
-                    where MssqlUsers.alias eq alias
-                    ).fetchAll()
+        (sqlClient selectFrom MssqlUsers
+                where MssqlUsers.alias eq alias
+                ).fetchAll()
 
     fun selectAllMappedToDto() =
-            (sqlClient.selectAndBuild {
-                UserDto("${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.isAdmin]!!,
-                        it[MssqlUsers.alias])
-            }
-                    from MssqlUsers
-                    ).fetchAll()
+        (sqlClient.selectAndBuild {
+            UserDto(
+                "${it[MssqlUsers.firstname]} ${it[MssqlUsers.lastname]}", it[MssqlUsers.isAdmin]!!,
+                it[MssqlUsers.alias]
+            )
+        }
+                from MssqlUsers
+                ).fetchAll()
 
     suspend fun updateLastname(newLastname: String) =
-            (sqlClient update MssqlUsers
-                    set MssqlUsers.lastname eq newLastname
-                    where MssqlUsers.id eq userJdoe.id
-                    ).execute()
+        (sqlClient update MssqlUsers
+                set MssqlUsers.lastname eq newLastname
+                where MssqlUsers.id eq userJdoe.id
+                ).execute()
 }

@@ -15,9 +15,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectIntTest
 @Order(1)
 class SpringJdbcSelectIntH2Test : AbstractSpringJdbcH2Test<SelectIntRepositoryH2Select>(),
     SelectIntTest<H2Ints, SelectIntRepositoryH2Select, SpringJdbcTransaction> {
-
-    override val context = startContext<SelectIntRepositoryH2Select>()
-    override val repository = getContextRepository<SelectIntRepositoryH2Select>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = SelectIntRepositoryH2Select(jdbcOperations)
 }
 
 class SelectIntRepositoryH2Select(client: JdbcOperations) : SelectIntRepository<H2Ints>(client.sqlClient(h2Tables), H2Ints)

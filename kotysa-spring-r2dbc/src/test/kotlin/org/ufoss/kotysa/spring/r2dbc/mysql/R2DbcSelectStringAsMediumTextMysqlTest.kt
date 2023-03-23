@@ -5,24 +5,19 @@
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MysqlCoroutinesSqlClient
+import org.ufoss.kotysa.MysqlReactorSqlClient
+import org.ufoss.kotysa.test.MysqlMediumTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsMediumTextNotNull
+import org.ufoss.kotysa.test.stringAsMediumTextNullable
 
 
 class R2DbcSelectStringAsMediumTextMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectStringAsMediumText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMysqlSelectStringAsMediumText>(resource)
-    }
-
-    override val repository: UserRepositoryMysqlSelectStringAsMediumText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
+        UserRepositoryMysqlSelectStringAsMediumText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsMediumTextNotNull`() {
@@ -165,9 +160,7 @@ class R2DbcSelectStringAsMediumTextMysqlTest : AbstractR2dbcMysqlTest<UserReposi
 }
 
 
-class UserRepositoryMysqlSelectStringAsMediumText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mysqlTables)
+class UserRepositoryMysqlSelectStringAsMediumText(private val sqlClient: MysqlReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()

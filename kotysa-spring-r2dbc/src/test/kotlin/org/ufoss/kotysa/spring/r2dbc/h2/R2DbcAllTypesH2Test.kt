@@ -10,10 +10,11 @@ import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.transaction.reactive.TransactionalOperator
+import org.ufoss.kotysa.H2CoroutinesSqlClient
+import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.SpringR2dbcReactorTransactionalOp
 import org.ufoss.kotysa.spring.r2dbc.transaction.transactional
-import org.ufoss.kotysa.spring.r2dbc.transaction.transactionalOp
 import org.ufoss.kotysa.test.*
 import reactor.kotlin.test.test
 import java.math.BigDecimal
@@ -22,8 +23,9 @@ import java.util.*
 
 
 class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
-    override val context = startContext<AllTypesRepositoryH2>()
-    override val repository = getContextRepository<AllTypesRepositoryH2>()
+
+    override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
+        AllTypesRepositoryH2(sqlClient, operator)
 
     @Test
     fun `Verify selectAllAllTypesNotNull returns all AllTypesNotNull`() {
@@ -143,8 +145,10 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
                     84.84,
                     BigDecimal("4.2"),
                     BigDecimal("4.3"),
-                    OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0,
-                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)),
+                    OffsetDateTime.of(
+                        2019, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ),
                     UUID.fromString(defaultUuid),
                 )
             )
@@ -155,10 +159,8 @@ class R2DbcAllTypesH2Test : AbstractR2dbcH2Test<AllTypesRepositoryH2>() {
 
 class AllTypesRepositoryH2(
     private val sqlClient: ReactorSqlClient,
-    transactionalOperator: TransactionalOperator
+    private val operator: SpringR2dbcReactorTransactionalOp
 ) : Repository {
-
-    private val operator = transactionalOperator.transactionalOp()
 
     override fun init() {
         createTables()

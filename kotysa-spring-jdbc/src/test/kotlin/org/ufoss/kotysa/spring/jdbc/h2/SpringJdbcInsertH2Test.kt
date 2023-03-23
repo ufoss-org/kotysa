@@ -16,8 +16,8 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 @Order(3)
 class SpringJdbcInsertH2Test : AbstractSpringJdbcH2Test<RepositoryH2Insert>(),
     InsertTest<H2Ints, H2Longs, H2Customers, RepositoryH2Insert, SpringJdbcTransaction> {
-    override val context = startContext<RepositoryH2Insert>()
-    override val repository = getContextRepository<RepositoryH2Insert>()
+    override fun instantiateRepository(jdbcOperations: JdbcOperations) = RepositoryH2Insert(jdbcOperations)
+
     override val exceptionClass = DataIntegrityViolationException::class.java
 }
 

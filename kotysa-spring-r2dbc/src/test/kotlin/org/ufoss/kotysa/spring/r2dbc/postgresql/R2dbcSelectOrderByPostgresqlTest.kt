@@ -5,47 +5,46 @@
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
+import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.test.PostgresqlCustomers
+import org.ufoss.kotysa.test.customerFrance
+import org.ufoss.kotysa.test.customerUSA1
+import org.ufoss.kotysa.test.customerUSA2
 
 class R2dbcSelectOrderByPostgresqlTest : AbstractR2dbcPostgresqlTest<OrderByRepositoryPostgresqlSelect>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<OrderByRepositoryPostgresqlSelect>(resource)
-    }
-
-    override val repository: OrderByRepositoryPostgresqlSelect by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(
+        sqlClient: PostgresqlReactorSqlClient,
+        coSqlClient: PostgresqlCoroutinesSqlClient,
+    ) = OrderByRepositoryPostgresqlSelect(sqlClient)
 
     @Test
     fun `Verify selectCustomerOrderByAgeAsc returns all customers ordered by age ASC`() {
         assertThat(repository.selectCustomerOrderByAgeAsc().toIterable())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 
     @Test
     fun `Verify selectCustomerOrderByAgeAndIdAsc returns all customers ordered by age and id ASC`() {
         assertThat(repository.selectCustomerOrderByAgeAndIdAsc().toIterable())
-                .hasSize(3)
-                .containsExactly(customerFrance, customerUSA2, customerUSA1)
+            .hasSize(3)
+            .containsExactly(customerFrance, customerUSA2, customerUSA1)
     }
 }
 
 class OrderByRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) : AbstractCustomerRepositoryPostgresql(sqlClient) {
 
     fun selectCustomerOrderByAgeAsc() =
-            (sqlClient selectFrom PostgresqlCustomers
-                    orderByAsc PostgresqlCustomers.age
-                    ).fetchAll()
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.age
+                ).fetchAll()
 
     fun selectCustomerOrderByAgeAndIdAsc() =
-            (sqlClient selectFrom PostgresqlCustomers
-                    orderByAsc PostgresqlCustomers.age andAsc PostgresqlCustomers.id
-                    ).fetchAll()
+        (sqlClient selectFrom PostgresqlCustomers
+                orderByAsc PostgresqlCustomers.age andAsc PostgresqlCustomers.id
+                ).fetchAll()
 }

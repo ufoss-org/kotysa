@@ -5,24 +5,19 @@
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.springframework.r2dbc.core.DatabaseClient
-import org.ufoss.kotysa.spring.r2dbc.sqlClient
-import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.hooks.TestContainersCloseableResource
+import org.ufoss.kotysa.MariadbCoroutinesSqlClient
+import org.ufoss.kotysa.MariadbReactorSqlClient
+import org.ufoss.kotysa.test.MariadbLongTexts
+import org.ufoss.kotysa.test.Repository
+import org.ufoss.kotysa.test.stringAsLongTextNotNull
+import org.ufoss.kotysa.test.stringAsLongTextNullable
 
 
 class R2DbcSelectStringAsLongTextMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelectStringAsLongText>() {
 
-    @BeforeAll
-    fun beforeAll(resource: TestContainersCloseableResource) {
-        context = startContext<UserRepositoryMariadbSelectStringAsLongText>(resource)
-    }
-
-    override val repository: UserRepositoryMariadbSelectStringAsLongText by lazy {
-        getContextRepository()
-    }
+    override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
+        UserRepositoryMariadbSelectStringAsLongText(sqlClient)
 
     @Test
     fun `Verify selectFirstByStringNotNull finds stringAsLongTextNotNull`() {
@@ -165,9 +160,7 @@ class R2DbcSelectStringAsLongTextMariadbTest : AbstractR2dbcMariadbTest<UserRepo
 }
 
 
-class UserRepositoryMariadbSelectStringAsLongText(dbClient: DatabaseClient) : Repository {
-
-    private val sqlClient = dbClient.sqlClient(mariadbTables)
+class UserRepositoryMariadbSelectStringAsLongText(private val sqlClient: MariadbReactorSqlClient) : Repository {
 
     override fun init() {
         createTables()
