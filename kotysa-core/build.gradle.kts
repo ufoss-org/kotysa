@@ -19,6 +19,7 @@ kotlin {
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
 
                 compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:${property("kotlinxDatetimeVersion")}")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinxSerializationVersion")}")
             }
         }
     }

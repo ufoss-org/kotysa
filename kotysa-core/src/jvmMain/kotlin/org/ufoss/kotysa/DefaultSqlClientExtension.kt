@@ -30,3 +30,26 @@ public fun <T : Any> DefaultSqlClient.setOracleReturnParameter(
             oracleStatement.registerReturnParameter(index + statementIndex + 1, jdbcType)
         }
 }
+
+public fun <T : Any> DefaultSqlClient.setStatementParams(row: T, table: KotysaTable<T>, statement: PreparedStatement): Int {
+    var index = 0
+    table.dbColumns
+        // do nothing for null values with default or Serial type
+        .filterNot { column ->
+            column.entityGetter(row) == null
+                    && (column.defaultValue != null
+                    || column.isAutoIncrement
+                    || SqlType.SERIAL == column.sqlType
+                    || SqlType.BIGSERIAL == column.sqlType)
+        }
+        .forEach { column ->
+            val dbValue = tables.getDbValue(column.entityGetter(row))
+            // workaround for MSSQL https://progress-supportcommunity.force.com/s/article/Implicit-conversion-from-data-type-nvarchar-to-varbinary-max-is-not-allowed-error-with-SQL-Server-JDBC-driver
+            if (SqlType.BINARY == column.sqlType) {
+                statement.setObject(++index, dbValue, Types.VARBINARY)
+            } else {
+                statement.setObject(++index, dbValue)
+            }
+        }
+    return index
+}

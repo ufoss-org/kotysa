@@ -19,6 +19,6 @@ interface CoroutinesSelectGroupByTest<T : Customers, U : CoroutinesSelectGroupBy
     fun `Verify selectCountCustomerGroupByCountry counts and group`() = runTest {
         assertThat(repository.selectCountCustomerGroupByCountry().toList())
             .hasSize(2)
-            .containsExactly(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
+            .containsExactlyInAnyOrder(Pair(1, customerFrance.country), Pair(2, customerUSA1.country))
     }
 }
