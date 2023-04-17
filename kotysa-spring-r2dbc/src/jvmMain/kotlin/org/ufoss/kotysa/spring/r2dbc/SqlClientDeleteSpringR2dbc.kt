@@ -45,6 +45,6 @@ internal class SqlClientDeleteSpringR2dbc private constructor() : AbstractSqlCli
 
     private interface Return<T : Any> : AbstractSqlClientDeleteSpringR2dbc.Return<T>, ReactorSqlClientDeleteOrUpdate.Return {
 
-        override fun execute(): Mono<Int> = fetch().rowsUpdated()
+        override fun execute(): Mono<Long> = fetch().rowsUpdated()
     }
 }

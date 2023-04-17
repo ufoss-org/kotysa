@@ -91,10 +91,12 @@ data class PostgresqlAllTypesNotNullEntity(
         if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
             != other.kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
         ) return false
-        if (localDateTime1 != other.localDateTime1) return false
-        if (localDateTime2 != other.localDateTime2) return false
-        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
-        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (localDateTime1.truncatedTo(ChronoUnit.MILLIS) != other.localDateTime1.truncatedTo(ChronoUnit.MILLIS)) return false
+        if (localDateTime2.truncatedTo(ChronoUnit.MILLIS) != other.localDateTime2.truncatedTo(ChronoUnit.MILLIS)) return false
+        if (kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)) return false
+        if (kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)) return false
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
@@ -102,7 +104,7 @@ data class PostgresqlAllTypesNotNullEntity(
         if (double != other.double) return false
         if (bigDecimal1 != other.bigDecimal1) return false
         if (bigDecimal2 != other.bigDecimal2) return false
-        if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
+        if (!offsetDateTime.truncatedTo(ChronoUnit.MILLIS).isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))) return false
         if (uuid != other.uuid) return false
 
         return true

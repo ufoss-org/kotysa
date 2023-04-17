@@ -27,7 +27,7 @@ public sealed interface ReactorSqlClient {
     public infix fun <T : Any> createTableIfNotExists(table: Table<T>): Mono<Void>
 
     public infix fun <T : Any> deleteFrom(table: Table<T>): ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
-    public infix fun <T : Any> deleteAllFrom(table: Table<T>): Mono<Int> = deleteFrom(table).execute()
+    public infix fun <T : Any> deleteAllFrom(table: Table<T>): Mono<Long> = deleteFrom(table).execute()
 
     public infix fun <T : Any> update(table: Table<T>): ReactorSqlClientDeleteOrUpdate.Update<T>
 
@@ -288,6 +288,6 @@ public class ReactorSqlClientDeleteOrUpdate private constructor() {
         /**
          * Execute delete or update and return the number of updated or deleted rows
          */
-        public fun execute(): Mono<Int>
+        public fun execute(): Mono<Long>
     }
 }

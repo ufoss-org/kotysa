@@ -49,6 +49,6 @@ internal class CoroutinesSqlClientUpdateSpringR2Dbc private constructor() : Abst
 
     private interface Return<T : Any> : AbstractSqlClientUpdateSpringR2dbc.Return<T>, CoroutinesSqlClientDeleteOrUpdate.Return {
 
-        override suspend fun execute(): Int = fetch().awaitRowsUpdated()
+        override suspend fun execute(): Long = fetch().awaitRowsUpdated()
     }
 }

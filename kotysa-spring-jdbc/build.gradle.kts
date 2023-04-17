@@ -1,3 +1,9 @@
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
 kotlin {
     sourceSets {
         jvmMain {
