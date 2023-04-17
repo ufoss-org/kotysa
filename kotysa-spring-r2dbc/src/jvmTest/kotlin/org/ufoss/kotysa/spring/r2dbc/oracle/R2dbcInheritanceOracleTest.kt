@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleInheriteds
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInheritanceRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInheritanceTest
 
-class JdbcInheritanceOracleTest : AbstractR2dbcOracleTest<ReactorInheritanceOracleRepository>(),
+class R2dbcInheritanceOracleTest : AbstractR2dbcOracleTest<ReactorInheritanceOracleRepository>(),
     ReactorInheritanceTest<OracleInheriteds, ReactorInheritanceOracleRepository, ReactorTransaction> {
     override val table = OracleInheriteds
 

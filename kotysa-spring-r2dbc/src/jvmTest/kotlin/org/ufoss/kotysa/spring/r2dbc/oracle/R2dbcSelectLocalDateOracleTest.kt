@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleLocalDates
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLocalDateRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLocalDateTest
 
-class JdbcSelectLocalDateOracleTest : AbstractR2dbcOracleTest<LocalDateRepositoryOracleSelect>(),
+class R2dbcSelectLocalDateOracleTest : AbstractR2dbcOracleTest<LocalDateRepositoryOracleSelect>(),
     ReactorSelectLocalDateTest<OracleLocalDates, LocalDateRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         LocalDateRepositoryOracleSelect(sqlClient)

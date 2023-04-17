@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleLocalDateTimeAsTimestamps
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLocalDateTimeAsTimestampRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLocalDateTimeAsTimestampTest
 
-class JdbcSelectLocalDateTimeAsTimestampOracleTest :
+class R2dbcSelectLocalDateTimeAsTimestampOracleTest :
     AbstractR2dbcOracleTest<LocalDateTimeAsTimestampRepositoryOracleSelect>(),
     ReactorSelectLocalDateTimeAsTimestampTest<OracleLocalDateTimeAsTimestamps,
             LocalDateTimeAsTimestampRepositoryOracleSelect, ReactorTransaction> {

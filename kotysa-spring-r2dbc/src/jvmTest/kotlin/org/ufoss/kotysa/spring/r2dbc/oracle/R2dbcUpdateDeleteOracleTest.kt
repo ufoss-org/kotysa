@@ -14,7 +14,7 @@ import org.ufoss.kotysa.test.OracleUsers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorUpdateDeleteRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorUpdateDeleteTest
 
-class JdbcUpdateDeleteOracleTest : AbstractR2dbcOracleTest<UserRepositoryR2dbcOracleUpdateDelete>(),
+class R2dbcUpdateDeleteOracleTest : AbstractR2dbcOracleTest<UserRepositoryR2dbcOracleUpdateDelete>(),
     ReactorUpdateDeleteTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryR2dbcOracleUpdateDelete,
             ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =

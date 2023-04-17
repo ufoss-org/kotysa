@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleByteArrays
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectByteArrayRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectByteArrayTest
 
-class JdbcSelectByteArrayOracleTest : AbstractR2dbcOracleTest<ByteArrayRepositoryOracleSelect>(),
+class R2dbcSelectByteArrayOracleTest : AbstractR2dbcOracleTest<ByteArrayRepositoryOracleSelect>(),
     ReactorSelectByteArrayTest<OracleByteArrays, ByteArrayRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ByteArrayRepositoryOracleSelect(sqlClient)

@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleCustomers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrderByRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrderByTest
 
-class JdbcSelectOrderByOracleTest : AbstractR2dbcOracleTest<OrderByRepositoryOracleSelect>(),
+class R2dbcSelectOrderByOracleTest : AbstractR2dbcOracleTest<OrderByRepositoryOracleSelect>(),
     ReactorSelectOrderByTest<OracleCustomers, OrderByRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         OrderByRepositoryOracleSelect(sqlClient)

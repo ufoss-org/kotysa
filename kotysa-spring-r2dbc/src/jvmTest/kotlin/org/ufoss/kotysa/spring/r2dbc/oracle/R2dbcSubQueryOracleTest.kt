@@ -14,7 +14,7 @@ import org.ufoss.kotysa.test.OracleUsers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryTest
 
-class JdbcSubQueryOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSubQuery>(),
+class R2dbcSubQueryOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSubQuery>(),
     ReactorSubQueryTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSubQuery,
             ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =

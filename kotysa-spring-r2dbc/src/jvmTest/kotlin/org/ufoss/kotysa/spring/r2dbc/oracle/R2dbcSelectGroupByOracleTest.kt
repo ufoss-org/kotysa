@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleCustomers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectGroupByRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectGroupByTest
 
-class JdbcSelectGroupByOracleTest : AbstractR2dbcOracleTest<GroupByRepositoryOracleSelect>(),
+class R2dbcSelectGroupByOracleTest : AbstractR2dbcOracleTest<GroupByRepositoryOracleSelect>(),
     ReactorSelectGroupByTest<OracleCustomers, GroupByRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         GroupByRepositoryOracleSelect(sqlClient)

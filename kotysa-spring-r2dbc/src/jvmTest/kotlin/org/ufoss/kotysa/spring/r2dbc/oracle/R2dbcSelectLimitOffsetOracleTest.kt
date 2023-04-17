@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleCustomers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLimitOffsetRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLimitOffsetTest
 
-class JdbcSelectLimitOffsetOracleTest : AbstractR2dbcOracleTest<LimitOffsetRepositoryOracleSelect>(),
+class R2dbcSelectLimitOffsetOracleTest : AbstractR2dbcOracleTest<LimitOffsetRepositoryOracleSelect>(),
     ReactorSelectLimitOffsetTest<OracleCustomers, LimitOffsetRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         LimitOffsetRepositoryOracleSelect(sqlClient)

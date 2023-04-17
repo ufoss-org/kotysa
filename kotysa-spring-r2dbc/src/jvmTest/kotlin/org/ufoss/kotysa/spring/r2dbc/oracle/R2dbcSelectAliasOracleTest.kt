@@ -12,7 +12,7 @@ import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.reactor.AbstractReactorUserRepository
 
-class JdbcSelectAliasOracleTest : AbstractR2dbcOracleTest<UserRepositorySelectAlias>() {
+class R2dbcSelectAliasOracleTest : AbstractR2dbcOracleTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         UserRepositorySelectAlias(sqlClient)
 

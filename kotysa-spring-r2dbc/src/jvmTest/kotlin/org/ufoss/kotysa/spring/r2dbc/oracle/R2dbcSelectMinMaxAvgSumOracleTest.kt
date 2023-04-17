@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleCustomers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectMinMaxAvgSumRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectMinMaxAvgSumTest
 
-class JdbcSelectMinMaxAvgSumOracleTest : AbstractR2dbcOracleTest<MinMaxAvgSumRepositoryOracleSelect>(),
+class R2dbcSelectMinMaxAvgSumOracleTest : AbstractR2dbcOracleTest<MinMaxAvgSumRepositoryOracleSelect>(),
     ReactorSelectMinMaxAvgSumTest<OracleCustomers, MinMaxAvgSumRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         MinMaxAvgSumRepositoryOracleSelect(sqlClient)

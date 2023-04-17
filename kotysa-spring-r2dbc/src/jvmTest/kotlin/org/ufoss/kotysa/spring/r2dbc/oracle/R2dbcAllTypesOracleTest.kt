@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-class JdbcAllTypesOracleTest : AbstractR2dbcOracleTest<ReactorAllTypesRepositoryOracle>() {
+class R2dbcAllTypesOracleTest : AbstractR2dbcOracleTest<ReactorAllTypesRepositoryOracle>() {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorAllTypesRepositoryOracle(sqlClient)
 
