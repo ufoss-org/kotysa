@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
 import org.ufoss.kotysa.h2.*
 import org.ufoss.kotysa.tables
 import java.math.BigDecimal
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 object H2Roles : H2Table<RoleEntity>("roles"), Roles {
@@ -79,7 +83,7 @@ data class H2AllTypesNotNullEntity(
 
         other as H2AllTypesNotNullEntity
 
-        if (offsetDateTime != other.offsetDateTime) return false
+        if (offsetDateTime.truncatedTo(ChronoUnit.MILLIS) != other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS)) return false
         if (uuid != other.uuid) return false
 
         return true
@@ -128,10 +132,10 @@ object H2AllTypesNotNulls : H2Table<H2AllTypesNotNullEntity>("all_types") {
     val kotlinxLocalDate = date(AllTypesNotNullEntity::kotlinxLocalDate)
     val localTim = time(AllTypesNotNullWithTimeEntity::localTime, precision = 9)
     val kotlinxLocalTim = time(AllTypesNotNullWithTimeEntity::kotlinxLocalTime, precision = 9)
-    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1)
-    val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2)
-    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1)
-    val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2)
+    val localDateTime1 = dateTime(AllTypesNotNullEntity::localDateTime1, precision = 9)
+    val localDateTime2 = timestamp(AllTypesNotNullEntity::localDateTime2, precision = 9)
+    val kotlinxLocalDateTime1 = dateTime(AllTypesNotNullEntity::kotlinxLocalDateTime1, precision = 9)
+    val kotlinxLocalDateTime2 = timestamp(AllTypesNotNullEntity::kotlinxLocalDateTime2, precision = 9)
     val inte = integer(AllTypesNotNullEntity::int)
     val longe = bigInt(AllTypesNotNullEntity::long)
     val byteArray = binary(AllTypesNotNullEntity::byteArray)

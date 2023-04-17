@@ -7,7 +7,6 @@ package org.ufoss.kotysa.spring.jdbc.mssql
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.UncategorizedSQLException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.QueryAlias
@@ -21,21 +20,21 @@ class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositor
     override fun instantiateRepository(jdbcOperations: JdbcOperations) = UserRepositorySelectAlias(jdbcOperations)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws UncategorizedSQLException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname) }
-            .isInstanceOf(BadSqlGrammarException::class.java)
+            .isInstanceOf(UncategorizedSQLException::class.java)
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws UncategorizedSQLException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname) }
-            .isInstanceOf(BadSqlGrammarException::class.java)
+            .isInstanceOf(UncategorizedSQLException::class.java)
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws UncategorizedSQLException`() {
         assertThatThrownBy { repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(BadSqlGrammarException::class.java)
+            .isInstanceOf(UncategorizedSQLException::class.java)
     }
 
     @Test
@@ -73,9 +72,9 @@ class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositor
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws UncategorizedSQLException`() {
         assertThatThrownBy { repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)) }
-            .isInstanceOf(BadSqlGrammarException::class.java)
+            .isInstanceOf(UncategorizedSQLException::class.java)
     }
 
     @Test

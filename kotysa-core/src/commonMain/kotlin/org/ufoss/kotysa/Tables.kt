@@ -34,6 +34,11 @@ public sealed class Tables protected constructor(
                 "kotlinx.datetime.LocalDateTime" -> (value as kotlinx.datetime.LocalDateTime).toJavaLocalDateTime()
                 "java.time.LocalTime" -> localTimeValue(value as LocalTime)
                 "kotlinx.datetime.LocalTime" -> localTimeValue((value as kotlinx.datetime.LocalTime).toJavaLocalTime())
+                "kotlin.Boolean" -> if (dbType == DbType.ORACLE) {
+                    if (value as Boolean) 1 else 0
+                } else {
+                    value
+                }
                 else -> value
             }
         } else {

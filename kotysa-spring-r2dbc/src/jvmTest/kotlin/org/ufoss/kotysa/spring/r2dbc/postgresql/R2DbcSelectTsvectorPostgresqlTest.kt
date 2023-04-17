@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
+import org.springframework.r2dbc.BadSqlGrammarException
 import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
@@ -17,6 +20,13 @@ class R2DbcSelectTsvectorPostgresqlTest : AbstractR2dbcPostgresqlTest<TsvectorPo
         sqlClient: PostgresqlReactorSqlClient,
         coSqlClient: PostgresqlCoroutinesSqlClient,
     ) = TsvectorPostgresqlRepository(sqlClient)
+
+    @Test
+    override fun `Verify selectToTsqueryBoth 'table create' throws Exception`() {
+        assertThatThrownBy {
+            repository.selectToTsqueryBoth("table create").blockLast()
+        }.isInstanceOf(BadSqlGrammarException::class.java)
+    }
 }
 
 class TsvectorPostgresqlRepository(sqlClient: PostgresqlReactorSqlClient) : ReactorSelectTsvectorRepository(sqlClient)

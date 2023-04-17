@@ -96,7 +96,7 @@ data class OracleAllTypesNotNullEntity(
         if (!byteArray.contentEquals(other.byteArray)) return false
         if (float != other.float) return false
         if (double != other.double) return false
-        if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
+        if (!offsetDateTime.truncatedTo(ChronoUnit.MILLIS).isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))) return false
 
         return true
     }

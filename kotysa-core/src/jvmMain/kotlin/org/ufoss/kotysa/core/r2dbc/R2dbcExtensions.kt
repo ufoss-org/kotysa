@@ -6,9 +6,9 @@ package org.ufoss.kotysa.core.r2dbc
 
 import io.r2dbc.spi.Statement
 import org.ufoss.kotysa.*
-import io.r2dbc.spi.Row
+import io.r2dbc.spi.Readable
 
-public fun Row.toRow(): RowImpl = RowImpl(R2dbcRow(this))
+public fun Readable.toRow(): RowImpl = RowImpl(R2dbcRow(this))
 
 public fun DefaultSqlClientCommon.Properties.r2dbcBindParams(statement: Statement) {
     parameters

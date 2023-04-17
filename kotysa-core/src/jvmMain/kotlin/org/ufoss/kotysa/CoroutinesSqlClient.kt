@@ -24,7 +24,7 @@ public sealed interface CoroutinesSqlClient {
     public suspend infix fun <T : Any> createTableIfNotExists(table: Table<T>)
 
     public infix fun <T : Any> deleteFrom(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>
-    public suspend infix fun <T : Any> deleteAllFrom(table: Table<T>): Int = deleteFrom(table).execute()
+    public suspend infix fun <T : Any> deleteAllFrom(table: Table<T>): Long = deleteFrom(table).execute()
 
     public infix fun <T : Any> update(table: Table<T>): CoroutinesSqlClientDeleteOrUpdate.Update<T>
 
@@ -299,6 +299,6 @@ public class CoroutinesSqlClientDeleteOrUpdate private constructor() : SqlClient
         /**
          * Execute delete or update and return the number of updated or deleted rows
          */
-        public suspend fun execute(): Int
+        public suspend fun execute(): Long
     }
 }
