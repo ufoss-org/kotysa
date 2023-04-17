@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleDoubles
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDoubleRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDoubleTest
 
-class JdbcSelectDoubleOracleTest : AbstractR2dbcOracleTest<ReactorSelectDoubleRepositoryOracleSelect>(),
+class R2dbcSelectDoubleOracleTest : AbstractR2dbcOracleTest<ReactorSelectDoubleRepositoryOracleSelect>(),
     ReactorSelectDoubleTest<OracleDoubles, ReactorSelectDoubleRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorSelectDoubleRepositoryOracleSelect(sqlClient)

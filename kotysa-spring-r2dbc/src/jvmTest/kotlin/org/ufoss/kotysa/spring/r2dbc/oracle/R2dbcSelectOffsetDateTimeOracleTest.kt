@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleOffsetDateTimes
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOffsetDateTimeRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOffsetDateTimeTest
 
-class JdbcSelectOffsetDateTimeOracleTest : AbstractR2dbcOracleTest<OffsetDateTimeRepositoryOracleSelect>(),
+class R2dbcSelectOffsetDateTimeOracleTest : AbstractR2dbcOracleTest<OffsetDateTimeRepositoryOracleSelect>(),
     ReactorSelectOffsetDateTimeTest<OracleOffsetDateTimes, OffsetDateTimeRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         OffsetDateTimeRepositoryOracleSelect(sqlClient)

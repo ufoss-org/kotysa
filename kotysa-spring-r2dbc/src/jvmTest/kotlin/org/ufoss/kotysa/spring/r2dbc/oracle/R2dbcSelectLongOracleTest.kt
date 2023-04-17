@@ -14,7 +14,7 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLongRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectLongTest
 
 @Order(2)
-class JdbcSelectLongOracleTest : AbstractR2dbcOracleTest<ReactorLongRepositoryOracleSelect>(),
+class R2dbcSelectLongOracleTest : AbstractR2dbcOracleTest<ReactorLongRepositoryOracleSelect>(),
     ReactorSelectLongTest<OracleLongs, ReactorLongRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorLongRepositoryOracleSelect(sqlClient)

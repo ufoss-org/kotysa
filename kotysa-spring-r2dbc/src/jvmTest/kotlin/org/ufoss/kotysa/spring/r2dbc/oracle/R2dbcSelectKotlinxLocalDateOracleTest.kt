@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleKotlinxLocalDates
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalDateRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalDateTest
 
-class JdbcSelectKotlinxLocalDateOracleTest :
+class R2dbcSelectKotlinxLocalDateOracleTest :
     AbstractR2dbcOracleTest<KotlinxLocalDateRepositoryOracleSelect>(),
     ReactorSelectKotlinxLocalDateTest<OracleKotlinxLocalDates, KotlinxLocalDateRepositoryOracleSelect,
             ReactorTransaction> {

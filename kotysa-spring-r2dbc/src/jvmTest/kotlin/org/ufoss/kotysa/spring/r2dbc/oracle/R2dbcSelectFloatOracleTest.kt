@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleFloats
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectFloatRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectFloatTest
 
-class JdbcSelectFloatOracleTest : AbstractR2dbcOracleTest<ReactorSelectFloatRepositoryOracleSelect>(),
+class R2dbcSelectFloatOracleTest : AbstractR2dbcOracleTest<ReactorSelectFloatRepositoryOracleSelect>(),
     ReactorSelectFloatTest<OracleFloats, ReactorSelectFloatRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorSelectFloatRepositoryOracleSelect(sqlClient)

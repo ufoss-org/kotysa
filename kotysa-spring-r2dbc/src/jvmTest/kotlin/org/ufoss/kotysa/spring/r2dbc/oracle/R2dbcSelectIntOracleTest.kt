@@ -14,7 +14,7 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntTest
 
 @Order(1)
-class JdbcSelectIntOracleTest : AbstractR2dbcOracleTest<ReactorSelectIntRepositoryOracleSelect>(),
+class R2dbcSelectIntOracleTest : AbstractR2dbcOracleTest<ReactorSelectIntRepositoryOracleSelect>(),
     ReactorSelectIntTest<OracleInts, ReactorSelectIntRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorSelectIntRepositoryOracleSelect(sqlClient)

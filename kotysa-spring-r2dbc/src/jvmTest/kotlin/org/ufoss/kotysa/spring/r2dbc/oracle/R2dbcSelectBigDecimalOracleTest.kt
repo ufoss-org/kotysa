@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.OracleBigDecimals
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBigDecimalRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBigDecimalTest
 
-class JdbcSelectBigDecimalOracleTest : AbstractR2dbcOracleTest<ReactorSelectBigDecimalRepositoryOracleSelect>(),
+class R2dbcSelectBigDecimalOracleTest : AbstractR2dbcOracleTest<ReactorSelectBigDecimalRepositoryOracleSelect>(),
     ReactorSelectBigDecimalTest<OracleBigDecimals, ReactorSelectBigDecimalRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorSelectBigDecimalRepositoryOracleSelect(sqlClient)
