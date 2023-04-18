@@ -1,8 +1,9 @@
 ## Release
 * verify the current version you want to release in gradle.properties
 * verify you are using SSH with GIT
-* use openJDK 1.8 as project JDK
-* do **publish** task
+* use openJDK 17 as project JDK
+* do **kotysa publish mobile** task
+* do **kotysa publish jpms** task
 * Go to staging repos : https://s01.oss.sonatype.org/#stagingRepositories (ufoss account)
   * do **close** , refresh
   * then **release**
