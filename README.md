@@ -77,7 +77,7 @@ val admins = (sqlClient selectFrom Users
 
 Contributions are welcome.
 
-* Compile Kotysa with a JDK 8.
+* Compile Kotysa with a JDK 17.
 * You need a local docker, like docker-ce : some tests use testcontainers to start real databases like PostgreSQL, MySQL...
 
 1. Clone this repo
