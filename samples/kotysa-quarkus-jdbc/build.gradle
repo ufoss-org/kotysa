@@ -4,6 +4,12 @@ plugins {
     id 'io.quarkus'
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -30,15 +36,20 @@ allOpen {
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 
-compileKotlin {
-    kotlinOptions.freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
-}
-
-compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ['-Xjsr305=strict', '-Xjvm-default=all-compatibility']
+compileJava {
+    // replace '-' with '.' to match JPMS jigsaw module name
+    def jpmsName = project.name.replace('-', '.')
+    // this is needed because we have a separate compile step in this example with th
+    //  'module-info.java' is in 'main/java' and the Kotlin code is in 'main/kotlin'
+    options.compilerArgs = [
+//            "--module-path",
+//            compileJava.classpath.asPath,   
+        "--patch-module",
+        "$jpmsName=${sourceSets.main.output.asPath}"
+    ]
 }
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.1'
     distributionType = Wrapper.DistributionType.ALL
 }

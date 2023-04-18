@@ -6,6 +6,12 @@ plugins {
 
 mainClassName = "com.sample.ApplicationKt"
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 repositories {
     mavenCentral()
 }
@@ -29,11 +35,24 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-assertions-ktor:$kotest_assertions_ktor_version")
 }
 
+compileJava {
+    // replace '-' with '.' to match JPMS jigsaw module name
+    def jpmsName = project.name.replace('-', '.')
+    // this is needed because we have a separate compile step in this example with th
+    //  'module-info.java' is in 'main/java' and the Kotlin code is in 'main/kotlin'
+    options.compilerArgs = [
+//            "--module-path",
+//            compileJava.classpath.asPath,   
+        "--patch-module",
+        "$jpmsName=${sourceSets.main.output.asPath}"
+    ]
+}
+
 test {
     useJUnitPlatform()
 }
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.1'
     distributionType = Wrapper.DistributionType.ALL
 }

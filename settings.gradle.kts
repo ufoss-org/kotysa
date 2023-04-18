@@ -18,15 +18,17 @@ println("isJpms = $isJpms")
 
 // MPP projects
 include("kotysa-core")
-include("kotysa-sqlite")
+if (isJpms != true) {
+    include("kotysa-sqlite")
+}
 
 // JVM only projects
 if (isJpms != false) {
     include("kotysa-java-tests")
     include("kotysa-tests")
-    include("kotysa-jdbc")
+//    include("kotysa-jdbc")
     include("kotysa-r2dbc")
-    include("kotysa-spring-jdbc")
-    include("kotysa-spring-r2dbc")
-    include("kotysa-vertx-sqlclient")
+//    include("kotysa-spring-jdbc")
+//    include("kotysa-spring-r2dbc")
+//    include("kotysa-vertx-sqlclient")
 }

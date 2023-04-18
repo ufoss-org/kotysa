@@ -9,7 +9,7 @@ import org.kodein.di.*
 import org.kodein.di.ktor.closestDI
 import org.kodein.di.ktor.di
 import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.r2dbc.sqlClient
+import org.ufoss.kotysa.r2dbc.coSqlClient
 import org.ufoss.kotysa.tables
 
 fun Application.dataConfig() {
@@ -36,7 +36,7 @@ private val h2Tables = tables().h2(Roles, Users)
 private val dataModule = DI.Module(name = "data") {
     // create Kotysa SqlClient from R2DBC ConnectionFactory
     bind<R2dbcSqlClient>() with singleton {
-        ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1").sqlClient(h2Tables)
+        ConnectionFactories.get("r2dbc:h2:mem:///testdb;DB_CLOSE_DELAY=-1").coSqlClient(h2Tables)
     }
     bind<Json>() with singleton { DefaultJson }
     // Repositories
