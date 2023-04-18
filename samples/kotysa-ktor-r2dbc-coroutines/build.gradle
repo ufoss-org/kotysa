@@ -4,7 +4,11 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
-mainClassName = "com.sample.ApplicationKt"
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
 
 repositories {
     mavenCentral()
@@ -19,7 +23,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_di_ktor_version") // kodein for ktor
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlinx_datetime_version")
-    implementation("org.ufoss.kotysa:kotysa-r2dbc-coroutines:$kotysa_version")
+    implementation("org.ufoss.kotysa:kotysa-r2dbc:$kotysa_version")
 
     runtimeOnly("io.r2dbc:r2dbc-h2:$h2_version") // R2DBC driver for H2
     
@@ -30,17 +34,17 @@ dependencies {
     testImplementation("io.kotest.extensions:kotest-assertions-ktor:$kotest_assertions_ktor_version")
 }
 
-compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ['-opt-in=kotlinx.serialization.ExperimentalSerializationApi', '-opt-in=kotlin.RequiresOptIn']
-    }
-}
-
-compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ['-opt-in=kotlin.RequiresOptIn', '-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi',
-                            '-opt-in=kotlinx.serialization.ExperimentalSerializationApi']
-    }
+compileJava {
+    // replace '-' with '.' to match JPMS jigsaw module name
+    def jpmsName = project.name.replace('-', '.')
+    // this is needed because we have a separate compile step in this example with th
+    //  'module-info.java' is in 'main/java' and the Kotlin code is in 'main/kotlin'
+    options.compilerArgs = [
+//            "--module-path",
+//            compileJava.classpath.asPath,   
+        "--patch-module",
+        "$jpmsName=${sourceSets.main.output.asPath}"
+    ]
 }
 
 test {
@@ -48,6 +52,6 @@ test {
 }
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.1'
     distributionType = Wrapper.DistributionType.ALL
 }

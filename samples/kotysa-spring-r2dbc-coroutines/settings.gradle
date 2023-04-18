@@ -9,6 +9,5 @@ pluginManagement {
         id 'org.jetbrains.kotlin.plugin.spring' version "$kotlinVersion"
         id 'io.spring.dependency-management' version "$dependencyManagementPluginVersion"
         id 'org.springframework.boot' version "$springBootPluginVersion"
-//        id 'org.springframework.experimental.aot' version "$springAotVersion"
     }
 }

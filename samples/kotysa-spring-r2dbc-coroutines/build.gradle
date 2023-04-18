@@ -3,18 +3,16 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring'
     id 'io.spring.dependency-management'
     id 'org.springframework.boot'
-//    id 'org.springframework.experimental.aot'
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven { url 'https://repo.spring.io/release' }
 }
 
@@ -33,12 +31,6 @@ dependencies {
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test'
 }
 
-compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ['-Xjsr305=strict']
-    }
-}
-
 compileJava {
     // replace '-' with '.' to match JPMS jigsaw module name
     def jpmsName = project.name.replace('-', '.')
@@ -47,29 +39,23 @@ compileJava {
     options.compilerArgs = [
 //            "--module-path",
 //            compileJava.classpath.asPath,   
-            "--patch-module",
-            "$jpmsName=${sourceSets.main.output.asPath}"
-]
-}
-
-compileTestKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ['-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi']
-    }
+        "--patch-module",
+        "$jpmsName=${sourceSets.main.output.asPath}"
+    ]
 }
 
 test {
     useJUnitPlatform()
 }
 
-//bootBuildImage {
-//    builder = "paketobuildpacks/builder:tiny"
-//    environment = [
-//            "BP_NATIVE_IMAGE" : "true"
-//    ]
-//}
+bootBuildImage {
+    builder = "paketobuildpacks/builder:tiny"
+    environment = [
+            "BP_NATIVE_IMAGE" : "true"
+    ]
+}
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.1'
     distributionType = Wrapper.DistributionType.ALL
 }

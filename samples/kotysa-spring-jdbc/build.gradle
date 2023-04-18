@@ -3,10 +3,13 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.spring'
     id 'io.spring.dependency-management'
     id 'org.springframework.boot'
-    id 'org.springframework.experimental.aot'
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_11
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
 
 repositories {
     mavenCentral()
@@ -27,9 +30,17 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-webflux')
 }
 
-compileKotlin.kotlinOptions {
-    freeCompilerArgs = ['-Xjsr305=strict']
-    jvmTarget = JavaVersion.VERSION_11
+compileJava {
+    // replace '-' with '.' to match JPMS jigsaw module name
+    def jpmsName = project.name.replace('-', '.') + ".sample"
+    // this is needed because we have a separate compile step in this example with th
+    //  'module-info.java' is in 'main/java' and the Kotlin code is in 'main/kotlin'
+    options.compilerArgs = [
+//            "--module-path",
+//            compileJava.classpath.asPath,   
+        "--patch-module",
+        "$jpmsName=${sourceSets.main.output.asPath}"
+    ]
 }
 
 test {
@@ -44,6 +55,6 @@ bootBuildImage {
 }
 
 wrapper {
-    gradleVersion = '7.6'
+    gradleVersion = '8.1'
     distributionType = Wrapper.DistributionType.ALL
 }

@@ -25,8 +25,6 @@ plugins {
 }
 
 subprojects {
-    // Regular java modules need 'java-library' plugin for proper publication
-//    apply(plugin = "java-library")
         when {
             (isJpms == true || name == "kotysa-java-tests") -> apply(plugin = "kotysa.jpms-no-mobile-conventions")
             isJpms == false -> apply(plugin = "kotysa.client-only-conventions")
