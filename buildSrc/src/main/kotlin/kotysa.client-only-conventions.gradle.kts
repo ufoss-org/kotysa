@@ -29,7 +29,9 @@ kotlin {
         }
     }
 
-    android()
+    android {
+        publishLibraryVariants("release")
+    }
 
     sourceSets {
         all {
@@ -78,18 +80,6 @@ android {
         multipleVariants {
             allVariants()
             withSourcesJar()
-        }
-    }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("allVariants") {
-                artifactId = project.name + "-android"
-
-                from(components["default"])
-            }
         }
     }
 }
