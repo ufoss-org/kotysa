@@ -3,12 +3,16 @@
  */
 
 module kotysa.core {
-    requires java.sql;
+    requires org.slf4j;
     requires kotlin.reflect;
     requires kotlin.stdlib;
     requires kolog;
 
+    requires static java.sql;
     requires static kotlinx.datetime;
+    requires static r2dbc.spi;
+    // todo uncomment with kotlinx.coroutines 1.7.x
+//    requires static kotlinx.coroutines.core;
 
     exports org.ufoss.kotysa;
     exports org.ufoss.kotysa.columns;
