@@ -8,7 +8,7 @@ import io.restassured.module.kotlin.extensions.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
-import javax.ws.rs.core.MediaType
+import jakarta.ws.rs.core.MediaType
 
 @QuarkusTest
 class IntegrationTests {

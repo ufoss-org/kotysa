@@ -4,7 +4,7 @@ import io.quarkus.test.junit.QuarkusTest
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.*
 import org.junit.jupiter.api.Test
-import javax.inject.Inject
+import jakarta.inject.Inject
 
 @QuarkusTest
 class UserRepositoryTests {

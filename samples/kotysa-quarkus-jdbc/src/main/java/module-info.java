@@ -1,6 +1,7 @@
 module kotysa.quarkus.jdbc {
     requires java.sql;
-    requires java.ws.rs;
+    requires jakarta.cdi;
+    requires jakarta.ws.rs;
     requires kotlin.stdlib;
     requires kotysa.jdbc;
 
