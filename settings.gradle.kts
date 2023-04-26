@@ -26,9 +26,9 @@ if (isJpms != true) {
 if (isJpms != false) {
     include("kotysa-java-tests")
     include("kotysa-tests")
-//    include("kotysa-jdbc")
+    include("kotysa-jdbc")
     include("kotysa-r2dbc")
-//    include("kotysa-spring-jdbc")
-//    include("kotysa-spring-r2dbc")
-//    include("kotysa-vertx-sqlclient")
+    include("kotysa-spring-jdbc")
+    include("kotysa-spring-r2dbc")
+    include("kotysa-vertx-sqlclient")
 }

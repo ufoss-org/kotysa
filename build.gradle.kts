@@ -118,6 +118,6 @@ configure<ReleaseExtension> {
 // when version changes :
 // -> execute ./gradlew wrapper, then remove .gradle directory, then execute ./gradlew wrapper again
 tasks.wrapper {
-    gradleVersion = "8.1"
+    gradleVersion = "8.1.1"
     distributionType = Wrapper.DistributionType.ALL
 }
