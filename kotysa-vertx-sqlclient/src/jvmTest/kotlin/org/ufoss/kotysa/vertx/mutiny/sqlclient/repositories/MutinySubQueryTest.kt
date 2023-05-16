@@ -37,6 +37,12 @@ interface MutinySubQueryTest<T : Roles, U : Users, V : UserRoles, W : MutinySubQ
     }
 
     @Test
+    fun `Verify selectRoleLabelAndEqUserSubQueryWithAnd returns User role`() {
+        assertThat(repository.selectRoleLabelAndEqUserSubQueryWithAnd(userJdoe.id).await().indefinitely())
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
         assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)).await().indefinitely())
             .hasSize(2)

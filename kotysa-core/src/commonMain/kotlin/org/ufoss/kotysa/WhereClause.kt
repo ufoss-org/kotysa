@@ -33,7 +33,7 @@ internal sealed interface WhereClauseColumn {
 }
 
 internal sealed interface WhereClauseSubQuery<T : Any> {
-    val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    val result: SubQueryResult<T>
 }
 
 internal class WhereClauseValueWithColumn<T : Any> internal constructor(
@@ -69,13 +69,13 @@ internal class WhereClauseExists<T : Any> internal constructor(
 internal class WhereClauseSubQueryWithColumn<T : Any, U : Any> internal constructor(
     override val column: Column<T, U>,
     override val operation: Operation,
-    override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+    override val result: SubQueryResult<U>,
 ) : WhereClauseWithColumn<T>, WhereClauseSubQuery<U>
 
 internal class WhereClauseSubQueryWithAlias<T, U : Any> internal constructor(
     override val alias: QueryAlias<T>,
     override val operation: Operation,
-    override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
+    override val result: SubQueryResult<U>,
 ) : WhereClauseWithAlias<T>, WhereClauseSubQuery<U>
 
 public class WhereClauseWithType internal constructor(

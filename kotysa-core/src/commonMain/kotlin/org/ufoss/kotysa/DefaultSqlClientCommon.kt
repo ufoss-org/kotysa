@@ -390,9 +390,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
             whereClauseType: WhereClauseType
         ) {
+            val result = properties.executeSubQuery(dsl)
             properties.whereClauses.add(
                 WhereClauseWithType(
-                    WhereClauseSubQueryWithColumn(column.getOrClone(properties.availableColumns), operation, dsl),
+                    WhereClauseSubQueryWithColumn(column.getOrClone(properties.availableColumns), operation, result),
                     whereClauseType,
                 )
             )
@@ -451,9 +452,10 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
             whereClauseType: WhereClauseType
         ) {
+            val result = properties.executeSubQuery(dsl)
             properties.whereClauses.add(
                 WhereClauseWithType(
-                    WhereClauseSubQueryWithAlias(alias, operation, dsl),
+                    WhereClauseSubQueryWithAlias(alias, operation, result),
                     whereClauseType,
                 )
             )
@@ -2140,10 +2142,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                             }"
 
                                             is WhereClauseSubQuery<*> -> {
-                                                val (_, result) = properties.executeSubQuery(
-                                                    dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
-                                                )
-                                                "$fieldName = (${result.sql(this@with)})"
+                                                "$fieldName = (${result.result.sql(this@with)})"
                                             }
 
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")
@@ -2204,10 +2203,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
                                             is WhereClauseColumn -> TODO()
                                             is WhereClauseSubQuery<*> -> {
-                                                val (_, result) = properties.executeSubQuery(
-                                                    dsl as SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<Any>
-                                                )
-                                                "$fieldName IN (${result.sql(this@with)})"
+                                                "$fieldName IN (${result.result.sql(this@with)})"
                                             }
 
                                             else -> throw UnsupportedOperationException("$operation is not supported, should not happen !")

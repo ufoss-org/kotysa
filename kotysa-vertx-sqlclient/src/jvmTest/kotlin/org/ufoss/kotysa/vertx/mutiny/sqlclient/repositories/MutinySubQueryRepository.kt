@@ -63,6 +63,17 @@ abstract class MutinySubQueryRepository<T : Roles, U : Users, V : UserRoles>(
                 })
             .fetchOne()
 
+    fun selectRoleLabelAndEqUserSubQueryWithAnd(userId: Int) =
+        (sqlClient select tableRoles.label and tableRoles.id
+                from tableRoles
+                where tableRoles.id eq
+                {
+                    (this select tableUsers.roleId
+                            from tableUsers
+                            where tableUsers.id eq userId)
+                } and tableRoles.id notEq 0)
+            .fetchOne()
+
     fun selectRoleLabelWhereInUserSubQuery(userIds: List<Int>) =
         (sqlClient select tableRoles.label and tableRoles.id
                 from tableRoles
