@@ -40,6 +40,12 @@ interface CoroutinesSubQueryTest<T : Roles, U : Users, V : UserRoles, W : Corout
     }
 
     @Test
+    fun `Verify selectRoleLabelAndEqUserSubQueryWithAnd returns User role`() = runTest {
+        assertThat(repository.selectRoleLabelAndEqUserSubQueryWithAnd(userJdoe.id))
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() = runTest {
         assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
             .hasSize(2)

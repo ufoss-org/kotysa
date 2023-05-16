@@ -42,6 +42,12 @@ interface SubQueryTest<T : Roles, U : Users, V : UserRoles, W : SubQueryReposito
     }
 
     @Test
+    fun `Verify selectRoleLabelAndEqUserSubQueryWithAnd returns User role`() {
+        expect(repository.selectRoleLabelAndEqUserSubQueryWithAnd(userJdoe.id))
+            .toEqual(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
         expect(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)))
             .toHaveSize(2)

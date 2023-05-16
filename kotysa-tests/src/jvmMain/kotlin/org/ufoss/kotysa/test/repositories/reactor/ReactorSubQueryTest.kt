@@ -38,6 +38,12 @@ interface ReactorSubQueryTest<T : Roles, U : Users, V : UserRoles, W : ReactorSu
     }
 
     @Test
+    fun `Verify selectRoleLabelAndEqUserSubQueryWithAnd returns User role`() {
+        assertThat(repository.selectRoleLabelAndEqUserSubQueryWithAnd(userJdoe.id).block())
+            .isEqualTo(Pair(roleUser.label, roleUser.id))
+    }
+
+    @Test
     fun `Verify selectRoleLabelWhereInUserSubQuery returns User and Admin roles`() {
         assertThat(repository.selectRoleLabelWhereInUserSubQuery(listOf(userBboss.id, userJdoe.id)).toIterable())
             .hasSize(2)
