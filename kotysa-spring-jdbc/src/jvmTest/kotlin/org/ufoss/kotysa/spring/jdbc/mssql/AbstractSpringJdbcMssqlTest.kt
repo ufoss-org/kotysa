@@ -38,6 +38,7 @@ abstract class AbstractSpringJdbcMssqlTest<T : Repository> : RepositoryTest<T, S
         dataSource.user = "SA"
         dataSource.setPassword("A_Str0ng_Required_Password")
         dataSource.encrypt = "false"
+        dataSource.sendTimeAsDatetime = false
         val beans = beans {
             bean {
                 JdbcTemplate(dataSource)

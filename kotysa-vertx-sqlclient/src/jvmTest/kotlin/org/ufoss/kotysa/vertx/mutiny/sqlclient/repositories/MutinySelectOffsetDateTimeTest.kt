@@ -140,7 +140,7 @@ interface MutinySelectOffsetDateTimeTest<T : OffsetDateTimes, U : MutinySelectOf
             repository.selectAllByOffsetDateTimeNullable(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).await().indefinitely()
         )
@@ -161,7 +161,7 @@ interface MutinySelectOffsetDateTimeTest<T : OffsetDateTimes, U : MutinySelectOf
             repository.selectAllByOffsetDateTimeNullableNotEq(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).await().indefinitely()
         )
@@ -192,7 +192,7 @@ interface MutinySelectOffsetDateTimeTest<T : OffsetDateTimes, U : MutinySelectOf
             repository.selectAllByOffsetDateTimeNullableBefore(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).await().indefinitely()
         )
@@ -259,7 +259,7 @@ interface MutinySelectOffsetDateTimeTest<T : OffsetDateTimes, U : MutinySelectOf
             repository.selectAllByOffsetDateTimeNullableAfterOrEq(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).await().indefinitely()
         )
