@@ -245,7 +245,7 @@ val offsetDateTimeWithNullable = OffsetDateTimeEntity(
     OffsetDateTime.of(2019, 11, 4, 0, 0, 0, 0, ZoneOffset.UTC),
     OffsetDateTime.of(
         2018, 11, 4, 0, 0, 0, 0,
-        ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+        ZoneOffset.ofHoursMinutes(1, 2)
     )
 )
 val offsetDateTimeWithoutNullable = OffsetDateTimeEntity(

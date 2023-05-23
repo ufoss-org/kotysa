@@ -9,6 +9,9 @@ import org.ufoss.kotysa.columns.*
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.OffsetDateTime
+import java.util.*
 
 /**
  * Represents a Microsoft SQL Server Table
@@ -129,6 +132,54 @@ public actual abstract class MssqlTable<T : Any> protected actual constructor(ta
         precision: Int? = null
     ): LocalDateTimeDbDateTimeColumnNullable<T> =
         LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+
+    protected fun dateTimeOffset(
+        getter: (T) -> OffsetDateTime,
+        columnName: String? = null,
+        precision: Int? = null
+    ): OffsetDateTimeDbDateTimeOffsetColumnNotNull<T> =
+        OffsetDateTimeDbDateTimeOffsetColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+
+    protected fun dateTimeOffset(
+        getter: (T) -> OffsetDateTime?,
+        columnName: String? = null,
+        defaultValue: OffsetDateTime? = null,
+        precision: Int? = null
+    ): OffsetDateTimeDbDateTimeOffsetColumnNullable<T> =
+        OffsetDateTimeDbDateTimeOffsetColumnNullable(
+            getter,
+            columnName,
+            defaultValue,
+            precision
+        ).also { addColumn(it) }
+
+    protected fun time(
+        getter: (T) -> LocalTime,
+        columnName: String? = null,
+        precision: Int? = null
+    ): LocalTimeDbTimeColumnNotNull<T> =
+        LocalTimeDbTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+
+    protected fun time(
+        getter: (T) -> LocalTime?,
+        columnName: String? = null,
+        defaultValue: LocalTime? = null,
+        precision: Int? = null
+    ): LocalTimeDbTimeColumnNullable<T> =
+        LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+
+    protected fun uniqueIdentifier(
+        getter: (T) -> UUID,
+        columnName: String? = null,
+    ): UuidDbUniqueIdentifierColumnNotNull<T> =
+        UuidDbUniqueIdentifierColumnNotNull(getter, columnName).also { addColumn(it) }
+
+    protected fun uniqueIdentifier(
+        getter: (T) -> UUID?,
+        columnName: String? = null,
+        defaultValue: UUID? = null
+    ): UuidDbUniqueIdentifierColumnNullable<T> =
+        UuidDbUniqueIdentifierColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
         ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }

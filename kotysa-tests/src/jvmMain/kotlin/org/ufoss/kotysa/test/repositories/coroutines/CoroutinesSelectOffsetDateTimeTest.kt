@@ -143,7 +143,7 @@ interface CoroutinesSelectOffsetDateTimeTest<T : OffsetDateTimes, U : Coroutines
             repository.selectAllByOffsetDateTimeNullable(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).toList()
         )
@@ -164,7 +164,7 @@ interface CoroutinesSelectOffsetDateTimeTest<T : OffsetDateTimes, U : Coroutines
             repository.selectAllByOffsetDateTimeNullableNotEq(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).toList()
         )
@@ -195,7 +195,7 @@ interface CoroutinesSelectOffsetDateTimeTest<T : OffsetDateTimes, U : Coroutines
             repository.selectAllByOffsetDateTimeNullableBefore(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).toList()
         )
@@ -262,7 +262,7 @@ interface CoroutinesSelectOffsetDateTimeTest<T : OffsetDateTimes, U : Coroutines
             repository.selectAllByOffsetDateTimeNullableAfterOrEq(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             ).toList()
         )

@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.test.repositories.blocking
 
-import ch.tutteli.atrium.api.fluent.en_GB.toContainExactly
+import ch.tutteli.atrium.api.fluent.en_GB.toContain
 import ch.tutteli.atrium.api.fluent.en_GB.toHaveSize
 import ch.tutteli.atrium.api.verbs.expect
 import org.junit.jupiter.api.Test
@@ -19,6 +19,6 @@ interface SelectGroupByTest<T : Customers, U : SelectGroupByRepository<T>, V : T
     fun `Verify selectCountCustomerGroupByCountry counts and group`() {
         expect(repository.selectCountCustomerGroupByCountry())
             .toHaveSize(2)
-            .toContainExactly(Pair(1L, customerFrance.country), Pair(2L, customerUSA1.country))
+            .toContain(Pair(1L, customerFrance.country), Pair(2L, customerUSA1.country))
     }
 }

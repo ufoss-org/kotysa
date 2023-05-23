@@ -144,7 +144,7 @@ interface SelectOffsetDateTimeTest<T : OffsetDateTimes, U : SelectOffsetDateTime
             repository.selectAllByOffsetDateTimeNullable(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             )
         )
@@ -165,7 +165,7 @@ interface SelectOffsetDateTimeTest<T : OffsetDateTimes, U : SelectOffsetDateTime
             repository.selectAllByOffsetDateTimeNullableNotEq(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             )
         )
@@ -196,7 +196,7 @@ interface SelectOffsetDateTimeTest<T : OffsetDateTimes, U : SelectOffsetDateTime
             repository.selectAllByOffsetDateTimeNullableBefore(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             )
         )
@@ -263,7 +263,7 @@ interface SelectOffsetDateTimeTest<T : OffsetDateTimes, U : SelectOffsetDateTime
             repository.selectAllByOffsetDateTimeNullableAfterOrEq(
                 OffsetDateTime.of(
                     2018, 11, 4, 0, 0, 0, 0,
-                    ZoneOffset.ofHoursMinutesSeconds(1, 2, 3)
+                    ZoneOffset.ofHoursMinutes(1, 2)
                 )
             )
         )

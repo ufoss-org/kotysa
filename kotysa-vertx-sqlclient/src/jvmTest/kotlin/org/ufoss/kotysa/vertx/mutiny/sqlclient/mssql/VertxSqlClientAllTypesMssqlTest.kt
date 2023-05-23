@@ -14,8 +14,8 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.MutinySqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import java.math.BigDecimal
-import java.time.LocalDate
-import java.time.LocalDateTime
+import java.time.*
+import java.util.*
 
 class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypesRepositoryMssql>() {
 
@@ -33,11 +33,13 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
         assertThat(repository.selectAllAllTypesNullableDefaultValue().await().indefinitely())
             .hasSize(1)
             .containsExactly(
-                AllTypesNullableDefaultValueEntity(
-                    1,
+                MssqlAllTypesNullableDefaultValueEntity(
+                    mssqlAllTypesNullableDefaultValue.id,
                     "default",
                     LocalDate.of(2019, 11, 4),
                     kotlinx.datetime.LocalDate(2019, 11, 6),
+                    LocalTime.of(11, 25, 55, 123456789),
+                    kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
                     LocalDateTime.of(2018, 11, 4, 0, 0),
                     LocalDateTime.of(2019, 11, 4, 0, 0),
                     kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
@@ -48,6 +50,11 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
                     84.84,
                     BigDecimal("4.2"),
                     BigDecimal("4.3"),
+                    OffsetDateTime.of(
+                        2019, 11, 4, 0, 0, 0, 0,
+                        ZoneOffset.ofHoursMinutes(1, 2)
+                    ),
+                    UUID.fromString(defaultUuid),
                 )
             )
     }
@@ -56,13 +63,15 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
     fun `Verify selectAllAllTypesNullable returns all AllTypesNullable`() {
         assertThat(repository.selectAllAllTypesNullable().await().indefinitely())
             .hasSize(1)
-            .containsExactly(allTypesNullable)
+            .containsExactly(mssqlAllTypesNullable)
     }
 
     @Test
     fun `Verify updateAllTypesNotNull works`() {
         val newLocalDate = LocalDate.now()
         val newKotlinxLocalDate = Clock.System.todayIn(TimeZone.UTC)
+        val newLocalTime = LocalTime.now()
+        val newKotlinxLocalTime = Clock.System.now().toLocalDateTime(TimeZone.UTC).time
         val newLocalDateTime = LocalDateTime.now()
         val newKotlinxLocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val newInt = 2
@@ -71,11 +80,14 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
         val newDouble = 2.2
         val newByteArray = byteArrayOf(0x2B)
         val newBigDecimal = BigDecimal("3.3")
+        val newOffsetDateTime = OffsetDateTime.now()
+        val newUuid = UUID.randomUUID()
         val allAllTypesNotNull = operator.transactional { transaction ->
             transaction.setRollbackOnly()
             repository.updateAllTypesNotNull(
-                "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
-                newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal
+                "new", false, newLocalDate, newKotlinxLocalDate, newLocalTime, newKotlinxLocalTime,
+                newLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble,
+                newBigDecimal, newOffsetDateTime, newUuid
             )
                 .onItem().invoke { n -> assertThat(n).isEqualTo(1) }
                 .chain { -> repository.selectAllAllTypesNotNull() }
@@ -84,9 +96,10 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
             .hasSize(1)
             .containsExactly(
                 MssqlAllTypesNotNull(
-                    allTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate, newLocalDateTime,
-                    newLocalDateTime, newKotlinxLocalDateTime, newKotlinxLocalDateTime, newInt, newLong, newByteArray,
-                    newFloat, newDouble, newBigDecimal, newBigDecimal
+                    mssqlAllTypesNotNull.id, "new", false, newLocalDate, newKotlinxLocalDate,
+                    newLocalTime, newKotlinxLocalTime, newLocalDateTime, newLocalDateTime, newKotlinxLocalDateTime,
+                    newKotlinxLocalDateTime, newInt, newLong, newByteArray, newFloat, newDouble, newBigDecimal,
+                    newBigDecimal, newOffsetDateTime, newUuid
                 )
             )
     }
@@ -112,11 +125,13 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
         }.await().indefinitely()
 
         assertThat(allTypes).isEqualTo(
-            AllTypesNullableDefaultValueEntity(
-                allTypesNullableDefaultValueToInsert.id,
+            MssqlAllTypesNullableDefaultValueEntity(
+                mssqlAllTypesNullableDefaultValueToInsert.id,
                 "default",
                 LocalDate.of(2019, 11, 4),
                 kotlinx.datetime.LocalDate(2019, 11, 6),
+                LocalTime.of(11, 25, 55, 123456789),
+                kotlinx.datetime.LocalTime(11, 25, 55, 123456789),
                 LocalDateTime.of(2018, 11, 4, 0, 0),
                 LocalDateTime.of(2019, 11, 4, 0, 0),
                 kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0),
@@ -127,6 +142,11 @@ class VertxSqlClientAllTypesMssqlTest : AbstractVertxSqlClientMssqlTest<AllTypes
                 84.84,
                 BigDecimal("4.2"),
                 BigDecimal("4.3"),
+                OffsetDateTime.of(
+                    2019, 11, 4, 0, 0, 0, 0,
+                    ZoneOffset.ofHoursMinutes(1, 2)
+                ),
+                UUID.fromString(defaultUuid),
             )
         )
     }
@@ -155,8 +175,8 @@ class AllTypesRepositoryMssql(private val sqlClient: MutinySqlClient) : Reposito
 
     private fun insertAllTypes() =
         sqlClient.insert(mssqlAllTypesNotNull)
-            .chain { -> sqlClient.insert(allTypesNullable) }
-            .chain { -> sqlClient.insert(allTypesNullableDefaultValue) }
+            .chain { -> sqlClient.insert(mssqlAllTypesNullable) }
+            .chain { -> sqlClient.insert(mssqlAllTypesNullableDefaultValue) }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom MssqlAllTypesNotNulls
 
@@ -169,6 +189,8 @@ class AllTypesRepositoryMssql(private val sqlClient: MutinySqlClient) : Reposito
         newBoolean: Boolean,
         newLocalDate: LocalDate,
         newKotlinxLocalDate: kotlinx.datetime.LocalDate,
+        newLocalTime: LocalTime,
+        newKotlinxLocalTime: kotlinx.datetime.LocalTime,
         newLocalDateTime: LocalDateTime,
         newKotlinxLocalDateTime: kotlinx.datetime.LocalDateTime,
         newInt: Int,
@@ -177,12 +199,16 @@ class AllTypesRepositoryMssql(private val sqlClient: MutinySqlClient) : Reposito
         newFloat: Float,
         newDouble: Double,
         newBigDecimal: BigDecimal,
+        newOffsetDateTime: OffsetDateTime,
+        newUuid: UUID,
     ) =
         (sqlClient update MssqlAllTypesNotNulls
                 set MssqlAllTypesNotNulls.string eq newString
                 set MssqlAllTypesNotNulls.boolean eq newBoolean
                 set MssqlAllTypesNotNulls.localDate eq newLocalDate
                 set MssqlAllTypesNotNulls.kotlinxLocalDate eq newKotlinxLocalDate
+                set MssqlAllTypesNotNulls.localTim eq newLocalTime
+                set MssqlAllTypesNotNulls.kotlinxLocalTim eq newKotlinxLocalTime
                 set MssqlAllTypesNotNulls.localDateTime1 eq newLocalDateTime
                 set MssqlAllTypesNotNulls.localDateTime2 eq newLocalDateTime
                 set MssqlAllTypesNotNulls.kotlinxLocalDateTime1 eq newKotlinxLocalDateTime
@@ -194,7 +220,9 @@ class AllTypesRepositoryMssql(private val sqlClient: MutinySqlClient) : Reposito
                 set MssqlAllTypesNotNulls.doublee eq newDouble
                 set MssqlAllTypesNotNulls.bigDecimal1 eq newBigDecimal
                 set MssqlAllTypesNotNulls.bigDecimal2 eq newBigDecimal
-                where MssqlAllTypesNotNulls.id eq allTypesNotNull.id
+                set MssqlAllTypesNotNulls.offsetDateTime eq newOffsetDateTime
+                set MssqlAllTypesNotNulls.uuid eq newUuid
+                where MssqlAllTypesNotNulls.id eq allTypesNotNullWithTime.id
                 ).execute()
 
     fun updateAllTypesNotNullColumn() =
@@ -203,6 +231,8 @@ class AllTypesRepositoryMssql(private val sqlClient: MutinySqlClient) : Reposito
                 set MssqlAllTypesNotNulls.boolean eq MssqlAllTypesNotNulls.boolean
                 set MssqlAllTypesNotNulls.localDate eq MssqlAllTypesNotNulls.localDate
                 set MssqlAllTypesNotNulls.kotlinxLocalDate eq MssqlAllTypesNotNulls.kotlinxLocalDate
+                set MssqlAllTypesNotNulls.localTim eq  MssqlAllTypesNotNulls.localTim
+                set MssqlAllTypesNotNulls.kotlinxLocalTim eq MssqlAllTypesNotNulls.kotlinxLocalTim
                 set MssqlAllTypesNotNulls.localDateTime1 eq MssqlAllTypesNotNulls.localDateTime1
                 set MssqlAllTypesNotNulls.localDateTime2 eq MssqlAllTypesNotNulls.localDateTime2
                 set MssqlAllTypesNotNulls.kotlinxLocalDateTime1 eq MssqlAllTypesNotNulls.kotlinxLocalDateTime1
@@ -214,8 +244,10 @@ class AllTypesRepositoryMssql(private val sqlClient: MutinySqlClient) : Reposito
                 set MssqlAllTypesNotNulls.doublee eq MssqlAllTypesNotNulls.doublee
                 set MssqlAllTypesNotNulls.bigDecimal1 eq MssqlAllTypesNotNulls.bigDecimal1
                 set MssqlAllTypesNotNulls.bigDecimal2 eq MssqlAllTypesNotNulls.bigDecimal2
-                where MssqlAllTypesNotNulls.id eq allTypesNotNull.id
+                set MssqlAllTypesNotNulls.offsetDateTime eq MssqlAllTypesNotNulls.offsetDateTime
+                set MssqlAllTypesNotNulls.uuid eq MssqlAllTypesNotNulls.uuid
+                where MssqlAllTypesNotNulls.id eq mssqlAllTypesNotNull.id
                 ).execute()
 
-    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn allTypesNullableDefaultValueToInsert
+    fun insertAndReturnAllTypesDefaultValues() = sqlClient insertAndReturn mssqlAllTypesNullableDefaultValueToInsert
 }

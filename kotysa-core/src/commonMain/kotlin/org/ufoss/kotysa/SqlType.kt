@@ -37,10 +37,12 @@ public enum class SqlType(internal val fullType: String) {
     DATE_TIME("DATETIME"),
     TIME("TIME"),
     TIMESTAMP_WITH_TIME_ZONE("TIMESTAMP WITH TIME ZONE"),
+    DATETIMEOFFSET("DATETIMEOFFSET"),
 
     BOOLEAN("BOOLEAN"),
 
     UUID("UUID"),
+    UNIQUEIDENTIFIER("UNIQUEIDENTIFIER"),
 
     // Binary
     BLOB("BLOB"),
