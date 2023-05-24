@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Order
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectIntRepository
-import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectIntTest
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectIntAsIdentitiesRepository
+import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectIntAsIdentitiesTest
 
 @Order(1)
 class R2dbcSelectIntMssqlTest : AbstractR2dbcMssqlTest<SelectIntRepositoryMssqlSelect>(),
-    CoroutinesSelectIntTest<MssqlInts, SelectIntRepositoryMssqlSelect, R2dbcTransaction> {
+    CoroutinesSelectIntAsIdentitiesTest<MssqlIntAsIdentities, SelectIntRepositoryMssqlSelect, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = SelectIntRepositoryMssqlSelect(sqlClient)
 }
 
 class SelectIntRepositoryMssqlSelect(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectIntRepository<MssqlInts>(sqlClient, MssqlInts)
+    CoroutinesSelectIntAsIdentitiesRepository<MssqlIntAsIdentities>(sqlClient, MssqlIntAsIdentities)

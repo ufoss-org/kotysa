@@ -7,15 +7,14 @@ package org.ufoss.kotysa.vertx.mutiny.sqlclient.oracle
 import org.junit.jupiter.api.Order
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectIntRepository
-import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectIntTest
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectIntAsIdentitiesRepository
+import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectIntAsIdentitiesTest
 
 @Order(1)
 class VertxSqlClientSelectIntOracleTest : AbstractVertxSqlClientOracleTest<SelectIntRepositoryOracleSelect>(),
-    MutinySelectIntTest<OracleInts, SelectIntRepositoryOracleSelect> {
+    MutinySelectIntAsIdentitiesTest<OracleIntAsIdentities, SelectIntRepositoryOracleSelect> {
     override fun instantiateRepository(sqlClient: VertxSqlClient) = SelectIntRepositoryOracleSelect(sqlClient)
 }
 
-
 class SelectIntRepositoryOracleSelect(sqlClient: VertxSqlClient) :
-    MutinySelectIntRepository<OracleInts>(sqlClient, OracleInts)
+    MutinySelectIntAsIdentitiesRepository<OracleIntAsIdentities>(sqlClient, OracleIntAsIdentities)

@@ -10,15 +10,15 @@ import org.ufoss.kotysa.OracleReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntRepository
-import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntTest
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesTest
 
 @Order(1)
 class R2dbcSelectIntOracleTest : AbstractR2dbcOracleTest<ReactorSelectIntRepositoryOracleSelect>(),
-    ReactorSelectIntTest<OracleInts, ReactorSelectIntRepositoryOracleSelect, ReactorTransaction> {
+    ReactorSelectIntAsIdentitiesTest<OracleIntAsIdentities, ReactorSelectIntRepositoryOracleSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         ReactorSelectIntRepositoryOracleSelect(sqlClient)
 }
 
 class ReactorSelectIntRepositoryOracleSelect(sqlClient: ReactorSqlClient) :
-    ReactorSelectIntRepository<OracleInts>(sqlClient, OracleInts)
+    ReactorSelectIntAsIdentitiesRepository<OracleIntAsIdentities>(sqlClient, OracleIntAsIdentities)

@@ -363,6 +363,14 @@ object OracleInts : OracleTable<IntEntity>(), Ints {
     override val intNullable = number(IntEntity::intNullable)
 }
 
+object OracleIntAsIdentities : OracleTable<IntEntityAsIdentity>(), IntAsIdentities {
+    override val id = number(IntEntityAsIdentity::id)
+        .identity()
+        .primaryKey()
+    override val intNotNull = number(IntEntityAsIdentity::intNotNull)
+    override val intNullable = number(IntEntityAsIdentity::intNullable)
+}
+
 object OracleLongs : OracleTable<LongEntity>(), Longs {
     override val id = number(LongEntity::id)
         .identity()
@@ -438,6 +446,7 @@ val oracleTables = tables().oracle(
     OracleLocalDateTimeAsTimestamps,
     OracleKotlinxLocalDateTimeAsTimestamps,
     OracleOffsetDateTimes,
+    OracleIntAsIdentities,
     OracleInts,
     OracleLongs,
     OracleInheriteds,

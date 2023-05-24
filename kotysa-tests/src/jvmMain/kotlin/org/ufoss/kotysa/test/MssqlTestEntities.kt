@@ -447,6 +447,13 @@ object MssqlInts : MssqlTable<IntEntity>(), Ints {
     override val intNullable = integer(IntEntity::intNullable)
 }
 
+object MssqlIntAsIdentities : MssqlTable<IntEntityAsIdentity>(), IntAsIdentities {
+    override val id = integer(IntEntityAsIdentity::id).identity()
+        .primaryKey()
+    override val intNotNull = integer(IntEntityAsIdentity::intNotNull)
+    override val intNullable = integer(IntEntityAsIdentity::intNullable)
+}
+
 object MssqlLongs : MssqlTable<LongEntity>(), Longs {
     override val id = bigInt(LongEntity::id).identity()
         .primaryKey()
@@ -535,6 +542,7 @@ val mssqlTables = tables().mssql(
     MssqlLocalDateTimes,
     MssqlKotlinxLocalDateTimes,
     MssqlOffsetDateTimes,
+    MssqlIntAsIdentities,
     MssqlInts,
     MssqlLongs,
     MssqlUuids,
