@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.postgresql
 
-import org.ufoss.kotysa.AbstractTable
+import org.ufoss.kotysa.AbstractCommonTable
 import org.ufoss.kotysa.Index
 import org.ufoss.kotysa.IndexType
 import org.ufoss.kotysa.columns.*
@@ -26,7 +26,7 @@ import java.util.*
  * @param T Entity type associated with this table
  */
 public actual abstract class PostgresqlTable<T : Any> protected actual constructor(tableName: String?) :
-    AbstractTable<T>(tableName) {
+    AbstractCommonTable<T>(tableName) {
 
     protected fun varchar(
         getter: (T) -> String,

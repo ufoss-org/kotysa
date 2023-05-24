@@ -439,6 +439,14 @@ object PostgresqlInts : PostgresqlTable<IntEntity>(), Ints {
     override val intNullable = integer(IntEntity::intNullable)
 }
 
+object PostgresqlIntAsIdentities : PostgresqlTable<IntEntityAsIdentity>(), IntAsIdentities {
+    override val id = integer(IntEntityAsIdentity::id)
+        .identity()
+        .primaryKey()
+    override val intNotNull = integer(IntEntityAsIdentity::intNotNull)
+    override val intNullable = integer(IntEntityAsIdentity::intNullable)
+}
+
 object PostgresqlLongs : PostgresqlTable<LongEntity>(), Longs {
     override val id = bigSerial(LongEntity::id)
         .primaryKey()
@@ -557,6 +565,7 @@ val postgresqlTables = tables().postgresql(
     PostgresqlOffsetDateTimes,
     PostgresqlLocalTimes,
     PostgresqlKotlinxLocalTimes,
+    PostgresqlIntAsIdentities,
     PostgresqlInts,
     PostgresqlLongs,
     PostgresqlUuids,

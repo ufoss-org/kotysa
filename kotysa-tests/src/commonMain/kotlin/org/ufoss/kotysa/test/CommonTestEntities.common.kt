@@ -151,6 +151,21 @@ interface Ints : Table<IntEntity> {
     val intNullable: IntColumnNullable<IntEntity>
 }
 
+data class IntEntityAsIdentity(
+    val intNotNull: Int,
+    val intNullable: Int? = null,
+    val id: Int? = null
+)
+
+val intAsIdentityWithNullable = IntEntityAsIdentity(10, 6)
+val intAsIdentityWithoutNullable = IntEntityAsIdentity(12)
+
+interface IntAsIdentities : Table<IntEntityAsIdentity> {
+    val id: IntColumnNotNull<IntEntityAsIdentity>
+    val intNotNull: IntColumnNotNull<IntEntityAsIdentity>
+    val intNullable: IntColumnNullable<IntEntityAsIdentity>
+}
+
 data class LongEntity(
     val longNotNull: Long,
     val longNullable: Long? = null,

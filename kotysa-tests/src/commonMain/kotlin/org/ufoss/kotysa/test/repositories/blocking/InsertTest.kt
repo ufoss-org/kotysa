@@ -16,7 +16,7 @@ interface InsertTest<T : Ints, U : Longs, V : Customers, W : InsertRepository<T,
     : RepositoryTest<W, X> {
     val exceptionClass: KClass<*>
 
-    @Test // org.junit.jupiter.api.Test
+    @Test
     fun `Verify insertCustomer works correctly`() {
         expect(repository.selectAllCustomers())
             .toBeEmpty()

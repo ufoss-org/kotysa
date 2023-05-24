@@ -8,14 +8,15 @@ import org.junit.jupiter.api.Order
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
 import org.ufoss.kotysa.test.*
-import org.ufoss.kotysa.test.repositories.blocking.SelectIntRepository
-import org.ufoss.kotysa.test.repositories.blocking.SelectIntTest
+import org.ufoss.kotysa.test.repositories.blocking.SelectIntAsIdentitiesRepository
+import org.ufoss.kotysa.test.repositories.blocking.SelectIntAsIdentitiesTest
 
 @Order(1)
 class JdbcSelectIntMssqlTest : AbstractJdbcMssqlTest<SelectIntRepositoryMssqlSelect>(),
-    SelectIntTest<MssqlInts, SelectIntRepositoryMssqlSelect, JdbcTransaction> {
+    SelectIntAsIdentitiesTest<MssqlIntAsIdentities, SelectIntRepositoryMssqlSelect, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = SelectIntRepositoryMssqlSelect(sqlClient)
 }
 
 
-class SelectIntRepositoryMssqlSelect(sqlClient: JdbcSqlClient) : SelectIntRepository<MssqlInts>(sqlClient, MssqlInts)
+class SelectIntRepositoryMssqlSelect(sqlClient: JdbcSqlClient) :
+    SelectIntAsIdentitiesRepository<MssqlIntAsIdentities>(sqlClient, MssqlIntAsIdentities)

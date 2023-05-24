@@ -4,7 +4,7 @@
 
 package org.ufoss.kotysa.postgresql
 
-import org.ufoss.kotysa.AbstractTable
+import org.ufoss.kotysa.AbstractCommonTable
 
 public expect abstract class PostgresqlTable<T : Any> protected constructor(tableName: String? = null) :
-    AbstractTable<T>
+    AbstractCommonTable<T>

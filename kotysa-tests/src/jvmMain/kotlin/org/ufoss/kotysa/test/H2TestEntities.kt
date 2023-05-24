@@ -402,6 +402,14 @@ object H2Ints : H2Table<IntEntity>(), Ints {
     override val intNullable = integer(IntEntity::intNullable)
 }
 
+object H2IntAsIdentities : H2Table<IntEntityAsIdentity>(), IntAsIdentities {
+    override val id = integer(IntEntityAsIdentity::id)
+        .identity()
+        .primaryKey()
+    override val intNotNull = integer(IntEntityAsIdentity::intNotNull)
+    override val intNullable = integer(IntEntityAsIdentity::intNullable)
+}
+
 object H2Longs : H2Table<LongEntity>(), Longs {
     override val id = autoIncrementBigInt(LongEntity::id)
         .primaryKey()
@@ -501,6 +509,7 @@ val h2Tables = tables().h2(
     H2OffsetDateTimes,
     H2LocalTimes,
     H2KotlinxLocalTimes,
+    H2IntAsIdentities,
     H2Ints,
     H2Longs,
     H2Uuids,
