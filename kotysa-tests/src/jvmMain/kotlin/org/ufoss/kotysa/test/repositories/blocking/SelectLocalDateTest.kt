@@ -94,21 +94,21 @@ interface SelectLocalDateTest<T : LocalDates, U : SelectLocalDateRepository<T>, 
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullable finds h2UuidWithNullable`() {
+    fun `Verify selectAllByLocalDateNullable finds localDateWithNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(LocalDate.of(2018, 11, 4)))
             .hasSize(1)
             .containsExactlyInAnyOrder(localDateWithNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullable finds h2UuidWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullable finds localDateWithoutNullable`() {
         assertThat(repository.selectAllByLocalDateNullable(null))
             .hasSize(1)
             .containsExactlyInAnyOrder(localDateWithoutNullable)
     }
 
     @Test
-    fun `Verify selectAllByLocalDateNullableNotEq finds h2UuidWithoutNullable`() {
+    fun `Verify selectAllByLocalDateNullableNotEq finds no result`() {
         assertThat(repository.selectAllByLocalDateNullableNotEq(LocalDate.of(2018, 11, 4)))
             .isEmpty()
     }
