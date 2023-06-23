@@ -471,7 +471,7 @@ object H2JavaUsers : H2Table<JavaUser>("java_users"), JavaUsers {
 }
 
 object H2Customers : H2Table<CustomerEntity>(), Customers {
-    override val id = integer(CustomerEntity::id)
+    override val id = bigInt(CustomerEntity::id)
         .primaryKey()
     override val name = varchar(CustomerEntity::name)
         .unique()

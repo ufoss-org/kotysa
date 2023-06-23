@@ -212,21 +212,21 @@ interface Doubles : Table<DoubleEntity> {
 }
 
 data class CustomerEntity(
-    val id: Int,
+    val id: Long,
     val name: String,
     val country: String,
     val age: Int,
 )
 
-val customerFrance = CustomerEntity(1, "Jean", "France", 19)
-val customerUSA1 = CustomerEntity(2, "John", "USA", 21)
-val customerUSA2 = CustomerEntity(3, "Big Boss", "USA", 20)
-val customerJapan1 = CustomerEntity(4, "Seya", "USA", 20)
-val customerJapan2 = CustomerEntity(5, "Shun", "USA", 20)
-val customerFranceDup = CustomerEntity(6, "Jean", "France", 56)
+val customerFrance = CustomerEntity(2147483648L, "Jean", "France", 19)
+val customerUSA1 = CustomerEntity(2147483649L, "John", "USA", 21)
+val customerUSA2 = CustomerEntity(2147483650L, "Big Boss", "USA", 20)
+val customerJapan1 = CustomerEntity(2147483651L, "Seya", "USA", 20)
+val customerJapan2 = CustomerEntity(2147483652L, "Shun", "USA", 20)
+val customerFranceDup = CustomerEntity(2147483653L, "Jean", "France", 56)
 
 interface Customers : Table<CustomerEntity> {
-    val id: IntColumnNotNull<CustomerEntity>
+    val id: LongColumnNotNull<CustomerEntity>
     val name: StringColumnNotNull<CustomerEntity>
     val country: StringColumnNotNull<CustomerEntity>
     val age: IntColumnNotNull<CustomerEntity>

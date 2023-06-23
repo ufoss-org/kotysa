@@ -26,6 +26,11 @@ abstract class SelectMinMaxAvgSumRepositoryCommon<T : Customers>(
         (sqlClient selectSum table.age
                 from table
                 ).fetchOne()
+
+    fun selectCustomerSumId() =
+        (sqlClient selectSum table.id
+                from table
+                ).fetchOne()
 }
 
 expect abstract class SelectMinMaxAvgSumRepository<T : Customers>(

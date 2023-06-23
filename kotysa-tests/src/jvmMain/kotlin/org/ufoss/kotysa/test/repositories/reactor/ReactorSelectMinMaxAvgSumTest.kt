@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa.test.repositories.reactor
 
+import ch.tutteli.atrium.api.fluent.en_GB.toEqual
+import ch.tutteli.atrium.api.verbs.expect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.Customers
@@ -34,5 +36,11 @@ interface ReactorSelectMinMaxAvgSumTest<T : Customers, U : ReactorSelectMinMaxAv
     fun `Verify selectCustomerSumAge returns 60`() {
         assertThat(repository.selectCustomerSumAge().block() as Long)
             .isEqualTo(60)
+    }
+
+    @Test
+    fun `Verify selectCustomerSumId returns 6442450947L`() {
+        expect(repository.selectCustomerSumId().block() as Long)
+            .toEqual(6442450947)
     }
 }

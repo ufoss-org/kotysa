@@ -44,7 +44,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSubQuery.FirstSelect<BigDecimal> =
             FirstSelect<BigDecimal>(properties()).apply { addAvgColumn(column) }
 
-        override fun selectSum(column: IntColumn<*>): SqlClientSubQuery.FirstSelect<Long> =
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): SqlClientSubQuery.FirstSelect<Long> =
             FirstSelect<Long>(properties()).apply { addLongSumColumn(column) }
 
         override fun selectTsRankCd(
@@ -130,7 +130,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SqlClientSubQuery.SecondSelect<T?, BigDecimal> =
             SecondSelect(properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSubQuery.SecondSelect<T?, Long> =
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): SqlClientSubQuery.SecondSelect<T?, Long> =
             SecondSelect(properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun andTsRankCd(
@@ -216,7 +216,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): SqlClientSubQuery.ThirdSelect<T, U, BigDecimal> =
             ThirdSelect(properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSubQuery.ThirdSelect<T, U, Long> =
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): SqlClientSubQuery.ThirdSelect<T, U, Long> =
             ThirdSelect(properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun andTsRankCd(
@@ -302,7 +302,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): SqlClientSubQuery.Select =
             Select(properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSubQuery.Select =
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): SqlClientSubQuery.Select =
             Select(properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun andTsRankCd(
@@ -382,7 +382,9 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             addAvgColumn(column)
         }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSubQuery.Select = this.apply { addLongSumColumn(column) }
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): SqlClientSubQuery.Select = this.apply {
+            addLongSumColumn(column)
+        }
 
         override fun andTsRankCd(
             tsvectorColumn: TsvectorColumn<*>,

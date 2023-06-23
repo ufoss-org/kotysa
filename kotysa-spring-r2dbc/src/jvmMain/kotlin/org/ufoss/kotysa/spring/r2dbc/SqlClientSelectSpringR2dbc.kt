@@ -47,7 +47,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): ReactorSqlClientSelect.FirstSelect<BigDecimal> =
             FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
 
-        override fun selectSum(column: IntColumn<*>): ReactorSqlClientSelect.FirstSelect<Long> =
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
             FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
 
         override fun <T : Any> select(
@@ -136,7 +136,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): ReactorSqlClientSelect.SecondSelect<T?, BigDecimal> =
             SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): ReactorSqlClientSelect.SecondSelect<T?, Long> =
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): ReactorSqlClientSelect.SecondSelect<T?, Long> =
             SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun <U : Any> and(
@@ -226,7 +226,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, BigDecimal> =
             ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): ReactorSqlClientSelect.ThirdSelect<T, U, Long> =
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): ReactorSqlClientSelect.ThirdSelect<T, U, Long> =
             ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
@@ -317,7 +317,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): ReactorSqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): ReactorSqlClientSelect.Select =
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): ReactorSqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun <W : Any> and(
@@ -406,7 +406,7 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
             addAvgColumn(column)
         }
 
-        override fun andSum(column: IntColumn<*>): ReactorSqlClientSelect.Select =
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): ReactorSqlClientSelect.Select =
             this.apply { addLongSumColumn(column) }
 
         override fun <T : Any> and(

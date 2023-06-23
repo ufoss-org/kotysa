@@ -30,6 +30,12 @@ interface SelectMinMaxAvgSumTestCommon<T : Customers, U : SelectMinMaxAvgSumRepo
         expect(repository.selectCustomerSumAge())
             .toEqual(60)
     }
+
+    @Test
+    fun `Verify selectCustomerSumId returns 6442450947L`() {
+        expect(repository.selectCustomerSumId())
+            .toEqual(6442450947)
+    }
 }
 
 expect interface SelectMinMaxAvgSumTest<T : Customers, U : SelectMinMaxAvgSumRepository<T>, V : Transaction> :

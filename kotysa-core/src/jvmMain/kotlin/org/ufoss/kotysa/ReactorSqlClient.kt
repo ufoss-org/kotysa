@@ -40,7 +40,7 @@ public sealed interface ReactorSqlClient {
     public infix fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U>
     public infix fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U>
     public infix fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): ReactorSqlClientSelect.FirstSelect<BigDecimal>
-    public infix fun <T : Any> selectSum(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long>
+    public infix fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>): ReactorSqlClientSelect.FirstSelect<Long>
     public infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>)
             : ReactorSqlClientSelect.FirstSelect<T>
 
@@ -85,7 +85,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
-        override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): FirstSelect<Long>
         override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): FirstSelect<T>
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
@@ -122,7 +122,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <U : Any> andMin(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
-        override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): SecondSelect<T?, Long>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>)
                 : SecondSelect<T?, U?>
 
@@ -152,7 +152,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <V : Any> andMin(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
-        override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): ThirdSelect<T, U, Long>
         override fun <V : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>)
                 : ThirdSelect<T, U, V?>
 
@@ -181,7 +181,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <W : Any> andMin(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
-        override fun andSum(column: IntColumn<*>): Select
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): Select
         override fun <W : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>): Select
         override fun <W : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
@@ -209,7 +209,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> andMin(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
-        override fun andSum(column: IntColumn<*>): Select
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): Select
         override fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
         override fun <T : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>

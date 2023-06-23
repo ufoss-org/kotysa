@@ -49,7 +49,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): CoroutinesSqlClientSelect.FirstSelect<BigDecimal> =
             FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
 
-        override fun selectSum(column: IntColumn<*>): CoroutinesSqlClientSelect.FirstSelect<Long> =
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): CoroutinesSqlClientSelect.FirstSelect<Long> =
             FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
 
         override fun <T : Any> select(
@@ -140,7 +140,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, BigDecimal> =
             SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.SecondSelect<T?, Long> =
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, Long> =
             SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun <U : Any> and(
@@ -230,7 +230,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, BigDecimal> =
             ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
             ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
@@ -321,7 +321,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): CoroutinesSqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.Select =
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): CoroutinesSqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun <W : Any> and(
@@ -405,7 +405,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             addAvgColumn(column)
         }
 
-        override fun andSum(column: IntColumn<*>): CoroutinesSqlClientSelect.Select =
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): CoroutinesSqlClientSelect.Select =
             this.apply { addLongSumColumn(column) }
 
         override fun <T : Any> and(

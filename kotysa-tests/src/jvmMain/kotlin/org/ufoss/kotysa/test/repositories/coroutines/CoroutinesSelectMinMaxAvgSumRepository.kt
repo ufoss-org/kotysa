@@ -31,4 +31,9 @@ abstract class CoroutinesSelectMinMaxAvgSumRepository<T : Customers>(
         (sqlClient selectSum table.age
                 from table
                 ).fetchOne()
+
+    suspend fun selectCustomerSumId() =
+        (sqlClient selectSum table.id
+                from table
+                ).fetchOne()
 }

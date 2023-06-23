@@ -60,11 +60,14 @@ internal sealed class SqlClientSpringR2dbc(
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectDistinct(column)
     protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectMin(column)
-    protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
+    protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>)
+    : ReactorSqlClientSelect.FirstSelect<U> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectMax(column)
-    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>): ReactorSqlClientSelect.FirstSelect<BigDecimal> =
+    protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>)
+    : ReactorSqlClientSelect.FirstSelect<BigDecimal> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAvg(column)
-    protected fun <T : Any> selectSumProtected(column: IntColumn<T>): ReactorSqlClientSelect.FirstSelect<Long> =
+    protected fun <T : Any, U : Any> selectSumProtected(column: WholeNumberColumn<T, U>)
+    : ReactorSqlClientSelect.FirstSelect<Long> =
             SqlClientSelectSpringR2dbc.Selectable(client, tables).selectSum(column)
 
     protected fun selectTsRankCdProtected(
@@ -110,7 +113,7 @@ internal class H2SqlClientSpringR2dbc internal constructor(
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>) = selectSumProtected(column)
     override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
@@ -141,7 +144,7 @@ internal class MysqlSqlClientSpringR2dbc internal constructor(
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>) = selectSumProtected(column)
     override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
@@ -172,7 +175,7 @@ internal class PostgresqlSqlClientSpringR2dbc internal constructor(
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>) = selectSumProtected(column)
     override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
@@ -208,7 +211,7 @@ internal class MssqlSqlClientSpringR2dbc internal constructor(
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>) = selectSumProtected(column)
     override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
@@ -239,7 +242,7 @@ internal class MariadbSqlClientSpringR2dbc internal constructor(
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>) = selectSumProtected(column)
     override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
@@ -270,7 +273,7 @@ internal class OracleSqlClientSpringR2dbc internal constructor(
     override fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>) = selectMinProtected(column)
     override fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>) = selectMaxProtected(column)
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>) = selectAvgProtected(column)
-    override fun <T : Any> selectSum(column: IntColumn<T>) = selectSumProtected(column)
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>) = selectSumProtected(column)
     override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) = selectProtected(dsl)
 
     override fun <T : Any> selectCaseWhenExists(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>) =
