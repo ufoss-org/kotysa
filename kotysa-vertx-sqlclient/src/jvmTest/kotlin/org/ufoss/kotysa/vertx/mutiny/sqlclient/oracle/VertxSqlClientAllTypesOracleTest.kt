@@ -9,7 +9,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
@@ -112,7 +111,6 @@ class VertxSqlClientAllTypesOracleTest : AbstractVertxSqlClientOracleTest<AllTyp
     }
 
     @Test
-    @Disabled // todo enable when https://github.com/eclipse-vertx/vertx-sql-client/issues/1276 is fixed
     fun `Verify insertAndReturnAllTypesDefaultValues works correctly`() {
         val allTypes = operator.transactional { transaction ->
             transaction.setRollbackOnly()
