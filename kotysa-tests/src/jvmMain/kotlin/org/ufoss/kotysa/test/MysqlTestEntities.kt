@@ -510,7 +510,7 @@ object MysqlJavaUsers : MysqlTable<JavaUser>("java_users"), JavaUsers {
 }
 
 object MysqlCustomers : MysqlTable<CustomerEntity>(), Customers {
-    override val id = integer(CustomerEntity::id)
+    override val id = bigInt(CustomerEntity::id)
         .primaryKey()
     override val name = varchar(CustomerEntity::name)
         .unique()

@@ -4,6 +4,8 @@
 
 package org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories
 
+import ch.tutteli.atrium.api.fluent.en_GB.toEqual
+import ch.tutteli.atrium.api.verbs.expect
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.Customers
@@ -33,5 +35,11 @@ interface MutinySelectMinMaxAvgSumTest<T : Customers, U : MutinySelectMinMaxAvgS
     fun `Verify selectCustomerSumAge returns 60`() {
         assertThat(repository.selectCustomerSumAge().await().indefinitely())
             .isEqualTo(60)
+    }
+
+    @Test
+    fun `Verify selectCustomerSumId returns 6442450947L`() {
+        expect(repository.selectCustomerSumId().await().indefinitely())
+            .toEqual(6442450947)
     }
 }

@@ -45,7 +45,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): MutinySqlClientSelect.FirstSelect<BigDecimal> =
             FirstSelect<BigDecimal>(pool, properties()).apply { addAvgColumn(column) }
 
-        override fun selectSum(column: IntColumn<*>): MutinySqlClientSelect.FirstSelect<Long> =
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): MutinySqlClientSelect.FirstSelect<Long> =
             FirstSelect<Long>(pool, properties()).apply { addLongSumColumn(column) }
 
         override fun <T : Any> select(
@@ -135,7 +135,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): MutinySqlClientSelect.SecondSelect<T?, BigDecimal> =
             SecondSelect(pool, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): MutinySqlClientSelect.SecondSelect<T?, Long> =
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): MutinySqlClientSelect.SecondSelect<T?, Long> =
             SecondSelect(pool, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun <U : Any> and(
@@ -227,7 +227,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
                 properties as Properties<Triple<T, U, BigDecimal>>
             ).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): MutinySqlClientSelect.ThirdSelect<T, U, Long> =
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): MutinySqlClientSelect.ThirdSelect<T, U, Long> =
             ThirdSelect(pool, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
@@ -318,7 +318,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): MutinySqlClientSelect.Select =
             Select(pool, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): MutinySqlClientSelect.Select =
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): MutinySqlClientSelect.Select =
             Select(pool, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun <W : Any> and(
@@ -400,7 +400,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             addAvgColumn(column)
         }
 
-        override fun andSum(column: IntColumn<*>): MutinySqlClientSelect.Select =
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): MutinySqlClientSelect.Select =
             this.apply { addLongSumColumn(column) }
 
         override fun <T : Any> and(

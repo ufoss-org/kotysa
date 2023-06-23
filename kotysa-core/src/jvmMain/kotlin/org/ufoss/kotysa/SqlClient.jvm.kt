@@ -37,7 +37,7 @@ public actual sealed interface SqlClient {
     public actual infix fun <T : Any, U : Any> selectMin(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U>
     public actual infix fun <T : Any, U : Any> selectMax(column: MinMaxColumn<T, U>): SqlClientSelect.FirstSelect<U>
     public infix fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal>
-    public actual infix fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long>
+    public actual infix fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>): SqlClientSelect.FirstSelect<Long>
     public actual infix fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>)
             : SqlClientSelect.FirstSelect<T>
 
@@ -81,7 +81,7 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
         actual override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): FirstSelect<T>
         actual override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
-        actual override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
+        actual override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): FirstSelect<Long>
         actual override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): FirstSelect<T>
         actual override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
@@ -119,7 +119,7 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
         actual override fun <U : Any> andMin(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         actual override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
-        actual override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
+        actual override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): SecondSelect<T?, Long>
         actual override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>)
                 : SecondSelect<T?, U?>
 
@@ -149,7 +149,7 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
         actual override fun <V : Any> andMin(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         actual override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
-        actual override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
+        actual override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): ThirdSelect<T, U, Long>
         actual override fun <V : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>)
                 : ThirdSelect<T, U, V?>
 
@@ -178,7 +178,7 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
         actual override fun <W : Any> andMin(column: MinMaxColumn<*, W>): Select
         actual override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
         actual override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
-        actual override fun andSum(column: IntColumn<*>): Select
+        actual override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): Select
         actual override fun <W : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>): Select
         actual override fun <W : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<W>
@@ -206,7 +206,7 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
         actual override fun <T : Any> andMin(column: MinMaxColumn<*, T>): Select
         actual override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
         actual override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
-        actual override fun andSum(column: IntColumn<*>): Select
+        actual override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): Select
         actual override fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Select
         actual override fun <T : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>

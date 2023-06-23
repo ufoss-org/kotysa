@@ -44,7 +44,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSelect.FirstSelect<BigDecimal> =
             FirstSelect<BigDecimal>(client, properties()).apply { addAvgColumn(column) }
 
-        override fun selectSum(column: IntColumn<*>): SqlClientSelect.FirstSelect<Long> =
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): SqlClientSelect.FirstSelect<Long> =
             FirstSelect<Long>(client, properties()).apply { addLongSumColumn(column) }
 
         override fun <T : Any> select(
@@ -135,7 +135,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SqlClientSelect.SecondSelect<T?, BigDecimal> =
             SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSelect.SecondSelect<T?, Long> =
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): SqlClientSelect.SecondSelect<T?, Long> =
             SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
 
         override fun <U : Any> and(
@@ -224,7 +224,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, BigDecimal> =
             ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSelect.ThirdSelect<T, U, Long> =
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): SqlClientSelect.ThirdSelect<T, U, Long> =
             ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
@@ -314,7 +314,7 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): SqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addAvgColumn(column) }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSelect.Select =
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): SqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addLongSumColumn(column) }
 
         override fun <W : Any> and(
@@ -395,7 +395,8 @@ internal class SqlClientSelectSqLite private constructor() : DefaultSqlClientSel
             addAvgColumn(column)
         }
 
-        override fun andSum(column: IntColumn<*>): SqlClientSelect.Select = this.apply { addLongSumColumn(column) }
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): SqlClientSelect.Select =
+            this.apply { addLongSumColumn(column) }
         
         override fun <T : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>

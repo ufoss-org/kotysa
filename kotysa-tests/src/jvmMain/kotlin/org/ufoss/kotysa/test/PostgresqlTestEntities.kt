@@ -508,7 +508,7 @@ object PostgresqlJavaUsers : PostgresqlTable<JavaUser>("java_users"), JavaUsers 
 }
 
 object PostgresqlCustomers : PostgresqlTable<CustomerEntity>(), Customers {
-    override val id = integer(CustomerEntity::id)
+    override val id = bigInt(CustomerEntity::id)
         .primaryKey()
     override val name = varchar(CustomerEntity::name)
         .unique()

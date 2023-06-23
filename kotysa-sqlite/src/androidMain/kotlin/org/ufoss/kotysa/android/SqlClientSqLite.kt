@@ -130,7 +130,7 @@ internal class SqlClientSqLite internal constructor(
     override fun <T : Any, U : Any> selectAvg(column: NumericColumn<T, U>): SqlClientSelect.FirstSelect<BigDecimal> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectAvg(column)
 
-    override fun <T : Any> selectSum(column: IntColumn<T>): SqlClientSelect.FirstSelect<Long> =
+    override fun <T : Any, U : Any> selectSum(column: WholeNumberColumn<T, U>): SqlClientSelect.FirstSelect<Long> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectSum(column)
 
     override fun <T : Any> select(

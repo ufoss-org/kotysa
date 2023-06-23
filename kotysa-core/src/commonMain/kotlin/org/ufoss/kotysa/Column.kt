@@ -25,6 +25,7 @@ public interface DbColumn<out T : Any, U : Any> : Column<T, U> {
 
 public interface MinMaxColumn<out T : Any, U : Any> : Column<T, U>
 public interface NumericColumn<out T : Any, U : Any> : Column<T, U>
+public interface WholeNumberColumn<out T : Any, U : Any> : Column<T, U>
 
 /**
  * Not null column, its return type is <[U]>
@@ -79,11 +80,13 @@ public interface KotlinxLocalTimeColumnNullable<out T : Any> :
 
 public interface BooleanColumnNotNull<out T : Any> : DbColumn<T, Boolean>, ColumnNotNull<T, Boolean>
 
-public interface IntColumn<out T : Any> : DbColumn<T, Int>, MinMaxColumn<T, Int>, NumericColumn<T, Int>
+public interface IntColumn<out T : Any> : DbColumn<T, Int>, WholeNumberColumn<T, Int>, MinMaxColumn<T, Int>,
+        NumericColumn<T, Int>
 public interface IntColumnNotNull<out T : Any> : IntColumn<T>, ColumnNotNull<T, Int>
 public interface IntColumnNullable<out T : Any> : IntColumn<T>, ColumnNullable<T, Int>
 
-public interface LongColumn<out T : Any> : DbColumn<T, Long>, MinMaxColumn<T, Long>, NumericColumn<T, Long>
+public interface LongColumn<out T : Any> : DbColumn<T, Long>, WholeNumberColumn<T, Long>, MinMaxColumn<T, Long>,
+        NumericColumn<T, Long>
 public interface LongColumnNotNull<out T : Any> : LongColumn<T>, ColumnNotNull<T, Long>
 public interface LongColumnNullable<out T : Any> : LongColumn<T>, ColumnNullable<T, Long>
 

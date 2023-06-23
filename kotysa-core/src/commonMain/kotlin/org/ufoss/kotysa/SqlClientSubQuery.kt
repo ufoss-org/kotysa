@@ -17,7 +17,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): Fromable<T>
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): Fromable<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): Fromable<BigDecimal>
-        override fun selectSum(column: IntColumn<*>): Fromable<Long>
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): Fromable<Long>
         override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Fromable<Float>
     }
 
@@ -29,7 +29,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): FirstSelect<T>
         override fun <T : Any> selectAvg(column: NumericColumn<*, T>): FirstSelect<BigDecimal>
-        override fun selectSum(column: IntColumn<*>): FirstSelect<Long>
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): FirstSelect<Long>
         override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): FirstSelect<Float>
         override fun <T : Any> selectCaseWhenExists(
             dsl: SingleScope.() -> Return<T>
@@ -63,7 +63,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <U : Any> andMin(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andMax(column: MinMaxColumn<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): SecondSelect<T?, BigDecimal>
-        override fun andSum(column: IntColumn<*>): SecondSelect<T?, Long>
+        override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): SecondSelect<T?, Long>
         override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): SecondSelect<T?, Float>
         override fun <U : Any> and(dsl: Scope.() -> Return<U>)
                 : SecondSelect<T?, U?>
@@ -92,7 +92,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <V : Any> andMin(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andMax(column: MinMaxColumn<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): ThirdSelect<T, U, BigDecimal>
-        override fun andSum(column: IntColumn<*>): ThirdSelect<T, U, Long>
+        override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): ThirdSelect<T, U, Long>
         override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): ThirdSelect<T, U, Float>
         override fun <V : Any> and(dsl: Scope.() -> Return<V>)
                 : ThirdSelect<T, U, V?>
@@ -119,7 +119,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <W : Any> andMin(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andMax(column: MinMaxColumn<*, W>): Select
         override fun <W : Any> andAvg(column: NumericColumn<*, W>): Select
-        override fun andSum(column: IntColumn<*>): Select
+        override fun <W : Any> andSum(column: WholeNumberColumn<*, W>): Select
         override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
         override fun <W : Any> and(dsl: Scope.() -> Return<W>): Select
         override fun <W : Any> andCaseWhenExists(
@@ -145,7 +145,7 @@ public class SqlClientSubQuery private constructor() {
         override fun <T : Any> andMin(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andMax(column: MinMaxColumn<*, T>): Select
         override fun <T : Any> andAvg(column: NumericColumn<*, T>): Select
-        override fun andSum(column: IntColumn<*>): Select
+        override fun <T : Any> andSum(column: WholeNumberColumn<*, T>): Select
         override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
         override fun <T : Any> and(dsl: Scope.() -> Return<T>): Select
         override fun <T : Any> andCaseWhenExists(
