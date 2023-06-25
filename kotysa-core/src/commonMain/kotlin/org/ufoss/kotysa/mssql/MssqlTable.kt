@@ -1,5 +1,9 @@
 package org.ufoss.kotysa.mssql
 
+/*
+ * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
+ */
+
 import org.ufoss.kotysa.AbstractCommonTable
 
 /**
