@@ -531,6 +531,9 @@ object MssqlByteArrayAsBinaries : MssqlTable<ByteArrayAsBinaryEntity>(), ByteArr
 }
 
 val mssqlTables = tables().mssql(
+    GenericAllTypesNotNulls,
+    GenericAllTypesNullables,
+    GenericAllTypesNullableDefaultValues,
     MssqlRoles,
     MssqlUsers,
     MssqlUserRoles,

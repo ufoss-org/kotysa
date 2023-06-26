@@ -494,6 +494,9 @@ object H2ByteArrayAsBinaries : H2Table<ByteArrayAsBinaryEntity>(), ByteArrayAsBi
 }
 
 val h2Tables = tables().h2(
+    GenericAllTypesNotNulls,
+    GenericAllTypesNullables,
+    GenericAllTypesNullableDefaultValues,
     H2Roles,
     H2Users,
     H2UserRoles,

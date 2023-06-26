@@ -2,11 +2,12 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.mssql
+package org.ufoss.kotysa
 
-import org.ufoss.kotysa.AbstractCommonTable
-import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.columns.*
+import org.ufoss.kotysa.h2.IH2Table
+import org.ufoss.kotysa.mssql.IMssqlTable
+import org.ufoss.kotysa.postgresql.IPostgresqlTable
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -14,30 +15,28 @@ import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.*
 
-public interface IMssqlTable<T : Any> : Table<T>
-
 /**
- * Represents a Microsoft SQL Server Table
+ * Represents a Generic H2, MSSQL or PostgreSQL Table, it can be used to map a table for several of these databases,
+ * for example if your tests run with H2 and your real database is PostgreSQL or MSSQL
  *
  * **Extend this class with an object**
  *
- * supported types follow :
- * [Microsoft SQL Server Data types](https://docs.microsoft.com/en-us/sql/t-sql/data-types/data-types-transact-sql?view=sql-server-ver15)
+ * supported types follow : [H2 Data types](http://h2database.com/html/datatypes.html)
  * @param T Entity type associated with this table
  */
-public actual abstract class MssqlTable<T : Any> protected actual constructor(tableName: String?) :
-    AbstractCommonTable<T>(tableName), IMssqlTable<T> {
+public actual abstract class GenericTable<T : Any> protected actual constructor(tableName: String?) :
+    AbstractCommonTable<T>(tableName), IH2Table<T>, IMssqlTable<T>, IPostgresqlTable<T> {
 
     protected fun varchar(
         getter: (T) -> String,
         columnName: String? = null,
-        size: Int = 255
+        size: Int? = null
     ): StringDbVarcharColumnNotNull<T> =
         StringDbVarcharColumnNotNull(getter, columnName, size).also { addColumn(it) }
 
     protected fun varchar(
         getter: (T) -> String?, columnName: String? = null, defaultValue: String? = null,
-        size: Int = 255
+        size: Int? = null
     ): StringDbVarcharColumnNullable<T> =
         StringDbVarcharColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
 
@@ -48,9 +47,8 @@ public actual abstract class MssqlTable<T : Any> protected actual constructor(ta
         getter: (T) -> Int?,
         columnName: String? = null,
         defaultValue: Int? = null
-    ): IntDbIntColumnNullable<T> =
-        IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
-    
+    ): IntDbIntColumnNullable<T> = IntDbIntColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+
     protected fun bigInt(getter: (T) -> Long, columnName: String? = null): LongDbBigIntColumnNotNull<T> =
         LongDbBigIntColumnNotNull(getter, columnName, false).also { addColumn(it) }
 
@@ -70,17 +68,17 @@ public actual abstract class MssqlTable<T : Any> protected actual constructor(ta
         defaultValue: Float? = null
     ): FloatDbRealColumnNullable<T> = FloatDbRealColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun float(getter: (T) -> Double, columnName: String? = null, size: Int? = null)
-            : DoubleDbFloatColumnNotNull<T> =
-        DoubleDbFloatColumnNotNull(getter, columnName, size).also { addColumn(it) }
+    protected fun doublePrecision(getter: (T) -> Double, columnName: String? = null)
+            : DoubleDbDoublePrecisionColumnNotNull<T> =
+        DoubleDbDoublePrecisionColumnNotNull(getter, columnName, null, null).also { addColumn(it) }
 
-    protected fun float(
+    protected fun doublePrecision(
         getter: (T) -> Double?,
         columnName: String? = null,
-        defaultValue: Double? = null,
-        size: Int? = null,
-    ): DoubleDbFloatColumnNullable<T> =
-        DoubleDbFloatColumnNullable(getter, columnName, defaultValue, size).also { addColumn(it) }
+        defaultValue: Double? = null
+    ): DoubleDbDoublePrecisionColumnNullable<T> =
+        DoubleDbDoublePrecisionColumnNullable(getter, columnName, defaultValue, null, null)
+            .also { addColumn(it) }
 
     protected fun numeric(getter: (T) -> BigDecimal, precision: Int, scale: Int, columnName: String? = null)
             : BigDecimalDbNumericColumnNotNull<T> =
@@ -108,8 +106,8 @@ public actual abstract class MssqlTable<T : Any> protected actual constructor(ta
     ): BigDecimalDbDecimalColumnNullable<T> =
         BigDecimalDbDecimalColumnNullable(getter, columnName, defaultValue, precision, scale).also { addColumn(it) }
 
-    protected fun bit(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBitColumnNotNull<T> =
-        BooleanDbBitColumnNotNull(getter, columnName).also { addColumn(it) }
+    protected fun boolean(getter: (T) -> Boolean, columnName: String? = null): BooleanDbBooleanColumnNotNull<T> =
+        BooleanDbBooleanColumnNotNull(getter, columnName).also { addColumn(it) }
 
     protected fun date(getter: (T) -> LocalDate, columnName: String? = null): LocalDateDbDateColumnNotNull<T> =
         LocalDateDbDateColumnNotNull(getter, columnName).also { addColumn(it) }
@@ -121,35 +119,35 @@ public actual abstract class MssqlTable<T : Any> protected actual constructor(ta
     ): LocalDateDbDateColumnNullable<T> =
         LocalDateDbDateColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
-    protected fun dateTime(
+    protected fun timestamp(
         getter: (T) -> LocalDateTime,
         columnName: String? = null,
         precision: Int? = null
-    ): LocalDateTimeDbDateTimeColumnNotNull<T> =
-        LocalDateTimeDbDateTimeColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+    ): LocalDateTimeDbTimestampColumnNotNull<T> =
+        LocalDateTimeDbTimestampColumnNotNull(getter, columnName, precision).also { addColumn(it) }
 
-    protected fun dateTime(
+    protected fun timestamp(
         getter: (T) -> LocalDateTime?,
         columnName: String? = null,
         defaultValue: LocalDateTime? = null,
         precision: Int? = null
-    ): LocalDateTimeDbDateTimeColumnNullable<T> =
-        LocalDateTimeDbDateTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
+    ): LocalDateTimeDbTimestampColumnNullable<T> =
+        LocalDateTimeDbTimestampColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
-    protected fun dateTimeOffset(
+    protected fun timestampWithTimeZone(
         getter: (T) -> OffsetDateTime,
         columnName: String? = null,
         precision: Int? = null
-    ): OffsetDateTimeDbDateTimeOffsetColumnNotNull<T> =
-        OffsetDateTimeDbDateTimeOffsetColumnNotNull(getter, columnName, precision).also { addColumn(it) }
+    ): OffsetDateTimeDbTimestampWithTimeZoneColumnNotNull<T> =
+        OffsetDateTimeDbTimestampWithTimeZoneColumnNotNull(getter, columnName, precision).also { addColumn(it) }
 
-    protected fun dateTimeOffset(
+    protected fun timestampWithTimeZone(
         getter: (T) -> OffsetDateTime?,
         columnName: String? = null,
         defaultValue: OffsetDateTime? = null,
         precision: Int? = null
-    ): OffsetDateTimeDbDateTimeOffsetColumnNullable<T> =
-        OffsetDateTimeDbDateTimeOffsetColumnNullable(
+    ): OffsetDateTimeDbTimestampWithTimeZoneColumnNullable<T> =
+        OffsetDateTimeDbTimestampWithTimeZoneColumnNullable(
             getter,
             columnName,
             defaultValue,
@@ -171,18 +169,15 @@ public actual abstract class MssqlTable<T : Any> protected actual constructor(ta
     ): LocalTimeDbTimeColumnNullable<T> =
         LocalTimeDbTimeColumnNullable(getter, columnName, defaultValue, precision).also { addColumn(it) }
 
-    protected fun uniqueIdentifier(
-        getter: (T) -> UUID,
-        columnName: String? = null,
-    ): UuidDbUniqueIdentifierColumnNotNull<T> =
-        UuidDbUniqueIdentifierColumnNotNull(getter, columnName).also { addColumn(it) }
+    protected fun uuid(getter: (T) -> UUID, columnName: String? = null): UuidDbUuidColumnNotNull<T> =
+        UuidDbUuidColumnNotNull(getter, columnName).also { addColumn(it) }
 
-    protected fun uniqueIdentifier(
+    protected fun uuid(
         getter: (T) -> UUID?,
         columnName: String? = null,
         defaultValue: UUID? = null
-    ): UuidDbUniqueIdentifierColumnNullable<T> =
-        UuidDbUniqueIdentifierColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
+    ): UuidDbUuidColumnNullable<T> =
+        UuidDbUuidColumnNullable(getter, columnName, defaultValue).also { addColumn(it) }
 
     protected fun binary(getter: (T) -> ByteArray, columnName: String? = null): ByteArrayDbBinaryColumnNotNull<T> =
         ByteArrayDbBinaryColumnNotNull(getter, columnName).also { addColumn(it) }

@@ -552,6 +552,9 @@ object PostgresqlTsvectors : PostgresqlTable<TsvectorEntity>() {
 }
 
 val postgresqlTables = tables().postgresql(
+    GenericAllTypesNotNulls,
+    GenericAllTypesNullables,
+    GenericAllTypesNullableDefaultValues,
     PostgresqlRoles,
     PostgresqlUsers,
     PostgresqlUserRoles,

@@ -4,14 +4,18 @@
 
 package org.ufoss.kotysa.test
 
+import kotlinx.datetime.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.columns.*
 import java.math.BigDecimal
 import java.time.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 import java.util.*
 
 const val defaultUuid = "67d4306e-d99d-4e54-8b1d-5b1e92691a4e"
@@ -203,6 +207,128 @@ val allTypesNotNullWithTime = AllTypesNotNullWithTimeEntity(
     Clock.System.now().toLocalDateTime(TimeZone.UTC).time,
 )
 
+data class GenericAllTypesNotNullEntity(
+    override val id: Int,
+    override val string: String,
+    override val boolean: Boolean,
+    override val localDate: LocalDate,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate,
+    override val localTime: LocalTime,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime,
+    override val localDateTime1: LocalDateTime,
+    override val localDateTime2: LocalDateTime,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime,
+    override val int: Int,
+    override val long: Long,
+    override val byteArray: ByteArray,
+    override val float: Float,
+    override val double: Double,
+    override val bigDecimal1: BigDecimal,
+    override val bigDecimal2: BigDecimal,
+    val offsetDateTime: OffsetDateTime,
+    val uuid: UUID,
+) : AllTypesNotNullWithTimeEntity(
+    id, string, boolean, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
+) {
+
+    // Must override equals for various Date truncation, we must ensure the most restricted one = MSSQL
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GenericAllTypesNotNullEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (localDateTime1.truncatedTo(ChronoUnit.SECONDS) != other.localDateTime1.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (localDateTime2.truncatedTo(ChronoUnit.SECONDS) != other.localDateTime2.truncatedTo(ChronoUnit.SECONDS)) return false
+        if (kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        ) return false
+        if (int != other.int) return false
+        if (long != other.long) return false
+        if (!byteArray.contentEquals(other.byteArray)) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
+        if (bigDecimal1 != other.bigDecimal1) return false
+        if (bigDecimal2 != other.bigDecimal2) return false
+        if (
+            !offsetDateTime.truncatedTo(ChronoUnit.MILLIS).isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))
+        ) return false
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + offsetDateTime.hashCode()
+        result = 31 * result + uuid.hashCode()
+        return result
+    }
+}
+
+val genericAllTypesNotNull = GenericAllTypesNotNullEntity(
+    1,
+    "",
+    true,
+    LocalDate.now(),
+    Clock.System.todayIn(TimeZone.UTC),
+    LocalTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC).time,
+    LocalDateTime.now(),
+    LocalDateTime.now(),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Clock.System.now().toLocalDateTime(TimeZone.UTC),
+    Int.MAX_VALUE,
+    Long.MAX_VALUE,
+    byteArrayOf(0x2A),
+    Float.MAX_VALUE,
+    Double.MAX_VALUE,
+    BigDecimal("1.1"),
+    BigDecimal("2.2"),
+    OffsetDateTime.of(
+        2018, 11, 4, 0, 0, 0, 0,
+        ZoneOffset.ofHoursMinutes(1, 2)
+    ),
+    UUID.randomUUID(),
+)
+
+object GenericAllTypesNotNulls : GenericTable<GenericAllTypesNotNullEntity>("generic_all_types") {
+    val id = integer(GenericAllTypesNotNullEntity::id)
+        .primaryKey()
+    val string = varchar(GenericAllTypesNotNullEntity::string)
+    val boolean = boolean(GenericAllTypesNotNullEntity::boolean)
+    val localDate = date(GenericAllTypesNotNullEntity::localDate)
+    val kotlinxLocalDate = date(GenericAllTypesNotNullEntity::kotlinxLocalDate)
+    val localTim = time(GenericAllTypesNotNullEntity::localTime, precision = 6)
+    val kotlinxLocalTim = time(GenericAllTypesNotNullEntity::kotlinxLocalTime, precision = 6)
+    val localDateTime1 = timestamp(GenericAllTypesNotNullEntity::localDateTime1, precision = 6)
+    val localDateTime2 = timestamp(GenericAllTypesNotNullEntity::localDateTime2, precision = 6)
+    val kotlinxLocalDateTime1 = timestamp(GenericAllTypesNotNullEntity::kotlinxLocalDateTime1, precision = 6)
+    val kotlinxLocalDateTime2 = timestamp(GenericAllTypesNotNullEntity::kotlinxLocalDateTime2, precision = 6)
+    val inte = integer(GenericAllTypesNotNullEntity::int)
+    val longe = bigInt(GenericAllTypesNotNullEntity::long)
+    val byteArray = binary(GenericAllTypesNotNullEntity::byteArray)
+    val float = real(GenericAllTypesNotNullEntity::float)
+    val doublee = doublePrecision(GenericAllTypesNotNullEntity::double)
+    val bigDecimal1 = numeric(GenericAllTypesNotNullEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(GenericAllTypesNotNullEntity::bigDecimal2, 3, 1)
+    val offsetDateTime = timestampWithTimeZone(GenericAllTypesNotNullEntity::offsetDateTime)
+    val uuid = uuid(GenericAllTypesNotNullEntity::uuid)
+}
+
 actual open class AllTypesNullableBaseEntity(
     open val id: Int,
     open val string: String?,
@@ -355,6 +481,80 @@ val allTypesNullableWithTime = AllTypesNullableWithTimeEntity(
     null, null, null, null, null, null
 )
 
+data class GenericAllTypesNullableEntity(
+    override val id: Int,
+    override val string: String?,
+    override val localDate: LocalDate?,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate?,
+    override val localTime: LocalTime?,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime?,
+    override val localDateTime1: LocalDateTime?,
+    override val localDateTime2: LocalDateTime?,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime?,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime?,
+    override val int: Int?,
+    override val long: Long?,
+    override val byteArray: ByteArray?,
+    override val float: Float?,
+    override val double: Double?,
+    override val bigDecimal1: BigDecimal?,
+    override val bigDecimal2: BigDecimal?,
+    val offsetDateTime: OffsetDateTime?,
+    val uuid: UUID?,
+) : AllTypesNullableWithTimeEntity(
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, byteArray, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as GenericAllTypesNullableEntity
+
+        if (offsetDateTime != other.offsetDateTime) return false
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
+        return result
+    }
+}
+
+val genericAllTypesNullable = GenericAllTypesNullableEntity(
+    1, null, null, null, null, null, null,
+    null, null, null, null, null, null,
+    null, null, null, null, null, null
+)
+
+object GenericAllTypesNullables : GenericTable<GenericAllTypesNullableEntity>("generic_all_types_nullable") {
+    val id = integer(GenericAllTypesNullableEntity::id)
+        .primaryKey()
+    val string = varchar(GenericAllTypesNullableEntity::string)
+    val localDate = date(GenericAllTypesNullableEntity::localDate)
+    val kotlinxLocalDate = date(GenericAllTypesNullableEntity::kotlinxLocalDate)
+    val localTim = time(GenericAllTypesNullableEntity::localTime)
+    val kotlinxLocalTim = time(GenericAllTypesNullableEntity::kotlinxLocalTime)
+    val localDateTime1 = timestamp(GenericAllTypesNullableEntity::localDateTime1)
+    val localDateTime2 = timestamp(GenericAllTypesNullableEntity::localDateTime2)
+    val kotlinxLocalDateTime1 = timestamp(GenericAllTypesNullableEntity::kotlinxLocalDateTime1)
+    val kotlinxLocalDateTime2 = timestamp(GenericAllTypesNullableEntity::kotlinxLocalDateTime2)
+    val inte = integer(GenericAllTypesNullableEntity::int)
+    val longe = bigInt(GenericAllTypesNullableEntity::long)
+    val byteArray = binary(GenericAllTypesNullableEntity::byteArray)
+    val float = real(GenericAllTypesNullableEntity::float)
+    val doublee = doublePrecision(GenericAllTypesNullableEntity::double)
+    val bigDecimal1 = numeric(GenericAllTypesNullableEntity::bigDecimal1, 3, 1)
+    val bigDecimal2 = decimal(GenericAllTypesNullableEntity::bigDecimal2, 3, 1)
+    val offsetDateTime = timestampWithTimeZone(GenericAllTypesNullableEntity::offsetDateTime)
+    val uuid = uuid(GenericAllTypesNullableEntity::uuid)
+}
+
 actual open class AllTypesNullableDefaultValueBaseEntity(
     open val id: Int,
     open val string: String? = null,
@@ -495,6 +695,149 @@ open class AllTypesNullableDefaultValueWithTimeEntity(
 
 val allTypesNullableDefaultValueWithTime = AllTypesNullableDefaultValueWithTimeEntity(1)
 val allTypesNullableDefaultValueWithTimeToInsert = AllTypesNullableDefaultValueWithTimeEntity(2)
+
+data class GenericAllTypesNullableDefaultValueEntity(
+    override val id: Int,
+    override val string: String? = null,
+    override val localDate: LocalDate? = null,
+    override val kotlinxLocalDate: kotlinx.datetime.LocalDate? = null,
+    override val localTime: LocalTime? = null,
+    override val kotlinxLocalTime: kotlinx.datetime.LocalTime? = null,
+    override val localDateTime1: LocalDateTime? = null,
+    override val localDateTime2: LocalDateTime? = null,
+    override val kotlinxLocalDateTime1: kotlinx.datetime.LocalDateTime? = null,
+    override val kotlinxLocalDateTime2: kotlinx.datetime.LocalDateTime? = null,
+    override val int: Int? = null,
+    override val long: Long? = null,
+    override val float: Float? = null,
+    override val double: Double? = null,
+    override val bigDecimal1: BigDecimal? = null,
+    override val bigDecimal2: BigDecimal? = null,
+    val offsetDateTime: OffsetDateTime? = null,
+    val uuid: UUID? = null,
+) : AllTypesNullableDefaultValueWithTimeEntity(
+    id, string, localDate, kotlinxLocalDate, localDateTime1, localDateTime2, kotlinxLocalDateTime1,
+    kotlinxLocalDateTime2, int, long, float, double, bigDecimal1, bigDecimal2, localTime, kotlinxLocalTime
+) {
+
+    // Must override equals for various Date truncation, we must ensure the most restricted one = MSSQL
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GenericAllTypesNullableDefaultValueEntity
+
+        if (id != other.id) return false
+        if (string != other.string) return false
+        if (localDate != other.localDate) return false
+        if (kotlinxLocalDate != other.kotlinxLocalDate) return false
+        if (localTime != null) {
+            if (localTime.truncatedTo(ChronoUnit.SECONDS)
+                != other.localTime?.truncatedTo(ChronoUnit.SECONDS)
+            ) return false
+        } else if (other.localTime != null) {
+            return false
+        }
+        if (kotlinxLocalTime != null) {
+            if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+                != other.kotlinxLocalTime?.toJavaLocalTime()?.truncatedTo(ChronoUnit.SECONDS)
+            ) return false
+        } else if (other.kotlinxLocalTime != null) {
+            return false
+        }
+        if (localDateTime1 != other.localDateTime1) return false
+        if (localDateTime2 != other.localDateTime2) return false
+        if (kotlinxLocalDateTime1 != other.kotlinxLocalDateTime1) return false
+        if (kotlinxLocalDateTime2 != other.kotlinxLocalDateTime2) return false
+        if (int != other.int) return false
+        if (long != other.long) return false
+        if (float != other.float) return false
+        if (double != other.double) return false
+        if (offsetDateTime != null) {
+            if (!offsetDateTime.isEqual(other.offsetDateTime)) return false
+        } else if (other.offsetDateTime != null) {
+            return false
+        }
+        if (uuid != other.uuid) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + (offsetDateTime?.hashCode() ?: 0)
+        result = 31 * result + (uuid?.hashCode() ?: 0)
+        return result
+    }
+}
+
+val genericAllTypesNullableDefaultValue = GenericAllTypesNullableDefaultValueEntity(1)
+val genericAllTypesNullableDefaultValueToInsert = GenericAllTypesNullableDefaultValueEntity(2)
+
+object GenericAllTypesNullableDefaultValues : GenericTable<GenericAllTypesNullableDefaultValueEntity>() {
+    val id = integer(GenericAllTypesNullableDefaultValueEntity::id)
+        .primaryKey()
+    val string = varchar(GenericAllTypesNullableDefaultValueEntity::string, defaultValue = "default")
+    val localDate = date(
+        GenericAllTypesNullableDefaultValueEntity::localDate,
+        defaultValue = LocalDate.of(2019, 11, 4)
+    )
+    val kotlinxLocalDate = date(
+        GenericAllTypesNullableDefaultValueEntity::kotlinxLocalDate,
+        defaultValue = kotlinx.datetime.LocalDate(2019, 11, 6)
+    )
+    val localTim = time(
+        GenericAllTypesNullableDefaultValueEntity::localTime,
+        defaultValue = LocalTime.of(11, 25, 55, 123456789)
+    )
+    val kotlinxLocalTim = time(
+        GenericAllTypesNullableDefaultValueEntity::kotlinxLocalTime,
+        defaultValue = kotlinx.datetime.LocalTime(11, 25, 55, 123456789)
+    )
+    val localDateTime1 = timestamp(
+        GenericAllTypesNullableDefaultValueEntity::localDateTime1,
+        defaultValue = LocalDateTime.of(2018, 11, 4, 0, 0)
+    )
+    val localDateTime2 = timestamp(
+        GenericAllTypesNullableDefaultValueEntity::localDateTime2,
+        defaultValue = LocalDateTime.of(2019, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime1 = timestamp(
+        GenericAllTypesNullableDefaultValueEntity::kotlinxLocalDateTime1,
+        defaultValue = kotlinx.datetime.LocalDateTime(2018, 11, 4, 0, 0)
+    )
+    val kotlinxLocalDateTime2 = timestamp(
+        GenericAllTypesNullableDefaultValueEntity::kotlinxLocalDateTime2,
+        defaultValue = kotlinx.datetime.LocalDateTime(2019, 11, 4, 0, 0)
+    )
+    val inte = integer(GenericAllTypesNullableDefaultValueEntity::int, defaultValue = 42)
+    val longe = bigInt(GenericAllTypesNullableDefaultValueEntity::long, defaultValue = 84L)
+    val float = real(GenericAllTypesNullableDefaultValueEntity::float, defaultValue = 42.42f)
+    val doublee = doublePrecision(GenericAllTypesNullableDefaultValueEntity::double, defaultValue = 84.84)
+    val bigDecimal1 = numeric(
+        GenericAllTypesNullableDefaultValueEntity::bigDecimal1,
+        3,
+        1,
+        defaultValue = BigDecimal("4.2")
+    )
+    val bigDecimal2 = decimal(
+        GenericAllTypesNullableDefaultValueEntity::bigDecimal2,
+        3,
+        1,
+        defaultValue = BigDecimal("4.3")
+    )
+    val offsetDateTime = timestampWithTimeZone(
+        GenericAllTypesNullableDefaultValueEntity::offsetDateTime,
+        defaultValue = OffsetDateTime.of(
+            2019, 11, 4, 0, 0, 0, 0,
+            ZoneOffset.ofHoursMinutes(1, 2)
+        )
+    )
+    val uuid = uuid(
+        GenericAllTypesNullableDefaultValueEntity::uuid,
+        defaultValue = UUID.fromString(defaultUuid)
+    )
+}
 
 data class LocalDateEntity(
     val id: Int,
