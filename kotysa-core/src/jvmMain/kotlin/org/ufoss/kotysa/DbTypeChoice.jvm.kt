@@ -4,19 +4,19 @@
 
 package org.ufoss.kotysa
 
-import org.ufoss.kotysa.h2.H2Table
+import org.ufoss.kotysa.h2.IH2Table
 import org.ufoss.kotysa.mariadb.MariadbTable
-import org.ufoss.kotysa.mssql.MssqlTable
+import org.ufoss.kotysa.mssql.IMssqlTable
 import org.ufoss.kotysa.mysql.MysqlTable
 import org.ufoss.kotysa.oracle.OracleTable
-import org.ufoss.kotysa.postgresql.PostgresqlTable
+import org.ufoss.kotysa.postgresql.IPostgresqlTable
 
 public actual object DbTypeChoice : DbTypeChoiceCommon() {
     /**
      * Configure Functional Table Mapping support for H2
      * @sample org.ufoss.kotysa.sample.h2Tables
      */
-    public fun h2(vararg tables: H2Table<*>): H2Tables = buildH2Tables(tables)
+    public fun h2(vararg tables: IH2Table<*>): H2Tables = buildH2Tables(tables)
 
     /**
      * Configure Functional Table Mapping support for MySQL
@@ -28,13 +28,13 @@ public actual object DbTypeChoice : DbTypeChoiceCommon() {
      * Configure Functional Table Mapping support for PostgreSQL
      * @sample org.ufoss.kotysa.sample.postgresqlTables
      */
-    public fun postgresql(vararg tables: PostgresqlTable<*>): PostgresqlTables = buildPostgresqlTables(tables)
+    public fun postgresql(vararg tables: IPostgresqlTable<*>): PostgresqlTables = buildPostgresqlTables(tables)
 
     /**
      * Configure Functional Table Mapping support for Microsoft SQL Server
      * @sample org.ufoss.kotysa.sample.mssqlTables
      */
-    public fun mssql(vararg tables: MssqlTable<*>): MssqlTables = buildMssqlTables(tables)
+    public fun mssql(vararg tables: IMssqlTable<*>): MssqlTables = buildMssqlTables(tables)
 
     /**
      * Configure Functional Table Mapping support for MariaDB

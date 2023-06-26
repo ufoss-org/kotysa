@@ -7,6 +7,7 @@ package org.ufoss.kotysa.postgresql
 import org.ufoss.kotysa.AbstractCommonTable
 import org.ufoss.kotysa.Index
 import org.ufoss.kotysa.IndexType
+import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.columns.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -14,6 +15,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.*
+
+public interface IPostgresqlTable<T : Any> : Table<T>
 
 /**
  * Represents a PostgreSQL Table
@@ -26,7 +29,7 @@ import java.util.*
  * @param T Entity type associated with this table
  */
 public actual abstract class PostgresqlTable<T : Any> protected actual constructor(tableName: String?) :
-    AbstractCommonTable<T>(tableName) {
+    AbstractCommonTable<T>(tableName), IPostgresqlTable<T> {
 
     protected fun varchar(
         getter: (T) -> String,

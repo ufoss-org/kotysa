@@ -22,7 +22,7 @@ import kotlin.reflect.full.allSupertypes
  */
 public abstract class DbTypeChoiceCommon {
 
-    private fun fillTables(dbType: DbType, tables: Array<out AbstractTable<*>>)
+    private fun fillTables(dbType: DbType, tables: Array<out Table<*>>)
             : Pair<Map<Table<*>, KotysaTable<*>>, Map<Column<*, *>, KotysaColumn<*, *>>> {
         require(tables.isNotEmpty()) { "Tables must declare at least one table" }
 
@@ -35,8 +35,10 @@ public abstract class DbTypeChoiceCommon {
                         DbType.SQLITE -> SqLiteTable::class == type.classifier
                         DbType.MYSQL -> MysqlTable::class == type.classifier
                         DbType.POSTGRESQL -> PostgresqlTable::class == type.classifier
-                        DbType.H2 -> H2Table::class == type.classifier
-                        DbType.MSSQL -> MssqlTable::class == type.classifier
+                                || GenericTable::class == type.classifier
+
+                        DbType.H2 -> H2Table::class == type.classifier || GenericTable::class == type.classifier
+                        DbType.MSSQL -> MssqlTable::class == type.classifier || GenericTable::class == type.classifier
                         DbType.MARIADB -> MariadbTable::class == type.classifier
                         DbType.ORACLE -> OracleTable::class == type.classifier
                     }
@@ -47,14 +49,14 @@ public abstract class DbTypeChoiceCommon {
                 "Trying to map entity class \"${tableClass.qualifiedName}\" to multiple tables"
             }
             @Suppress("UNCHECKED_CAST")
-            val kotysaTable = initializeTable(table as AbstractTable<Any>, tableClass as KClass<Any>)
+            val kotysaTable = initializeTable(table as AbstractTable<Any>, tableClass as KClass<Any>, dbType)
             allTables[kotysaTable.table] = kotysaTable
             allColumns.putAll(kotysaTable.columns.associateBy { kotysaColumn -> kotysaColumn.column })
         }
         return Pair(allTables, allColumns)
     }
 
-    internal fun buildH2Tables(tables: Array<out AbstractTable<*>>): H2Tables {
+    internal fun buildH2Tables(tables: Array<out Table<*>>): H2Tables {
         val pair = fillTables(DbType.H2, tables)
         return H2Tables(pair.first, pair.second)
     }
@@ -64,12 +66,12 @@ public abstract class DbTypeChoiceCommon {
         return MysqlTables(pair.first, pair.second)
     }
 
-    internal fun buildPostgresqlTables(tables: Array<out AbstractTable<*>>): PostgresqlTables {
+    internal fun buildPostgresqlTables(tables: Array<out Table<*>>): PostgresqlTables {
         val pair = fillTables(DbType.POSTGRESQL, tables)
         return PostgresqlTables(pair.first, pair.second)
     }
 
-    internal fun buildMssqlTables(tables: Array<out AbstractTable<*>>): MssqlTables {
+    internal fun buildMssqlTables(tables: Array<out Table<*>>): MssqlTables {
         val pair = fillTables(DbType.MSSQL, tables)
         return MssqlTables(pair.first, pair.second)
     }
@@ -89,7 +91,7 @@ public abstract class DbTypeChoiceCommon {
         return SqLiteTables(pair.first, pair.second)
     }
 
-    private fun initializeTable(table: AbstractTable<Any>, tableClass: KClass<Any>): KotysaTable<*> {
+    private fun initializeTable(table: AbstractTable<Any>, tableClass: KClass<Any>, dbType: DbType): KotysaTable<*> {
         // define table name = provided name or else mapping class simpleName
         table.kotysaName = table.tableName ?: table::class.simpleName!!
 
@@ -103,20 +105,7 @@ public abstract class DbTypeChoiceCommon {
             .filterIsInstance<AbstractDbColumn<Any, *>>()
             .forEach { column ->
                 column.name = buildColumnName(column, table)
-                @Suppress("UNCHECKED_CAST")
-                val kotysaColumn = KotysaColumnDb(
-                    column,
-                    column.entityGetter,
-                    column.entityGetter.toCallable().returnType.classifier as KClass<Any>,
-                    column.name,
-                    column.sqlType,
-                    column.isAutoIncrement,
-                    column.isNullable,
-                    column.defaultValue,
-                    column.size,
-                    column.scale,
-                    column.identity,
-                )
+                val kotysaColumn = createKotysaColumn(column, dbType)
                 kotysaColumnsMap[column] = kotysaColumn
             }
 
@@ -145,6 +134,45 @@ public abstract class DbTypeChoiceCommon {
         // associate table to all its columns
         kotysaTable.columns.forEach { c -> c.table = kotysaTable }
         return kotysaTable
+    }
+
+    private fun createKotysaColumn(
+        column: AbstractDbColumn<Any, *>,
+        dbType: DbType,
+    ): KotysaColumn<Any, *> {
+        // we must adapt for some generic table types
+        var size = column.size
+        var sqlType = column.sqlType
+        if (dbType == DbType.MSSQL) {
+            if (column.sqlType == SqlType.DOUBLE_PRECISION) {
+                size = 53
+                sqlType = SqlType.FLOAT
+            } else if (column.sqlType == SqlType.TIMESTAMP_WITH_TIME_ZONE) {
+                size = null
+                sqlType = SqlType.DATETIMEOFFSET
+            } else if (column.sqlType == SqlType.TIMESTAMP) {
+                size = null
+                sqlType = SqlType.DATE_TIME
+            } else if (column.sqlType == SqlType.BOOLEAN) {
+                sqlType = SqlType.BIT
+            } else if (column.sqlType == SqlType.UUID) {
+                sqlType = SqlType.UNIQUEIDENTIFIER
+            } else if (column.sqlType == SqlType.VARCHAR && size == null) {
+                size = 255
+            }
+        } else if (dbType == DbType.POSTGRESQL) {
+            if (column.sqlType == SqlType.BINARY) {
+                sqlType = SqlType.BYTEA
+            }
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return KotysaColumnDb(
+            column, column.entityGetter,
+            column.entityGetter.toCallable().returnType.classifier as KClass<Any>,
+            column.name, sqlType, column.isAutoIncrement, column.isNullable, column.defaultValue, size, column.scale,
+            column.identity
+        )
     }
 
     /**

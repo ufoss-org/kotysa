@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.h2
 
 import org.ufoss.kotysa.AbstractCommonTable
+import org.ufoss.kotysa.Table
 import org.ufoss.kotysa.columns.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -12,6 +13,8 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
 import java.util.*
+
+public interface IH2Table<T : Any> : Table<T>
 
 /**
  * Represents a H2 Table
@@ -22,7 +25,7 @@ import java.util.*
  * @param T Entity type associated with this table
  */
 public actual abstract class H2Table<T : Any> protected actual constructor(tableName: String?) :
-    AbstractCommonTable<T>(tableName) {
+    AbstractCommonTable<T>(tableName), IH2Table<T> {
 
     protected fun varchar(
         getter: (T) -> String,
