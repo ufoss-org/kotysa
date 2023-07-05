@@ -21,7 +21,7 @@ class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSu
             R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryR2dbcMysqlSubQuery(sqlClient)
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify selectCaseWhenExistsSubQuery throws IllegalArgumentException`() {
         Assertions.assertThatThrownBy {

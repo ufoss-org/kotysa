@@ -12,7 +12,7 @@ kotlin {
 
                 implementation(kotlin("test"))
 //                api(kotlin("test-annotations-common"))
-                implementation("ch.tutteli.atrium:atrium-fluent-en_GB:${property("atriumVersion")}")
+                implementation("ch.tutteli.atrium:atrium-fluent:${property("atriumVersion")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:${property("kotlinxDatetimeVersion")}")
             }
         }

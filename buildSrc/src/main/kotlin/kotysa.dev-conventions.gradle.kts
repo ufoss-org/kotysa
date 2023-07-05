@@ -57,7 +57,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
-                implementation("ch.tutteli.atrium:atrium-fluent-en_GB:${property("atriumVersion")}")
+                implementation("ch.tutteli.atrium:atrium-fluent:${property("atriumVersion")}")
             }
         }
 
