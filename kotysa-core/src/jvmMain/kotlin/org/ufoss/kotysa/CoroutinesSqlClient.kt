@@ -47,13 +47,13 @@ public sealed interface CoroutinesSqlClient {
 
     // Postgresql specific
     public fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery)
-    : CoroutinesSqlClientSelect.FirstSelect<Float> =
+            : CoroutinesSqlClientSelect.FirstSelect<Float> =
         throw UnsupportedOperationException("Only PostgreSQL supports selectTsRankCd")
 
     public infix fun <T : Any> selectStarFrom(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): CoroutinesSqlClientSelect.From<T>
-    
+
     public infix fun <T : Any> selectFrom(table: Table<T>): CoroutinesSqlClientSelect.FromTable<T, T> =
         select(table).from(table)
 
@@ -87,6 +87,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SelectCaseWhenExistsFirst<T>
+
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): From<T>
@@ -227,9 +228,13 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         override fun and(tsquery: Tsquery): From<T>
     }
 
-    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
-        SqlClientQuery.From<From<T>>, From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
+    public interface FromTable<T : Any, U : Any> : FromTableSelect<U>, SqlClientQuery.From<From<T>>, From<T>,
+        Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
         override fun `as`(alias: String): FromTable<T, U>
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
     }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
@@ -285,9 +290,13 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
 
 public class CoroutinesSqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
 
-    public interface FirstDeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<T>>, Return
+    public interface FirstDeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<T>>, Return {
+        override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+    }
 
-    public interface DeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<Any>>, Return
+    public interface DeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<Any>>, Return {
+        override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+    }
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>
 

@@ -14,8 +14,8 @@ internal class SqlClientUpdateVertx private constructor() : DefaultSqlClientDele
             override val pool: Pool,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            MutinySqlClientDeleteOrUpdate.Where<T>, MutinySqlClientDeleteOrUpdate.Update<T>,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T,  MutinySqlClientDeleteOrUpdate.Where<T>,
+            MutinySqlClientDeleteOrUpdate.Update<T>,
             MutinySqlClientDeleteOrUpdate.UpdateInt<T>>(DbAccessType.VERTX, Module.VERTX_SQL_CLIENT),
         MutinySqlClientDeleteOrUpdate.Update<T>, MutinySqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
         override val where = Where(pool, properties) // fixme try with a lazy
@@ -24,17 +24,26 @@ internal class SqlClientUpdateVertx private constructor() : DefaultSqlClientDele
         override val fromTable: MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(pool, properties)
         }
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Update<T : Any> internal constructor(
             override val pool: Pool,
             override val properties: Properties<T>
-    ) : DeleteOrUpdate<T, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            MutinySqlClientDeleteOrUpdate.Where<Any>>(),
-            MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+    ) : DeleteOrUpdate<T, MutinySqlClientDeleteOrUpdate.Where<Any>>(), MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
+        Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(pool, properties as Properties<Any>) // fixme try with a lazy
         override val fromTable = this
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Where<T : Any>(

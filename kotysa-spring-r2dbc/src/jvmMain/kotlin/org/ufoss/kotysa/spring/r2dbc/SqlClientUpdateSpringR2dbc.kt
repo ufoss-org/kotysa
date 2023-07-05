@@ -15,8 +15,7 @@ internal class SqlClientUpdateSpringR2dbc private constructor() : AbstractSqlCli
         override val client: DatabaseClient,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            ReactorSqlClientDeleteOrUpdate.Where<T>,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, ReactorSqlClientDeleteOrUpdate.Where<T>,
             ReactorSqlClientDeleteOrUpdate.Update<T>, ReactorSqlClientDeleteOrUpdate.UpdateInt<T>>
         (DbAccessType.R2DBC, Module.SPRING_R2DBC), ReactorSqlClientDeleteOrUpdate.Update<T>,
         ReactorSqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
@@ -26,17 +25,26 @@ internal class SqlClientUpdateSpringR2dbc private constructor() : AbstractSqlCli
         override val fromTable: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(client, properties)
         }
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Update<T : Any> internal constructor(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
         ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
         override val fromTable = this
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Where<T : Any>(

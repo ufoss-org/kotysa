@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa.spring.jdbc.mariadb
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
+import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
@@ -20,6 +23,12 @@ class SpringJdbcSelectMariadbTest : AbstractSpringJdbcMariadbTest<UserRepository
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcMariadbSelect(jdbcOperations)
+
+    @Test
+    override fun `Verify selectWithCascadeFullJoin works correctly`() {
+        assertThatThrownBy { super.`Verify selectWithCascadeFullJoin works correctly`() }
+            .isInstanceOf(BadSqlGrammarException::class.java)
+    }
 }
 
 class UserRepositorySpringJdbcMariadbSelect(client: JdbcOperations) :

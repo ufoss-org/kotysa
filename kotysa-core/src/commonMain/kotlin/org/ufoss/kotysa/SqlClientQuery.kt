@@ -60,7 +60,7 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface Fromable {
-        public infix fun <T : Any> from(table: Table<T>): FromTable<T, *>
+        public infix fun <T : Any> from(table: Table<T>): FromTable<T>
         public infix fun <T : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): From<*>
 
         // Postgresql specific
@@ -98,7 +98,7 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface From<T : From<T>> {
-        public infix fun <U : Any> and(table: Table<U>): FromTable<U, *>
+        public infix fun <U : Any> and(table: Table<U>): FromTable<U>
         public infix fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<*>
 
         public infix fun `as`(alias: String): T
@@ -107,18 +107,24 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(tsquery: Tsquery): From<*>
     }
 
-    public interface FromTable<T : Any, U : FromTable<T, U>> {
-        public infix fun <V : Any> innerJoin(table: Table<V>): Joinable<T, U, V>
+    public interface FromTable<T : Any> {
+        public infix fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, *>
     }
 
-    public interface Joinable<T : Any, U : FromTable<T, U>, V : Any> {
-        public infix fun on(column: Column<T, *>): Join<T, U, V>
+    public interface Joinable<T : Any, U : Any, V : FromTable<U>> {
+        public infix fun on(column: Column<T, *>): Join<U, V>
 
         public infix fun `as`(alias: String): Joinable<T, U, V>
     }
 
-    public interface Join<T : Any, U : FromTable<T, U>, V : Any> {
-        public infix fun eq(column: Column<V, *>): U
+    public interface Join<T : Any, U : FromTable<T>> {
+        public infix fun eq(column: Column<T, *>): U
+    }
+
+    public interface FromTableSelect<T : Any> : FromTable<T> {
+        public infix fun <U : Any> leftJoin(table: Table<U>): Joinable<T, U, *>
+        public infix fun <U : Any> rightJoin(table: Table<U>): Joinable<T, U, *>
+        public infix fun <U : Any> fullJoin(table: Table<U>): Joinable<T, U, *>
     }
 
     public interface Update<T : Any, U : Update<T, U, V>, V : UpdateInt<T, U, V>> {

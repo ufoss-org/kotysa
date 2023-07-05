@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa.r2dbc.mariadb
 
+import io.r2dbc.spi.R2dbcBadGrammarException
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MariadbRoles
@@ -14,8 +17,15 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectTest
 
 
 class R2dbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelect>(),
-    CoroutinesSelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelect, R2dbcTransaction> {
+    CoroutinesSelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelect,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelect(sqlClient)
+
+    @Test
+    override fun `Verify selectWithCascadeFullJoin works correctly`() {
+        assertThatThrownBy { super.`Verify selectWithCascadeFullJoin works correctly`() }
+            .isInstanceOf(R2dbcBadGrammarException::class.java)
+    }
 }
 
 class UserRepositoryJdbcMariadbSelect(sqlClient: R2dbcSqlClient) :

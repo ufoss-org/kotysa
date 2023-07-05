@@ -43,8 +43,32 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
     }
 
     @Test
-    fun `Verify selectWithJoin works correctly`() {
-        assertThat(repository.selectWithJoin().await().indefinitely())
+    fun `Verify selectWithCascadeInnerJoin works correctly`() {
+        assertThat(repository.selectWithCascadeInnerJoin().await().indefinitely())
+            .hasSize(1)
+            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+    }
+
+    @Test
+    fun `Verify selectWithCascadeLeftJoin works correctly`() {
+        assertThat(repository.selectWithCascadeLeftJoin().await().indefinitely())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
+    }
+
+    @Test
+    fun `Verify selectWithCascadeRightJoin works correctly`() {
+        assertThat(repository.selectWithCascadeRightJoin().await().indefinitely())
+            .hasSize(1)
+            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+    }
+
+    @Test
+    fun `Verify selectWithCascadeFullJoin works correctly`() {
+        assertThat(repository.selectWithCascadeFullJoin().await().indefinitely())
             .hasSize(2)
             .containsExactlyInAnyOrder(
                 UserWithRoleDto(userJdoe.lastname, roleUser.label),

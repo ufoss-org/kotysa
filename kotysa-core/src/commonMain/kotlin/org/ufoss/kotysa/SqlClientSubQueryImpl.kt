@@ -90,7 +90,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         }
 
         override fun <U : Any> from(table: Table<U>): SqlClientSubQuery.FromTable<T, U> =
-            addFromTable(table, from as FromTable<T, U>)
+            addFromTable(table, from as FromTable<T, U>) as SqlClientSubQuery.FromTable<T, U>
 
         override fun <U : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -180,7 +180,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         }
 
         override fun <V : Any> from(table: Table<V>): SqlClientSubQuery.FromTable<Pair<T, U>, V> =
-            addFromTable(table, from as FromTable<Pair<T, U>, V>)
+            addFromTable(table, from as FromTable<Pair<T, U>, V>) as SqlClientSubQuery.FromTable<Pair<T, U>, V>
 
         override fun <V : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
@@ -266,7 +266,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         }
 
         override fun <W : Any> from(table: Table<W>): SqlClientSubQuery.FromTable<Triple<T, U, V>, W> =
-            addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
+            addFromTable(table, from as FromTable<Triple<T, U, V>, W>) as SqlClientSubQuery.FromTable<Triple<T, U, V>, W>
 
         override fun <W : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
@@ -349,7 +349,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(properties)
 
         override fun <T : Any> from(table: Table<T>): SqlClientSubQuery.FromTable<List<Any?>, T> =
-            addFromTable(table, from as FromTable<List<Any?>, T>)
+            addFromTable(table, from as FromTable<List<Any?>, T>) as SqlClientSubQuery.FromTable<List<Any?>, T>
 
         override fun <T : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -404,7 +404,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
     private class FromTable<T : Any, U : Any>(
         properties: Properties<T>,
-    ) : FromWhereableSubQuery<T, U, SqlClientSubQuery.FromTable<T, U>, SqlClientSubQuery.From<T>,
+    ) : FromWhereableSubQuery<T, U, SqlClientSubQuery.From<T>,
             SqlClientSubQuery.Where<T>, SqlClientSubQuery.LimitOffset<T>,
             SqlClientSubQuery.GroupByPart2<T>>(properties), SqlClientSubQuery.FromTable<T, U>,
         SqlClientSubQuery.From<T>, GroupBy<T>, SqlClientSubQuery.LimitOffset<T>, Return<T> {
@@ -414,6 +414,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override val where by lazy { Where(properties) }
         override val limitOffset by lazy { LimitOffset(properties) }
         override val groupByPart2 by lazy { GroupByPart2(properties) }
+
         override fun <V : Any> and(table: Table<V>): SqlClientSubQuery.FromTable<T, V> =
             addFromTable(table, fromTable as FromTable<T, V>)
 
@@ -426,6 +427,26 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun `as`(alias: String): SqlClientSubQuery.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): Joinable<U, V, SqlClientSubQuery.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.INNER) as Joinable<U, V, SqlClientSubQuery.FromTable<T, V>>
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): Joinable<U, V, SqlClientSubQuery.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER) as Joinable<U, V, SqlClientSubQuery.FromTable<T, V>>
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): Joinable<U, V, SqlClientSubQuery.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER) as Joinable<U, V, SqlClientSubQuery.FromTable<T, V>>
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): Joinable<U, V, SqlClientSubQuery.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER) as Joinable<U, V, SqlClientSubQuery.FromTable<T, V>>
     }
 
     private class Where<T : Any>(

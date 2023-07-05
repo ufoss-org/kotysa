@@ -16,8 +16,7 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
         override val connectionFactory: ConnectionFactory,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            CoroutinesSqlClientDeleteOrUpdate.Where<T>,
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, CoroutinesSqlClientDeleteOrUpdate.Where<T>,
             CoroutinesSqlClientDeleteOrUpdate.Update<T>, CoroutinesSqlClientDeleteOrUpdate.UpdateInt<T>>
         (DbAccessType.R2DBC, Module.R2DBC), CoroutinesSqlClientDeleteOrUpdate.Update<T>,
         CoroutinesSqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
@@ -27,17 +26,26 @@ internal class SqlClientUpdateR2dbc private constructor() : DefaultSqlClientDele
         override val fromTable: CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Update(connectionFactory, properties)
         }
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Update<T : Any> internal constructor(
         override val connectionFactory: ConnectionFactory,
         override val properties: Properties<T>
-    ) : DeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            CoroutinesSqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, CoroutinesSqlClientDeleteOrUpdate.Where<Any>>(),
         CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(connectionFactory, properties as Properties<Any>) // fixme try with a lazy
         override val fromTable = this
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Where<T : Any>(

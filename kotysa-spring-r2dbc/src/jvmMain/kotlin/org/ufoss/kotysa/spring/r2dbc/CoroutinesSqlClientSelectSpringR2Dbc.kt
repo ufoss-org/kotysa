@@ -447,11 +447,10 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
     private class FromTable<T : Any, U : Any>(
         override val client: DatabaseClient,
         properties: Properties<T>,
-    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.FromTable<T, U>, CoroutinesSqlClientSelect.From<T>,
-            CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
-            CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(properties),
-        CoroutinesSqlClientSelect.FromTable<T, U>, CoroutinesSqlClientSelect.From<T>, GroupBy<T>, OrderBy<T>,
-        CoroutinesSqlClientSelect.LimitOffset<T> {
+    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.From<T>, CoroutinesSqlClientSelect.Where<T>,
+            CoroutinesSqlClientSelect.LimitOffset<T>, CoroutinesSqlClientSelect.GroupByPart2<T>,
+            CoroutinesSqlClientSelect.OrderByPart2<T>>(properties), CoroutinesSqlClientSelect.FromTable<T, U>,
+        CoroutinesSqlClientSelect.From<T>, GroupBy<T>, OrderBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
         override val fromTable = this
         override val from = this
 
@@ -470,6 +469,26 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
 
         override fun `as`(alias: String): CoroutinesSqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
     private class Where<T : Any>(
