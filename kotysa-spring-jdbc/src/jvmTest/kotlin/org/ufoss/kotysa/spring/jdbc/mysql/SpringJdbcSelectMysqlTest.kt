@@ -4,6 +4,9 @@
 
 package org.ufoss.kotysa.spring.jdbc.mysql
 
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
+import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
@@ -19,6 +22,12 @@ class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpri
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcMysqlSelect(jdbcOperations)
+
+    @Test
+    override fun `Verify selectWithCascadeFullJoin works correctly`() {
+        assertThatThrownBy { super.`Verify selectWithCascadeFullJoin works correctly`() }
+            .isInstanceOf(BadSqlGrammarException::class.java)
+    }
 }
 
 class UserRepositorySpringJdbcMysqlSelect(client: JdbcOperations) :

@@ -4,7 +4,10 @@
 
 package org.ufoss.kotysa.android
 
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import ch.tutteli.atrium.api.fluent.en_GB.toThrow
+import ch.tutteli.atrium.api.verbs.expect
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.android.transaction.AndroidTransaction
@@ -40,8 +43,27 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>(),
     }
 
     @Test
-    fun `Verify selectWithJoin works correctly - Android`() {
-        `Verify selectWithJoin works correctly`()
+    fun `Verify selectWithCascadeInnerJoin works correctly - Android`() {
+        `Verify selectWithCascadeInnerJoin works correctly`()
+    }
+
+    @Test
+    fun `Verify selectWithCascadeLeftJoin works correctly - Android`() {
+        `Verify selectWithCascadeLeftJoin works correctly`()
+    }
+
+    @Test
+    fun `Verify selectWithCascadeRightJoin works correctly - Android`() {
+        // SqLite on Android does not support right join
+        expect { `Verify selectWithCascadeRightJoin works correctly`() }
+            .toThrow<SQLiteException>()
+    }
+
+    @Test
+    fun `Verify selectWithCascadeFullJoin works correctly - Android`() {
+        // SqLite on Android does not support full join
+        expect { `Verify selectWithCascadeFullJoin works correctly`() }
+            .toThrow<SQLiteException>()
     }
 
     @Test

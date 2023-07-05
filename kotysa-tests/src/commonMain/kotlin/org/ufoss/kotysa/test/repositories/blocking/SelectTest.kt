@@ -45,8 +45,32 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
     }
 
     @Test
-    fun `Verify selectWithJoin works correctly`() {
-        expect(repository.selectWithJoin())
+    fun `Verify selectWithCascadeInnerJoin works correctly`() {
+        expect(repository.selectWithCascadeInnerJoin())
+            .toHaveSize(1)
+            .toContainExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+    }
+
+    @Test
+    fun `Verify selectWithCascadeLeftJoin works correctly`() {
+        expect(repository.selectWithCascadeLeftJoin())
+            .toHaveSize(2)
+            .toContain(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
+    }
+
+    @Test
+    fun `Verify selectWithCascadeRightJoin works correctly`() {
+        expect(repository.selectWithCascadeRightJoin())
+            .toHaveSize(1)
+            .toContainExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+    }
+
+    @Test
+    fun `Verify selectWithCascadeFullJoin works correctly`() {
+        expect(repository.selectWithCascadeFullJoin())
             .toHaveSize(2)
             .toContain(
                 UserWithRoleDto(userJdoe.lastname, roleUser.label),

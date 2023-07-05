@@ -434,10 +434,10 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
     private class FromTable<T : Any, U : Any>(
             override val client: NamedParameterJdbcOperations,
             properties: Properties<T>,
-    ) : FromWhereable<T, U, SqlClientSelect.FromTable<T, U>, SqlClientSelect.From<T>, SqlClientSelect.Where<T>,
-            SqlClientSelect.LimitOffset<T>, SqlClientSelect.GroupByPart2<T>,
-            SqlClientSelect.OrderByPart2<T>>(properties), SqlClientSelect.FromTable<T, U>, SqlClientSelect.From<T>,
-        GroupBy<T>, OrderBy<T>, SqlClientSelect.LimitOffset<T> {
+    ) : FromWhereable<T, U, SqlClientSelect.From<T>, SqlClientSelect.Where<T>, SqlClientSelect.LimitOffset<T>,
+            SqlClientSelect.GroupByPart2<T>, SqlClientSelect.OrderByPart2<T>>(properties),
+        SqlClientSelect.FromTable<T, U>, SqlClientSelect.From<T>, GroupBy<T>, OrderBy<T>,
+        SqlClientSelect.LimitOffset<T> {
         override val fromTable = this
         override val from = this
         
@@ -457,6 +457,25 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun `as`(alias: String): SqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
     private class Where<T : Any>(

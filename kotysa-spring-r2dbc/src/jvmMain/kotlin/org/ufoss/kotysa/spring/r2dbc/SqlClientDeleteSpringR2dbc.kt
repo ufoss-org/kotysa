@@ -15,24 +15,33 @@ internal class SqlClientDeleteSpringR2dbc private constructor() : AbstractSqlCli
         override val client: DatabaseClient,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            ReactorSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
+    ) : FirstDeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.Where<T>>(DbAccessType.R2DBC, Module.SPRING_R2DBC),
         ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>, Return<T> {
         
         override val where = Where(client, properties)
         override val fromTable: ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(client, properties)
         }
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Delete<T : Any>(
             override val client: DatabaseClient,
             override val properties: Properties<T>,
-    ) : DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
+    ) : DeleteOrUpdate<T, ReactorSqlClientDeleteOrUpdate.Where<Any>>(),
         ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>)
         override val fromTable = this
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Where<T : Any>(

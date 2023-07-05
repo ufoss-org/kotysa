@@ -44,9 +44,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : FromTable<U, V>> addFromTable(
+        protected fun <U : Any, V : FromTable<U>> addFromTable(
             table: Table<U>,
-            from: FromWhereableSubQuery<T, U, V, *, *, *, *>,
+            from: FromWhereableSubQuery<T, U, *, *, *, *>,
         ): V {
             properties.select = buildSelect()
             return from.addFromTable(table)
@@ -57,7 +57,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
          */
         protected fun <U : Any, V : From<V>> addFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
-            from: FromWhereableSubQuery<T, U, *, V, *, *, *>,
+            from: FromWhereableSubQuery<T, U, V, *, *, *>,
             selectStar: Boolean = false,
         ): V {
             val result = properties.executeSubQuery(dsl)
@@ -73,7 +73,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
          */
         protected fun <U : Any, V : From<V>> addFromTsquery(
             tsquery: Tsquery,
-            from: FromWhereableSubQuery<T, U, *, V, *, *, *>,
+            from: FromWhereableSubQuery<T, U, V, *, *, *>,
         ): V {
             properties.select = buildSelect()
             return from.addFromTsquery(tsquery)
@@ -175,40 +175,41 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
             properties.select = field.builder
         }
 
-        protected fun <U : Any, V : FromTable<U, V>> addFromTable(
+        protected fun <U : Any, V : FromTable<U>> addFromTable(
             table: Table<U>,
-            from: FromWhereable<T, U, V, *, *, *, *, *>
+            from: FromWhereable<T, U, *, *, *, *, *>
         ): V = from.addFromTable(table)
 
         protected fun <U : Any, V : From<V>> addFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
-            from: FromWhereable<T, U, *, V, *, *, *, *>
+            from: FromWhereable<T, U, V, *, *, *, *>
         ): V = from.addFromSubQuery(properties.executeSubQuery(dsl))
 
         protected fun <U : Any, V : From<V>> addFromTsquery(
             tsquery: Tsquery,
-            from: FromWhereable<T, U, *, V, *, *, *, *>,
+            from: FromWhereable<T, U, V, *, *, *, *>,
         ): V = from.addFromTsquery(tsquery)
     }
 
-    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : FromTable<U, V>, W : From<W>, X : SqlClientQuery.Where<X>,
+    public abstract class FromWhereableSubQuery<T : Any, U : Any, W : From<W>, X : SqlClientQuery.Where<X>,
             Y : SqlClientQuery.LimitOffset<Y>, Z : SqlClientQuery.GroupByPart2<Z>>
     protected constructor(
         final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, V, W, X>(), LimitOffset<T, Y>, GroupBy<T, Z> {
-        protected fun <A : Any, B : FromTable<A, B>> addFromTable(
+    ) : DefaultSqlClientCommon.FromWhereable<U, W, X>(), FromTableSelect<U>, LimitOffset<T, Y>,
+        GroupBy<T, Z> {
+        protected fun <A : Any, B : FromTable<A>> addFromTable(
             table: Table<A>,
-            from: FromWhereableSubQuery<T, A, B, *, *, *, *>,
+            from: FromWhereableSubQuery<T, A, *, *, *, *>,
         ): B = from.addFromTable(table)
 
         protected fun <A : Any, B : From<B>> addFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<A>,
-            from: FromWhereableSubQuery<T, A, *, B, *, *, *>
+            from: FromWhereableSubQuery<T, A, B, *, *, *>
         ): B = from.addFromSubQuery(properties.executeSubQuery(dsl))
 
         protected fun <A : Any, B : From<B>> addFromTsquery(
             tsquery: Tsquery,
-            from: FromWhereableSubQuery<T, A, *, B, *, *, *>,
+            from: FromWhereableSubQuery<T, A, B, *, *, *>,
         ): B = from.addFromTsquery(tsquery)
 
         protected fun <A : From<A>> aliasLastFrom(
@@ -219,11 +220,11 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    public abstract class FromWhereable<T : Any, U : Any, V : FromTable<U, V>, W : From<W>, X : SqlClientQuery.Where<X>,
+    public abstract class FromWhereable<T : Any, U : Any, W : From<W>, X : SqlClientQuery.Where<X>,
             Y : SqlClientQuery.LimitOffset<Y>, Z : SqlClientQuery.GroupByPart2<Z>, A : SqlClientQuery.OrderByPart2<A>>
     protected constructor(
         properties: Properties<T>,
-    ) : FromWhereableSubQuery<T, U, V, W, X, Y, Z>(properties), OrderBy<T, A>
+    ) : FromWhereableSubQuery<T, U, W, X, Y, Z>(properties), OrderBy<T, A>
 
     public abstract class WhereSubQuery<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
             W : SqlClientQuery.GroupByPart2<W>>

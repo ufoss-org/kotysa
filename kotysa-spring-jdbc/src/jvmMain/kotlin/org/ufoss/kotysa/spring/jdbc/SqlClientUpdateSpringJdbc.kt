@@ -15,27 +15,34 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
             override val client: NamedParameterJdbcOperations,
             override val tables: Tables,
             override val table: Table<T>,
-    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>>
-        (DbAccessType.JDBC, Module.SPRING_JDBC),
+    ) : DefaultSqlClientDeleteOrUpdate.Update<T, SqlClientDeleteOrUpdate.Where<T>, SqlClientDeleteOrUpdate.Update<T>,
+            SqlClientDeleteOrUpdate.UpdateInt<T>> (DbAccessType.JDBC, Module.SPRING_JDBC),
             SqlClientDeleteOrUpdate.Update<T>, SqlClientDeleteOrUpdate.UpdateInt<T>, Return<T> {
         override val where = Where(client, properties) // fixme try with a lazy
         override val update = this
         override val updateInt = this
-        override val fromTable: SqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
+        override val fromTable: Update<T> by lazy {
             Update(client, properties)
         }
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Update<T : Any> internal constructor(
             override val client: NamedParameterJdbcOperations,
             override val properties: Properties<T>
-    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            SqlClientDeleteOrUpdate.Where<Any>>(),
-            SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+    ) : DeleteOrUpdate<T, SqlClientDeleteOrUpdate.Where<Any>>(), SqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(client, properties as Properties<Any>) // fixme try with a lazy
         override val fromTable = this
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Where<T : Any>(

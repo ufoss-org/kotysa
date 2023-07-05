@@ -15,8 +15,7 @@ public class JoinClause<T : Any, U : Any> internal constructor(
 
 public enum class JoinClauseType(internal val sql: String) {
     INNER("INNER JOIN"),
-    LEFT_OUTER("LEFT OUTER JOIN"),
-    RIGHT_OUTER("RIGHT OUTER JOIN"),
-    FULL_OUTER("OUTER JOIN"),
-    CROSS("CROSSS JOIN")
+    LEFT_OUTER("LEFT JOIN"),
+    RIGHT_OUTER("RIGHT JOIN"),
+    FULL_OUTER("FULL OUTER JOIN")
 }

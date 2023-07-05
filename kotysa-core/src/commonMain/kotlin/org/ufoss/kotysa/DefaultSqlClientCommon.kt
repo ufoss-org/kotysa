@@ -33,27 +33,30 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         public val properties: Properties
     }
 
-    public abstract class FromTableWhereable<T : Any, U : FromTable<T, U>, V : SqlClientQuery.Where<V>> :
-        Whereable<V>(), FromTable<T, U> {
-        protected abstract val fromTable: U
-        private val joinable: Joinable<T, U, *> by lazy {
-            Joinable<T, U, Any>(properties, fromTable)
+    public abstract class FromTableWhereable<T : Any, U : SqlClientQuery.Where<U>> :
+        Whereable<U>(), FromTable<T> {
+        protected abstract val fromTable: FromTable<*>
+        private val joinable: Joinable<T, *, *> by lazy {
+            Joinable(properties, fromTable)
         }
 
-        protected fun <W : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<W>) {
+        protected fun <V : Any> addFromTable(properties: Properties, kotysaTable: KotysaTable<V>) {
             makeAvailable(properties, kotysaTable)
             properties.fromClauses.add(FromClauseTable(kotysaTable.table))
         }
 
-        override fun <W : Any> innerJoin(table: Table<W>): SqlClientQuery.Joinable<T, U, W> {
+        protected fun <V : Any, W : FromTable<V>> joinProtected(
+            table: Table<V>,
+            joinType: JoinClauseType,
+        ): SqlClientQuery.Joinable<T, V, W> {
             makeAvailable(properties, properties.tables.getTable(table))
-            val joinable = (joinable as Joinable<T, U, W>)
-            joinable.type = JoinClauseType.INNER
+            val joinable = (joinable as Joinable<T, V, W>)
+            joinable.type = joinType
             joinable.table = table
             return joinable
         }
 
-        private fun <W : Any> makeAvailable(properties: Properties, kotysaTable: KotysaTable<W>) {
+        private fun <V : Any> makeAvailable(properties: Properties, kotysaTable: KotysaTable<V>) {
             properties.apply {
                 // This table becomes available
                 availableTables[kotysaTable.table] = kotysaTable
@@ -63,19 +66,19 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public abstract class FromWhereable<T : Any, U : FromTable<T, U>, V : From<V>, W : SqlClientQuery.Where<W>> :
-        FromTableWhereable<T, U, W>(), From<V> {
-        protected abstract val from: V
+    public abstract class FromWhereable<T : Any, U : From<U>, V : SqlClientQuery.Where<V>> :
+        FromTableWhereable<T, V>(), From<U> {
+        protected abstract val from: U
 
-        internal fun <X : Any> addFromTable(table: Table<X>): U = with(properties) {
+        internal fun <W : Any, X : FromTable<W>> addFromTable(table: Table<W>): X = with(properties) {
             addFromTable(this, tables.getTable(table))
-            fromTable
+            fromTable as X
         }
 
-        internal fun <X : Any> addFromSubQuery(
-            result: SubQueryResult<X>,
+        internal fun <W : Any> addFromSubQuery(
+            result: SubQueryResult<W>,
             selectStar: Boolean = false,
-        ): V = with(properties) {
+        ): U = with(properties) {
             // All selected tables and columns become available
             availableTables.putAll(result.subQueryProperties.availableTables)
             availableColumns.putAll(result.subQueryProperties.availableColumns)
@@ -84,23 +87,23 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             from
         }
 
-        internal fun addFromTsquery(tsquery: Tsquery): V = with(properties) {
+        internal fun addFromTsquery(tsquery: Tsquery): U = with(properties) {
             properties.fromClauses.add(FromClauseTsquery(tsquery))
             from
         }
     }
 
-    public class Joinable<T : Any, U : FromTable<T, U>, V : Any> internal constructor(
+    public class Joinable<T : Any, U : Any, V : FromTable<U>> internal constructor(
         override val properties: Properties,
-        from: U,
+        from: V,
     ) : SqlClientQuery.Joinable<T, U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
-        internal lateinit var table: Table<V>
+        internal lateinit var table: Table<U>
         internal var alias: String? = null
 
         private val join = Join<T, U, V>(properties, from)
 
-        override fun on(column: Column<T, *>): SqlClientQuery.Join<T, U, V> =
+        override fun on(column: Column<T, *>): SqlClientQuery.Join<U, V> =
             join.apply {
                 type = this@Joinable.type
                 table = this@Joinable.table
@@ -114,16 +117,16 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         }
     }
 
-    public class Join<T : Any, U : FromTable<T, U>, V : Any> internal constructor(
+    public class Join<T : Any, U : Any, V : FromTable<U>> internal constructor(
         override val properties: Properties,
-        private val from: U,
-    ) : SqlClientQuery.Join<T, U, V>, WithProperties {
+        private val from: V,
+    ) : SqlClientQuery.Join<U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
-        internal lateinit var table: Table<V>
+        internal lateinit var table: Table<U>
         internal lateinit var column: Column<T, *>
         internal var alias: String? = null
 
-        override fun eq(column: Column<V, *>): U = with(properties) {
+        override fun eq(column: Column<U, *>): V = with(properties) {
             // get last from
             val joinClause = JoinClause(
                 table,
@@ -214,11 +217,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.WHERE)
 
         override fun <U : Any> where(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>)
-        : WhereOpByteArrayColumnNotNull<U, T> =
+                : WhereOpByteArrayColumnNotNull<U, T> =
             whereOpByteArrayColumnNotNull(byteArrayColumnNotNull, WhereClauseType.WHERE)
 
         override fun <U : Any> where(byteArrayColumnNullable: ByteArrayColumnNullable<U>)
-        : WhereOpByteArrayColumnNullable<U, T> =
+                : WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.WHERE)
 
         override fun <U : Any> where(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T> =
@@ -1360,8 +1363,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
     public interface WhereOpBigDecimalColumn<T : Any, U : SqlClientQuery.Where<U>> :
         WhereOpColumn<T, U, BigDecimal>, WhereInOpColumn<T, U, BigDecimal>, WhereOpBigDecimal<T, U> {
-        override infix fun inf(value: BigDecimal): U = where.apply { addClauseValue(column, Operation.INF, value, type) }
-        override infix fun sup(value: BigDecimal): U = where.apply { addClauseValue(column, Operation.SUP, value, type) }
+        override infix fun inf(value: BigDecimal): U =
+            where.apply { addClauseValue(column, Operation.INF, value, type) }
+
+        override infix fun sup(value: BigDecimal): U =
+            where.apply { addClauseValue(column, Operation.SUP, value, type) }
+
         override infix fun infOrEq(value: BigDecimal): U =
             where.apply { addClauseValue(column, Operation.INF_OR_EQ, value, type) }
 
@@ -1675,11 +1682,11 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
             whereOpUuidColumnNullable(uuidColumnNullable, WhereClauseType.AND)
 
         override fun <U : Any> and(byteArrayColumnNotNull: ByteArrayColumnNotNull<U>)
-        : WhereOpByteArrayColumnNotNull<U, T> =
+                : WhereOpByteArrayColumnNotNull<U, T> =
             whereOpByteArrayColumnNotNull(byteArrayColumnNotNull, WhereClauseType.AND)
 
         override fun <U : Any> and(byteArrayColumnNullable: ByteArrayColumnNullable<U>)
-        : WhereOpByteArrayColumnNullable<U, T> =
+                : WhereOpByteArrayColumnNullable<U, T> =
             whereOpByteArrayColumnNullable(byteArrayColumnNullable, WhereClauseType.AND)
 
         override fun <U : Any> and(floatColumnNotNull: FloatColumnNotNull<U>): WhereOpFloatNotNull<U, T> =
@@ -2044,27 +2051,28 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                 }
                 when (fromClause) {
                     is FromClauseTable<*> ->
-                        "${fromClause.table.getFieldName(availableTables)}$alias " + fromClause.joinClauses.joinToString { joinClause ->
-                            val ons = joinClause.references.entries.joinToString("and ") { reference ->
-                                "${reference.key.getFieldName(availableColumns, tables.dbType)} = ${
-                                    reference.value.getFieldName(
-                                        availableColumns,
-                                        tables.dbType
-                                    )
-                                }"
-                            }
-                            val joinAlias = if (joinClause.alias.isNullOrBlank()) {
-                                ""
-                            } else {
-                                when (tables.dbType) {
-                                    DbType.MSSQL, DbType.POSTGRESQL -> " AS ${joinClause.alias}"
-                                    DbType.ORACLE -> " ${joinClause.alias}"
-                                    else -> " AS `${joinClause.alias}`"
+                        "${fromClause.table.getFieldName(availableTables)}$alias " + fromClause.joinClauses
+                            .joinToString(" ") { joinClause ->
+                                val ons = joinClause.references.entries.joinToString("and ") { reference ->
+                                    "${reference.key.getFieldName(availableColumns, tables.dbType)} = ${
+                                        reference.value.getFieldName(
+                                            availableColumns,
+                                            tables.dbType
+                                        )
+                                    }"
                                 }
-                            }
+                                val joinAlias = if (joinClause.alias.isNullOrBlank()) {
+                                    ""
+                                } else {
+                                    when (tables.dbType) {
+                                        DbType.MSSQL, DbType.POSTGRESQL -> " AS ${joinClause.alias}"
+                                        DbType.ORACLE -> " ${joinClause.alias}"
+                                        else -> " AS `${joinClause.alias}`"
+                                    }
+                                }
 
-                            "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)}$joinAlias ON $ons"
-                        }
+                                "${joinClause.type.sql} ${joinClause.table.getFieldName(availableTables)}$joinAlias ON $ons"
+                            }
 
                     is FromClauseSubQuery<*> -> {
                         if (fromClause.selectStar
@@ -2076,15 +2084,17 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                         }
                         "( ${fromClause.result.sql(this@with)} )$alias"
                     }
-                    
+
                     is FromClauseTsquery -> with(fromClause.tsquery) {
                         val function = when (operation) {
                             Operation.TO_TSQUERY -> "to_tsquery"
                             Operation.PLAINTO_TSQUERY -> "plainto_tsquery"
                             Operation.PHRASETO_TSQUERY -> "phraseto_tsquery"
                             Operation.WEBSEARCH_TO_TSQUERY -> "websearch_to_tsquery"
-                            else -> throw IllegalArgumentException("Only TO_TSQUERY, PLAINTO_TSQUERY," +
-                                    "PHRASETO_TSQUERY AND WEBSEARCH_TO_TSQUERY are supported in FromClauseTsquery")
+                            else -> throw IllegalArgumentException(
+                                "Only TO_TSQUERY, PLAINTO_TSQUERY," +
+                                        "PHRASETO_TSQUERY AND WEBSEARCH_TO_TSQUERY are supported in FromClauseTsquery"
+                            )
                         }
                         "$function('$value')$alias"
                     }
@@ -2118,10 +2128,12 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
                                 )
                                 "EXISTS (${result.sql(this@with)})"
                             }
+
                             is WhereClauseTsqueryWithColumn<*> -> {
                                 val fieldName = getFieldName(availableColumns, tables)
                                 "${tsquery.alias} @@ $fieldName"
                             }
+
                             else -> {
                                 val fieldName = getFieldName(availableColumns, tables)
                                 when (operation) {
@@ -2233,7 +2245,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         private fun WhereClause.getFieldName(
             availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>>,
             tables: Tables
-        ) = 
+        ) =
             if (this is WhereClauseWithColumn<*>) {
                 column.getFieldName(availableColumns, tables.dbType)
             } else {

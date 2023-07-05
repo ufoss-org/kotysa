@@ -4,8 +4,8 @@
 
 package org.ufoss.kotysa.test.repositories.reactor
 
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.test.*
@@ -45,8 +45,32 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
     }
 
     @Test
-    fun `Verify selectWithJoin works correctly`() {
-        assertThat(repository.selectWithJoin().toIterable())
+    fun `Verify selectWithCascadeInnerJoin works correctly`() {
+        assertThat(repository.selectWithCascadeInnerJoin().toIterable())
+            .hasSize(1)
+            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+    }
+
+    @Test
+    fun `Verify selectWithCascadeLeftJoin works correctly`() {
+        assertThat(repository.selectWithCascadeLeftJoin().toIterable())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
+                UserWithRoleDto(userJdoe.lastname, roleUser.label),
+                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+            )
+    }
+
+    @Test
+    fun `Verify selectWithCascadeRightJoin works correctly`() {
+        assertThat(repository.selectWithCascadeRightJoin().toIterable())
+            .hasSize(1)
+            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+    }
+
+    @Test
+    fun `Verify selectWithCascadeFullJoin works correctly`() {
+        assertThat(repository.selectWithCascadeFullJoin().toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
                 UserWithRoleDto(userJdoe.lastname, roleUser.label),

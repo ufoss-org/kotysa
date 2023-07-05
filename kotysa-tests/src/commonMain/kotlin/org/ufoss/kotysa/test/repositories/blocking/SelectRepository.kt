@@ -26,9 +26,28 @@ abstract class SelectRepository<T : Roles, U : Users, V : UserRoles>(
                 from tableUsers
                 ).fetchAll()
 
-    fun selectWithJoin() =
+    fun selectWithCascadeInnerJoin() =
         (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
                 from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
+                innerJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                ).fetchAll()
+
+    fun selectWithCascadeLeftJoin() =
+        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+                from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
+                leftJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                ).fetchAll()
+
+    fun selectWithCascadeRightJoin() =
+        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+                from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
+                rightJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                ).fetchAll()
+
+    fun selectWithCascadeFullJoin() =
+        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+                from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
+                fullJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
                 ).fetchAll()
 
     fun selectWithEqJoin() =

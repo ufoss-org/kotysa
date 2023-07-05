@@ -193,9 +193,13 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
         actual override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
     }
 
-    public actual interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
+    public actual interface FromTable<T : Any, U : Any> : FromTableSelect<U>,
         SqlClientQuery.From<From<T>>, From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
         actual override fun `as`(alias: String): FromTable<T, U>
+        actual override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        actual override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        actual override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        actual override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
     }
 
     public actual interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
@@ -255,9 +259,13 @@ public actual class SqlClientSelect private actual constructor() : SqlClientQuer
 
 
 public actual class SqlClientDeleteOrUpdate private actual constructor() : SqlClientQuery() {
-    public actual interface FirstDeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<T>>, Return
+    public actual interface FirstDeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<T>>, Return {
+        actual override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+    }
 
-    public actual interface DeleteOrUpdate<T : Any> : FromTable<T, DeleteOrUpdate<T>>, Whereable<Where<Any>>, Return
+    public actual interface DeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<Any>>, Return {
+        actual override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+    }
 
     public actual interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>
 

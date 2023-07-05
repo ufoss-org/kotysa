@@ -447,11 +447,10 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
     private class FromTable<T : Any, U : Any>(
         override val client: DatabaseClient,
         properties: Properties<T>,
-    ) : FromWhereable<T, U, ReactorSqlClientSelect.FromTable<T, U>, ReactorSqlClientSelect.From<T>,
-            ReactorSqlClientSelect.Where<T>, ReactorSqlClientSelect.LimitOffset<T>,
-            ReactorSqlClientSelect.GroupByPart2<T>, ReactorSqlClientSelect.OrderByPart2<T>>(properties),
-        ReactorSqlClientSelect.FromTable<T, U>, ReactorSqlClientSelect.From<T>,
-        GroupBy<T>, OrderBy<T>, ReactorSqlClientSelect.LimitOffset<T> {
+    ) : FromWhereable<T, U, ReactorSqlClientSelect.From<T>, ReactorSqlClientSelect.Where<T>,
+            ReactorSqlClientSelect.LimitOffset<T>, ReactorSqlClientSelect.GroupByPart2<T>,
+            ReactorSqlClientSelect.OrderByPart2<T>>(properties), ReactorSqlClientSelect.FromTable<T, U>,
+        ReactorSqlClientSelect.From<T>, GroupBy<T>, OrderBy<T>, ReactorSqlClientSelect.LimitOffset<T> {
         override val fromTable = this
         override val from = this
 
@@ -470,6 +469,26 @@ internal class SqlClientSelectSpringR2dbc private constructor() : AbstractSqlCli
 
         override fun `as`(alias: String): ReactorSqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
     private class Where<T : Any>(

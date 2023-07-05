@@ -162,8 +162,13 @@ public class SqlClientSubQuery private constructor() {
         override fun and(tsquery: Tsquery): From<T>
     }
 
-    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
-        SqlClientQuery.From<From<T>>, From<T>, SqlClientQuery.Whereable<Where<T>>, GroupBy<T>, LimitOffset<T>, Return<T>
+    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTableSelect<U>, SqlClientQuery.From<From<T>>, From<T>,
+        SqlClientQuery.Whereable<Where<T>>, GroupBy<T>, LimitOffset<T>, Return<T> {
+        override fun <V : Any> innerJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
+    }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, GroupBy<T>, LimitOffset<T>, Return<T>
 

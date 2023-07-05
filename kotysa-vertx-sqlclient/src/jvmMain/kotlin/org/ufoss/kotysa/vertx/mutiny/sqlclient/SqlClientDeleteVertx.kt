@@ -14,8 +14,7 @@ internal class SqlClientDeleteVertx private constructor() : DefaultSqlClientDele
         override val pool: Pool,
         override val tables: Tables,
         override val table: Table<T>,
-    ) : FirstDeleteOrUpdate<T, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
-            MutinySqlClientDeleteOrUpdate.Where<T>>(DbAccessType.VERTX, Module.VERTX_SQL_CLIENT),
+    ) : FirstDeleteOrUpdate<T, MutinySqlClientDeleteOrUpdate.Where<T>>(DbAccessType.VERTX, Module.VERTX_SQL_CLIENT),
         MutinySqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T>,
         Return<T> {
         
@@ -23,16 +22,26 @@ internal class SqlClientDeleteVertx private constructor() : DefaultSqlClientDele
         override val fromTable: MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T> by lazy {
             Delete(pool, properties)
         }
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Delete<T : Any>(
             override val pool: Pool,
             override val properties: Properties<T>,
-    ) : DeleteOrUpdate<T, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>, MutinySqlClientDeleteOrUpdate.Where<Any>>(),
-        MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>, Return<T> {
+    ) : DeleteOrUpdate<T, MutinySqlClientDeleteOrUpdate.Where<Any>>(), MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<T>,
+        Return<T> {
         @Suppress("UNCHECKED_CAST")
         override val where = Where(pool, properties as Properties<Any>)
         override val fromTable = this
+
+        override fun <U : Any> innerJoin(
+            table: Table<U>
+        ): SqlClientQuery.Joinable<T, U, MutinySqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+            joinProtected(table, JoinClauseType.INNER)
     }
 
     internal class Where<T : Any>(

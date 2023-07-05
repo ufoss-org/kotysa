@@ -230,9 +230,13 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun and(tsquery: Tsquery): From<T>
     }
 
-    public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTable<U, FromTable<T, U>>,
-        SqlClientQuery.From<From<T>>, From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
+    public interface FromTable<T : Any, U : Any> : FromTableSelect<U>, SqlClientQuery.From<From<T>>, From<T>,
+        Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
         override fun `as`(alias: String): FromTable<T, U>
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
     }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>, Return<T>
@@ -272,11 +276,15 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
 
 public class ReactorSqlClientDeleteOrUpdate private constructor() {
 
-    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Where<T>>,
-        Return
+    public interface FirstDeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T>, SqlClientQuery.Whereable<Where<T>>,
+        Return {
+        override fun <U : Any> innerJoin(table: Table<U>): SqlClientQuery.Joinable<T, U, DeleteOrUpdate<U>>
+    }
 
-    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T, DeleteOrUpdate<T>>, SqlClientQuery.Whereable<Where<Any>>,
-        Return
+    public interface DeleteOrUpdate<T : Any> : SqlClientQuery.FromTable<T>, SqlClientQuery.Whereable<Where<Any>>,
+        Return {
+        override fun <U : Any> innerJoin(table: Table<U>): SqlClientQuery.Joinable<T, U, DeleteOrUpdate<U>>
+    }
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>
 

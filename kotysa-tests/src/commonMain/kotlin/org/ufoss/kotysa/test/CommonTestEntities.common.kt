@@ -47,7 +47,7 @@ data class UserRoleEntity(
     val roleId: Int,
 )
 
-val userRoleBboss = UserRoleEntity(2, 2)
+val userRoleBboss = UserRoleEntity(userBboss.id, roleAdmin.id)
 
 interface UserRoles : Table<UserRoleEntity> {
     val userId: IntColumnNotNull<UserRoleEntity>

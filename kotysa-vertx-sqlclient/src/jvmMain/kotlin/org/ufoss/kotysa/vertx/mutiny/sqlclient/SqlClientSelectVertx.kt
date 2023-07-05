@@ -441,7 +441,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
     private class FromTable<T : Any, U : Any>(
         override val pool: Pool,
         properties: Properties<T>,
-    ) : FromWhereable<T, U, MutinySqlClientSelect.FromTable<T, U>, MutinySqlClientSelect.From<T>, MutinySqlClientSelect.Where<T>,
+    ) : FromWhereable<T, U, MutinySqlClientSelect.From<T>, MutinySqlClientSelect.Where<T>,
             MutinySqlClientSelect.LimitOffset<T>, MutinySqlClientSelect.GroupByPart2<T>,
             MutinySqlClientSelect.OrderByPart2<T>>(properties), MutinySqlClientSelect.FromTable<T, U>,
         MutinySqlClientSelect.From<T>,
@@ -465,6 +465,26 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
 
         override fun `as`(alias: String): MutinySqlClientSelect.FromTable<T, U> =
             from.apply { aliasLastFrom(alias) }
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
     private class Where<T : Any>(
