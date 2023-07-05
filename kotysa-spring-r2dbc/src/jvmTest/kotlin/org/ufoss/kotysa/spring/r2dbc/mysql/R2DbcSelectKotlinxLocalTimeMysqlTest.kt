@@ -12,7 +12,7 @@ import org.ufoss.kotysa.test.MysqlKotlinxLocalTimes
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalTimeRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectKotlinxLocalTimeTest
 
-@Tag("miku")
+@Tag("asyncer")
 class R2DbcSelectKotlinxLocalTimeMysqlTest : AbstractR2dbcMysqlTest<KotlinxLocalTimeMysqlRepository>(),
     ReactorSelectKotlinxLocalTimeTest<MysqlKotlinxLocalTimes, KotlinxLocalTimeMysqlRepository, ReactorTransaction> {
 

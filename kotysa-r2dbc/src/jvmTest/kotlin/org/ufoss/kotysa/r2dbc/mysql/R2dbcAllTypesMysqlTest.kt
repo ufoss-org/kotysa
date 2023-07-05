@@ -126,7 +126,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         }
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify selectAllAllTypesNotNullWithTime returns all AllTypesNotNull`() = runTest {
         assertThat(repository.selectAllAllTypesNotNullWithTime().toList())
@@ -134,7 +134,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
             .containsExactly(mysqlAllTypesNotNullWithTime)
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify selectAllAllTypesNullableDefaultValueWithTime returns all AllTypesNullableDefaultValueWithTime`() =
         runTest {
@@ -169,7 +169,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
             .containsExactly(allTypesNullableWithTime)
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify updateAllTypesNotNullWithTime works`() = runTest {
         val newLocalDate = LocalDate.now()
@@ -204,7 +204,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         }
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify updateAllTypesNotNullColumnWithTime works`() = runTest {
         coOperator.transactional<Unit> { transaction ->
@@ -216,7 +216,7 @@ class R2dbcAllTypesMysqlTest : AbstractR2dbcMysqlTest<AllTypesRepositoryMysql>()
         }
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify insertAndReturnAllTypesDefaultValuesWithTime works correctly`() = runTest {
         coOperator.transactional { transaction ->

@@ -105,7 +105,7 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
             .isEqualTo(userBboss.firstname)
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAliasSubQuery throws IllegalArgumentException`() {
         assertThatThrownBy { runTest {

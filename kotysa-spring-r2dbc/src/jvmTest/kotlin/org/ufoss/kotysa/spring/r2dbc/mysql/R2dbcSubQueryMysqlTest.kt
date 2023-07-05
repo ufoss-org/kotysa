@@ -50,7 +50,7 @@ class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSu
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
 
-    @Tag("miku")
+    @Tag("asyncer")
     @Test
     fun `Verify selectCaseWhenExistsSubQuery throws IllegalArgumentException`() {
         Assertions.assertThatThrownBy {

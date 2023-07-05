@@ -3,9 +3,9 @@ kotlin {
         testRuns["test"].executionTask.configure {
             useJUnitPlatform {
                 // for jasync
-                excludeTags("miku")
-                // for miku
-//                excludeTags("jasync")
+//                excludeTags("asyncer")
+                // for asyncer
+                excludeTags("jasync")
             }
         }
     }
@@ -39,8 +39,8 @@ kotlin {
 
                 runtimeOnly("io.r2dbc:r2dbc-h2:${property("r2dbcH2Version")}")
                 runtimeOnly("org.mariadb:r2dbc-mariadb:${property("r2dbcMariadbVersion")}")
-//                runtimeOnly("dev.miku:r2dbc-mysql:${property("r2dbcMysqlVersion")}")
-                runtimeOnly("com.github.jasync-sql:jasync-r2dbc-mysql:${property("jasyncR2dbcVersion")}")
+                runtimeOnly("io.asyncer:r2dbc-mysql:${property("r2dbcMysqlVersion")}")
+//                runtimeOnly("com.github.jasync-sql:jasync-r2dbc-mysql:${property("jasyncR2dbcVersion")}")
                 runtimeOnly("io.r2dbc:r2dbc-mssql:${property("r2dbcMssqlVersion")}")
                 runtimeOnly("org.postgresql:r2dbc-postgresql:${property("r2dbcPostgresqlVersion")}")
                 runtimeOnly("com.oracle.database.r2dbc:oracle-r2dbc:${property("r2dbcOracleVersion")}")

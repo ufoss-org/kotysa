@@ -11,7 +11,7 @@ import org.ufoss.kotysa.test.MysqlKotlinxLocalTimes
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectKotlinxLocalTimeRepository
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectKotlinxLocalTimeTest
 
-@Tag("miku")
+@Tag("asyncer")
 class R2dbcSelectKotlinxLocalTimeMysqlTest : AbstractR2dbcMysqlTest<KotlinxLocalTimeRepositoryMysqlSelect>(),
     CoroutinesSelectKotlinxLocalTimeTest<MysqlKotlinxLocalTimes, KotlinxLocalTimeRepositoryMysqlSelect,
             R2dbcTransaction> {

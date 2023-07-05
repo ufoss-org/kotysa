@@ -12,7 +12,7 @@ import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.test.*
 import java.time.LocalTime
 
-@Tag("miku")
+@Tag("asyncer")
 class R2DbcSelectLocalTimeMysqlTest : AbstractR2dbcMysqlTest<LocalTimeRepositoryMysqlSelect>() {
 
     override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =

@@ -11,7 +11,7 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLocalTimeRepository
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectLocalTimeTest
 
-@Tag("miku")
+@Tag("asyncer")
 class R2dbcSelectLocalTimeMysqlTest : AbstractR2dbcMysqlTest<LocalTimeRepositoryMysqlSelect>(),
     CoroutinesSelectLocalTimeTest<MysqlLocalTimes, LocalTimeRepositoryMysqlSelect, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = LocalTimeRepositoryMysqlSelect(sqlClient)
