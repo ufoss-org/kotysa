@@ -11,12 +11,12 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectAndRepository
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectAndTest
 
-class VertxSqlClientSelectAndOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryJdbcOracleSelectAnd>(),
-    MutinySelectAndTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelectAnd> {
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryJdbcOracleSelectAnd(sqlClient)
+class VertxSqlClientSelectAndOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryVertxSqlClientOracleSelectAnd>(),
+    MutinySelectAndTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryVertxSqlClientOracleSelectAnd> {
+    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryVertxSqlClientOracleSelectAnd(sqlClient)
 }
 
-class UserRepositoryJdbcOracleSelectAnd(sqlClient: VertxSqlClient) :
+class UserRepositoryVertxSqlClientOracleSelectAnd(sqlClient: VertxSqlClient) :
     MutinySelectAndRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

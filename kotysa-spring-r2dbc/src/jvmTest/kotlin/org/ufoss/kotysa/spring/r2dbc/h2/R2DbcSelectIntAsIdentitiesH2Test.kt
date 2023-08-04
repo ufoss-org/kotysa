@@ -14,11 +14,12 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesRe
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesTest
 
 @Order(1)
-class R2DbcSelectIntAsIdentitiesH2Test : AbstractR2dbcH2Test<ReactorSelectIntRepositoryH2Select>(),
-    ReactorSelectIntAsIdentitiesTest<H2IntAsIdentities, ReactorSelectIntRepositoryH2Select, ReactorTransaction> {
+class R2DbcSelectIntAsIdentitiesH2Test : AbstractR2dbcH2Test<ReactorSelectIntAsIdentitiesRepositoryH2Select>(),
+    ReactorSelectIntAsIdentitiesTest<H2IntAsIdentities, ReactorSelectIntAsIdentitiesRepositoryH2Select,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
-        ReactorSelectIntRepositoryH2Select(sqlClient)
+        ReactorSelectIntAsIdentitiesRepositoryH2Select(sqlClient)
 }
 
-class ReactorSelectIntRepositoryH2Select(sqlClient: ReactorSqlClient) :
+class ReactorSelectIntAsIdentitiesRepositoryH2Select(sqlClient: ReactorSqlClient) :
     ReactorSelectIntAsIdentitiesRepository<H2IntAsIdentities>(sqlClient, H2IntAsIdentities)

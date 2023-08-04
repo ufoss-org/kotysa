@@ -84,7 +84,7 @@ public class WhereClauseWithType internal constructor(
 )
 
 public enum class WhereClauseType {
-    WHERE, AND, OR
+    WHERE, OR
 }
 
 internal class WhereClauseTsqueryWithColumn<T : Any> internal constructor(

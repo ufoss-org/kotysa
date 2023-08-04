@@ -41,55 +41,58 @@ internal sealed class SqlClientSpringR2dbc(
 
     protected fun <T : Any> deleteFromProtected(table: Table<T>)
     : ReactorSqlClientDeleteOrUpdate.FirstDeleteOrUpdate<T> =
-        SqlClientDeleteSpringR2dbc.FirstDelete(client, tables, table)
+        ReactorSqlClientDeleteSpringR2dbc.FirstDelete(client, tables, table)
 
     protected fun <T : Any> updateProtected(table: Table<T>): ReactorSqlClientDeleteOrUpdate.Update<T> =
-        SqlClientUpdateSpringR2dbc.FirstUpdate(client, tables, table)
+        ReactorSqlClientUpdateSpringR2dbc.FirstUpdate(client, tables, table)
 
     protected fun <T : Any, U : Any> selectProtected(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).select(column)
     protected fun <T : Any> selectProtected(table: Table<T>): ReactorSqlClientSelect.FirstSelect<T> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).select(table)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).select(table)
     protected fun <T : Any> selectAndBuildProtected(dsl: (ValueProvider) -> T): ReactorSqlClientSelect.Fromable<T> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAndBuild(dsl)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectAndBuild(dsl)
     protected fun selectCountProtected(): ReactorSqlClientSelect.Fromable<Long> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount<Any>(null)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount<Any>(null)
     protected fun <T : Any> selectCountProtected(column: Column<*, T>): ReactorSqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectCount(column)
     protected fun <T : Any, U : Any> selectDistinctProtected(column: Column<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectDistinct(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectDistinct(column)
     protected fun <T : Any, U : Any> selectMinProtected(column: MinMaxColumn<T, U>): ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectMin(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectMin(column)
     protected fun <T : Any, U : Any> selectMaxProtected(column: MinMaxColumn<T, U>)
     : ReactorSqlClientSelect.FirstSelect<U> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectMax(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectMax(column)
     protected fun <T : Any, U : Any> selectAvgProtected(column: NumericColumn<T, U>)
     : ReactorSqlClientSelect.FirstSelect<BigDecimal> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectAvg(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectAvg(column)
     protected fun <T : Any, U : Any> selectSumProtected(column: WholeNumberColumn<T, U>)
     : ReactorSqlClientSelect.FirstSelect<Long> =
-            SqlClientSelectSpringR2dbc.Selectable(client, tables).selectSum(column)
+            ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectSum(column)
 
     protected fun selectTsRankCdProtected(
         tsvectorColumn: TsvectorColumn<*>,
         tsquery: Tsquery,
     ): ReactorSqlClientSelect.FirstSelect<Float> =
-        SqlClientSelectSpringR2dbc.Selectable(client, tables).selectTsRankCd(tsvectorColumn, tsquery)
+        ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectTsRankCd(tsvectorColumn, tsquery)
 
     protected fun <T : Any> selectProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): ReactorSqlClientSelect.FirstSelect<T> =
-        SqlClientSelectSpringR2dbc.Selectable(client, tables).select(dsl)
+        ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).select(dsl)
 
     protected fun <T : Any> selectCaseWhenExistsProtected(
         dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
     ): ReactorSqlClientSelect.SelectCaseWhenExistsFirst<T> =
-        SqlClientSelectSpringR2dbc.Selectable(client, tables).selectCaseWhenExists(dsl)
+        ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectCaseWhenExists(dsl)
 
     protected fun <T : Any> selectStarFromProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): ReactorSqlClientSelect.From<T> =
-        SqlClientSelectSpringR2dbc.Selectable(client, tables).selectStarFromSubQuery(dsl)
+        ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selectStarFromSubQuery(dsl)
+
+    protected fun selectsProtected(): ReactorSqlClientSelect.Selects =
+        ReactorSqlClientSelectSpringR2dbc.Selectable(client, tables).selects()
 }
 
 internal class H2SqlClientSpringR2dbc internal constructor(
@@ -121,6 +124,8 @@ internal class H2SqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MysqlSqlClientSpringR2dbc internal constructor(
@@ -152,6 +157,8 @@ internal class MysqlSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class PostgresqlSqlClientSpringR2dbc internal constructor(
@@ -183,6 +190,8 @@ internal class PostgresqlSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun selectTsRankCd(
         tsvectorColumn: TsvectorColumn<*>,
@@ -219,6 +228,8 @@ internal class MssqlSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MariadbSqlClientSpringR2dbc internal constructor(
@@ -250,6 +261,8 @@ internal class MariadbSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class OracleSqlClientSpringR2dbc internal constructor(
@@ -281,4 +294,6 @@ internal class OracleSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }

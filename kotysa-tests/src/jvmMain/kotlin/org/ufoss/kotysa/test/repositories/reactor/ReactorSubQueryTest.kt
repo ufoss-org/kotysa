@@ -71,4 +71,25 @@ interface ReactorSubQueryTest<T : Roles, U : Users, V : UserRoles, W : ReactorSu
                 roleGod.label,
             )
     }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 0 if`() {
+        assertThat(repository.selectStarConditionalSyntax().toIterable())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 1 if`() {
+        assertThat(repository.selectStarConditionalSyntax(1).toIterable())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 2 ifs`() {
+        assertThat(repository.selectStarConditionalSyntax(2).toIterable())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
+    }
 }

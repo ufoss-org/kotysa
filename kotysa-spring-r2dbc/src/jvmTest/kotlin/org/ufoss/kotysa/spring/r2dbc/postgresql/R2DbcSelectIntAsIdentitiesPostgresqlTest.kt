@@ -15,15 +15,14 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesTe
 
 @Order(1)
 class R2DbcSelectIntAsIdentitiesPostgresqlTest :
-    AbstractR2dbcPostgresqlTest<ReactorSelectIntRepositoryPostgresqlSelect>(),
-    ReactorSelectIntAsIdentitiesTest<PostgresqlIntAsIdentities, ReactorSelectIntRepositoryPostgresqlSelect,
+    AbstractR2dbcPostgresqlTest<ReactorSelectIntAsIdentitiesRepositoryPostgresqlSelect>(),
+    ReactorSelectIntAsIdentitiesTest<PostgresqlIntAsIdentities, ReactorSelectIntAsIdentitiesRepositoryPostgresqlSelect,
             ReactorTransaction> {
     override fun instantiateRepository(
         sqlClient: PostgresqlReactorSqlClient,
         coSqlClient: PostgresqlCoroutinesSqlClient
-    ) =
-        ReactorSelectIntRepositoryPostgresqlSelect(sqlClient)
+    ) = ReactorSelectIntAsIdentitiesRepositoryPostgresqlSelect(sqlClient)
 }
 
-class ReactorSelectIntRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) :
+class ReactorSelectIntAsIdentitiesRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) :
     ReactorSelectIntAsIdentitiesRepository<PostgresqlIntAsIdentities>(sqlClient, PostgresqlIntAsIdentities)

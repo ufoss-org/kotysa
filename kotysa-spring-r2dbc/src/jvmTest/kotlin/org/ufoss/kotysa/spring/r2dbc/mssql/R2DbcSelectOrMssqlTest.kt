@@ -4,35 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MssqlCoroutinesSqlClient
 import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.MssqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MssqlUserRoles
+import org.ufoss.kotysa.test.MssqlUsers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrTest
 
-
-class R2DbcSelectOrMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlSelectOr>() {
-
+class R2dbcSelectOrMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryR2dbcMssqlSelectOr>(),
+    ReactorSelectOrTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryR2dbcMssqlSelectOr,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
-        UserRepositoryMssqlSelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toIterable())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
+        UserRepositoryR2dbcMssqlSelectOr(sqlClient)
 }
 
-
-class UserRepositoryMssqlSelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMssql(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-        (sqlClient selectFrom MssqlRoles
-                where MssqlRoles.label eq label1
-                or MssqlRoles.label eq label2
-                ).fetchAll()
-}
+class UserRepositoryR2dbcMssqlSelectOr(sqlClient: ReactorSqlClient) :
+    ReactorSelectOrRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )

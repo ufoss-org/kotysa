@@ -172,4 +172,25 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
             .hasSize(1)
             .containsExactly(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 0 if`() {
+        assertThat(repository.selectConditionalSyntax().await().indefinitely())
+            .hasSize(2)
+            .containsExactly(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 1 if`() {
+        assertThat(repository.selectConditionalSyntax(1).await().indefinitely())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 2 ifs`() {
+        assertThat(repository.selectConditionalSyntax(2).await().indefinitely())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
+    }
 }

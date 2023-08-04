@@ -146,4 +146,7 @@ internal class SqlClientSqLite internal constructor(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.From<T> =
         SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selectStarFromSubQuery(dsl)
+
+    override fun selects(): SqlClientSelect.Selects =
+        SqlClientSelectSqLite.Selectable(client.readableDatabase, tables).selects()
 }

@@ -17,19 +17,19 @@ class R2dbcSelectAliasOracleTest : AbstractR2dbcOracleTest<UserRepositorySelectA
         UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname).block() }
             .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy { repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname).block() }
             .isInstanceOf(BadSqlGrammarException::class.java)
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
         }
@@ -71,7 +71,7 @@ class R2dbcSelectAliasOracleTest : AbstractR2dbcOracleTest<UserRepositorySelectA
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
         }.isInstanceOf(BadSqlGrammarException::class.java)

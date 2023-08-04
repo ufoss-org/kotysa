@@ -42,7 +42,7 @@ kotlin {
             }
         }
         
-        // No tests here because of compilation problems with Atrium (that compiles with  Java 11)
+        // No tests here because of compilation problems with Atrium (that compiles with Java 11)
         val commonMain by getting
         
         val androidMain by getting

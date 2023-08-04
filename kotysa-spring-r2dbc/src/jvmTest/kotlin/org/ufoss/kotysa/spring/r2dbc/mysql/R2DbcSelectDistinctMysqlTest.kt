@@ -4,35 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MysqlCoroutinesSqlClient
 import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.MysqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MysqlUserRoles
+import org.ufoss.kotysa.test.MysqlUsers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
-
-class R2DbcSelectDistinctMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectDistinct>() {
-
+class R2dbcSelectDistinctMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSelectDistinct>(),
+    ReactorSelectDistinctTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryR2dbcMysqlSelectDistinct,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
-        UserRepositoryMysqlSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels().toIterable())
-            .hasSize(3)
-            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
+        UserRepositoryR2dbcMysqlSelectDistinct(sqlClient)
 }
 
-
-class UserRepositoryMysqlSelectDistinct(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct MysqlRoles.label
-                from MysqlRoles
-                ).fetchAll()
-}
+class UserRepositoryR2dbcMysqlSelectDistinct(sqlClient: ReactorSqlClient) :
+    ReactorSelectDistinctRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    )

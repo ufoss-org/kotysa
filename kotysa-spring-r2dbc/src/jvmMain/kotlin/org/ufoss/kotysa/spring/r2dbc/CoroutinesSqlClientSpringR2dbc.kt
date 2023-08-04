@@ -105,6 +105,9 @@ internal sealed class CoroutinesSqlClientSpringR2dbc(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): CoroutinesSqlClientSelect.From<T> =
         CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selectStarFromSubQuery(dsl)
+
+    protected fun selectsProtected(): CoroutinesSqlClientSelect.Selects =
+        CoroutinesSqlClientSelectSpringR2Dbc.Selectable(client, tables).selects()
 }
 
 internal class H2CoroutinesSqlClientSpringR2dbc internal constructor(
@@ -136,6 +139,8 @@ internal class H2CoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MysqlCoroutinesSqlClientSpringR2dbc internal constructor(
@@ -167,6 +172,8 @@ internal class MysqlCoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class PostgresqlCoroutinesSqlClientSpringR2dbc internal constructor(
@@ -198,6 +205,8 @@ internal class PostgresqlCoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun selectTsRankCd(
         tsvectorColumn: TsvectorColumn<*>,
@@ -234,6 +243,8 @@ internal class MssqlCoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MariadbCoroutinesSqlClientSpringR2dbc internal constructor(
@@ -265,6 +276,8 @@ internal class MariadbCoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class OracleCoroutinesSqlClientSpringR2dbc internal constructor(
@@ -296,4 +309,6 @@ internal class OracleCoroutinesSqlClientSpringR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }

@@ -32,11 +32,6 @@ abstract class ReactorSelectStringAsTinyTextRepository<T : TinyTexts>(
 
     private fun deleteAll() = sqlClient deleteAllFrom table
 
-    fun selectFirstOrNullByStringNotNull(value: String) =
-        (sqlClient selectFrom table
-                where table.stringNotNull eq value
-                ).fetchFirst()
-
     fun selectFirstByStringNotNull(value: String) =
         (sqlClient selectFrom table
                 where table.stringNotNull eq value

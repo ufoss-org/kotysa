@@ -4,41 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MariadbCoroutinesSqlClient
 import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.MariadbRoles
+import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBooleanTest
 
-
-class R2DbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelectBoolean>() {
-
+class R2dbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<ReactorUserRepositoryMariadbSelectBoolean>(),
+    ReactorSelectBooleanTest<MariadbRoles, MariadbUsers, MariadbUserRoles, ReactorUserRepositoryMariadbSelectBoolean,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
-        UserRepositoryMariadbSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true).toIterable())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false).toIterable())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
+        ReactorUserRepositoryMariadbSelectBoolean(sqlClient)
 }
 
-
-class UserRepositoryMariadbSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MariadbUsers
-                where MariadbUsers.isAdmin eq value
-                ).fetchAll()
-}
+class ReactorUserRepositoryMariadbSelectBoolean(sqlClient: ReactorSqlClient) :
+    ReactorSelectBooleanRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    )

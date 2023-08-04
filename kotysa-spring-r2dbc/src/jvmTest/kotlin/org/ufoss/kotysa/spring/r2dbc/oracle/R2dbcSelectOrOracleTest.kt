@@ -14,14 +14,14 @@ import org.ufoss.kotysa.test.OracleUsers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrTest
 
-class R2dbcSelectOrOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSelectOr>(),
-    ReactorSelectOrTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelectOr,
+class R2dbcSelectOrOracleTest : AbstractR2dbcOracleTest<UserRepositoryR2dbcOracleSelectOr>(),
+    ReactorSelectOrTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryR2dbcOracleSelectOr,
             ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
-        UserRepositoryJdbcOracleSelectOr(sqlClient)
+        UserRepositoryR2dbcOracleSelectOr(sqlClient)
 }
 
-class UserRepositoryJdbcOracleSelectOr(sqlClient: ReactorSqlClient) :
+class UserRepositoryR2dbcOracleSelectOr(sqlClient: ReactorSqlClient) :
     ReactorSelectOrRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

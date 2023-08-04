@@ -52,6 +52,21 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>(),
     fun `Verify selectOrderByCaseWhenExistsSubQuery returns results - Android`() {
         `Verify selectOrderByCaseWhenExistsSubQuery returns results`()
     }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 0 if - Android`() {
+        `Verify selectStarConditionalSyntax with 0 if`()
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 1 if - Android`() {
+        `Verify selectStarConditionalSyntax with 1 if`()
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 2 ifs - Android`() {
+        `Verify selectStarConditionalSyntax with 2 ifs`()
+    }
 }
 
 class UserRepositorySqliteSubQuery(

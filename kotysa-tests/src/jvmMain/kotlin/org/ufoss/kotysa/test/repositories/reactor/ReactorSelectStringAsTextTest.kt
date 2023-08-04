@@ -5,9 +5,7 @@
 package org.ufoss.kotysa.test.repositories.reactor
 
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.Texts
 import org.ufoss.kotysa.test.stringAsTextNotNull
 import org.ufoss.kotysa.test.stringAsTextNullable
@@ -17,21 +15,15 @@ interface ReactorSelectStringAsTextTest<T : Texts, U : ReactorSelectStringAsText
     ReactorRepositoryTest<U, V> {
 
     @Test
-    fun `Verify selectFirstOrNullByStringNotNull finds stringAsTextNotNull`() {
-        assertThat(repository.selectFirstOrNullByStringNotNull(stringAsTextNotNull.stringNotNull).block())
+    fun `Verify selectFirstByStringNotNull finds stringAsTextNotNull`() {
+        assertThat(repository.selectFirstByStringNotNull(stringAsTextNotNull.stringNotNull).block())
             .isEqualTo(stringAsTextNotNull)
     }
 
     @Test
-    fun `Verify selectFirstOrNullByStringNotNull finds no Unknown`() {
-        assertThat(repository.selectFirstOrNullByStringNotNull("Unknown").block())
+    fun `Verify selectFirstByStringNotNull finds no Unknown`() {
+        assertThat(repository.selectFirstByStringNotNull("Unknown").block())
             .isNull()
-    }
-
-    @Test
-    fun `Verify selectFirstByStringNotNull finds no Unknown, throws NoResultException`() {
-        assertThatThrownBy { repository.selectFirstByStringNotNull("Unknown").block() }
-            .isInstanceOf(NoResultException::class.java)
     }
 
     @Test

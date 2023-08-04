@@ -22,7 +22,7 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
     ) = UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcBadSqlGrammarException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws R2dbcBadSqlGrammarException`() {
         assertThatThrownBy {
             repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname).block()
         }
@@ -30,7 +30,7 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcBadSqlGrammarException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws R2dbcBadSqlGrammarException`() {
         assertThatThrownBy {
             repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname).block()
         }
@@ -38,7 +38,7 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcBadSqlGrammarException`() {
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws R2dbcBadSqlGrammarException`() {
         assertThatThrownBy {
             repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
         }
@@ -80,7 +80,7 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcBadSqlGrammarException`() {
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws R2dbcBadSqlGrammarException`() {
         assertThatThrownBy {
             repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockFirst()
         }

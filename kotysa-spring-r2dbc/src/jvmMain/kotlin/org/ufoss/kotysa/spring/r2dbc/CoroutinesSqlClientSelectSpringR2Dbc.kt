@@ -71,6 +71,7 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             tsquery: Tsquery
         ): CoroutinesSqlClientSelect.FirstSelect<Float> =
             FirstSelect<Float>(client, properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
+        override fun selects(): CoroutinesSqlClientSelect.Selects = Selects(client, properties())
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -99,6 +100,9 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         private val from: FromTable<T, *> by lazy {
             FromTable<T, Any>(client, properties)
         }
+        private val froms: Froms<T, *> by lazy {
+            Froms<T, Any>(client, properties)
+        }
 
         override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
@@ -108,6 +112,8 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
+
+        override fun froms(): CoroutinesSqlClientSelect.Froms<T> = addFroms(froms)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -138,7 +144,10 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             }
 
         override fun <U : Any> andAvg(column: NumericColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, BigDecimal> =
-            SecondSelect(client, properties as Properties<Pair<T?, BigDecimal>>).apply { addAvgColumn(column) }
+            SecondSelect(
+                client,
+                properties as Properties<Pair<T?, BigDecimal>>
+            ).apply { addAvgColumn(column) }
 
         override fun <U : Any> andSum(column: WholeNumberColumn<*, U>): CoroutinesSqlClientSelect.SecondSelect<T?, Long> =
             SecondSelect(client, properties as Properties<Pair<T?, Long>>).apply { addLongSumColumn(column) }
@@ -152,7 +161,8 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
 
         override fun <U : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): CoroutinesSqlClientSelect.AndCaseWhenExistsSecond<T, U> = AndCaseWhenExistsSecond(client, properties, dsl)
+        ): CoroutinesSqlClientSelect.AndCaseWhenExistsSecond<T, U> =
+            AndCaseWhenExistsSecond(client, properties, dsl)
 
         override fun andTsRankCd(
             tsvectorColumn: TsvectorColumn<*>,
@@ -193,6 +203,9 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         private val from: FromTable<Pair<T, U>, *> by lazy {
             FromTable<Pair<T, U>, Any>(client, properties)
         }
+        private val froms: Froms<Pair<T, U>, *> by lazy {
+            Froms<Pair<T, U>, Any>(client, properties)
+        }
 
         override fun <V : Any> from(table: Table<V>): CoroutinesSqlClientSelect.FromTable<Pair<T, U>, V> =
             addFromTable(table, from as FromTable<Pair<T, U>, V>)
@@ -203,6 +216,8 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
 
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
 
+        override fun froms(): CoroutinesSqlClientSelect.Froms<Pair<T, U>> = addFroms(froms)
+
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
 
@@ -210,7 +225,10 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             ThirdSelect(client, properties as Properties<Triple<T, U, V>>).apply { addSelectTable(table) }
 
         override fun <V : Any> andCount(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
-            ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addCountColumn(column) }
+            ThirdSelect(
+                client,
+                properties as Properties<Triple<T, U, Long>>
+            ).apply { addCountColumn(column) }
 
         override fun <V : Any> andDistinct(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(client, properties as Properties<Triple<T, U, V?>>).apply {
@@ -228,10 +246,17 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             }
 
         override fun <V : Any> andAvg(column: NumericColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, BigDecimal> =
-            ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply { addAvgColumn(column) }
+            ThirdSelect(client, properties as Properties<Triple<T, U, BigDecimal>>).apply {
+                addAvgColumn(
+                    column
+                )
+            }
 
         override fun <V : Any> andSum(column: WholeNumberColumn<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, Long> =
-            ThirdSelect(client, properties as Properties<Triple<T, U, Long>>).apply { addLongSumColumn(column) }
+            ThirdSelect(
+                client,
+                properties as Properties<Triple<T, U, Long>>
+            ).apply { addLongSumColumn(column) }
 
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
@@ -242,7 +267,8 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
 
         override fun <V : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<V>
-        ): CoroutinesSqlClientSelect.AndCaseWhenExistsThird<T, U, V> = AndCaseWhenExistsThird(client, properties, dsl)
+        ): CoroutinesSqlClientSelect.AndCaseWhenExistsThird<T, U, V> =
+            AndCaseWhenExistsThird(client, properties, dsl)
 
         override fun andTsRankCd(
             tsvectorColumn: TsvectorColumn<*>,
@@ -283,16 +309,22 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         private val from: FromTable<Triple<T, U, V>, *> by lazy {
             FromTable<Triple<T, U, V>, Any>(client, properties)
         }
+        private val froms: Froms<Triple<T, U, V>, *> by lazy {
+            Froms<Triple<T, U, V>, Any>(client, properties)
+        }
 
         override fun <W : Any> from(table: Table<W>): CoroutinesSqlClientSelect.FromTable<Triple<T, U, V>, W> =
             addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
 
         override fun <W : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
-        ): CoroutinesSqlClientSelect.From<Triple<T, U, V>> = addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
+        ): CoroutinesSqlClientSelect.From<Triple<T, U, V>> =
+            addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
 
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<Triple<T, U, V>> =
             addFromTsquery(tsquery, from)
+
+        override fun froms(): CoroutinesSqlClientSelect.Froms<Triple<T, U, V>> = addFroms(froms)
 
         override fun <W : Any> and(column: Column<*, W>): CoroutinesSqlClientSelect.Select =
             Select(client, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -369,16 +401,21 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         private val client: DatabaseClient,
         override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), CoroutinesSqlClientSelect.Select {
+        // todo lazy
         private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(client, properties)
+        private val froms: Froms<List<Any?>, *> = Froms<List<Any?>, Any>(client, properties)
 
         override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<List<Any?>, U> =
             addFromTable(table, from as FromTable<List<Any?>, U>)
 
         override fun <T : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-        ): CoroutinesSqlClientSelect.From<List<Any?>> = addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
+        ): CoroutinesSqlClientSelect.From<List<Any?>> =
+            addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): CoroutinesSqlClientSelect.Froms<List<Any?>> = addFroms(froms)
 
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
@@ -414,7 +451,8 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
 
         override fun <T : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
-        ): CoroutinesSqlClientSelect.AndCaseWhenExistsLast<T> = AndCaseWhenExistsLast(client, properties, dsl)
+        ): CoroutinesSqlClientSelect.AndCaseWhenExistsLast<T> =
+            AndCaseWhenExistsLast(client, properties, dsl)
 
         override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery)
                 : CoroutinesSqlClientSelect.Select =
@@ -423,12 +461,101 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
         override fun `as`(alias: String): CoroutinesSqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
+    private class Selects(
+        private val client: DatabaseClient,
+        override val properties: Properties<List<Any?>>,
+    ) : DefaultSqlClientSelect.Select<List<Any?>>(), CoroutinesSqlClientSelect.SelectsPart2 {
+        init {
+            properties.isConditionalSelect = true
+        }
+
+        // todo lazy
+        private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(client, properties)
+        private val froms: Froms<List<Any?>, *> = Froms<List<Any?>, Any>(client, properties)
+
+        override fun <T : Any> from(table: Table<T>): CoroutinesSqlClientSelect.FromTable<List<Any?>, T> =
+            addFromTable(table, from as FromTable<List<Any?>, T>)
+
+        override fun <T : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): CoroutinesSqlClientSelect.From<List<Any?>> =
+            addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
+
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): CoroutinesSqlClientSelect.Froms<List<Any?>> = addFroms(froms)
+
+        override fun <T : Any> select(column: Column<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply { addSelectColumn(column) }
+
+        override fun <T : Any> select(table: Table<T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply { addSelectTable(table) }
+
+        override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply { addCountColumn(column) }
+
+        override fun <T : Any> selectDistinct(column: Column<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
+
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.MIN)
+        }
+
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.MAX)
+        }
+
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
+            addAvgColumn(column)
+        }
+
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply { addLongSumColumn(column) }
+
+        override fun <T : Any> select(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): CoroutinesSqlClientSelect.SelectsPart2 = this.apply { addSelectSubQuery(dsl) }
+
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        ): CoroutinesSqlClientSelect.SelectsCaseWhenExists<T> = SelectsCaseWhenExists(client, properties, dsl)
+
+        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply { addTsRankCd(tsvectorColumn, tsquery) }
+
+        override fun `as`(alias: String): CoroutinesSqlClientSelect.SelectsPart2 = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class SelectsCaseWhenExists<T : Any>(
+        private val client: DatabaseClient,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ) : CoroutinesSqlClientSelect.SelectsCaseWhenExists<T> {
+        override fun <U : Any> then(value: U): CoroutinesSqlClientSelect.SelectsCaseWhenExistsPart2<T, U> =
+            SelectsCaseWhenExistsPart2(client, properties, dsl, value)
+    }
+
+    private class SelectsCaseWhenExistsPart2<T : Any, U : Any>(
+        private val client: DatabaseClient,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : CoroutinesSqlClientSelect.SelectsCaseWhenExistsPart2<T, U> {
+        override fun `else`(value: U): CoroutinesSqlClientSelect.SelectsPart2 =
+            Selects(client, properties).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
+    }
+
     private class SelectWithDsl<T : Any>(
         client: DatabaseClient,
         properties: Properties<T>,
         dsl: (ValueProvider) -> T,
     ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), CoroutinesSqlClientSelect.Fromable<T> {
+        // todo lazy
         private val from: FromTable<T, *> = FromTable<T, Any>(client, properties)
+        private val froms: Froms<T, *> = Froms<T, Any>(client, properties)
 
         override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
@@ -439,6 +566,8 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
 
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
+        override fun froms(): CoroutinesSqlClientSelect.Froms<T> = addFroms(froms)
+
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
         }
@@ -447,28 +576,35 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
     private class FromTable<T : Any, U : Any>(
         override val client: DatabaseClient,
         properties: Properties<T>,
-    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.From<T>, CoroutinesSqlClientSelect.Where<T>,
-            CoroutinesSqlClientSelect.LimitOffset<T>, CoroutinesSqlClientSelect.GroupByPart2<T>,
-            CoroutinesSqlClientSelect.OrderByPart2<T>>(properties), CoroutinesSqlClientSelect.FromTable<T, U>,
-        CoroutinesSqlClientSelect.From<T>, GroupBy<T>, OrderBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
+    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.Where<T>,
+            CoroutinesSqlClientSelect.LimitOffset<T>, CoroutinesSqlClientSelect.GroupBy<T>,
+            CoroutinesSqlClientSelect.OrderBy<T>>(properties), CoroutinesSqlClientSelect.FromTable<T, U>,
+        CoroutinesSqlClientSelect.From<T>, GroupableBy<T>, OrderableBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
         override val fromTable = this
-        override val from = this
 
         override val where by lazy { Where(client, properties) }
+        private val wheres by lazy { Wheres(client, properties) }
         override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(client, properties) }
+        override val orderBy by lazy { OrderByAndable(client, properties) }
+        private val ordersBy by lazy { OrdersBy(client, properties) }
+        private val groupsBy by lazy { GroupsBy(client, properties) }
+        override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
+
         override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.FromTable<T, V> =
-            addFromTable(table, from as FromTable<T, V>)
+            addFromTable(table, fromTable as FromTable<T, V>)
 
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
-        ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+        ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, fromTable as FromTable<T, V>)
 
-        override fun and(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
+        override fun and(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, fromTable)
 
         override fun `as`(alias: String): CoroutinesSqlClientSelect.FromTable<T, U> =
-            from.apply { aliasLastFrom(alias) }
+            fromTable.apply { aliasLastFrom(alias) }
+
+        override fun wheres(): CoroutinesSqlClientSelect.Wheres<T> = wheres
 
         override fun <V : Any> innerJoin(
             table: Table<V>
@@ -491,86 +627,197 @@ internal class CoroutinesSqlClientSelectSpringR2Dbc private constructor() : Abst
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
+    private class Froms<T : Any, U : Any>(
+        override val client: DatabaseClient,
+        properties: Properties<T>,
+    ) : FromWhereable<T, U, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
+            CoroutinesSqlClientSelect.GroupBy<T>, CoroutinesSqlClientSelect.OrderBy<T>>(properties),
+        CoroutinesSqlClientSelect.FromsTable<T, U>, GroupableBy<T>, OrderableBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
+        override val fromTable = this
+
+        override val where by lazy { Where(client, properties) }
+        private val wheres by lazy { Wheres(client, properties) }
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(client, properties) }
+        override val orderBy by lazy { OrderByAndable(client, properties) }
+        private val ordersBy by lazy { OrdersBy(client, properties) }
+        private val groupsBy by lazy { GroupsBy(client, properties) }
+        override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
+
+        override fun <V : Any> from(table: Table<V>): CoroutinesSqlClientSelect.FromsTable<T, V> =
+            addFromTable(table, fromTable as Froms<T, V>)
+
+        override fun <V : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): CoroutinesSqlClientSelect.FromsPart2<T> = addFromSubQuery(dsl, fromTable as Froms<T, V>)
+
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.FromsPart2<T> = addFromTsquery(tsquery, fromTable)
+
+        override fun `as`(alias: String): CoroutinesSqlClientSelect.Froms<T> = fromTable.apply { aliasLastFrom(alias) }
+
+        override fun wheres(): CoroutinesSqlClientSelect.Wheres<T> = wheres
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
+    }
+
     private class Where<T : Any>(
         override val client: DatabaseClient,
-        override val properties: Properties<T>,
+        override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
-            CoroutinesSqlClientSelect.GroupByPart2<T>, CoroutinesSqlClientSelect.OrderByPart2<T>>(),
-        CoroutinesSqlClientSelect.Where<T>, GroupBy<T>, OrderBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
+            CoroutinesSqlClientSelect.GroupBy<T>, CoroutinesSqlClientSelect.OrderBy<T>>(),
+        CoroutinesSqlClientSelect.Where<T>, GroupableBy<T>, OrderableBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(client, properties) }
+        override val orderBy by lazy { OrderByAndable(client, properties) }
+        private val ordersBy by lazy { OrdersBy(client, properties) }
+        private val groupsBy by lazy { GroupsBy(client, properties) }
+        override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
     }
 
-    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
-        CoroutinesSqlClientSelect.GroupBy<T>, Return<T>
-
-    private class GroupByPart2<T : Any>(
+    private class Wheres<T : Any>(
         override val client: DatabaseClient,
         override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.GroupByPart2<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
-        CoroutinesSqlClientSelect.GroupByPart2<T>,
-        DefaultSqlClientSelect.OrderBy<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
-        OrderBy<T>, DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T, CoroutinesSqlClientSelect.Wheres<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
+            CoroutinesSqlClientSelect.GroupBy<T>, CoroutinesSqlClientSelect.OrderBy<T>>(),
+        CoroutinesSqlClientSelect.Wheres<T>, GroupableBy<T>, OrderableBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
+        override val where = this
         override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(client, properties) }
-        override val groupByPart2 = this
+        override val groupByPart2 by lazy { GroupByAndable(client, properties) }
+        override val orderBy by lazy { OrderByAndable(client, properties) }
+        private val ordersBy by lazy { OrdersBy(client, properties) }
+        private val groupsBy by lazy { GroupsBy(client, properties) }
+        override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
     }
 
-    private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
-        CoroutinesSqlClientSelect.OrderBy<T>, Return<T> {
+    private interface GroupableBy<T : Any> : DefaultSqlClientSelect.GroupableBy<T,
+            CoroutinesSqlClientSelect.GroupBy<T>>, CoroutinesSqlClientSelect.GroupableBy<T>, Return<T>
+
+    private class GroupByAndable<T : Any>(
+        override val client: DatabaseClient,
+        override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupByAndable<T, CoroutinesSqlClientSelect.GroupBy<T>>,
+        CoroutinesSqlClientSelect.GroupBy<T>,
+        DefaultSqlClientSelect.OrderableBy<T, CoroutinesSqlClientSelect.OrderBy<T>>,
+        OrderableBy<T>, DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val orderBy by lazy { OrderByAndable(client, properties) }
+        override val groupByPart2 = this
+        private val ordersBy by lazy { OrdersBy(client, properties) }
+        override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
+    }
+
+    private class GroupsBy<T : Any>(
+        override val client: DatabaseClient,
+        override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupableBy<T, CoroutinesSqlClientSelect.GroupsBy<T>>,
+        CoroutinesSqlClientSelect.GroupsBy<T>,
+        DefaultSqlClientSelect.OrderableBy<T, CoroutinesSqlClientSelect.OrderBy<T>>,
+        OrderableBy<T>, DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val orderBy by lazy { OrderByAndable(client, properties) }
+        override val groupByPart2 = this
+        private val ordersBy by lazy { OrdersBy(client, properties) }
+        override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
+    }
+
+    private interface OrderableBy<T : Any> : DefaultSqlClientSelect.OrderableBy<T,
+            CoroutinesSqlClientSelect.OrderBy<T>>, CoroutinesSqlClientSelect.OrderableBy<T>, Return<T> {
 
         override fun <U : Any> orderByAscCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderByPart2<T>> =
-            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
+        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.ASC)
 
         override fun <U : Any> orderByDescCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderByPart2<T>> =
-            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
+        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.DESC)
     }
 
-    private class OrderByCaseWhenExists<T : Any, U : Any>(
+    private class OrdersBy<T : Any>(
+        override val client: DatabaseClient,
+        override val properties: Properties<T>
+    ): DefaultSqlClientSelect.OrderableBy<T, CoroutinesSqlClientSelect.OrdersBy<T>>,
+        CoroutinesSqlClientSelect.OrdersBy<T>, GroupableBy<T>, DefaultSqlClientSelect.LimitOffset<T,
+                CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(client, properties) }
+        override val orderBy = this
+        override val groupByPart2 by lazy { GroupByAndable(client, properties) }
+        private val groupsBy by lazy { GroupsBy(client, properties) }
+        override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
+
+        override fun <U : Any> orderByAscCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrdersBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.ASC)
+
+        override fun <U : Any> orderByDescCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrdersBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.DESC)
+    }
+
+    private class OrderByCaseWhenExists<T : Any, U : Any, V : OrderBy<V>>(
         override val properties: Properties<T>,
-        override val orderByPart2: CoroutinesSqlClientSelect.OrderByPart2<T>,
+        override val orderByPart2: V,
         override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
         override val order: Order
-    ) : DefaultSqlClientSelect.OrderByCaseWhenExists<T, U, CoroutinesSqlClientSelect.OrderByPart2<T>> {
-        override fun <V : Any> then(value: V): SqlClientQuery.OrderByCaseWhenExistsPart2<U, V,
-                CoroutinesSqlClientSelect.OrderByPart2<T>> {
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExists<T, U, V> {
+        override fun <W : Any> then(value: W): SqlClientQuery.OrderByCaseWhenExistsPart2<U, W, V> {
             return OrderByCaseWhenExistsPart2(properties, orderByPart2, dsl, value, order)
         }
     }
 
-    private class OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any>(
+    private class OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any, W : OrderBy<W>>(
         override val properties: Properties<T>,
-        override val orderByPart2: CoroutinesSqlClientSelect.OrderByPart2<T>,
+        override val orderByPart2: W,
         override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
         override val then: V,
         override val order: Order
-    ) : DefaultSqlClientSelect.OrderByCaseWhenExistsPart2<T, U, V, CoroutinesSqlClientSelect.OrderByPart2<T>>
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExistsPart2<T, U, V, W>
 
-    private class OrderByPart2<T : Any>(
+    private class OrderByAndable<T : Any>(
         override val client: DatabaseClient,
         override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.OrderByPart2<T, CoroutinesSqlClientSelect.OrderByPart2<T>>,
-        CoroutinesSqlClientSelect.OrderByPart2<T>,
-        DefaultSqlClientSelect.GroupBy<T, CoroutinesSqlClientSelect.GroupByPart2<T>>,
+    ) : DefaultSqlClientSelect.OrderByAndable<T, CoroutinesSqlClientSelect.OrderBy<T>>,
+        CoroutinesSqlClientSelect.OrderBy<T>,
+        DefaultSqlClientSelect.GroupableBy<T, CoroutinesSqlClientSelect.GroupBy<T>>,
         DefaultSqlClientSelect.LimitOffset<T, CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(client, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(client, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(client, properties) }
         override val orderByPart2 = this
+        private val groupsBy by lazy { GroupsBy(client, properties) }
+        override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
 
         override fun <U : Any> andAscCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderByPart2<T>> =
+        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderBy<T>> =
             OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
 
         override fun <U : Any> andDescCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderByPart2<T>> =
+        ): SqlClientQuery.OrderByCaseWhenExists<U, CoroutinesSqlClientSelect.OrderBy<T>> =
             OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
     }
 

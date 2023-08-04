@@ -5,6 +5,7 @@
 package org.ufoss.kotysa.test.repositories.blocking
 
 import org.ufoss.kotysa.SqlClient
+import org.ufoss.kotysa.SqlClientSubQuery
 import org.ufoss.kotysa.test.Roles
 import org.ufoss.kotysa.test.UserRoles
 import org.ufoss.kotysa.test.Users
@@ -107,4 +108,50 @@ abstract class SubQueryRepository<T : Roles, U : Users, V : UserRoles>(
         } then true `else` false
                 andAsc tableRoles.label)
             .fetchAll()
+
+    fun selectStarConditionalSyntax(params: Int = 0) =
+        (sqlClient selectStarFrom { selectStarConditionalSyntax(params, this) } `as` "derivedTable"
+                ).fetchAll()
+
+    private fun selectStarConditionalSyntax(
+        params: Int,
+        subQueryScope: SqlClientSubQuery.Scope
+    ): SqlClientSubQuery.Return<List<Any?>> {
+        val selects = subQueryScope.selects()
+        selects.select(tableUsers.firstname)
+        if (params > 0) {
+            selects.select(tableUsers.lastname)
+        }
+        if (params > 1) {
+            selects.select(tableRoles.label)
+        }
+
+        val froms = selects.froms()
+        froms.from(tableUsers)
+        if (params > 0) {
+            froms.from(tableUserRoles)
+        }
+        if (params > 1) {
+            froms.from(tableRoles)
+        }
+
+        val wheres = froms.wheres()
+        wheres.where(tableUsers.id).sup(0)
+        if (params > 0) {
+            wheres.where(tableUserRoles.userId).eq(tableUsers.id)
+        }
+        if (params > 1) {
+            wheres.where(tableRoles.id).eq(tableUserRoles.roleId)
+        }
+
+        val groupsBy = wheres.groupsBy()
+        groupsBy.groupBy(tableUsers.firstname)
+        if (params > 0) {
+            groupsBy.groupBy(tableUsers.lastname)
+        }
+        if (params > 1) {
+            groupsBy.groupBy(tableRoles.label)
+        }
+        return groupsBy
+    }
 }

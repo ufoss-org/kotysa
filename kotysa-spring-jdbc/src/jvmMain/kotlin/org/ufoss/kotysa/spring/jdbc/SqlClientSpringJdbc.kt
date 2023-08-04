@@ -212,6 +212,9 @@ internal sealed class SqlClientSpringJdbc(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.From<T> =
         SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selectStarFromSubQuery(dsl)
+
+    protected fun selectsProtected(): SqlClientSelect.Selects =
+        SqlClientSelectSpringJdbc.Selectable(namedParameterJdbcOperations, tables).selects()
 }
 
 internal class H2SqlClientSpringJdbc internal constructor(
@@ -243,6 +246,8 @@ internal class H2SqlClientSpringJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MysqlSqlClientSpringJdbc internal constructor(
@@ -274,6 +279,8 @@ internal class MysqlSqlClientSpringJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class PostgresqlSqlClientSpringJdbc internal constructor(
@@ -310,6 +317,8 @@ internal class PostgresqlSqlClientSpringJdbc internal constructor(
         tsvectorColumn: TsvectorColumn<*>,
         tsquery: Tsquery,
     ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MssqlSqlClientSpringJdbc internal constructor(
@@ -341,6 +350,8 @@ internal class MssqlSqlClientSpringJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class MariadbSqlClientSpringJdbc internal constructor(
@@ -372,6 +383,8 @@ internal class MariadbSqlClientSpringJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }
 
 internal class OracleSqlClientSpringJdbc internal constructor(
@@ -403,4 +416,6 @@ internal class OracleSqlClientSpringJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 }

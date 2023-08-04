@@ -6,6 +6,7 @@ package org.ufoss.kotysa.test.repositories.reactor
 
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
+import reactor.core.publisher.Flux
 
 abstract class ReactorSelectRepository<T : Roles, U : Users, V : UserRoles>(
     sqlClient: ReactorSqlClient,
@@ -123,4 +124,52 @@ abstract class ReactorSelectRepository<T : Roles, U : Users, V : UserRoles>(
                 from tableUserRoles innerJoin tableRoles on tableUserRoles.roleId eq tableRoles.id
                 where tableUserRoles.userId eq userId)
             .fetchAll()
+
+    fun selectConditionalSyntax(params: Int = 0): Flux<List<Any?>> {
+        val selects = sqlClient.selects()
+        selects.select(tableUsers.firstname)
+        if (params > 0) {
+            selects.select(tableUsers.lastname)
+        }
+        if (params > 1) {
+            selects.select(tableRoles.label)
+        }
+
+        val froms = selects.froms()
+        froms.from(tableUsers)
+        if (params > 0) {
+            froms.from(tableUserRoles)
+        }
+        if (params > 1) {
+            froms.from(tableRoles)
+        }
+
+        val wheres = froms.wheres()
+        wheres.where(tableUsers.id).sup(0)
+        if (params > 0) {
+            wheres.where(tableUserRoles.userId).eq(tableUsers.id)
+        }
+        if (params > 1) {
+            wheres.where(tableRoles.id).eq(tableUserRoles.roleId)
+        }
+
+        val groupsBy = wheres.groupsBy()
+        groupsBy.groupBy(tableUsers.firstname)
+        if (params > 0) {
+            groupsBy.groupBy(tableUsers.lastname)
+        }
+        if (params > 1) {
+            groupsBy.groupBy(tableRoles.label)
+        }
+
+        val ordersBy = groupsBy.ordersBy()
+        if (params > 0) {
+            ordersBy.orderByDesc(tableUsers.lastname)
+        }
+        if (params > 1) {
+            ordersBy.orderByAsc(tableRoles.label)
+        }
+        ordersBy.orderByAsc(tableUsers.firstname)
+        return ordersBy.fetchAll()
+    }
 }

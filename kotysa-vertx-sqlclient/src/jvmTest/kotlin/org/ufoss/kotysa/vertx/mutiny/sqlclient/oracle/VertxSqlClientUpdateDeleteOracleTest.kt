@@ -11,12 +11,12 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyUpdateDeleteRepository
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinyUpdateDeleteTest
 
-class JdbcUpdateDeleteOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryJdbcOracleUpdateDelete>(),
-    MutinyUpdateDeleteTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleUpdateDelete> {
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryJdbcOracleUpdateDelete(sqlClient)
+class JdbcUpdateDeleteOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryVertxSqlClientOracleUpdateDelete>(),
+    MutinyUpdateDeleteTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryVertxSqlClientOracleUpdateDelete> {
+    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryVertxSqlClientOracleUpdateDelete(sqlClient)
 }
 
-class UserRepositoryJdbcOracleUpdateDelete(sqlClient: VertxSqlClient) :
+class UserRepositoryVertxSqlClientOracleUpdateDelete(sqlClient: VertxSqlClient) :
     MutinyUpdateDeleteRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

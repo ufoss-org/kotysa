@@ -274,6 +274,9 @@ internal sealed class SqlClientR2dbc(
     ): CoroutinesSqlClientSelect.From<T> =
         SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selectStarFromSubQuery(dsl)
 
+    protected fun selectsProtected(): CoroutinesSqlClientSelect.Selects =
+        SqlClientSelectR2dbc.Selectable(connectionFactory, tables).selects()
+
     protected suspend fun <T> transactionalProtected(block: suspend (R2dbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val currentTransaction = coroutineContext[R2dbcTransactionImpl]
@@ -365,6 +368,8 @@ internal class H2SqlClientR2dbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -398,6 +403,8 @@ internal class MysqlSqlClientR2dbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -430,6 +437,8 @@ internal class PostgresqlSqlClientR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun selectTsRankCd(
         tsvectorColumn: TsvectorColumn<*>,
@@ -469,6 +478,8 @@ internal class MssqlSqlClientR2dbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -502,6 +513,8 @@ internal class MariadbSqlClientR2dbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -534,6 +547,8 @@ internal class OracleSqlClientR2dbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override suspend fun <U> transactional(block: suspend (R2dbcTransaction) -> U) = transactionalProtected(block)
 }

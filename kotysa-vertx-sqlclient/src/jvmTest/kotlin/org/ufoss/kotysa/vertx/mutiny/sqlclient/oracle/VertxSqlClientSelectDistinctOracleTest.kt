@@ -12,12 +12,12 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectDistinct
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectDistinctTest
 
 class VertxSqlClientSelectDistinctOracleTest :
-    AbstractVertxSqlClientOracleTest<UserRepositoryJdbcOracleSelectDistinct>(),
-    MutinySelectDistinctTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelectDistinct> {
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryJdbcOracleSelectDistinct(sqlClient)
+    AbstractVertxSqlClientOracleTest<UserRepositoryVertxSqlClientOracleSelectDistinct>(),
+    MutinySelectDistinctTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryVertxSqlClientOracleSelectDistinct> {
+    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryVertxSqlClientOracleSelectDistinct(sqlClient)
 }
 
-class UserRepositoryJdbcOracleSelectDistinct(sqlClient: VertxSqlClient) :
+class UserRepositoryVertxSqlClientOracleSelectDistinct(sqlClient: VertxSqlClient) :
     MutinySelectDistinctRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

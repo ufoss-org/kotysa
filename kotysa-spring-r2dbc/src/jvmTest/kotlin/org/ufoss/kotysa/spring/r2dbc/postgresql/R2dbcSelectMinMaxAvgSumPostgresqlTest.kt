@@ -4,65 +4,19 @@
 
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.PostgresqlCustomers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectMinMaxAvgSumRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectMinMaxAvgSumTest
 
-class R2dbcSelectMinMaxAvgSumPostgresqlTest : AbstractR2dbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>() {
-
-    override fun instantiateRepository(
-        sqlClient: PostgresqlReactorSqlClient,
-        coSqlClient: PostgresqlCoroutinesSqlClient,
-    ) = MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
-
-    @Test
-    fun `Verify selectCustomerMinAge returns 19`() {
-        assertThat(repository.selectCustomerMinAge().block() as Int)
-            .isEqualTo(19)
-    }
-
-    @Test
-    fun `Verify selectCustomerMaxAge returns 21`() {
-        assertThat(repository.selectCustomerMaxAge().block() as Int)
-            .isEqualTo(21)
-    }
-
-    @Test
-    fun `Verify selectCustomerAvgAge returns 20`() {
-        assertThat(repository.selectCustomerAvgAge().block())
-            .isEqualByComparingTo(20.toBigDecimal())
-    }
-
-    @Test
-    fun `Verify selectCustomerSumAge returns 60`() {
-        assertThat(repository.selectCustomerSumAge().block() as Long)
-            .isEqualTo(60L)
-    }
+class R2dbcSelectMinMaxAvgSumPostgresqlTest : AbstractR2dbcPostgresqlTest<MinMaxAvgSumRepositoryPostgresqlSelect>(),
+    ReactorSelectMinMaxAvgSumTest<PostgresqlCustomers, MinMaxAvgSumRepositoryPostgresqlSelect, ReactorTransaction> {
+    override fun instantiateRepository(sqlClient: PostgresqlReactorSqlClient, coSqlClient: PostgresqlCoroutinesSqlClient) =
+        MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient)
 }
 
 class MinMaxAvgSumRepositoryPostgresqlSelect(sqlClient: ReactorSqlClient) :
-    AbstractCustomerRepositoryPostgresql(sqlClient) {
-
-    fun selectCustomerMinAge() =
-        (sqlClient selectMin PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-
-    fun selectCustomerMaxAge() =
-        (sqlClient selectMax PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-
-    fun selectCustomerAvgAge() =
-        (sqlClient selectAvg PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-
-    fun selectCustomerSumAge() =
-        (sqlClient selectSum PostgresqlCustomers.age
-                from PostgresqlCustomers
-                ).fetchOne()
-}
+    ReactorSelectMinMaxAvgSumRepository<PostgresqlCustomers>(sqlClient, PostgresqlCustomers)

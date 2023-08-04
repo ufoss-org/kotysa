@@ -4,41 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MysqlCoroutinesSqlClient
 import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.MysqlRoles
+import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBooleanTest
 
-
-class R2DbcSelectBooleanMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMyqlSelectBoolean>() {
-
+class R2dbcSelectBooleanMysqlTest : AbstractR2dbcMysqlTest<ReactorUserRepositoryMysqlSelectBoolean>(),
+    ReactorSelectBooleanTest<MysqlRoles, MysqlUsers, MysqlUserRoles, ReactorUserRepositoryMysqlSelectBoolean,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
-        UserRepositoryMyqlSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true).toIterable())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false).toIterable())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
+        ReactorUserRepositoryMysqlSelectBoolean(sqlClient)
 }
 
-
-class UserRepositoryMyqlSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom MysqlUsers
-                where MysqlUsers.isAdmin eq value
-                ).fetchAll()
-}
+class ReactorUserRepositoryMysqlSelectBoolean(sqlClient: ReactorSqlClient) :
+    ReactorSelectBooleanRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    )

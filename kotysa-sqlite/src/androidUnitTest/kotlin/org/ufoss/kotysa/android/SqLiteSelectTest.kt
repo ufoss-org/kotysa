@@ -135,6 +135,21 @@ class SqLiteSelectTest : AbstractSqLiteTest<UserRepositorySelect>(),
     fun `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss - Android`() {
         `Verify selectRoleLabelsFromUserId returns Admin role for TheBoss`()
     }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 0 if - Android`() {
+        `Verify selectConditionalSyntax with 0 if`()
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 1 if - Android`() {
+        `Verify selectConditionalSyntax with 1 if`()
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 2 ifs - Android`() {
+        `Verify selectConditionalSyntax with 2 ifs`()
+    }
 }
 
 class UserRepositorySelect(

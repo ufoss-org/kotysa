@@ -175,4 +175,25 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
             .hasSize(1)
             .containsExactly(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 0 if`() {
+        assertThat(repository.selectConditionalSyntax().toIterable())
+            .hasSize(2)
+            .containsExactly(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 1 if`() {
+        assertThat(repository.selectConditionalSyntax(1).toIterable())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 2 ifs`() {
+        assertThat(repository.selectConditionalSyntax(2).toIterable())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
+    }
 }

@@ -9,7 +9,7 @@ import org.ufoss.kotysa.*
 import reactor.core.publisher.Mono
 
 
-internal class SqlClientUpdateSpringR2dbc private constructor() : AbstractSqlClientUpdateSpringR2dbc() {
+internal class ReactorSqlClientUpdateSpringR2dbc private constructor() : AbstractSqlClientUpdateSpringR2dbc() {
 
     internal class FirstUpdate<T : Any> internal constructor(
         override val client: DatabaseClient,

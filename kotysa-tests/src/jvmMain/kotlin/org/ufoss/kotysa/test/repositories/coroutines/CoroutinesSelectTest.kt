@@ -4,10 +4,6 @@
 
 package org.ufoss.kotysa.test.repositories.coroutines
 
-import ch.tutteli.atrium.api.fluent.en_GB.toContain
-import ch.tutteli.atrium.api.fluent.en_GB.toContainExactly
-import ch.tutteli.atrium.api.fluent.en_GB.toHaveSize
-import ch.tutteli.atrium.api.verbs.expect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -52,16 +48,16 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
 
     @Test
     fun `Verify selectWithCascadeInnerJoin works correctly`() = runTest {
-        expect(repository.selectWithCascadeInnerJoin().toList())
-            .toHaveSize(1)
-            .toContainExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+        assertThat(repository.selectWithCascadeInnerJoin().toList())
+            .hasSize(1)
+            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
     }
 
     @Test
     fun `Verify selectWithCascadeLeftJoin works correctly`() = runTest {
-        expect(repository.selectWithCascadeLeftJoin().toList())
-            .toHaveSize(2)
-            .toContain(
+        assertThat(repository.selectWithCascadeLeftJoin().toList())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
                 UserWithRoleDto(userJdoe.lastname, roleUser.label),
                 UserWithRoleDto(userBboss.lastname, roleAdmin.label)
             )
@@ -69,16 +65,16 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
 
     @Test
     fun `Verify selectWithCascadeRightJoin works correctly`() = runTest {
-        expect(repository.selectWithCascadeRightJoin().toList())
-            .toHaveSize(1)
-            .toContainExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+        assertThat(repository.selectWithCascadeRightJoin().toList())
+            .hasSize(1)
+            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
     }
 
     @Test
     fun `Verify selectWithCascadeFullJoin works correctly`() = runTest {
-        expect(repository.selectWithCascadeFullJoin().toList())
-            .toHaveSize(2)
-            .toContain(
+        assertThat(repository.selectWithCascadeFullJoin().toList())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(
                 UserWithRoleDto(userJdoe.lastname, roleUser.label),
                 UserWithRoleDto(userBboss.lastname, roleAdmin.label)
             )
@@ -179,5 +175,26 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
         assertThat(repository.selectRoleLabelsFromUserId(userBboss.id).toList())
             .hasSize(1)
             .containsExactly(roleAdmin.label)
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 0 if`() = runTest {
+        assertThat(repository.selectConditionalSyntax().toList())
+            .hasSize(2)
+            .containsExactly(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 1 if`() = runTest {
+        assertThat(repository.selectConditionalSyntax(1).toList())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 2 ifs`() = runTest {
+        assertThat(repository.selectConditionalSyntax(2).toList())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
     }
 }

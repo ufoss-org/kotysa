@@ -16,8 +16,10 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
     ) : SqlClientSubQuery.Scope {
         internal lateinit var properties: Properties<*>
         private fun <T : Any> properties(): Properties<T> {
-            val props = Properties<T>(initialProps.tables, initialProps.dbAccessType, initialProps.module,
-                initialProps.availableColumns)
+            val props = Properties<T>(
+                initialProps.tables, initialProps.dbAccessType, initialProps.module,
+                initialProps.availableColumns
+            )
             props.index = initialProps.index
             properties = props
             return props
@@ -50,7 +52,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun selectTsRankCd(
             tsvectorColumn: TsvectorColumn<*>,
             tsquery: Tsquery,
-        ): SqlClientSubQuery.FirstSelect<Float> = FirstSelect<Float>(properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
+        ): SqlClientSubQuery.FirstSelect<Float> =
+            FirstSelect<Float>(properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
 
         override fun <T : Any> select(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
@@ -63,6 +66,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): SqlClientSubQuery.From<T> = FirstSelect<T>(properties()).selectStarFrom(dsl)
+
+        override fun selects(): SqlClientSubQuery.Selects = Selects(properties())
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -84,7 +89,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
     private class FirstSelect<T : Any>(override val properties: Properties<T>) : DefaultSqlClientSelect.Select<T>(),
         SqlClientSubQuery.FirstSelect<T> {
-        
+
         private val from: FromTable<T, *> by lazy {
             FromTable<T, Any>(properties)
         }
@@ -97,6 +102,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         ): SqlClientSubQuery.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
         override fun from(tsquery: Tsquery): SqlClientSubQuery.From<T> = addFromTsquery(tsquery, from)
+
+        override fun froms(): SqlClientSubQuery.Froms<T> = addFroms(from)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -153,6 +160,93 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun `as`(alias: String): SqlClientSubQuery.FirstSelect<T> = this.apply { aliasLastColumn(alias) }
     }
 
+    private class Selects(override val properties: Properties<List<Any?>>) :
+        DefaultSqlClientSelect.Select<List<Any?>>(), SqlClientSubQuery.SelectsPart2 {
+        init {
+            properties.isConditionalSelect = true
+        }
+
+        private val from: FromTable<List<Any?>, *> by lazy {
+            FromTable<List<Any?>, Any>(properties)
+        }
+        private val froms: Froms<List<Any?>, *> by lazy {
+            Froms<List<Any?>, Any>(properties)
+        }
+
+        override fun <T : Any> from(table: Table<T>): SqlClientSubQuery.FromTable<List<Any?>, T> =
+            addFromTable(table, from as FromTable<List<Any?>, T>) as SqlClientSubQuery.FromTable<List<Any?>, T>
+
+        override fun <T : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSubQuery.From<List<Any?>> = addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
+
+        override fun from(tsquery: Tsquery): SqlClientSubQuery.From<List<Any?>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): SqlClientSubQuery.Froms<List<Any?>> = addFroms(froms)
+
+        override fun <T : Any> select(column: Column<*, T>): SqlClientSubQuery.SelectsPart2 =
+            this.apply { addSelectColumn(column) }
+
+        override fun <T : Any> select(table: Table<T>): SqlClientSubQuery.SelectsPart2 =
+            this.apply { addSelectTable(table) }
+
+        override fun <T : Any> selectCount(column: Column<*, T>?): SqlClientSubQuery.SelectsPart2 =
+            this.apply { addCountColumn(column) }
+
+        override fun <T : Any> selectDistinct(column: Column<*, T>): SqlClientSubQuery.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
+
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): SqlClientSubQuery.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.MIN)
+        }
+
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): SqlClientSubQuery.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.MAX)
+        }
+
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): SqlClientSubQuery.SelectsPart2 = this.apply {
+            addAvgColumn(column)
+        }
+
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): SqlClientSubQuery.SelectsPart2 =
+            this.apply { addLongSumColumn(column) }
+
+        override fun <T : Any> select(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSubQuery.SelectsPart2 = this.apply { addSelectSubQuery(dsl) }
+
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        ): SqlClientSubQuery.SelectsCaseWhenExists<T> = SelectsCaseWhenExists(properties, dsl)
+
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery,
+        ): SqlClientSubQuery.SelectsPart2 = this.apply { addTsRankCd(tsvectorColumn, tsquery) }
+
+        override fun `as`(alias: String): SqlClientSubQuery.SelectsPart2 = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class SelectsCaseWhenExists<T : Any>(
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ) : SqlClientSubQuery.SelectsCaseWhenExists<T> {
+        override fun <U : Any> then(value: U): SqlClientSubQuery.SelectsCaseWhenExistsPart2<T, U> =
+            SelectsCaseWhenExistsPart2(properties, dsl, value)
+    }
+
+    private class SelectsCaseWhenExistsPart2<T : Any, U : Any>(
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : SqlClientSubQuery.SelectsCaseWhenExistsPart2<T, U> {
+        override fun `else`(value: U): SqlClientSubQuery.SelectsPart2 =
+            Selects(properties).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
+    }
+
     private class AndCaseWhenExistsSecond<T : Any, U : Any>(
         private val properties: Properties<T>,
         private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
@@ -174,7 +268,7 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
     private class SecondSelect<T, U>(override val properties: Properties<Pair<T, U>>) :
         DefaultSqlClientSelect.Select<Pair<T, U>>(), SqlClientSubQuery.SecondSelect<T, U> {
-        
+
         private val from: FromTable<Pair<T, U>, *> by lazy {
             FromTable<Pair<T, U>, Any>(properties)
         }
@@ -187,7 +281,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         ): SqlClientSubQuery.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
 
         override fun from(tsquery: Tsquery): SqlClientSubQuery.From<Pair<T, U>> = addFromTsquery(tsquery, from)
-        
+
+        override fun froms(): SqlClientSubQuery.Froms<Pair<T, U>> = addFroms(from)
 
         override fun <V : Any> and(column: Column<*, V>): SqlClientSubQuery.ThirdSelect<T, U, V?> =
             ThirdSelect(properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -260,13 +355,16 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
     private class ThirdSelect<T, U, V>(override val properties: Properties<Triple<T, U, V>>) :
         DefaultSqlClientSelect.Select<Triple<T, U, V>>(), SqlClientSubQuery.ThirdSelect<T, U, V> {
-        
+
         private val from: FromTable<Triple<T, U, V>, *> by lazy {
             FromTable<Triple<T, U, V>, Any>(properties)
         }
 
         override fun <W : Any> from(table: Table<W>): SqlClientSubQuery.FromTable<Triple<T, U, V>, W> =
-            addFromTable(table, from as FromTable<Triple<T, U, V>, W>) as SqlClientSubQuery.FromTable<Triple<T, U, V>, W>
+            addFromTable(
+                table,
+                from as FromTable<Triple<T, U, V>, W>
+            ) as SqlClientSubQuery.FromTable<Triple<T, U, V>, W>
 
         override fun <W : Any> from(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<W>
@@ -274,6 +372,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
 
         override fun from(tsquery: Tsquery): SqlClientSubQuery.From<Triple<T, U, V>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): SqlClientSubQuery.Froms<Triple<T, U, V>> = addFroms(from)
 
         override fun <W : Any> and(column: Column<*, W>): SqlClientSubQuery.Select =
             Select(properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -358,6 +458,8 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun from(tsquery: Tsquery): SqlClientSubQuery.From<List<Any?>> = addFromTsquery(tsquery, from)
 
+        override fun froms(): SqlClientSubQuery.Froms<List<Any?>> = addFroms(from)
+
         override fun <T : Any> and(column: Column<*, T>): SqlClientSubQuery.Select =
             this.apply { addSelectColumn(column) }
 
@@ -404,16 +506,17 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
     private class FromTable<T : Any, U : Any>(
         properties: Properties<T>,
-    ) : FromWhereableSubQuery<T, U, SqlClientSubQuery.From<T>,
-            SqlClientSubQuery.Where<T>, SqlClientSubQuery.LimitOffset<T>,
-            SqlClientSubQuery.GroupByPart2<T>>(properties), SqlClientSubQuery.FromTable<T, U>,
-        SqlClientSubQuery.From<T>, GroupBy<T>, SqlClientSubQuery.LimitOffset<T>, Return<T> {
+    ) : FromWhereableSubQuery<T, U, SqlClientSubQuery.Where<T>, SqlClientSubQuery.LimitOffset<T>,
+            SqlClientSubQuery.GroupByAndable<T>>(properties), SqlClientSubQuery.FromTable<T, U>,
+        SqlClientSubQuery.From<T>, GroupableBy<T>, SqlClientSubQuery.LimitOffset<T>, Return<T> {
         override val fromTable = this
-        override val from = this
-        
+
         override val where by lazy { Where(properties) }
+        private val wheres by lazy { Wheres(properties) }
         override val limitOffset by lazy { LimitOffset(properties) }
-        override val groupByPart2 by lazy { GroupByPart2(properties) }
+        override val groupByPart2 by lazy { GroupByAndable(properties) }
+        private val groupsBy by lazy { GroupsBy(properties) }
+        override fun groupsBy(): SqlClientSubQuery.GroupsBy<T> = groupsBy
 
         override fun <V : Any> and(table: Table<V>): SqlClientSubQuery.FromTable<T, V> =
             addFromTable(table, fromTable as FromTable<T, V>)
@@ -421,12 +524,14 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): SqlClientSubQuery.From<T> =
-            addFromSubQuery(dsl, from as FromTable<T, V>)
+            addFromSubQuery(dsl, fromTable as FromTable<T, V>)
 
-        override fun and(tsquery: Tsquery): SqlClientSubQuery.From<T> = addFromTsquery(tsquery, from)
+        override fun and(tsquery: Tsquery): SqlClientSubQuery.From<T> = addFromTsquery(tsquery, fromTable)
 
         override fun `as`(alias: String): SqlClientSubQuery.FromTable<T, U> =
-            from.apply { aliasLastFrom(alias) }
+            fromTable.apply { aliasLastFrom(alias) }
+
+        override fun wheres(): SqlClientSubQuery.Wheres<T> = wheres
 
         override fun <V : Any> innerJoin(
             table: Table<V>
@@ -449,22 +554,93 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
             joinProtected(table, JoinClauseType.FULL_OUTER) as Joinable<U, V, SqlClientSubQuery.FromTable<T, V>>
     }
 
+    private class Froms<T : Any, U : Any>(properties: Properties<T>) : FromWhereableSubQuery<T, U,
+            SqlClientSubQuery.Where<T>, SqlClientSubQuery.LimitOffset<T>,
+            SqlClientSubQuery.GroupByAndable<T>>(properties), SqlClientSubQuery.FromsTable<T, U>, GroupableBy<T>,
+        SqlClientSubQuery.LimitOffset<T>, Return<T> {
+        override val fromTable = this
+
+        override val where by lazy { Where(properties) }
+        private val wheres by lazy { Wheres(properties) }
+        override val limitOffset by lazy { LimitOffset(properties) }
+        override val groupByPart2 by lazy { GroupByAndable(properties) }
+        private val groupsBy by lazy { GroupsBy(properties) }
+        override fun groupsBy(): SqlClientSubQuery.GroupsBy<T> = groupsBy
+
+        override fun <V : Any> from(table: Table<V>): SqlClientSubQuery.FromsTable<T, V> =
+            addFromTable(table, fromTable as Froms<T, V>)
+
+        override fun <V : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): SqlClientSubQuery.FromsPart2<T> = addFromSubQuery(dsl, fromTable as Froms<T, V>)
+
+        override fun from(tsquery: Tsquery): SqlClientSubQuery.FromsPart2<T> = addFromTsquery(tsquery, fromTable)
+
+        override fun `as`(alias: String): SqlClientSubQuery.Froms<T> = fromTable.apply { aliasLastFrom(alias) }
+
+        override fun wheres(): SqlClientSubQuery.Wheres<T> = wheres
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
+    }
+
     private class Where<T : Any>(
         override val properties: Properties<T>,
     ) : WhereSubQuery<T, SqlClientSubQuery.Where<T>, SqlClientSubQuery.LimitOffset<T>,
-            SqlClientSubQuery.GroupByPart2<T>>(), SqlClientSubQuery.Where<T>, GroupBy<T>,
+            SqlClientSubQuery.GroupByAndable<T>>(), SqlClientSubQuery.Where<T>, GroupableBy<T>,
         SqlClientSubQuery.LimitOffset<T>, Return<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(properties) }
-        override val groupByPart2 by lazy { GroupByPart2(properties) }
+        override val groupByPart2 by lazy { GroupByAndable(properties) }
+        private val groupsBy by lazy { GroupsBy(properties) }
+        override fun groupsBy(): SqlClientSubQuery.GroupsBy<T> = groupsBy
     }
 
-    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, SqlClientSubQuery.GroupByPart2<T>>,
-        SqlClientSubQuery.GroupBy<T>
-
-    private class GroupByPart2<T : Any>(
+    private class Wheres<T : Any>(
         override val properties: Properties<T>,
-    ) : DefaultSqlClientSelect.GroupByPart2<T, SqlClientSubQuery.GroupByPart2<T>>, SqlClientSubQuery.GroupByPart2<T>,
+    ) : WhereSubQuery<T, SqlClientSubQuery.Wheres<T>, SqlClientSubQuery.LimitOffset<T>,
+            SqlClientSubQuery.GroupByAndable<T>>(), SqlClientSubQuery.Wheres<T>, GroupableBy<T>,
+        SqlClientSubQuery.LimitOffset<T>, Return<T> {
+        override val where = this
+        override val limitOffset by lazy { LimitOffset(properties) }
+        override val groupByPart2 by lazy { GroupByAndable(properties) }
+        private val groupsBy by lazy { GroupsBy(properties) }
+        override fun groupsBy(): SqlClientSubQuery.GroupsBy<T> = groupsBy
+    }
+
+    private interface GroupableBy<T : Any> : DefaultSqlClientSelect.GroupableBy<T, SqlClientSubQuery.GroupByAndable<T>>,
+        SqlClientSubQuery.GroupableBy<T>
+
+    private class GroupByAndable<T : Any>(
+        override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.GroupByAndable<T, SqlClientSubQuery.GroupByAndable<T>>,
+        SqlClientSubQuery.GroupByAndable<T>,
+        DefaultSqlClientSelect.LimitOffset<T, SqlClientSubQuery.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(properties) }
+        override val groupByPart2 = this
+    }
+
+    private class GroupsBy<T : Any>(
+        override val properties: Properties<T>,
+    ) : DefaultSqlClientSelect.GroupableBy<T, SqlClientSubQuery.GroupsBy<T>>,
+        SqlClientSubQuery.GroupsBy<T>,
         DefaultSqlClientSelect.LimitOffset<T, SqlClientSubQuery.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(properties) }
         override val groupByPart2 = this

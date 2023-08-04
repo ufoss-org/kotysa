@@ -223,7 +223,7 @@ internal sealed class SqlClientVertx(
         SqlClientSelectVertx.Selectable(pool, tables).selectAvg(column)
 
     protected fun <T : Any, U : Any> selectSumProtected(column: WholeNumberColumn<T, U>)
-    : MutinySqlClientSelect.FirstSelect<Long> =
+            : MutinySqlClientSelect.FirstSelect<Long> =
         SqlClientSelectVertx.Selectable(pool, tables).selectSum(column)
 
     protected fun selectTsRankCdProtected(
@@ -244,6 +244,9 @@ internal sealed class SqlClientVertx(
     protected fun <T : Any> selectStarFromProtected(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): MutinySqlClientSelect.From<T> = SqlClientSelectVertx.Selectable(pool, tables).selectStarFromSubQuery(dsl)
+
+    protected fun selectsProtected(): MutinySqlClientSelect.Selects =
+        SqlClientSelectVertx.Selectable(pool, tables).selects()
 
     protected fun <T : Any> transactionalProtected(block: (VertxTransaction) -> Uni<T>): Uni<T> =
         // reuse currentTransaction if any, else create new transaction from new established connection
@@ -372,6 +375,8 @@ internal class MysqlSqlClientVertx internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
 }
@@ -411,6 +416,8 @@ internal class PostgresqlSqlClientVertx internal constructor(
         tsquery: Tsquery,
     ) = selectTsRankCdProtected(tsvectorColumn, tsquery)
 
+    override fun selects() = selectsProtected()
+
     override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
 }
@@ -444,6 +451,8 @@ internal class MssqlSqlClientVertx internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
@@ -479,6 +488,8 @@ internal class MariadbSqlClientVertx internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
 }
@@ -512,6 +523,8 @@ internal class OracleSqlClientVertx internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun <T : Any> transactional(block: (VertxTransaction) -> Uni<T>) = transactionalProtected(block)
     override fun <T : Any> transactionalMulti(block: (VertxTransaction) -> Multi<T>) = transactionalProtected(block)
