@@ -14,14 +14,14 @@ import org.ufoss.kotysa.test.OracleUsers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryTest
 
-class R2dbcSubQueryOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSubQuery>(),
-    ReactorSubQueryTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSubQuery,
+class R2dbcSubQueryOracleTest : AbstractR2dbcOracleTest<UserRepositoryR2dbcOracleSubQuery>(),
+    ReactorSubQueryTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryR2dbcOracleSubQuery,
             ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
-        UserRepositoryJdbcOracleSubQuery(sqlClient)
+        UserRepositoryR2dbcOracleSubQuery(sqlClient)
 }
 
-class UserRepositoryJdbcOracleSubQuery(sqlClient: ReactorSqlClient) :
+class UserRepositoryR2dbcOracleSubQuery(sqlClient: ReactorSqlClient) :
     ReactorSubQueryRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

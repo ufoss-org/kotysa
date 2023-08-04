@@ -4,35 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mysql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MysqlCoroutinesSqlClient
 import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.MysqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MysqlUserRoles
+import org.ufoss.kotysa.test.MysqlUsers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrTest
 
-
-class R2DbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryMysqlSelectOr>() {
-
+class R2dbcSelectOrMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSelectOr>(),
+    ReactorSelectOrTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryR2dbcMysqlSelectOr,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
-        UserRepositoryMysqlSelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds postgresqlAdmin and postgresqlGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toIterable())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
+        UserRepositoryR2dbcMysqlSelectOr(sqlClient)
 }
 
-
-class UserRepositoryMysqlSelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-        (sqlClient selectFrom MysqlRoles
-                where MysqlRoles.label eq label1
-                or MysqlRoles.label eq label2
-                ).fetchAll()
-}
+class UserRepositoryR2dbcMysqlSelectOr(sqlClient: ReactorSqlClient) :
+    ReactorSelectOrRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles
+    )

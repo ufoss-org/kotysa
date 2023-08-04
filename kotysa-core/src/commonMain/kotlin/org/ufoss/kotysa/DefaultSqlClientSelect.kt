@@ -20,6 +20,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         override val availableColumns: MutableMap<Column<*, *>, KotysaColumn<*, *>> = mutableMapOf(),
     ) : DefaultSqlClientCommon.Properties {
         internal val selectedFields = mutableListOf<Field<*>>()
+        public var isConditionalSelect: Boolean = false
         override val parameters: MutableList<Any?> = mutableListOf()
         override val fromClauses: MutableList<FromClause> = mutableListOf()
         override val whereClauses: MutableList<WhereClauseWithType> = mutableListOf()
@@ -46,7 +47,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
          */
         protected fun <U : Any, V : FromTable<U>> addFromTable(
             table: Table<U>,
-            from: FromWhereableSubQuery<T, U, *, *, *, *>,
+            from: FromWhereableSubQuery<T, U, *, *, *>,
         ): V {
             properties.select = buildSelect()
             return from.addFromTable(table)
@@ -55,9 +56,9 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<V>> addFromSubQuery(
+        protected fun <U : Any, V : FromAndable> addFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
-            from: FromWhereableSubQuery<T, U, V, *, *, *>,
+            from: FromWhereableSubQuery<T, U, *, *, *>,
             selectStar: Boolean = false,
         ): V {
             val result = properties.executeSubQuery(dsl)
@@ -71,18 +72,31 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         /**
          * 'select' phase is finished, start 'from' phase
          */
-        protected fun <U : Any, V : From<V>> addFromTsquery(
+        protected fun <U : Any, V : FromAndable> addFromTsquery(
             tsquery: Tsquery,
-            from: FromWhereableSubQuery<T, U, V, *, *, *>,
+            from: FromWhereableSubQuery<T, U, *, *, *>,
         ): V {
             properties.select = buildSelect()
             return from.addFromTsquery(tsquery)
         }
 
+        /**
+         * 'select' phase is finished, start 'from' phase
+         */
+        protected fun <U : Any, V : Fromable> addFroms(
+            from: FromWhereableSubQuery<T, U, *, *, *>,
+        ): V {
+            properties.select = buildSelect()
+            return from as V
+        }
+
         private fun buildSelect(): (RowImpl) -> T? = with(properties) {
-            when (selectedFields.size) {
-                1 -> selectedFields[0].builder as (RowImpl) -> T?
-                2 -> {
+            when {
+                selectedFields.size > 3 || isConditionalSelect -> {
+                    { row: RowImpl -> selectedFields.map { selectedField -> selectedField.builder.invoke(row) } } as (RowImpl) -> T?
+                }
+                selectedFields.size == 1 -> selectedFields[0].builder as (RowImpl) -> T?
+                selectedFields.size == 2 -> {
                     { row: RowImpl ->
                         Pair(
                             selectedFields[0].builder.invoke(row),
@@ -90,7 +104,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                         )
                     } as (RowImpl) -> T?
                 }
-                3 -> {
+                selectedFields.size == 3 -> {
                     { row: RowImpl ->
                         Triple(
                             selectedFields[0].builder.invoke(row), selectedFields[1].builder.invoke(row),
@@ -98,9 +112,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
                         )
                     } as (RowImpl) -> T?
                 }
-                else -> {
-                    { row: RowImpl -> selectedFields.map { selectedField -> selectedField.builder.invoke(row) } } as (RowImpl) -> T?
-                }
+                else -> throw IllegalStateException("Could not build select result, should not happen !")
             }
         }
 
@@ -177,42 +189,48 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
 
         protected fun <U : Any, V : FromTable<U>> addFromTable(
             table: Table<U>,
-            from: FromWhereable<T, U, *, *, *, *, *>
+            from: FromWhereable<T, U, *, *, *, *>
         ): V = from.addFromTable(table)
 
-        protected fun <U : Any, V : From<V>> addFromSubQuery(
+        protected fun <U : Any, V : FromAndable> addFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>,
-            from: FromWhereable<T, U, V, *, *, *, *>
+            from: FromWhereable<T, U, *, *, *, *>
         ): V = from.addFromSubQuery(properties.executeSubQuery(dsl))
 
-        protected fun <U : Any, V : From<V>> addFromTsquery(
+        protected fun <U : Any, V : FromAndable> addFromTsquery(
             tsquery: Tsquery,
-            from: FromWhereable<T, U, V, *, *, *, *>,
+            from: FromWhereable<T, U, *, *, *, *>,
         ): V = from.addFromTsquery(tsquery)
+
+        /**
+         * 'select' phase is finished, start 'from' phase
+         */
+        protected fun <U : Any, V : Fromable> addFroms(
+            from: FromWhereable<T, U, *, *, *, *>,
+        ): V = from as V
     }
 
-    public abstract class FromWhereableSubQuery<T : Any, U : Any, W : From<W>, X : SqlClientQuery.Where<X>,
-            Y : SqlClientQuery.LimitOffset<Y>, Z : SqlClientQuery.GroupByPart2<Z>>
+    public abstract class FromWhereableSubQuery<T : Any, U : Any, V : SqlClientQuery.Where<V>,
+            W : SqlClientQuery.LimitOffset<W>, X : GroupBy<X>>
     protected constructor(
         final override val properties: Properties<T>,
-    ) : DefaultSqlClientCommon.FromWhereable<U, W, X>(), FromTableSelect<U>, LimitOffset<T, Y>,
-        GroupBy<T, Z> {
-        protected fun <A : Any, B : FromTable<A>> addFromTable(
-            table: Table<A>,
-            from: FromWhereableSubQuery<T, A, *, *, *, *>,
-        ): B = from.addFromTable(table)
+    ) : DefaultSqlClientCommon.FromWhereable<U, V>(), FromTableSelect<U>, LimitOffset<T, W>, GroupableBy<T, X> {
+        protected fun <Y : Any, Z : FromTable<Y>> addFromTable(
+            table: Table<Y>,
+            from: FromWhereableSubQuery<T, Y, *, *, *>,
+        ): Z = from.addFromTable(table)
 
-        protected fun <A : Any, B : From<B>> addFromSubQuery(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<A>,
-            from: FromWhereableSubQuery<T, A, B, *, *, *>
-        ): B = from.addFromSubQuery(properties.executeSubQuery(dsl))
+        protected fun <Y : Any, Z : From> addFromSubQuery(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<Y>,
+            from: FromWhereableSubQuery<T, Y, *, *, *>
+        ): Z = from.addFromSubQuery(properties.executeSubQuery(dsl))
 
-        protected fun <A : Any, B : From<B>> addFromTsquery(
+        protected fun <Y : From> addFromTsquery(
             tsquery: Tsquery,
-            from: FromWhereableSubQuery<T, A, B, *, *, *>,
-        ): B = from.addFromTsquery(tsquery)
+            from: FromWhereableSubQuery<T, *, *, *, *>,
+        ): Y = from.addFromTsquery(tsquery)
 
-        protected fun <A : From<A>> aliasLastFrom(
+        protected fun aliasLastFrom(
             alias: String
         ) {
             val lastFrom = properties.fromClauses.last()
@@ -220,22 +238,22 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    public abstract class FromWhereable<T : Any, U : Any, W : From<W>, X : SqlClientQuery.Where<X>,
-            Y : SqlClientQuery.LimitOffset<Y>, Z : SqlClientQuery.GroupByPart2<Z>, A : SqlClientQuery.OrderByPart2<A>>
+    public abstract class FromWhereable<T : Any, U : Any, V : SqlClientQuery.Where<V>,
+            W : SqlClientQuery.LimitOffset<W>, X : GroupBy<X>, Y : OrderBy<Y>>
     protected constructor(
         properties: Properties<T>,
-    ) : FromWhereableSubQuery<T, U, W, X, Y, Z>(properties), OrderBy<T, A>
+    ) : FromWhereableSubQuery<T, U, V, W, X>(properties), OrderableBy<T, Y>
 
     public abstract class WhereSubQuery<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
-            W : SqlClientQuery.GroupByPart2<W>>
-    protected constructor() : DefaultSqlClientCommon.Where<U>(), LimitOffset<T, V>, GroupBy<T, W>
+            W : GroupBy<W>>
+    protected constructor() : DefaultSqlClientCommon.Where<U>(), LimitOffset<T, V>, GroupableBy<T, W>
 
     public abstract class Where<T : Any, U : SqlClientQuery.Where<U>, V : SqlClientQuery.LimitOffset<V>,
-            W : SqlClientQuery.GroupByPart2<W>, X : SqlClientQuery.OrderByPart2<X>>
-    protected constructor() : WhereSubQuery<T, U, V, W>(), OrderBy<T, X>
+            W : GroupBy<W>, X : OrderBy<X>>
+    protected constructor() : WhereSubQuery<T, U, V, W>(), OrderableBy<T, X>
 
-    protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>>
-        : SqlClientQuery.LimitOffset<U>, WithProperties<T> {
+    protected interface LimitOffset<T : Any, U : SqlClientQuery.LimitOffset<U>> : SqlClientQuery.LimitOffset<U>,
+        WithProperties<T> {
         public val limitOffset: U
 
         override fun limit(limit: Long): U {
@@ -249,8 +267,7 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface GroupBy<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupBy<U>,
-        WithProperties<T> {
+    protected interface GroupableBy<T : Any, U : GroupBy<U>> : SqlClientQuery.GroupableBy<U>, WithProperties<T> {
         public val groupByPart2: U
 
         override fun groupBy(column: Column<Any, *>): U {
@@ -264,8 +281,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface GroupByPart2<T : Any, U : SqlClientQuery.GroupByPart2<U>> : SqlClientQuery.GroupByPart2<U>,
-        WithProperties<T> {
+    protected interface GroupByAndable<T : Any, U : SqlClientQuery.GroupByAndable<U>> :
+        SqlClientQuery.GroupByAndable<U>, WithProperties<T> {
         public val groupByPart2: U
 
         override fun and(column: Column<Any, *>): U {
@@ -279,44 +296,44 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface OrderBy<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderBy<U>,
+    protected interface OrderableBy<T : Any, U : OrderBy<U>> : SqlClientQuery.OrderableBy<U>,
         WithProperties<T> {
-        public val orderByPart2: U
+        public val orderBy: U
 
         override fun orderByAsc(column: Column<Any, *>): U {
             properties.orderByClauses.add(
                 OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.ASC)
             )
-            return orderByPart2
+            return orderBy
         }
 
         override fun orderByDesc(column: Column<Any, *>): U {
             properties.orderByClauses.add(
                 OrderByClauseWithColumn(column.getOrClone(properties.availableColumns), Order.DESC)
             )
-            return orderByPart2
+            return orderBy
         }
 
         override fun orderByAsc(alias: QueryAlias<*>): U {
             properties.orderByClauses.add(OrderByClauseWithAlias(alias, Order.ASC))
-            return orderByPart2
+            return orderBy
         }
 
         override fun orderByDesc(alias: QueryAlias<*>): U {
             properties.orderByClauses.add(OrderByClauseWithAlias(alias, Order.DESC))
-            return orderByPart2
+            return orderBy
         }
     }
 
-    protected interface OrderByCaseWhenExists<T : Any, U : Any, V : SqlClientQuery.OrderByPart2<V>>
-        : SqlClientQuery.OrderByCaseWhenExists<U, V>, WithProperties<T> {
+    protected interface OrderByCaseWhenExists<T : Any, U : Any, V : OrderBy<V>> :
+        SqlClientQuery.OrderByCaseWhenExists<U, V>, WithProperties<T> {
         public val orderByPart2: V
         public val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         public val order: Order
     }
 
-    protected interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any, W : SqlClientQuery.OrderByPart2<W>>
-        : SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, W>, WithProperties<T> {
+    protected interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any, W : OrderBy<W>> :
+        SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, W>, WithProperties<T> {
         public val orderByPart2: W
         public val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
         public val then: V
@@ -329,8 +346,8 @@ public open class DefaultSqlClientSelect protected constructor() : DefaultSqlCli
         }
     }
 
-    protected interface OrderByPart2<T : Any, U : SqlClientQuery.OrderByPart2<U>> : SqlClientQuery.OrderByPart2<U>,
-        WithProperties<T> {
+    protected interface OrderByAndable<T : Any, U : SqlClientQuery.OrderByAndable<U>> :
+        SqlClientQuery.OrderByAndable<U>, WithProperties<T> {
         public val orderByPart2: U
 
         override fun andAsc(column: Column<Any, *>): U {

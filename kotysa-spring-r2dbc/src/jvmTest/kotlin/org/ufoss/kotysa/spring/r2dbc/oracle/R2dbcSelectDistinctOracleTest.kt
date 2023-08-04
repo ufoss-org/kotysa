@@ -14,14 +14,14 @@ import org.ufoss.kotysa.test.OracleUsers
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
-class R2dbcSelectDistinctOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSelectDistinct>(),
-    ReactorSelectDistinctTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelectDistinct,
+class R2dbcSelectDistinctOracleTest : AbstractR2dbcOracleTest<UserRepositoryR2dbcOracleSelectDistinct>(),
+    ReactorSelectDistinctTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryR2dbcOracleSelectDistinct,
             ReactorTransaction> {
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
-        UserRepositoryJdbcOracleSelectDistinct(sqlClient)
+        UserRepositoryR2dbcOracleSelectDistinct(sqlClient)
 }
 
-class UserRepositoryJdbcOracleSelectDistinct(sqlClient: ReactorSqlClient) :
+class UserRepositoryR2dbcOracleSelectDistinct(sqlClient: ReactorSqlClient) :
     ReactorSelectDistinctRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

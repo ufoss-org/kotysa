@@ -66,6 +66,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             tsquery: Tsquery
         ): MutinySqlClientSelect.FirstSelect<Float> =
             FirstSelect<Float>(pool, properties()).apply { addTsRankCd(tsvectorColumn, tsquery) }
+
+        override fun selects(): MutinySqlClientSelect.Selects = Selects(pool, properties())
     }
 
     private class SelectCaseWhenExistsFirst<T : Any>(
@@ -94,6 +96,9 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         private val from: FromTable<T, *> by lazy {
             FromTable<T, Any>(pool, properties)
         }
+        private val froms: Froms<T, *> by lazy {
+            Froms<T, Any>(pool, properties)
+        }
 
         override fun <U : Any> from(table: Table<U>): MutinySqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
@@ -103,6 +108,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         ): MutinySqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>)
 
         override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, from)
+
+        override fun froms(): MutinySqlClientSelect.Froms<T> = addFroms(froms)
 
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
@@ -187,6 +194,9 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         private val from: FromTable<Pair<T, U>, *> by lazy {
             FromTable<Pair<T, U>, Any>(pool, properties)
         }
+        private val froms: Froms<Pair<T, U>, *> by lazy {
+            Froms<Pair<T, U>, Any>(pool, properties)
+        }
 
         override fun <V : Any> from(table: Table<V>): MutinySqlClientSelect.FromTable<Pair<T, U>, V> =
             addFromTable(table, from as FromTable<Pair<T, U>, V>)
@@ -196,6 +206,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         ): MutinySqlClientSelect.From<Pair<T, U>> = addFromSubQuery(dsl, from as FromTable<Pair<T, U>, V>)
 
         override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): MutinySqlClientSelect.Froms<Pair<T, U>> = addFroms(froms)
 
         override fun <V : Any> and(column: Column<*, V>): MutinySqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(pool, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
@@ -248,8 +260,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             ThirdSelect(pool, properties as Properties<Triple<T, U, Float>>)
                 .apply { addTsRankCd(tsvectorColumn, tsquery) }
 
-        override fun `as`(alias: String): MutinySqlClientSelect.SecondSelect<T, U> =
-            this.apply { aliasLastColumn(alias) }
+        override fun `as`(alias: String): MutinySqlClientSelect.SecondSelect<T, U> = this.apply { aliasLastColumn(alias) }
     }
 
     private class AndCaseWhenExistsThird<T, U, V : Any>(
@@ -280,6 +291,9 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         private val from: FromTable<Triple<T, U, V>, *> by lazy {
             FromTable<Triple<T, U, V>, Any>(pool, properties)
         }
+        private val froms: Froms<Triple<T, U, V>, *> by lazy {
+            Froms<Triple<T, U, V>, Any>(pool, properties)
+        }
 
         override fun <W : Any> from(table: Table<W>): MutinySqlClientSelect.FromTable<Triple<T, U, V>, W> =
             addFromTable(table, from as FromTable<Triple<T, U, V>, W>)
@@ -290,6 +304,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             addFromSubQuery(dsl, from as FromTable<Triple<T, U, V>, W>)
 
         override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<Triple<T, U, V>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): MutinySqlClientSelect.Froms<Triple<T, U, V>> = addFroms(froms)
 
         override fun <W : Any> and(column: Column<*, W>): MutinySqlClientSelect.Select =
             Select(pool, properties as Properties<List<Any?>>).apply { addSelectColumn(column) }
@@ -335,8 +351,7 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): MutinySqlClientSelect.Select =
             Select(pool, properties as Properties<List<Any?>>).apply { addTsRankCd(tsvectorColumn, tsquery) }
 
-        override fun `as`(alias: String): MutinySqlClientSelect.ThirdSelect<T, U, V> =
-            this.apply { aliasLastColumn(alias) }
+        override fun `as`(alias: String): MutinySqlClientSelect.ThirdSelect<T, U, V> = this.apply { aliasLastColumn(alias) }
     }
 
     private class AndCaseWhenExistsLast<T : Any>(
@@ -364,7 +379,9 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         private val pool: Pool,
         override val properties: Properties<List<Any?>>,
     ) : DefaultSqlClientSelect.Select<List<Any?>>(), MutinySqlClientSelect.Select {
+        // todo lazy
         private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(pool, properties)
+        private val froms: Froms<List<Any?>, *> = Froms<List<Any?>, Any>(pool, properties)
 
         override fun <T : Any> from(table: Table<T>): MutinySqlClientSelect.FromTable<List<Any?>, T> =
             addFromTable(table, from as FromTable<List<Any?>, T>)
@@ -375,6 +392,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
 
         override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): MutinySqlClientSelect.Froms<List<Any?>> = addFroms(froms)
 
         override fun <T : Any> and(column: Column<*, T>): MutinySqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
@@ -417,12 +436,101 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
         override fun `as`(alias: String): MutinySqlClientSelect.Select = this.apply { aliasLastColumn(alias) }
     }
 
+    private class Selects(
+        private val pool: Pool,
+        override val properties: Properties<List<Any?>>,
+    ) : DefaultSqlClientSelect.Select<List<Any?>>(), MutinySqlClientSelect.SelectsPart2 {
+        init {
+            properties.isConditionalSelect = true
+        }
+
+        // todo lazy
+        private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(pool, properties)
+        private val froms: Froms<List<Any?>, *> = Froms<List<Any?>, Any>(pool, properties)
+
+        override fun <T : Any> from(table: Table<T>): MutinySqlClientSelect.FromTable<List<Any?>, T> =
+            addFromTable(table, from as FromTable<List<Any?>, T>)
+
+        override fun <T : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): MutinySqlClientSelect.From<List<Any?>> =
+            addFromSubQuery(dsl, from as FromTable<List<Any?>, T>)
+
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
+
+        override fun froms(): MutinySqlClientSelect.Froms<List<Any?>> = addFroms(froms)
+
+        override fun <T : Any> select(column: Column<*, T>): MutinySqlClientSelect.SelectsPart2 =
+            this.apply { addSelectColumn(column) }
+
+        override fun <T : Any> select(table: Table<T>): MutinySqlClientSelect.SelectsPart2 =
+            this.apply { addSelectTable(table) }
+
+        override fun <T : Any> selectCount(column: Column<*, T>?): MutinySqlClientSelect.SelectsPart2 =
+            this.apply { addCountColumn(column) }
+
+        override fun <T : Any> selectDistinct(column: Column<*, T>): MutinySqlClientSelect.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.DISTINCT)
+        }
+
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): MutinySqlClientSelect.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.MIN)
+        }
+
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): MutinySqlClientSelect.SelectsPart2 = this.apply {
+            addSelectColumn(column, FieldClassifier.MAX)
+        }
+
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): MutinySqlClientSelect.SelectsPart2 = this.apply {
+            addAvgColumn(column)
+        }
+
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): MutinySqlClientSelect.SelectsPart2 =
+            this.apply { addLongSumColumn(column) }
+
+        override fun <T : Any> select(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): MutinySqlClientSelect.SelectsPart2 = this.apply { addSelectSubQuery(dsl) }
+
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        ): MutinySqlClientSelect.SelectsCaseWhenExists<T> = SelectsCaseWhenExists(pool, properties, dsl)
+
+        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): MutinySqlClientSelect.SelectsPart2 =
+            this.apply { addTsRankCd(tsvectorColumn, tsquery) }
+
+        override fun `as`(alias: String): MutinySqlClientSelect.SelectsPart2 = this.apply { aliasLastColumn(alias) }
+    }
+
+    private class SelectsCaseWhenExists<T : Any>(
+        private val pool: Pool,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+    ) : MutinySqlClientSelect.SelectsCaseWhenExists<T> {
+        override fun <U : Any> then(value: U): MutinySqlClientSelect.SelectsCaseWhenExistsPart2<T, U> =
+            SelectsCaseWhenExistsPart2(pool, properties, dsl, value)
+    }
+
+    private class SelectsCaseWhenExistsPart2<T : Any, U : Any>(
+        private val pool: Pool,
+        private val properties: Properties<List<Any?>>,
+        private val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>,
+        private val then: U,
+    ) : MutinySqlClientSelect.SelectsCaseWhenExistsPart2<T, U> {
+        override fun `else`(value: U): MutinySqlClientSelect.SelectsPart2 =
+            Selects(pool, properties).apply {
+                addSelectCaseWhenExistsSubQuery(dsl, then, value)
+            }
+    }
+
     private class SelectWithDsl<T : Any>(
         pool: Pool,
         properties: Properties<T>,
         dsl: (ValueProvider) -> T,
     ) : DefaultSqlClientSelect.SelectWithDsl<T>(properties, dsl), MutinySqlClientSelect.Fromable<T> {
+        // todo lazy
         private val from: FromTable<T, *> = FromTable<T, Any>(pool, properties)
+        private val froms: Froms<T, *> = Froms<T, Any>(pool, properties)
 
         override fun <U : Any> from(table: Table<U>): MutinySqlClientSelect.FromTable<T, U> =
             addFromTable(table, from as FromTable<T, U>)
@@ -433,6 +541,8 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
 
         override fun from(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
+        override fun froms(): MutinySqlClientSelect.Froms<T> = addFroms(froms)
+
         override fun `as`(alias: String): Nothing {
             throw IllegalArgumentException("No Alias for selectAndBuild")
         }
@@ -441,35 +551,37 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
     private class FromTable<T : Any, U : Any>(
         override val pool: Pool,
         properties: Properties<T>,
-    ) : FromWhereable<T, U, MutinySqlClientSelect.From<T>, MutinySqlClientSelect.Where<T>,
-            MutinySqlClientSelect.LimitOffset<T>, MutinySqlClientSelect.GroupByPart2<T>,
-            MutinySqlClientSelect.OrderByPart2<T>>(properties), MutinySqlClientSelect.FromTable<T, U>,
-        MutinySqlClientSelect.From<T>,
-        GroupBy<T>, OrderBy<T>, MutinySqlClientSelect.LimitOffset<T> {
+    ) : FromWhereable<T, U, MutinySqlClientSelect.Where<T>, MutinySqlClientSelect.LimitOffset<T>, MutinySqlClientSelect.GroupBy<T>,
+            MutinySqlClientSelect.OrderBy<T>>(properties), MutinySqlClientSelect.FromTable<T, U>, MutinySqlClientSelect.From<T>,
+        GroupableBy<T>, OrderableBy<T>, MutinySqlClientSelect.LimitOffset<T> {
         override val fromTable = this
-        override val from = this
 
         override val where by lazy { Where(pool, properties) }
+        private val wheres by lazy { Wheres(pool, properties) }
         override val limitOffset by lazy { LimitOffset(pool, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(pool, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(pool, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(pool, properties) }
+        override val orderBy by lazy { OrderByAndable(pool, properties) }
+        private val ordersBy by lazy { OrdersBy(pool, properties) }
+        private val groupsBy by lazy { GroupsBy(pool, properties) }
+        override fun ordersBy(): MutinySqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): MutinySqlClientSelect.GroupsBy<T> = groupsBy
 
         override fun <V : Any> and(table: Table<V>): MutinySqlClientSelect.FromTable<T, V> =
             addFromTable(table, fromTable as FromTable<T, V>)
 
         override fun <V : Any> and(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
-        ): MutinySqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, V>)
+        ): MutinySqlClientSelect.From<T> = addFromSubQuery(dsl, fromTable as FromTable<T, V>)
 
-        override fun and(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, from)
+        override fun and(tsquery: Tsquery): MutinySqlClientSelect.From<T> = addFromTsquery(tsquery, fromTable)
 
-        override fun `as`(alias: String): MutinySqlClientSelect.FromTable<T, U> =
-            from.apply { aliasLastFrom(alias) }
+        override fun `as`(alias: String): MutinySqlClientSelect.FromTable<T, U> = fromTable.apply { aliasLastFrom(alias) }
+
+        override fun wheres(): MutinySqlClientSelect.Wheres<T> = wheres
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromTable<T, V>> =
-            joinProtected(table, JoinClauseType.INNER)
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
@@ -487,86 +599,195 @@ internal class SqlClientSelectVertx private constructor() : DefaultSqlClientSele
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
+    private class Froms<T : Any, U : Any>(
+        override val pool: Pool,
+        properties: Properties<T>,
+    ) : FromWhereable<T, U, MutinySqlClientSelect.Where<T>, MutinySqlClientSelect.LimitOffset<T>,
+            MutinySqlClientSelect.GroupBy<T>, MutinySqlClientSelect.OrderBy<T>>(properties),
+        MutinySqlClientSelect.FromsTable<T, U>, GroupableBy<T>, OrderableBy<T>, MutinySqlClientSelect.LimitOffset<T> {
+        override val fromTable = this
+
+        override val where by lazy { Where(pool, properties) }
+        private val wheres by lazy { Wheres(pool, properties) }
+        override val limitOffset by lazy { LimitOffset(pool, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(pool, properties) }
+        override val orderBy by lazy { OrderByAndable(pool, properties) }
+        private val ordersBy by lazy { OrdersBy(pool, properties) }
+        private val groupsBy by lazy { GroupsBy(pool, properties) }
+        override fun ordersBy(): MutinySqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): MutinySqlClientSelect.GroupsBy<T> = groupsBy
+
+        override fun <V : Any> from(table: Table<V>): MutinySqlClientSelect.FromsTable<T, V> =
+            addFromTable(table, fromTable as Froms<T, V>)
+
+        override fun <V : Any> from(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
+        ): MutinySqlClientSelect.FromsPart2<T> = addFromSubQuery(dsl, fromTable as Froms<T, V>)
+
+        override fun from(tsquery: Tsquery): MutinySqlClientSelect.FromsPart2<T> = addFromTsquery(tsquery, fromTable)
+
+        override fun `as`(alias: String): MutinySqlClientSelect.Froms<T> = fromTable.apply { aliasLastFrom(alias) }
+
+        override fun wheres(): MutinySqlClientSelect.Wheres<T> = wheres
+
+        override fun <V : Any> innerJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+
+        override fun <V : Any> leftJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.LEFT_OUTER)
+
+        override fun <V : Any> rightJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.RIGHT_OUTER)
+
+        override fun <V : Any> fullJoin(
+            table: Table<V>
+        ): SqlClientQuery.Joinable<U, V, MutinySqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.FULL_OUTER)
+    }
+
     private class Where<T : Any>(
         override val pool: Pool,
         override val properties: Properties<T>
     ) : DefaultSqlClientSelect.Where<T, MutinySqlClientSelect.Where<T>, MutinySqlClientSelect.LimitOffset<T>,
-            MutinySqlClientSelect.GroupByPart2<T>, MutinySqlClientSelect.OrderByPart2<T>>(),
-        MutinySqlClientSelect.Where<T>,
-        GroupBy<T>, OrderBy<T>, MutinySqlClientSelect.LimitOffset<T> {
+            MutinySqlClientSelect.GroupBy<T>, MutinySqlClientSelect.OrderBy<T>>(), MutinySqlClientSelect.Where<T>,
+        GroupableBy<T>, OrderableBy<T>, MutinySqlClientSelect.LimitOffset<T> {
         override val where = this
         override val limitOffset by lazy { LimitOffset(pool, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(pool, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(pool, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(pool, properties) }
+        override val orderBy by lazy { OrderByAndable(pool, properties) }
+        private val ordersBy by lazy { OrdersBy(pool, properties) }
+        private val groupsBy by lazy { GroupsBy(pool, properties) }
+        override fun ordersBy(): MutinySqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): MutinySqlClientSelect.GroupsBy<T> = groupsBy
     }
 
-    private interface GroupBy<T : Any> : DefaultSqlClientSelect.GroupBy<T, MutinySqlClientSelect.GroupByPart2<T>>,
-        MutinySqlClientSelect.GroupBy<T>, Return<T>
-
-    private class GroupByPart2<T : Any>(
+    private class Wheres<T : Any>(
         override val pool: Pool,
         override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.GroupByPart2<T, MutinySqlClientSelect.GroupByPart2<T>>,
-        MutinySqlClientSelect.GroupByPart2<T>,
-        DefaultSqlClientSelect.OrderBy<T, MutinySqlClientSelect.OrderByPart2<T>>,
-        OrderBy<T>, DefaultSqlClientSelect.LimitOffset<T, MutinySqlClientSelect.LimitOffset<T>>, Return<T> {
+    ) : DefaultSqlClientSelect.Where<T, MutinySqlClientSelect.Wheres<T>, MutinySqlClientSelect.LimitOffset<T>,
+            MutinySqlClientSelect.GroupBy<T>, MutinySqlClientSelect.OrderBy<T>>(), MutinySqlClientSelect.Wheres<T>,
+        GroupableBy<T>, OrderableBy<T>, MutinySqlClientSelect.LimitOffset<T> {
+        override val where = this
         override val limitOffset by lazy { LimitOffset(pool, properties) }
-        override val orderByPart2 by lazy { OrderByPart2(pool, properties) }
-        override val groupByPart2 = this
+        override val groupByPart2 by lazy { GroupByAndable(pool, properties) }
+        override val orderBy by lazy { OrderByAndable(pool, properties) }
+        private val ordersBy by lazy { OrdersBy(pool, properties) }
+        private val groupsBy by lazy { GroupsBy(pool, properties) }
+        override fun ordersBy(): MutinySqlClientSelect.OrdersBy<T> = ordersBy
+        override fun groupsBy(): MutinySqlClientSelect.GroupsBy<T> = groupsBy
     }
 
-    private interface OrderBy<T : Any> : DefaultSqlClientSelect.OrderBy<T, MutinySqlClientSelect.OrderByPart2<T>>,
-        MutinySqlClientSelect.OrderBy<T>, Return<T> {
+    private interface GroupableBy<T : Any> : DefaultSqlClientSelect.GroupableBy<T, MutinySqlClientSelect.GroupBy<T>>,
+        MutinySqlClientSelect.GroupableBy<T>, Return<T>
+
+    private class GroupByAndable<T : Any>(
+        override val pool: Pool,
+        override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupByAndable<T, MutinySqlClientSelect.GroupBy<T>>,
+        MutinySqlClientSelect.GroupBy<T>,
+        DefaultSqlClientSelect.OrderableBy<T, MutinySqlClientSelect.OrderBy<T>>,
+        OrderableBy<T>, DefaultSqlClientSelect.LimitOffset<T, MutinySqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(pool, properties) }
+        override val orderBy by lazy { OrderByAndable(pool, properties) }
+        override val groupByPart2 = this
+        private val ordersBy by lazy { OrdersBy(pool, properties) }
+        override fun ordersBy(): MutinySqlClientSelect.OrdersBy<T> = ordersBy
+    }
+
+    private class GroupsBy<T : Any>(
+        override val pool: Pool,
+        override val properties: Properties<T>
+    ) : DefaultSqlClientSelect.GroupableBy<T, MutinySqlClientSelect.GroupsBy<T>>,
+        MutinySqlClientSelect.GroupsBy<T>,
+        DefaultSqlClientSelect.OrderableBy<T, MutinySqlClientSelect.OrderBy<T>>,
+        OrderableBy<T>, DefaultSqlClientSelect.LimitOffset<T, MutinySqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(pool, properties) }
+        override val orderBy by lazy { OrderByAndable(pool, properties) }
+        override val groupByPart2 = this
+        private val ordersBy by lazy { OrdersBy(pool, properties) }
+        override fun ordersBy(): MutinySqlClientSelect.OrdersBy<T> = ordersBy
+    }
+
+    private interface OrderableBy<T : Any> : DefaultSqlClientSelect.OrderableBy<T, MutinySqlClientSelect.OrderBy<T>>,
+        MutinySqlClientSelect.OrderableBy<T>, Return<T> {
 
         override fun <U : Any> orderByAscCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderByPart2<T>> =
-            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
+        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.ASC)
 
         override fun <U : Any> orderByDescCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderByPart2<T>> =
-            OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
+        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.DESC)
     }
 
-    private class OrderByCaseWhenExists<T : Any, U : Any>(
+    private class OrdersBy<T : Any>(
+        override val pool: Pool,
+        override val properties: Properties<T>
+    ): DefaultSqlClientSelect.OrderableBy<T, MutinySqlClientSelect.OrdersBy<T>>, MutinySqlClientSelect.OrdersBy<T>, GroupableBy<T>,
+        DefaultSqlClientSelect.LimitOffset<T, MutinySqlClientSelect.LimitOffset<T>>, Return<T> {
+        override val limitOffset by lazy { LimitOffset(pool, properties) }
+        override val orderBy = this
+        override val groupByPart2 by lazy { GroupByAndable(pool, properties) }
+        private val groupsBy by lazy { GroupsBy(pool, properties) }
+        override fun groupsBy(): MutinySqlClientSelect.GroupsBy<T> = groupsBy
+
+        override fun <U : Any> orderByAscCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrdersBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.ASC)
+
+        override fun <U : Any> orderByDescCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
+        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrdersBy<T>> =
+            OrderByCaseWhenExists(properties, orderBy, dsl, Order.DESC)
+    }
+
+    private class OrderByCaseWhenExists<T : Any, U : Any, V : OrderBy<V>>(
         override val properties: Properties<T>,
-        override val orderByPart2: MutinySqlClientSelect.OrderByPart2<T>,
+        override val orderByPart2: V,
         override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
         override val order: Order
-    ) : DefaultSqlClientSelect.OrderByCaseWhenExists<T, U, MutinySqlClientSelect.OrderByPart2<T>> {
-        override fun <V : Any> then(value: V): SqlClientQuery.OrderByCaseWhenExistsPart2<U, V, MutinySqlClientSelect.OrderByPart2<T>> {
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExists<T, U, V> {
+        override fun <W : Any> then(value: W): SqlClientQuery.OrderByCaseWhenExistsPart2<U, W, V> {
             return OrderByCaseWhenExistsPart2(properties, orderByPart2, dsl, value, order)
         }
     }
 
-    private class OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any>(
+    private class OrderByCaseWhenExistsPart2<T : Any, U : Any, V : Any, W : OrderBy<W>>(
         override val properties: Properties<T>,
-        override val orderByPart2: MutinySqlClientSelect.OrderByPart2<T>,
+        override val orderByPart2: W,
         override val dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>,
         override val then: V,
         override val order: Order
-    ) : DefaultSqlClientSelect.OrderByCaseWhenExistsPart2<T, U, V, MutinySqlClientSelect.OrderByPart2<T>>
+    ) : DefaultSqlClientSelect.OrderByCaseWhenExistsPart2<T, U, V, W>
 
-    private class OrderByPart2<T : Any>(
+    private class OrderByAndable<T : Any>(
         override val pool: Pool,
         override val properties: Properties<T>
-    ) : DefaultSqlClientSelect.OrderByPart2<T, MutinySqlClientSelect.OrderByPart2<T>>,
-        MutinySqlClientSelect.OrderByPart2<T>,
-        DefaultSqlClientSelect.GroupBy<T, MutinySqlClientSelect.GroupByPart2<T>>,
+    ) : DefaultSqlClientSelect.OrderByAndable<T, MutinySqlClientSelect.OrderBy<T>>, MutinySqlClientSelect.OrderBy<T>,
+        DefaultSqlClientSelect.GroupableBy<T, MutinySqlClientSelect.GroupBy<T>>,
         DefaultSqlClientSelect.LimitOffset<T, MutinySqlClientSelect.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(pool, properties) }
-        override val groupByPart2 by lazy { GroupByPart2(pool, properties) }
+        override val groupByPart2 by lazy { GroupByAndable(pool, properties) }
         override val orderByPart2 = this
+        private val groupsBy by lazy { GroupsBy(pool, properties) }
+        override fun groupsBy(): MutinySqlClientSelect.GroupsBy<T> = groupsBy
 
         override fun <U : Any> andAscCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderByPart2<T>> =
+        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderBy<T>> =
             OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.ASC)
 
         override fun <U : Any> andDescCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<U>
-        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderByPart2<T>> =
+        ): SqlClientQuery.OrderByCaseWhenExists<U, MutinySqlClientSelect.OrderBy<T>> =
             OrderByCaseWhenExists(properties, orderByPart2, dsl, Order.DESC)
     }
 

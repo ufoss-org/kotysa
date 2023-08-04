@@ -4,38 +4,30 @@
 
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.PostgresqlRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.PostgresqlUserRoles
+import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
-
-class R2DbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectDistinct>() {
-
+class R2dbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryR2dbcPostgresqlSelectDistinct>(),
+    ReactorSelectDistinctTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles,
+            UserRepositoryR2dbcPostgresqlSelectDistinct, ReactorTransaction> {
     override fun instantiateRepository(
         sqlClient: PostgresqlReactorSqlClient,
-        coSqlClient: PostgresqlCoroutinesSqlClient,
-    ) = UserRepositoryPostgresqlSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels().toIterable())
-            .hasSize(3)
-            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
+        coSqlClient: PostgresqlCoroutinesSqlClient
+    ) =
+        UserRepositoryR2dbcPostgresqlSelectDistinct(sqlClient)
 }
 
-
-class UserRepositoryPostgresqlSelectDistinct(sqlClient: ReactorSqlClient) :
-    AbstractUserRepositoryPostgresql(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct PostgresqlRoles.label
-                from PostgresqlRoles
-                ).fetchAll()
-}
+class UserRepositoryR2dbcPostgresqlSelectDistinct(sqlClient: ReactorSqlClient) :
+    ReactorSelectDistinctRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

@@ -181,4 +181,25 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
             .toHaveSize(1)
             .toContainExactly(roleAdmin.label)
     }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 0 if`() {
+        expect(repository.selectConditionalSyntax())
+            .toHaveSize(2)
+            .toContain(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 1 if`() {
+        expect(repository.selectConditionalSyntax(1))
+            .toHaveSize(1)
+            .toContain(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectConditionalSyntax with 2 ifs`() {
+        expect(repository.selectConditionalSyntax(2))
+            .toHaveSize(1)
+            .toContain(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
+    }
 }

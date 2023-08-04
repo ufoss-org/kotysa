@@ -4,35 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mariadb
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MariadbCoroutinesSqlClient
 import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.MariadbRoles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleGod
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.MariadbUserRoles
+import org.ufoss.kotysa.test.MariadbUsers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
-
-class R2DbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelectDistinct>() {
-
+class R2dbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryR2dbcMariadbSelectDistinct>(),
+    ReactorSelectDistinctTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryR2dbcMariadbSelectDistinct,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
-        UserRepositoryMariadbSelectDistinct(sqlClient)
-
-    @Test
-    fun `Verify selectDistinctRoleLabels finds no duplicates`() {
-        assertThat(repository.selectDistinctRoleLabels().toIterable())
-            .hasSize(3)
-            .containsExactlyInAnyOrder(roleUser.label, roleAdmin.label, roleGod.label)
-    }
+        UserRepositoryR2dbcMariadbSelectDistinct(sqlClient)
 }
 
-
-class UserRepositoryMariadbSelectDistinct(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
-
-    fun selectDistinctRoleLabels() =
-        (sqlClient selectDistinct MariadbRoles.label
-                from MariadbRoles
-                ).fetchAll()
-}
+class UserRepositoryR2dbcMariadbSelectDistinct(sqlClient: ReactorSqlClient) :
+    ReactorSelectDistinctRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles
+    )

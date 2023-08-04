@@ -73,4 +73,25 @@ interface CoroutinesSubQueryTest<T : Roles, U : Users, V : UserRoles, W : Corout
                 roleGod.label,
             )
     }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 0 if`() = runTest {
+        assertThat(repository.selectStarConditionalSyntax().toList())
+            .hasSize(2)
+            .containsExactlyInAnyOrder(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 1 if`() = runTest {
+        assertThat(repository.selectStarConditionalSyntax(1).toList())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 2 ifs`() = runTest {
+        assertThat(repository.selectStarConditionalSyntax(2).toList())
+            .hasSize(1)
+            .containsExactly(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
+    }
 }

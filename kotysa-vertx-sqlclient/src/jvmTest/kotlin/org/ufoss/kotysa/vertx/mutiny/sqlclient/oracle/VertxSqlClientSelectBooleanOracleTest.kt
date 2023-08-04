@@ -11,12 +11,12 @@ import org.ufoss.kotysa.vertx.mutiny.sqlclient.VertxSqlClient
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBooleanRepository
 import org.ufoss.kotysa.vertx.mutiny.sqlclient.repositories.MutinySelectBooleanTest
 
-class VertxSqlClientSelectBooleanOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryJdbcOracleSelectBoolean>(),
-    MutinySelectBooleanTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelectBoolean> {
-    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryJdbcOracleSelectBoolean(sqlClient)
+class VertxSqlClientSelectBooleanOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryVertxSqlClientOracleSelectBoolean>(),
+    MutinySelectBooleanTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryVertxSqlClientOracleSelectBoolean> {
+    override fun instantiateRepository(sqlClient: VertxSqlClient) = UserRepositoryVertxSqlClientOracleSelectBoolean(sqlClient)
 }
 
-class UserRepositoryJdbcOracleSelectBoolean(sqlClient: VertxSqlClient) :
+class UserRepositoryVertxSqlClientOracleSelectBoolean(sqlClient: VertxSqlClient) :
     MutinySelectBooleanRepository<OracleRoles, OracleUsers, OracleUserRoles>(
         sqlClient,
         OracleRoles,

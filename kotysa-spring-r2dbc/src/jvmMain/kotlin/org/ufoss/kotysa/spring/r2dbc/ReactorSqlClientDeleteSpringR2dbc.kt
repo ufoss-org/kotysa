@@ -9,7 +9,7 @@ import org.ufoss.kotysa.*
 import reactor.core.publisher.Mono
 
 
-internal class SqlClientDeleteSpringR2dbc private constructor() : AbstractSqlClientDeleteSpringR2dbc() {
+internal class ReactorSqlClientDeleteSpringR2dbc private constructor() : AbstractSqlClientDeleteSpringR2dbc() {
 
     internal class FirstDelete<T : Any> internal constructor(
         override val client: DatabaseClient,

@@ -49,6 +49,8 @@ public expect sealed interface SqlClient {
 
     public open infix fun <T : Any> selectAllFrom(table: Table<T>): List<T>
     public open infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long
+    
+    public fun selects(): SqlClientSelect.Selects
 }
 
 public interface SqLiteSqlClient : SqlClient
@@ -72,6 +74,8 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): From<T>
+
+        override fun selects(): Selects
     }
 
     public interface SelectCaseWhenExistsFirst<T : Any> : SelectCaseWhenExists {
@@ -82,12 +86,34 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun `else`(value: U): FirstSelect<U>
     }
 
-    public interface Fromable<T : Any> : SqlClientQuery.Fromable, SqlClientQuery.Select {
+    public interface Fromable<T : Any> : SqlClientQuery.Fromable {
         override fun <U : Any> from(table: Table<U>): FromTable<T, U>
         override fun <U : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
+        public fun froms(): Froms<T>
     }
 
-    public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, Andable {
+    public interface Whereable<T : Any> : SqlClientQuery.Whereable<Where<T>> {
+        public fun wheres(): Wheres<T>
+    }
+
+    public interface Froms<T : Any> : SqlClientQuery.Fromable, Whereable<T>, GroupableBy<T>, OrderableBy<T>,
+        LimitOffset<T>, Return<T> {
+        override fun <U : Any> from(table: Table<U>): FromsTable<T, U>
+        override fun <U : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): FromsPart2<T>
+    }
+
+    public interface FromsPart2<T : Any> : Froms<T>, SqlClientQuery.From {
+        override fun `as`(alias: String): Froms<T>
+    }
+
+    public interface FromsTable<T : Any, U : Any> : FromsPart2<T>, FromTableSelect<U> {
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
+    }
+
+    public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, SelectAndable {
         override fun <U : Any> and(column: Column<*, U>): SecondSelect<T?, U?>
         override fun <U : Any> and(table: Table<U>): SecondSelect<T, U>
         override fun <U : Any> andCount(column: Column<*, U>): SecondSelect<T, Long>
@@ -113,7 +139,7 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun `else`(value: V): SecondSelect<T?, V>
     }
 
-    public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, Andable {
+    public interface SecondSelect<T, U> : Fromable<Pair<T, U>>, SqlClientQuery.Select, SelectAndable {
         override fun <V : Any> and(column: Column<*, V>): ThirdSelect<T, U, V?>
         override fun <V : Any> and(table: Table<V>): ThirdSelect<T, U, V>
         override fun <V : Any> andCount(column: Column<*, V>): ThirdSelect<T, U, Long>
@@ -138,7 +164,7 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun `else`(value: W): ThirdSelect<T, U, W>
     }
 
-    public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, Andable {
+    public interface ThirdSelect<T, U, V> : Fromable<Triple<T, U, V>>, SqlClientQuery.Select, SelectAndable {
         override fun <W : Any> and(column: Column<*, W>): Select
         override fun <W : Any> and(table: Table<W>): Select
         override fun <W : Any> andCount(column: Column<*, W>): Select
@@ -163,7 +189,7 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun `else`(value: U): Select
     }
 
-    public interface Select : Fromable<List<Any?>>, Andable {
+    public interface Select : Fromable<List<Any?>>, SqlClientQuery.Select, SelectAndable {
         override fun <T : Any> and(column: Column<*, T>): Select
         override fun <T : Any> and(table: Table<T>): Select
         override fun <T : Any> andCount(column: Column<*, T>): Select
@@ -180,14 +206,41 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun `as`(alias: String): Select
     }
 
-    public interface From<T : Any> : SqlClientQuery.From<From<T>>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>,
+    public interface Selects : Fromable<List<Any?>>, SqlClientQuery.Selectable {
+        override fun <T : Any> select(column: Column<*, T>): SelectsPart2
+        override fun <T : Any> select(table: Table<T>): SelectsPart2
+        override fun <T : Any> selectCount(column: Column<*, T>?): SelectsPart2
+        override fun <T : Any> selectDistinct(column: Column<*, T>): SelectsPart2
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): SelectsPart2
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): SelectsPart2
+        override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): SelectsPart2
+        override fun <T : Any> select(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): SelectsPart2
+        override fun <T : Any> selectCaseWhenExists(
+            dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
+        ): SelectsCaseWhenExists<T>
+    }
+
+    public interface SelectsCaseWhenExists<T : Any> : SelectCaseWhenExists {
+        override fun <U : Any> then(value: U): SelectsCaseWhenExistsPart2<T, U>
+    }
+
+    public interface SelectsCaseWhenExistsPart2<T : Any, U : Any> : SelectCaseWhenExistsPart2<U> {
+        override fun `else`(value: U): SelectsPart2
+    }
+
+    public interface SelectsPart2 : Selects, SqlClientQuery.Select {
+        override fun `as`(alias: String): Selects
+    }
+
+    public interface From<T : Any> : SqlClientQuery.From, FromAndable, Whereable<T>, GroupableBy<T>, OrderableBy<T>,
         LimitOffset<T>, Return<T> {
+        override fun `as`(alias: String): From<T>
         override fun <U : Any> and(table: Table<U>): FromTable<T, U>
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
     }
 
-    public interface FromTable<T : Any, U : Any> : FromTableSelect<U>,
-        SqlClientQuery.From<From<T>>, From<T>, Whereable<Where<T>>, GroupBy<T>, OrderBy<T>, LimitOffset<T>, Return<T> {
+    public interface FromTable<T : Any, U : Any> : FromTableSelect<U>, From<T>, Whereable<T>, GroupableBy<T>, OrderableBy<T>,
+        LimitOffset<T>, Return<T> {
         override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
         override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
         override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
@@ -195,18 +248,32 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun `as`(alias: String): FromTable<T, U>
     }
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, OrderBy<T>, GroupBy<T>, LimitOffset<T>,
-        Return<T>
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Andable<Where<T>>, Orable<Where<T>>, OrderableBy<T>,
+        GroupableBy<T>, LimitOffset<T>, Return<T>
 
-    public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupByPart2<T>>
+    public interface Wheres<T : Any> : SqlClientQuery.Whereable<Wheres<T>>, SqlClientQuery.Where<Wheres<T>>,
+        Orable<Wheres<T>>, OrderableBy<T>, GroupableBy<T>, LimitOffset<T>, Return<T>
 
-    public interface GroupByPart2<T : Any> : SqlClientQuery.GroupByPart2<GroupByPart2<T>>, OrderBy<T>, LimitOffset<T>,
-        Return<T>
+    public interface GroupableBy<T : Any> : SqlClientQuery.GroupableBy<GroupBy<T>> {
+        public fun groupsBy() : GroupsBy<T>
+    }
 
-    public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderByPart2<T>>
+    public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupBy<T>>,
+        GroupByAndable<GroupBy<T>>, OrderableBy<T>,
+        LimitOffset<T>, Return<T>
 
-    public interface OrderByPart2<T : Any> : SqlClientQuery.OrderByPart2<OrderByPart2<T>>, GroupBy<T>, LimitOffset<T>,
-        Return<T>
+    public interface GroupsBy<T : Any> : SqlClientQuery.GroupBy<GroupsBy<T>>, SqlClientQuery.GroupableBy<GroupsBy<T>>,
+        OrderableBy<T>, LimitOffset<T>, Return<T>
+
+    public interface OrderableBy<T : Any> : SqlClientQuery.OrderableBy<OrderBy<T>> {
+        public fun ordersBy() : OrdersBy<T>
+    }
+
+    public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderBy<T>>, OrderByAndable<OrderBy<T>>, GroupableBy<T>,
+        LimitOffset<T>, Return<T>
+
+    public interface OrdersBy<T : Any> : SqlClientQuery.OrderBy<OrdersBy<T>>, SqlClientQuery.OrderableBy<OrdersBy<T>>,
+        GroupableBy<T>, LimitOffset<T>, Return<T>
 
     public interface LimitOffset<T : Any> : SqlClientQuery.LimitOffset<LimitOffset<T>>, Return<T>
 

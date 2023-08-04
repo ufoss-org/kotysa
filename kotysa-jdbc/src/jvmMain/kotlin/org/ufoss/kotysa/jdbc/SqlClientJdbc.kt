@@ -201,6 +201,9 @@ internal sealed class SqlClientJdbc(
         dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
     ): SqlClientSelect.From<T> = SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selectStarFromSubQuery(dsl)
 
+    protected fun selectsProtected(): SqlClientSelect.Selects =
+        SqlClientSelectJdbc.Selectable(getJdbcConnection(), tables).selects()
+    
     protected fun <T> transactionalProtected(block: (JdbcTransaction) -> T): T? {
         // reuse currentTransaction if any, else create new transaction from new established connection
         val isOrigin = currentTransaction == null
@@ -304,6 +307,8 @@ internal class H2SqlClientJdbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -337,6 +342,8 @@ internal class MysqlSqlClientJdbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -369,6 +376,8 @@ internal class PostgresqlSqlClientJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun selectTsRankCd(
         tsvectorColumn: TsvectorColumn<*>,
@@ -408,6 +417,8 @@ internal class MssqlSqlClientJdbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -441,6 +452,8 @@ internal class MariadbSqlClientJdbc internal constructor(
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
 
+    override fun selects() = selectsProtected()
+
     override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 }
 
@@ -473,6 +486,8 @@ internal class OracleSqlClientJdbc internal constructor(
 
     override fun <T : Any> selectStarFrom(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>) =
         selectStarFromProtected(dsl)
+
+    override fun selects() = selectsProtected()
 
     override fun <U> transactional(block: (JdbcTransaction) -> U) = transactionalProtected(block)
 }

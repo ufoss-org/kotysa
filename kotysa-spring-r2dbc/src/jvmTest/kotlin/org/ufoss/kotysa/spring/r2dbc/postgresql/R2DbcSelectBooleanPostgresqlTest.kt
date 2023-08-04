@@ -4,43 +4,30 @@
 
 package org.ufoss.kotysa.spring.r2dbc.postgresql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.PostgresqlRoles
+import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
-import org.ufoss.kotysa.test.userBboss
-import org.ufoss.kotysa.test.userJdoe
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBooleanRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectBooleanTest
 
-
-class R2DbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryPostgresqlSelectBoolean>() {
-
+class R2dbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<ReactorUserRepositoryPostgresqlSelectBoolean>(),
+    ReactorSelectBooleanTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles,
+            ReactorUserRepositoryPostgresqlSelectBoolean, ReactorTransaction> {
     override fun instantiateRepository(
         sqlClient: PostgresqlReactorSqlClient,
-        coSqlClient: PostgresqlCoroutinesSqlClient,
-    ) = UserRepositoryPostgresqlSelectBoolean(sqlClient)
-
-    @Test
-    fun `Verify selectAllByIsAdminEq true finds Big Boss`() {
-        assertThat(repository.selectAllByIsAdminEq(true).toIterable())
-            .hasSize(1)
-            .containsExactly(userBboss)
-    }
-
-    @Test
-    fun `Verify selectAllByIsAdminEq false finds John`() {
-        assertThat(repository.selectAllByIsAdminEq(false).toIterable())
-            .hasSize(1)
-            .containsExactly(userJdoe)
-    }
+        coSqlClient: PostgresqlCoroutinesSqlClient
+    ) =
+        ReactorUserRepositoryPostgresqlSelectBoolean(sqlClient)
 }
 
-
-class UserRepositoryPostgresqlSelectBoolean(sqlClient: ReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
-
-    fun selectAllByIsAdminEq(value: Boolean) =
-        (sqlClient selectFrom PostgresqlUsers
-                where PostgresqlUsers.isAdmin eq value
-                ).fetchAll()
-}
+class ReactorUserRepositoryPostgresqlSelectBoolean(sqlClient: ReactorSqlClient) :
+    ReactorSelectBooleanRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles
+    )

@@ -4,34 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.h2
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.H2CoroutinesSqlClient
 import org.ufoss.kotysa.H2ReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
 import org.ufoss.kotysa.test.H2Roles
-import org.ufoss.kotysa.test.roleAdmin
-import org.ufoss.kotysa.test.roleUser
+import org.ufoss.kotysa.test.H2UserRoles
+import org.ufoss.kotysa.test.H2Users
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectOrTest
 
-
-class R2DbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryH2SelectOr>() {
+class R2dbcSelectOrH2Test : AbstractR2dbcH2Test<UserRepositoryR2dbcH2SelectOr>(),
+    ReactorSelectOrTest<H2Roles, H2Users, H2UserRoles, UserRepositoryR2dbcH2SelectOr,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
-        UserRepositoryH2SelectOr(sqlClient)
-
-    @Test
-    fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {
-        assertThat(repository.selectRolesByLabels(roleUser.label, roleAdmin.label).toIterable())
-            .hasSize(2)
-            .containsExactlyInAnyOrder(roleUser, roleAdmin)
-    }
+        UserRepositoryR2dbcH2SelectOr(sqlClient)
 }
 
-
-class UserRepositoryH2SelectOr(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
-
-    fun selectRolesByLabels(label1: String, label2: String) =
-        (sqlClient selectFrom H2Roles
-                where H2Roles.label eq label1
-                or H2Roles.label eq label2
-                ).fetchAll()
-}
+class UserRepositoryR2dbcH2SelectOr(sqlClient: ReactorSqlClient) :
+    ReactorSelectOrRepository<H2Roles, H2Users, H2UserRoles>(
+        sqlClient,
+        H2Roles,
+        H2Users,
+        H2UserRoles
+    )

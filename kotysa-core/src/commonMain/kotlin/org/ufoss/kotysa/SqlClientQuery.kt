@@ -30,9 +30,6 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface Selectable : SelectableSingle {
         public infix fun <T : Any> select(table: Table<T>): Select
-        public infix fun <T : Any> selectStarFromSubQuery(
-            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
-        ): From<*>
 
         /**
          * sub-query
@@ -43,10 +40,6 @@ public abstract class SqlClientQuery protected constructor() {
         ): SelectCaseWhenExists
     }
 
-    public interface SelectableFull : Selectable {
-        public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Select
-    }
-
     public interface SelectCaseWhenExists {
         public infix fun <T : Any> then(value: T): SelectCaseWhenExistsPart2<T>
     }
@@ -55,35 +48,27 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun `else`(value: T): Select
     }
 
+    public interface SelectableFull : Selectable {
+        public infix fun <T : Any> selectAndBuild(dsl: (ValueProvider) -> T): Fromable
+        public infix fun <T : Any> selectStarFromSubQuery(
+            dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
+        ): From
+        public fun selects(): Selectable
+    }
+
     public interface Select {
-        public infix fun `as`(alias: String): Select
+        public infix fun `as`(alias: String): Fromable
     }
 
-    public interface Fromable {
-        public infix fun <T : Any> from(table: Table<T>): FromTable<T>
-        public infix fun <T : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): From<*>
-
-        // Postgresql specific
-        public infix fun from(tsquery: Tsquery): From<*>
-    }
-
-    public interface AndCaseWhenExists {
-        public infix fun <T : Any> then(value: T): AndCaseWhenExistsPart2<T>
-    }
-
-    public interface AndCaseWhenExistsPart2<T : Any> {
-        public infix fun `else`(value: T): Andable
-    }
-
-    public interface Andable {
-        public infix fun <T : Any> and(table: Table<T>): Andable
-        public infix fun <T : Any> and(column: Column<*, T>): Andable
-        public infix fun <T : Any> andCount(column: Column<*, T>): Andable
-        public infix fun <T : Any> andDistinct(column: Column<*, T>): Andable
-        public infix fun <T : Any> andMin(column: MinMaxColumn<*, T>): Andable
-        public infix fun <T : Any> andMax(column: MinMaxColumn<*, T>): Andable
-        public infix fun <T : Any> andAvg(column: NumericColumn<*, T>): Andable
-        public infix fun <T : Any> andSum(column: WholeNumberColumn<*, T>): Andable
+    public interface SelectAndable {
+        public infix fun <T : Any> and(table: Table<T>): SelectAndable
+        public infix fun <T : Any> and(column: Column<*, T>): SelectAndable
+        public infix fun <T : Any> andCount(column: Column<*, T>): SelectAndable
+        public infix fun <T : Any> andDistinct(column: Column<*, T>): SelectAndable
+        public infix fun <T : Any> andMin(column: MinMaxColumn<*, T>): SelectAndable
+        public infix fun <T : Any> andMax(column: MinMaxColumn<*, T>): SelectAndable
+        public infix fun <T : Any> andAvg(column: NumericColumn<*, T>): SelectAndable
+        public infix fun <T : Any> andSum(column: WholeNumberColumn<*, T>): SelectAndable
 
         // Postgresql specific
         public fun andTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): Select
@@ -91,24 +76,42 @@ public abstract class SqlClientQuery protected constructor() {
         /**
          * sub-query
          */
-        public infix fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): Andable
+        public infix fun <T : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): SelectAndable
         public infix fun <T : Any> andCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): AndCaseWhenExists
     }
 
-    public interface From<T : From<T>> {
-        public infix fun <U : Any> and(table: Table<U>): FromTable<U>
-        public infix fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<*>
+    public interface AndCaseWhenExists {
+        public infix fun <T : Any> then(value: T): AndCaseWhenExistsPart2<T>
+    }
 
-        public infix fun `as`(alias: String): T
+    public interface AndCaseWhenExistsPart2<T : Any> {
+        public infix fun `else`(value: T): SelectAndable
+    }
+
+    public interface Fromable {
+        public infix fun <T : Any> from(table: Table<T>): FromTable<T>
+        public infix fun <T : Any> from(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>): From
 
         // Postgresql specific
-        public infix fun and(tsquery: Tsquery): From<*>
+        public infix fun from(tsquery: Tsquery): From
+    }
+
+    public interface From {
+        public infix fun `as`(alias: String): Any
     }
 
     public interface FromTable<T : Any> {
         public infix fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, *>
+    }
+
+    public interface FromAndable : From {
+        public infix fun <U : Any> and(table: Table<U>): FromTable<U>
+        public infix fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): FromAndable
+
+        // Postgresql specific
+        public infix fun and(tsquery: Tsquery): FromAndable
     }
 
     public interface Joinable<T : Any, U : Any, V : FromTable<U>> {
@@ -647,7 +650,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun applyOn(tsvectorColumn: TsvectorColumn<*>): T
     }
 
-    public interface Where<T : Where<T>> {
+    public interface Where<T : Where<T>>
+
+    public interface Andable<T : Where<T>> {
         public infix fun <U : Any> and(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringNotNull<U, T>
         public infix fun <U : Any> and(stringColumnNullable: StringColumnNullable<U>): WhereOpStringNullable<U, T>
         public infix fun <U : Any> and(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalDateTime>
@@ -737,7 +742,9 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun and(doubleAliasNullable: QueryAlias<Double?>): WhereOpDoubleNullable<Double, T>
         public infix fun and(bigDecimalAliasNotNull: QueryAlias<BigDecimal>): WhereOpBigDecimalNotNull<BigDecimal, T>
         public infix fun and(bigDecimalAliasNullable: QueryAlias<BigDecimal?>): WhereOpBigDecimalNullable<BigDecimal, T>
+    }
 
+    public interface Orable<T : Where<T>> {
         public infix fun <U : Any> or(stringColumnNotNull: StringColumnNotNull<U>): WhereOpStringNotNull<U, T>
         public infix fun <U : Any> or(stringColumnNullable: StringColumnNullable<U>): WhereOpStringNullable<U, T>
         public infix fun <U : Any> or(localDateTimeColumnNotNull: LocalDateTimeColumnNotNull<U>): WhereOpDateNotNull<U, T, LocalDateTime>
@@ -832,19 +839,21 @@ public abstract class SqlClientQuery protected constructor() {
         public infix fun offset(offset: Long): T
     }
 
-    public interface GroupBy<T : GroupByPart2<T>> {
+    public interface GroupableBy<T : GroupBy<T>> {
         public infix fun groupBy(column: Column<*, *>): T
         public infix fun groupBy(alias: QueryAlias<*>): T
     }
 
-    public interface GroupByPart2<T : GroupByPart2<T>> {
+    public interface GroupBy<T : GroupBy<T>>
+
+    public interface GroupByAndable<T : GroupBy<T>> : GroupBy<T> {
         public infix fun and(column: Column<*, *>): T
         public infix fun and(alias: QueryAlias<*>): T
 
         // todo HAVING https://www.dofactory.com/sql/having
     }
 
-    public interface OrderBy<T : OrderByPart2<T>> {
+    public interface OrderableBy<T : OrderBy<T>> {
         public infix fun orderByAsc(column: Column<*, *>): T
         public infix fun orderByDesc(column: Column<*, *>): T
 
@@ -861,15 +870,17 @@ public abstract class SqlClientQuery protected constructor() {
         ): OrderByCaseWhenExists<U, T>
     }
 
-    public interface OrderByCaseWhenExists<T : Any, U : OrderByPart2<U>> {
+    public interface OrderByCaseWhenExists<T : Any, U : OrderBy<U>> {
         public infix fun <V : Any> then(value: V): OrderByCaseWhenExistsPart2<T, V, U>
     }
 
-    public interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : OrderByPart2<V>> {
+    public interface OrderByCaseWhenExistsPart2<T : Any, U : Any, V : OrderBy<V>> {
         public infix fun `else`(value: U): V
     }
 
-    public interface OrderByPart2<T : OrderByPart2<T>> {
+    public interface OrderBy<T : OrderBy<T>>
+
+    public interface OrderByAndable<T : OrderByAndable<T>> : OrderBy<T> {
         public infix fun andAsc(column: Column<*, *>): T
         public infix fun andDesc(column: Column<*, *>): T
 

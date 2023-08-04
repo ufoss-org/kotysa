@@ -18,7 +18,7 @@ class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAli
         UserRepositorySelectAlias(sqlClient)
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameGet throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname).block()
         }
@@ -26,7 +26,7 @@ class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAli
     }
 
     @Test
-    fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectAliasedFirstnameByFirstnameAlias throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname).block()
         }
@@ -34,7 +34,7 @@ class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAli
     }
 
     @Test
-    fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectCaseWhenExistsSubQueryAlias throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
         }
@@ -76,7 +76,7 @@ class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAli
     }
 
     @Test
-    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
+    fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws R2dbcSQLSyntaxErrorException`() {
         assertThatThrownBy {
             repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).blockLast()
         }

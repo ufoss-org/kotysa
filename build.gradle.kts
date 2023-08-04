@@ -45,11 +45,11 @@ subprojects {
                             }
 
                             project.name == "kotysa-spring-r2dbc" -> {
-                                50
+                                47
                             }
 
                             else -> {
-                                68
+                                67
                             }
                         }
                     }

@@ -75,4 +75,25 @@ interface SubQueryTest<T : Roles, U : Users, V : UserRoles, W : SubQueryReposito
                 roleGod.label,
             )
     }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 0 if`() {
+        expect(repository.selectStarConditionalSyntax())
+            .toHaveSize(2)
+            .toContain(listOf(userBboss.firstname), listOf(userJdoe.firstname))
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 1 if`() {
+        expect(repository.selectStarConditionalSyntax(1))
+            .toHaveSize(1)
+            .toContain(listOf(userBboss.firstname, userBboss.lastname))
+    }
+
+    @Test
+    fun `Verify selectStarConditionalSyntax with 2 ifs`() {
+        expect(repository.selectStarConditionalSyntax(2))
+            .toHaveSize(1)
+            .toContain(listOf(userBboss.firstname, userBboss.lastname, roleAdmin.label))
+    }
 }

@@ -14,7 +14,7 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesRe
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectIntAsIdentitiesTest
 
 @Order(1)
-class R2dbcSelectIntMssqlTest : AbstractR2dbcMssqlTest<ReactorSelectIntRepositoryMssqlSelect>(),
+class R2DbcSelectIntAsIdentitiesMssqlTest : AbstractR2dbcMssqlTest<ReactorSelectIntRepositoryMssqlSelect>(),
     ReactorSelectIntAsIdentitiesTest<MssqlIntAsIdentities, ReactorSelectIntRepositoryMssqlSelect, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
         ReactorSelectIntRepositoryMssqlSelect(sqlClient)

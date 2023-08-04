@@ -4,196 +4,27 @@
 
 package org.ufoss.kotysa.spring.r2dbc.mssql
 
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.MssqlCoroutinesSqlClient
 import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
-import org.ufoss.kotysa.test.*
-import reactor.kotlin.test.test
+import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.MssqlRoles
+import org.ufoss.kotysa.test.MssqlUserRoles
+import org.ufoss.kotysa.test.MssqlUsers
+import org.ufoss.kotysa.test.repositories.reactor.ReactorUpdateDeleteRepository
+import org.ufoss.kotysa.test.repositories.reactor.ReactorUpdateDeleteTest
 
-class R2DbcUpdateDeleteMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryMssqlUpdateDelete>() {
-
+class R2dbcUpdateDeleteMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryR2dbcMssqlUpdateDelete>(),
+    ReactorUpdateDeleteTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryR2dbcMssqlUpdateDelete,
+            ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
-        UserRepositoryMssqlUpdateDelete(sqlClient)
-
-    @Test
-    fun `Verify deleteAllFromUserRoles works correctly`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.deleteAllFromUserRoles()
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .thenMany(repository.countAllUserRoles())
-        }.test()
-            .expectNext(0)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify deleteUserById works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.deleteUserById(userJdoe.id)
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .thenMany(repository.selectAllUsers())
-        }.test()
-            .expectNext(userBboss)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify deleteUserIn works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.deleteUserIn(listOf(userJdoe.id, 9999999))
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .thenMany(repository.selectAllUsers())
-        }.test()
-            .expectNext(userBboss)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify deleteUserWithJoin works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.deleteUserWithJoin(roleUser.label)
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .thenMany(repository.selectAllUsers())
-        }.test()
-            .expectNext(userBboss)
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify updateLastname works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.updateLastname("Do")
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .then(repository.selectFirstByFirstname(userJdoe.firstname))
-        }.test()
-            .expectNextMatches { user -> "Do" == user!!.lastname }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify updateLastnameIn works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.updateLastnameIn("Do", listOf(userJdoe.id, 9999999))
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .then(repository.selectFirstByFirstname(userJdoe.firstname))
-        }.test()
-            .expectNextMatches { user -> "Do" == user!!.lastname }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify updateWithJoin works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.updateWithJoin("Doee", roleUser.label)
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .then(repository.selectFirstByFirstname(userJdoe.firstname))
-        }.test()
-            .expectNextMatches { user -> "Doee" == user!!.lastname }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify updateAlias works`() {
-        assertThat(repository.updateAlias("TheBigBoss").block()!!)
-            .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstname(userBboss.firstname).block())
-            .extracting { user -> user?.alias }
-            .isEqualTo("TheBigBoss")
-        assertThat(repository.updateAlias(null).block()!!)
-            .isEqualTo(1)
-        assertThat(repository.selectFirstByFirstname(userBboss.firstname).block())
-            .extracting { user -> user?.alias }
-            .isEqualTo(null)
-        repository.updateAlias(userBboss.alias).block()
-    }
-
-    @Test
-    fun `Verify updateAndIncrementRoleId works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.updateAndIncrementRoleId()
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .then(repository.selectFirstByFirstname(userJdoe.firstname))
-        }.test()
-            .expectNextMatches { user -> roleGod.id == user!!.roleId }
-            .verifyComplete()
-    }
-
-    @Test
-    fun `Verify updateAndDecrementRoleId works`() {
-        operator.transactional { transaction ->
-            transaction.setRollbackOnly()
-            repository.updateAndDecrementRoleId()
-                .doOnNext { n -> assertThat(n).isEqualTo(1) }
-                .then(repository.selectFirstByFirstname(userBboss.firstname))
-        }.test()
-            .expectNextMatches { user -> roleUser.id == user!!.roleId }
-            .verifyComplete()
-    }
+        UserRepositoryR2dbcMssqlUpdateDelete(sqlClient)
 }
 
-
-class UserRepositoryMssqlUpdateDelete(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMssql(sqlClient) {
-
-    fun deleteUserById(id: Int) =
-        (sqlClient deleteFrom MssqlUsers
-                where MssqlUsers.id eq id
-                ).execute()
-
-    fun deleteUserIn(ids: Collection<Int>) =
-        (sqlClient deleteFrom MssqlUsers
-                where MssqlUsers.id `in` ids
-                ).execute()
-
-    fun deleteUserWithJoin(roleLabel: String) =
-        (sqlClient deleteFrom MssqlUsers
-                innerJoin MssqlRoles on MssqlUsers.roleId eq MssqlRoles.id
-                where MssqlRoles.label eq roleLabel
-                ).execute()
-
-    fun updateLastname(newLastname: String) =
-        (sqlClient update MssqlUsers
-                set MssqlUsers.lastname eq newLastname
-                where MssqlUsers.id eq userJdoe.id
-                ).execute()
-
-    fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =
-        (sqlClient update MssqlUsers
-                set MssqlUsers.lastname eq newLastname
-                where MssqlUsers.id `in` ids
-                ).execute()
-
-    fun updateAlias(newAlias: String?) =
-        (sqlClient update MssqlUsers
-                set MssqlUsers.alias eq newAlias
-                where MssqlUsers.id eq userBboss.id
-                ).execute()
-
-    fun updateWithJoin(newLastname: String, roleLabel: String) =
-        (sqlClient update MssqlUsers
-                set MssqlUsers.lastname eq newLastname
-                innerJoin MssqlRoles on MssqlUsers.roleId eq MssqlRoles.id
-                where MssqlRoles.label eq roleLabel
-                ).execute()
-
-    fun updateAndIncrementRoleId() =
-        (sqlClient update MssqlUsers
-                set MssqlUsers.roleId eq MssqlUsers.roleId plus 2
-                where MssqlUsers.id eq userJdoe.id
-                ).execute()
-
-    fun updateAndDecrementRoleId() =
-        (sqlClient update MssqlUsers
-                set MssqlUsers.roleId eq MssqlUsers.roleId minus 1
-                where MssqlUsers.id eq userBboss.id
-                ).execute()
-}
+class UserRepositoryR2dbcMssqlUpdateDelete(sqlClient: ReactorSqlClient) :
+    ReactorUpdateDeleteRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles
+    )
