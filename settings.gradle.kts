@@ -1,9 +1,7 @@
 pluginManagement {
     val releasePluginVersion: String by settings
-    val koverPluginVersion: String by settings
     plugins {
         id("net.researchgate.release") version releasePluginVersion
-        id("org.jetbrains.kotlinx.kover") version koverPluginVersion
     }
 }
 

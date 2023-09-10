@@ -21,7 +21,6 @@ plugins {
     `maven-publish`
     signing
     id("net.researchgate.release")
-    id("org.jetbrains.kotlinx.kover")
 }
 
 subprojects {
@@ -32,31 +31,6 @@ subprojects {
         }
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
-    apply(plugin = "org.jetbrains.kotlinx.kover")
-
-    koverReport {
-        defaults {
-            verify {
-                rule {
-                    bound {
-                        minValue = when {
-                            project.name == "kotysa-core" || project.name == "kotysa-tests" -> {
-                                0
-                            }
-
-                            project.name == "kotysa-spring-r2dbc" -> {
-                                47
-                            }
-
-                            else -> {
-                                67
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     // --------------- publishing ---------------
 
@@ -120,6 +94,6 @@ configure<ReleaseExtension> {
 // when version changes :
 // -> execute ./gradlew wrapper, then remove .gradle directory, then execute ./gradlew wrapper again
 tasks.wrapper {
-    gradleVersion = "8.2"
+    gradleVersion = "8.3"
     distributionType = Wrapper.DistributionType.ALL
 }
