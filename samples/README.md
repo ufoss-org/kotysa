@@ -8,7 +8,7 @@ This folder contains all Kotysa sample projects.
 
 A sample project for a Spring Boot Coroutines WebFlux application with a R2DBC backend accessed via `kotysa-spring-r2dbc`.
 
-### kotysa-spring-r2dbc-reactive
+### kotysa-spring-r2dbc-reactor
 
 A sample project for a Spring Boot Reactive WebFlux application with a R2DBC backend accessed via `kotysa-spring-r2dbc`.
 
@@ -28,7 +28,11 @@ A sample project for a Ktor Netty application with a JDBC backend accessed via `
 
 ## With Quarkus
 
-### kotysa-quarkus-vertx-sqlclient
+### kotysa-quarkus-vertx-sqlclient-croutines
+
+A sample project for a Quarkus Coroutines Resteasy application with a Coroutines Vertx Sqlclient backend accessed via `kotysa-vertx-sqlclient`.
+
+### kotysa-quarkus-vertx-sqlclient-mutiny
 
 A sample project for a Quarkus Reactive Resteasy application with a Mutiny Vertx Sqlclient backend accessed via `kotysa-vertx-sqlclient`.
 

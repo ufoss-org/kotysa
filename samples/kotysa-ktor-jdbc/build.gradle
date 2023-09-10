@@ -4,8 +4,6 @@ plugins {
     id 'org.jetbrains.kotlin.plugin.serialization'
 }
 
-mainClassName = "com.sample.ApplicationKt"
-
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
@@ -53,6 +51,6 @@ test {
 }
 
 wrapper {
-    gradleVersion = '8.2'
+    gradleVersion = '8.3'
     distributionType = Wrapper.DistributionType.ALL
 }

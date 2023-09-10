@@ -3,6 +3,7 @@ module kotysa.quarkus.jdbc {
     requires jakarta.cdi;
     requires jakarta.ws.rs;
     requires kotlin.stdlib;
+    requires kotysa.core;
     requires kotysa.jdbc;
 
     exports com.sample;
