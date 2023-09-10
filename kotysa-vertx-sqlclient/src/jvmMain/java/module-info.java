@@ -3,13 +3,16 @@
  */
 
 module kotysa.vertx.sqlclient {
-    requires io.smallrye.mutiny;
-    requires io.smallrye.mutiny.vertx.sql.client;
     requires io.vertx.client.sql;
     requires io.vertx.core;
     requires kotlin.stdlib;
     requires kotysa.core;
 
-    exports org.ufoss.kotysa.vertx.mutiny.sqlclient;
-    exports org.ufoss.kotysa.vertx.mutiny.sqlclient.transaction;
+    requires static io.smallrye.mutiny;
+    requires static io.smallrye.mutiny.vertx.sql.client;
+    requires static io.vertx.kotlin.coroutines;
+    requires static kotlinx.coroutines.core;
+
+    exports org.ufoss.kotysa.vertx;
+    exports org.ufoss.kotysa.vertx.transaction;
 }

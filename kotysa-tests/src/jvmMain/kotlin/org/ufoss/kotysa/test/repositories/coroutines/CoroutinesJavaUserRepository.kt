@@ -23,7 +23,7 @@ abstract class CoroutinesJavaUserRepository<T : JavaUsers>(
     }
 
     private suspend fun createTable() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     suspend fun insert() {

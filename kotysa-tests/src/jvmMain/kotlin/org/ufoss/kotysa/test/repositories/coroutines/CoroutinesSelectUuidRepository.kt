@@ -24,7 +24,7 @@ abstract class CoroutinesSelectUuidRepository<T : Uuids>(
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertUuids() {

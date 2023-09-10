@@ -27,7 +27,7 @@ abstract class CoroutinesSelectKotlinxLocalDateTimeAsTimestampRepository<T : Kot
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertLocalDateTimes() {

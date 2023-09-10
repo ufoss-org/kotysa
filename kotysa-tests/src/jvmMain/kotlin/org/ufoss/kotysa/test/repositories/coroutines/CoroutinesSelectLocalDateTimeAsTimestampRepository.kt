@@ -24,7 +24,7 @@ abstract class CoroutinesSelectLocalDateTimeAsTimestampRepository<T : LocalDateT
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertLocalDateTimes() {

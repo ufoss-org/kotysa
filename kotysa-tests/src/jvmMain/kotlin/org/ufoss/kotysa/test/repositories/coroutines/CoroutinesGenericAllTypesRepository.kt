@@ -28,8 +28,8 @@ class CoroutinesGenericAllTypesRepository(private val sqlClient: CoroutinesSqlCl
     }
 
     private suspend fun createTables() {
-        sqlClient createTable GenericAllTypesNotNulls
-        sqlClient createTable GenericAllTypesNullables
+        sqlClient createTableIfNotExists GenericAllTypesNotNulls
+        sqlClient createTableIfNotExists GenericAllTypesNullables
         sqlClient createTableIfNotExists GenericAllTypesNullableDefaultValues
     }
 

@@ -23,7 +23,7 @@ abstract class CoroutinesSelectFloatRepository<T : Floats>(
     }
 
     private suspend fun createTable() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     suspend fun insert() {

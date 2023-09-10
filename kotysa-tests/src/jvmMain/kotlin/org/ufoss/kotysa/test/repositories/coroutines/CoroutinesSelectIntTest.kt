@@ -8,22 +8,14 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.Ints
 import org.ufoss.kotysa.transaction.Transaction
 
-private val intWithNullable = IntEntity(
-    org.ufoss.kotysa.test.intWithNullable.intNotNull,
-    org.ufoss.kotysa.test.intWithNullable.intNullable,
-    1
-)
+interface CoroutinesSelectIntTest<T : Ints, U : CoroutinesSelectIntRepository<T>, V : Transaction> :
+    CoroutinesRepositoryTest<U, V> {
 
-private val intWithoutNullable = IntEntity(
-    org.ufoss.kotysa.test.intWithoutNullable.intNotNull,
-    org.ufoss.kotysa.test.intWithoutNullable.intNullable,
-    2
-)
-
-interface CoroutinesSelectIntTest<T : Ints, U : CoroutinesSelectIntRepository<T>, V : Transaction> : CoroutinesRepositoryTest<U, V> {
+    private val intWithNullable get() = repository.generatedIntWithNullable
+    private val intWithoutNullable get() = repository.generatedIntWithoutNullable
 
     @Test
     fun `Verify selectAllByIntNotNull finds intWithNullable`() = runTest {

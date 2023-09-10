@@ -26,7 +26,7 @@ abstract class CoroutinesSelectStringAsTextRepository<T : Texts>(
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertTexts() {

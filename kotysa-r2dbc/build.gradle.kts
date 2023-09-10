@@ -22,9 +22,6 @@ kotlin {
         }
 
         jvmTest {
-            languageSettings.apply {
-                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
-            }
 
             dependencies {
                 // import BOMs

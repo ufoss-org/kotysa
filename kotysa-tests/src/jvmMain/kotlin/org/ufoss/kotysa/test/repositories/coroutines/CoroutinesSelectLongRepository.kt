@@ -9,9 +9,12 @@ import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class CoroutinesSelectLongRepository<T : Longs>(
-        private val sqlClient: CoroutinesSqlClient,
-        private val table: T,
+    private val sqlClient: CoroutinesSqlClient,
+    private val table: T,
 ) : Repository {
+
+    internal lateinit var generatedLongWithNullable: LongEntity
+    internal lateinit var generatedLongWithoutNullable: LongEntity
 
     override fun init() = runBlocking {
         createTable()
@@ -23,11 +26,12 @@ abstract class CoroutinesSelectLongRepository<T : Longs>(
     }
 
     private suspend fun createTable() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     suspend fun insert() {
-        sqlClient.insert(longWithNullable, longWithoutNullable)
+        generatedLongWithNullable = sqlClient insertAndReturn longWithNullable
+        generatedLongWithoutNullable = sqlClient insertAndReturn longWithoutNullable
     }
 
     suspend fun deleteAll() = sqlClient deleteAllFrom table

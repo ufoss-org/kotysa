@@ -9,9 +9,12 @@ import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.test.*
 
 abstract class CoroutinesSelectIntRepository<T : Ints>(
-        private val sqlClient: CoroutinesSqlClient,
-        private val table: T,
+    private val sqlClient: CoroutinesSqlClient,
+    private val table: T,
 ) : Repository {
+
+    internal lateinit var generatedIntWithNullable: IntEntity
+    internal lateinit var generatedIntWithoutNullable: IntEntity
 
     override fun init() = runBlocking {
         createTable()
@@ -23,11 +26,12 @@ abstract class CoroutinesSelectIntRepository<T : Ints>(
     }
 
     private suspend fun createTable() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     suspend fun insert() {
-        sqlClient.insert(intWithNullable, intWithoutNullable)
+        generatedIntWithNullable = sqlClient insertAndReturn intWithNullable
+        generatedIntWithoutNullable = sqlClient insertAndReturn intWithoutNullable
     }
 
     suspend fun deleteAll() = sqlClient deleteAllFrom table
