@@ -1,0 +1,59 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.spring'
+    id 'io.spring.dependency-management'
+    id 'org.springframework.boot'
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.spring.io/release' }
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    implementation('org.springframework.data:spring-data-r2dbc')
+    implementation('com.fasterxml.jackson.module:jackson-module-kotlin')
+    implementation("org.ufoss.kotysa:kotysa-spring-r2dbc:${kotysaVersion}")
+
+    runtimeOnly('io.r2dbc:r2dbc-h2')
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+}
+
+compileJava {
+    // replace '-' with '.' to match JPMS jigsaw module name
+    def jpmsName = project.name.replace('-', '.')
+    // this is needed because we have a separate compile step in this example with th
+    //  'module-info.java' is in 'main/java' and the Kotlin code is in 'main/kotlin'
+    options.compilerArgs = [
+//            "--module-path",
+//            compileJava.classpath.asPath,   
+        "--patch-module",
+        "$jpmsName=${sourceSets.main.output.asPath}"
+    ]
+}
+
+test {
+    useJUnitPlatform()
+}
+
+bootBuildImage {
+    builder = "paketobuildpacks/builder:tiny"
+    environment = [
+            "BP_NATIVE_IMAGE" : "true"
+    ]
+}
+
+wrapper {
+    gradleVersion = '8.3'
+    distributionType = Wrapper.DistributionType.ALL
+}

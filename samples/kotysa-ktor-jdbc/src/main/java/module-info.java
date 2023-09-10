@@ -5,6 +5,7 @@ module kotysa.ktor.jdbc {
     requires io.ktor.server.host.common;
     requires io.ktor.server.netty;
     requires kotlin.stdlib;
+    requires kotysa.core;
     requires kotysa.jdbc;
 
     exports com.sample;
