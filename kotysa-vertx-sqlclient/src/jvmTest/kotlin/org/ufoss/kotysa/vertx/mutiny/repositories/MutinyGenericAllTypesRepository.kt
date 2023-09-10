@@ -2,41 +2,41 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.test.repositories.reactor
+package org.ufoss.kotysa.vertx.mutiny.repositories
 
-import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.vertx.MutinySqlClient
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.OffsetDateTime
-import java.util.UUID
+import java.util.*
 
-class ReactorGenericAllTypesRepository(private val sqlClient: ReactorSqlClient) : Repository {
+class MutinyGenericAllTypesRepository(private val sqlClient: MutinySqlClient) : Repository {
 
     override fun init() {
         createTables()
-            .then(insertAllTypes())
-            .block()
+            .chain { -> insertAllTypes() }
+            .await().indefinitely()
     }
 
     override fun delete() {
         (sqlClient deleteAllFrom GenericAllTypesNotNulls)
-            .then(sqlClient deleteAllFrom GenericAllTypesNullables)
-            .then(sqlClient deleteAllFrom GenericAllTypesNullableDefaultValues)
-            .block()
+            .chain { -> sqlClient deleteAllFrom GenericAllTypesNullables }
+            .chain { -> sqlClient deleteAllFrom GenericAllTypesNullableDefaultValues }
+            .await().indefinitely()
     }
 
     private fun createTables() =
         (sqlClient createTable GenericAllTypesNotNulls)
-            .then(sqlClient createTable GenericAllTypesNullables)
-            .then(sqlClient createTableIfNotExists GenericAllTypesNullableDefaultValues)
+            .chain { -> sqlClient createTable GenericAllTypesNullables }
+            .chain { -> sqlClient createTableIfNotExists GenericAllTypesNullableDefaultValues }
 
     private fun insertAllTypes() =
         (sqlClient insert genericAllTypesNotNull)
-            .then(sqlClient insert genericAllTypesNullable)
-            .then(sqlClient insert genericAllTypesNullableDefaultValue)
+            .chain { -> sqlClient insert genericAllTypesNullable }
+            .chain { -> sqlClient insert genericAllTypesNullableDefaultValue }
 
     fun selectAllAllTypesNotNull() = sqlClient selectAllFrom GenericAllTypesNotNulls
 

@@ -5,11 +5,12 @@ kotlin {
                 api(project(":kotysa-core"))
 
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
-                
+
+                compileOnly("io.smallrye.reactive:smallrye-mutiny-vertx-oracle-client:${property("mutinySqlclientVersion")}")
                 compileOnly("io.smallrye.reactive:smallrye-mutiny-vertx-sql-client:${property("mutinySqlclientVersion")}")
                 compileOnly("io.vertx:vertx-lang-kotlin-coroutines:${property("vertxLangCoroutines")}")
+                compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinxCoroutinesVersion")}")
                 compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:${property("kotlinxDatetimeVersion")}")
-                compileOnly("io.smallrye.reactive:smallrye-mutiny-vertx-oracle-client:${property("mutinySqlclientVersion")}")
             }
         }
         

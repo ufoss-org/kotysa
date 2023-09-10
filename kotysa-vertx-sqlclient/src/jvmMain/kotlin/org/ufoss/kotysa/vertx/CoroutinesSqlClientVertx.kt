@@ -20,7 +20,6 @@ import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.vertx.transaction.CoroutinesVertxTransaction
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigDecimal
-import java.sql.SQLException
 import kotlin.coroutines.coroutineContext
 
 /**
@@ -285,10 +284,7 @@ internal sealed class CoroutinesSqlClientVertx(
                     withContext(context) {
                         block.invoke(vertxTransaction)
                     }
-                } catch (ex: SQLException) { // An expected checked Exception in JDBC
-                    throwable = ex
-                    throw ex
-                } catch (ex: RuntimeException) {
+                } catch (ex: RuntimeException) { // DatabaseException from VertX is a RuntimeException
                     throwable = ex
                     throw ex
                 } catch (ex: Error) {
