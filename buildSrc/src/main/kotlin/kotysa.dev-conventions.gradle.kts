@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform")
     id("org.jetbrains.dokka")
     id("com.android.library")
+    id("org.jetbrains.kotlinx.kover")
 }
 
 java {
@@ -15,6 +16,31 @@ java {
 repositories {
     google()
     mavenCentral()
+}
+
+koverReport {
+    defaults {
+        verify {
+            onCheck = true
+            rule {
+                bound {
+                    minValue = when {
+                        project.name == "kotysa-core" || project.name == "kotysa-tests" -> {
+                            0
+                        }
+
+                        project.name == "kotysa-spring-r2dbc" -> {
+                            47
+                        }
+
+                        else -> {
+                            67
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 kotlin {    
@@ -40,15 +66,13 @@ kotlin {
         }
     }
 
-    android()
+    androidTarget()
 
     sourceSets {
         all {
             languageSettings.apply {
-                languageVersion = "1.8"
-                apiVersion = "1.8"
-//                optIn("kotlin.contracts.ExperimentalContracts")
-//                optIn("kotlin.time.ExperimentalTime")
+                languageVersion = "1.9"
+                apiVersion = "1.9"
                 progressiveMode = true
             }
         }
