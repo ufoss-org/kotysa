@@ -5,8 +5,9 @@ kotlin {
                 api(project(":kotysa-core"))
 
                 implementation("org.jetbrains.kotlin:kotlin-reflect")
-                implementation("io.smallrye.reactive:smallrye-mutiny-vertx-sql-client:${property("mutinySqlclientVersion")}")
-
+                
+                compileOnly("io.smallrye.reactive:smallrye-mutiny-vertx-sql-client:${property("mutinySqlclientVersion")}")
+                compileOnly("io.vertx:vertx-lang-kotlin-coroutines:${property("vertxLangCoroutines")}")
                 compileOnly("org.jetbrains.kotlinx:kotlinx-datetime:${property("kotlinxDatetimeVersion")}")
                 compileOnly("io.smallrye.reactive:smallrye-mutiny-vertx-oracle-client:${property("mutinySqlclientVersion")}")
             }
@@ -22,10 +23,12 @@ kotlin {
 
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:${property("kotlinxDatetimeVersion")}")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${property("kotlinxCoroutinesVersion")}")
                 implementation("io.smallrye.reactive:smallrye-mutiny-vertx-mssql-client:${property("mutinySqlclientVersion")}")
                 implementation("io.smallrye.reactive:smallrye-mutiny-vertx-mysql-client:${property("mutinySqlclientVersion")}")
                 implementation("io.smallrye.reactive:smallrye-mutiny-vertx-pg-client:${property("mutinySqlclientVersion")}")
                 implementation("io.smallrye.reactive:smallrye-mutiny-vertx-oracle-client:${property("mutinySqlclientVersion")}")
+                implementation("io.vertx:vertx-lang-kotlin-coroutines:${property("vertxLangCoroutines")}")
                 
                 implementation("mysql:mysql-connector-java:${property("mysqlVersion")}")
                 implementation("com.microsoft.sqlserver:mssql-jdbc:${property("mssqlVersion")}")

@@ -23,7 +23,7 @@ abstract class CoroutinesInheritanceRepository<T : Inheriteds>(
     }
 
     private suspend fun createTable() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     suspend fun insert() {

@@ -5,23 +5,13 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.IntAsIdentities
-import org.ufoss.kotysa.test.IntEntityAsIdentity
 import org.ufoss.kotysa.transaction.Transaction
-
-private val intAsIdentityWithNullable = IntEntityAsIdentity(
-    org.ufoss.kotysa.test.intAsIdentityWithNullable.intNotNull,
-    org.ufoss.kotysa.test.intAsIdentityWithNullable.intNullable,
-    1
-)
-
-private val intAsIdentityWithoutNullable = IntEntityAsIdentity(
-    org.ufoss.kotysa.test.intAsIdentityWithoutNullable.intNotNull,
-    org.ufoss.kotysa.test.intAsIdentityWithoutNullable.intNullable,
-    2
-)
 
 interface CoroutinesSelectIntAsIdentitiesTest<T : IntAsIdentities, U : CoroutinesSelectIntAsIdentitiesRepository<T>,
         V : Transaction> : CoroutinesRepositoryTest<U, V> {
+
+    private val intAsIdentityWithNullable get() = repository.generatedIntAsIdentityWithNullable
+    private val intAsIdentityWithoutNullable get() = repository.generatedIntAsIdentityWithoutNullable
 
     @Test
     fun `Verify selectAllByIntNotNull finds intAsIdentityWithNullable`() = runTest {

@@ -4,23 +4,14 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.test.LongEntity
 import org.ufoss.kotysa.test.Longs
 import org.ufoss.kotysa.transaction.Transaction
 
-private val longWithNullable = LongEntity(
-    org.ufoss.kotysa.test.longWithNullable.longNotNull,
-    org.ufoss.kotysa.test.longWithNullable.longNullable,
-    1
-)
+interface CoroutinesSelectLongTest<T : Longs, U : CoroutinesSelectLongRepository<T>, V : Transaction> :
+    CoroutinesRepositoryTest<U, V> {
 
-private val longWithoutNullable = LongEntity(
-    org.ufoss.kotysa.test.longWithoutNullable.longNotNull,
-    org.ufoss.kotysa.test.longWithoutNullable.longNullable,
-    2
-)
-
-interface CoroutinesSelectLongTest<T : Longs, U : CoroutinesSelectLongRepository<T>, V : Transaction> : CoroutinesRepositoryTest<U, V> {
+    private val longWithNullable get() = repository.generatedLongWithNullable
+    private val longWithoutNullable get() = repository.generatedLongWithoutNullable
 
     @Test
     fun `Verify selectAllByLongNotNull finds longWithNullable`() = runTest {

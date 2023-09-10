@@ -24,7 +24,7 @@ abstract class CoroutinesSelectOffsetDateTimeRepository<T : OffsetDateTimes>(
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertOffsetDateTimes() {

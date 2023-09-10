@@ -26,7 +26,7 @@ abstract class CoroutinesSelectStringAsLongTextRepository<T : LongTexts>(
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertLongTexts() {

@@ -24,7 +24,7 @@ abstract class CoroutinesSelectLocalDateRepository<T : LocalDates>(
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertLocalDates() {

@@ -12,7 +12,7 @@ import java.math.BigDecimal
 /**
  * Coroutines Sql Client
  */
-public sealed interface CoroutinesSqlClient {
+public interface CoroutinesSqlClient {
 
     public suspend infix fun <T : Any> insert(row: T)
     public suspend fun <T : Any> insert(vararg rows: T)

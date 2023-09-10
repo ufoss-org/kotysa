@@ -24,7 +24,7 @@ abstract class CoroutinesSelectBigDecimalRepository<T : BigDecimals>(
     }
 
     private suspend fun createTable() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     suspend fun insert() {

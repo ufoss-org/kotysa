@@ -27,7 +27,7 @@ abstract class CoroutinesSelectTsvectorRepository(private val sqlClient: Postgre
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertTsvectors() {

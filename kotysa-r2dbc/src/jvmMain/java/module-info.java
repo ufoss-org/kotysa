@@ -8,8 +8,7 @@ module kotysa.r2dbc {
     requires kotysa.core;
     requires r2dbc.spi;
 
-    // todo uncomment with kotlinx.coroutines 1.7.x
-    //    requires static kotlinx.coroutines.core;
+    requires static kotlinx.coroutines.core;
 
     exports org.ufoss.kotysa.r2dbc;
     exports org.ufoss.kotysa.r2dbc.transaction;

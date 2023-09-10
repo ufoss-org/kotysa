@@ -23,7 +23,7 @@ abstract class CoroutinesSelectByteArrayRepository<T : ByteArrays>(
     }
 
     private suspend fun createTables() {
-        sqlClient createTable table
+        sqlClient createTableIfNotExists table
     }
 
     private suspend fun insertByteArrays() {
