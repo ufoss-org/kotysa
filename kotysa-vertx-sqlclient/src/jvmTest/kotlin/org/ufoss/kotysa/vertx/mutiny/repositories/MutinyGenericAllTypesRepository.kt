@@ -29,8 +29,8 @@ class MutinyGenericAllTypesRepository(private val sqlClient: MutinySqlClient) : 
     }
 
     private fun createTables() =
-        (sqlClient createTable GenericAllTypesNotNulls)
-            .chain { -> sqlClient createTable GenericAllTypesNullables }
+        (sqlClient createTableIfNotExists GenericAllTypesNotNulls)
+            .chain { -> sqlClient createTableIfNotExists GenericAllTypesNullables }
             .chain { -> sqlClient createTableIfNotExists GenericAllTypesNullableDefaultValues }
 
     private fun insertAllTypes() =

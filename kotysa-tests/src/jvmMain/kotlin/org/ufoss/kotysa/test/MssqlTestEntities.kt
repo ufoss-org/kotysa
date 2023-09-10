@@ -90,17 +90,17 @@ data class MssqlAllTypesNotNull(
         if (string != other.string) return false
         if (localDate != other.localDate) return false
         if (kotlinxLocalDate != other.kotlinxLocalDate) return false
-        if (localTime.truncatedTo(ChronoUnit.SECONDS) != other.localTime.truncatedTo(ChronoUnit.SECONDS)) return false
-        if (kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
-            != other.kotlinxLocalTime.toJavaLocalTime().truncatedTo(ChronoUnit.SECONDS)
+        if (localTime.roundToSecond() != other.localTime.roundToSecond()) return false
+        if (kotlinxLocalTime.toJavaLocalTime().roundToSecond()
+            != kotlinxLocalTime.toJavaLocalTime().roundToSecond()
         ) return false
-        if (localDateTime1.truncatedTo(ChronoUnit.SECONDS) != other.localDateTime1.truncatedTo(ChronoUnit.SECONDS)) return false
-        if (localDateTime2.truncatedTo(ChronoUnit.SECONDS) != other.localDateTime2.truncatedTo(ChronoUnit.SECONDS)) return false
-        if (kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
-            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        if (localDateTime1.roundToSecond() != other.localDateTime1.roundToSecond()) return false
+        if (localDateTime2.roundToSecond() != other.localDateTime2.roundToSecond()) return false
+        if (kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
+            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().roundToSecond()
         ) return false
-        if (kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
-            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.SECONDS)
+        if (kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
+            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().roundToSecond()
         ) return false
         if (int != other.int) return false
         if (long != other.long) return false

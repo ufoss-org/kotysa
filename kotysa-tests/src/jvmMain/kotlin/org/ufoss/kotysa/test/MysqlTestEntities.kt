@@ -14,7 +14,6 @@ import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.time.temporal.ChronoUnit
 
 object MysqlRoles : MysqlTable<RoleEntity>("roles"), Roles {
     override val id = integer(RoleEntity::id)
@@ -47,22 +46,6 @@ object MysqlUserRoles : MysqlTable<UserRoleEntity>("userRoles"), UserRoles {
     init {
         primaryKey(userId, roleId)
     }
-}
-
-private fun LocalTime.roundToSecond(): LocalTime {
-    var time = this
-    if (nano >= 500_000_000) {
-        time = plusSeconds(1)
-    }
-    return time.truncatedTo(ChronoUnit.SECONDS)
-}
-
-private fun LocalDateTime.roundToSecond(): LocalDateTime {
-    var localDateTime = this
-    if (nano >= 500_000_000) {
-        localDateTime = plusSeconds(1)
-    }
-    return localDateTime.truncatedTo(ChronoUnit.SECONDS)
 }
 
 data class MysqlAllTypesNotNull(
