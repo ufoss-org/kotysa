@@ -17,6 +17,7 @@ abstract class CoroutinesUpdateDeleteRepository<T : Roles, U : Users, V : UserRo
     suspend fun deleteUserById(id: Int) =
         (sqlClient deleteFrom tableUsers
                 where tableUsers.id eq id
+                and tableUsers.id eq id
                 ).execute()
 
     suspend fun deleteUserIn(ids: Collection<Int>) =
@@ -34,6 +35,7 @@ abstract class CoroutinesUpdateDeleteRepository<T : Roles, U : Users, V : UserRo
         (sqlClient update tableUsers
                 set tableUsers.lastname eq newLastname
                 where tableUsers.id eq userJdoe.id
+                or tableUsers.id eq userJdoe.id
                 ).execute()
 
     suspend fun updateLastnameIn(newLastname: String, ids: Collection<Int>) =

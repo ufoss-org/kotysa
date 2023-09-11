@@ -326,7 +326,7 @@ public expect class SqlClientDeleteOrUpdate private constructor() : SqlClientQue
 
     public interface UpdateInt<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.UpdateInt<T, Update<T>, UpdateInt<T>>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Andable<Where<T>>, Orable<Where<T>>, Return
 
     public interface Return {
         /**
