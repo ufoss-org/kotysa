@@ -56,9 +56,10 @@ public sealed interface ReactorSqlClient {
     ): ReactorSqlClientSelect.From<T>
 
     public infix fun <T : Any> selectFrom(table: Table<T>): ReactorSqlClientSelect.FromTable<T, T> =
-            select(table).from(table)
+        select(table).from(table)
+
     public infix fun <T : Any> selectCountFrom(table: Table<T>): ReactorSqlClientSelect.FromTable<Long, T> =
-            selectCount().from(table)
+        selectCount().from(table)
 
     public infix fun <T : Any> selectAllFrom(table: Table<T>): Flux<T> = selectFrom(table).fetchAll()
     public infix fun <T : Any> selectCountAllFrom(table: Table<T>): Mono<Long> = selectCountFrom(table).fetchOne()
@@ -90,6 +91,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
         ): SelectCaseWhenExistsFirst<T>
+
         override fun <T : Any> selectStarFromSubQuery(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<T>
         ): From<T>
@@ -308,7 +310,7 @@ public class ReactorSqlClientSelect private constructor() : SqlClientQuery() {
         SqlClientQuery.GroupableBy<GroupsBy<T>>, OrderableBy<T>, LimitOffset<T>, Return<T>
 
     public interface OrderableBy<T : Any> : SqlClientQuery.OrderableBy<OrderBy<T>> {
-        public fun ordersBy() : OrdersBy<T>
+        public fun ordersBy(): OrdersBy<T>
     }
 
     public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderBy<T>>, OrderByAndable<OrderBy<T>>, GroupableBy<T>,
@@ -356,7 +358,8 @@ public class ReactorSqlClientDeleteOrUpdate private constructor() {
 
     public interface UpdateInt<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.UpdateInt<T, Update<T>, UpdateInt<T>>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, SqlClientQuery.Andable<Where<T>>,
+        SqlClientQuery.Orable<Where<T>>, Return
 
     public interface Return {
         /**

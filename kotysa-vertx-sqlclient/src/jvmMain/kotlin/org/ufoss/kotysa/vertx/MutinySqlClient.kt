@@ -361,7 +361,8 @@ public class MutinySqlClientDeleteOrUpdate private constructor() {
 
     public interface UpdateInt<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.UpdateInt<T, Update<T>, UpdateInt<T>>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, SqlClientQuery.Andable<Where<T>>,
+        SqlClientQuery.Orable<Where<T>>, Return
 
     public interface Return {
         /**

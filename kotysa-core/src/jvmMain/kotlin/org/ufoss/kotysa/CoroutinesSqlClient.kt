@@ -308,7 +308,7 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
         SqlClientQuery.GroupableBy<GroupsBy<T>>, OrderableBy<T>, LimitOffset<T>, Return<T>
 
     public interface OrderableBy<T : Any> : SqlClientQuery.OrderableBy<OrderBy<T>> {
-        public fun ordersBy() : OrdersBy<T>
+        public fun ordersBy(): OrdersBy<T>
     }
 
     public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderBy<T>>, OrderByAndable<OrderBy<T>>, GroupableBy<T>,
@@ -369,7 +369,7 @@ public class CoroutinesSqlClientDeleteOrUpdate private constructor() : SqlClient
 
     public interface UpdateInt<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.UpdateInt<T, Update<T>, UpdateInt<T>>
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Return
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Andable<Where<T>>, Orable<Where<T>>, Return
 
     public interface Return {
         /**

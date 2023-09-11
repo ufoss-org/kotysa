@@ -352,8 +352,8 @@ public open class DefaultSqlClientDeleteOrUpdate protected constructor() : Defau
         }
     }
 
-    public abstract class Where<T : Any, U : SqlClientQuery.Where<U>>
-        : DefaultSqlClientCommon.Where<U>(), WithProperties<T>, Return<T>
+    public abstract class Where<T : Any, U : SqlClientQuery.Where<U>> : DefaultSqlClientCommon.Where<U>(),
+        WithProperties<T>, Return<T>
 
     public interface Return<T : Any> : DefaultSqlClientCommon.Return, WithProperties<T> {
 

@@ -47,8 +47,8 @@ internal class MutinySqlClientDeleteVertx private constructor() : DefaultSqlClie
     internal class Where<T : Any>(
             override val pool: Pool,
             override val properties: Properties<T>
-    ) : DefaultSqlClientDeleteOrUpdate.Where<T, MutinySqlClientDeleteOrUpdate.Where<T>>(), MutinySqlClientDeleteOrUpdate.Where<T>,
-        Return<T> {
+    ) : DefaultSqlClientDeleteOrUpdate.Where<T, MutinySqlClientDeleteOrUpdate.Where<T>>(),
+        MutinySqlClientDeleteOrUpdate.Where<T>, Return<T> {
         override val where = this
     }
 
