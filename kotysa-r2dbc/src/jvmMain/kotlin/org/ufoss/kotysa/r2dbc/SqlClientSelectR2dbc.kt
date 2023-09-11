@@ -8,8 +8,8 @@ import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.Statement
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirst
 import kotlinx.coroutines.reactive.awaitFirstOrNull
-import kotlinx.coroutines.reactive.awaitSingle
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.columns.TsvectorColumn
 import org.ufoss.kotysa.core.r2dbc.r2dbcBindParams
@@ -117,7 +117,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<T> = addFromTsquery(tsquery, from)
 
         override fun froms(): CoroutinesSqlClientSelect.Froms<T> = addFroms(froms)
-        
+
         fun <U : Any> selectStarFrom(
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>
         ): CoroutinesSqlClientSelect.From<T> = addFromSubQuery(dsl, from as FromTable<T, U>, true)
@@ -220,7 +220,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<Pair<T, U>> = addFromTsquery(tsquery, from)
 
         override fun froms(): CoroutinesSqlClientSelect.Froms<Pair<T, U>> = addFroms(froms)
-        
+
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.ThirdSelect<T, U, V?> =
             ThirdSelect(connectionFactory, properties as Properties<Triple<T, U, V?>>).apply { addSelectColumn(column) }
 
@@ -407,7 +407,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         // todo lazy
         private val from: FromTable<List<Any?>, *> = FromTable<List<Any?>, Any>(connectionFactory, properties)
         private val froms: Froms<List<Any?>, *> = Froms<List<Any?>, Any>(connectionFactory, properties)
-        
+
         override fun <U : Any> from(table: Table<U>): CoroutinesSqlClientSelect.FromTable<List<Any?>, U> =
             addFromTable(table, from as FromTable<List<Any?>, U>)
 
@@ -419,7 +419,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.From<List<Any?>> = addFromTsquery(tsquery, from)
 
         override fun froms(): CoroutinesSqlClientSelect.Froms<List<Any?>> = addFroms(froms)
-        
+
         override fun <V : Any> and(column: Column<*, V>): CoroutinesSqlClientSelect.Select =
             this.apply { addSelectColumn(column) }
 
@@ -497,21 +497,25 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         override fun <T : Any> selectCount(column: Column<*, T>?): CoroutinesSqlClientSelect.SelectsPart2 =
             this.apply { addCountColumn(column) }
 
-        override fun <T : Any> selectDistinct(column: Column<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
-            addSelectColumn(column, FieldClassifier.DISTINCT)
-        }
+        override fun <T : Any> selectDistinct(column: Column<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply {
+                addSelectColumn(column, FieldClassifier.DISTINCT)
+            }
 
-        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
-            addSelectColumn(column, FieldClassifier.MIN)
-        }
+        override fun <T : Any> selectMin(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply {
+                addSelectColumn(column, FieldClassifier.MIN)
+            }
 
-        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
-            addSelectColumn(column, FieldClassifier.MAX)
-        }
+        override fun <T : Any> selectMax(column: MinMaxColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply {
+                addSelectColumn(column, FieldClassifier.MAX)
+            }
 
-        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 = this.apply {
-            addAvgColumn(column)
-        }
+        override fun <T : Any> selectAvg(column: NumericColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
+            this.apply {
+                addAvgColumn(column)
+            }
 
         override fun <T : Any> selectSum(column: WholeNumberColumn<*, T>): CoroutinesSqlClientSelect.SelectsPart2 =
             this.apply { addLongSumColumn(column) }
@@ -522,9 +526,13 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
 
         override fun <T : Any> selectCaseWhenExists(
             dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<T>
-        ): CoroutinesSqlClientSelect.SelectsCaseWhenExists<T> = SelectsCaseWhenExists(connectionFactory, properties, dsl)
+        ): CoroutinesSqlClientSelect.SelectsCaseWhenExists<T> =
+            SelectsCaseWhenExists(connectionFactory, properties, dsl)
 
-        override fun selectTsRankCd(tsvectorColumn: TsvectorColumn<*>, tsquery: Tsquery): CoroutinesSqlClientSelect.SelectsPart2 =
+        override fun selectTsRankCd(
+            tsvectorColumn: TsvectorColumn<*>,
+            tsquery: Tsquery
+        ): CoroutinesSqlClientSelect.SelectsPart2 =
             this.apply { addTsRankCd(tsvectorColumn, tsquery) }
 
         override fun `as`(alias: String): CoroutinesSqlClientSelect.SelectsPart2 = this.apply { aliasLastColumn(alias) }
@@ -594,7 +602,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         private val groupsBy by lazy { GroupsBy(connectionFactory, properties) }
         override fun ordersBy(): CoroutinesSqlClientSelect.OrdersBy<T> = ordersBy
         override fun groupsBy(): CoroutinesSqlClientSelect.GroupsBy<T> = groupsBy
-        
+
         override fun <V : Any> and(table: Table<V>): CoroutinesSqlClientSelect.FromTable<T, V> =
             addFromTable(table, fromTable as FromTable<T, V>)
 
@@ -635,7 +643,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
         properties: Properties<T>,
     ) : FromWhereable<T, U, CoroutinesSqlClientSelect.Where<T>, CoroutinesSqlClientSelect.LimitOffset<T>,
             CoroutinesSqlClientSelect.GroupBy<T>, CoroutinesSqlClientSelect.OrderBy<T>>(properties),
-        CoroutinesSqlClientSelect.FromsTable<T, U>, GroupableBy<T>, OrderableBy<T>, CoroutinesSqlClientSelect.LimitOffset<T> {
+        CoroutinesSqlClientSelect.FromsTable<T, U>, GroupableBy<T>, OrderableBy<T>,
+        CoroutinesSqlClientSelect.LimitOffset<T> {
         override val fromTable = this
 
         override val where by lazy { Where(connectionFactory, properties) }
@@ -655,7 +664,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
             dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<V>
         ): CoroutinesSqlClientSelect.FromsPart2<T> = addFromSubQuery(dsl, fromTable as Froms<T, V>)
 
-        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.FromsPart2<T> = addFromTsquery(tsquery, fromTable)
+        override fun from(tsquery: Tsquery): CoroutinesSqlClientSelect.FromsPart2<T> =
+            addFromTsquery(tsquery, fromTable)
 
         override fun `as`(alias: String): CoroutinesSqlClientSelect.Froms<T> = fromTable.apply { aliasLastFrom(alias) }
 
@@ -663,7 +673,8 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+            joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
@@ -761,7 +772,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
     private class OrdersBy<T : Any>(
         override val connectionFactory: ConnectionFactory,
         override val properties: Properties<T>
-    ): DefaultSqlClientSelect.OrderableBy<T, CoroutinesSqlClientSelect.OrdersBy<T>>,
+    ) : DefaultSqlClientSelect.OrderableBy<T, CoroutinesSqlClientSelect.OrdersBy<T>>,
         CoroutinesSqlClientSelect.OrdersBy<T>, GroupableBy<T>, DefaultSqlClientSelect.LimitOffset<T,
                 CoroutinesSqlClientSelect.LimitOffset<T>>, Return<T> {
         override val limitOffset by lazy { LimitOffset(connectionFactory, properties) }
@@ -892,7 +903,7 @@ internal class SqlClientSelectR2dbc private constructor() : DefaultSqlClientSele
                 try {
                     val statement = r2dbcConnection.connection.createStatement(selectSql())
                     buildParameters(statement)
-                    val result = statement.execute().awaitSingle()
+                    val result = statement.execute().awaitFirst()
                     emitAll(
                         result.map { row, _ ->
                             Optional.ofNullable(properties.select(row.toRow()))
