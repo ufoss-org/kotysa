@@ -10,7 +10,7 @@
 - Kotysa supports various database engines : PostgreSQL, MySQL, Microsoft SQL Server, MariaDB, Oracle, H2
 - Kotysa supports SqLite on Android
 
-See the [project website](https://ufoss.org/kotysa/kotysa.html) for documentation and APIs.
+See the [project website](https://ufoss.org/kotysa/) for documentation and APIs.
 
 ## Basic example
 

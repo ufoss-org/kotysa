@@ -28,7 +28,7 @@ A sample project for a Ktor Netty application with a JDBC backend accessed via `
 
 ## With Quarkus
 
-### kotysa-quarkus-vertx-sqlclient-croutines
+### kotysa-quarkus-vertx-sqlclient-coroutines
 
 A sample project for a Quarkus Coroutines Resteasy application with a Coroutines Vertx Sqlclient backend accessed via `kotysa-vertx-sqlclient`.
 
