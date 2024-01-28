@@ -107,27 +107,34 @@ class CoroutinesUserH2Repository(private val sqlClient: CoroutinesSqlClient) : R
 
     override fun init() = runTest {
         createTables()
+        insertCompanies()
         insertRoles()
         insertUsers()
     }
 
     override fun delete() = runTest {
         deleteAllFromUsers()
-        deleteAllFromRole()
+        deleteAllFromRoles()
+        deleteAllFromCompanies()
     }
 
     private suspend fun createTables() {
+        sqlClient createTableIfNotExists H2Companies
         sqlClient createTableIfNotExists H2Roles
         sqlClient createTableIfNotExists H2Users
     }
+
+    private suspend fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom H2Roles
-
     suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom H2Users
+
+    private suspend fun deleteAllFromRoles() = sqlClient deleteAllFrom H2Roles
+
+    private suspend fun deleteAllFromCompanies() = sqlClient deleteAllFrom H2Companies
 
     fun selectAllUsers() = sqlClient selectAllFrom H2Users
 

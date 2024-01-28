@@ -576,21 +576,21 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
         
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
@@ -627,21 +627,21 @@ internal class SqlClientSelectSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 

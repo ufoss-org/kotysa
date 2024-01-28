@@ -4,24 +4,27 @@
 
 package org.ufoss.kotysa.vertx.coroutines.mysql
 
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
-import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesUpdateDeleteRepository
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesUpdateDeleteTest
+import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 
 class VertxCoroutinesUpdateDeleteMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepositoryJdbcMysqlUpdateDelete>(),
-    CoroutinesUpdateDeleteTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlUpdateDelete,
-            Transaction> {
-    override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositoryJdbcMysqlUpdateDelete(sqlClient)
+    CoroutinesUpdateDeleteTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
+            UserRepositoryJdbcMysqlUpdateDelete, Transaction> {
+    override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) =
+        UserRepositoryJdbcMysqlUpdateDelete(sqlClient)
 }
 
 class UserRepositoryJdbcMysqlUpdateDelete(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesUpdateDeleteRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesUpdateDeleteRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

@@ -11,6 +11,7 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: MutinyS
 
     override fun init() {
         createTables()
+            .chain { -> insertCompanies() }
             .chain { -> insertRoles() }
             .chain { -> insertUsers() }
             .chain { -> insertUserRoles() }
@@ -21,11 +22,13 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: MutinyS
         deleteAllFromUserRoles()
             .chain { -> deleteAllFromUsers() }
             .chain { -> deleteAllFromRole() }
+            .chain { -> deleteAllFromCompanies() }
             .await().indefinitely()
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists PostgresqlRoles)
+        (sqlClient createTableIfNotExists PostgresqlCompanies)
+            .chain { -> sqlClient createTableIfNotExists PostgresqlRoles }
             .chain { -> sqlClient createTableIfNotExists PostgresqlUsers }
             .chain { -> sqlClient createTableIfNotExists PostgresqlUserRoles }
 
@@ -35,11 +38,15 @@ abstract class AbstractUserRepositoryPostgresql(protected val sqlClient: MutinyS
 
     private fun insertUserRoles() = sqlClient insert userRoleBboss
 
+    private fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
+
     private fun deleteAllFromUsers() = sqlClient deleteAllFrom PostgresqlUsers
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom PostgresqlRoles
 
     fun deleteAllFromUserRoles() = sqlClient deleteAllFrom PostgresqlUserRoles
+
+    private fun deleteAllFromCompanies() = sqlClient deleteAllFrom PostgresqlCompanies
 
     fun countAllUserRoles() = sqlClient selectCountAllFrom PostgresqlUserRoles
 

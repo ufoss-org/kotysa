@@ -11,11 +11,13 @@ import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.SqliteCompanies
 import org.ufoss.kotysa.test.repositories.blocking.UpdateDeleteRepository
 import org.ufoss.kotysa.test.repositories.blocking.UpdateDeleteTest
 
 class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>(),
-    UpdateDeleteTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositoryUpdateDelete, AndroidTransaction> {
+    UpdateDeleteTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositoryUpdateDelete,
+            AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryUpdateDelete(dbHelper, sqLiteTables)
 
@@ -83,9 +85,10 @@ class SqLiteUpdateDeleteTest : AbstractSqLiteTest<UserRepositoryUpdateDelete>(),
 class UserRepositoryUpdateDelete(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : UpdateDeleteRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+) : UpdateDeleteRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
     sqLiteOpenHelper.sqlClient(tables),
     SqliteRoles,
     SqliteUsers,
-    SqliteUserRoles
+    SqliteUserRoles,
+    SqliteCompanies
 )

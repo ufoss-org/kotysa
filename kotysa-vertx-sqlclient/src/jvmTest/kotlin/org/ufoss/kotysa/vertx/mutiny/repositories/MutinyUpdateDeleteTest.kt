@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinyUpdateDeleteTest<T : Roles, U : Users, V : UserRoles, W : MutinyUpdateDeleteRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinyUpdateDeleteTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : MutinyUpdateDeleteRepository<T, U, V, W>> : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

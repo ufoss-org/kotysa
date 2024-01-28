@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesSelectBooleanTest<T : Roles, U : Users, V : UserRoles, W : CoroutinesSelectBooleanRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesSelectBooleanTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : CoroutinesSelectBooleanRepository<T, U, V, W>, Y : Transaction> : CoroutinesRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() = runTest {

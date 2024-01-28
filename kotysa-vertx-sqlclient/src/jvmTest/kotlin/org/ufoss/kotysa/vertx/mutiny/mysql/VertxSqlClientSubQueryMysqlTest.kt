@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.mutiny.mysql
 
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
@@ -12,14 +13,17 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySubQueryRepository
 import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySubQueryTest
 
 class VertxSqlClientSubQueryMysqlTest : AbstractVertxSqlClientMysqlTest<UserRepositoryVertxSqlClientMysqlSubQuery>(),
-    MutinySubQueryTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryVertxSqlClientMysqlSubQuery> {
-    override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = UserRepositoryVertxSqlClientMysqlSubQuery(sqlClient)
+    MutinySubQueryTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
+            UserRepositoryVertxSqlClientMysqlSubQuery> {
+    override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) =
+        UserRepositoryVertxSqlClientMysqlSubQuery(sqlClient)
 }
 
 class UserRepositoryVertxSqlClientMysqlSubQuery(sqlClient: MutinyVertxSqlClient) :
-    MutinySubQueryRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    MutinySubQueryRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

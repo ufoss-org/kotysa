@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface ReactorSelectStringTest<T : Roles, U : Users, V : UserRoles, W : ReactorSelectStringRepository<T, U, V>,
-        X : Transaction> : ReactorRepositoryTest<W, X> {
+interface ReactorSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : ReactorSelectStringRepository<T, U, V, W>, Y : Transaction> : ReactorRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

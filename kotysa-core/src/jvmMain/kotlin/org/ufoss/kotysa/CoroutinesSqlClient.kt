@@ -133,10 +133,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
     }
 
     public interface FromsTable<T : Any, U : Any> : FromsPart2<T>, FromTableSelect<U> {
-        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
     }
 
     public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, SelectAndable {
@@ -285,10 +285,10 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
     public interface FromTable<T : Any, U : Any> : FromTableSelect<U>, From<T>, Whereable<T>, GroupableBy<T>,
         OrderableBy<T>, LimitOffset<T>, Return<T> {
         override fun `as`(alias: String): FromTable<T, U>
-        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
     }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Andable<Where<T>>, Orable<Where<T>>,
@@ -358,11 +358,11 @@ public class CoroutinesSqlClientSelect private constructor() : SqlClientQuery() 
 public class CoroutinesSqlClientDeleteOrUpdate private constructor() : SqlClientQuery() {
 
     public interface FirstDeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<T>>, Return {
-        override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+        override fun <U : Any> innerJoin(table: Table<U>): Joinable<U, DeleteOrUpdate<U>>
     }
 
     public interface DeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<Any>>, Return {
-        override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+        override fun <U : Any> innerJoin(table: Table<U>): Joinable<U, DeleteOrUpdate<U>>
     }
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>

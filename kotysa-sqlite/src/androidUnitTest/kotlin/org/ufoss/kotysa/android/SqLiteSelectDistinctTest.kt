@@ -11,11 +11,13 @@ import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.SqliteCompanies
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
 class SqLiteSelectDistinctTest : AbstractSqLiteTest<UserRepositorySelectDistinct>(),
-    SelectDistinctTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySelectDistinct, AndroidTransaction> {
+    SelectDistinctTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositorySelectDistinct,
+            AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectDistinct(dbHelper, sqLiteTables)
 
@@ -28,9 +30,10 @@ class SqLiteSelectDistinctTest : AbstractSqLiteTest<UserRepositorySelectDistinct
 class UserRepositorySelectDistinct(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : SelectDistinctRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+) : SelectDistinctRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
     sqLiteOpenHelper.sqlClient(tables),
     SqliteRoles,
     SqliteUsers,
-    SqliteUserRoles
+    SqliteUserRoles,
+    SqliteCompanies
 )

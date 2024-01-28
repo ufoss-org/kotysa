@@ -172,11 +172,12 @@ class SqLiteSelectAliasTest : AbstractSqLiteTest<UserRepositorySelectAlias>() {
 class UserRepositorySelectAlias(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : AbstractUserRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+) : AbstractUserRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
     sqLiteOpenHelper.sqlClient(tables),
     SqliteRoles,
     SqliteUsers,
-    SqliteUserRoles
+    SqliteUserRoles,
+    SqliteCompanies
 ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

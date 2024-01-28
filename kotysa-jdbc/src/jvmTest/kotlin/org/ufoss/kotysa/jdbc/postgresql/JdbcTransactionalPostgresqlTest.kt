@@ -8,11 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.PostgresqlJdbcSqlClient
-import org.ufoss.kotysa.test.PostgresqlRoles
-import org.ufoss.kotysa.test.PostgresqlUserRoles
-import org.ufoss.kotysa.test.PostgresqlUsers
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
-import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryJdbcPostgresqlTransactional>() {
     override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) =
@@ -30,9 +27,10 @@ class JdbcTransactionalPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositor
 }
 
 class UserRepositoryJdbcPostgresqlTransactional(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     )

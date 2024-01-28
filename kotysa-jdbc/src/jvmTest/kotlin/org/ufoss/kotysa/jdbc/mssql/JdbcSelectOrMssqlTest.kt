@@ -6,6 +6,7 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MssqlCompanies
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
@@ -13,9 +14,16 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
 class JdbcSelectOrMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelectOr>(),
-    SelectOrTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryJdbcMssqlSelectOr, JdbcTransaction> {
+    SelectOrTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies, UserRepositoryJdbcMssqlSelectOr,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlSelectOr(sqlClient)
 }
 
 class UserRepositoryJdbcMssqlSelectOr(sqlClient: JdbcSqlClient) :
-    SelectOrRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(sqlClient, MssqlRoles, MssqlUsers, MssqlUserRoles)
+    SelectOrRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles,
+        MssqlCompanies
+    )

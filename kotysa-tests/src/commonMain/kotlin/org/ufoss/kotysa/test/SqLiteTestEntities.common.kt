@@ -8,6 +8,13 @@ import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.sqlite.SqLiteTable
 import org.ufoss.kotysa.sqlite.text
 
+object SqliteCompanies : SqLiteTable<CompanyEntity>("companies"), Companies {
+    override val id = integer(CompanyEntity::id)
+        .primaryKey()
+    override val name = text(CompanyEntity::name)
+        .unique()
+}
+
 object SqliteRoles : SqLiteTable<RoleEntity>("roles"), Roles {
     override val id = integer(RoleEntity::id)
         .primaryKey()
@@ -23,6 +30,8 @@ object SqliteUsers : SqLiteTable<UserEntity>("users"), Users {
     override val isAdmin = integer(UserEntity::isAdmin)
     override val roleId = integer(UserEntity::roleId)
         .foreignKey(SqliteRoles.id, "FK_users_roles")
+    override val companyId = integer(UserEntity::companyId)
+        .foreignKey(SqliteCompanies.id, "FK_users_companies")
     override val alias = text(UserEntity::alias)
 
     init {

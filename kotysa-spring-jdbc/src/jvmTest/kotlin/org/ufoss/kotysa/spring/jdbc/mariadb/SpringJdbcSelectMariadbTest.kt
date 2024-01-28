@@ -10,15 +10,12 @@ import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.MariadbRoles
-import org.ufoss.kotysa.test.MariadbUserRoles
-import org.ufoss.kotysa.test.MariadbUsers
-import org.ufoss.kotysa.test.mariadbTables
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectTest
 
 class SpringJdbcSelectMariadbTest : AbstractSpringJdbcMariadbTest<UserRepositorySpringJdbcMariadbSelect>(),
-    SelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositorySpringJdbcMariadbSelect,
+    SelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies, UserRepositorySpringJdbcMariadbSelect,
             SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
@@ -32,9 +29,10 @@ class SpringJdbcSelectMariadbTest : AbstractSpringJdbcMariadbTest<UserRepository
 }
 
 class UserRepositorySpringJdbcMariadbSelect(client: JdbcOperations) :
-    SelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    SelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         client.sqlClient(mariadbTables),
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

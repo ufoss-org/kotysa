@@ -6,6 +6,7 @@ package org.ufoss.kotysa.jdbc.mysql
 
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
@@ -13,9 +14,16 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
 class JdbcSelectBooleanMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlSelectBoolean>(),
-    SelectBooleanTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectBoolean, JdbcTransaction> {
+    SelectBooleanTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositoryJdbcMysqlSelectBoolean,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlSelectBoolean(sqlClient)
 }
 
 class UserRepositoryJdbcMysqlSelectBoolean(sqlClient: JdbcSqlClient) :
-    SelectBooleanRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles)
+    SelectBooleanRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles,
+        MysqlCompanies
+    )

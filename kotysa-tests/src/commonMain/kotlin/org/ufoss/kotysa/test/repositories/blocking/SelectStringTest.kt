@@ -14,8 +14,8 @@ import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface SelectStringTest<T : Roles, U : Users, V : UserRoles, W : SelectStringRepository<T, U, V>, X : Transaction>
-    : RepositoryTest<W, X> {
+interface SelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : SelectStringRepository<T, U, V, W>, Y : Transaction> : RepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

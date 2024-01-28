@@ -11,6 +11,7 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: MutinySqlCli
 
     override fun init() {
         createTables()
+            .chain { -> insertCompanies() }
             .chain { -> insertRoles() }
             .chain { -> insertUsers() }
             .chain { -> insertUserRoles() }
@@ -21,11 +22,13 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: MutinySqlCli
         deleteAllFromUserRoles()
             .chain { -> deleteAllFromUsers() }
             .chain { -> deleteAllFromRole() }
+            .chain { -> deleteAllFromCompanies() }
             .await().indefinitely()
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists MysqlRoles)
+        (sqlClient createTableIfNotExists MysqlCompanies)
+            .chain { -> sqlClient createTableIfNotExists MysqlRoles }
             .chain { -> sqlClient createTableIfNotExists MysqlUsers }
             .chain { -> sqlClient createTableIfNotExists MysqlUserRoles }
 
@@ -35,11 +38,15 @@ abstract class AbstractUserRepositoryMysql(protected val sqlClient: MutinySqlCli
 
     private fun insertUserRoles() = sqlClient insert userRoleBboss
 
+    private fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
+
     private fun deleteAllFromUsers() = sqlClient deleteAllFrom MysqlUsers
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom MysqlRoles
 
     fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MysqlUserRoles
+
+    private fun deleteAllFromCompanies() = sqlClient deleteAllFrom MysqlCompanies
 
     fun countAllUserRoles() = sqlClient selectCountAllFrom MysqlUserRoles
 

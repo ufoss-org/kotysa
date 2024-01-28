@@ -17,7 +17,7 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryTest
 
 class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSubQuery>(),
-    ReactorSubQueryTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryR2dbcMysqlSubQuery,
+    ReactorSubQueryTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositoryR2dbcMysqlSubQuery,
             ReactorTransaction> {
 
     override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
@@ -47,9 +47,10 @@ class R2dbcSubQueryMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSu
 
 
 class UserRepositoryR2dbcMysqlSubQuery(sqlClient: ReactorSqlClient) :
-    ReactorSubQueryRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    ReactorSubQueryRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

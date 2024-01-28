@@ -11,10 +11,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 
 class VertxCoroutinesSelectAliasMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositorySelectAlias(sqlClient)
@@ -193,11 +193,12 @@ class VertxCoroutinesSelectAliasMysqlTest : AbstractVertxCoroutinesMysqlTest<Use
 }
 
 class UserRepositorySelectAlias(sqlClient: CoroutinesVertxSqlClient) :
-    AbstractCoroutinesUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    AbstractCoroutinesUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

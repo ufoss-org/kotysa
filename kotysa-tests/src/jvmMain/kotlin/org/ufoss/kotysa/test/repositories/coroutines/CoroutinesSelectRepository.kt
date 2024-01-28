@@ -8,12 +8,13 @@ import kotlinx.coroutines.flow.Flow
 import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class CoroutinesSelectRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class CoroutinesSelectRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
     sqlClient: CoroutinesSqlClient,
     tableRoles: T,
     tableUsers: U,
     tableUserRoles: V,
-) : AbstractCoroutinesUserRepository<T, U, V>(sqlClient, tableRoles, tableUsers, tableUserRoles) {
+    tableCompanies: W,
+) : AbstractCoroutinesUserRepository<T, U, V, W>(sqlClient, tableRoles, tableUsers, tableUserRoles, tableCompanies) {
 
     suspend fun selectOneNonUnique() =
         (sqlClient selectFrom tableUsers
@@ -28,33 +29,48 @@ abstract class CoroutinesSelectRepository<T : Roles, U : Users, V : UserRoles>(
                 ).fetchAll()
 
     fun selectWithCascadeInnerJoin() =
-        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+        (sqlClient selectAndBuild {
+            CompleteUserDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!, it[tableCompanies.name]!!)
+        }
                 from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
                 innerJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                innerJoin tableCompanies on tableUsers.companyId eq tableCompanies.id
                 ).fetchAll()
 
     fun selectWithCascadeLeftJoin() =
-        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+        (sqlClient selectAndBuild {
+            CompleteUserDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!, it[tableCompanies.name]!!)
+        }
                 from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
                 leftJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                innerJoin tableCompanies on tableUsers.companyId eq tableCompanies.id
                 ).fetchAll()
 
     fun selectWithCascadeRightJoin() =
-        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+        (sqlClient selectAndBuild {
+            CompleteUserDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!, it[tableCompanies.name]!!)
+        }
                 from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
                 rightJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                innerJoin tableCompanies on tableUsers.companyId eq tableCompanies.id
                 ).fetchAll()
 
     fun selectWithCascadeFullJoin() =
-        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
+        (sqlClient selectAndBuild {
+            CompleteUserDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!, it[tableCompanies.name]!!)
+        }
                 from tableUsers innerJoin tableRoles on tableUsers.roleId eq tableRoles.id
                 fullJoin tableUserRoles on tableRoles.id eq tableUserRoles.roleId
+                innerJoin tableCompanies on tableUsers.companyId eq tableCompanies.id
                 ).fetchAll()
 
     fun selectWithEqJoin() =
-        (sqlClient selectAndBuild { UserWithRoleDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!) }
-                from tableUsers and tableRoles
+        (sqlClient selectAndBuild {
+            CompleteUserDto(it[tableUsers.lastname]!!, it[tableRoles.label]!!, it[tableCompanies.name]!!)
+        }
+                from tableUsers and tableRoles and tableCompanies
                 where tableUsers.roleId eq tableRoles.id
+                and tableUsers.companyId eq tableCompanies.id
                 ).fetchAll()
 
     fun selectAllIn(aliases: Collection<String>) =

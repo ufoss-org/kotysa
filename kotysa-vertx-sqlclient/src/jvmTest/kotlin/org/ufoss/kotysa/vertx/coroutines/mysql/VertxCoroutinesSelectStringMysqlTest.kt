@@ -4,25 +4,28 @@
 
 package org.ufoss.kotysa.vertx.coroutines.mysql
 
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
-import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectStringRepository
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectStringTest
+import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 
 
 class VertxCoroutinesSelectStringMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepositoryJdbcMysqlSelectString>(),
-    CoroutinesSelectStringTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectString,
-            Transaction> {
-    override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositoryJdbcMysqlSelectString(sqlClient)
+    CoroutinesSelectStringTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
+            UserRepositoryJdbcMysqlSelectString, Transaction> {
+    override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) =
+        UserRepositoryJdbcMysqlSelectString(sqlClient)
 }
 
 class UserRepositoryJdbcMysqlSelectString(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesSelectStringRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesSelectStringRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
-    )
+        MysqlUserRoles,
+        MysqlCompanies
+        )

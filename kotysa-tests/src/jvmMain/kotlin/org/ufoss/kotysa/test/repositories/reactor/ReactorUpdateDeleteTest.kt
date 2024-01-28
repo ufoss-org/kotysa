@@ -10,8 +10,8 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 import reactor.kotlin.test.test
 
-interface ReactorUpdateDeleteTest<T : Roles, U : Users, V : UserRoles, W : ReactorUpdateDeleteRepository<T, U, V>,
-        X : Transaction> : ReactorRepositoryTest<W, X> {
+interface ReactorUpdateDeleteTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : ReactorUpdateDeleteRepository<T, U, V, W>, Y : Transaction> : ReactorRepositoryTest<X, Y> {
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() {

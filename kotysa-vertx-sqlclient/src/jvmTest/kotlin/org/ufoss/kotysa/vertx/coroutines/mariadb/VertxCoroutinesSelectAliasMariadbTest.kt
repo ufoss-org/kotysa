@@ -193,11 +193,12 @@ class VertxCoroutinesSelectAliasMariadbTest : AbstractVertxCoroutinesMariadbTest
 }
 
 class UserRepositorySelectAlias(sqlClient: CoroutinesVertxSqlClient) :
-    AbstractCoroutinesUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    AbstractCoroutinesUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

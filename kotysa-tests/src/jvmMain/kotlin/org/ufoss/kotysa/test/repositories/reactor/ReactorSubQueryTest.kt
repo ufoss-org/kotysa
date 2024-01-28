@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface ReactorSubQueryTest<T : Roles, U : Users, V : UserRoles, W : ReactorSubQueryRepository<T, U, V>,
-        X : Transaction> : ReactorRepositoryTest<W, X> {
+interface ReactorSubQueryTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : ReactorSubQueryRepository<T, U, V, W>, Y : Transaction> : ReactorRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {

@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.coroutines.mysql
 
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.test.MysqlRoles
@@ -13,15 +14,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectOrRepositor
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectOrTest
 
 class VertxCoroutinesSelectOrMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepositoryJdbcMysqlSelectOr>(),
-    CoroutinesSelectOrTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectOr,
+    CoroutinesSelectOrTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositoryJdbcMysqlSelectOr,
             Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositoryJdbcMysqlSelectOr(sqlClient)
 }
 
 class UserRepositoryJdbcMysqlSelectOr(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesSelectOrRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesSelectOrRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

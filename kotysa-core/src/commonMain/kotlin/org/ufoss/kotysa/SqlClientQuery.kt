@@ -103,7 +103,23 @@ public abstract class SqlClientQuery protected constructor() {
     }
 
     public interface FromTable<T : Any> {
-        public infix fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, *>
+        public infix fun <U : Any> innerJoin(table: Table<U>): Joinable<U, *>
+    }
+
+    public interface FromTableSelect<T : Any> : FromTable<T> {
+        public infix fun <U : Any> leftJoin(table: Table<U>): Joinable<U, *>
+        public infix fun <U : Any> rightJoin(table: Table<U>): Joinable<U, *>
+        public infix fun <U : Any> fullJoin(table: Table<U>): Joinable<U, *>
+    }
+
+    public interface Joinable<T : Any, U : FromTable<T>> {
+        public infix fun on(column: Column<*, *>): Join<T, U>
+
+        public infix fun `as`(alias: String): Joinable<T, U>
+    }
+
+    public interface Join<T : Any, U : FromTable<T>> {
+        public infix fun eq(column: Column<T, *>): U
     }
 
     public interface FromAndable : From {
@@ -112,22 +128,6 @@ public abstract class SqlClientQuery protected constructor() {
 
         // Postgresql specific
         public infix fun and(tsquery: Tsquery): FromAndable
-    }
-
-    public interface Joinable<T : Any, U : Any, V : FromTable<U>> {
-        public infix fun on(column: Column<T, *>): Join<U, V>
-
-        public infix fun `as`(alias: String): Joinable<T, U, V>
-    }
-
-    public interface Join<T : Any, U : FromTable<T>> {
-        public infix fun eq(column: Column<T, *>): U
-    }
-
-    public interface FromTableSelect<T : Any> : FromTable<T> {
-        public infix fun <U : Any> leftJoin(table: Table<U>): Joinable<T, U, *>
-        public infix fun <U : Any> rightJoin(table: Table<U>): Joinable<T, U, *>
-        public infix fun <U : Any> fullJoin(table: Table<U>): Joinable<T, U, *>
     }
 
     public interface Update<T : Any, U : Update<T, U, V>, V : UpdateInt<T, U, V>> {

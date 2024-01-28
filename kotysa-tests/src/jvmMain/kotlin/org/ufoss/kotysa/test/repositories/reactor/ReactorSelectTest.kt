@@ -12,8 +12,8 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 import reactor.kotlin.test.test
 
-interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSelectRepository<T, U, V>, X : Transaction>
-    : ReactorRepositoryTest<W, X> {
+interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : ReactorSelectRepository<T, U, V, W>, Y : Transaction> : ReactorRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -48,7 +48,7 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
     fun `Verify selectWithCascadeInnerJoin works correctly`() {
         assertThat(repository.selectWithCascadeInnerJoin().toIterable())
             .hasSize(1)
-            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .containsExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -56,8 +56,8 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
         assertThat(repository.selectWithCascadeLeftJoin().toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -65,7 +65,7 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
     fun `Verify selectWithCascadeRightJoin works correctly`() {
         assertThat(repository.selectWithCascadeRightJoin().toIterable())
             .hasSize(1)
-            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .containsExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -73,8 +73,8 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
         assertThat(repository.selectWithCascadeFullJoin().toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -83,8 +83,8 @@ interface ReactorSelectTest<T : Roles, U : Users, V : UserRoles, W : ReactorSele
         assertThat(repository.selectWithEqJoin().toIterable())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 

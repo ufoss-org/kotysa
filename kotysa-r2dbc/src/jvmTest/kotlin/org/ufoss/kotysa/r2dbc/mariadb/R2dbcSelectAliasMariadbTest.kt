@@ -193,11 +193,12 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
 }
 
 class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
-    AbstractCoroutinesUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    AbstractCoroutinesUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

@@ -10,15 +10,13 @@ import org.springframework.jdbc.BadSqlGrammarException
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.MysqlRoles
-import org.ufoss.kotysa.test.MysqlUserRoles
-import org.ufoss.kotysa.test.MysqlUsers
-import org.ufoss.kotysa.test.mysqlTables
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectTest
 
 class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpringJdbcMysqlSelect>(),
-    SelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositorySpringJdbcMysqlSelect, SpringJdbcTransaction> {
+    SelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositorySpringJdbcMysqlSelect,
+            SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcMysqlSelect(jdbcOperations)
@@ -31,9 +29,10 @@ class SpringJdbcSelectMysqlTest : AbstractSpringJdbcMysqlTest<UserRepositorySpri
 }
 
 class UserRepositorySpringJdbcMysqlSelect(client: JdbcOperations) :
-    SelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    SelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         client.sqlClient(mysqlTables),
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

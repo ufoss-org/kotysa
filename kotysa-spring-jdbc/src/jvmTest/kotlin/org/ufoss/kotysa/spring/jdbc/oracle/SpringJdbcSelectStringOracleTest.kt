@@ -7,23 +7,23 @@ package org.ufoss.kotysa.spring.jdbc.oracle
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.OracleRoles
-import org.ufoss.kotysa.test.OracleUserRoles
-import org.ufoss.kotysa.test.OracleUsers
-import org.ufoss.kotysa.test.oracleTables
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectStringRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectStringTest
 
 class SpringJdbcSelectStringOracleTest : AbstractSpringJdbcOracleTest<UserRepositorySpringJdbcOracleSelectString>(),
-    SelectStringTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositorySpringJdbcOracleSelectString,
-            SpringJdbcTransaction> {
+    SelectStringTest<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies,
+            UserRepositorySpringJdbcOracleSelectString, SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcOracleSelectString(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcOracleSelectString(client: JdbcOperations) :
-    SelectStringRepository<OracleRoles, OracleUsers, OracleUserRoles>(
-        client.sqlClient(oracleTables), OracleRoles,
-        OracleUsers, OracleUserRoles
+    SelectStringRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
+        client.sqlClient(oracleTables),
+        OracleRoles,
+        OracleUsers,
+        OracleUserRoles,
+        OracleCompanies
     )

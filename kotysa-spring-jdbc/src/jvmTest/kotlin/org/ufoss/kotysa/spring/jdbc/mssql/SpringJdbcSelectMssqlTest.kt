@@ -7,24 +7,23 @@ package org.ufoss.kotysa.spring.jdbc.mssql
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.MssqlRoles
-import org.ufoss.kotysa.test.MssqlUserRoles
-import org.ufoss.kotysa.test.MssqlUsers
-import org.ufoss.kotysa.test.mssqlTables
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectTest
 
 class SpringJdbcSelectMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositorySpringJdbcMssqlSelect>(),
-    SelectTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositorySpringJdbcMssqlSelect, SpringJdbcTransaction> {
+    SelectTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies, UserRepositorySpringJdbcMssqlSelect,
+            SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcMssqlSelect(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcMssqlSelect(client: JdbcOperations) :
-    SelectRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    SelectRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         client.sqlClient(mssqlTables),
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     )

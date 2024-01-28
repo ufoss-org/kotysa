@@ -15,6 +15,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+object MysqlCompanies : MysqlTable<CompanyEntity>("companies"), Companies {
+    override val id = integer(CompanyEntity::id)
+        .primaryKey()
+    override val name = varchar(CompanyEntity::name)
+        .unique()
+}
+
 object MysqlRoles : MysqlTable<RoleEntity>("roles"), Roles {
     override val id = integer(RoleEntity::id)
         .primaryKey()
@@ -30,6 +37,8 @@ object MysqlUsers : MysqlTable<UserEntity>("users"), Users {
     override val isAdmin = boolean(UserEntity::isAdmin)
     override val roleId = integer(UserEntity::roleId)
         .foreignKey(MysqlRoles.id, "FK_users_roles")
+    override val companyId = integer(UserEntity::companyId)
+        .foreignKey(MysqlCompanies.id, "FK_users_companies")
     override val alias = varchar(UserEntity::alias)
 
     init {
@@ -544,6 +553,7 @@ object MysqlByteArrayAsBinaries : MysqlTable<ByteArrayAsBinaryEntity>(), ByteArr
 }
 
 val mysqlTables = tables().mysql(
+    MysqlCompanies,
     MysqlRoles,
     MysqlUsers,
     MysqlUserRoles,

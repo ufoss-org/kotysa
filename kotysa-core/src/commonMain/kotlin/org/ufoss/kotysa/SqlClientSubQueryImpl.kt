@@ -582,22 +582,22 @@ internal class SqlClientSubQueryImpl internal constructor() : DefaultSqlClientSe
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSubQuery.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSubQuery.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSubQuery.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, SqlClientSubQuery.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, SqlClientSubQuery.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 

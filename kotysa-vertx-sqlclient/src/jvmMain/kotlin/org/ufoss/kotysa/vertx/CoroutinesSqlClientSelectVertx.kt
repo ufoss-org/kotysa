@@ -606,22 +606,22 @@ internal class CoroutinesSqlClientSelectVertx private constructor() : DefaultSql
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
@@ -658,21 +658,21 @@ internal class CoroutinesSqlClientSelectVertx private constructor() : DefaultSql
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, CoroutinesSqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 

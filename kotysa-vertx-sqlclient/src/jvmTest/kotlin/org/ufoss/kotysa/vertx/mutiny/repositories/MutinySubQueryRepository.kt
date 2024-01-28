@@ -5,18 +5,16 @@
 package org.ufoss.kotysa.vertx.mutiny.repositories
 
 import org.ufoss.kotysa.SqlClientSubQuery
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.vertx.MutinySqlClient
-import org.ufoss.kotysa.test.Roles
-import org.ufoss.kotysa.test.UserRoles
-import org.ufoss.kotysa.test.Users
-import org.ufoss.kotysa.test.roleAdmin
 
-abstract class MutinySubQueryRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class MutinySubQueryRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
     sqlClient: MutinySqlClient,
     tableRoles: T,
     tableUsers: U,
     tableUserRoles: V,
-) : AbstractMutinyUserRepository<T, U, V>(sqlClient, tableRoles, tableUsers, tableUserRoles) {
+    tableCompanies: W,
+) : AbstractMutinyUserRepository<T, U, V, W>(sqlClient, tableRoles, tableUsers, tableUserRoles, tableCompanies) {
 
     fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
         (sqlClient select tableUsers.firstname and {

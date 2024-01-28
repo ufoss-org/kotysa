@@ -7,39 +7,45 @@ package org.ufoss.kotysa.vertx.coroutines.oracle
 import io.vertx.oracleclient.OracleException
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 
 class VertxCoroutinesSelectAliasOracleTest : AbstractVertxCoroutinesOracleTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws VertxCoroutinesException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
+            }
+        }
             .isInstanceOf(OracleException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcVertxCoroutinesException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
+            }
+        }
             .isInstanceOf(OracleException::class.java)
     }
 
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcVertxCoroutinesException`() {
-        assertThatThrownBy { runTest {
-            repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
+            }
+        }
             .isInstanceOf(OracleException::class.java)
     }
 
@@ -79,9 +85,11 @@ class VertxCoroutinesSelectAliasOracleTest : AbstractVertxCoroutinesOracleTest<U
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcVertxCoroutinesException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
+            }
+        }
             .isInstanceOf(OracleException::class.java)
     }
 
@@ -93,9 +101,11 @@ class VertxCoroutinesSelectAliasOracleTest : AbstractVertxCoroutinesOracleTest<U
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
-        } }.isInstanceOf(OracleException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
+            }
+        }.isInstanceOf(OracleException::class.java)
     }
 
     @Test
@@ -126,7 +136,9 @@ class VertxCoroutinesSelectAliasOracleTest : AbstractVertxCoroutinesOracleTest<U
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() = runTest {
-        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
+        assertThat(
+            repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList()
+        )
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
@@ -145,39 +157,48 @@ class VertxCoroutinesSelectAliasOracleTest : AbstractVertxCoroutinesOracleTest<U
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
-        } }.isInstanceOf(OracleException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
+            }
+        }.isInstanceOf(OracleException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
-        } }.isInstanceOf(OracleException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
+            }
+        }.isInstanceOf(OracleException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
-        } }.isInstanceOf(OracleException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
+            }
+        }.isInstanceOf(OracleException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
-        } }.isInstanceOf(OracleException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
+            }
+        }.isInstanceOf(OracleException::class.java)
     }
 }
 
 class UserRepositorySelectAlias(sqlClient: CoroutinesVertxSqlClient) :
-    AbstractCoroutinesUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    AbstractCoroutinesUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         sqlClient,
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

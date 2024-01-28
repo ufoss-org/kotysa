@@ -174,11 +174,12 @@ class R2dbcSelectAliasMssqlTest : AbstractR2dbcMssqlTest<UserRepositorySelectAli
 }
 
 class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
-    AbstractCoroutinesUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    AbstractCoroutinesUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         sqlClient,
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

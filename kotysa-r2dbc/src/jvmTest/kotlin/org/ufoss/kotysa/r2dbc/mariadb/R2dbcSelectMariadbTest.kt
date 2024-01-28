@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MariadbCompanies
 import org.ufoss.kotysa.test.MariadbRoles
 import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
@@ -17,8 +18,8 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectTest
 
 
 class R2dbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelect>(),
-    CoroutinesSelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelect,
-            R2dbcTransaction> {
+    CoroutinesSelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies,
+            UserRepositoryJdbcMariadbSelect, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelect(sqlClient)
 
     @Test
@@ -29,9 +30,10 @@ class R2dbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariad
 }
 
 class UserRepositoryJdbcMariadbSelect(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    CoroutinesSelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

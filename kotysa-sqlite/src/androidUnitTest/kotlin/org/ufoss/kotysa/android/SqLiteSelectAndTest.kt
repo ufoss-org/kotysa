@@ -13,7 +13,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectAndRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectAndTest
 
 class SqliteSelectAndTest : AbstractSqLiteTest<UserRepositorySelectAnd>(),
-    SelectAndTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySelectAnd,
+    SelectAndTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositorySelectAnd,
             AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectAnd(dbHelper, sqLiteTables)
@@ -28,7 +28,10 @@ class UserRepositorySelectAnd(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
 ) :
-    SelectAndRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+    SelectAndRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
         sqLiteOpenHelper.sqlClient(tables),
-        SqliteRoles, SqliteUsers, SqliteUserRoles
+        SqliteRoles,
+        SqliteUsers,
+        SqliteUserRoles,
+        SqliteCompanies
     )

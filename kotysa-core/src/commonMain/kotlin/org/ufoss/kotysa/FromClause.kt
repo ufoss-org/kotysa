@@ -17,7 +17,7 @@ internal sealed class AbstractFromClause<T : Any> : FromClause {
 internal class FromClauseTable<T : Any> internal constructor(
     internal val table: Table<T>
 ) : AbstractFromClause<T>() {
-    internal val joinClauses = mutableListOf<JoinClause<T, *>>()
+    internal val joinClauses = mutableListOf<JoinClause<*, *>>()
 }
 
 internal class FromClauseSubQuery<T : Any> internal constructor(

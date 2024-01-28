@@ -188,11 +188,12 @@ class VertxSqlClientSelectAliasOracleTest : AbstractVertxSqlClientOracleTest<Use
 }
 
 class UserRepositorySelectAlias(sqlClient: MutinyVertxSqlClient) :
-    AbstractMutinyUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    AbstractMutinyUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         sqlClient,
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

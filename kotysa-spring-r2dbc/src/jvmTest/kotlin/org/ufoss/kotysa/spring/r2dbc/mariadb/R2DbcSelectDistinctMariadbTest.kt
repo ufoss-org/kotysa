@@ -8,6 +8,7 @@ import org.ufoss.kotysa.MariadbCoroutinesSqlClient
 import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.MariadbCompanies
 import org.ufoss.kotysa.test.MariadbRoles
 import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
@@ -15,16 +16,17 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepositor
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
 class R2dbcSelectDistinctMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryR2dbcMariadbSelectDistinct>(),
-    ReactorSelectDistinctTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryR2dbcMariadbSelectDistinct,
-            ReactorTransaction> {
+    ReactorSelectDistinctTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies,
+            UserRepositoryR2dbcMariadbSelectDistinct, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
         UserRepositoryR2dbcMariadbSelectDistinct(sqlClient)
 }
 
 class UserRepositoryR2dbcMariadbSelectDistinct(sqlClient: ReactorSqlClient) :
-    ReactorSelectDistinctRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    ReactorSelectDistinctRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

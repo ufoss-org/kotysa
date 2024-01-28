@@ -605,22 +605,22 @@ internal class ReactorSqlClientSelectSpringR2dbc private constructor() : Abstrac
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 
@@ -657,21 +657,21 @@ internal class ReactorSqlClientSelectSpringR2dbc private constructor() : Abstrac
 
         override fun <V : Any> innerJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromsTable<T, V>> = joinProtected(table, JoinClauseType.INNER)
 
         override fun <V : Any> leftJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.LEFT_OUTER)
 
         override fun <V : Any> rightJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.RIGHT_OUTER)
 
         override fun <V : Any> fullJoin(
             table: Table<V>
-        ): SqlClientQuery.Joinable<U, V, ReactorSqlClientSelect.FromsTable<T, V>> =
+        ): SqlClientQuery.Joinable<V, ReactorSqlClientSelect.FromsTable<T, V>> =
             joinProtected(table, JoinClauseType.FULL_OUTER)
     }
 

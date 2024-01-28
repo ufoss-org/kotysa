@@ -20,6 +20,13 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+object MssqlCompanies : MssqlTable<CompanyEntity>("companies"), Companies {
+    override val id = integer(CompanyEntity::id)
+        .primaryKey()
+    override val name = varchar(CompanyEntity::name)
+        .unique()
+}
+
 object MssqlRoles : MssqlTable<RoleEntity>("roles"), Roles {
     override val id = integer(RoleEntity::id)
         .primaryKey()
@@ -35,6 +42,8 @@ object MssqlUsers : MssqlTable<UserEntity>("users"), Users {
     override val isAdmin = bit(UserEntity::isAdmin)
     override val roleId = integer(UserEntity::roleId)
         .foreignKey(MssqlRoles.id, "FK_users_roles")
+    override val companyId = integer(UserEntity::companyId)
+        .foreignKey(MssqlCompanies.id, "FK_users_companies")
     override val alias = varchar(UserEntity::alias)
 
     init {
@@ -534,6 +543,7 @@ val mssqlTables = tables().mssql(
     GenericAllTypesNotNulls,
     GenericAllTypesNullables,
     GenericAllTypesNullableDefaultValues,
+    MssqlCompanies,
     MssqlRoles,
     MssqlUsers,
     MssqlUserRoles,

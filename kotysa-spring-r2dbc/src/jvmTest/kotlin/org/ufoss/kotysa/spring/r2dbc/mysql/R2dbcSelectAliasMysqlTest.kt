@@ -12,6 +12,7 @@ import org.springframework.r2dbc.BadSqlGrammarException
 import org.springframework.r2dbc.UncategorizedR2dbcException
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.reactor.AbstractReactorUserRepository
 
 class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAlias>() {
 
@@ -184,7 +185,14 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
     }
 }
 
-class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMysql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) :
+    AbstractReactorUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles,
+        MysqlCompanies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MysqlUsers.firstname `as` "fna"

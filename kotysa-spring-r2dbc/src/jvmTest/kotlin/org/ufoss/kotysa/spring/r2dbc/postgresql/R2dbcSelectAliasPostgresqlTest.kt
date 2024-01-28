@@ -13,6 +13,7 @@ import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.reactor.AbstractReactorUserRepository
 
 class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositorySelectAlias>() {
 
@@ -176,7 +177,14 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
     }
 }
 
-class UserRepositorySelectAlias(sqlClient: PostgresqlReactorSqlClient) : AbstractUserRepositoryPostgresql(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: PostgresqlReactorSqlClient) :
+    AbstractReactorUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
+        sqlClient,
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles,
+        PostgresqlCompanies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select PostgresqlUsers.firstname `as` "fna"

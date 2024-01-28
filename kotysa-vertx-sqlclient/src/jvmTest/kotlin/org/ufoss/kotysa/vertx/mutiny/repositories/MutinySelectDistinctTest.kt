@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinySelectDistinctTest<T : Roles, U : Users, V : UserRoles, W : MutinySelectDistinctRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinySelectDistinctTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : MutinySelectDistinctRepository<T, U, V, W>> : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {

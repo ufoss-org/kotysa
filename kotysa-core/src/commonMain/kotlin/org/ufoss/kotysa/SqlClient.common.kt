@@ -49,7 +49,7 @@ public expect sealed interface SqlClient {
 
     public open infix fun <T : Any> selectAllFrom(table: Table<T>): List<T>
     public open infix fun <T : Any> selectCountAllFrom(table: Table<T>): Long
-    
+
     public fun selects(): SqlClientSelect.Selects
 }
 
@@ -107,10 +107,10 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
     }
 
     public interface FromsTable<T : Any, U : Any> : FromsPart2<T>, FromTableSelect<U> {
-        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromsTable<T, V>>
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<V, FromsTable<T, V>>
     }
 
     public interface FirstSelect<T : Any> : Fromable<T>, SqlClientQuery.Select, SelectAndable {
@@ -239,23 +239,25 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         override fun <U : Any> and(dsl: SqlClientSubQuery.Scope.() -> SqlClientSubQuery.Return<U>): From<T>
     }
 
-    public interface FromTable<T : Any, U : Any> : FromTableSelect<U>, From<T>, Whereable<T>, GroupableBy<T>, OrderableBy<T>,
+    public interface FromTable<T : Any, U : Any> : FromTableSelect<U>, From<T>, Whereable<T>, GroupableBy<T>,
+        OrderableBy<T>,
         LimitOffset<T>, Return<T> {
-        override fun <V : Any> innerJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> leftJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> rightJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> fullJoin(table: Table<V>): Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> innerJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): Joinable<V, FromTable<T, V>>
         override fun `as`(alias: String): FromTable<T, U>
     }
 
-    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Andable<Where<T>>, Orable<Where<T>>, OrderableBy<T>,
+    public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, Andable<Where<T>>, Orable<Where<T>>,
+        OrderableBy<T>,
         GroupableBy<T>, LimitOffset<T>, Return<T>
 
     public interface Wheres<T : Any> : SqlClientQuery.Whereable<Wheres<T>>, SqlClientQuery.Where<Wheres<T>>,
         Orable<Wheres<T>>, OrderableBy<T>, GroupableBy<T>, LimitOffset<T>, Return<T>
 
     public interface GroupableBy<T : Any> : SqlClientQuery.GroupableBy<GroupBy<T>> {
-        public fun groupsBy() : GroupsBy<T>
+        public fun groupsBy(): GroupsBy<T>
     }
 
     public interface GroupBy<T : Any> : SqlClientQuery.GroupBy<GroupBy<T>>,
@@ -266,7 +268,7 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
         OrderableBy<T>, LimitOffset<T>, Return<T>
 
     public interface OrderableBy<T : Any> : SqlClientQuery.OrderableBy<OrderBy<T>> {
-        public fun ordersBy() : OrdersBy<T>
+        public fun ordersBy(): OrdersBy<T>
     }
 
     public interface OrderBy<T : Any> : SqlClientQuery.OrderBy<OrderBy<T>>, OrderByAndable<OrderBy<T>>, GroupableBy<T>,
@@ -315,11 +317,11 @@ public expect class SqlClientSelect private constructor() : SqlClientQuery {
 
 public expect class SqlClientDeleteOrUpdate private constructor() : SqlClientQuery {
     public interface FirstDeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<T>>, Return {
-        override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+        override fun <U : Any> innerJoin(table: Table<U>): Joinable<U, DeleteOrUpdate<U>>
     }
 
     public interface DeleteOrUpdate<T : Any> : FromTable<T>, Whereable<Where<Any>>, Return {
-        override fun <U : Any> innerJoin(table: Table<U>): Joinable<T, U, DeleteOrUpdate<U>>
+        override fun <U : Any> innerJoin(table: Table<U>): Joinable<U, DeleteOrUpdate<U>>
     }
 
     public interface Update<T : Any> : FirstDeleteOrUpdate<T>, SqlClientQuery.Update<T, Update<T>, UpdateInt<T>>

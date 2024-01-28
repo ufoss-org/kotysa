@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.mutiny.mssql
 
+import org.ufoss.kotysa.test.MssqlCompanies
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
@@ -12,14 +13,17 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySubQueryRepository
 import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySubQueryTest
 
 class VertxSqlClientSubQueryMssqlTest : AbstractVertxSqlClientMssqlTest<UserRepositoryVertxSqlClientMssqlSubQuery>(),
-    MutinySubQueryTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryVertxSqlClientMssqlSubQuery> {
-    override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = UserRepositoryVertxSqlClientMssqlSubQuery(sqlClient)
+    MutinySubQueryTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies,
+            UserRepositoryVertxSqlClientMssqlSubQuery> {
+    override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) =
+        UserRepositoryVertxSqlClientMssqlSubQuery(sqlClient)
 }
 
 class UserRepositoryVertxSqlClientMssqlSubQuery(sqlClient: MutinyVertxSqlClient) :
-    MutinySubQueryRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    MutinySubQueryRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         sqlClient,
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     )

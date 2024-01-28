@@ -5,16 +5,18 @@
 package org.ufoss.kotysa.test.repositories.coroutines
 
 import org.ufoss.kotysa.CoroutinesSqlClient
+import org.ufoss.kotysa.test.Companies
 import org.ufoss.kotysa.test.Roles
 import org.ufoss.kotysa.test.UserRoles
 import org.ufoss.kotysa.test.Users
 
-abstract class CoroutinesSelectStringRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class CoroutinesSelectStringRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
     sqlClient: CoroutinesSqlClient,
     tableRoles: T,
     tableUsers: U,
     tableUserRoles: V,
-) : AbstractCoroutinesUserRepository<T, U, V>(sqlClient, tableRoles, tableUsers, tableUserRoles) {
+    tableCompanies: W,
+) : AbstractCoroutinesUserRepository<T, U, V, W>(sqlClient, tableRoles, tableUsers, tableUserRoles, tableCompanies) {
 
     suspend fun selectFirstByFirstnameNotNullable(firstname: String) =
         (sqlClient selectFrom tableUsers

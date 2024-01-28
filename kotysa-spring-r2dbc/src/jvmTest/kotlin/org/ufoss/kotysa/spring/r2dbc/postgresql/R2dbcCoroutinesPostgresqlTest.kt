@@ -113,6 +113,7 @@ class CoroutinesUserPostgresqlRepository(private val sqlClient: PostgresqlCorout
 
     override fun init() = runTest {
         createTables()
+        insertCompanies()
         insertRoles()
         insertUsers()
     }
@@ -120,12 +121,16 @@ class CoroutinesUserPostgresqlRepository(private val sqlClient: PostgresqlCorout
     override fun delete() = runTest {
         deleteAllFromUsers()
         deleteAllFromRole()
+        deleteAllFromCompanies()
     }
 
     private suspend fun createTables() {
+        sqlClient createTableIfNotExists PostgresqlCompanies
         sqlClient createTableIfNotExists PostgresqlRoles
         sqlClient createTableIfNotExists PostgresqlUsers
     }
+
+    private suspend fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
@@ -134,6 +139,8 @@ class CoroutinesUserPostgresqlRepository(private val sqlClient: PostgresqlCorout
     private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom PostgresqlRoles
 
     suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom PostgresqlUsers
+
+    private suspend fun deleteAllFromCompanies() = sqlClient deleteAllFrom PostgresqlCompanies
 
     fun selectAllUsers() = sqlClient selectAllFrom PostgresqlUsers
 

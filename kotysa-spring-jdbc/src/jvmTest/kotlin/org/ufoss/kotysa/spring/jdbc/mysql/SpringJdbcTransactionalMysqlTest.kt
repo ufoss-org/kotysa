@@ -28,9 +28,10 @@ class SpringJdbcTransactionalMysqlTest : AbstractSpringJdbcMysqlTest<UserReposit
 }
 
 class UserRepositoryJdbcMysqldbTransactional(client: JdbcOperations) :
-    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         client.sqlClient(mysqlTables),
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

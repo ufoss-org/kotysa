@@ -11,6 +11,7 @@ import org.ufoss.kotysa.MariadbCoroutinesSqlClient
 import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.MariadbCompanies
 import org.ufoss.kotysa.test.MariadbRoles
 import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
@@ -18,7 +19,8 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectTest
 
 class R2DbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSelect>(),
-    ReactorSelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryMariadbSelect, ReactorTransaction> {
+    ReactorSelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies, UserRepositoryMariadbSelect,
+            ReactorTransaction> {
 
     override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
         UserRepositoryMariadbSelect(sqlClient)
@@ -31,9 +33,10 @@ class R2DbcSelectMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryMariadbSel
 }
 
 class UserRepositoryMariadbSelect(sqlClient: ReactorSqlClient) :
-    ReactorSelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    ReactorSelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

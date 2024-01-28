@@ -7,11 +7,8 @@ package org.ufoss.kotysa.jdbc.mysql
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.MysqlRoles
-import org.ufoss.kotysa.test.MysqlUserRoles
-import org.ufoss.kotysa.test.MysqlUsers
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
-import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysqlTransactional>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMysqlTransactional(sqlClient)
@@ -28,4 +25,10 @@ class JdbcTransactionalMysqlTest : AbstractJdbcMysqlTest<UserRepositoryJdbcMysql
 }
 
 class UserRepositoryJdbcMysqlTransactional(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles)
+    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles,
+        MysqlCompanies
+    )

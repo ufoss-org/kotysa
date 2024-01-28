@@ -48,7 +48,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         protected fun <V : Any, W : FromTable<V>> joinProtected(
             table: Table<V>,
             joinType: JoinClauseType,
-        ): SqlClientQuery.Joinable<T, V, W> {
+        ): SqlClientQuery.Joinable<V, W> {
             makeAvailable(properties, properties.tables.getTable(table))
             val joinable = (joinable as Joinable<T, V, W>)
             joinable.type = joinType
@@ -94,14 +94,14 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     public class Joinable<T : Any, U : Any, V : FromTable<U>> internal constructor(
         override val properties: Properties,
         from: V,
-    ) : SqlClientQuery.Joinable<T, U, V>, WithProperties {
+    ) : SqlClientQuery.Joinable<U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
         internal lateinit var table: Table<U>
         internal var alias: String? = null
 
         private val join = Join<T, U, V>(properties, from)
 
-        override fun on(column: Column<T, *>): SqlClientQuery.Join<U, V> =
+        override fun on(column: Column<*, *>): SqlClientQuery.Join<U, V> =
             join.apply {
                 type = this@Joinable.type
                 table = this@Joinable.table
@@ -121,7 +121,7 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
     ) : SqlClientQuery.Join<U, V>, WithProperties {
         internal lateinit var type: JoinClauseType
         internal lateinit var table: Table<U>
-        internal lateinit var column: Column<T, *>
+        internal lateinit var column: Column<Any, *>
         internal var alias: String? = null
 
         override fun eq(column: Column<U, *>): V = with(properties) {

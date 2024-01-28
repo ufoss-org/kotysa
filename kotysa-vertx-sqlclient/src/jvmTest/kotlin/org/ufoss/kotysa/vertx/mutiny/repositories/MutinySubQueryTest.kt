@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinySubQueryTest<T : Roles, U : Users, V : UserRoles, W : MutinySubQueryRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinySubQueryTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : MutinySubQueryRepository<T, U, V, W>> : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() {

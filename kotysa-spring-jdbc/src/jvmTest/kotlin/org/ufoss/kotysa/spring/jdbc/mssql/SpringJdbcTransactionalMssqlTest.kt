@@ -28,9 +28,10 @@ class SpringJdbcTransactionalMssqlTest : AbstractSpringJdbcMssqlTest<UserReposit
 }
 
 class UserRepositoryJdbcMssqldbTransactional(client: JdbcOperations) :
-    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         client.sqlClient(mssqlTables),
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     )

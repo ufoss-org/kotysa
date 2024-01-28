@@ -7,6 +7,7 @@ package org.ufoss.kotysa.vertx.coroutines.mysql
 import io.vertx.mysqlclient.MySQLException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.test.MysqlRoles
@@ -17,7 +18,7 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectTest
 
 
 class VertxCoroutinesSelectMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepositoryJdbcMysqlSelect>(),
-    CoroutinesSelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelect,
+    CoroutinesSelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositoryJdbcMysqlSelect,
             Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositoryJdbcMysqlSelect(sqlClient)
 
@@ -29,9 +30,10 @@ class VertxCoroutinesSelectMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepo
 }
 
 class UserRepositoryJdbcMysqlSelect(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesSelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesSelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

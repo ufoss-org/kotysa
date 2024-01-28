@@ -7,6 +7,7 @@ package org.ufoss.kotysa.vertx.mutiny.mysql
 import io.vertx.mysqlclient.MySQLException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
@@ -15,7 +16,7 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectRepository
 import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectTest
 
 class VertxSqlClientSelectMysqlTest : AbstractVertxSqlClientMysqlTest<UserRepositoryMysqlSelect>(),
-    MutinySelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryMysqlSelect> {
+    MutinySelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositoryMysqlSelect> {
 
     override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = UserRepositoryMysqlSelect(sqlClient)
 
@@ -27,9 +28,10 @@ class VertxSqlClientSelectMysqlTest : AbstractVertxSqlClientMysqlTest<UserReposi
 }
 
 class UserRepositoryMysqlSelect(sqlClient: MutinyVertxSqlClient) :
-    MutinySelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    MutinySelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

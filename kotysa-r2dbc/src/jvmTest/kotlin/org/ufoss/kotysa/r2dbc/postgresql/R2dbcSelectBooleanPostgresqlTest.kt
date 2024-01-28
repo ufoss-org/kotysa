@@ -7,6 +7,7 @@ package org.ufoss.kotysa.r2dbc.postgresql
 import org.ufoss.kotysa.PostgresqlR2dbcSqlClient
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.PostgresqlCompanies
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
@@ -15,15 +16,17 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
 
 class R2dbcSelectBooleanPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryJdbcPostgresqlSelectBoolean>(),
-    CoroutinesSelectBooleanTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryJdbcPostgresqlSelectBoolean, R2dbcTransaction> {
+    CoroutinesSelectBooleanTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies,
+            UserRepositoryJdbcPostgresqlSelectBoolean, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: PostgresqlR2dbcSqlClient) =
         UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient)
 }
 
 class UserRepositoryJdbcPostgresqlSelectBoolean(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectBooleanRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    CoroutinesSelectBooleanRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     )

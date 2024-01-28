@@ -27,4 +27,10 @@ class SpringJdbcTransactionalH2Test : AbstractSpringJdbcH2Test<UserRepositoryJdb
 }
 
 class UserRepositoryJdbcH2Transactional(client: JdbcOperations) :
-    AbstractUserRepository<H2Roles, H2Users, H2UserRoles>(client.sqlClient(h2Tables), H2Roles, H2Users, H2UserRoles)
+    AbstractUserRepository<H2Roles, H2Users, H2UserRoles, H2Companies>(
+        client.sqlClient(h2Tables),
+        H2Roles,
+        H2Users,
+        H2UserRoles,
+        H2Companies
+    )

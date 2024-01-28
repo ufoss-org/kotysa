@@ -7,6 +7,7 @@ package org.ufoss.kotysa.vertx.mutiny.mariadb
 import io.vertx.mysqlclient.MySQLException
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.test.MariadbCompanies
 import org.ufoss.kotysa.test.MariadbRoles
 import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
@@ -15,7 +16,7 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectRepository
 import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectTest
 
 class VertxSqlClientSelectMariadbTest : AbstractVertxSqlClientMariadbTest<UserRepositoryMariadbSelect>(),
-    MutinySelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryMariadbSelect> {
+    MutinySelectTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies, UserRepositoryMariadbSelect> {
 
     override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = UserRepositoryMariadbSelect(sqlClient)
 
@@ -27,9 +28,10 @@ class VertxSqlClientSelectMariadbTest : AbstractVertxSqlClientMariadbTest<UserRe
 }
 
 class UserRepositoryMariadbSelect(sqlClient: MutinyVertxSqlClient) :
-    MutinySelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    MutinySelectRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

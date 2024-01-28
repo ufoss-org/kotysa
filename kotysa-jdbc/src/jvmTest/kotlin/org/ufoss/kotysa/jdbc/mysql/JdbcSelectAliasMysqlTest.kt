@@ -163,7 +163,13 @@ class JdbcSelectAliasMysqlTest : AbstractJdbcMysqlTest<UserRepositorySelectAlias
 }
 
 class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(sqlClient, MysqlRoles, MysqlUsers, MysqlUserRoles) {
+    AbstractUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
+        sqlClient,
+        MysqlRoles,
+        MysqlUsers,
+        MysqlUserRoles,
+        MysqlCompanies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MysqlUsers.firstname `as` "fna"

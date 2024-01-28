@@ -18,6 +18,13 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+object PostgresqlCompanies : PostgresqlTable<CompanyEntity>("companies"), Companies {
+    override val id = integer(CompanyEntity::id)
+        .primaryKey()
+    override val name = varchar(CompanyEntity::name)
+        .unique()
+}
+
 object PostgresqlRoles : PostgresqlTable<RoleEntity>("roles"), Roles {
     override val id = integer(RoleEntity::id)
         .primaryKey()
@@ -33,6 +40,8 @@ object PostgresqlUsers : PostgresqlTable<UserEntity>("users"), Users {
     override val isAdmin = boolean(UserEntity::isAdmin)
     override val roleId = integer(UserEntity::roleId)
         .foreignKey(PostgresqlRoles.id, "FK_users_roles")
+    override val companyId = integer(UserEntity::companyId)
+        .foreignKey(PostgresqlCompanies.id, "FK_users_companies")
     override val alias = varchar(UserEntity::alias)
 
     init {
@@ -94,9 +103,11 @@ data class PostgresqlAllTypesNotNullEntity(
         if (localDateTime1.truncatedTo(ChronoUnit.MILLIS) != other.localDateTime1.truncatedTo(ChronoUnit.MILLIS)) return false
         if (localDateTime2.truncatedTo(ChronoUnit.MILLIS) != other.localDateTime2.truncatedTo(ChronoUnit.MILLIS)) return false
         if (kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
-            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)) return false
+            != other.kotlinxLocalDateTime1.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+        ) return false
         if (kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
-            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)) return false
+            != other.kotlinxLocalDateTime2.toJavaLocalDateTime().truncatedTo(ChronoUnit.MILLIS)
+        ) return false
         if (int != other.int) return false
         if (long != other.long) return false
         if (!byteArray.contentEquals(other.byteArray)) return false
@@ -104,7 +115,9 @@ data class PostgresqlAllTypesNotNullEntity(
         if (double != other.double) return false
         if (bigDecimal1 != other.bigDecimal1) return false
         if (bigDecimal2 != other.bigDecimal2) return false
-        if (!offsetDateTime.truncatedTo(ChronoUnit.MILLIS).isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))) return false
+        if (!offsetDateTime.truncatedTo(ChronoUnit.MILLIS)
+                .isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))
+        ) return false
         if (uuid != other.uuid) return false
 
         return true
@@ -555,6 +568,7 @@ val postgresqlTables = tables().postgresql(
     GenericAllTypesNotNulls,
     GenericAllTypesNullables,
     GenericAllTypesNullableDefaultValues,
+    PostgresqlCompanies,
     PostgresqlRoles,
     PostgresqlUsers,
     PostgresqlUserRoles,

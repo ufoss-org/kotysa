@@ -8,6 +8,7 @@ import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.PostgresqlCompanies
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
@@ -15,16 +16,17 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectAndRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectAndTest
 
 class R2DbcSelectAndPostgresqlTest : AbstractR2dbcPostgresqlTest<ReactorUserRepositoryPostgresqlSelectAnd>(),
-    ReactorSelectAndTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, ReactorUserRepositoryPostgresqlSelectAnd,
-            ReactorTransaction> {
+    ReactorSelectAndTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies,
+            ReactorUserRepositoryPostgresqlSelectAnd, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: PostgresqlReactorSqlClient, coSqlClient: PostgresqlCoroutinesSqlClient) =
         ReactorUserRepositoryPostgresqlSelectAnd(sqlClient)
 }
 
 class ReactorUserRepositoryPostgresqlSelectAnd(sqlClient: ReactorSqlClient) :
-    ReactorSelectAndRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    ReactorSelectAndRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     )

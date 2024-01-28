@@ -11,15 +11,16 @@ import kotlinx.coroutines.test.runTest
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.ufoss.kotysa.vertx.PostgresqlCoroutinesVertxSqlClient
 import org.ufoss.kotysa.QueryAlias
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.get
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
+import org.ufoss.kotysa.vertx.PostgresqlCoroutinesVertxSqlClient
 
 class VertxCoroutinesSelectAliasPostgresqlTest : AbstractVertxCoroutinesPostgresqlTest<UserRepositorySelectAlias>() {
-    override fun instantiateRepository(sqlClient: PostgresqlCoroutinesVertxSqlClient) = UserRepositorySelectAlias(sqlClient)
+    override fun instantiateRepository(sqlClient: PostgresqlCoroutinesVertxSqlClient) =
+        UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcVertxCoroutinesBadGrammarException`() {
@@ -195,11 +196,12 @@ class VertxCoroutinesSelectAliasPostgresqlTest : AbstractVertxCoroutinesPostgres
 }
 
 class UserRepositorySelectAlias(sqlClient: CoroutinesVertxSqlClient) :
-    AbstractCoroutinesUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    AbstractCoroutinesUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
