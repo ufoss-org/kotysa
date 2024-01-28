@@ -7,18 +7,22 @@ package org.ufoss.kotysa.spring.jdbc.h2
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.H2Roles
-import org.ufoss.kotysa.test.H2UserRoles
-import org.ufoss.kotysa.test.H2Users
-import org.ufoss.kotysa.test.h2Tables
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
 class SpringJdbcSelectOrH2Test : AbstractSpringJdbcH2Test<UserRepositorySpringJdbcH2SelectOr>(),
-    SelectOrTest<H2Roles, H2Users, H2UserRoles, UserRepositorySpringJdbcH2SelectOr, SpringJdbcTransaction> {
+    SelectOrTest<H2Roles, H2Users, H2UserRoles, H2Companies, UserRepositorySpringJdbcH2SelectOr,
+            SpringJdbcTransaction> {
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcH2SelectOr(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcH2SelectOr(client: JdbcOperations) :
-    SelectOrRepository<H2Roles, H2Users, H2UserRoles>(client.sqlClient(h2Tables), H2Roles, H2Users, H2UserRoles)
+    SelectOrRepository<H2Roles, H2Users, H2UserRoles, H2Companies>(
+        client.sqlClient(h2Tables),
+        H2Roles,
+        H2Users,
+        H2UserRoles,
+        H2Companies
+    )

@@ -7,11 +7,8 @@ package org.ufoss.kotysa.jdbc.oracle
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.OracleRoles
-import org.ufoss.kotysa.test.OracleUserRoles
-import org.ufoss.kotysa.test.OracleUsers
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
-import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalOracleTest : AbstractJdbcOracleTest<UserRepositoryJdbcOracleTransactional>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcOracleTransactional(sqlClient)
@@ -28,4 +25,10 @@ class JdbcTransactionalOracleTest : AbstractJdbcOracleTest<UserRepositoryJdbcOra
 }
 
 class UserRepositoryJdbcOracleTransactional(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(sqlClient, OracleRoles, OracleUsers, OracleUserRoles)
+    AbstractUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
+        sqlClient,
+        OracleRoles,
+        OracleUsers,
+        OracleUserRoles,
+        OracleCompanies
+    )

@@ -4,17 +4,19 @@
 
 package org.ufoss.kotysa.vertx.mutiny.repositories
 
+import org.ufoss.kotysa.test.Companies
 import org.ufoss.kotysa.vertx.MutinySqlClient
 import org.ufoss.kotysa.test.Roles
 import org.ufoss.kotysa.test.UserRoles
 import org.ufoss.kotysa.test.Users
 
-abstract class MutinySelectStringRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class MutinySelectStringRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
     sqlClient: MutinySqlClient,
     tableRoles: T,
     tableUsers: U,
     tableUserRoles: V,
-) : AbstractMutinyUserRepository<T, U, V>(sqlClient, tableRoles, tableUsers, tableUserRoles) {
+    tableCompanies: W,
+) : AbstractMutinyUserRepository<T, U, V, W>(sqlClient, tableRoles, tableUsers, tableUserRoles, tableCompanies) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
         (sqlClient selectFrom tableUsers

@@ -165,11 +165,12 @@ class SpringJdbcSelectAliasMssqlTest : AbstractSpringJdbcMssqlTest<UserRepositor
 }
 
 class UserRepositorySelectAlias(client: JdbcOperations) :
-    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         client.sqlClient(mssqlTables),
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

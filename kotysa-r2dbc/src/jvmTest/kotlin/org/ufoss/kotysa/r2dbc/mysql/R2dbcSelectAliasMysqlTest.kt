@@ -183,11 +183,12 @@ class R2dbcSelectAliasMysqlTest : AbstractR2dbcMysqlTest<UserRepositorySelectAli
 }
 
 class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
-    AbstractCoroutinesUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    AbstractCoroutinesUserRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

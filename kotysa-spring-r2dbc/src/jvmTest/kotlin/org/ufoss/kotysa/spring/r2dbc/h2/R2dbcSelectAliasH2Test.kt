@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.reactor.AbstractReactorUserRepository
 
 class R2dbcSelectAliasH2Test : AbstractR2dbcH2Test<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: H2ReactorSqlClient, coSqlClient: H2CoroutinesSqlClient) =
@@ -171,7 +172,14 @@ class R2dbcSelectAliasH2Test : AbstractR2dbcH2Test<UserRepositorySelectAlias>() 
     }
 }
 
-class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) : AbstractUserRepositoryH2(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) :
+    AbstractReactorUserRepository<H2Roles, H2Users, H2UserRoles, H2Companies>(
+        sqlClient,
+        H2Roles,
+        H2Users,
+        H2UserRoles,
+        H2Companies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select H2Users.firstname `as` "fna"

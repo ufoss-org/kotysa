@@ -11,11 +11,12 @@ import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.SqliteCompanies
 import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectBooleanTest
 
 class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>(),
-    SelectBooleanTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositoryBooleanSelect,
+    SelectBooleanTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositoryBooleanSelect,
             AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryBooleanSelect(dbHelper, sqLiteTables)
@@ -34,9 +35,10 @@ class SqLiteSelectBooleanTest : AbstractSqLiteTest<UserRepositoryBooleanSelect>(
 class UserRepositoryBooleanSelect(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : SelectBooleanRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+) : SelectBooleanRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
     sqLiteOpenHelper.sqlClient(tables),
     SqliteRoles,
     SqliteUsers,
-    SqliteUserRoles
+    SqliteUserRoles,
+    SqliteCompanies
 )

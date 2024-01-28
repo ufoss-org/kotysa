@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesUpdateDeleteTest<T : Roles, U : Users, V : UserRoles, W : CoroutinesUpdateDeleteRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesUpdateDeleteTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : CoroutinesUpdateDeleteRepository<T, U, V, W>, Y : Transaction> : CoroutinesRepositoryTest<X, Y> {
 
     @Test
     fun `Verify deleteAllFromUserRoles works correctly`() = runTest {

@@ -111,6 +111,7 @@ class CoroutinesUserMysqlRepository(private val sqlClient: MysqlCoroutinesSqlCli
 
     override fun init() = runTest {
         createTables()
+        insertCompanies()
         insertRoles()
         insertUsers()
     }
@@ -118,12 +119,16 @@ class CoroutinesUserMysqlRepository(private val sqlClient: MysqlCoroutinesSqlCli
     override fun delete() = runTest {
         deleteAllFromUsers()
         deleteAllFromRole()
+        deleteAllFromCompanies()
     }
 
     private suspend fun createTables() {
+        sqlClient createTableIfNotExists MysqlCompanies
         sqlClient createTableIfNotExists MysqlRoles
         sqlClient createTableIfNotExists MysqlUsers
     }
+
+    private suspend fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
@@ -132,6 +137,8 @@ class CoroutinesUserMysqlRepository(private val sqlClient: MysqlCoroutinesSqlCli
     private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MysqlRoles
 
     suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MysqlUsers
+
+    private suspend fun deleteAllFromCompanies() = sqlClient deleteAllFrom MysqlCompanies
 
     fun selectAllUsers() = sqlClient selectAllFrom MysqlUsers
 

@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc.mssql
 
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MssqlCompanies
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
@@ -13,15 +14,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSubQueryRepositor
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSubQueryTest
 
 class R2dbcSubQueryMssqlTest : AbstractR2dbcMssqlTest<UserRepositoryR2dbcMssqlSubQuery>(),
-    CoroutinesSubQueryTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryR2dbcMssqlSubQuery,
+    CoroutinesSubQueryTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies, UserRepositoryR2dbcMssqlSubQuery,
             R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryR2dbcMssqlSubQuery(sqlClient)
 }
 
 class UserRepositoryR2dbcMssqlSubQuery(sqlClient: R2dbcSqlClient) :
-    CoroutinesSubQueryRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    CoroutinesSubQueryRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         sqlClient,
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     )

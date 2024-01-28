@@ -18,6 +18,13 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 import java.util.*
 
+object H2Companies : H2Table<CompanyEntity>("companies"), Companies {
+    override val id = integer(CompanyEntity::id)
+        .primaryKey()
+    override val name = varchar(CompanyEntity::name)
+        .unique()
+}
+
 object H2Roles : H2Table<RoleEntity>("roles"), Roles {
     override val id = integer(RoleEntity::id)
         .primaryKey()
@@ -33,6 +40,8 @@ object H2Users : H2Table<UserEntity>("users"), Users {
     override val isAdmin = boolean(UserEntity::isAdmin)
     override val roleId = integer(UserEntity::roleId)
         .foreignKey(H2Roles.id, "FK_users_roles")
+    override val companyId = integer(UserEntity::companyId)
+        .foreignKey(H2Companies.id, "FK_users_companies")
     override val alias = varchar(UserEntity::alias)
 
     init {
@@ -497,6 +506,7 @@ val h2Tables = tables().h2(
     GenericAllTypesNotNulls,
     GenericAllTypesNullables,
     GenericAllTypesNullableDefaultValues,
+    H2Companies,
     H2Roles,
     H2Users,
     H2UserRoles,

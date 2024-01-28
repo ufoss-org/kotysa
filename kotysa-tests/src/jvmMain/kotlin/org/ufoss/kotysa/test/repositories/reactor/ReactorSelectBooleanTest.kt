@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface ReactorSelectBooleanTest<T : Roles, U : Users, V : UserRoles, W : ReactorSelectBooleanRepository<T, U, V>,
-        X : Transaction> : ReactorRepositoryTest<W, X> {
+interface ReactorSelectBooleanTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : ReactorSelectBooleanRepository<T, U, V, W>, Y : Transaction> : ReactorRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {

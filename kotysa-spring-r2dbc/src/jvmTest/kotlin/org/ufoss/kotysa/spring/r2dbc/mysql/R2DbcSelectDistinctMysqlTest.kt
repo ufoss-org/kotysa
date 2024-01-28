@@ -8,6 +8,7 @@ import org.ufoss.kotysa.MysqlCoroutinesSqlClient
 import org.ufoss.kotysa.MysqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
@@ -15,16 +16,17 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepositor
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
 class R2dbcSelectDistinctMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryR2dbcMysqlSelectDistinct>(),
-    ReactorSelectDistinctTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryR2dbcMysqlSelectDistinct,
-            ReactorTransaction> {
+    ReactorSelectDistinctTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
+            UserRepositoryR2dbcMysqlSelectDistinct, ReactorTransaction> {
     override fun instantiateRepository(sqlClient: MysqlReactorSqlClient, coSqlClient: MysqlCoroutinesSqlClient) =
         UserRepositoryR2dbcMysqlSelectDistinct(sqlClient)
 }
 
 class UserRepositoryR2dbcMysqlSelectDistinct(sqlClient: ReactorSqlClient) :
-    ReactorSelectDistinctRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    ReactorSelectDistinctRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

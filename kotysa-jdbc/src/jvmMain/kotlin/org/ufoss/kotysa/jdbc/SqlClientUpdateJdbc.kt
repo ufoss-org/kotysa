@@ -26,7 +26,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 
@@ -40,7 +40,7 @@ internal class SqlClientUpdateJdbc private constructor() : DefaultSqlClientDelet
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 

@@ -6,6 +6,7 @@ package org.ufoss.kotysa.jdbc.mssql
 
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.MssqlCompanies
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
@@ -13,9 +14,16 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectDistinctTest
 
 class JdbcSelectDistinctMssqlTest : AbstractJdbcMssqlTest<UserRepositoryJdbcMssqlSelectDistinct>(),
-    SelectDistinctTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryJdbcMssqlSelectDistinct, JdbcTransaction> {
+    SelectDistinctTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies, UserRepositoryJdbcMssqlSelectDistinct,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMssqlSelectDistinct(sqlClient)
 }
 
 class UserRepositoryJdbcMssqlSelectDistinct(sqlClient: JdbcSqlClient) :
-    SelectDistinctRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(sqlClient, MssqlRoles, MssqlUsers, MssqlUserRoles)
+    SelectDistinctRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles,
+        MssqlCompanies
+    )

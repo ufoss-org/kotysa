@@ -7,11 +7,8 @@ package org.ufoss.kotysa.jdbc.mariadb
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
-import org.ufoss.kotysa.test.MariadbRoles
-import org.ufoss.kotysa.test.MariadbUserRoles
-import org.ufoss.kotysa.test.MariadbUsers
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
-import org.ufoss.kotysa.test.userJdoe
 
 class JdbcTransactionalMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcMariadbTransactional>() {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcMariadbTransactional(sqlClient)
@@ -28,9 +25,10 @@ class JdbcTransactionalMariadbTest : AbstractJdbcMariadbTest<UserRepositoryJdbcM
 }
 
 class UserRepositoryJdbcMariadbTransactional(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

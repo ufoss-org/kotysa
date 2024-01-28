@@ -174,11 +174,12 @@ class R2dbcSelectAliasOracleTest : AbstractR2dbcOracleTest<UserRepositorySelectA
 }
 
 class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) :
-    AbstractReactorUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    AbstractReactorUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         sqlClient,
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

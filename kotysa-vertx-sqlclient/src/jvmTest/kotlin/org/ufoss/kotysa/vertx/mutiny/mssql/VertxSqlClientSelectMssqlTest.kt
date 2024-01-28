@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.mutiny.mssql
 
+import org.ufoss.kotysa.test.MssqlCompanies
 import org.ufoss.kotysa.test.MssqlRoles
 import org.ufoss.kotysa.test.MssqlUserRoles
 import org.ufoss.kotysa.test.MssqlUsers
@@ -12,15 +13,16 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectRepository
 import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectTest
 
 class VertxSqlClientSelectMssqlTest : AbstractVertxSqlClientMssqlTest<UserRepositoryMssqlSelect>(),
-    MutinySelectTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryMssqlSelect> {
+    MutinySelectTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies, UserRepositoryMssqlSelect> {
 
     override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = UserRepositoryMssqlSelect(sqlClient)
 }
 
 class UserRepositoryMssqlSelect(sqlClient: MutinyVertxSqlClient) :
-    MutinySelectRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    MutinySelectRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         sqlClient,
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     )

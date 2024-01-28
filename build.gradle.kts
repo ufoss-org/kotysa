@@ -24,11 +24,11 @@ plugins {
 }
 
 subprojects {
-        when {
-            (isJpms == true || name == "kotysa-java-tests") -> apply(plugin = "kotysa.jpms-no-mobile-conventions")
-            isJpms == false -> apply(plugin = "kotysa.client-only-conventions")
-            isJpms == null -> apply(plugin = "kotysa.dev-conventions")
-        }
+    when {
+        (isJpms == true || name == "kotysa-java-tests") -> apply(plugin = "kotysa.jpms-no-mobile-conventions")
+        isJpms == false -> apply(plugin = "kotysa.client-only-conventions")
+        isJpms == null -> apply(plugin = "kotysa.dev-conventions")
+    }
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
 
@@ -55,7 +55,7 @@ subprojects {
                 name.set(project.name)
                 description.set("Kotysa is the idiomatic way to write Kotlin type-safe SQL")
                 url.set("https://github.com/ufoss-org/kotysa")
-                
+
                 licenses {
                     license {
                         name.set("The Unlicence")
@@ -69,7 +69,7 @@ subprojects {
                         url.set("https://github.com/pull-vert")
                     }
                 }
-                
+
                 scm {
                     connection.set("scm:git:https://github.com/ufoss-org/kotysa")
                     developerConnection.set("scm:git:git://github.com/ufoss-org/kotysa.git")

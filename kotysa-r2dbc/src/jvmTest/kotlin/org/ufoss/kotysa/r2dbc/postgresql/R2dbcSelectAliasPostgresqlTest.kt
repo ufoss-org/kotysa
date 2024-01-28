@@ -195,11 +195,12 @@ class R2dbcSelectAliasPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositor
 }
 
 class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
-    AbstractCoroutinesUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    AbstractCoroutinesUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

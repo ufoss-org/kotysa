@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc.mariadb
 
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MariadbCompanies
 import org.ufoss.kotysa.test.MariadbRoles
 import org.ufoss.kotysa.test.MariadbUserRoles
 import org.ufoss.kotysa.test.MariadbUsers
@@ -14,9 +15,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
 
 class R2dbcSelectBooleanMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryJdbcMariadbSelectBoolean>(),
-    CoroutinesSelectBooleanTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryJdbcMariadbSelectBoolean, R2dbcTransaction> {
+    CoroutinesSelectBooleanTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies,
+            UserRepositoryJdbcMariadbSelectBoolean, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMariadbSelectBoolean(sqlClient)
 }
 
 class UserRepositoryJdbcMariadbSelectBoolean(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectBooleanRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(sqlClient, MariadbRoles, MariadbUsers, MariadbUserRoles)
+    CoroutinesSelectBooleanRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles,
+        MariadbCompanies
+    )

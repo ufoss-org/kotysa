@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinySelectBooleanTest<T : Roles, U : Users, V : UserRoles, W : MutinySelectBooleanRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinySelectBooleanTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : MutinySelectBooleanRepository<T, U, V, W>> : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify selectAllByIsAdminEq true finds Big Boss`() {

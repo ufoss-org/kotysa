@@ -11,11 +11,13 @@ import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.SqliteCompanies
 import org.ufoss.kotysa.test.repositories.blocking.SelectStringRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectStringTest
 
 class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>(),
-    SelectStringTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositoryStringSelect, AndroidTransaction> {
+    SelectStringTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositoryStringSelect,
+            AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositoryStringSelect(dbHelper, sqLiteTables)
 
@@ -133,7 +135,10 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>(),
 class UserRepositoryStringSelect(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : SelectStringRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
-    sqLiteOpenHelper.sqlClient(tables), SqliteRoles,
-    SqliteUsers, SqliteUserRoles
+) : SelectStringRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
+    sqLiteOpenHelper.sqlClient(tables),
+    SqliteRoles,
+    SqliteUsers,
+    SqliteUserRoles,
+    SqliteCompanies
 )

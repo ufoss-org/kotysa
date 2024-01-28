@@ -28,9 +28,10 @@ class SpringJdbcTransactionalMariadbTest : AbstractSpringJdbcMariadbTest<UserRep
 }
 
 class UserRepositoryJdbcMariadbTransactional(client: JdbcOperations) :
-    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         client.sqlClient(mariadbTables),
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

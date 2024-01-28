@@ -282,6 +282,7 @@ object SqliteLocalTimes : SqLiteTable<LocalTimeEntity>("local_time"), LocalTimes
 }
 
 actual val sqLiteTables = tables().sqlite(
+    SqliteCompanies,
     SqliteRoles,
     SqliteUsers,
     SqliteUserRoles,

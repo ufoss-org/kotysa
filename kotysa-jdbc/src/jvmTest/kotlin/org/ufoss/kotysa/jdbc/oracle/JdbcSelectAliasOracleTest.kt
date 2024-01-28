@@ -170,11 +170,12 @@ class JdbcSelectAliasOracleTest : AbstractJdbcOracleTest<UserRepositorySelectAli
 }
 
 class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    AbstractUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         sqlClient,
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

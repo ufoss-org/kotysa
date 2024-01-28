@@ -9,6 +9,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
@@ -17,7 +18,8 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectTest
 
 
 class R2dbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelect>(),
-    CoroutinesSelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelect, R2dbcTransaction> {
+    CoroutinesSelectTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies, UserRepositoryJdbcMysqlSelect,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMysqlSelect(sqlClient)
 
     @Test
@@ -28,9 +30,10 @@ class R2dbcSelectMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelec
 }
 
 class UserRepositoryJdbcMysqlSelect(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesSelectRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

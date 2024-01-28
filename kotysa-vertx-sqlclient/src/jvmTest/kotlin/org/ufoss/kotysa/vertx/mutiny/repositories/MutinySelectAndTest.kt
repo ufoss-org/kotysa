@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinySelectAndTest<T : Roles, U : Users, V : UserRoles, W : MutinySelectAndRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinySelectAndTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : MutinySelectAndRepository<T, U, V, W>> : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify selectRolesByLabels finds roleUser`() {

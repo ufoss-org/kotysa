@@ -11,11 +11,13 @@ import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.SqliteCompanies
 import org.ufoss.kotysa.test.repositories.blocking.SubQueryRepository
 import org.ufoss.kotysa.test.repositories.blocking.SubQueryTest
 
 class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>(),
-    SubQueryTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySqliteSubQuery, AndroidTransaction> {
+    SubQueryTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositorySqliteSubQuery,
+            AndroidTransaction> {
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySqliteSubQuery(dbHelper, sqLiteTables)
 
     @Test
@@ -72,9 +74,10 @@ class SqLiteSubQueryTest : AbstractSqLiteTest<UserRepositorySqliteSubQuery>(),
 class UserRepositorySqliteSubQuery(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : SubQueryRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+) : SubQueryRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
     sqLiteOpenHelper.sqlClient(tables),
     SqliteRoles,
     SqliteUsers,
-    SqliteUserRoles
+    SqliteUserRoles,
+    SqliteCompanies
 )

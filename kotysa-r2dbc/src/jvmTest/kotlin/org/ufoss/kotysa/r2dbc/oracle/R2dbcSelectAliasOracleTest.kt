@@ -173,11 +173,12 @@ class R2dbcSelectAliasOracleTest : AbstractR2dbcOracleTest<UserRepositorySelectA
 }
 
 class UserRepositorySelectAlias(sqlClient: R2dbcSqlClient) :
-    AbstractCoroutinesUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    AbstractCoroutinesUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         sqlClient,
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

@@ -5,16 +5,18 @@
 package org.ufoss.kotysa.test.repositories.blocking
 
 import org.ufoss.kotysa.SqlClient
+import org.ufoss.kotysa.test.Companies
 import org.ufoss.kotysa.test.Roles
 import org.ufoss.kotysa.test.UserRoles
 import org.ufoss.kotysa.test.Users
 
-abstract class SelectStringRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class SelectStringRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
     sqlClient: SqlClient,
     tableRoles: T,
     tableUsers: U,
     tableUserRoles: V,
-) : AbstractUserRepository<T, U, V>(sqlClient, tableRoles, tableUsers, tableUserRoles) {
+    tableCompanies: W,
+) : AbstractUserRepository<T, U, V, W>(sqlClient, tableRoles, tableUsers, tableUserRoles, tableCompanies) {
 
     fun selectFirstByFirstnameNotNullable(firstname: String) =
         (sqlClient selectFrom tableUsers

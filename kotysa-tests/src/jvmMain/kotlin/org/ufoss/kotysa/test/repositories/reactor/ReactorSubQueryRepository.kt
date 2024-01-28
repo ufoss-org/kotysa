@@ -6,17 +6,15 @@ package org.ufoss.kotysa.test.repositories.reactor
 
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.SqlClientSubQuery
-import org.ufoss.kotysa.test.Roles
-import org.ufoss.kotysa.test.UserRoles
-import org.ufoss.kotysa.test.Users
-import org.ufoss.kotysa.test.roleAdmin
+import org.ufoss.kotysa.test.*
 
-abstract class ReactorSubQueryRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class ReactorSubQueryRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
     sqlClient: ReactorSqlClient,
     tableRoles: T,
     tableUsers: U,
     tableUserRoles: V,
-) : AbstractReactorUserRepository<T, U, V>(sqlClient, tableRoles, tableUsers, tableUserRoles) {
+    tableCompanies: W,
+) : AbstractReactorUserRepository<T, U, V, W>(sqlClient, tableRoles, tableUsers, tableUserRoles, tableCompanies) {
 
     fun selectRoleLabelFromUserIdSubQuery(userId: Int) =
         (sqlClient select tableUsers.firstname and {

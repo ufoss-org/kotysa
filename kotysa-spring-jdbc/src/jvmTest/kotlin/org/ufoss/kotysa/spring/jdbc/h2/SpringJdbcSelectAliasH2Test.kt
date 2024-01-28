@@ -164,7 +164,13 @@ class SpringJdbcSelectAliasH2Test : AbstractSpringJdbcH2Test<UserRepositorySelec
 }
 
 class UserRepositorySelectAlias(client: JdbcOperations) :
-    AbstractUserRepository<H2Roles, H2Users, H2UserRoles>(client.sqlClient(h2Tables), H2Roles, H2Users, H2UserRoles) {
+    AbstractUserRepository<H2Roles, H2Users, H2UserRoles, H2Companies>(
+        client.sqlClient(h2Tables),
+        H2Roles,
+        H2Users,
+        H2UserRoles,
+        H2Companies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select H2Users.firstname `as` "fna"

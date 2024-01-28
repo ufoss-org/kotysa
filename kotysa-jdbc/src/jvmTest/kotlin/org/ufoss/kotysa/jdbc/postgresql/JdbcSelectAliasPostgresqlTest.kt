@@ -164,11 +164,12 @@ class JdbcSelectAliasPostgresqlTest : AbstractJdbcPostgresqlTest<UserRepositoryS
 }
 
 class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

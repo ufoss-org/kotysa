@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.springframework.r2dbc.BadSqlGrammarException
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.test.*
+import org.ufoss.kotysa.test.repositories.reactor.AbstractReactorUserRepository
 
 class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelectAlias>() {
 
@@ -172,7 +173,14 @@ class R2dbcSelectAliasMariadbTest : AbstractR2dbcMariadbTest<UserRepositorySelec
     }
 }
 
-class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) : AbstractUserRepositoryMariadb(sqlClient) {
+class UserRepositorySelectAlias(sqlClient: ReactorSqlClient) :
+    AbstractReactorUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
+        sqlClient,
+        MariadbRoles,
+        MariadbUsers,
+        MariadbUserRoles,
+        MariadbCompanies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MariadbUsers.firstname `as` "fna"

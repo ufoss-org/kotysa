@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.coroutines.mssql
 
+import org.ufoss.kotysa.test.MssqlCompanies
 import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.test.MssqlRoles
@@ -13,15 +14,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesUpdateDeleteRepos
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesUpdateDeleteTest
 
 class VertxCoroutinesUpdateDeleteMssqlTest : AbstractVertxCoroutinesMssqlTest<UserRepositoryJdbcMssqlUpdateDelete>(),
-    CoroutinesUpdateDeleteTest<MssqlRoles, MssqlUsers, MssqlUserRoles, UserRepositoryJdbcMssqlUpdateDelete,
-            Transaction> {
+    CoroutinesUpdateDeleteTest<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies,
+            UserRepositoryJdbcMssqlUpdateDelete, Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositoryJdbcMssqlUpdateDelete(sqlClient)
 }
 
 class UserRepositoryJdbcMssqlUpdateDelete(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesUpdateDeleteRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    CoroutinesUpdateDeleteRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         sqlClient,
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
+        MssqlUserRoles,
+        MssqlCompanies
     )

@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.mutiny.oracle
 
+import org.ufoss.kotysa.test.OracleCompanies
 import org.ufoss.kotysa.test.OracleRoles
 import org.ufoss.kotysa.test.OracleUserRoles
 import org.ufoss.kotysa.test.OracleUsers
@@ -12,14 +13,15 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectOrRepository
 import org.ufoss.kotysa.vertx.mutiny.repositories.MutinySelectOrTest
 
 class VertxSqlClientSelectOrOracleTest : AbstractVertxSqlClientOracleTest<UserRepositoryVertxSqlClientOracleSelectOr>(),
-    MutinySelectOrTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryVertxSqlClientOracleSelectOr> {
+    MutinySelectOrTest<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies, UserRepositoryVertxSqlClientOracleSelectOr> {
     override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = UserRepositoryVertxSqlClientOracleSelectOr(sqlClient)
 }
 
 class UserRepositoryVertxSqlClientOracleSelectOr(sqlClient: MutinyVertxSqlClient) :
-    MutinySelectOrRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    MutinySelectOrRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         sqlClient,
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     )

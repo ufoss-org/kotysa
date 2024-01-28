@@ -5,12 +5,12 @@
 package org.ufoss.kotysa.jdbc.mssql
 
 import com.microsoft.sqlserver.jdbc.SQLServerException
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.AbstractUserRepository
 
@@ -163,7 +163,13 @@ class JdbcSelectAliasMssqlTest : AbstractJdbcMssqlTest<UserRepositorySelectAlias
 }
 
 class UserRepositorySelectAlias(sqlClient: JdbcSqlClient) :
-    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(sqlClient, MssqlRoles, MssqlUsers, MssqlUserRoles) {
+    AbstractUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
+        sqlClient,
+        MssqlRoles,
+        MssqlUsers,
+        MssqlUserRoles,
+        MssqlCompanies
+    ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MssqlUsers.firstname `as` "fna"

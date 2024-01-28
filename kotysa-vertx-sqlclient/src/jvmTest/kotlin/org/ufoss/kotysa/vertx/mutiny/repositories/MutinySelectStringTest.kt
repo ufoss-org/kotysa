@@ -8,8 +8,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinySelectStringTest<T : Roles, U : Users, V : UserRoles, W : MutinySelectStringRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinySelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : MutinySelectStringRepository<T, U, V, W>> : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() {

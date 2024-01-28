@@ -6,6 +6,7 @@ package org.ufoss.kotysa.jdbc.oracle
 
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.OracleCompanies
 import org.ufoss.kotysa.test.OracleRoles
 import org.ufoss.kotysa.test.OracleUserRoles
 import org.ufoss.kotysa.test.OracleUsers
@@ -13,9 +14,16 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectTest
 
 class JdbcSelectOracleTest : AbstractJdbcOracleTest<UserRepositoryJdbcOracleSelect>(),
-    SelectTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelect, JdbcTransaction> {
+    SelectTest<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies, UserRepositoryJdbcOracleSelect,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcOracleSelect(sqlClient)
 }
 
 class UserRepositoryJdbcOracleSelect(sqlClient: JdbcSqlClient) :
-    SelectRepository<OracleRoles, OracleUsers, OracleUserRoles>(sqlClient, OracleRoles, OracleUsers, OracleUserRoles)
+    SelectRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
+        sqlClient,
+        OracleRoles,
+        OracleUsers,
+        OracleUserRoles,
+        OracleCompanies
+    )

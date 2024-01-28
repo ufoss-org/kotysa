@@ -25,7 +25,7 @@ internal class CoroutinesSqlClientDeleteSpringR2Dbc private constructor() : Abst
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 
@@ -40,7 +40,7 @@ internal class CoroutinesSqlClientDeleteSpringR2Dbc private constructor() : Abst
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 

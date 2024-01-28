@@ -64,10 +64,10 @@ public class SqlClientSubQuery private constructor() {
     }
 
     public interface FromsTable<T : Any, U : Any> : Froms<T>, SqlClientQuery.FromTableSelect<U>, SqlClientQuery.From {
-        override fun <V : Any> innerJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> leftJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> rightJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromsTable<T, V>>
-        override fun <V : Any> fullJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromsTable<T, V>>
+        override fun <V : Any> innerJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromsTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromsTable<T, V>>
         override fun `as`(alias: String): Froms<T>
     }
 
@@ -216,10 +216,10 @@ public class SqlClientSubQuery private constructor() {
 
     public interface FromTable<T : Any, U : Any> : SqlClientQuery.FromTableSelect<U>, From<T>,
         Whereable<T>, GroupableBy<T>, LimitOffset<T>, Return<T> {
-        override fun <V : Any> innerJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> leftJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> rightJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
-        override fun <V : Any> fullJoin(table: Table<V>): SqlClientQuery.Joinable<U, V, FromTable<T, V>>
+        override fun <V : Any> innerJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromTable<T, V>>
+        override fun <V : Any> leftJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromTable<T, V>>
+        override fun <V : Any> rightJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromTable<T, V>>
+        override fun <V : Any> fullJoin(table: Table<V>): SqlClientQuery.Joinable<V, FromTable<T, V>>
     }
 
     public interface Where<T : Any> : SqlClientQuery.Where<Where<T>>, SqlClientQuery.Andable<Where<T>>,

@@ -12,8 +12,8 @@ import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T, U, V>, X : Transaction>
-    : RepositoryTest<W, X> {
+interface SelectTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : SelectRepository<T, U, V, W>, Y : Transaction> : RepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -48,7 +48,7 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
     fun `Verify selectWithCascadeInnerJoin works correctly`() {
         expect(repository.selectWithCascadeInnerJoin())
             .toHaveSize(1)
-            .toContainExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .toContainExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -56,8 +56,8 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
         expect(repository.selectWithCascadeLeftJoin())
             .toHaveSize(2)
             .toContain(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -65,7 +65,7 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
     fun `Verify selectWithCascadeRightJoin works correctly`() {
         expect(repository.selectWithCascadeRightJoin())
             .toHaveSize(1)
-            .toContainExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .toContainExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -73,8 +73,8 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
         expect(repository.selectWithCascadeFullJoin())
             .toHaveSize(2)
             .toContain(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -83,8 +83,8 @@ interface SelectTest<T : Roles, U : Users, V : UserRoles, W : SelectRepository<T
         expect(repository.selectWithEqJoin())
             .toHaveSize(2)
             .toContain(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 

@@ -14,8 +14,8 @@ import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : CoroutinesSelectRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : CoroutinesSelectRepository<T, U, V, W>, Y : Transaction> : CoroutinesRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectAllUsers returns all users`() = runTest {
@@ -50,7 +50,7 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
     fun `Verify selectWithCascadeInnerJoin works correctly`() = runTest {
         assertThat(repository.selectWithCascadeInnerJoin().toList())
             .hasSize(1)
-            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .containsExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -58,8 +58,8 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
         assertThat(repository.selectWithCascadeLeftJoin().toList())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -67,7 +67,7 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
     fun `Verify selectWithCascadeRightJoin works correctly`() = runTest {
         assertThat(repository.selectWithCascadeRightJoin().toList())
             .hasSize(1)
-            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .containsExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -75,8 +75,8 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
         assertThat(repository.selectWithCascadeFullJoin().toList())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -85,8 +85,8 @@ interface CoroutinesSelectTest<T : Roles, U : Users, V : UserRoles, W : Coroutin
         assertThat(repository.selectWithEqJoin().toList())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 

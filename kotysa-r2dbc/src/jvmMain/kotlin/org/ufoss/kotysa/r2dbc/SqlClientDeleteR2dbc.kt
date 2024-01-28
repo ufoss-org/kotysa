@@ -24,7 +24,7 @@ internal class SqlClientDeleteR2dbc private constructor() : DefaultSqlClientDele
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 
@@ -39,7 +39,7 @@ internal class SqlClientDeleteR2dbc private constructor() : DefaultSqlClientDele
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, CoroutinesSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 

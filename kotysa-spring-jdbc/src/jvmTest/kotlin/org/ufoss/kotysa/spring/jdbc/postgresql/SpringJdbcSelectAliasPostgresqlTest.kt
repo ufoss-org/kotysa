@@ -165,11 +165,12 @@ class SpringJdbcSelectAliasPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Use
 }
 
 class UserRepositorySelectAlias(client: JdbcOperations) :
-    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    AbstractUserRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         client.sqlClient(postgresqlTables),
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

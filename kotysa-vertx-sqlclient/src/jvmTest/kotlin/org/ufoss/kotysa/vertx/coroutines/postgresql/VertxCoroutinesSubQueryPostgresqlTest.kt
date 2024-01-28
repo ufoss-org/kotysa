@@ -4,26 +4,29 @@
 
 package org.ufoss.kotysa.vertx.coroutines.postgresql
 
-import org.ufoss.kotysa.vertx.PostgresqlCoroutinesVertxSqlClient
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
-import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.test.PostgresqlCompanies
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSubQueryRepository
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSubQueryTest
+import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
+import org.ufoss.kotysa.vertx.PostgresqlCoroutinesVertxSqlClient
 
-class VertxCoroutinesSubQueryPostgresqlTest : AbstractVertxCoroutinesPostgresqlTest<UserRepositoryVertxCoroutinesPostgresqlSubQuery>(),
-    CoroutinesSubQueryTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositoryVertxCoroutinesPostgresqlSubQuery,
-            Transaction> {
+class VertxCoroutinesSubQueryPostgresqlTest :
+    AbstractVertxCoroutinesPostgresqlTest<UserRepositoryVertxCoroutinesPostgresqlSubQuery>(),
+    CoroutinesSubQueryTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies,
+            UserRepositoryVertxCoroutinesPostgresqlSubQuery, Transaction> {
     override fun instantiateRepository(sqlClient: PostgresqlCoroutinesVertxSqlClient) =
         UserRepositoryVertxCoroutinesPostgresqlSubQuery(sqlClient)
 }
 
 class UserRepositoryVertxCoroutinesPostgresqlSubQuery(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesSubQueryRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    CoroutinesSubQueryRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     )

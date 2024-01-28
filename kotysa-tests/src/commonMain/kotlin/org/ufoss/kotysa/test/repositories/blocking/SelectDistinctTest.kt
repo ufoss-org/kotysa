@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface SelectDistinctTest<T : Roles, U : Users, V : UserRoles, W : SelectDistinctRepository<T, U, V>, X : Transaction>
-    : RepositoryTest<W, X> {
+interface SelectDistinctTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : SelectDistinctRepository<T, U, V, W>, Y : Transaction> : RepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectDistinctRoleLabels finds no duplicates`() {

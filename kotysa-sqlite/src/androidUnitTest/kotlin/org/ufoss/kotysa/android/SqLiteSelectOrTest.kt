@@ -11,11 +11,13 @@ import org.ufoss.kotysa.android.transaction.AndroidTransaction
 import org.ufoss.kotysa.test.SqliteRoles
 import org.ufoss.kotysa.test.SqliteUserRoles
 import org.ufoss.kotysa.test.SqliteUsers
+import org.ufoss.kotysa.test.SqliteCompanies
 import org.ufoss.kotysa.test.repositories.blocking.SelectOrRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectOrTest
 
 class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>(),
-    SelectOrTest<SqliteRoles, SqliteUsers, SqliteUserRoles, UserRepositorySelectOr, AndroidTransaction> {
+    SelectOrTest<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies, UserRepositorySelectOr,
+            AndroidTransaction> {
 
     override fun getRepository(sqLiteTables: SqLiteTables) = UserRepositorySelectOr(dbHelper, sqLiteTables)
 
@@ -28,9 +30,10 @@ class SqLiteSelectOrTest : AbstractSqLiteTest<UserRepositorySelectOr>(),
 class UserRepositorySelectOr(
     sqLiteOpenHelper: SQLiteOpenHelper,
     tables: SqLiteTables,
-) : SelectOrRepository<SqliteRoles, SqliteUsers, SqliteUserRoles>(
+) : SelectOrRepository<SqliteRoles, SqliteUsers, SqliteUserRoles, SqliteCompanies>(
     sqLiteOpenHelper.sqlClient(tables),
     SqliteRoles,
     SqliteUsers,
-    SqliteUserRoles
+    SqliteUserRoles,
+    SqliteCompanies
 )

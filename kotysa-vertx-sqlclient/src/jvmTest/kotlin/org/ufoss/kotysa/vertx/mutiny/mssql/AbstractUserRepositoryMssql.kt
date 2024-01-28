@@ -11,6 +11,7 @@ abstract class AbstractUserRepositoryMssql(protected val sqlClient: MutinySqlCli
 
     override fun init() {
         createTables()
+            .chain { -> insertCompanies() }
             .chain { -> insertRoles() }
             .chain { -> insertUsers() }
             .chain { -> insertUserRoles() }
@@ -21,11 +22,13 @@ abstract class AbstractUserRepositoryMssql(protected val sqlClient: MutinySqlCli
         deleteAllFromUserRoles()
             .chain { -> deleteAllFromUsers() }
             .chain { -> deleteAllFromRole() }
+            .chain { -> deleteAllFromCompanies() }
             .await().indefinitely()
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists MssqlRoles)
+        (sqlClient createTableIfNotExists MssqlCompanies)
+            .chain { -> sqlClient createTableIfNotExists MssqlRoles }
             .chain { -> sqlClient createTableIfNotExists MssqlUsers }
             .chain { -> sqlClient createTableIfNotExists MssqlUserRoles }
 
@@ -35,9 +38,13 @@ abstract class AbstractUserRepositoryMssql(protected val sqlClient: MutinySqlCli
 
     private fun insertUserRoles() = sqlClient insert userRoleBboss
 
+    private fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
+
     private fun deleteAllFromUsers() = sqlClient deleteAllFrom MssqlUsers
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom MssqlRoles
+
+    private fun deleteAllFromCompanies() = sqlClient deleteAllFrom MssqlCompanies
 
     fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MssqlUserRoles
 

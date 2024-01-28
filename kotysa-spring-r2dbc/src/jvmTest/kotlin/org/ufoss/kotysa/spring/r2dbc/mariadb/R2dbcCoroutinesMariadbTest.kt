@@ -111,27 +111,34 @@ class CoroutinesUserMariadbRepository(private val sqlClient: MariadbCoroutinesSq
 
     override fun init() = runTest {
         createTables()
+        insertCompanies()
         insertRoles()
         insertUsers()
     }
 
     override fun delete() = runTest {
         deleteAllFromUsers()
-        deleteAllFromRole()
+        deleteAllFromRoles()
+        deleteAllFromCompanies()
     }
 
     private suspend fun createTables() {
+        sqlClient createTableIfNotExists MariadbCompanies
         sqlClient createTableIfNotExists MariadbRoles
         sqlClient createTableIfNotExists MariadbUsers
     }
+
+    private suspend fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
     private suspend fun insertUsers() = sqlClient.insert(userJdoe, userBboss)
 
-    private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MariadbRoles
-
     suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MariadbUsers
+
+    private suspend fun deleteAllFromRoles() = sqlClient deleteAllFrom MariadbRoles
+
+    private suspend fun deleteAllFromCompanies() = sqlClient deleteAllFrom MariadbCompanies
 
     fun selectAllUsers() = sqlClient selectAllFrom MariadbUsers
 

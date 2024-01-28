@@ -165,11 +165,12 @@ class SpringJdbcSelectAliasMariadbTest : AbstractSpringJdbcMariadbTest<UserRepos
 }
 
 class UserRepositorySelectAlias(client: JdbcOperations) :
-    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    AbstractUserRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         client.sqlClient(mariadbTables),
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     ) {
 
     fun selectAliasedFirstnameByFirstnameGet(firstname: String) =

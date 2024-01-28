@@ -8,6 +8,7 @@ import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
+import org.ufoss.kotysa.test.PostgresqlCompanies
 import org.ufoss.kotysa.test.PostgresqlRoles
 import org.ufoss.kotysa.test.PostgresqlUserRoles
 import org.ufoss.kotysa.test.PostgresqlUsers
@@ -15,7 +16,7 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctRepositor
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSelectDistinctTest
 
 class R2dbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserRepositoryR2dbcPostgresqlSelectDistinct>(),
-    ReactorSelectDistinctTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles,
+    ReactorSelectDistinctTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies,
             UserRepositoryR2dbcPostgresqlSelectDistinct, ReactorTransaction> {
     override fun instantiateRepository(
         sqlClient: PostgresqlReactorSqlClient,
@@ -25,9 +26,10 @@ class R2dbcSelectDistinctPostgresqlTest : AbstractR2dbcPostgresqlTest<UserReposi
 }
 
 class UserRepositoryR2dbcPostgresqlSelectDistinct(sqlClient: ReactorSqlClient) :
-    ReactorSelectDistinctRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    ReactorSelectDistinctRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         sqlClient,
         PostgresqlRoles,
         PostgresqlUsers,
-        PostgresqlUserRoles
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     )

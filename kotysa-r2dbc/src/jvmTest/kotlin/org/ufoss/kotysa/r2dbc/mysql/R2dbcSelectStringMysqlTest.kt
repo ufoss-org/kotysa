@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc.mysql
 
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
@@ -14,15 +15,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectStringTest
 
 
 class R2dbcSelectStringMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelectString>(),
-    CoroutinesSelectStringTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryJdbcMysqlSelectString,
-            R2dbcTransaction> {
+    CoroutinesSelectStringTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
+            UserRepositoryJdbcMysqlSelectString, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMysqlSelectString(sqlClient)
 }
 
 class UserRepositoryJdbcMysqlSelectString(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectStringRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesSelectStringRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesSubQueryTest<T : Roles, U : Users, V : UserRoles, W : CoroutinesSubQueryRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesSubQueryTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : CoroutinesSubQueryRepository<T, U, V, W>, Y : Transaction> : CoroutinesRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectRoleLabelFromUserIdSubQuery returns Admin role for TheBoss`() = runTest {

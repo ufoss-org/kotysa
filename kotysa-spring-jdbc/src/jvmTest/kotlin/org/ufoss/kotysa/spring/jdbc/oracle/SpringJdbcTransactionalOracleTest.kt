@@ -28,9 +28,10 @@ class SpringJdbcTransactionalOracleTest : AbstractSpringJdbcOracleTest<UserRepos
 }
 
 class UserRepositoryJdbcOracledbTransactional(client: JdbcOperations) :
-    AbstractUserRepository<OracleRoles, OracleUsers, OracleUserRoles>(
+    AbstractUserRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
         client.sqlClient(oracleTables),
         OracleRoles,
         OracleUsers,
-        OracleUserRoles
+        OracleUserRoles,
+        OracleCompanies
     )

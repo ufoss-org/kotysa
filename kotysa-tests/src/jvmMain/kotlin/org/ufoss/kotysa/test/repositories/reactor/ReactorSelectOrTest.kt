@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface ReactorSelectOrTest<T : Roles, U : Users, V : UserRoles, W : ReactorSelectOrRepository<T, U, V>,
-        X : Transaction> : ReactorRepositoryTest<W, X> {
+interface ReactorSelectOrTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : ReactorSelectOrRepository<T, U, V, W>, Y : Transaction> : ReactorRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectRolesByLabels finds roleAdmin and roleGod`() {

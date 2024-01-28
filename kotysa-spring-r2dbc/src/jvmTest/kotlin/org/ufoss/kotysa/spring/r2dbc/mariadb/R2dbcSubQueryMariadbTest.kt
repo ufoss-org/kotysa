@@ -13,8 +13,8 @@ import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorSubQueryTest
 
 class R2dbcSubQueryMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryR2dbcMariadbSubQuery>(),
-    ReactorSubQueryTest<MariadbRoles, MariadbUsers, MariadbUserRoles, UserRepositoryR2dbcMariadbSubQuery,
-            ReactorTransaction> {
+    ReactorSubQueryTest<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies,
+            UserRepositoryR2dbcMariadbSubQuery, ReactorTransaction> {
 
     override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
         UserRepositoryR2dbcMariadbSubQuery(sqlClient)
@@ -22,9 +22,10 @@ class R2dbcSubQueryMariadbTest : AbstractR2dbcMariadbTest<UserRepositoryR2dbcMar
 
 
 class UserRepositoryR2dbcMariadbSubQuery(sqlClient: ReactorSqlClient) :
-    ReactorSubQueryRepository<MariadbRoles, MariadbUsers, MariadbUserRoles>(
+    ReactorSubQueryRepository<MariadbRoles, MariadbUsers, MariadbUserRoles, MariadbCompanies>(
         sqlClient,
         MariadbRoles,
         MariadbUsers,
-        MariadbUserRoles
+        MariadbUserRoles,
+        MariadbCompanies
     )

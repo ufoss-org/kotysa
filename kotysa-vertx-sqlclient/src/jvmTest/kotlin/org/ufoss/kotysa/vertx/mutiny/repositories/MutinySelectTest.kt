@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NonUniqueResultException
 import org.ufoss.kotysa.test.*
 
-interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelectRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : Companies, X : MutinySelectRepository<T, U, V, W>>
+    : MutinyRepositoryTest<X> {
 
     @Test
     fun `Verify selectAllUsers returns all users`() {
@@ -46,7 +46,7 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
     fun `Verify selectWithCascadeInnerJoin works correctly`() {
         assertThat(repository.selectWithCascadeInnerJoin().await().indefinitely())
             .hasSize(1)
-            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .containsExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -54,8 +54,8 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
         assertThat(repository.selectWithCascadeLeftJoin().await().indefinitely())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -63,7 +63,7 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
     fun `Verify selectWithCascadeRightJoin works correctly`() {
         assertThat(repository.selectWithCascadeRightJoin().await().indefinitely())
             .hasSize(1)
-            .containsExactly(UserWithRoleDto(userBboss.lastname, roleAdmin.label))
+            .containsExactly(CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name))
     }
 
     @Test
@@ -71,8 +71,8 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
         assertThat(repository.selectWithCascadeFullJoin().await().indefinitely())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 
@@ -81,8 +81,8 @@ interface MutinySelectTest<T : Roles, U : Users, V : UserRoles, W : MutinySelect
         assertThat(repository.selectWithEqJoin().await().indefinitely())
             .hasSize(2)
             .containsExactlyInAnyOrder(
-                UserWithRoleDto(userJdoe.lastname, roleUser.label),
-                UserWithRoleDto(userBboss.lastname, roleAdmin.label)
+                CompleteUserDto(userJdoe.lastname, roleUser.label, companyBigPharma.name),
+                CompleteUserDto(userBboss.lastname, roleAdmin.label, companyBigPharma.name)
             )
     }
 

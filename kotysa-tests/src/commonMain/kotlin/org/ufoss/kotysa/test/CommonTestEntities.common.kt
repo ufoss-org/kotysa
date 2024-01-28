@@ -7,6 +7,19 @@ package org.ufoss.kotysa.test
 import org.ufoss.kotysa.*
 import org.ufoss.kotysa.columns.*
 
+data class CompanyEntity(
+    val id: Int,
+    val name: String,
+)
+
+val companyBigPharma = CompanyEntity(1, "Big Pharma")
+val companyBigBrother = CompanyEntity(2, "Big Brother")
+
+interface Companies : Table<CompanyEntity> {
+    val id: IntColumnNotNull<CompanyEntity>
+    val name: StringColumnNotNull<CompanyEntity>
+}
+
 data class RoleEntity(
     val id: Int,
     val label: String,
@@ -27,11 +40,13 @@ data class UserEntity(
     val lastname: String,
     val isAdmin: Boolean,
     val roleId: Int,
+    val companyId: Int,
     val alias: String? = null,
 )
 
-val userJdoe = UserEntity(1, "John", "Doe", false, roleUser.id)
-val userBboss = UserEntity(2, "Big", "Boss", true, roleAdmin.id, "TheBoss")
+val userJdoe = UserEntity(1, "John", "Doe", false, roleUser.id, companyBigPharma.id)
+val userBboss = UserEntity(2, "Big", "Boss", true, roleAdmin.id, companyBigPharma.id, "TheBoss")
+val userWatcher = UserEntity(3, "The", "Watcher", true, roleGod.id, companyBigBrother.id)
 
 interface Users : Table<UserEntity> {
     val id: IntColumnNotNull<UserEntity>
@@ -39,6 +54,7 @@ interface Users : Table<UserEntity> {
     val lastname: StringColumnNotNull<UserEntity>
     val isAdmin: BooleanColumnNotNull<UserEntity>
     val roleId: IntColumnNotNull<UserEntity>
+    val companyId: IntColumnNotNull<UserEntity>
     val alias: StringColumnNullable<UserEntity>
 }
 
@@ -238,9 +254,10 @@ data class UserDto(
     val alias: String?
 )
 
-data class UserWithRoleDto(
+data class CompleteUserDto(
     val lastname: String,
-    val role: String
+    val role: String,
+    val company: String
 )
 
 interface Nameable {

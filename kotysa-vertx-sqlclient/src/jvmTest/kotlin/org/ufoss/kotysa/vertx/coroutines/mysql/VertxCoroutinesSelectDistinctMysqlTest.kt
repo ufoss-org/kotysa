@@ -2,24 +2,26 @@
  * This is free and unencumbered software released into the public domain, following <https://unlicense.org>
  */
 
-package org.ufoss.kotysa.r2dbc.mysql
+package org.ufoss.kotysa.vertx.coroutines.mysql
 
-import org.ufoss.kotysa.R2dbcSqlClient
-import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
 import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.test.MysqlRoles
 import org.ufoss.kotysa.test.MysqlUserRoles
 import org.ufoss.kotysa.test.MysqlUsers
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctRepository
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectDistinctTest
+import org.ufoss.kotysa.transaction.Transaction
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 
-class R2dbcSelectDistinctMysqlTest : AbstractR2dbcMysqlTest<UserRepositoryJdbcMysqlSelectDistinct>(),
+class VertxCoroutinesSelectDistinctMysqlTest :
+    AbstractVertxCoroutinesMysqlTest<UserRepositoryJdbcMysqlSelectDistinct>(),
     CoroutinesSelectDistinctTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
-            UserRepositoryJdbcMysqlSelectDistinct, R2dbcTransaction> {
-    override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcMysqlSelectDistinct(sqlClient)
+            UserRepositoryJdbcMysqlSelectDistinct, Transaction> {
+    override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) =
+        UserRepositoryJdbcMysqlSelectDistinct(sqlClient)
 }
 
-class UserRepositoryJdbcMysqlSelectDistinct(sqlClient: R2dbcSqlClient) :
+class UserRepositoryJdbcMysqlSelectDistinct(sqlClient: CoroutinesVertxSqlClient) :
     CoroutinesSelectDistinctRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,

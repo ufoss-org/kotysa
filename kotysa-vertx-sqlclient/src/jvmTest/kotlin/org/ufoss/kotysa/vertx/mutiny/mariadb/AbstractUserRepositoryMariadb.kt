@@ -11,6 +11,7 @@ abstract class AbstractUserRepositoryMariadb(protected val sqlClient: MutinySqlC
 
     override fun init() {
         createTables()
+            .chain { -> insertCompanies() }
             .chain { -> insertRoles() }
             .chain { -> insertUsers() }
             .chain { -> insertUserRoles() }
@@ -21,11 +22,13 @@ abstract class AbstractUserRepositoryMariadb(protected val sqlClient: MutinySqlC
         deleteAllFromUserRoles()
             .chain { -> deleteAllFromUsers() }
             .chain { -> deleteAllFromRole() }
+            .chain { -> deleteAllFromCompanies() }
             .await().indefinitely()
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists MariadbRoles)
+        (sqlClient createTableIfNotExists MariadbCompanies)
+            .chain { -> sqlClient createTableIfNotExists MariadbRoles }
             .chain { -> sqlClient createTableIfNotExists MariadbUsers }
             .chain { -> sqlClient createTableIfNotExists MariadbUserRoles }
 
@@ -35,9 +38,13 @@ abstract class AbstractUserRepositoryMariadb(protected val sqlClient: MutinySqlC
 
     private fun insertUserRoles() = sqlClient insert userRoleBboss
 
+    private fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
+
     private fun deleteAllFromUsers() = sqlClient deleteAllFrom MariadbUsers
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom MariadbRoles
+
+    private fun deleteAllFromCompanies() = sqlClient deleteAllFrom MariadbCompanies
 
     fun deleteAllFromUserRoles() = sqlClient deleteAllFrom MariadbUserRoles
 

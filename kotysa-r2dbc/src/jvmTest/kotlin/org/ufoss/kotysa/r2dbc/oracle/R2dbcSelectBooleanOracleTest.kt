@@ -6,6 +6,7 @@ package org.ufoss.kotysa.r2dbc.oracle
 
 import org.ufoss.kotysa.R2dbcSqlClient
 import org.ufoss.kotysa.core.r2dbc.transaction.R2dbcTransaction
+import org.ufoss.kotysa.test.OracleCompanies
 import org.ufoss.kotysa.test.OracleRoles
 import org.ufoss.kotysa.test.OracleUserRoles
 import org.ufoss.kotysa.test.OracleUsers
@@ -14,9 +15,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSelectBooleanTest
 
 
 class R2dbcSelectBooleanOracleTest : AbstractR2dbcOracleTest<UserRepositoryJdbcOracleSelectBoolean>(),
-    CoroutinesSelectBooleanTest<OracleRoles, OracleUsers, OracleUserRoles, UserRepositoryJdbcOracleSelectBoolean, R2dbcTransaction> {
+    CoroutinesSelectBooleanTest<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies,
+            UserRepositoryJdbcOracleSelectBoolean, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = UserRepositoryJdbcOracleSelectBoolean(sqlClient)
 }
 
 class UserRepositoryJdbcOracleSelectBoolean(sqlClient: R2dbcSqlClient) :
-    CoroutinesSelectBooleanRepository<OracleRoles, OracleUsers, OracleUserRoles>(sqlClient, OracleRoles, OracleUsers, OracleUserRoles)
+    CoroutinesSelectBooleanRepository<OracleRoles, OracleUsers, OracleUserRoles, OracleCompanies>(
+        sqlClient,
+        OracleRoles,
+        OracleUsers,
+        OracleUserRoles,
+        OracleCompanies
+    )

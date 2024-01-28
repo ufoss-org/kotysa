@@ -16,6 +16,13 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
+object OracleCompanies : OracleTable<CompanyEntity>("companies"), Companies {
+    override val id = number(CompanyEntity::id)
+        .primaryKey()
+    override val name = varchar2(CompanyEntity::name)
+        .unique()
+}
+
 object OracleRoles : OracleTable<RoleEntity>("roles"), Roles {
     override val id = number(RoleEntity::id)
         .primaryKey()
@@ -31,6 +38,8 @@ object OracleUsers : OracleTable<UserEntity>("users"), Users {
     override val isAdmin = number(UserEntity::isAdmin)
     override val roleId = number(UserEntity::roleId)
         .foreignKey(OracleRoles.id, "FK_users_roles")
+    override val companyId = number(UserEntity::companyId)
+        .foreignKey(OracleCompanies.id, "FK_users_companies")
     override val alias = varchar2(UserEntity::alias)
 
     init {
@@ -96,7 +105,9 @@ data class OracleAllTypesNotNullEntity(
         if (!byteArray.contentEquals(other.byteArray)) return false
         if (float != other.float) return false
         if (double != other.double) return false
-        if (!offsetDateTime.truncatedTo(ChronoUnit.MILLIS).isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))) return false
+        if (!offsetDateTime.truncatedTo(ChronoUnit.MILLIS)
+                .isEqual(other.offsetDateTime.truncatedTo(ChronoUnit.MILLIS))
+        ) return false
 
         return true
     }
@@ -435,6 +446,7 @@ object OracleByteArrays : OracleTable<ByteArrayEntity>(), ByteArrays {
 }
 
 val oracleTables = tables().oracle(
+    OracleCompanies,
     OracleRoles,
     OracleUsers,
     OracleUserRoles,

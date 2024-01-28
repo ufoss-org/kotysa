@@ -13,8 +13,8 @@ import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesSelectStringTest<T : Roles, U : Users, V : UserRoles, W : CoroutinesSelectStringRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : CoroutinesSelectStringRepository<T, U, V, W>, Y : Transaction> : CoroutinesRepositoryTest<X, Y> {
 
     @Test
     fun `Verify selectFirstByFirstname finds John`() = runTest {

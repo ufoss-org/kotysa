@@ -28,7 +28,7 @@ internal class ReactorSqlClientUpdateSpringR2dbc private constructor() : Abstrac
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 
@@ -43,7 +43,7 @@ internal class ReactorSqlClientUpdateSpringR2dbc private constructor() : Abstrac
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, ReactorSqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 

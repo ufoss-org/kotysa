@@ -105,6 +105,7 @@ class CoroutinesUserMssqlRepository(private val sqlClient: MssqlCoroutinesSqlCli
 
     override fun init() = runTest {
         createTables()
+        insertCompanies()
         insertRoles()
         insertUsers()
     }
@@ -112,12 +113,16 @@ class CoroutinesUserMssqlRepository(private val sqlClient: MssqlCoroutinesSqlCli
     override fun delete() = runTest {
         deleteAllFromUsers()
         deleteAllFromRole()
+        deleteAllFromCompanies()
     }
 
     private suspend fun createTables() {
+        sqlClient createTableIfNotExists MssqlCompanies
         sqlClient createTableIfNotExists MssqlRoles
         sqlClient createTableIfNotExists MssqlUsers
     }
+
+    private suspend fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
 
     private suspend fun insertRoles() = sqlClient.insert(roleUser, roleAdmin)
 
@@ -126,6 +131,8 @@ class CoroutinesUserMssqlRepository(private val sqlClient: MssqlCoroutinesSqlCli
     private suspend fun deleteAllFromRole() = sqlClient deleteAllFrom MssqlRoles
 
     suspend fun deleteAllFromUsers() = sqlClient deleteAllFrom MssqlUsers
+
+    private suspend fun deleteAllFromCompanies() = sqlClient deleteAllFrom MssqlCompanies
 
     fun selectAllUsers() = sqlClient selectAllFrom MssqlUsers
 

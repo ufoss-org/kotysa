@@ -12,34 +12,40 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.QueryAlias
 import org.ufoss.kotysa.get
-import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.coroutines.AbstractCoroutinesUserRepository
+import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 
 class VertxCoroutinesSelectAliasMssqlTest : AbstractVertxCoroutinesMssqlTest<UserRepositorySelectAlias>() {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositorySelectAlias(sqlClient)
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGet throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { runTest { 
-            repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameGet(userBboss.firstname)
+            }
+        }
             .isInstanceOf(MSSQLException::class.java)
     }
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameAlias throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameAlias(userBboss.firstname)
+            }
+        }
             .isInstanceOf(MSSQLException::class.java)
     }
 
     @Test
     fun `Verify selectCaseWhenExistsSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { runTest {
-            repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectCaseWhenExistsSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
+            }
+        }
             .isInstanceOf(MSSQLException::class.java)
     }
 
@@ -79,9 +85,11 @@ class VertxCoroutinesSelectAliasMssqlTest : AbstractVertxCoroutinesMssqlTest<Use
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAlias throws JdbcSQLSyntaxErrorException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
-        } }
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelWhereInUserSubQueryAlias(listOf(userBboss.id, userJdoe.id)).toList()
+            }
+        }
             .isInstanceOf(MSSQLException::class.java)
     }
 
@@ -93,9 +101,11 @@ class VertxCoroutinesSelectAliasMssqlTest : AbstractVertxCoroutinesMssqlTest<Use
 
     @Test
     fun `Verify selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
-        } }.isInstanceOf(MSSQLException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectAliasedFirstnameByFirstnameGetSubQueryMissingAlias(userBboss.firstname)
+            }
+        }.isInstanceOf(MSSQLException::class.java)
     }
 
     @Test
@@ -126,7 +136,9 @@ class VertxCoroutinesSelectAliasMssqlTest : AbstractVertxCoroutinesMssqlTest<Use
 
     @Test
     fun `Verify selectRoleLabelWhereInUserSubQueryAliasSubQuery returns User and Admin roles`() = runTest {
-        assertThat(repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList())
+        assertThat(
+            repository.selectRoleLabelWhereInUserSubQueryAliasSubQuery(listOf(userBboss.id, userJdoe.id)).toList()
+        )
             .hasSize(2)
             .containsExactlyInAnyOrder(Pair(roleAdmin.label, roleAdmin.id), Pair(roleUser.label, roleUser.id))
     }
@@ -145,40 +157,49 @@ class VertxCoroutinesSelectAliasMssqlTest : AbstractVertxCoroutinesMssqlTest<Use
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
-        } }.isInstanceOf(MSSQLException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias(userBboss.id)
+            }
+        }.isInstanceOf(MSSQLException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias2 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
-        } }.isInstanceOf(MSSQLException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias2(userBboss.id)
+            }
+        }.isInstanceOf(MSSQLException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias3 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
-        } }.isInstanceOf(MSSQLException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias3(userBboss.id)
+            }
+        }.isInstanceOf(MSSQLException::class.java)
     }
 
     @Test
     fun `Verify selectRoleLabelAndIdFromUserIdMissingTableAlias4 throws SQLiteException`() {
-        assertThatThrownBy { runTest {
-            repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
-        } }.isInstanceOf(MSSQLException::class.java)
+        assertThatThrownBy {
+            runTest {
+                repository.selectRoleLabelAndIdFromUserIdMissingTableAlias4(userBboss.id)
+            }
+        }.isInstanceOf(MSSQLException::class.java)
     }
 }
 
 class UserRepositorySelectAlias(sqlClient: CoroutinesVertxSqlClient) :
-    AbstractCoroutinesUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles>(
+    AbstractCoroutinesUserRepository<MssqlRoles, MssqlUsers, MssqlUserRoles, MssqlCompanies>(
         sqlClient,
         MssqlRoles,
         MssqlUsers,
-        MssqlUserRoles
-    ) {
+        MssqlUserRoles,
+        MssqlCompanies
+        ) {
 
     suspend fun selectAliasedFirstnameByFirstnameGet(firstname: String) =
         (sqlClient select MssqlUsers.firstname `as` "fna"

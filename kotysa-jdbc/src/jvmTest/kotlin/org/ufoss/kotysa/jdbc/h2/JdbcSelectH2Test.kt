@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.JdbcSqlClient
 import org.ufoss.kotysa.core.jdbc.transaction.JdbcTransaction
+import org.ufoss.kotysa.test.H2Companies
 import org.ufoss.kotysa.test.H2Roles
 import org.ufoss.kotysa.test.H2UserRoles
 import org.ufoss.kotysa.test.H2Users
@@ -16,7 +17,7 @@ import org.ufoss.kotysa.test.repositories.blocking.SelectTest
 import java.sql.SQLSyntaxErrorException
 
 class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>(),
-    SelectTest<H2Roles, H2Users, H2UserRoles, UserRepositoryJdbcH2Select, JdbcTransaction> {
+    SelectTest<H2Roles, H2Users, H2UserRoles, H2Companies, UserRepositoryJdbcH2Select, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = UserRepositoryJdbcH2Select(sqlClient)
 
     @Test
@@ -27,4 +28,4 @@ class JdbcSelectH2Test : AbstractJdbcH2Test<UserRepositoryJdbcH2Select>(),
 }
 
 class UserRepositoryJdbcH2Select(sqlClient: JdbcSqlClient) :
-    SelectRepository<H2Roles, H2Users, H2UserRoles>(sqlClient, H2Roles, H2Users, H2UserRoles)
+    SelectRepository<H2Roles, H2Users, H2UserRoles, H2Companies>(sqlClient, H2Roles, H2Users, H2UserRoles, H2Companies)

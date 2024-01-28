@@ -7,23 +7,23 @@ package org.ufoss.kotysa.spring.jdbc.postgresql
 import org.springframework.jdbc.core.JdbcOperations
 import org.ufoss.kotysa.spring.jdbc.sqlClient
 import org.ufoss.kotysa.spring.jdbc.transaction.SpringJdbcTransaction
-import org.ufoss.kotysa.test.PostgresqlRoles
-import org.ufoss.kotysa.test.PostgresqlUserRoles
-import org.ufoss.kotysa.test.PostgresqlUsers
-import org.ufoss.kotysa.test.postgresqlTables
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.SelectAndRepository
 import org.ufoss.kotysa.test.repositories.blocking.SelectAndTest
 
 class SpringJdbcSelectAndPostgresqlTest :
     AbstractSpringJdbcPostgresqlTest<UserRepositorySpringJdbcPostgresqlSelectAnd>(),
-    SelectAndTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, UserRepositorySpringJdbcPostgresqlSelectAnd,
-            SpringJdbcTransaction> {
+    SelectAndTest<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies,
+            UserRepositorySpringJdbcPostgresqlSelectAnd, SpringJdbcTransaction> {
     override fun instantiateRepository(jdbcOperations: JdbcOperations) =
         UserRepositorySpringJdbcPostgresqlSelectAnd(jdbcOperations)
 }
 
 class UserRepositorySpringJdbcPostgresqlSelectAnd(client: JdbcOperations) :
-    SelectAndRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles>(
+    SelectAndRepository<PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles, PostgresqlCompanies>(
         client.sqlClient(postgresqlTables),
-        PostgresqlRoles, PostgresqlUsers, PostgresqlUserRoles
+        PostgresqlRoles,
+        PostgresqlUsers,
+        PostgresqlUserRoles,
+        PostgresqlCompanies
     )

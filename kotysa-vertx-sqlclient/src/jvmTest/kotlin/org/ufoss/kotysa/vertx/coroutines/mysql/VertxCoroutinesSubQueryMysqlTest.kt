@@ -4,6 +4,7 @@
 
 package org.ufoss.kotysa.vertx.coroutines.mysql
 
+import org.ufoss.kotysa.test.MysqlCompanies
 import org.ufoss.kotysa.vertx.CoroutinesVertxSqlClient
 import org.ufoss.kotysa.transaction.Transaction
 import org.ufoss.kotysa.test.MysqlRoles
@@ -13,15 +14,16 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSubQueryRepositor
 import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesSubQueryTest
 
 class VertxCoroutinesSubQueryMysqlTest : AbstractVertxCoroutinesMysqlTest<UserRepositoryVertxCoroutinesMysqlSubQuery>(),
-    CoroutinesSubQueryTest<MysqlRoles, MysqlUsers, MysqlUserRoles, UserRepositoryVertxCoroutinesMysqlSubQuery,
-            Transaction> {
+    CoroutinesSubQueryTest<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies,
+            UserRepositoryVertxCoroutinesMysqlSubQuery, Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = UserRepositoryVertxCoroutinesMysqlSubQuery(sqlClient)
 }
 
 class UserRepositoryVertxCoroutinesMysqlSubQuery(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesSubQueryRepository<MysqlRoles, MysqlUsers, MysqlUserRoles>(
+    CoroutinesSubQueryRepository<MysqlRoles, MysqlUsers, MysqlUserRoles, MysqlCompanies>(
         sqlClient,
         MysqlRoles,
         MysqlUsers,
-        MysqlUserRoles
+        MysqlUserRoles,
+        MysqlCompanies
     )

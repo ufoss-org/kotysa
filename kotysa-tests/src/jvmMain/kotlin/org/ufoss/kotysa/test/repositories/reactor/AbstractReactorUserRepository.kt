@@ -7,15 +7,17 @@ package org.ufoss.kotysa.test.repositories.reactor
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class AbstractReactorUserRepository<T : Roles, U : Users, V : UserRoles>(
+abstract class AbstractReactorUserRepository<T : Roles, U : Users, V : UserRoles, W : Companies>(
     protected val sqlClient: ReactorSqlClient,
     protected val tableRoles: T,
     protected val tableUsers: U,
     protected val tableUserRoles: V,
+    protected val tableCompanies: W,
 ) : Repository {
 
     override fun init() {
         createTables()
+            .then(insertCompanies())
             .then(insertRoles())
             .then(insertUsers())
             .then(insertUserRoles())
@@ -26,13 +28,17 @@ abstract class AbstractReactorUserRepository<T : Roles, U : Users, V : UserRoles
         deleteAllFromUserRoles()
             .then(deleteAllFromUsers())
             .then(deleteAllFromRole())
+            .then(deleteAllFromCompanies())
             .block()
     }
 
     private fun createTables() =
-        (sqlClient createTableIfNotExists tableRoles)
+        (sqlClient createTableIfNotExists tableCompanies)
+            .then(sqlClient createTableIfNotExists tableRoles)
             .then(sqlClient createTableIfNotExists tableUsers)
             .then(sqlClient createTableIfNotExists tableUserRoles)
+
+    private fun insertCompanies() = sqlClient.insert(companyBigPharma, companyBigBrother)
 
     private fun insertRoles() = sqlClient.insert(roleUser, roleAdmin, roleGod)
 
@@ -43,6 +49,8 @@ abstract class AbstractReactorUserRepository<T : Roles, U : Users, V : UserRoles
     private fun deleteAllFromUsers() = sqlClient deleteAllFrom tableUsers
 
     private fun deleteAllFromRole() = sqlClient deleteAllFrom tableRoles
+
+    private fun deleteAllFromCompanies() = sqlClient deleteAllFrom tableCompanies
 
     fun deleteAllFromUserRoles() = sqlClient deleteAllFrom tableUserRoles
 

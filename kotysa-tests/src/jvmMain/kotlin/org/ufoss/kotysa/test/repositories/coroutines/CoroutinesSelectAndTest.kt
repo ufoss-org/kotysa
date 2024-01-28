@@ -11,11 +11,11 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesSelectAndTest<T : Roles, U : Users, V : UserRoles, W : CoroutinesSelectAndRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesSelectAndTest<T : Roles, U : Users, V : UserRoles, W : Companies,
+        X : CoroutinesSelectAndRepository<T, U, V, W>, Y : Transaction> : CoroutinesRepositoryTest<X, Y> {
 
     @Test
-    fun `Verify selectRolesByLabels finds roleUser`() = runTest {
+    fun `verify selectRolesByLabels finds roleUser`() = runTest {
         assertThat(repository.selectRolesByLabels("u", "r").toList())
             .hasSize(1)
             .containsExactly(roleUser)

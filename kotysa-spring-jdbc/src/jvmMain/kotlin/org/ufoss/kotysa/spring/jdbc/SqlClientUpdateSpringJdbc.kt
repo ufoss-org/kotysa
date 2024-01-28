@@ -27,7 +27,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 
@@ -41,7 +41,7 @@ internal class SqlClientUpdateSpringJdbc private constructor() : DefaultSqlClien
 
         override fun <U : Any> innerJoin(
             table: Table<U>
-        ): SqlClientQuery.Joinable<T, U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
+        ): SqlClientQuery.Joinable<U, SqlClientDeleteOrUpdate.DeleteOrUpdate<U>> =
             joinProtected(table, JoinClauseType.INNER)
     }
 
