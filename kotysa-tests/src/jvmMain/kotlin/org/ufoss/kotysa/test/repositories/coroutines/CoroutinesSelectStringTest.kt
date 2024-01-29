@@ -6,8 +6,8 @@ package org.ufoss.kotysa.test.repositories.coroutines
 
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.NoResultException
 import org.ufoss.kotysa.test.*
@@ -97,6 +97,13 @@ interface CoroutinesSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Co
     }
 
     @Test
+    fun `Verify selectAllByFirstnameContainsIgnoreCase get BBoss by searching I`() = runTest {
+        assertThat(repository.selectAllByFirstnameContainsIgnoreCase("I").toList())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() = runTest {
         assertThat(repository.selectAllByFirstnameStartsWith("Joh").toList())
             .hasSize(1)
@@ -110,6 +117,13 @@ interface CoroutinesSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Co
     }
 
     @Test
+    fun `Verify selectAllByFirstnameStartsWithIgnoreCase get John by searching joh`() = runTest {
+        assertThat(repository.selectAllByFirstnameStartsWithIgnoreCase("joh").toList())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userJdoe)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() = runTest {
         assertThat(repository.selectAllByFirstnameEndsWith("ohn").toList())
             .hasSize(1)
@@ -120,6 +134,13 @@ interface CoroutinesSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Co
     fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() = runTest {
         assertThat(repository.selectAllByFirstnameEndsWith("joh").toList())
             .hasSize(0)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameEndsWithIgnoreCase get BBoss by searching IG`() = runTest {
+        assertThat(repository.selectAllByFirstnameEndsWithIgnoreCase("IG").toList())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test

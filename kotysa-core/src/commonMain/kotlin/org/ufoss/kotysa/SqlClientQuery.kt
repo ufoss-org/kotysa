@@ -371,17 +371,26 @@ public abstract class SqlClientQuery protected constructor() {
 
     public interface WhereOpString<T : Any, U : Where<U>> : WhereOp<U, String>, WhereInOp<T, U, String> {
         public infix fun contains(value: String): U
+        public infix fun containsIgnoreCase(value: String): U
         public infix fun startsWith(value: String): U
+        public infix fun startsWithIgnoreCase(value: String): U
         public infix fun endsWith(value: String): U
+        public infix fun endsWithIgnoreCase(value: String): U
         public infix fun eq(otherStringColumn: StringColumn<*>): U
         public infix fun notEq(otherStringColumn: StringColumn<*>): U
         public infix fun contains(otherStringColumn: StringColumn<*>): U
+        public infix fun containsIgnoreCase(otherStringColumn: StringColumn<*>): U
         public infix fun startsWith(otherStringColumn: StringColumn<*>): U
+        public infix fun startsWithIgnoreCase(otherStringColumn: StringColumn<*>): U
         public infix fun endsWith(otherStringColumn: StringColumn<*>): U
+        public infix fun endsWithIgnoreCase(otherStringColumn: StringColumn<*>): U
 
         public infix fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun containsIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
         public infix fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun startsWithIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
         public infix fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
+        public infix fun endsWithIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U
     }
 
     public interface WhereOpStringNotNull<T : Any, U : Where<U>> :

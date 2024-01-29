@@ -46,7 +46,6 @@ data class UserEntity(
 
 val userJdoe = UserEntity(1, "John", "Doe", false, roleUser.id, companyBigPharma.id)
 val userBboss = UserEntity(2, "Big", "Boss", true, roleAdmin.id, companyBigPharma.id, "TheBoss")
-val userWatcher = UserEntity(3, "The", "Watcher", true, roleGod.id, companyBigBrother.id)
 
 interface Users : Table<UserEntity> {
     val id: IntColumnNotNull<UserEntity>

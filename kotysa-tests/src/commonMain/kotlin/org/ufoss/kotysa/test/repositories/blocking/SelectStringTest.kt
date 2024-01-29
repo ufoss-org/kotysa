@@ -98,6 +98,13 @@ interface SelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
     }
 
     @Test
+    fun `Verify selectAllByFirstnameContainsIgnoreCase get BBoss by searching I`() {
+        expect(repository.selectAllByFirstnameContainsIgnoreCase("I"))
+            .toHaveSize(1)
+            .toContain(userBboss)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
         expect(repository.selectAllByFirstnameStartsWith("Joh"))
             .toHaveSize(1)
@@ -111,6 +118,13 @@ interface SelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
     }
 
     @Test
+    fun `Verify selectAllByFirstnameStartsWithIgnoreCase get John by searching joh`() {
+        expect(repository.selectAllByFirstnameStartsWithIgnoreCase("joh"))
+            .toHaveSize(1)
+            .toContain(userJdoe)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
         expect(repository.selectAllByFirstnameEndsWith("ohn"))
             .toHaveSize(1)
@@ -121,6 +135,13 @@ interface SelectStringTest<T : Roles, U : Users, V : UserRoles, W : Companies,
     fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
         expect(repository.selectAllByFirstnameEndsWith("joh"))
             .toHaveSize(0)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameEndsWithIgnoreCase get BBoss by searching IG`() {
+        expect(repository.selectAllByFirstnameEndsWithIgnoreCase("IG"))
+            .toHaveSize(1)
+            .toContain(userBboss)
     }
 
     @Test

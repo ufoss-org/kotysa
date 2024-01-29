@@ -48,14 +48,29 @@ abstract class CoroutinesSelectStringRepository<T : Roles, U : Users, V : UserRo
                 where tableUsers.firstname contains firstnameContains
                 ).fetchAll()
 
+    fun selectAllByFirstnameContainsIgnoreCase(firstnameContains: String) =
+        (sqlClient selectFrom tableUsers
+                where tableUsers.firstname containsIgnoreCase firstnameContains
+                ).fetchAll()
+
     fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
         (sqlClient selectFrom tableUsers
                 where tableUsers.firstname startsWith firstnameStartsWith
                 ).fetchAll()
 
+    fun selectAllByFirstnameStartsWithIgnoreCase(firstnameStartsWith: String) =
+        (sqlClient selectFrom tableUsers
+                where tableUsers.firstname startsWithIgnoreCase firstnameStartsWith
+                ).fetchAll()
+
     fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
         (sqlClient selectFrom tableUsers
                 where tableUsers.firstname endsWith firstnameEndsWith
+                ).fetchAll()
+
+    fun selectAllByFirstnameEndsWithIgnoreCase(firstnameEndsWith: String) =
+        (sqlClient selectFrom tableUsers
+                where tableUsers.firstname endsWithIgnoreCase firstnameEndsWith
                 ).fetchAll()
 
     fun selectAllByAliasContains(aliasContains: String) =
@@ -72,4 +87,5 @@ abstract class CoroutinesSelectStringRepository<T : Roles, U : Users, V : UserRo
         (sqlClient selectFrom tableUsers
                 where tableUsers.alias endsWith aliasEndsWith
                 ).fetchAll()
+    
 }

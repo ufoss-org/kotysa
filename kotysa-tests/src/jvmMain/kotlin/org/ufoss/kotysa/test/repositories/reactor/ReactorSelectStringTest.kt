@@ -93,6 +93,13 @@ interface ReactorSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Compa
     }
 
     @Test
+    fun `Verify selectAllByFirstnameContainsIgnoreCase get BBoss by searching I`() {
+        assertThat(repository.selectAllByFirstnameContainsIgnoreCase("I").toIterable())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
         assertThat(repository.selectAllByFirstnameStartsWith("Joh").toIterable())
             .hasSize(1)
@@ -106,6 +113,13 @@ interface ReactorSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Compa
     }
 
     @Test
+    fun `Verify selectAllByFirstnameStartsWithIgnoreCase get John by searching joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWithIgnoreCase("joh").toIterable())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userJdoe)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
         assertThat(repository.selectAllByFirstnameEndsWith("ohn").toIterable())
             .hasSize(1)
@@ -116,6 +130,13 @@ interface ReactorSelectStringTest<T : Roles, U : Users, V : UserRoles, W : Compa
     fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
         assertThat(repository.selectAllByFirstnameEndsWith("joh").toIterable())
             .hasSize(0)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameEndsWithIgnoreCase get BBoss by searching IG`() {
+        assertThat(repository.selectAllByFirstnameEndsWithIgnoreCase("IG").toIterable())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test

@@ -10,7 +10,7 @@ import org.ufoss.kotysa.test.Roles
 import org.ufoss.kotysa.test.UserRoles
 import org.ufoss.kotysa.test.Users
 
-abstract class ReactorSelectStringRepository<T : Roles, U : Users, V : UserRoles, W: Companies>(
+abstract class ReactorSelectStringRepository<T : Roles, U : Users, V : UserRoles, W : Companies>(
     sqlClient: ReactorSqlClient,
     tableRoles: T,
     tableUsers: U,
@@ -48,14 +48,29 @@ abstract class ReactorSelectStringRepository<T : Roles, U : Users, V : UserRoles
                 where tableUsers.firstname contains firstnameContains
                 ).fetchAll()
 
+    fun selectAllByFirstnameContainsIgnoreCase(firstnameContains: String) =
+        (sqlClient selectFrom tableUsers
+                where tableUsers.firstname containsIgnoreCase firstnameContains
+                ).fetchAll()
+
     fun selectAllByFirstnameStartsWith(firstnameStartsWith: String) =
         (sqlClient selectFrom tableUsers
                 where tableUsers.firstname startsWith firstnameStartsWith
                 ).fetchAll()
 
+    fun selectAllByFirstnameStartsWithIgnoreCase(firstnameStartsWith: String) =
+        (sqlClient selectFrom tableUsers
+                where tableUsers.firstname startsWithIgnoreCase firstnameStartsWith
+                ).fetchAll()
+
     fun selectAllByFirstnameEndsWith(firstnameEndsWith: String) =
         (sqlClient selectFrom tableUsers
                 where tableUsers.firstname endsWith firstnameEndsWith
+                ).fetchAll()
+
+    fun selectAllByFirstnameEndsWithIgnoreCase(firstnameEndsWith: String) =
+        (sqlClient selectFrom tableUsers
+                where tableUsers.firstname endsWithIgnoreCase firstnameEndsWith
                 ).fetchAll()
 
     fun selectAllByAliasContains(aliasContains: String) =
