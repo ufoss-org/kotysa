@@ -82,6 +82,11 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>(),
     }
 
     @Test
+    fun `Verify selectAllByFirstnameContainsIgnoreCase get BBoss by searching I - Android`() {
+        `Verify selectAllByFirstnameContainsIgnoreCase get BBoss by searching I`()
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh - Android`() {
         `Verify selectAllByFirstnameStartsWith get John by searching Joh`()
     }
@@ -92,6 +97,11 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>(),
     }
 
     @Test
+    fun `Verify selectAllByFirstnameStartsWithIgnoreCase get John by searching joh - Android`() {
+        `Verify selectAllByFirstnameStartsWithIgnoreCase get John by searching joh`()
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn - Android`() {
         `Verify selectAllByFirstnameEndsWith get John by searching ohn`()
     }
@@ -99,6 +109,11 @@ class SqLiteSelectStringTest : AbstractSqLiteTest<UserRepositoryStringSelect>(),
     @Test
     fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh - Android`() {
         `Verify selectAllByFirstnameEndsWith get nothing by searching joh`()
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameEndsWithIgnoreCase get BBoss by searching IG - Android`() {
+        `Verify selectAllByFirstnameEndsWithIgnoreCase get BBoss by searching IG`()
     }
 
     @Test

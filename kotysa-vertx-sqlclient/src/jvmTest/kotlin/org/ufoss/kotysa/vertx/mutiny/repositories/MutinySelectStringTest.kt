@@ -92,6 +92,13 @@ interface MutinySelectStringTest<T : Roles, U : Users, V : UserRoles, W : Compan
     }
 
     @Test
+    fun `Verify selectAllByFirstnameContainsIgnoreCase get BBoss by searching I`() {
+        assertThat(repository.selectAllByFirstnameContainsIgnoreCase("I").await().indefinitely())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameStartsWith get John by searching Joh`() {
         assertThat(repository.selectAllByFirstnameStartsWith("Joh").await().indefinitely())
             .hasSize(1)
@@ -105,6 +112,13 @@ interface MutinySelectStringTest<T : Roles, U : Users, V : UserRoles, W : Compan
     }
 
     @Test
+    fun `Verify selectAllByFirstnameStartsWithIgnoreCase get John by searching joh`() {
+        assertThat(repository.selectAllByFirstnameStartsWithIgnoreCase("joh").await().indefinitely())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userJdoe)
+    }
+
+    @Test
     fun `Verify selectAllByFirstnameEndsWith get John by searching ohn`() {
         assertThat(repository.selectAllByFirstnameEndsWith("ohn").await().indefinitely())
             .hasSize(1)
@@ -115,6 +129,13 @@ interface MutinySelectStringTest<T : Roles, U : Users, V : UserRoles, W : Compan
     fun `Verify selectAllByFirstnameEndsWith get nothing by searching joh`() {
         assertThat(repository.selectAllByFirstnameEndsWith("joh").await().indefinitely())
             .hasSize(0)
+    }
+
+    @Test
+    fun `Verify selectAllByFirstnameEndsWithIgnoreCase get BBoss by searching IG`() {
+        assertThat(repository.selectAllByFirstnameEndsWithIgnoreCase("IG").await().indefinitely())
+            .hasSize(1)
+            .containsExactlyInAnyOrder(userBboss)
     }
 
     @Test

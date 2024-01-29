@@ -349,11 +349,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun contains(value: String): U =
             where.apply { addClauseValue(column, Operation.CONTAINS, "%$value%", type) }
 
+        override infix fun containsIgnoreCase(value: String): U =
+            where.apply { addClauseValue(column, Operation.CONTAINS_IGNORE_CASE, "%${value.uppercase()}%", type) }
+
         override infix fun startsWith(value: String): U =
             where.apply { addClauseValue(column, Operation.STARTS_WITH, "$value%", type) }
 
+        override infix fun startsWithIgnoreCase(value: String): U =
+            where.apply { addClauseValue(column, Operation.STARTS_WITH_IGNORE_CASE, "${value.uppercase()}%", type) }
+
         override infix fun endsWith(value: String): U =
             where.apply { addClauseValue(column, Operation.ENDS_WITH, "%$value", type) }
+
+        override infix fun endsWithIgnoreCase(value: String): U =
+            where.apply { addClauseValue(column, Operation.ENDS_WITH_IGNORE_CASE, "%${value.uppercase()}", type) }
 
         override infix fun eq(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.EQ, otherStringColumn, type) }
@@ -364,20 +373,38 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun contains(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.CONTAINS, otherStringColumn, type) }
 
+        override infix fun containsIgnoreCase(otherStringColumn: StringColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.CONTAINS_IGNORE_CASE, otherStringColumn, type) }
+
         override infix fun startsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.STARTS_WITH, otherStringColumn, type) }
+
+        override infix fun startsWithIgnoreCase(otherStringColumn: StringColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.STARTS_WITH_IGNORE_CASE, otherStringColumn, type) }
 
         override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(column, Operation.ENDS_WITH, otherStringColumn, type) }
 
+        override infix fun endsWithIgnoreCase(otherStringColumn: StringColumn<*>): U =
+            where.apply { addClauseColumn(column, Operation.ENDS_WITH_IGNORE_CASE, otherStringColumn, type) }
+
         override fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(column, Operation.CONTAINS, dsl, type) }
+
+        override fun containsIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.CONTAINS_IGNORE_CASE, dsl, type) }
 
         override fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(column, Operation.STARTS_WITH, dsl, type) }
 
+        override fun startsWithIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.STARTS_WITH_IGNORE_CASE, dsl, type) }
+
         override fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(column, Operation.ENDS_WITH, dsl, type) }
+
+        override fun endsWithIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(column, Operation.ENDS_WITH_IGNORE_CASE, dsl, type) }
     }
 
     public interface WhereOpStringAlias<T, U : SqlClientQuery.Where<U>> :
@@ -385,11 +412,20 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun contains(value: String): U =
             where.apply { addClauseValue(alias, Operation.CONTAINS, "%$value%", type) }
 
+        override infix fun containsIgnoreCase(value: String): U =
+            where.apply { addClauseValue(alias, Operation.CONTAINS_IGNORE_CASE, "%${value.uppercase()}%", type) }
+
         override infix fun startsWith(value: String): U =
             where.apply { addClauseValue(alias, Operation.STARTS_WITH, "$value%", type) }
 
+        override infix fun startsWithIgnoreCase(value: String): U =
+            where.apply { addClauseValue(alias, Operation.STARTS_WITH_IGNORE_CASE, "${value.uppercase()}%", type) }
+
         override infix fun endsWith(value: String): U =
             where.apply { addClauseValue(alias, Operation.ENDS_WITH, "%$value", type) }
+
+        override infix fun endsWithIgnoreCase(value: String): U =
+            where.apply { addClauseValue(alias, Operation.ENDS_WITH_IGNORE_CASE, "%${value.uppercase()}", type) }
 
         override infix fun eq(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.EQ, otherStringColumn, type) }
@@ -400,20 +436,38 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
         override infix fun contains(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.CONTAINS, otherStringColumn, type) }
 
+        override infix fun containsIgnoreCase(otherStringColumn: StringColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.CONTAINS_IGNORE_CASE, otherStringColumn, type) }
+
         override infix fun startsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.STARTS_WITH, otherStringColumn, type) }
+
+        override infix fun startsWithIgnoreCase(otherStringColumn: StringColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.STARTS_WITH_IGNORE_CASE, otherStringColumn, type) }
 
         override infix fun endsWith(otherStringColumn: StringColumn<*>): U =
             where.apply { addClauseColumn(alias, Operation.ENDS_WITH, otherStringColumn, type) }
 
+        override infix fun endsWithIgnoreCase(otherStringColumn: StringColumn<*>): U =
+            where.apply { addClauseColumn(alias, Operation.ENDS_WITH_IGNORE_CASE, otherStringColumn, type) }
+
         override fun contains(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(alias, Operation.CONTAINS, dsl, type) }
+
+        override fun containsIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.CONTAINS_IGNORE_CASE, dsl, type) }
 
         override fun startsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(alias, Operation.STARTS_WITH, dsl, type) }
 
+        override fun startsWithIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.STARTS_WITH_IGNORE_CASE, dsl, type) }
+
         override fun endsWith(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
             where.apply { addClauseSubQuery(alias, Operation.ENDS_WITH, dsl, type) }
+
+        override fun endsWithIgnoreCase(dsl: SqlClientSubQuery.SingleScope.() -> SqlClientSubQuery.Return<String>): U =
+            where.apply { addClauseSubQuery(alias, Operation.ENDS_WITH_IGNORE_CASE, dsl, type) }
     }
 
     public class WhereOpStringColumnNotNull<T : Any, U : SqlClientQuery.Where<U>> internal constructor(
@@ -2181,6 +2235,13 @@ public open class DefaultSqlClientCommon protected constructor() : SqlClientQuer
 
                                     Operation.CONTAINS, Operation.STARTS_WITH, Operation.ENDS_WITH ->
                                         "$fieldName LIKE ${variable()}"
+
+                                    Operation.CONTAINS_IGNORE_CASE, Operation.STARTS_WITH_IGNORE_CASE,
+                                    Operation.ENDS_WITH_IGNORE_CASE ->
+                                        when {
+                                            tables.dbType == DbType.POSTGRESQL -> "$fieldName iLIKE ${variable()}"
+                                            else -> "UPPER($fieldName) LIKE UPPER(${variable()})"
+                                        }
 
                                     Operation.INF -> "$fieldName < ${variable()}"
                                     Operation.INF_OR_EQ -> "$fieldName <= ${variable()}"

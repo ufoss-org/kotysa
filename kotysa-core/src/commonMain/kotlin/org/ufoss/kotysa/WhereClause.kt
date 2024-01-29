@@ -7,7 +7,9 @@ package org.ufoss.kotysa
 import org.ufoss.kotysa.postgresql.Tsquery
 
 public enum class Operation {
-    EQ, NOT_EQ, CONTAINS, STARTS_WITH, ENDS_WITH, SUP, INF, SUP_OR_EQ, INF_OR_EQ, IN, EXISTS,
+    EQ, NOT_EQ, CONTAINS, CONTAINS_IGNORE_CASE, STARTS_WITH, STARTS_WITH_IGNORE_CASE, ENDS_WITH, ENDS_WITH_IGNORE_CASE,
+    SUP, INF, SUP_OR_EQ, INF_OR_EQ, IN, EXISTS,
+
     // Postgresql specific tsquery
     TO_TSQUERY, PLAINTO_TSQUERY, PHRASETO_TSQUERY, WEBSEARCH_TO_TSQUERY, APPLY_ON
 }
