@@ -5,10 +5,9 @@
 package org.ufoss.kotysa.vertx.coroutines.oracle
 
 import io.vertx.kotlin.coroutines.await
+import io.vertx.oracleclient.OracleBuilder
 import io.vertx.oracleclient.OracleConnectOptions
-import io.vertx.oracleclient.OraclePool
 import io.vertx.sqlclient.Pool
-import io.vertx.sqlclient.PoolOptions
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -36,7 +35,9 @@ abstract class AbstractVertxCoroutinesOracleTest<T : Repository> : CoroutinesRep
             .fromUri("oracle:thin:@${containerResource.host}:${containerResource.firstMappedPort}/db")
             .setUser("test")
             .setPassword("test")
-        pool = OraclePool.pool(clientOptions, PoolOptions())
+        pool = OracleBuilder.pool()
+            .connectingTo(clientOptions)
+            .build()
 
         sqlClient = pool.coSqlClient(oracleTables)
         repository.init()

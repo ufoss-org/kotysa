@@ -5,10 +5,9 @@
 package org.ufoss.kotysa.vertx.coroutines.mssql
 
 import io.vertx.kotlin.coroutines.await
+import io.vertx.mssqlclient.MSSQLBuilder
 import io.vertx.mssqlclient.MSSQLConnectOptions
-import io.vertx.mssqlclient.MSSQLPool
 import io.vertx.sqlclient.Pool
-import io.vertx.sqlclient.PoolOptions
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -36,7 +35,9 @@ abstract class AbstractVertxCoroutinesMssqlTest<T : Repository> : CoroutinesRepo
             .fromUri("sqlserver://${containerResource.host}:${containerResource.firstMappedPort}")
             .setUser("SA")
             .setPassword("A_Str0ng_Required_Password")
-        pool = MSSQLPool.pool(clientOptions, PoolOptions())
+        pool = MSSQLBuilder.pool()
+            .connectingTo(clientOptions)
+            .build()
 
         sqlClient = pool.coSqlClient(mssqlTables)
         repository.init()

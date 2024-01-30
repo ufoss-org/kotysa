@@ -151,8 +151,8 @@ class H2TablesDslTest {
         val userTableFk = userTable.foreignKeys.iterator().next()
         assertThat(userTableFk.name).isEqualTo("FK_users_roles")
         assertThat(userTableFk.references.values)
-            .hasSize(1)
             .containsExactly(H2Roles.id)
+            .hasSize(1)
         
         val index = userTable.kotysaIndexes.first()
         assertThat(index.columns)

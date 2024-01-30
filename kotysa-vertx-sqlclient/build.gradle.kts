@@ -31,7 +31,7 @@ kotlin {
                 implementation("io.smallrye.reactive:smallrye-mutiny-vertx-oracle-client:${property("mutinySqlclientVersion")}")
                 implementation("io.vertx:vertx-lang-kotlin-coroutines:${property("vertxLangCoroutines")}")
                 
-                implementation("mysql:mysql-connector-java:${property("mysqlVersion")}")
+                implementation("com.mysql:mysql-connector-j:${property("mysqlVersion")}")
                 implementation("com.microsoft.sqlserver:mssql-jdbc:${property("mssqlVersion")}")
                 implementation("org.mariadb.jdbc:mariadb-java-client:${property("mariadbVersion")}")
                 implementation("org.postgresql:postgresql:${property("postgresqlVersion")}")
@@ -39,7 +39,7 @@ kotlin {
                 implementation("org.testcontainers:postgresql")
                 implementation("org.testcontainers:mysql")
                 implementation("org.testcontainers:mssqlserver")
-                implementation("org.testcontainers:oracle-xe")
+                implementation("org.testcontainers:oracle-free")
             }
         }
     }

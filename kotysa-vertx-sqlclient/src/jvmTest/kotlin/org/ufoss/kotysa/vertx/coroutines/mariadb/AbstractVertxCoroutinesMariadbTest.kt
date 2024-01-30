@@ -5,10 +5,9 @@
 package org.ufoss.kotysa.vertx.coroutines.mariadb
 
 import io.vertx.kotlin.coroutines.await
+import io.vertx.mysqlclient.MySQLBuilder
 import io.vertx.mysqlclient.MySQLConnectOptions
-import io.vertx.mysqlclient.MySQLPool
 import io.vertx.sqlclient.Pool
-import io.vertx.sqlclient.PoolOptions
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -36,7 +35,9 @@ abstract class AbstractVertxCoroutinesMariadbTest<T : Repository> : CoroutinesRe
             .fromUri("mariadb://${containerResource.host}:${containerResource.firstMappedPort}/db")
             .setUser("mariadb")
             .setPassword("test")
-        pool = MySQLPool.pool(clientOptions, PoolOptions())
+        pool = MySQLBuilder.pool()
+            .connectingTo(clientOptions)
+            .build()
 
         sqlClient = pool.coSqlClient(mariadbTables)
         repository.init()
