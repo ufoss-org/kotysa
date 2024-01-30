@@ -17,7 +17,7 @@ kotlin {
                 implementation("org.junit.jupiter:junit-jupiter-api")
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:${property("kotlinxDatetimeVersion")}")
                 implementation("com.h2database:h2:${property("h2Version")}")
-                implementation("mysql:mysql-connector-java:${property("mysqlVersion")}")
+                implementation("com.mysql:mysql-connector-j:${property("mysqlVersion")}")
                 implementation("com.microsoft.sqlserver:mssql-jdbc:${property("mssqlVersion")}")
                 implementation("org.mariadb.jdbc:mariadb-java-client:${property("mariadbVersion")}")
                 implementation("org.postgresql:postgresql:${property("postgresqlVersion")}")
@@ -26,7 +26,7 @@ kotlin {
                 implementation("org.testcontainers:mysql")
                 implementation("org.testcontainers:mssqlserver")
                 implementation("org.testcontainers:mariadb")
-                implementation("org.testcontainers:oracle-xe")
+                implementation("org.testcontainers:oracle-free")
             }
         }
     }

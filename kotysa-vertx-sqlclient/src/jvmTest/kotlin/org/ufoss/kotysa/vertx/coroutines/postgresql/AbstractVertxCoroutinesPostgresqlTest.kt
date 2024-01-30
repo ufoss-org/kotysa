@@ -5,10 +5,9 @@
 package org.ufoss.kotysa.vertx.coroutines.postgresql
 
 import io.vertx.kotlin.coroutines.await
+import io.vertx.pgclient.PgBuilder
 import io.vertx.pgclient.PgConnectOptions
-import io.vertx.pgclient.PgPool
 import io.vertx.sqlclient.Pool
-import io.vertx.sqlclient.PoolOptions
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
@@ -36,7 +35,9 @@ abstract class AbstractVertxCoroutinesPostgresqlTest<T : Repository> : Coroutine
             .fromUri("postgresql://${containerResource.host}:${containerResource.firstMappedPort}/db")
             .setUser("postgres")
             .setPassword("test")
-        pool = PgPool.pool(clientOptions, PoolOptions())
+        pool = PgBuilder.pool()
+            .connectingTo(clientOptions)
+            .build()
 
         sqlClient = pool.coSqlClient(postgresqlTables)
         repository.init()

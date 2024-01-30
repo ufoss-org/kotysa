@@ -52,7 +52,7 @@ kotlin {
                 implementation("org.testcontainers:mysql")
                 implementation("org.testcontainers:mssqlserver")
                 implementation("org.testcontainers:mariadb")
-                implementation("org.testcontainers:oracle-xe")
+                implementation("org.testcontainers:oracle-free")
             }
         }
     }

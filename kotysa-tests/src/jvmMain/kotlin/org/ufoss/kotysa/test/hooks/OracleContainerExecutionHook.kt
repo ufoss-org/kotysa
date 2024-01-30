@@ -8,7 +8,7 @@ import com.github.dockerjava.api.command.InspectContainerResponse
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
-import org.testcontainers.containers.OracleContainer
+import org.testcontainers.oracle.OracleContainer
 
 public class OracleContainerExecutionHook : ParameterResolver {
 
@@ -19,7 +19,7 @@ public class OracleContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
             .getOrComputeIfAbsent("oracleContainer") {
-                val oracleContainer = OracleContainer("gvenzl/oracle-xe:21.3.0-slim-faststart")
+                val oracleContainer = OracleContainer("gvenzl/oracle-free:23.3-slim-faststart")
                     .withDatabaseName("db")
                 oracleContainer.start()
                 println("OracleContainer started")
