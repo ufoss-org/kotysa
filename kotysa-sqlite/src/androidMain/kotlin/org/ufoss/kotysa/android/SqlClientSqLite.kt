@@ -66,7 +66,8 @@ internal class SqlClientSqLite internal constructor(
         table.dbColumns
             // do nothing for null values with default
             .filterNot { column ->
-                column.entityGetter(row) == null &&
+                val value = column.entityGetter(row)
+                ((value == null) || (value is Number && value.toLong() <= 0L)) &&
                         (column.defaultValue != null || column.isAutoIncrement)
             }
             .forEachIndexed { index, column -> statement.bind(index + 1, column.entityGetter(row)) }

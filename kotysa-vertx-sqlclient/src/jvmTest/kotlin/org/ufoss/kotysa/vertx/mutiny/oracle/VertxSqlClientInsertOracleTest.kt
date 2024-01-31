@@ -13,15 +13,18 @@ import org.ufoss.kotysa.vertx.mutiny.repositories.MutinyInsertTest
 
 @Order(3)
 class JdbcInsertOracleTest : AbstractVertxSqlClientOracleTest<RepositoryOracleInsert>(),
-    MutinyInsertTest<OracleInts, OracleLongs, OracleCustomers, RepositoryOracleInsert> {
+    MutinyInsertTest<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds,
+            RepositoryOracleInsert> {
     override fun instantiateRepository(sqlClient: MutinyVertxSqlClient) = RepositoryOracleInsert(sqlClient)
     override val exceptionClass = OracleException::class.java
 }
 
 class RepositoryOracleInsert(sqlClient: MutinyVertxSqlClient) :
-    MutinyInsertRepository<OracleInts, OracleLongs, OracleCustomers>(
+    MutinyInsertRepository<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds>(
         sqlClient,
         OracleInts,
         OracleLongs,
-        OracleCustomers
+        OracleCustomers,
+        OracleIntNonNullIds,
+        OracleLongNonNullIds
     )

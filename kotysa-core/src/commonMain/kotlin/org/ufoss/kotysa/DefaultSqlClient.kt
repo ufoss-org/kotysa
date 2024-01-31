@@ -202,7 +202,9 @@ public interface DefaultSqlClient {
         if (tables.dbType == DbType.MSSQL
             && kotysaTable.columns
                 .filterIsInstance<KotysaColumnDb<T, *>>()
-                .any { column -> column.isAutoIncrement && column.entityGetter(row) != null }
+                .any { column -> 
+                    val value = column.entityGetter(row)
+                    column.isAutoIncrement && value != null && value is Number && value.toLong() > 0L }
         ) {
             prefix = "SET IDENTITY_INSERT ${kotysaTable.name} ON\n"
             suffix = "\nSET IDENTITY_INSERT ${kotysaTable.name} OFF"
@@ -261,10 +263,11 @@ public interface DefaultSqlClient {
         forceQuestionMark: Boolean
     ): String =
         kotysaTable.dbColumns
-            // filter out null values with default value or Serial types
+            // filter out null or numeric values with negative or zero values with default value or Serial types
             .filterNot { column ->
-                column.entityGetter(row) == null
-                        && (column.defaultValue != null
+                val value = column.entityGetter(row)
+                ((value == null) || (value is Number && value.toLong() <= 0L)) &&
+                        (column.defaultValue != null
                         || column.isAutoIncrement
                         || SqlType.SERIAL == column.sqlType
                         || SqlType.BIGSERIAL == column.sqlType)
@@ -293,10 +296,11 @@ public interface DefaultSqlClient {
             .joinToString { column -> column.name }
 
         val pkFirstColumn = pkColumns.elementAt(0)
+        val value = pkFirstColumn.entityGetter(row)
         val wheres = if (
             pkColumns.size == 1 &&
             pkFirstColumn.isAutoIncrement &&
-            pkFirstColumn.entityGetter(row) == null
+            ((value == null) || (value is Number && value.toLong() <= 0L))
         ) {
             val selected = if (tables.dbType == DbType.MYSQL) {
                 "(SELECT LAST_INSERT_ID())"

@@ -8,11 +8,13 @@ import kotlinx.coroutines.runBlocking
 import org.ufoss.kotysa.CoroutinesSqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class CoroutinesInsertRepository<T : Ints, U : Longs, V : Customers>(
+abstract class CoroutinesInsertRepository<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds>(
     private val sqlClient: CoroutinesSqlClient,
     private val tableInts: T,
     private val tableLongs: U,
     private val tableCustomers: V,
+    private val tableIntNonNullIds: W,
+    private val tableLongNonNullIds: X,
 ) : Repository {
 
     override fun init() = runBlocking {
@@ -27,6 +29,8 @@ abstract class CoroutinesInsertRepository<T : Ints, U : Longs, V : Customers>(
         sqlClient createTableIfNotExists tableInts
         sqlClient createTableIfNotExists tableLongs
         sqlClient createTableIfNotExists tableCustomers
+        sqlClient createTableIfNotExists tableIntNonNullIds
+        sqlClient createTableIfNotExists tableLongNonNullIds
     }
 
     suspend fun insertCustomer() = sqlClient insert customerFrance
@@ -39,7 +43,13 @@ abstract class CoroutinesInsertRepository<T : Ints, U : Longs, V : Customers>(
 
     suspend fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
+    suspend fun insertAndReturnIntNullId(intNonNullIdEntity: IntNonNullIdEntity) =
+        sqlClient insertAndReturn intNonNullIdEntity
+
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
+
+    fun insertAndReturnLongNullIds() =
+        sqlClient.insertAndReturn(longNonNullIdWithNullable, longNonNullIdWithoutNullable)
 
     suspend fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

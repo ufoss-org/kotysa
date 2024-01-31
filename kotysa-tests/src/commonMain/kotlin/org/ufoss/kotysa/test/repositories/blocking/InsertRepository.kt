@@ -7,11 +7,13 @@ package org.ufoss.kotysa.test.repositories.blocking
 import org.ufoss.kotysa.SqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class InsertRepository<T : Ints, U : Longs, V : Customers>(
+abstract class InsertRepository<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds>(
     private val sqlClient: SqlClient,
     private val tableInts: T,
     private val tableLongs: U,
     private val tableCustomers: V,
+    private val tableIntNonNullIds: W,
+    private val tableLongNonNullIds: X,
 ) : Repository {
 
     override fun init() {
@@ -26,6 +28,8 @@ abstract class InsertRepository<T : Ints, U : Longs, V : Customers>(
         sqlClient createTableIfNotExists tableInts
         sqlClient createTableIfNotExists tableLongs
         sqlClient createTableIfNotExists tableCustomers
+        sqlClient createTableIfNotExists tableIntNonNullIds
+        sqlClient createTableIfNotExists tableLongNonNullIds
     }
 
     fun insertCustomer() = sqlClient insert customerFrance
@@ -38,7 +42,12 @@ abstract class InsertRepository<T : Ints, U : Longs, V : Customers>(
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
+    fun insertAndReturnIntNullId(intNonNullIdEntity: IntNonNullIdEntity) = sqlClient insertAndReturn intNonNullIdEntity
+
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
+
+    fun insertAndReturnLongNullIds() =
+        sqlClient.insertAndReturn(longNonNullIdWithNullable, longNonNullIdWithoutNullable)
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

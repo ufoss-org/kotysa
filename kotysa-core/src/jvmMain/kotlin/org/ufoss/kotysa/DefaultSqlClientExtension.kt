@@ -34,10 +34,11 @@ public fun <T : Any> DefaultSqlClient.setOracleReturnParameter(
 public fun <T : Any> DefaultSqlClient.setStatementParams(row: T, table: KotysaTable<T>, statement: PreparedStatement): Int {
     var index = 0
     table.dbColumns
-        // do nothing for null values with default or Serial type
+        // filter out null or numeric values with negative or zero values with default value or Serial types
         .filterNot { column ->
-            column.entityGetter(row) == null
-                    && (column.defaultValue != null
+            val value = column.entityGetter(row)
+            ((value == null) || (value is Number && value.toLong() <= 0L)) &&
+                    (column.defaultValue != null
                     || column.isAutoIncrement
                     || SqlType.SERIAL == column.sqlType
                     || SqlType.BIGSERIAL == column.sqlType)

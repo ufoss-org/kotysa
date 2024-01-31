@@ -15,15 +15,19 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class JdbcInsertPostgresqlTest : AbstractJdbcPostgresqlTest<RepositoryPostgresqlInsert>(),
-    InsertTest<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, RepositoryPostgresqlInsert, JdbcTransaction> {
+    InsertTest<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlIntNonNullIds, PostgresqlLongNonNullIds,
+            RepositoryPostgresqlInsert, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: PostgresqlJdbcSqlClient) = RepositoryPostgresqlInsert(sqlClient)
     override val exceptionClass = PSQLException::class
 }
 
 class RepositoryPostgresqlInsert(sqlClient: JdbcSqlClient) :
-    InsertRepository<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers>(
+    InsertRepository<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlIntNonNullIds,
+            PostgresqlLongNonNullIds>(
         sqlClient,
         PostgresqlInts,
         PostgresqlLongs,
-        PostgresqlCustomers
+        PostgresqlCustomers,
+        PostgresqlIntNonNullIds,
+        PostgresqlLongNonNullIds
     )

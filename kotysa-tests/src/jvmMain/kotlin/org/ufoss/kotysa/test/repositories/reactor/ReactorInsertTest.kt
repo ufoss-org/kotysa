@@ -10,8 +10,8 @@ import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 import reactor.kotlin.test.test
 
-interface ReactorInsertTest<T : Ints, U : Longs, V : Customers, W : ReactorInsertRepository<T, U, V>, X : Transaction>
-    : ReactorRepositoryTest<W, X> {
+interface ReactorInsertTest<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds,
+        Y : ReactorInsertRepository<T, U, V, W, X>, Z : Transaction> : ReactorRepositoryTest<Y, Z> {
     val exceptionClass: Class<out Throwable>
 
     @Test
@@ -77,6 +77,34 @@ interface ReactorInsertTest<T : Ints, U : Longs, V : Customers, W : ReactorInser
     }
 
     @Test
+    fun `Verify insertAndReturnIntNullId auto-generated works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnIntNullId(intNonNullIdWithNullable)
+        }.test()
+            .expectNextMatches { inserted ->
+                assertThat(inserted!!.intNotNull).isEqualTo(intNonNullIdWithNullable.intNotNull)
+                assertThat(inserted.intNullable).isEqualTo(intNonNullIdWithNullable.intNullable)
+                assertThat(inserted.id).isGreaterThan(0)
+                true
+            }.verifyComplete()
+    }
+
+    @Test
+    fun `Verify insertAndReturnIntNullId not auto-generated works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnIntNullId(IntNonNullIdEntity(1, 2, 666))
+        }.test()
+            .expectNextMatches { inserted ->
+                assertThat(inserted!!.intNotNull).isEqualTo(1)
+                assertThat(inserted.intNullable).isEqualTo(2)
+                assertThat(inserted.id).isEqualTo(666)
+                true
+            }.verifyComplete()
+    }
+
+    @Test
     fun `Verify insertAndReturnLongs works correctly`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
@@ -90,6 +118,25 @@ interface ReactorInsertTest<T : Ints, U : Longs, V : Customers, W : ReactorInser
             }.expectNextMatches { inserted ->
                 assertThat(inserted!!.longNotNull).isEqualTo(longWithoutNullable.longNotNull)
                 assertThat(inserted.longNullable).isEqualTo(longWithoutNullable.longNullable)
+                assertThat(inserted.id).isGreaterThan(1L)
+                true
+            }.verifyComplete()
+    }
+
+    @Test
+    fun `Verify insertAndReturnLongNullIds works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnLongNullIds()
+        }.test()
+            .expectNextMatches { inserted ->
+                assertThat(inserted!!.longNotNull).isEqualTo(longNonNullIdWithNullable.longNotNull)
+                assertThat(inserted.longNullable).isEqualTo(longNonNullIdWithNullable.longNullable)
+                assertThat(inserted.id).isGreaterThan(0L)
+                true
+            }.expectNextMatches { inserted ->
+                assertThat(inserted!!.longNotNull).isEqualTo(longNonNullIdWithoutNullable.longNotNull)
+                assertThat(inserted.longNullable).isEqualTo(longNonNullIdWithoutNullable.longNullable)
                 assertThat(inserted.id).isGreaterThan(1L)
                 true
             }.verifyComplete()

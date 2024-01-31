@@ -90,11 +90,25 @@ object SqliteInts : SqLiteTable<IntEntity>("ints"), Ints {
     override val intNullable = integer(IntEntity::intNullable)
 }
 
+object SqliteIntNonNullIds : SqLiteTable<IntNonNullIdEntity>(), IntNonNullIds {
+    override val id = autoIncrementInteger(IntNonNullIdEntity::id)
+        .primaryKey()
+    override val intNotNull = integer(IntNonNullIdEntity::intNotNull)
+    override val intNullable = integer(IntNonNullIdEntity::intNullable)
+}
+
 object SqliteLongs : SqLiteTable<LongEntity>("longs"), Longs {
     override val id = autoIncrementInteger(LongEntity::id)
         .primaryKey()
     override val longNotNull = integer(LongEntity::longNotNull)
     override val longNullable = integer(LongEntity::longNullable)
+}
+
+object SqliteLongNonNullIds : SqLiteTable<LongNonNullIdEntity>(), LongNonNullIds {
+    override val id = autoIncrementInteger(LongNonNullIdEntity::id)
+        .primaryKey()
+    override val longNotNull = integer(LongNonNullIdEntity::longNotNull)
+    override val longNullable = integer(LongNonNullIdEntity::longNullable)
 }
 
 object SqliteFloats : SqLiteTable<FloatEntity>(), Floats {

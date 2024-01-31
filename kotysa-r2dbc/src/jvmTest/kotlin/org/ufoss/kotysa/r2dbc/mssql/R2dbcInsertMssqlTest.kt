@@ -14,15 +14,18 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class R2dbcInsertMssqlTest : AbstractR2dbcMssqlTest<RepositoryMssqlInsert>(),
-    CoroutinesInsertTest<MssqlInts, MssqlLongs, MssqlCustomers, RepositoryMssqlInsert, R2dbcTransaction> {
+    CoroutinesInsertTest<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds,
+            RepositoryMssqlInsert, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryMssqlInsert(sqlClient)
     override val exceptionClass = R2dbcDataIntegrityViolationException::class.java
 }
 
 class RepositoryMssqlInsert(sqlClient: R2dbcSqlClient) :
-    CoroutinesInsertRepository<MssqlInts, MssqlLongs, MssqlCustomers>(
+    CoroutinesInsertRepository<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds>(
         sqlClient,
         MssqlInts,
         MssqlLongs,
-        MssqlCustomers
+        MssqlCustomers,
+        MssqlIntNonNullIds,
+        MssqlLongNonNullIds
     )

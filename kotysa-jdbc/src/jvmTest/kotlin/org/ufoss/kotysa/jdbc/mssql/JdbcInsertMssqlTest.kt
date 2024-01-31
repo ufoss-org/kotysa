@@ -14,10 +14,18 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class JdbcInsertMssqlTest : AbstractJdbcMssqlTest<RepositoryMssqlInsert>(),
-    InsertTest<MssqlInts, MssqlLongs, MssqlCustomers, RepositoryMssqlInsert, JdbcTransaction> {
+    InsertTest<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds, RepositoryMssqlInsert,
+            JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryMssqlInsert(sqlClient)
     override val exceptionClass = SQLServerException::class
 }
 
 class RepositoryMssqlInsert(sqlClient: JdbcSqlClient) :
-    InsertRepository<MssqlInts, MssqlLongs, MssqlCustomers>(sqlClient, MssqlInts, MssqlLongs, MssqlCustomers)
+    InsertRepository<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds>(
+        sqlClient,
+        MssqlInts,
+        MssqlLongs,
+        MssqlCustomers,
+        MssqlIntNonNullIds,
+        MssqlLongNonNullIds
+    )

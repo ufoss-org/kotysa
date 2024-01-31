@@ -14,10 +14,18 @@ import java.sql.SQLIntegrityConstraintViolationException
 
 @Order(3)
 class JdbcInsertOracleTest : AbstractJdbcOracleTest<RepositoryOracleInsert>(),
-    InsertTest<OracleInts, OracleLongs, OracleCustomers, RepositoryOracleInsert, JdbcTransaction> {
+    InsertTest<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds,
+            RepositoryOracleInsert, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryOracleInsert(sqlClient)
     override val exceptionClass = SQLIntegrityConstraintViolationException::class
 }
 
 class RepositoryOracleInsert(sqlClient: JdbcSqlClient) :
-    InsertRepository<OracleInts, OracleLongs, OracleCustomers>(sqlClient, OracleInts, OracleLongs, OracleCustomers)
+    InsertRepository<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds>(
+        sqlClient,
+        OracleInts,
+        OracleLongs,
+        OracleCustomers,
+        OracleIntNonNullIds,
+        OracleLongNonNullIds
+    )

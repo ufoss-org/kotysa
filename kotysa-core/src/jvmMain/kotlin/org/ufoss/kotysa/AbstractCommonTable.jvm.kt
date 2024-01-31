@@ -10,12 +10,12 @@ public actual abstract class AbstractCommonTable<T : Any> internal actual constr
     AbstractTable<T>(tableName) {
     protected fun <U> U.identity(): IntDbIdentityColumnNotNull<T>
             where U : AbstractDbColumn<T, Int>,
-                  U : IntColumnNullable<T> =
+                  U : IntColumn<T> =
         IntDbIdentityColumnNotNull(this, Identity()).also { addIdentityColumn(this, it) }
 
     protected fun <U> U.identity(): LongDbIdentityColumnNotNull<T>
             where U : AbstractDbColumn<T, Long>,
-                  U : LongColumnNullable<T> =
+                  U : LongColumn<T> =
         LongDbIdentityColumnNotNull(this, Identity()).also { addIdentityColumn(this, it) }
 
     private fun addIdentityColumn(oldColumn: AbstractColumn<T, *>, identityColumn: AbstractColumn<T, *>) {

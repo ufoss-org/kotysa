@@ -14,10 +14,17 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class JdbcInsertH2Test : AbstractJdbcH2Test<RepositoryH2Insert>(),
-    InsertTest<H2Ints, H2Longs, H2Customers, RepositoryH2Insert, JdbcTransaction> {
+    InsertTest<H2Ints, H2Longs, H2Customers, H2IntNonNullIds, H2LongNonNullIds, RepositoryH2Insert, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryH2Insert(sqlClient)
     override val exceptionClass = JdbcSQLIntegrityConstraintViolationException::class
 }
 
 class RepositoryH2Insert(sqlClient: JdbcSqlClient) :
-    InsertRepository<H2Ints, H2Longs, H2Customers>(sqlClient, H2Ints, H2Longs, H2Customers)
+    InsertRepository<H2Ints, H2Longs, H2Customers, H2IntNonNullIds, H2LongNonNullIds>(
+        sqlClient,
+        H2Ints,
+        H2Longs,
+        H2Customers,
+        H2IntNonNullIds,
+        H2LongNonNullIds
+    )

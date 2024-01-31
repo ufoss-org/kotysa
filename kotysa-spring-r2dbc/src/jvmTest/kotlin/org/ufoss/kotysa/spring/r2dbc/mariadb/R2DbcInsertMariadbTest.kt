@@ -9,15 +9,14 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.ufoss.kotysa.MariadbCoroutinesSqlClient
 import org.ufoss.kotysa.MariadbReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
-import org.ufoss.kotysa.test.MariadbCustomers
-import org.ufoss.kotysa.test.MariadbInts
-import org.ufoss.kotysa.test.MariadbLongs
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertTest
 
 @Order(3)
 class R2DbcInsertMariadbTest : AbstractR2dbcMariadbTest<MariadbInsertRepository>(),
-    ReactorInsertTest<MariadbInts, MariadbLongs, MariadbCustomers, MariadbInsertRepository, ReactorTransaction> {
+    ReactorInsertTest<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds,
+            MariadbInsertRepository, ReactorTransaction> {
 
     override fun instantiateRepository(sqlClient: MariadbReactorSqlClient, coSqlClient: MariadbCoroutinesSqlClient) =
         MariadbInsertRepository(sqlClient)
@@ -26,9 +25,11 @@ class R2DbcInsertMariadbTest : AbstractR2dbcMariadbTest<MariadbInsertRepository>
 }
 
 class MariadbInsertRepository(sqlClient: MariadbReactorSqlClient) :
-    ReactorInsertRepository<MariadbInts, MariadbLongs, MariadbCustomers>(
+    ReactorInsertRepository<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds>(
         sqlClient,
         MariadbInts,
         MariadbLongs,
-        MariadbCustomers
+        MariadbCustomers,
+        MariadbIntNonNullIds,
+        MariadbLongNonNullIds
     )

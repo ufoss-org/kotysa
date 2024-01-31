@@ -14,15 +14,18 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class VertxCoroutinesInsertMysqlTest : AbstractVertxCoroutinesMysqlTest<RepositoryMysqlInsert>(),
-    CoroutinesInsertTest<MysqlInts, MysqlLongs, MysqlCustomers, RepositoryMysqlInsert, Transaction> {
+    CoroutinesInsertTest<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds,
+            RepositoryMysqlInsert, Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = RepositoryMysqlInsert(sqlClient)
     override val exceptionClass = MySQLException::class.java
 }
 
 class RepositoryMysqlInsert(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesInsertRepository<MysqlInts, MysqlLongs, MysqlCustomers>(
+    CoroutinesInsertRepository<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds>(
         sqlClient,
         MysqlInts,
         MysqlLongs,
-        MysqlCustomers
+        MysqlCustomers,
+        MysqlIntNonNullIds,
+        MysqlLongNonNullIds
     )

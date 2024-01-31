@@ -45,10 +45,11 @@ internal sealed class CoroutinesSqlClientVertx(
 
     private fun <T : Any> buildTuple(row: T, table: KotysaTable<T>) =
         table.dbColumns
-            // do nothing for null values with default or Serial type
+            // filter out null or numeric values with negative or zero values with default value or Serial types
             .filterNot { column ->
-                column.entityGetter(row) == null
-                        && (column.defaultValue != null
+                val value = column.entityGetter(row)
+                ((value == null) || (value is Number && value.toLong() <= 0L)) &&
+                        (column.defaultValue != null
                         || column.isAutoIncrement
                         || SqlType.SERIAL == column.sqlType
                         || SqlType.BIGSERIAL == column.sqlType)
@@ -114,11 +115,12 @@ internal sealed class CoroutinesSqlClientVertx(
     private suspend fun <T : Any> fetchLastInserted(connection: SqlConnection, row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
         val pkFirstColumn = pkColumns.elementAt(0)
+        val firstPkValue = pkFirstColumn.entityGetter(row)
 
         val rowSet = if (
             pkColumns.size == 1 &&
             pkFirstColumn.isAutoIncrement &&
-            pkFirstColumn.entityGetter(row) == null
+            ((firstPkValue == null) || (firstPkValue is Number && firstPkValue.toLong() <= 0L))
         ) {
             connection.query(lastInsertedSql(row))
                 .execute()

@@ -14,10 +14,18 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class R2dbcInsertH2Test : AbstractR2dbcH2Test<RepositoryH2Insert>(),
-    CoroutinesInsertTest<H2Ints, H2Longs, H2Customers, RepositoryH2Insert, R2dbcTransaction> {
+    CoroutinesInsertTest<H2Ints, H2Longs, H2Customers, H2IntNonNullIds, H2LongNonNullIds, RepositoryH2Insert,
+            R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryH2Insert(sqlClient)
     override val exceptionClass = R2dbcDataIntegrityViolationException::class.java
 }
 
 class RepositoryH2Insert(sqlClient: R2dbcSqlClient) :
-    CoroutinesInsertRepository<H2Ints, H2Longs, H2Customers>(sqlClient, H2Ints, H2Longs, H2Customers)
+    CoroutinesInsertRepository<H2Ints, H2Longs, H2Customers, H2IntNonNullIds, H2LongNonNullIds>(
+        sqlClient,
+        H2Ints,
+        H2Longs,
+        H2Customers,
+        H2IntNonNullIds,
+        H2LongNonNullIds
+    )

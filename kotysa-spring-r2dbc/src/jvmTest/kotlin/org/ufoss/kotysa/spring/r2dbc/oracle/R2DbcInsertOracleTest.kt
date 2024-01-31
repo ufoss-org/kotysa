@@ -9,14 +9,13 @@ import org.ufoss.kotysa.OracleCoroutinesSqlClient
 import org.ufoss.kotysa.OracleReactorSqlClient
 import org.ufoss.kotysa.ReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
-import org.ufoss.kotysa.test.OracleCustomers
-import org.ufoss.kotysa.test.OracleInts
-import org.ufoss.kotysa.test.OracleLongs
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertTest
 
 class R2DbcInsertOracleTest : AbstractR2dbcOracleTest<OracleInsertRepository>(),
-    ReactorInsertTest<OracleInts, OracleLongs, OracleCustomers, OracleInsertRepository, ReactorTransaction> {
+    ReactorInsertTest<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds,
+            OracleInsertRepository, ReactorTransaction> {
 
     override fun instantiateRepository(sqlClient: OracleReactorSqlClient, coSqlClient: OracleCoroutinesSqlClient) =
         OracleInsertRepository(sqlClient)
@@ -25,9 +24,11 @@ class R2DbcInsertOracleTest : AbstractR2dbcOracleTest<OracleInsertRepository>(),
 }
 
 class OracleInsertRepository(sqlClient: ReactorSqlClient) :
-    ReactorInsertRepository<OracleInts, OracleLongs, OracleCustomers>(
+    ReactorInsertRepository<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds>(
         sqlClient,
         OracleInts,
         OracleLongs,
-        OracleCustomers
+        OracleCustomers,
+        OracleIntNonNullIds,
+        OracleLongNonNullIds
     )

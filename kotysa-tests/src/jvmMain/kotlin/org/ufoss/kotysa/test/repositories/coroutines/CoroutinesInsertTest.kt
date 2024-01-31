@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.transaction.Transaction
 
-interface CoroutinesInsertTest<T : Ints, U : Longs, V : Customers, W : CoroutinesInsertRepository<T, U, V>, X : Transaction>
-    : CoroutinesRepositoryTest<W, X> {
+interface CoroutinesInsertTest<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds,
+        Y : CoroutinesInsertRepository<T, U, V, W, X>, Z : Transaction> : CoroutinesRepositoryTest<Y, Z> {
     val exceptionClass: Class<*>
 
     @Test
@@ -73,6 +73,28 @@ interface CoroutinesInsertTest<T : Ints, U : Longs, V : Customers, W : Coroutine
     }
 
     @Test
+    fun `Verify insertAndReturnIntNullId auto-generated works correctly`() = runTest {
+        coOperator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            val inserted = repository.insertAndReturnIntNullId(intNonNullIdWithNullable)
+            assertThat(inserted.intNotNull).isEqualTo(intNonNullIdWithNullable.intNotNull)
+            assertThat(inserted.intNullable).isEqualTo(intNonNullIdWithNullable.intNullable)
+            assertThat(inserted.id).isGreaterThan(0)
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnIntNullId not auto-generated works correctly`() = runTest {
+        coOperator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            val inserted = repository.insertAndReturnIntNullId(IntNonNullIdEntity(1, 2, 666))
+            assertThat(inserted.intNotNull).isEqualTo(1)
+            assertThat(inserted.intNullable).isEqualTo(2)
+            assertThat(inserted.id).isEqualTo(666)
+        }
+    }
+
+    @Test
     fun `Verify insertAndReturnLongs works correctly`() = runTest {
         coOperator.transactional { transaction ->
             transaction.setRollbackOnly()
@@ -84,6 +106,22 @@ interface CoroutinesInsertTest<T : Ints, U : Longs, V : Customers, W : Coroutine
             inserted = longs[1]
             assertThat(inserted.longNotNull).isEqualTo(longWithoutNullable.longNotNull)
             assertThat(inserted.longNullable).isEqualTo(longWithoutNullable.longNullable)
+            assertThat(inserted.id).isGreaterThan(1L)
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnLongNullIds works correctly`() = runTest {
+        coOperator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            val longs = repository.insertAndReturnLongNullIds().toList()
+            var inserted = longs[0]
+            assertThat(inserted.longNotNull).isEqualTo(longNonNullIdWithNullable.longNotNull)
+            assertThat(inserted.longNullable).isEqualTo(longNonNullIdWithNullable.longNullable)
+            assertThat(inserted.id).isGreaterThan(0L)
+            inserted = longs[1]
+            assertThat(inserted.longNotNull).isEqualTo(longNonNullIdWithoutNullable.longNotNull)
+            assertThat(inserted.longNullable).isEqualTo(longNonNullIdWithoutNullable.longNullable)
             assertThat(inserted.id).isGreaterThan(1L)
         }
     }

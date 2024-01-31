@@ -969,6 +969,21 @@ interface Uuids : Table<UuidEntity> {
     val uuidNullable: UuidColumnNullable<UuidEntity>
 }
 
+data class IntEntityAsIdentity(
+    val intNotNull: Int,
+    val intNullable: Int? = null,
+    val id: Int? = null
+)
+
+val intAsIdentityWithNullable = IntEntityAsIdentity(10, 6)
+val intAsIdentityWithoutNullable = IntEntityAsIdentity(12)
+
+interface IntAsIdentities : Table<IntEntityAsIdentity> {
+    val id: IntColumnNotNull<IntEntityAsIdentity>
+    val intNotNull: IntColumnNotNull<IntEntityAsIdentity>
+    val intNullable: IntColumnNullable<IntEntityAsIdentity>
+}
+
 data class BigDecimalEntity(
     val id: Int,
     val bigDecimalNotNull: BigDecimal,

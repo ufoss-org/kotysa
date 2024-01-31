@@ -7,11 +7,13 @@ package org.ufoss.kotysa.vertx.mutiny.repositories
 import org.ufoss.kotysa.vertx.MutinySqlClient
 import org.ufoss.kotysa.test.*
 
-abstract class MutinyInsertRepository<T : Ints, U : Longs, V : Customers>(
+abstract class MutinyInsertRepository<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds>(
     private val sqlClient: MutinySqlClient,
     private val tableInts: T,
     private val tableLongs: U,
     private val tableCustomers: V,
+    private val tableIntNonNullIds: W,
+    private val tableLongNonNullIds: X,
 ) : Repository {
 
     override fun init() {
@@ -26,6 +28,8 @@ abstract class MutinyInsertRepository<T : Ints, U : Longs, V : Customers>(
         (sqlClient createTableIfNotExists tableInts)
             .chain { -> sqlClient createTableIfNotExists tableLongs }
             .chain { -> sqlClient createTableIfNotExists tableCustomers }
+            .chain { -> sqlClient createTableIfNotExists tableIntNonNullIds }
+            .chain { -> sqlClient createTableIfNotExists tableLongNonNullIds }
             .await().indefinitely()
     }
 
@@ -39,7 +43,12 @@ abstract class MutinyInsertRepository<T : Ints, U : Longs, V : Customers>(
 
     fun insertAndReturnInt(intEntity: IntEntity) = sqlClient insertAndReturn intEntity
 
+    fun insertAndReturnIntNullId(intNonNullIdEntity: IntNonNullIdEntity) = sqlClient insertAndReturn intNonNullIdEntity
+
     fun insertAndReturnLongs() = sqlClient.insertAndReturn(longWithNullable, longWithoutNullable)
+
+    fun insertAndReturnLongNullIds() =
+        sqlClient.insertAndReturn(longNonNullIdWithNullable, longNonNullIdWithoutNullable)
 
     fun insertDupCustomers() = sqlClient.insert(customerFrance, customerFranceDup)
 }

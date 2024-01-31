@@ -93,10 +93,11 @@ internal sealed class SqlClientJdbc(
         val pkColumns = table.primaryKey.columns
         val statement = connection.prepareStatement(lastInsertedSql(row))
         val pkFirstColumn = pkColumns.elementAt(0)
+        val value = pkFirstColumn.entityGetter(row)
         if (
             pkColumns.size != 1 ||
             !pkFirstColumn.isAutoIncrement ||
-            pkFirstColumn.entityGetter(row) != null
+            (value != null && value is Number && value.toLong() > 0L)
         ) {
             // bind all PK values
             pkColumns

@@ -14,15 +14,18 @@ import java.sql.SQLIntegrityConstraintViolationException
 
 @Order(3)
 class JdbcInsertMariadbTest : AbstractJdbcMariadbTest<RepositoryMariadbInsert>(),
-    InsertTest<MariadbInts, MariadbLongs, MariadbCustomers, RepositoryMariadbInsert, JdbcTransaction> {
+    InsertTest<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds,
+            RepositoryMariadbInsert, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryMariadbInsert(sqlClient)
     override val exceptionClass = SQLIntegrityConstraintViolationException::class
 }
 
 class RepositoryMariadbInsert(sqlClient: JdbcSqlClient) :
-    InsertRepository<MariadbInts, MariadbLongs, MariadbCustomers>(
+    InsertRepository<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds>(
         sqlClient,
         MariadbInts,
         MariadbLongs,
-        MariadbCustomers
+        MariadbCustomers,
+        MariadbIntNonNullIds,
+        MariadbLongNonNullIds
     )
