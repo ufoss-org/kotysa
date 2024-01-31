@@ -15,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class SpringJdbcInsertMariadbTest : AbstractSpringJdbcMariadbTest<RepositoryMariadbInsert>(),
-    InsertTest<MariadbInts, MariadbLongs, MariadbCustomers, RepositoryMariadbInsert, SpringJdbcTransaction> {
+    InsertTest<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds,
+            RepositoryMariadbInsert, SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) = RepositoryMariadbInsert(jdbcOperations)
 
@@ -23,9 +24,11 @@ class SpringJdbcInsertMariadbTest : AbstractSpringJdbcMariadbTest<RepositoryMari
 }
 
 class RepositoryMariadbInsert(dbClient: JdbcOperations) :
-    InsertRepository<MariadbInts, MariadbLongs, MariadbCustomers>(
+    InsertRepository<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds>(
         dbClient.sqlClient(mariadbTables),
         MariadbInts,
         MariadbLongs,
-        MariadbCustomers
+        MariadbCustomers,
+        MariadbIntNonNullIds,
+        MariadbLongNonNullIds
     )

@@ -9,14 +9,13 @@ import android.database.sqlite.SQLiteOpenHelper
 import org.junit.Test
 import org.ufoss.kotysa.SqLiteTables
 import org.ufoss.kotysa.android.transaction.AndroidTransaction
-import org.ufoss.kotysa.test.SqliteCustomers
-import org.ufoss.kotysa.test.SqliteInts
-import org.ufoss.kotysa.test.SqliteLongs
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.blocking.InsertRepository
 import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLiteInsert>(),
-    InsertTest<SqliteInts, SqliteLongs, SqliteCustomers, RepositorySqLiteInsert, AndroidTransaction> {
+    InsertTest<SqliteInts, SqliteLongs, SqliteCustomers, SqliteIntNonNullIds, SqliteLongNonNullIds,
+            RepositorySqLiteInsert, AndroidTransaction> {
     override fun getRepository(sqLiteTables: SqLiteTables) = RepositorySqLiteInsert(dbHelper, sqLiteTables)
     override val exceptionClass = SQLiteConstraintException::class
 
@@ -41,8 +40,23 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLiteInsert>(),
     }
 
     @Test
+    fun `Verify insertAndReturnIntNullId auto-generated works correctly - Android`() {
+        `Verify insertAndReturnIntNullId auto-generated works correctly`()
+    }
+
+    @Test
+    fun `Verify insertAndReturnIntNullId not auto-generated works correctly - Android`() {
+        `Verify insertAndReturnIntNullId not auto-generated works correctly`()
+    }
+
+    @Test
     fun `Verify insertAndReturnLongs works correctly - Android`() {
         `Verify insertAndReturnLongs works correctly`()
+    }
+
+    @Test
+    fun `Verify insertAndReturnLongNullIds works correctly - Android`() {
+        `Verify insertAndReturnLongNullIds works correctly`()
     }
 
     @Test
@@ -52,9 +66,11 @@ class SqLiteInsertTest : AbstractSqLiteTest<RepositorySqLiteInsert>(),
 }
 
 class RepositorySqLiteInsert(sqLiteOpenHelper: SQLiteOpenHelper, tables: SqLiteTables) :
-    InsertRepository<SqliteInts, SqliteLongs, SqliteCustomers>(
+    InsertRepository<SqliteInts, SqliteLongs, SqliteCustomers, SqliteIntNonNullIds, SqliteLongNonNullIds>(
         sqLiteOpenHelper.sqlClient(tables),
         SqliteInts,
         SqliteLongs,
-        SqliteCustomers
+        SqliteCustomers,
+        SqliteIntNonNullIds,
+        SqliteLongNonNullIds
     )

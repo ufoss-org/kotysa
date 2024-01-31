@@ -14,10 +14,18 @@ import java.sql.SQLIntegrityConstraintViolationException
 
 @Order(3)
 class JdbcInsertMysqlTest : AbstractJdbcMysqlTest<RepositoryMysqlInsert>(),
-    InsertTest<MysqlInts, MysqlLongs, MysqlCustomers, RepositoryMysqlInsert, JdbcTransaction> {
+    InsertTest<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds,
+            RepositoryMysqlInsert, JdbcTransaction> {
     override fun instantiateRepository(sqlClient: JdbcSqlClient) = RepositoryMysqlInsert(sqlClient)
     override val exceptionClass = SQLIntegrityConstraintViolationException::class
 }
 
 class RepositoryMysqlInsert(sqlClient: JdbcSqlClient) :
-    InsertRepository<MysqlInts, MysqlLongs, MysqlCustomers>(sqlClient, MysqlInts, MysqlLongs, MysqlCustomers)
+    InsertRepository<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds>(
+        sqlClient,
+        MysqlInts,
+        MysqlLongs,
+        MysqlCustomers,
+        MysqlIntNonNullIds,
+        MysqlLongNonNullIds
+    )

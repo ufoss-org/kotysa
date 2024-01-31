@@ -14,15 +14,18 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class VertxCoroutinesInsertMssqlTest : AbstractVertxCoroutinesMssqlTest<RepositoryMssqlInsert>(),
-    CoroutinesInsertTest<MssqlInts, MssqlLongs, MssqlCustomers, RepositoryMssqlInsert, Transaction> {
+    CoroutinesInsertTest<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds,
+            RepositoryMssqlInsert, Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = RepositoryMssqlInsert(sqlClient)
     override val exceptionClass = MSSQLException::class.java
 }
 
 class RepositoryMssqlInsert(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesInsertRepository<MssqlInts, MssqlLongs, MssqlCustomers>(
+    CoroutinesInsertRepository<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds>(
         sqlClient,
         MssqlInts,
         MssqlLongs,
-        MssqlCustomers
+        MssqlCustomers,
+        MssqlIntNonNullIds,
+        MssqlLongNonNullIds
     )

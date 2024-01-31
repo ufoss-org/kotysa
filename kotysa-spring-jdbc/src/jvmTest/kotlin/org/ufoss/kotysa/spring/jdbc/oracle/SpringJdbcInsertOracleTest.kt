@@ -15,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class SpringJdbcInsertOracleTest : AbstractSpringJdbcOracleTest<RepositoryOracleInsert>(),
-    InsertTest<OracleInts, OracleLongs, OracleCustomers, RepositoryOracleInsert, SpringJdbcTransaction> {
+    InsertTest<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds,
+            RepositoryOracleInsert, SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) = RepositoryOracleInsert(jdbcOperations)
 
@@ -23,9 +24,11 @@ class SpringJdbcInsertOracleTest : AbstractSpringJdbcOracleTest<RepositoryOracle
 }
 
 class RepositoryOracleInsert(dbClient: JdbcOperations) :
-    InsertRepository<OracleInts, OracleLongs, OracleCustomers>(
+    InsertRepository<OracleInts, OracleLongs, OracleCustomers, OracleIntNonNullIds, OracleLongNonNullIds>(
         dbClient.sqlClient(oracleTables),
         OracleInts,
         OracleLongs,
-        OracleCustomers
+        OracleCustomers,
+        OracleIntNonNullIds,
+        OracleLongNonNullIds
     )

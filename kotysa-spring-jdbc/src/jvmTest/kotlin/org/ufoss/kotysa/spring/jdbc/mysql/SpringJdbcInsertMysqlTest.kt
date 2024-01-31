@@ -15,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class SpringJdbcInsertMysqlTest : AbstractSpringJdbcMysqlTest<RepositoryMysqlInsert>(),
-    InsertTest<MysqlInts, MysqlLongs, MysqlCustomers, RepositoryMysqlInsert, SpringJdbcTransaction> {
+    InsertTest<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds,
+            RepositoryMysqlInsert, SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) = RepositoryMysqlInsert(jdbcOperations)
 
@@ -23,9 +24,11 @@ class SpringJdbcInsertMysqlTest : AbstractSpringJdbcMysqlTest<RepositoryMysqlIns
 }
 
 class RepositoryMysqlInsert(dbClient: JdbcOperations) :
-    InsertRepository<MysqlInts, MysqlLongs, MysqlCustomers>(
+    InsertRepository<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds>(
         dbClient.sqlClient(mysqlTables),
         MysqlInts,
         MysqlLongs,
-        MysqlCustomers
+        MysqlCustomers,
+        MysqlIntNonNullIds,
+        MysqlLongNonNullIds
     )

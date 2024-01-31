@@ -452,6 +452,13 @@ object PostgresqlInts : PostgresqlTable<IntEntity>(), Ints {
     override val intNullable = integer(IntEntity::intNullable)
 }
 
+object PostgresqlIntNonNullIds : PostgresqlTable<IntNonNullIdEntity>(), IntNonNullIds {
+    override val id = serial(IntNonNullIdEntity::id)
+        .primaryKey()
+    override val intNotNull = integer(IntNonNullIdEntity::intNotNull)
+    override val intNullable = integer(IntNonNullIdEntity::intNullable)
+}
+
 object PostgresqlIntAsIdentities : PostgresqlTable<IntEntityAsIdentity>(), IntAsIdentities {
     override val id = integer(IntEntityAsIdentity::id)
         .identity()
@@ -465,6 +472,13 @@ object PostgresqlLongs : PostgresqlTable<LongEntity>(), Longs {
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object PostgresqlLongNonNullIds : PostgresqlTable<LongNonNullIdEntity>(), LongNonNullIds {
+    override val id = bigSerial(LongNonNullIdEntity::id)
+        .primaryKey()
+    override val longNotNull = bigInt(LongNonNullIdEntity::longNotNull)
+    override val longNullable = bigInt(LongNonNullIdEntity::longNullable)
 }
 
 object PostgresqlFloats : PostgresqlTable<FloatEntity>(), Floats {
@@ -584,7 +598,9 @@ val postgresqlTables = tables().postgresql(
     PostgresqlKotlinxLocalTimes,
     PostgresqlIntAsIdentities,
     PostgresqlInts,
+    PostgresqlIntNonNullIds,
     PostgresqlLongs,
+    PostgresqlLongNonNullIds,
     PostgresqlUuids,
     PostgresqlInheriteds,
     PostgresqlJavaUsers,

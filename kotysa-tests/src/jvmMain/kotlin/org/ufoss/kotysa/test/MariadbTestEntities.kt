@@ -460,11 +460,25 @@ object MariadbInts : MariadbTable<IntEntity>(), Ints {
     override val intNullable = integer(IntEntity::intNullable)
 }
 
+object MariadbIntNonNullIds : MariadbTable<IntNonNullIdEntity>(), IntNonNullIds {
+    override val id = autoIncrementInteger(IntNonNullIdEntity::id)
+        .primaryKey()
+    override val intNotNull = integer(IntNonNullIdEntity::intNotNull)
+    override val intNullable = integer(IntNonNullIdEntity::intNullable)
+}
+
 object MariadbLongs : MariadbTable<LongEntity>(), Longs {
     override val id = autoIncrementBigInt(LongEntity::id)
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object MariadbLongNonNullIds : MariadbTable<LongNonNullIdEntity>(), LongNonNullIds {
+    override val id = autoIncrementBigInt(LongNonNullIdEntity::id)
+        .primaryKey()
+    override val longNotNull = bigInt(LongNonNullIdEntity::longNotNull)
+    override val longNullable = bigInt(LongNonNullIdEntity::longNullable)
 }
 
 object MariadbFloats : MariadbTable<FloatEntity>(), Floats {
@@ -582,7 +596,9 @@ val mariadbTables = tables().mariadb(
     MariadbLocalTimes,
     MariadbKotlinxLocalTimes,
     MariadbInts,
+    MariadbIntNonNullIds,
     MariadbLongs,
+    MariadbLongNonNullIds,
     MariadbInheriteds,
     MariadbJavaUsers,
     MariadbCustomers,

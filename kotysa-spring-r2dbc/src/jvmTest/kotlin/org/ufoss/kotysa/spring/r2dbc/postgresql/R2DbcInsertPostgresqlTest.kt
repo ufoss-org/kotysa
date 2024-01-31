@@ -9,15 +9,14 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.ufoss.kotysa.PostgresqlCoroutinesSqlClient
 import org.ufoss.kotysa.PostgresqlReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
-import org.ufoss.kotysa.test.PostgresqlCustomers
-import org.ufoss.kotysa.test.PostgresqlInts
-import org.ufoss.kotysa.test.PostgresqlLongs
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertTest
 
 @Order(3)
 class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<PostgresqlInsertRepository>(),
-    ReactorInsertTest<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlInsertRepository, ReactorTransaction> {
+    ReactorInsertTest<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlIntNonNullIds,
+            PostgresqlLongNonNullIds, PostgresqlInsertRepository, ReactorTransaction> {
 
     override fun instantiateRepository(
         sqlClient: PostgresqlReactorSqlClient,
@@ -28,9 +27,12 @@ class R2DbcInsertPostgresqlTest : AbstractR2dbcPostgresqlTest<PostgresqlInsertRe
 }
 
 class PostgresqlInsertRepository(sqlClient: PostgresqlReactorSqlClient) :
-    ReactorInsertRepository<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers>(
+    ReactorInsertRepository<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlIntNonNullIds,
+            PostgresqlLongNonNullIds>(
         sqlClient,
         PostgresqlInts,
         PostgresqlLongs,
-        PostgresqlCustomers
+        PostgresqlCustomers,
+        PostgresqlIntNonNullIds,
+        PostgresqlLongNonNullIds
     )

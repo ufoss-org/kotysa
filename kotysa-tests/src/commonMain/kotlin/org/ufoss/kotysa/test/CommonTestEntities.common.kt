@@ -166,19 +166,18 @@ interface Ints : Table<IntEntity> {
     val intNullable: IntColumnNullable<IntEntity>
 }
 
-data class IntEntityAsIdentity(
+data class IntNonNullIdEntity(
     val intNotNull: Int,
     val intNullable: Int? = null,
-    val id: Int? = null
+    val id: Int = 0
 )
 
-val intAsIdentityWithNullable = IntEntityAsIdentity(10, 6)
-val intAsIdentityWithoutNullable = IntEntityAsIdentity(12)
+val intNonNullIdWithNullable = IntNonNullIdEntity(20, 12)
 
-interface IntAsIdentities : Table<IntEntityAsIdentity> {
-    val id: IntColumnNotNull<IntEntityAsIdentity>
-    val intNotNull: IntColumnNotNull<IntEntityAsIdentity>
-    val intNullable: IntColumnNullable<IntEntityAsIdentity>
+interface IntNonNullIds : Table<IntNonNullIdEntity> {
+    val id: IntColumnNotNull<IntNonNullIdEntity>
+    val intNotNull: IntColumnNotNull<IntNonNullIdEntity>
+    val intNullable: IntColumnNullable<IntNonNullIdEntity>
 }
 
 data class LongEntity(
@@ -194,6 +193,21 @@ interface Longs : Table<LongEntity> {
     val id: LongColumnNotNull<LongEntity>
     val longNotNull: LongColumnNotNull<LongEntity>
     val longNullable: LongColumnNullable<LongEntity>
+}
+
+data class LongNonNullIdEntity(
+    val longNotNull: Long,
+    val longNullable: Long? = null,
+    val id: Long = 0L
+)
+
+val longNonNullIdWithNullable = LongNonNullIdEntity(20L, 12L)
+val longNonNullIdWithoutNullable = LongNonNullIdEntity(24L)
+
+interface LongNonNullIds : Table<LongNonNullIdEntity> {
+    val id: LongColumnNotNull<LongNonNullIdEntity>
+    val longNotNull: LongColumnNotNull<LongNonNullIdEntity>
+    val longNullable: LongColumnNullable<LongNonNullIdEntity>
 }
 
 data class FloatEntity(

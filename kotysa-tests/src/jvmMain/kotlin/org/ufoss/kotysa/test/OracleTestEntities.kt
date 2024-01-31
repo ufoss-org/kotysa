@@ -374,6 +374,14 @@ object OracleInts : OracleTable<IntEntity>(), Ints {
     override val intNullable = number(IntEntity::intNullable)
 }
 
+object OracleIntNonNullIds : OracleTable<IntNonNullIdEntity>(), IntNonNullIds {
+    override val id = number(IntNonNullIdEntity::id)
+        .identity()
+        .primaryKey()
+    override val intNotNull = number(IntNonNullIdEntity::intNotNull)
+    override val intNullable = number(IntNonNullIdEntity::intNullable)
+}
+
 object OracleIntAsIdentities : OracleTable<IntEntityAsIdentity>(), IntAsIdentities {
     override val id = number(IntEntityAsIdentity::id)
         .identity()
@@ -388,6 +396,14 @@ object OracleLongs : OracleTable<LongEntity>(), Longs {
         .primaryKey()
     override val longNotNull = number(LongEntity::longNotNull)
     override val longNullable = number(LongEntity::longNullable)
+}
+
+object OracleLongNonNullIds : OracleTable<LongNonNullIdEntity>(), LongNonNullIds {
+    override val id = number(LongNonNullIdEntity::id)
+        .identity()
+        .primaryKey()
+    override val longNotNull = number(LongNonNullIdEntity::longNotNull)
+    override val longNullable = number(LongNonNullIdEntity::longNullable)
 }
 
 object OracleFloats : OracleTable<FloatEntity>(), Floats {
@@ -460,7 +476,9 @@ val oracleTables = tables().oracle(
     OracleOffsetDateTimes,
     OracleIntAsIdentities,
     OracleInts,
+    OracleIntNonNullIds,
     OracleLongs,
+    OracleLongNonNullIds,
     OracleInheriteds,
     OracleJavaUsers,
     OracleCustomers,

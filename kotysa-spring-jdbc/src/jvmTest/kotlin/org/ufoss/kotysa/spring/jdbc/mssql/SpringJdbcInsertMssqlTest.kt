@@ -15,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class SpringJdbcInsertMssqlTest : AbstractSpringJdbcMssqlTest<RepositoryMssqlInsert>(),
-    InsertTest<MssqlInts, MssqlLongs, MssqlCustomers, RepositoryMssqlInsert, SpringJdbcTransaction> {
+    InsertTest<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds, RepositoryMssqlInsert,
+            SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) = RepositoryMssqlInsert(jdbcOperations)
 
@@ -23,9 +24,11 @@ class SpringJdbcInsertMssqlTest : AbstractSpringJdbcMssqlTest<RepositoryMssqlIns
 }
 
 class RepositoryMssqlInsert(dbClient: JdbcOperations) :
-    InsertRepository<MssqlInts, MssqlLongs, MssqlCustomers>(
+    InsertRepository<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds>(
         dbClient.sqlClient(mssqlTables),
         MssqlInts,
         MssqlLongs,
-        MssqlCustomers
+        MssqlCustomers,
+        MssqlIntNonNullIds,
+        MssqlLongNonNullIds
     )

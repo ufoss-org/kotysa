@@ -14,15 +14,19 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class VertxCoroutinesInsertMariadbTest : AbstractVertxCoroutinesMariadbTest<RepositoryMariadbInsert>(),
-    CoroutinesInsertTest<MariadbInts, MariadbLongs, MariadbCustomers, RepositoryMariadbInsert, Transaction> {
+    CoroutinesInsertTest<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds,
+            RepositoryMariadbInsert, Transaction> {
     override fun instantiateRepository(sqlClient: CoroutinesVertxSqlClient) = RepositoryMariadbInsert(sqlClient)
     override val exceptionClass = MySQLException::class.java
 }
 
 class RepositoryMariadbInsert(sqlClient: CoroutinesVertxSqlClient) :
-    CoroutinesInsertRepository<MariadbInts, MariadbLongs, MariadbCustomers>(
+    CoroutinesInsertRepository<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds,
+            MariadbLongNonNullIds>(
         sqlClient,
         MariadbInts,
         MariadbLongs,
-        MariadbCustomers
+        MariadbCustomers,
+        MariadbIntNonNullIds,
+        MariadbLongNonNullIds
     )

@@ -15,7 +15,8 @@ import org.ufoss.kotysa.test.repositories.blocking.InsertTest
 
 @Order(3)
 class SpringJdbcInsertPostgresqlTest : AbstractSpringJdbcPostgresqlTest<RepositoryPostgresqlInsert>(),
-    InsertTest<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, RepositoryPostgresqlInsert, SpringJdbcTransaction> {
+    InsertTest<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlIntNonNullIds, PostgresqlLongNonNullIds,
+            RepositoryPostgresqlInsert, SpringJdbcTransaction> {
 
     override fun instantiateRepository(jdbcOperations: JdbcOperations) = RepositoryPostgresqlInsert(jdbcOperations)
 
@@ -23,9 +24,12 @@ class SpringJdbcInsertPostgresqlTest : AbstractSpringJdbcPostgresqlTest<Reposito
 }
 
 class RepositoryPostgresqlInsert(dbClient: JdbcOperations) :
-    InsertRepository<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers>(
+    InsertRepository<PostgresqlInts, PostgresqlLongs, PostgresqlCustomers, PostgresqlIntNonNullIds,
+            PostgresqlLongNonNullIds>(
         dbClient.sqlClient(postgresqlTables),
         PostgresqlInts,
         PostgresqlLongs,
-        PostgresqlCustomers
+        PostgresqlCustomers,
+        PostgresqlIntNonNullIds,
+        PostgresqlLongNonNullIds
     )

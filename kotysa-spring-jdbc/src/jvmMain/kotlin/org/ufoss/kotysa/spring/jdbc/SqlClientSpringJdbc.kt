@@ -89,10 +89,11 @@ internal sealed class SqlClientSpringJdbc(
     private fun <T : Any> paramSource(row: T, table: KotysaTable<T>): SqlParameterSource {
         val parameters = MapSqlParameterSource()
         table.dbColumns
-            // do nothing for null values with default or Serial type
+            // filter out null or numeric values with negative or zero values with default value or Serial types
             .filterNot { column ->
-                column.entityGetter(row) == null
-                        && (column.defaultValue != null
+                val value = column.entityGetter(row)
+                ((value == null) || (value is Number && value.toLong() <= 0L)) &&
+                        (column.defaultValue != null
                         || column.isAutoIncrement
                         || SqlType.SERIAL == column.sqlType
                         || SqlType.BIGSERIAL == column.sqlType)
@@ -105,12 +106,13 @@ internal sealed class SqlClientSpringJdbc(
     private fun <T : Any> fetchLastInserted(row: T, table: KotysaTable<T>): T {
         val pkColumns = table.primaryKey.columns
         val pkFirstColumn = pkColumns.elementAt(0)
-
+        val value = pkFirstColumn.entityGetter(row)
+        
         val parameters = MapSqlParameterSource()
         if (
             pkColumns.size != 1 ||
             !pkFirstColumn.isAutoIncrement ||
-            pkFirstColumn.entityGetter(row) != null
+            (value != null && value is Number && value.toLong() > 0L)
         ) {
             // bind all PK values
             pkColumns

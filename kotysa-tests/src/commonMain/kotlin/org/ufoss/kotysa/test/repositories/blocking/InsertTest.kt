@@ -12,8 +12,8 @@ import org.ufoss.kotysa.transaction.Transaction
 import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 
-interface InsertTest<T : Ints, U : Longs, V : Customers, W : InsertRepository<T, U, V>, X : Transaction>
-    : RepositoryTest<W, X> {
+interface InsertTest<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds,
+        Y : InsertRepository<T, U, V, W, X>, Z : Transaction> : RepositoryTest<Y, Z> {
     val exceptionClass: KClass<*>
 
     @Test
@@ -72,6 +72,28 @@ interface InsertTest<T : Ints, U : Longs, V : Customers, W : InsertRepository<T,
     }
 
     @Test
+    fun `Verify insertAndReturnIntNullId auto-generated works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            val inserted = repository.insertAndReturnIntNullId(intNonNullIdWithNullable)
+            expect(inserted.intNotNull).toEqual(intNonNullIdWithNullable.intNotNull)
+            expect(inserted.intNullable).toEqual(intNonNullIdWithNullable.intNullable)
+            expect(inserted.id).toBeGreaterThan(0)
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnIntNullId not auto-generated works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            val inserted = repository.insertAndReturnIntNullId(IntNonNullIdEntity(1, 2, 666))
+            expect(inserted.intNotNull).toEqual(1)
+            expect(inserted.intNullable).toEqual(2)
+            expect(inserted.id).toEqual(666)
+        }
+    }
+
+    @Test
     fun `Verify insertAndReturnLongs works correctly`() {
         operator.transactional { transaction ->
             transaction.setRollbackOnly()
@@ -86,7 +108,23 @@ interface InsertTest<T : Ints, U : Longs, V : Customers, W : InsertRepository<T,
             expect(inserted.id).notToEqualNull().toBeGreaterThan(1L)
         }
     }
-    
+
+    @Test
+    fun `Verify insertAndReturnLongNullIds works correctly`() {
+        operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            val longs = repository.insertAndReturnLongNullIds()
+            var inserted = longs[0]
+            expect(inserted.longNotNull).toEqual(longNonNullIdWithNullable.longNotNull)
+            expect(inserted.longNullable).toEqual(longNonNullIdWithNullable.longNullable)
+            expect(inserted.id).toBeGreaterThan(0L)
+            inserted = longs[1]
+            expect(inserted.longNotNull).toEqual(longNonNullIdWithoutNullable.longNotNull)
+            expect(inserted.longNullable).toEqual(longNonNullIdWithoutNullable.longNullable)
+            expect(inserted.id).toBeGreaterThan(1L)
+        }
+    }
+
     @Test
     fun `Verify insertCustomer fails if duplicate name`() {
         expect(repository.selectAllCustomers())

@@ -9,15 +9,14 @@ import org.springframework.dao.DataIntegrityViolationException
 import org.ufoss.kotysa.MssqlCoroutinesSqlClient
 import org.ufoss.kotysa.MssqlReactorSqlClient
 import org.ufoss.kotysa.spring.r2dbc.transaction.ReactorTransaction
-import org.ufoss.kotysa.test.MssqlCustomers
-import org.ufoss.kotysa.test.MssqlInts
-import org.ufoss.kotysa.test.MssqlLongs
+import org.ufoss.kotysa.test.*
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertRepository
 import org.ufoss.kotysa.test.repositories.reactor.ReactorInsertTest
 
 @Order(3)
 class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<MssqlInsertRepository>(),
-    ReactorInsertTest<MssqlInts, MssqlLongs, MssqlCustomers, MssqlInsertRepository, ReactorTransaction> {
+    ReactorInsertTest<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds, MssqlInsertRepository,
+            ReactorTransaction> {
 
     override fun instantiateRepository(sqlClient: MssqlReactorSqlClient, coSqlClient: MssqlCoroutinesSqlClient) =
         MssqlInsertRepository(sqlClient)
@@ -26,9 +25,11 @@ class R2DbcInsertMssqlTest : AbstractR2dbcMssqlTest<MssqlInsertRepository>(),
 }
 
 class MssqlInsertRepository(sqlClient: MssqlReactorSqlClient) :
-    ReactorInsertRepository<MssqlInts, MssqlLongs, MssqlCustomers>(
+    ReactorInsertRepository<MssqlInts, MssqlLongs, MssqlCustomers, MssqlIntNonNullIds, MssqlLongNonNullIds>(
         sqlClient,
         MssqlInts,
         MssqlLongs,
-        MssqlCustomers
+        MssqlCustomers,
+        MssqlIntNonNullIds,
+        MssqlLongNonNullIds
     )

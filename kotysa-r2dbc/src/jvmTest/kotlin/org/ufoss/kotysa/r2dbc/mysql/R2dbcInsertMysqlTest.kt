@@ -14,15 +14,18 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class R2dbcInsertMysqlTest : AbstractR2dbcMysqlTest<RepositoryMysqlInsert>(),
-    CoroutinesInsertTest<MysqlInts, MysqlLongs, MysqlCustomers, RepositoryMysqlInsert, R2dbcTransaction> {
+    CoroutinesInsertTest<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds,
+            RepositoryMysqlInsert, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryMysqlInsert(sqlClient)
     override val exceptionClass = R2dbcDataIntegrityViolationException::class.java
 }
 
 class RepositoryMysqlInsert(sqlClient: R2dbcSqlClient) :
-    CoroutinesInsertRepository<MysqlInts, MysqlLongs, MysqlCustomers>(
+    CoroutinesInsertRepository<MysqlInts, MysqlLongs, MysqlCustomers, MysqlIntNonNullIds, MysqlLongNonNullIds>(
         sqlClient,
         MysqlInts,
         MysqlLongs,
-        MysqlCustomers
+        MysqlCustomers,
+        MysqlIntNonNullIds,
+        MysqlLongNonNullIds
     )

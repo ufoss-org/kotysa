@@ -11,6 +11,10 @@ import org.ufoss.kotysa.mssql.date
 import org.ufoss.kotysa.mssql.dateTime
 import org.ufoss.kotysa.mssql.time
 import org.ufoss.kotysa.tables
+import org.ufoss.kotysa.test.MssqlInts.identity
+import org.ufoss.kotysa.test.MssqlInts.primaryKey
+import org.ufoss.kotysa.test.MssqlLongs.identity
+import org.ufoss.kotysa.test.MssqlLongs.primaryKey
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -450,10 +454,19 @@ object MssqlKotlinxLocalTimes : MssqlTable<KotlinxLocalTimeEntity>(), KotlinxLoc
 }
 
 object MssqlInts : MssqlTable<IntEntity>(), Ints {
-    override val id = integer(IntEntity::id).identity()
+    override val id = integer(IntEntity::id)
+        .identity()
         .primaryKey()
     override val intNotNull = integer(IntEntity::intNotNull)
     override val intNullable = integer(IntEntity::intNullable)
+}
+
+object MssqlIntNonNullIds : MssqlTable<IntNonNullIdEntity>(), IntNonNullIds {
+    override val id = integer(IntNonNullIdEntity::id)
+        .identity()
+        .primaryKey()
+    override val intNotNull = integer(IntNonNullIdEntity::intNotNull)
+    override val intNullable = integer(IntNonNullIdEntity::intNullable)
 }
 
 object MssqlIntAsIdentities : MssqlTable<IntEntityAsIdentity>(), IntAsIdentities {
@@ -464,10 +477,19 @@ object MssqlIntAsIdentities : MssqlTable<IntEntityAsIdentity>(), IntAsIdentities
 }
 
 object MssqlLongs : MssqlTable<LongEntity>(), Longs {
-    override val id = bigInt(LongEntity::id).identity()
+    override val id = bigInt(LongEntity::id)
+        .identity()
         .primaryKey()
     override val longNotNull = bigInt(LongEntity::longNotNull)
     override val longNullable = bigInt(LongEntity::longNullable)
+}
+
+object MssqlLongNonNullIds : MssqlTable<LongNonNullIdEntity>(), LongNonNullIds {
+    override val id = bigInt(LongNonNullIdEntity::id)
+        .identity()
+        .primaryKey()
+    override val longNotNull = bigInt(LongNonNullIdEntity::longNotNull)
+    override val longNullable = bigInt(LongNonNullIdEntity::longNullable)
 }
 
 object MssqlFloats : MssqlTable<FloatEntity>(), Floats {
@@ -557,7 +579,9 @@ val mssqlTables = tables().mssql(
     MssqlOffsetDateTimes,
     MssqlIntAsIdentities,
     MssqlInts,
+    MssqlIntNonNullIds,
     MssqlLongs,
+    MssqlLongNonNullIds,
     MssqlUuids,
     MssqlLocalTimes,
     MssqlKotlinxLocalTimes,

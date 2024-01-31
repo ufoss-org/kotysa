@@ -9,8 +9,8 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.ufoss.kotysa.test.*
 
-interface MutinyInsertTest<T : Ints, U : Longs, V : Customers, W : MutinyInsertRepository<T, U, V>>
-    : MutinyRepositoryTest<W> {
+interface MutinyInsertTest<T : Ints, U : Longs, V : Customers, W : IntNonNullIds, X : LongNonNullIds,
+        Y : MutinyInsertRepository<T, U, V, W, X>> : MutinyRepositoryTest<Y> {
     val exceptionClass: Class<out Throwable>
 
     @Test
@@ -77,6 +77,36 @@ interface MutinyInsertTest<T : Ints, U : Longs, V : Customers, W : MutinyInsertR
     }
 
     @Test
+    fun `Verify insertAndReturnIntNullId auto-generated works correctly`() {
+        val insertedInt = operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnIntNullId(intNonNullIdWithNullable)
+        }.await().indefinitely()
+
+        assertThat(insertedInt).matches { inserted ->
+            assertThat(inserted!!.intNotNull).isEqualTo(intNonNullIdWithNullable.intNotNull)
+            assertThat(inserted.intNullable).isEqualTo(intNonNullIdWithNullable.intNullable)
+            assertThat(inserted.id).isGreaterThan(0)
+            true
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnIntNullId not auto-generated works correctly`() {
+        val insertedInt = operator.transactional { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnIntNullId(IntNonNullIdEntity(1, 2, 666))
+        }.await().indefinitely()
+
+        assertThat(insertedInt).matches { inserted ->
+            assertThat(inserted!!.intNotNull).isEqualTo(1)
+            assertThat(inserted.intNullable).isEqualTo(2)
+            assertThat(inserted.id).isEqualTo(666)
+            true
+        }
+    }
+
+    @Test
     fun `Verify insertAndReturnLongs works correctly`() {
         val insertedLongs = operator.transactionalMulti { transaction ->
             transaction.setRollbackOnly()
@@ -92,6 +122,27 @@ interface MutinyInsertTest<T : Ints, U : Longs, V : Customers, W : MutinyInsertR
         assertThat(insertedLongs[1]).matches { inserted ->
             assertThat(inserted!!.longNotNull).isEqualTo(longWithoutNullable.longNotNull)
             assertThat(inserted.longNullable).isEqualTo(longWithoutNullable.longNullable)
+            assertThat(inserted.id).isGreaterThan(1L)
+            true
+        }
+    }
+
+    @Test
+    fun `Verify insertAndReturnLongNullIds works correctly`() {
+        val insertedLongs = operator.transactionalMulti { transaction ->
+            transaction.setRollbackOnly()
+            repository.insertAndReturnLongNullIds()
+        }.collect().asList().await().indefinitely()
+
+        assertThat(insertedLongs[0]).matches { inserted ->
+            assertThat(inserted!!.longNotNull).isEqualTo(longNonNullIdWithNullable.longNotNull)
+            assertThat(inserted.longNullable).isEqualTo(longNonNullIdWithNullable.longNullable)
+            assertThat(inserted.id).isGreaterThan(0L)
+            true
+        }
+        assertThat(insertedLongs[1]).matches { inserted ->
+            assertThat(inserted!!.longNotNull).isEqualTo(longNonNullIdWithoutNullable.longNotNull)
+            assertThat(inserted.longNullable).isEqualTo(longNonNullIdWithoutNullable.longNullable)
             assertThat(inserted.id).isGreaterThan(1L)
             true
         }

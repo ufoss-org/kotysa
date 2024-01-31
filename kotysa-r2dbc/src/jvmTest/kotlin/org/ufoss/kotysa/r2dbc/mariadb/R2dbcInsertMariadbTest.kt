@@ -14,15 +14,18 @@ import org.ufoss.kotysa.test.repositories.coroutines.CoroutinesInsertTest
 
 @Order(3)
 class R2dbcInsertMariadbTest : AbstractR2dbcMariadbTest<RepositoryMariadbInsert>(),
-    CoroutinesInsertTest<MariadbInts, MariadbLongs, MariadbCustomers, RepositoryMariadbInsert, R2dbcTransaction> {
+    CoroutinesInsertTest<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds,
+            RepositoryMariadbInsert, R2dbcTransaction> {
     override fun instantiateRepository(sqlClient: R2dbcSqlClient) = RepositoryMariadbInsert(sqlClient)
     override val exceptionClass = R2dbcDataIntegrityViolationException::class.java
 }
 
 class RepositoryMariadbInsert(sqlClient: R2dbcSqlClient) :
-    CoroutinesInsertRepository<MariadbInts, MariadbLongs, MariadbCustomers>(
+    CoroutinesInsertRepository<MariadbInts, MariadbLongs, MariadbCustomers, MariadbIntNonNullIds, MariadbLongNonNullIds>(
         sqlClient,
         MariadbInts,
         MariadbLongs,
-        MariadbCustomers
+        MariadbCustomers,
+        MariadbIntNonNullIds,
+        MariadbLongNonNullIds
     )
