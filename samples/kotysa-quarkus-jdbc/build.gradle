@@ -43,13 +43,13 @@ compileJava {
     //  'module-info.java' is in 'main/java' and the Kotlin code is in 'main/kotlin'
     options.compilerArgs = [
 //            "--module-path",
-//            compileJava.classpath.asPath,   
+//            compileJava.classpath.asPath,
         "--patch-module",
         "$jpmsName=${sourceSets.main.output.asPath}"
     ]
 }
 
 wrapper {
-    gradleVersion = '8.3'
+    gradleVersion = '8.5'
     distributionType = Wrapper.DistributionType.ALL
 }
