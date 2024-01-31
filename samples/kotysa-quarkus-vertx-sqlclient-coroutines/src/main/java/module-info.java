@@ -1,4 +1,5 @@
 module kotysa.quarkus.vertx.sqlclient.coroutines {
+    requires io.vertx.client.sql.pg;
     requires jakarta.cdi;
     requires jakarta.ws.rs;
     requires kotlin.stdlib;

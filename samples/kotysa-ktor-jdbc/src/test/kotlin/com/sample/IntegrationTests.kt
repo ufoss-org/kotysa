@@ -26,7 +26,7 @@ class IntegrationTests : StringSpec({
         kotysaApiTest {
             val response = client.get("/api/users/123")
             response shouldHaveStatus HttpStatusCode.OK
-            response.body<User>().id!! shouldBeExactly 123
+            response.body<User>().id shouldBeExactly 123
         }
     }
 })
