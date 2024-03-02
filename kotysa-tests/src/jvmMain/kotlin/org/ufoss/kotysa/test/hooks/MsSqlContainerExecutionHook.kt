@@ -18,21 +18,29 @@ public class MsSqlContainerExecutionHook : ParameterResolver {
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
-                .getOrComputeIfAbsent("msSqlContainer") {
-                    val msSqlContainer = MSSQLServerContainer("mcr.microsoft.com/mssql/server:2019-CU18-ubuntu-20.04")
-                    msSqlContainer
-                            .acceptLicense() // required
-                            .withPassword("A_Str0ng_Required_Password")
+            .getOrComputeIfAbsent("msSqlContainer") {
+                // waiting for https://github.com/microsoft/mssql-docker/issues/868 to run on Linux kernel 6.7+
+                val msSqlContainer = MSSQLServerContainer(
+                    "mcr.microsoft.com/mssql/server:2022-CU11-ubuntu-22.04")
+                msSqlContainer
+                    .acceptLicense() // required
+                    .withPassword("A_Str0ng_Required_Password")
+                    .withStartupTimeoutSeconds(5)
+                    .withConnectTimeoutSeconds(5)
+                try {
                     msSqlContainer.start()
-                    println("MsSqlContainer started")
-
-                    MsSqlContainerResource(msSqlContainer)
+                } catch (e: Exception) {
+                    println(msSqlContainer.logs)
                 }
+                println("MsSqlContainer started")
+
+                MsSqlContainerResource(msSqlContainer)
+            }
     }
 }
 
 public class MsSqlContainerResource internal constructor(
-        private val dbContainer: MSSQLServerContainer<*>
+    private val dbContainer: MSSQLServerContainer<*>
 ) : TestContainersCloseableResource {
     public companion object {
         public const val ID: String = "MsSqlContainerResource"
