@@ -19,14 +19,12 @@ public class MsSqlContainerExecutionHook : ParameterResolver {
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
         return extensionContext.root.getStore(ExtensionContext.Namespace.GLOBAL)
             .getOrComputeIfAbsent("msSqlContainer") {
-                // waiting for https://github.com/microsoft/mssql-docker/issues/868 to run on Linux kernel 6.7+
+                // https://hub.docker.com/_/microsoft-mssql-server/
                 val msSqlContainer = MSSQLServerContainer(
-                    "mcr.microsoft.com/mssql/server:2022-CU11-ubuntu-22.04")
+                    "mcr.microsoft.com/mssql/server:2022-CU12-ubuntu-22.04")
                 msSqlContainer
                     .acceptLicense() // required
                     .withPassword("A_Str0ng_Required_Password")
-                    .withStartupTimeoutSeconds(5)
-                    .withConnectTimeoutSeconds(5)
                 try {
                     msSqlContainer.start()
                 } catch (e: Exception) {
